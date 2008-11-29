@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Package Version="2">
+    <PathDelim Value="\"/>
+    <Name Value="P4DLaz"/>
+    <CompilerOptions>
+      <Version Value="5"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <OtherUnitFiles Value="$(PackageDir)\"/>
+        <UnitOutputDirectory Value="C:\P4D\temp"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <DelphiCompat Value="True"/>
+        </SyntaxOptions>
+      </Parsing>
+      <CodeGeneration>
+        <Generate Value="Faster"/>
+      </CodeGeneration>
+      <Other>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
+    </CompilerOptions>
+    <Files Count="6">
+      <Item1>
+        <Filename Value="PythonEngine.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PythonEngine"/>
+      </Item1>
+      <Item2>
+        <Filename Value="PythonGUIInputOutput.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PythonGUIInputOutput"/>
+      </Item2>
+      <Item3>
+        <Filename Value="PythonAction.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="PythonAction"/>
+      </Item3>
+      <Item4>
+        <Filename Value="MethodCallBack.pas"/>
+        <UnitName Value="MethodCallBack"/>
+      </Item4>
+      <Item5>
+        <Filename Value="VarPyth.pas"/>
+        <UnitName Value="VarPyth"/>
+      </Item5>
+      <Item6>
+        <Filename Value="PythonD6Decs.pas"/>
+        <UnitName Value="PythonD6Decs"/>
+      </Item6>
+    </Files>
+    <Type Value="RunAndDesignTime"/>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)\"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <IgnoreBinaries Value="False"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

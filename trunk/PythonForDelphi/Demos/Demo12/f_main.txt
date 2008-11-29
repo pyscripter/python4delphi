@@ -1,0 +1,183 @@
+object FRM_Main: TFRM_Main
+  Left = 244
+  Top = 136
+  Width = 749
+  Height = 652
+  Caption = 'FRM_Main'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object MEM_Script: TRichEdit
+    Left = 200
+    Top = 8
+    Width = 530
+    Height = 345
+    Anchors = [akLeft, akTop, akRight]
+    Lines.Strings = (
+      'class MyClass:'
+      '    def __init__(self):'
+      '        print "[PYTHON] MyClass.__init__"'
+      '        self.myProperty="foo"'
+      '        self.myListProperty=["foo","bar","spam",123456]'
+      '   '
+      '    def myMethod(self):'
+      '        print "[PYTHON] myMethod feels good !"'
+      ''
+      '    def myMethod2(self, myString):'
+      '        print "[PYTHON] Hello World %s  ! " % myString'
+      ''
+      '    def myMethod3(self, int):'
+      '        return 3*int'
+      ''
+      '    def mySelf(self):'
+      '        return self'
+      ''
+      '    def myList(self):'
+      '        return ['#39'123'#39','#39'456'#39','#39'foo'#39','#39'bar'#39']'
+      ''
+      'delphiVar.value=MyClass()')
+    ScrollBars = ssBoth
+    TabOrder = 0
+    WordWrap = False
+  end
+  object MEM_Console: TRichEdit
+    Left = 8
+    Top = 360
+    Width = 722
+    Height = 255
+    Anchors = [akLeft, akTop, akRight, akBottom]
+    ScrollBars = ssBoth
+    TabOrder = 1
+    WordWrap = False
+    OnChange = MEM_ConsoleChange
+  end
+  object BTN_Exec: TButton
+    Left = 8
+    Top = 8
+    Width = 185
+    Height = 25
+    Caption = 'Exec Script'
+    TabOrder = 2
+    OnClick = BTN_ExecClick
+  end
+  object BTN_DelphiVarIntoAtom: TButton
+    Left = 8
+    Top = 40
+    Width = 185
+    Height = 25
+    Caption = 'delphiVar -> Atom'
+    TabOrder = 3
+    OnClick = BTN_DelphiVarIntoAtomClick
+  end
+  object BTN_AtomMyMethod: TButton
+    Left = 8
+    Top = 72
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myMethod()'
+    TabOrder = 4
+    OnClick = BTN_AtomMyMethodClick
+  end
+  object BTN_AtomMyMethod2_toto: TButton
+    Left = 8
+    Top = 104
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myMethod2("toto")'
+    TabOrder = 5
+    OnClick = BTN_AtomMyMethod2_totoClick
+  end
+  object BTN_myMethod3_6: TButton
+    Left = 8
+    Top = 136
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myMethod3(6)'
+    TabOrder = 6
+    OnClick = BTN_myMethod3_6Click
+  end
+  object BTN_MySelf: TButton
+    Left = 8
+    Top = 168
+    Width = 185
+    Height = 25
+    Caption = 'Atom.mySelf.mySelf...myMethod3(18)'
+    TabOrder = 7
+    OnClick = BTN_MySelfClick
+  end
+  object BTN_AtomMyProperty: TButton
+    Left = 8
+    Top = 200
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myProperty'
+    TabOrder = 8
+    OnClick = BTN_AtomMyPropertyClick
+  end
+  object BTN_AtomMyProperty_Bar: TButton
+    Left = 8
+    Top = 232
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myProperty:='#39'bar'#39
+    TabOrder = 9
+    OnClick = BTN_AtomMyProperty_BarClick
+  end
+  object BTN_AtomMyList_1: TButton
+    Left = 8
+    Top = 264
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myList()[1]'
+    TabOrder = 10
+    OnClick = BTN_AtomMyList_1Click
+  end
+  object BTN_AtomMyListProperty_2: TButton
+    Left = 8
+    Top = 296
+    Width = 185
+    Height = 25
+    Caption = 'Atom.myListProperty[2]'
+    TabOrder = 11
+    OnClick = BTN_AtomMyListProperty_2Click
+  end
+  object BTN_AtomNonExistentMethod: TButton
+    Left = 8
+    Top = 328
+    Width = 185
+    Height = 25
+    Caption = 'Atom.nonExistentMethod()'
+    TabOrder = 12
+    OnClick = BTN_AtomNonExistentMethodClick
+  end
+  object PythonEngine: TPythonEngine
+    DllName = 'python15.dll'
+    APIVersion = 1007
+    IO = PythonGUIInputOutput
+    InitThreads = False
+    Left = 456
+    Top = 208
+  end
+  object PythonGUIInputOutput: TPythonGUIInputOutput
+    Output = MEM_Console
+    Left = 488
+    Top = 208
+  end
+  object PYV_DelphiVar: TPythonDelphiVar
+    Engine = PythonEngine
+    Module = '__main__'
+    VarName = 'delphiVar'
+    OnChange = PYV_DelphiVarChange
+    Left = 520
+    Top = 208
+  end
+end

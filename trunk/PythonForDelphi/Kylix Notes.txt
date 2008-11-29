@@ -1,0 +1,121 @@
+Here are the steps for installing Python for Delphi under Kylix:
+----------------------------------------------------------------
+
+Installation of the package in the Kylix IDE
+--------------------------------------------
+
+1) Get the tar archive containing the distribution and copy it to your install folder
+2) Extract the content of the archive
+    tar xvfz PythonForDelphi.tgz
+3) Launch Kylix
+4) Open the file .../PythonForDelphi/Components/Definition.inc and select the Python version you want to use by commenting out
+   the corresponding $define declaration, or by setting the default Python version you want to used.
+
+   WARNING! Be sure to have the symbol HAS_MODIFIED_DISPINVOKE properly defined (or not) according to your Kylix version.
+   This is due to an interface change in the custom variants introduced in Kylix2 only, and there's no way of differencing
+   Kylix1 from Kylix2, nor from Delphi6 (from the VERXXX point of view).
+
+5) Open the package .../PythonForDelphi/Components/Python_kylix.dpk
+6) Compile and install it
+7) Add the following path to your library path (Tools/Environment options/Library):
+   .../PythonForDelphi/Components/Sources/Core
+
+Installation of the Python distribution
+---------------------------------------
+
+We must build Python as a shared library to let PythonForDelphi load it dynamically, like a windows dll.
+Then we must compile the Python modules to force them use the new Python shared library, otherwise
+you won't be able to import any standard Python module (like time).
+
+1) Get the latest version of Python (2.2) and copy it to a temporary folder (/tmp)
+2) Extract the content of the Python archive
+   tar xvfz Python-2.2.tgz
+3) cd Python-2.2
+4) ./configure
+5) Edit the Makefile if you want to change the install path. By default it is /usr/local
+   but you can edit the variable "prefix" and set it to /usr for instance.
+6) make OPT="-fpic -O2"
+7) mkdir .extract
+8) cd .extract
+9) ar xv ../libpython2.2.a
+10) cd ..
+11) gcc -shared -o libpython2.2.so .extract/*.o
+12) rm -rf .extract
+13) cp libpython2.2.so /usr/lib 
+    Note that /usr/lib will be automatically recognized by the Linux loader, whereas /usr/local/lib won't.
+14) make install
+15) ldconfig
+16) gcc -Xlinker -export-dynamic Modules/python.o -o python_shared -lpython2.2 -lpthread -ldl -lutil -lm
+17) rm /usr/bin/python
+18) rm /usr/bin/python2.2
+19) cp python_shared /usr/bin/python2.2
+20) strip /usr/bin/python2.2
+21) ln -f /usr/bin/python2.2 /usr/bin/python
+22) rm -f python_shared
+
+1) make distclean
+2) ./configure
+3) Edit the file setup.py (to force the Python modules link to the Python shared library): 
+   * locate the line that contains:  self.compiler.set_executables(**args)
+   * before this line, insert the following instruction: args['linker_so'] = 'gcc -shared -lpython2.2'
+     (and replace 2.2 with the version of Python you're building).
+Redo above steps from 5 to 22
+
+
+References:
+-----------
+http://www.python.org/doc/FAQ.html#3.30
+www.mv.com/ipusers/vanzandt/lib.html
+
+
+Here's a script that will automate the generation of the shared library, and the python command
+line tool.
+written by Ulrich Berning (berning@teuto.de)
+extracted from: http://mail.python.org/pipermail/python-list/2001-May/043271.html
+--8<------------------------------------------------------------------------->8--
+#!/bin/bash
+
+user=`whoami`
+
+if [ $user != 'root' ]; then
+  echo "Try again as root ..."
+  exit 1
+fi
+
+echo "Creating temporary directory '.extract' ..."
+mkdir .extract
+
+echo "Extraction object files from static library ..."
+(cd .extract; ar xv ../libpython2.2.a)
+
+echo "Creating shared library 'libpython2.2.so.0' ..."
+gcc -shared -o libpython2.2.so.0 .extract/*.o
+
+echo "Removing temporary directory '.extract' ..."
+rm -rf .extract
+
+echo "Installing shared library 'libpython2.2.so.0 in /usr/lib ..."
+cp libpython2.2.so.0 /usr/lib/
+strip /usr/lib/libpython2.2.so.0
+chmod 555 /usr/lib/libpython2.2.so.0
+ln -sf /usr/lib/libpython2.2.so.0 /usr/lib/libpython2.2.so
+ldconfig
+rm -f libpython2.2.so.0
+
+echo "Linking new python executable with shared library ..."
+gcc -Xlinker -export-dynamic Modules/python.o -o python_shared -lpython2.2 -lpthread -ldl -lutil -lm
+
+echo "Removing old executables in /usr/bin ..."
+rm /usr/bin/python
+rm /usr/bin/python2.2
+
+echo "Installing new binary in /usr/bin ..."
+cp python_shared /usr/bin/python2.2
+strip /usr/bin/python2.2
+ln -f /usr/bin/python2.2 /usr/bin/python
+rm -f python_shared
+
+echo "Calling ldd on new executable to check the use of the shared library ..."
+ldd /usr/bin/python2.2
+
+echo "All done ..."

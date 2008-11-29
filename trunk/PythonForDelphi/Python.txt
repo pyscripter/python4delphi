@@ -1,0 +1,17 @@
+Python is a freeware portable object oriented language that is very powerfull.
+It compiles the source code into byte-code and runs it in a virtual machine.
+Python was created by Guido van Rossum.
+
+You can find whatever you want about Python at the official site:
+http://www.python.org/
+
+  You can get the sources of Python, or specific binaries distributions
+  (for unix, Windows, Macintosh, OS2...)
+  You can get the Python reference manuals (a Tutorial, Language Reference,
+  Library Reference and Extending Reference).
+
+There are several books:
+- Mark Lutz, Programming Python, O'Reilly and Associates, 1996.
+- Guido van Rossum, and James C. Ahlstrom, Internet Programming with Python,
+  M&T Books (MIS Press/Henry Holt and Co.), Fall, 1996.
+  

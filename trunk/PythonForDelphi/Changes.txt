@@ -1,0 +1,1249 @@
+This is the list of all changes since the first release:
+
+----------------------------------------------------------------------
+1.2   error handling in run component
+----------------------------------------------------------------------
+1.3   Inserted functionality and definitions got from
+      Grzegorz Makarewicz
+      mak@mikroplan.com.pl
+      http://www.mikroplan.com.pl/home/mak/python
+      Thank you for permission and help!
+----------------------------------------------------------------------
+1.4   Cleaning up, eliminating German comments, further tests
+      Inserted some ideas from Andrew Robinson,
+      andy@hps1.demon.co.uk
+----------------------------------------------------------------------
+1.5   Initialization String, some minor functionalities
+----------------------------------------------------------------------
+2.0   18/12/1997
+      Extended by Morgan Martinet (mmm@imaginet.fr)
+      The architecture of the system was changed a lot !
+      See the text files (Documentation and tutorial) for more infos.
+      * Works with Python 1.5 Beta 2
+      * Renamed unit as PythonEngine
+      * Cleaned the formatting of the source code
+      * Reorganized some parts of the source
+      * Reorganized the content of the components
+      * Used exceptions instead of error variables
+      * Suppressed the script, methods and InitModule of TPytRun,
+        because there are new components for that.
+      * We use the ExitProcess function instead of Halt, because
+        Halt does not unload the Dlls before it leaves.
+      * When defining methods, there's no need to add a blank method
+        for the last one, because we allways allocate n+1 methods,
+        and the new allocated data is allways cleared.
+      * Renamed classes, in order to avoid name conflicts
+        with the previous components, which can coexist:
+            TDynDll   -->  TDynamicDll
+            TPytDll   -->  TPythonInterface
+            TPytRun   -->  TPythonEngine (It hosts the interpreter)
+
+      * Added components
+            TEngineClient
+            TMethodsContainer
+            TPythonType         --> Lets you create a new Type object
+            TPythonModule       --> Lets you create a new module
+            TPythonDelphiVar    --> Lets you create Python variables
+                                    that are bound to Delphi.
+            TPythonOutput       --> Works as a console for displaying
+                                    Python outputs.
+
+----------------------------------------------------------------------
+2.01
+      * Py_BuildValue modified to support floats thanks to Grzegorz Makarewicz
+      * Renamed the functions Exec_command -> ExecString
+                              Eval_command -> EvalString
+      * Added the functions EvalStringAsStr and EvalStringsAsStr
+      * Added a delay mechanism for the output, in order to let threads write
+        to output. There are 2 new functions in the module pyio:
+            SetDelayWrites(1/0) -> (de)activates the delaying
+            SetMaxLines(val) -> sets the # of lines of the output
+      * Added 2 functions to convert Python objects to variants and vice versa:
+            PyObjectAsVariant
+            VariantAsPyObject
+            VarRecAsPyObject
+      * Removed the flag argument of the AddMethod procedure, because it must
+        be always 1.
+      * Checked if the VarName attribute of a TPythonDelphiVar does already
+        exist and raise an exception.
+      * Added functions CheckSyntax, CheckEvalSyntax, CheckExecSyntax.
+      * Added functions MakePyTuple, MakePyList,
+                        ArrayToPyTuple, ArrayToPyList, ArrayToPyDict
+                        StringsToPyList, StringsToPyTuple,
+                        PyListToStrings, PyTupleToStrings
+      * Added a function ReturnNone that returns a
+        Py_None object, correctly incremented.
+      * Extended the exception classes in Delphi that map the exceptions of Python.
+        Now, there's a one to one maping.
+
+----------------------------------------------------------------------
+2.02  07/01/1998
+      * modified Py_BuildValue to handle currencies as python doubles.
+      * Added method TMethodsContainer.MethodWrap to call Delphi Methods
+        from Python.
+
+----------------------------------------------------------------------
+2.03  09/01/1998
+      * Removed MethodWrap and added AddDelphiMethod.
+        I added a new type TDelphiMethod wich will constrain
+        to declare a valid delphi method to pass to Python.
+        Now it simplifies the declaration of a method, and it
+        checks the type of the method passed.
+      * Added Demo7 to show the new functionality of the Delphi
+        methods. I show in this demo how to use ArrayToPyTuple
+        in the getlong2 function.
+
+----------------------------------------------------------------------
+2.04  12/01/1998
+      * Removed the DelphiObject argument of the AddDelphiMethod because
+        it could be extracted from the DelphiMethod arg (look at the trick !).
+
+----------------------------------------------------------------------
+2.05  13/01/1998
+      * Added a property APIVersion in order to use different versions of
+        Python.
+      * Added GetOfObjectCallBack in the MethodCallback.pas and used it in
+        the AddDelphiMethod.
+
+----------------------------------------------------------------------
+2.06  27/01/1998
+      * Changed how TPythonEngine checks if it already exists.
+        Now you can open several forms containing each a TPythonEngine,
+        but you can't drop 2 TPythonEngine on the same form, and when
+        your application will execute it will check that there's only one
+        instance of TPythonEngine.
+      * Added a new property "ExecModule" that lets you specify in which
+        module your code will be executed. By default it's "__main__".
+      * Added a new system that lets you create new Python types with
+        Delphi classes. So, you can use the inheritence and polymorphism
+        in your Python types ! And it is more easier to build !
+      * Changed the tutorial, and added a demo8 that shows you how to use
+        the Delphi classes.
+----------------------------------------------------------------------
+2.07  02/02/1998
+      * Added a property "AutoFinalize" to TPythonEngine that enables or not
+        the call to Py_Finalize in the destructor of TPythonEngine.
+        It's usefull for the Python modules as Dlls.
+      * Added a Demo9 to show how to build a Python module as a Dll
+        and explained it in the tutorial.
+      * Changed TPythonType so that it automatically creates a variable
+        containing the type and labelled with the TypeName in its
+        linked module. Now you can check the type of an object like this:
+           if type(obj) is spam.Point:
+             ...
+----------------------------------------------------------------------
+2.08  05/02/1998
+      * Changed the Input/Output mechanism thanks to Mark Watts.
+        Renamed TPythonOutput as TPythonInputOutput. It is now a
+        base class that can be derived in order to output on what
+        you want (a RichEdit for instance).
+        There are 2 new events OnSendData and OnReceiveData that let
+        you send/receive data to/from Python where you want without
+        deriving a new class. You can use it if you want to send
+        the output to a file for debuging purposes.
+        There's a new component TPythonGUIInputOutput that has a property
+        Output that redirects the output to a RichEdit.
+      * Changed all demos to reflect the new design.
+      * Changed tutorial
+      * Changed Demo9, use module.Initialize instead of module.MakeModule
+      * cleaned up the "uses" part of the units. Used MessageBox instead of
+        MessageDlg.
+----------------------------------------------------------------------
+2.09  08/02/1998
+      * Added a property "Errors" to TPythonModule that lets you
+        define python errors and then raise them easily with the
+        3 methods RaiseError, RaiseErrorFmt and RaiseErrorObj of TPythonModule.
+        Errors is a collection of TError items.
+        TError must have a Name (that will be used to define a string
+        variable into the module). You can define the property "Text"
+        that will define the content of the string error, if it is of type String.
+        If you don't define it, then we will use the property "Name" instead.
+        The property "ErrorType" lets you select between a String error or
+        a class error. The latter has the advantage of containing instance variables
+        that provide infos when we catch an error. And because of the class hierarchy,
+        we can catch a parent class. So, if you define the ErrorType to etClass, then
+        you can provide the name of the parent class. If it is empty, then there's no
+        parent ! You can define in which module the parent class can be found (we will
+        IMPORT this module, so it can be any module, internal or external), else it
+        will use the module's name of the TPythonModule where the errors are located.
+      * Changed demo8 to show the use of errors inside an object.
+      * Updated tutorial.txt
+      * Updated PyDelphi for the new input/output mechanism.
+----------------------------------------------------------------------
+2.10  12/02/1998
+      * When the Name of an Error is changed, then we update all Errors that
+        are derived from. We check if this Name does not already exist in the
+        TError collection.
+      * When the Module of an Error is changed, then we update all Errors that
+        where referencing it.
+      * Reactived the AddClient/RemoveClient of a TClientEngine when in
+        design mode. It seems that there's no crash.
+----------------------------------------------------------------------
+2.11  19/03/1998
+      * Corrected a bug in TMethodsContainer.ReallocMethods, because the
+        function realloc did not clear the new allocated memory.
+      * Imported function Py_malloc of the python15.dll
+      * Made procedure TEngineClient.SetEngine virtual
+----------------------------------------------------------------------
+2.12  06/04/1998
+      * Added PyFunction_Check to TPythonInterface
+      * Added FindFunction, EvalPyFunction, EvalFunction and EvalFunctionNoArgs
+        to TPythonEngine for a more sophisticated interface from Delphi
+        to Python functions
+----------------------------------------------------------------------
+======================================================================
+----------------------------------------------------------------------
+3.00  29/11/1998
+      Updated for compatibility to Delphi 4:
+      * TPythonModule.Clients       published -> public
+      * TPythonDelphiVar.VarObject  published -> public
+      * PythonVCLStd not regenerated with VCL Generator to
+        provide backward compatibility to Delphi 3.
+
+      Following points conditional compiled with
+      $IFDEF DELPHI4_OR_HIGHER (Delphi 4, Compiler VER120):
+      * Included Definition.Inc to have central conditional defines.
+      * Python_Controls,Delphi_Controls: uses ImgList added
+      * Properties TCustomImageList.DragCursor and
+        TCustomImageList.Dragging removed.
+      * TDesigner in Python_Forms, Delphi_Forms deleted,
+        because of missing in Delphi 4
+
+      * Added all missing functions from Python/C API Reference Manual
+        part "8. Initialization, Finalization, and Threads" except
+        Py_GetCompiler (which is not exported by the DLL). The Py_GetPlatform
+        is a cheat; the result will always be "win32" (even if running
+        Delphi 5 under LINUX!). Py_Get(Exec)Prefix return empty strings!
+      * PyFrameObject updated
+      * PyInterpreterState and PyThreadState added.
+      * Added Properties InterpreterState and ThreadState to TPythonEngine
+      * Added published property InitThreads to PythonEngine.
+      * Added TPythonThread class.
+----------------------------------------------------------------------
+3.01  25/05/1999
+      * Fixed bug in method TPythonModule.Initialize
+        the event OnInitialize was fired before the module was created
+      * Added Date support in method TPythonEngine.VariantAsPyObject
+        Any TDateTime type is converted to a tuple of the form:
+        (year, month, day, hours, minutes, seconds, milliseconds)
+      * Added Date support in method TPythonEngine.PyObjectAsVariant
+        Any tuple of the form:
+        (year, month, day, hours, minutes, seconds, milliseconds)
+        is converted in a TDateTime
+      * Added methods SetVar, GetVar, DeleteVar, SetVarFromVariant,
+        GetVarAsVariant to the TPythonModule.
+        They let you easily create/modify/read/delete vars inside a Python module.
+      * Fixed a RefCount leak in ArrayToPyDict
+      * Added Demo10 implementing new Python types mapping the VCL components
+        TTable and TQuery for easy Database access from inside Python.
+      * Added method FindClient to TPythonEngine
+      * Fixed small bug in Repr method of a PyObject : it returned the
+        classname of TPythonEngine instead of this of the TPyObject !
+      * Fixed bugs with Number, Sequence and Mapping services : they were
+        not available.
+      * Fixed missing reference to the function Py_GetBuildInfo in python15.dll
+        of Python 1.5.2
+        --> full compatible with last version 1.5.2
+      * Renamed package Python.dpk to Python_d3.dpk
+      * Added package for Delphi 4 (Python_d4.dpk)
+      * Removed references to the TPythonVCLStd when compiling with Delphi 4
+----------------------------------------------------------------------
+3.02  10/06/1999
+      * Added global function PythonOK to test if the Python engine is
+        created and valid.
+      * Extended the VCL Generator. Now we support the methods call.
+----------------------------------------------------------------------
+3.03  13/06/1999
+      * Fixed bug in method TPythonModule.Initialize
+        The last fix from version 3.01 caused a bug !
+        the event OnInitialize MUST be fired before the module was created
+        because it's the place where you add the Module methods !
+        I restored it as it was and I added a new event : OnAfterInitialize
+        which lets you define vars inside the module after is has been created.
+      * Added method InitializeForNewInterpreter to the TPythonModule which
+        lets you initialize the module again in a new interpreter.
+        Calling the method initialize could not work because it tested
+        if the module was already created.
+      * Added Demo11 which shows you the use of threads inside Python and Delphi.
+      * Added property ThreadExecMode to TPythonThread class.
+----------------------------------------------------------------------
+3.04  25/06/1999
+      * Added dynamic creation of the TRecentFiles component in PyDelphi
+        in order to avoid its installation.
+      * Added support of varArray and sequences in the VariantAsPyObject
+        and PyObjectAsVariant conversion methods of TPythonEngine.
+        Now a varArray is converted in a Python list of values, and a
+        Python sequence (a list, a tuple or the like) is converted to
+        an array of variant.
+      * Extended Demo10 : added Locate and lookup support in example2
+      * VCL Generator now supports generation for Delphi 4
+----------------------------------------------------------------------
+3.05  15/07/1999
+      * Fixed a bug with TPythonDelphiVar found by Robert Ruehlmann :
+        could not get type of object (print type(DelphiVar))
+----------------------------------------------------------------------
+3.06  01/09/1999
+      * Extended Demo10 : added Range support in example2
+      * Fixed a bug in Demo10 if we wanted to iterate on an
+        empty table.
+      * Fixed a bug in PyObjectAsVariant introduced in 3.04
+----------------------------------------------------------------------
+3.07  14/09/1999
+      * In TPythonEngine.Destroy, use Py_Finalize first, before
+        the finalization of modules, because Python frees objects
+        stored in modules and this must happen prior to the destruction
+        of their associated types.
+      * Rewrote the TPythonDelphiVar using a Delphi class
+      * Replaced the variant storage in a TPythonDelphiVar with
+        a Python object. That way you can store any Python object.
+      * Added two new events to TPythonDelphiVar that let you work
+        with a Python object instead of a Variant:
+        OnExtGetValue and OnExtSetValue
+      * Added new property ValueObject to TPythonDelphiVar, which
+        lets you access the object stored inside as a PPyObject.
+      * Updated tutorial.txt
+      * Updated Demo4
+----------------------------------------------------------------------
+3.08  16/09/1999
+      * Added method IsVariantOk to TPythonDelphiVar wich checks if
+        a variant is one of the standard types (integer, string...)
+      * Fixed small bug in PyObjectAsVariant method of TPythonEngine,
+        it didn't return a variant of type varNull if no compatible
+        type was found, but returned instead a variant whose value
+        was varNull.
+      * Changed DateTime support as tuple to reflect the Python format
+        (year, month, day, hour, min, sec, DayOfWeek, JulianDay, DayLight)
+        according to a fix proposed by Jose Alberto Hernandis Talens
+        (jhernandis@arrakis.es).
+      * Added methods SetToList and ListToSet to TPythonEngine that
+        let you convert a Delphi set to a Python list, or the opposite.
+      * Added method IsDelphiObject to TPythonEngine which lets you
+        test a Python object, in order to know if the underlying object
+        is a Delphi class (that inherits from TPyObject).
+      * Fixed a bug found in TPythonEngine.FindFunction:
+        if the function was not found, Python raised an exception that
+        was visible only on the next execution of a script.
+      * Fixed a bug in the finalization of the Python engine:
+        GetPythonEngine calls TPythonEngine.Initialized to check if Python
+        is properly initialized, but Initialized calls Py_IsInitialized to
+        check it, and this functions returns falls after a call to
+        Py_Finalize.
+        But Py_Finalize clears all modules and their attributes, which
+        may call your object destructor, which will use some Python API
+        but it will raise an exception because it will detect that
+        Python is no more initialized !
+        So, I've added a property to TPythonEngine (Finalizing) that
+        GetPythonEngine will check before Initialized. If it's true
+        (it is the case only when calling Py_Finalize), then no exception
+        is raised.
+      * Added a public method Finalize to TPythonEngine, that lets
+        you finalize Python yourself, instead of waiting that
+        the TPythonEngine object is destroyed by the form.
+      * Extended Demo10
+      * Checked compatibility with Delphi 5.
+        It's fine : there was nothing to do ;-)
+      * Added a package for Delphi 5
+----------------------------------------------------------------------
+3.09  29/09/1999
+      * Added event OnPathInitialization to TPythonEngine that will let
+        you define the Python path in the Windows Registry if it was not
+        already done.
+      * Updated tutorial.txt and added a warning in the Demo8
+      * Added property DocString to the TPythonType that lets you define
+        a documentation string for your type.
+      * Added property DocString to the TPythonModule that lets you define
+        a documentation string for your module.
+      * Extracted the VCL Generator in an external project.
+      * Added DocStrings to all types, modules and methods of
+        the Demo10. Look at example2.
+      * Added a test with IsDelphiObject in the function
+        PythonToDelphi.
+      * Introduced events in VCL Objects of Demo10
+----------------------------------------------------------------------
+3.10  11/10/1999
+      * in function pyio_write, we forbid the printing of any other thread
+        than the main thread, because we could not get to a stable state
+        in multi-threading.
+      * Added a docstring for the CreateXXX functions that instantiate
+        a type XXX.
+      * Added more events in Demo10
+      * Added a new property __properties__ to the types mapping the
+        VCL objects in Demo10, which returns a list of
+        all available properties. It's like the __methods__ property
+        but for the properties.
+      * Added alias "__members__" to "__properties__"
+      * Added properties InstanceCount, CreateHits, DeleteHits to
+        the TPythonType, which keep track of the instances allocation.
+      * Added function GetTypesStats to the pyio module, which will
+        gather the stats of each type in a list of tuples.
+        Look at Demo10, example5.
+      * Added method CheckError to TPythonEngine.
+        It simply checks if a Python error occurred and if yes, it
+        prints the Python error and raises a Delphi exception.
+      * NEW ! NEW ! NEW ! :
+        Added PythonAtom unit from Olivier Deckmyn (olivier.deckmyn@mail.dotcom.fr)
+        It lets you elegantly access any Python object as an Ole object !!!
+        You can look at the Demo12 and PythonAtom.hlp
+      * In Demo10, splitted file pyDatabase.pas in pyDB.pas and pyDBTables.pas
+        to reflect the VCL unit names.
+      * NEW ! NEW ! NEW ! :
+        Added new component TPythonDatabase that implements the VCL units
+        DB and DBTables for Database access. Look at Demo13.
+      * Added Demo13 that shows the use of the TPythonDatabase component.
+        It it the same demo as Demo10, but with the new component.
+      * Added new package PythonVCL_d3.pkg for the TPythonDatabase component.
+      * Added new package PythonVCL_d4.pkg for the TPythonDatabase component.
+      * Added new package PythonVCL_d5.pkg for the TPythonDatabase component.
+      * Updated readme.txt and tutorial.txt
+----------------------------------------------------------------------
+3.11  14/10/1999
+      * Added Demo14 that builds a DLL module from the database components
+        that will give you access to the database stuff from any Python application,
+        even from the Python console.
+      * Updated readme.txt and tutorial.txt
+      * Added new property "Traceback" to TPythonEngine, which lets you
+        browse the traceback after the execution of a Python script that
+        raised an exception. This property is a TPythonTraceback object
+        that contains a list of Items (TTracebackItem). Each item
+        contains the filename, lineno and context informations.
+        This list is automatically refreshed when using TPythonEngine
+        execution methods, but if you use Python core API, you may call
+        the Refresh methods at any time (but after the PyErr_Print function),
+        or you should better call the CheckError method of TPythonEngine.
+      * TPythonEngine.CheckError refreshes automatically the Traceback.
+      * In design mode, each new droped EngineClient will automatically find
+        a TPythonEngine and link to it through the Engine property.
+----------------------------------------------------------------------
+3.12  24/11/1999
+      * In TPythonEngine.RemoveClient, we call TPythonEngine.Finalize, if running,
+        in order to finalize the Python virtual machine BEFORE any TEngineClient
+        is destroyed by Delphi, because if it occurrs prior to Py_Finalize, the destruction
+        of a Python object which uses an already destroyed TEngineClient would cause
+        a memory crash !
+      * In PyObjectDestructor, we check if PythonOk before call the object destructor.
+        This avoids crashes with Dlls.
+      * Made some cleaning in all demos to work properly with Delphi5
+      * Updated readme.txt and tutorial.txt
+      * Made an installer that handles all the installation of Python for Delphi
+        in all versions of Delphi (3 to 5).
+----------------------------------------------------------------------
+3.13  29/11/1999
+      * Enhanced checking of date in TPythonEngine.PyObjectAsVariant
+      * Added Demo15
+      * Updated tutorial.txt
+      * Changed representation string of a TPythonDelphiVar
+      * Removed "Evaluate" button in all demos, except in Demo02.
+      * In PyDelphi, used TPythonEngine.Traceback and fixed name collapse between
+        form and type.
+----------------------------------------------------------------------
+3.14  08/12/1999
+      * TPythonGUIInputOutput now supports any kind of TCustomMemo, it means that you
+        can use a TMemo or a TRichEdit.
+      * Changed Demo1 that uses a TMemo instead of a TReachEdit
+      * Updated tutorial.txt
+      * Changed Demo10 and Demo13: added example6 that shows how to subclass any
+        Python object with a Proxy class.
+      * Added file deployment.txt that gives some hints on deploying a Delphi application
+        using Python.
+      * Added Demo15, that presents 2 examples of interaction between Delphi and Python.
+        These examples were posted on the Python for Delphi mailing list.
+----------------------------------------------------------------------
+3.15  25/02/2000
+      * Enhanced method TPythonEngine.VariantAsPyObject: added support for multi-dimensional
+        variant arrays (limited to 3 dimensions)
+      * Added demo17 that shows the use of variant arrays of 2 dimensions.
+      * Renamed TCallType constants to :
+        TCallType = (ctSTDCALL, ctCDECL);
+        in order to avoid a name conflict in C++ Builder.
+      * Added C++ Builder compilation support, thanks to Sergey A. Kosmakov (sergek@etr.ru)
+      * Added Demo18 for C++ Builder: shows how to use the python15.dll in a console app.
+      * Added Demo19 for C++ Builder: it's a replicate of Demo05
+      * Added Demo20 for C++ Builder: it's a replicate of Demo08
+      * Updated tutorial.txt
+      * Added file C++ Builder Notes.txt
+      * Updated definition.inc
+----------------------------------------------------------------------
+3.16  29/11/2000
+      * Fixed a small bug in CheckRegistry: if the registry key
+        containing the path was not defined, it tried to write something
+        even if the event OnPathInitialization was undefined.
+        Under NT, if not administrator, it would raise an exception as
+        it's forbidden to write under the HKEY_LOCAL_MACHINE without the
+        admin rights.
+      * Changed Dietmar's email: dbudelsky@web.de
+      * Added method TPythonEngine.SetProgramArgs which will set the command line arguments transmitted
+        to the application in the sys.argv list.
+      * Added C++ Builder 5 packages
+      * Added new property UseWindowsConsole to TPythonEngine, that lets you use a Windows Text console
+        instead of a TMemo. If you set it to True, then don't use the RedirectIO !
+        The main advantage is that it works very well with multi-threading !
+        It works only if the property is set prior to loading the Python DLL.
+      * Gene Chiaramonte (gchiaramonte@mail.com) fixed a bug in PythonAtom: the order of method arguments
+        had to be reversed !
+      * Sigve Tjora (public@tjora.no) fixed a reference counting bug in PythonAtom.
+      * Sigve Tjora (public@tjora.no) made some interesting enhancements in PythonAtom:
+        - allow pythonAtoms to be passed as arguments to python methods.
+          Probably PythonDelphi variables can be used to, but it has not been tested.
+        - allow results from pythonAtom methods to be used as arguments to other pythonAtom methods.
+
+      * Sigve Tjora Updated demo12 to demonstrate the use of its new feature.
+      * Mark Derricutt (mark@talios.com) added an "Events" collection for defining Python methods
+        in a TPythonModule. This will ease the declaration of new methods !!!
+      * Added Demo21 which introduces the new Events collection feature.
+      * Added Demo22 which presents the new UseWindowsConsole property of TPythonEngine, and
+        uses the new possibility to extract command line arguments.
+        We execute a threaded program, which runs fine with the Windows console.
+        With threaded programs, you must always take care that the calling thread finishes after all
+        created threads ! This is easily done using the threading module and its "join" method.
+        Note for Python 1.5.2 version :
+        if you're using the "threading" module, you should do a TPythonEngine.Finalize in the
+        OnClose event of your form, otherwise you'll get an access violation ! I don't know why ?
+        It works fine with the new 1.6 or 2.0 versions.
+      * Added Demo23 which is basically the same as Demo22, but uses the Delphi Log (since Delphi4) window
+        for displaying Python output instead of using the Windows console. The main advantage is that you
+        can scroll the log window, and save its content to a file, but the drawback is that you must
+        run Delphi !
+      * Updated tutorial.txt
+      * allowed the possibility of doing Initialize/Finalize several times in TPythonEngine, in order
+        to clear the engine memory.
+      * Added property UseLastKnownVersion to TPythonEngine. If true, PythonEngine will attempt to load
+        automatically the latest known Python dll.
+      * Python for Delphi works fine with the latest version 1.6, and with the version 2.0
+        But I couldn't generate a python20.lib file for the C++ Builder users ! So, just use the component
+        which uses dynamic linking, and avoid the static linking of the Dll.
+      * Python for Delphi installs correctly under Windows 2000.
+      * Fixed a bug in TPythonModule.GetVar. If the var was not found, it would raise a Python exception
+        the next time you execute a script.
+      * Igor E. Poteryaev (jah@mail.ru) updated some new API definitions matching the new version 2.0
+      * Added new methods to the TPyObject class for supporting new API introduced in version 2.0
+      * Added 2 properties to TPythonEngine: GlobalVars and LocalVars.
+        You can set a Python dictionary that will be used by the TPythonEngine.Run_CommandAsObject
+        method. Set properties will increment the reference count of the object.
+      * Sigve Tjora subclassed TPythonEngine (TAtomPythonEngine) in a new unit AtomPythonEngine.pas,
+        because he had to use the PythonAtom.pas unit, and we don't want to use Com code in the
+        PythonEngine.pas unit. The unit is added to the Python_d?.dpk package.
+      * Stefan Franke [franke@meso.net] fixed a bug in PythonAtom.pas:
+        when you called a Python function that returned a result and if you didn't assign the returned
+        value to a Delphi variable, you would get an access violation.
+      * Fixed a bug in PyObjectAsVariant: if the Python object was a class instance, that didn't implement
+        the sequence API, it would raise a Python exception. Now, we check that the sequence API is
+        properly implemented, and return a Null variant if not.
+      * Added Demo25 made by Sigve Tjora for demonstrating the use of the TAtomPythonEngine.
+
+----------------------------------------------------------------------
+3.17b1  09/07/2001
+      * Added compatibility with Python 2.1
+      * Yuri Filimonov (fil65@mail.ru) fixed a bug in the asm code of Py_BuildValue: the EBX register was
+        not correctly restored.
+      * Added compatibility with Delphi6
+      * Added unit VarPyth.pas that replaces the PythonAtom.pas, using the new variant custom types of D6.
+      * In PythonEngine.pas, added functions:
+           PyObject_DelItem
+           PyObject_IsInstance
+           PyObject_IsSubclass
+           PySequence_Contains
+           GetMainModule
+      * Extracted the definition of the PYTHON symbols from PythonEngine.pas to Definition.inc
+      * Added Demo25 that runs several unit tests for validating the new VarPyth.pas functionality.
+        It's a good start to look at all that's possible...
+----------------------------------------------------------------------
+3.17b2  22/07/2001
+      * Fixed a bug in TPythonEngine.PyObjectAsVariant thanks to cipherhaze@yahoo.com.au:
+        the Python strings containing a zero were truncated when beeing converted
+        to a variant.
+
+      * in PythonEngine.pas:
+         - added method TPythonEngine.PySequence_DelSlice
+         - added var TPythonInterface.Py_OptimizeFlag
+         - added var TPythonInterface.Py_InteractiveFlag
+         - added var TPythonInterface.Py_NoSiteFlag
+         - added var TPythonInterface.Py_TabcheckFlag
+         - added var TPythonInterface.Py_UnicodeFlag
+         - added property TPythonEngine.PyFlags that lets you enable some Python flags very easily,
+           like Verbose mode, or Optimize, thanks to a thread started in the mailing list.
+
+      * in VarPyth.pas:
+         - added function VarAsPython --> cast a variant into a Python variant.
+         - added function GetAtom --> compatibility mode with former PythonAtom.pas
+           you can use the VarPyth unit instead of PythonAtom, and get the same behaviour of PythonAtom
+           when instanciating the Python variants with the function GetAtom.
+           Note however, that you must replace all your OleVariant types with Variant.
+           You can test it on Demo12: in the uses statement, replace PythonAtom with VarPyth,
+           and declare myAtom as a Variant, instead of OleVariant. That's all!
+           But if you're instanciating the Python variants with VarPythonCreate, you'll get the new
+           behaviour, so you can benefit from the 2 worlds, simultaneously!
+         - added function len --> return the length of a collection. Same as the len function of Python
+           and same as using the Length property or Length() method.
+           So, len(obj) = obj.Length = obj.Length()
+         - added function _type --> return the type object of a Python object
+         - added function VarIsSameType --> checks if 2 python variants have the same Python type.
+         - added function VarIsTrue --> return true if the variant is different from zero or None.
+           This is the same as casting a variant to a boolean.
+         - added function Ellipsis that can be used in GetSlice or SetSlice, if you don't want to specifiy
+           explicitly the length of sequence. So, foo.GetSlice(2, Ellipsis) is equivalent with foo[2:]
+         - added function BuiltinModule that returns the __builtin__ module object, that contains all
+           the builtin functions that you can use directly:
+             _hash := BuiltinModule.hash(foo)
+         - added special method DelSlice for sequence objects, that does the same as: del list[x:y]
+----------------------------------------------------------------------
+3.17  27/08/2001 (final)
+      * Added file py21.lib in the Components folder, it's the lib file for Python 2.1 that allows you
+        to use the C native APIs of the Python dll.
+      * Updated the C++ demos to use the py21.lib file
+      * Updated include files with Python 2.1 version.
+      * Updated file C++ Builder Notes.txt
+      * Fixed a bug thanks to Gene Chiaramonte: when running an application with no component for Python output, 
+        an exception was raised while closing the form that hosted PythonEngine, because it tried to restore the initial streams,
+        whereas no redirection was done.
+      * Added function NewPythonTuple to VarPyth.pas
+      * Updated Demo25: added a test for the dates.
+      * Finished update for changes from version 2.1: 
+          - added enum bsRichCompare to set TBasicServices
+          - added virtual method RichCompare to TPyObject
+          - added property TypeFlags to TPythonType for setting new behaviours like tpfHaveRichCompare.
+----------------------------------------------------------------------
+3.18  02/11/2001 
+      * mitchchapman@earthlink.net fixed a bug in the VarPyth.pas unit: a crash occurred with some 
+        variants used by ref, with an integer value corresponding to the ID of the VarPython custom
+        variant type.
+      * Added access to the variable Py_NotImplemented that should be used in the new coercion model of
+        version 2.1
+      * Added Kylix support!!! But I have 1 issue:
+         - the varargs functions don't work in Kylix (cf PyArg_Parse and PyArg_ParseTuple)
+      * Started converting the demos to cross-platform usage: Demo01, 02, 03, 07, 09 and 25
+      * Added new beta version 2.2 to the list of the known versions, and started implementing modifications:
+        changed the record definitions of the PythonType object, and Code object, that caused a problem
+        for parsing the traceback. Be sure to define the symbol PYTHON22 before including the definition.inc
+        because I won't set it as a default until the 2.2 becomes official.
+        Warning! The date module has introduced a new time_struct for storing a date/time value
+        in new beta version 2.2.
+       Maybe the traceback has changed also.
+      * Added file "Kylix Notes.txt"
+      * Made the code compatible with the last service pack update for Delphi 6.
+----------------------------------------------------------------------
+3.19  16/11/2001 
+      * Fixed Kylix port issue: the PyArg_Parse and PyArg_ParseTuple now work properly
+        thanks to Stefan.Hoffmeister@Econos.de
+      * Finished converting the demos to cross-platform usage: Demo04, 05, 06, 08, 11, 16, 17, 21, 22, 23.
+        Note that the remaining demos are simply not portable (they use TTable or PythonAtom).
+      * Continued implementation of the news from version 2.2 of Python.
+      * Fixed some problems when using the PYTHONXX defines, thanks to Andy Bulka (abulka@netspace.net.au).
+----------------------------------------------------------------------
+3.20  08/01/2002 
+      * Fixed a ifdef bug in PythonEngine.pas
+      * Fixed a bug in VarPyth.pas: when setting a property of a Python object, the assigned value
+        was converted from/to a variant, even when it was a VarPython variant!
+      * Added APIs for Long objects, and compatibility between Python long objects and Int64 variants.
+      * Used new Python2.2 APIs for true division (/) and floor division (div) inside VarPyth.
+        You can now override these behaviours inside your TPyObject classes.
+      * Added Iter and IterNext new services of Python2.2 to TPythonType.
+      * Added Traverse and Clear new services of Python2.0 to TPythonType (they are used with Garbage collection).
+      * Added UNICODE support. A Python Unicode string is kept as wide string inside a variant.
+        A variant is converted into a Python Unicode string only if the symbol PREFER_UNICODE is defined inside the 
+        file definition.inc
+        Added APIs PyUnicode_FromWideChar, PyUnicode_AsWideChar
+        Added methods Unicode_check, PyUnicode_AsWideString, PyUnicode_FromWideString
+        Note that UNICODE was introduced in Python 2.0
+        Note that it will work under Kylix, but I deactivated it as I've got a bug with the WideString conversions.
+      * Added function VarPythonEval to VarPyth.pas, that returns a new Python variant from the evaluation of a Python
+        expression. This is the same as VarPythonCreate(GetPythonEngine.EvalString(MyExpression))
+      * Ready for the new time_struct object of Python 2.2 that replaces the tuple of 9 items, but that remains compatible
+        with it.
+      * Updated the list of Python exceptions, with their Delphi mapping, using version 2.2.
+      * Updated set of Python flags up to Python 2.2
+      * Changed the way of loading the latest version of Python when UseLatestKnownVersion is true:
+          first we always start from the version which PythonForDelphi was compiled for, and if we don't find it we 
+          try to upgrade the version, only if the new version is compatible with the compiled version.
+          So, if P4D was compiled for Python 1.5.2 it will only look for python15.dll, and won't try to use python22.dll.
+          If P4D was compiled for Python 2.1.1 it will first look for python21.dll, then for python22.dll as it's compatible.
+      * Rewrote the way to extract the traceback content by using PyObject_GetAttrString API instead of direct access to
+        the traceback record object, to avoid compatibility issues between different versions of Python.
+      * Added PyWeakRef and PyWrapper APIs, from Python 2.2.
+      * Updated file "Kylix Notes.txt"
+----------------------------------------------------------------------
+3.21  06/03/2002 
+      * Fixed a compilation problem when using PYTHON15 symbol.
+      * Added a default implementation of TCriticalSection for Delphi3 that misses the unit SyncObjs.pas.
+      * Added property DllPath to specify a folder where the Python Dll should be searched. You can define this property
+        at runtime, using the event OnBeforeLoad.
+      * Fixed a bug with custom variants and Int64, introduced by the UpdatePack2 of Delphi6.
+      * Modified installer to let the user choose a default version of Python before compiling the packages.
+      * Fixed the WideString/Unicode bug in Kylix. In fact, it was not due to Borland but to Python itself! Python on Linux is supposed
+        to use UCS2 strings, whereas it actually uses UCS4 strings!!!
+      * Added a new define HAS_MODIFIED_DISPINVOKE to Definition.inc, to distinguish between Delphi6, Kylix1 and Kylix2, as Kylix2 uses
+        a modified interface of the method DispInvoke of the custom variants, that has a PVarData parameter instead of a
+        (var xxx : TVarData).
+      * Updated file "Kylix Notes.txt"
+      * Modified DispInvoke of the VarPyth unit.
+      * PythonForDelphi is up and running with the latest versions of Delphi and Kylix (and Python),
+        but note that there's a problem with Kylix2 (I used the OpenEdition): all compiles and works fine, but the IDE
+        crashes when a form hosting PythonForDelphi components is closed! I don't know why, as it works fine with Kylix1
+        and all Delphi versions! I'll have to investigate further...
+----------------------------------------------------------------------
+3.22  22/03/2002 
+      * Removed a warning when compiling PythonGUIInputOutput.pas, thanks to Mitch Chapman (mitchchapman@earthlink.net)
+      * Updated Demo25, and allowed it to work with Python2.0 or higher.
+----------------------------------------------------------------------
+3.23  20/10/2002 
+      * Delphi7 Ready.
+      * Fixed a nasty bug that occurred in some cases, but that should have always occurred. To allow multiple Finalize/Initialize
+        sequences, I moved the ClearEngine loop from the Finalize method to the Destroy method of TPythonEngine.
+        It was wrong, because when the TPythonEngine was destroyed it tried to call the ClearEngine method of each 
+        of its clients, that were usually already destroyed! The problem appears only when there are a lot of Python components,
+        otherwise it seems that the memory allocated for the client component is still available for the process
+        and thus doesn't cause an access violation. This bug was originally discovered by Dietmar.
+      * Fixed a memory leak in unit VarPyth.pas, in function VarPythonEval
+      * Fixed a memory leak in Demo25.
+      * Problem with Kylix3: I can't get the package to compile because it fails with an internal error.
+        However if you use the Python units inside a project it will compile without any problem! Anyway, I still
+        have issues with the components in design time, because Delphi IDE freezes when closing a form hosting the
+        components. So, it may be a workaround for both problems to dynamically create the Python components.
+----------------------------------------------------------------------
+3.24  29/01/2003 
+      * Fixed nasty bug that would freeze Kylix2 IDE (and maybe Delphi6/7 in some cases):
+        in unit PythonGUIInputOutput.pas, method TPythonGUIInputOutput.Notification did not call inherited!
+      * Fixed bug in PythonEngine.pas, in VariantAsPyObject when called by VarPyth.TPythonVariantType.VarDataToPythonObject.
+        It caused a variant memory error when doing a dict.SetValue('key', ''); (empty string).
+        Bug reported by Andy Bulka [abulka@netspace.net.au]
+      * Added Python 2.3 compatibility:
+         - new bool type: PyBool_Check, PyBool_FromLong
+         - new date, time, datetime, delta... types from new datetime module
+         - new property DatetimeConversionMode in TPythonEngine allowing to decide how a variant containing
+           a datetime should be converted into a Python object.
+           Presently there are only 2 modes: the default is dcmToTuple (a tuple containing year, month, day...)
+           and starting with Python2.3 you get dcmToDatetime that will use the new datetime objects of the
+           datetime module. I could not set it as default to avoid breaking existing code.
+         - new exceptions: PyExc_FutureWarning, PyExc_PendingDeprecationWarning, PyExc_UnicodeDecodeError,
+                           PyExc_UnicodeEncodeError, PyExc_UnicodeTranslateError
+
+         - new APIs (note that some of them were missing since previous Python versions): 
+                     PyType_IsSubtype, PyObject_TypeCheck, PyBaseString_Check
+                     PyObject_GC_Malloc, PyObject_GC_New, PyObject_GC_NewVar, PyObject_GC_Resize, 
+                     PyObject_GC_Del, PyObject_GC_Track, PyObject_GC_UnTrack
+                     PyType_IS_GC, PyObject_IS_GC
+                     PySlice_GetIndicesEx, PySlice_Check
+                     PyString_DecodeEscape, PyString_Repr             
+
+         - new behaviour:
+
+  With Python2.3 the following functions return True if the Python object is the expected type or 
+  one of its descendants:
+    PyString_Check
+    PyFloat_Check
+    PyInt_Check
+    PyLong_Check
+    PyTuple_Check
+    PyList_Check
+    PyDict_Check
+    PyModule_Check
+    PyUnicode_Check
+
+  To check if a Python object is really (and only) the expected type then use the new functions instead:
+    PyString_CheckExact
+    PyFloat_CheckExact
+    PyInt_CheckExact
+    PyLong_CheckExact
+    PyTuple_CheckExact
+    PyList_CheckExact
+    PyDict_CheckExact
+    PyModule_CheckExact
+    PyUnicode_CheckExact
+
+      * in unit VarPyth.pas, added functions:
+
+    VarIsSubtypeOf
+    VarIsPythonDateTime
+    VarIsPythonDate
+    VarIsPythonTime
+    VarIsPythonDateTimeTZ
+    VarIsPythonDateTimeDelta
+    VarIsPythonTimeTZ
+    VarIsPythonTZInfo
+    VarIsBool
+    VarIsEnum
+    DatetimeModule
+
+         - updated Demo25 to reflect last additions made to VarPyth.pas
+
+
+----------------------------------------------------------------------
+3.25  5/04/2003 
+
+      * Added compatibility with Python 2.3b2 that refactored the new datetime module.
+
+      * Allowed TPyObject instances to be created without a TPythonType, in order to use them outside 
+        P4D context (give nil as argument). This is a suggestion made by Gert Steyn [gert@ise.co.za]
+
+      * Fixed a bug in TPythonType.TypeFlagsAsInt where some flags where forgotten
+        (tpfHeapType, tpfBaseType, tpfReady, tpfReadying, tpfHaveGC)
+        thanks to jacoboy1234 [fan_jacob@hotmail.com]
+
+      * Added APIs PyObject_GenericGetAttr, PyObject_GenericSetAttr,
+        PyType_GenericAlloc, PyType_GenericNew, PyType_Ready, PyObject_Free
+
+      * Added new class TMembersContainer allowing TPythonType to define members of a type
+        and added class method RegisterMembers to TPyObject, allowing type objects to define
+        their members, to be used when subclassing an existing type.
+
+      * Added new class TGetSetContainer allowing TPythonType to define properties with
+        Get/Set accessor functions, and added class method RegisterGetSets to TPyObject, 
+        allowing type objects to define their properties, to be used when 
+        subclassing an existing type.
+
+      * Allowed any TPythonType (and related TPyObject class) to become a base type
+        that may be subclassed within Python.
+        To use this feature, simply select tpfBaseType in the TypeFlags property of TPythonType,
+        then override TPyObject.RegisterMembers in your Python/Delphi class and expose each
+        of your instance member as a MemberDef (call AType.AddMember(...)).
+        You can override TPyObject.RegisterGetSets in you need to expose properties
+        with Get/Set accessor functions.
+
+        You should not override GetAttr and SetAttr anymore and you should not
+        select the Basic services flags [bsGetAttr, bsSetAttr].
+        Instead, simply select the flags [bsGetAttrO, bsSetAttrO] and the class
+        TPyObject does simply call PyObject_GenericGetAttr in GetAttrO
+        and PyObject_GenericSetAttr in SetAttrO.
+        The Python Generic Get/Set functions will use new slots introduced in
+        the type object for specifying a list of members (class fields),
+        a list of get/set functions (like properties in Delphi) and a list
+        of methods. That way a subclass can introduce its own members/get,set/methods
+        and call the others coming from the base classes.
+
+        You can override the new Init method of TPyObject if you want to perform the same kind
+        of initialization that you would do in the __init__ method of a Python class.
+        Note however that by default the CreateWith constructor of TPyObject will be called
+        when instanciating a new subtype, allowing you to get constructor arguments as you
+        already did with regular types.
+
+        Note that for a subtype instance, the memory allocated will come from 
+        Python heap and not from Delphi. So, we have a reserved space inside the subtype
+        instance where we plug our Delphi class definition. This is tricky but it works!
+        
+        Note that TPyObject now has a new attribute IsSubType set to True when a subtype
+        is instanciated.
+
+        Note that if tpfBaseType is set, you can now instanciate a type by calling its type
+        object instead of relying on the CreateXXX function. Ex: p = spam.Point(3, 2)
+        In that case Python acts as it would create a subtype instance by using the
+        tp_new slot of your type, but the type pointer given is the one of your TPythonType.
+        So, your TPyObject instance will have memory allocated by Python (prop PythonAlloc
+        is true) and the property IsSubType will be set to False.
+
+        Note that to enable this double behaviour, I had to change the way a TPyObject is
+        allocated: I removed the first two fields (ob_refcnt and ob_type) and replaced them
+        with public properties, and redefined NewInstance and FreeInstance to
+        allocate a bigger chunk of memory (with Sizeof(PyObject) more) and offseted the
+        Self pointer to start after the PyObject header (containing the space reserved
+        for the ob_refcnt and ob_type fields). So, when the ob_refcnt and ob_type properties
+        access their associated data, they pick it from this extra hidden header.
+        Note that when using GetSelf, it will return a pointer to the the start of this
+        hidden header. And the Adjust method will correct Self to move after this header.
+        Finally, in FreeInstance, we free the memory only if PythonAlloc is False.
+
+        A                    B                                                      C
+        +-------------------++------------------------------------------------------+
+        | PyObject header   ||             TPyObject class                          |
+        +----------+--------++-----------------+------------+----------+------------+
+        |ob_refcnt |ob_type ||hidden Class Ptr |PythonType  |IsSubType |PythonAlloc |
+        |integer   |pointer ||pointer          |TPythonType |Boolean   |Boolean     |
+        |4 bytes   |4 bytes ||4 bytes          |4 bytes     |1 byte    |1 byte      |
+        +----------+--------++-----------------+------------+----------+------------+
+
+        ^                    ^
+        |                    |
+        ptr returned         ptr returned by Adjust
+        by GetSelf
+
+        - a Python object must start at A.
+        - a Delphi class class must start at B
+        - TPyObject.InstanceSize will return C-B
+        - Sizeof(TPyObject) will return B-A
+        - The total memory allocated for a TPyObject instance will be C-A,
+          even if its InstanceSize is C-B.
+        - When turning a Python object pointer into a Delphi instance pointer, PythonToDelphi
+          will offset the pointer from A to B.
+        - When turning a Delphi instance into a Python object pointer, GetSelf will offset
+          Self from B to A.
+        - Properties ob_refcnt and ob_type will call GetSelf to access their data.
+
+
+  Subclassing TPyObject in Delphi (TPyPoint = class(TPyObject))
+
+  A                    B                                                      C                 D
+  +-------------------++------------------------------------------------------+-----------------+
+  | PyObject header   ||             TPyObject class                          | TPyPoint class  |
+  +----------+--------++-----------------+------------+----------+------------+--------+--------+
+  |ob_refcnt |ob_type ||hidden Class Ptr |PythonType  |IsSubType |PythonAlloc |x       |y       |
+  |integer   |pointer ||pointer          |TPythonType |Boolean   |Boolean     |integer |integer |
+  |4 bytes   |4 bytes ||4 bytes          |4 bytes     |1 byte    |1 byte      |4 bytes |4 bytes |
+  +----------+--------++-----------------+------------+----------+------------+--------+--------+
+
+        - TPyPoint.InstanceSize will return D-B
+        - The total memory allocated for a TPyPoint instance will be D-A
+        - The Python type object will have D-A in its tp_basicsize slot.
+        - in RegisterMembers, calling 
+          PythonType.AddMember('x', mtInt, Integer(@TPyPoint(nil).x), mfDefault, 'x coordinate');
+          will produce an offset of C-A, instead of C-B, because AddMember will add
+          automatically B-A to the offset.
+
+
+
+  Subclassing TPyPoint in Python (class MyPoint(spam.Point))
+
+
+  A                    B                                                      C                 D         E
+  +-------------------++------------------------------------------------------+-----------------+---------+
+  | PyObject header   ||             TPyObject class                          | TPyPoint class  | MyPoint |
+  +----------+--------++-----------------+------------+----------+------------+--------+--------+---------+
+  |ob_refcnt |ob_type ||hidden Class Ptr |PythonType  |IsSubType |PythonAlloc |x       |y       |Dict     |
+  |integer   |pointer ||pointer          |TPythonType |Boolean   |Boolean     |integer |integer |pointer  |
+  |4 bytes   |4 bytes ||4 bytes          |4 bytes     |1 byte    |1 byte      |4 bytes |4 bytes |4 bytes  |
+  +----------+--------++-----------------+------------+----------+------------+--------+--------+---------+
+
+        - The total memory allocated for a MyPoint instance will be E-A
+        - The Python type object will have E-A in its tp_basicsize slot.
+        - The Python type object will have D-A in its tp_dictoffset slot (it is the tp_basicsize of
+          the inherited type, accessible through tp_base).
+        - The memory allocation is done by Python, that also initializes parts A-B and D-E,
+          leaving us an available space between B and D. That's why we can't have the
+          ob_refcnt and ob_type fields inside the TPyObject class definition, as they would
+          appear in the free space available for the parent types and would not be used
+          by Python. This would not be an issue, except for calculating the exact member offsets.
+
+      So, hiding the PyObject header and ensuring this always comes first, makes it consistent
+      in all cases for the member offsets to remain valid.
+
+
+      * Added Demo26 to show how you can build base types (This is an adaptation of Demo8),
+        and updated Tutorial.txt for giving some explanations to the new way of building
+        types allowing subclassing.
+
+      * Allowed a TPythonType to be dynamically created after everything has already been
+        setup. It means that the module hosting the type will effectively have a variable
+        referencing the new Type object and a CreateXXX function for creating new instances
+        of that type.
+----------------------------------------------------------------------
+3.26  6/09/2004
+
+      * Added compatibility with new version 2.4 of Python (Alpha presently)
+      * Added new document "Deploying P4D.PDF" explaining how you can deploy your own version of Python (using a private folder).
+      * Fixed a bug in PythonEngine.pas: when trying to convert a variant containing an empty string to a Python object,
+        the application could crash with a Memory error exception.
+      * Fixed a small memory leak when instanciating TPythonEngine at runtime, without an Owner, then TPythonEngine would leak 
+        and internal TPythonModule used for redirecting I/O. (thanks to t.handler@n-tree.com)
+      * Fixed a problem in demo 16 / Example 1 (missing a __str__ override in the wrapper class)
+
+----------------------------------------------------------------------
+3.27  01/12/2004
+      * added method flush when redirecting IO. This was fix made by Qi Wenmin (dumm@libr.3322.org):
+In my work I find a little problem with the RedirectIO feature. I enable the RedirectIO and add a stream handler of logging package to the logger. When I launch the script in Delphi, the engine reports the stream handler has no flush() method. So I make some change with PythonEngine.pas, add the following codes into the code constant in the TPythonEngine.DoRedirectIO method:
+
+      * fixed a bug when the datetime module was not deployed, P4D would raise an exception while executing
+        RedirectIO.
+
+      * added new event OnSysPathInit to TPythonEngine. This event is fired immediately after Py_Initialize and
+        will provide the list object stored in sys.path, containing all the folders used by Python to find
+        an imported module.
+        This will allow you to extend the path when you have a custom installation that is not allowed to touch
+        the windows registry/filesystem.
+        Example:
+
+procedure TForm1.PythonEngine1SysPathInit(Sender : TObject; PathList : PPyObject);
+var
+  folder : PPyObject;
+begin
+  with GetPythonEngine do
+  begin
+    folder := PyString_FromString('c:\myapp\mymodules');
+    PyList_Append(PathList, folder);
+    Py_XDecRef(folder);
+  end;
+end;        
+
+      * fixed a bug: when using a Python iterator, eventhough you caught the stop exception, a 'Stop iteration' message was displayed in the output.
+
+      * added function iter to VarPyth.pas that will return an iterator object for the specified container argument.
+        Example:
+var
+  _iter : Variant;
+  _value : Variant;
+begin
+  _iter := iter(VarPythonCreate([1, 2, 3, 4], stTuple));
+  try
+    while True do
+    begin
+      _value := iter.next();
+      [...]
+    end;
+  except
+    on E: EPyStopIteration do
+    begin
+      // End of sequence
+    end;
+  end;
+end;
+
+      * added PyDict_Copy api
+
+      * added overloaded ExecStrings/EvalStrings methods that let you provide your own global/local dictionaries.
+        Note that you can still use the TPythonEngine properties LocalVars and GlobalVars.
+
+      * added demo27 showing the possibilities of container indexing:
+#index:
+s[0]
+#slice
+s[0:2]
+#ellipsis
+s[...]
+#extended slice
+s[0:2:2]
+#multidimensional slice:
+s[10, 10:20, 20:100:5, ...]
+
+      * added demo28 showing how to implement an iterator over a sequence (a simple TStringList wrapper)
+
+      * added support for Delphi 2005
+----------------------------------------------------------------------
+3.28  23/04/2005
+
+      * Fixed a bug in PyObjectAsVariant thanks to Kiriakos Vlahos [kvlahos@london.edu]
+        Testing for Boolean values should be done before Integer values, as Boolean inherit from Integers.
+
+      * Fixed a bug in ArrayToPyTuple, ArrayToPyList and ArrayToPyDict when giving empty string as argument
+        thanks to Dietmar Budelsky.
+
+      * Added demo 29 showing how to exchange images between Delphi and Python Imaging Library (PIL).
+
+      * In PythonEngine.pas, added APIs:
+           - PyObject_Call
+           - PyErr_SetInterrupt
+
+      * Added new feature to VarPyth: you can now invoke functions or methods using named parameters.
+        A big advantage of named parameters over regular parameters is that the order of parameters is not important
+        and help invoking functions with many optional parameters, as you can only specify the one you need.
+        Note that any Python function can be invoked with or without named parameters, and that you can mix regular and named parameters.
+
+Python code:
+def MakeList(a, b, c):
+  return [a, b, c]
+
+Delphi code:
+var
+  _main : Variant;
+  L : Variant;
+begin
+  _main := MainModule;
+  L := _main.MakeList(1, 2, 3); // L = [1, 2, 3] (this is the old way)
+  L := _main.MakeList(1, c := 3, b := 2); // L = [1, 2, 3] Note that you can mix regular and named parameters.
+  L := _main.MakeList(c := 3, a := 1, b := 2); // L = [1, 2, 3] Only named parameters
+
+      * Added Demo30 to show how you can use named parameters.
+
+      * Added Project PythonIDE thanks to a donation of Kiriakos Vlahos [kvlahos@london.edu].
+            PyScripter was not designed to compete with other Python IDE tools
+            but rather to serve the purpose of providing a strong scripting
+            solution for Delphi Applications.  However it is a reasonably
+            good stand-alone Python IDE.
+
+            Features:
+
+            - Easy Integration with Delphi applications
+            - Syntax Highlighting
+            - Brace Highlighting
+            - Python source code utilities ((un)tabify, (un)comment, (un)indent)
+            - Code Explorer
+            - File Explorer with filter
+            - Easy configuration and browsing of the Python Path
+            - Access to Python manuals through the Help menu
+              and context sensitive help (press F1 on a Python keyword
+              inside the editor)
+            - Integrated Python Interpreter
+              - Command History
+                    - Alt-UP : previous command
+                    - Alt-Down : next command
+                    - Esc : clear command
+              - Code Completion
+              - Call Tips
+            - Integrated Python Debugging
+            - Debug Windows
+              - Call Stack
+              - Variables Window
+              - Watches Window
+              - BreakPoints Window
+            - Modern UI with docked forms
+            - Persistent configurable IDE options
+
+        Note that P4D only contains PythonIDE source code, but you can download a compiled version from
+        http://mmm-experts.com/Downloads.aspx?ProductId=4
+           
+        If you want to rebuild it by yourself, you'll need to look at PythonIDE\Readme.txt for the required
+        component packages.
+
+      * Flagged GetAtom of PythonAtom.pas and TAtomPythonEngine of AtomPythonEngine.pas as deprecated when
+        using Delphi 6 or later.
+        You should replace TAtomPythonEngine by TPythonEngine and PythonAtom.pas by VarPyth.pas.
+
+        Note that VarPyth and PythonAtom act differently. So, simply changing the unit may compile but 
+        your application may crash at runtime because PythonAtom converts Python sequences into variant arrays
+        for instance, whereas VarPyth will keep the Python sequence object and let you act on it.
+        See discussions in the yahoo group and Andy's tutorial about latest techniques:
+        http://www.atug.com/andypatterns/PythonDelphiLatest.htm
+
+        Converting TAtomPythonEngine is easy: open the form or datamodule hosting the component,
+        View as text (Alt + F12), replace TAtomPythonEngine by TPythonEngine, View as Form (Alt + F12),
+        in the unit, replace TAtomPythonEngine by TPythonEngine nad replace AtomPythonEngine by PythonEngine (in the uses).
+        Save.
+
+        Note that eventhough you get a deprecated warning, it still works as it is and you're not required to do the change.
+        It's only better to do it for the future and for the additional benefits of VarPyth...
+
+      * Updated file 'Deploying P4D.pdf' to refer to the Python tool that helps collect all module dependencies.
+
+----------------------------------------------------------------------
+3.29  28/08/2005
+
+      * Fixed bug in TPythonType, reported by Roar Larsen [roar@tordivel.no], where a Access Violation would occur 
+        when exceeding 10 methods/getsets/members in a new base type (tpfBaseType option).
+
+      * Fixed bug found by daydaysy [ildg@163.com] where VarIsPythonClass would
+        return False when checking a new style Python class inheriting from object (class Foo(object): pass).
+
+      * Used exported API for function PyImport_ExecCodeModule instead of duplicating code
+
+      * Added APIs PyObject_GetIter, PyIter_Next and PyIter_Check to TPythonEngine
+
+      * Added changes sent by Chris Nicolai <nicolaitanes@gmail.com>:
+          added PyThreadState_SetAsyncExc -- throw an exception into _another_ thread!!
+          added new PyThreadState members from Python2.3
+
+      * Addew new virtual class procedure SetupType to TPyObject, allowing the class to
+        setup its associated Python type. This is very useful when building a hierarchy of classes,
+        and thus avoiding copy&paste of the type services for each TPythonType. Instead, setup the type
+        in the base class, and introduce in the subclasses the new services when they're implemented.
+
+      * Added methods AddMethodWithKeywords/AddDelphiMethodWithKeywords to TPythonModule and TPythonType, 
+        allowing you to create functions receiving keyword parameters: foo(param1=val1, param2=val2...)
+
+      * Added function VarPythonIsIterator to VarPyth.pas (and rewrote functions len and iter)
+
+      * Added new component TPyDelphiWrapper originally written and donated by Kiriakos Vlahos [kvlahos@london.edu]
+        It allows you to interact with Delphi VCL objects from Python. It works with Delphi5 or above.
+        It also helps expose your own Delphi classes to Python more easily with Delphi 7 or later.
+
+        Look at the documentation embedded at the beginning of the WrapDelphi.pas unit.
+
+      * Added Demos 31 and 32 that show how you can benefit from WrapDelphi.
+
+      * Added support for Free Pascal Compiler (http://www.freepascal.org/)
+        and Lazarus Project (http://www.lazarus.freepascal.org/)
+        Thanks to Michiel du Toit (micdutoit@hsbfn.com)
+
+      * Added new folder "Modules" containing the folder "Delphi" which contains a Dll project for building 
+        a Python .pyd module in order to expose the VCL to a regular Python interpreter.
+        Modules also constains a very simple Python script relying on Delphi.pyd for displaying a simple form.
+        Note that you must ensure that Delphi.pyd is accessible from the Python path, before trying to run
+        TestApp.py
+
+----------------------------------------------------------------------
+3.30  18/12/2005
+
+      * Added function VarModuleHasObject to VarPyth.pas (done by Dietmar) to check if a module contains a specific object.
+      * Fixed Bug in P4D that would prevent a script from printing unicode strings.
+      * Made breaking change to TPythonEngine: the pyio module which is used to redirect input/output
+        is not imported any more (pyio = __import__("pyio")) to avoid polluting the list of 
+        imported module (change made by Kiriakos Vlahos).
+      * Included new release 1.3 of PyScripter source code.
+      * Updated WrapDelphi:
+          - Added new unit WrapDelphiWindows (to define a couple of symbols only)
+          - Added new unit WrapDelphiComCtrls
+          - Added new unit WrapDelphiGrids
+          - Added new unit WrapDelphiGraphics
+          - Added new unit WrapDelphiButtons
+          - Wrapped TSize
+          - Wrapped TCanvas, TGraphic, TBitmap, TMetaFile, TIcon, TPicture
+          - Wrapped TKeyPressEvent, TKeyEvent
+          - Made a breaking change when dealing with property sets:
+            now we expect a sequence of strings. Each string should have the name as the enumeration in the set.
+            Ex:  MainForm.Anchors = ['akLeft', 'akTop']
+            Of course, a set property will now return a list of strings.
+            In the past, it would have returned an integer containing all the bits of the set,
+            and it would have accepted to assign either the same kind of integer value or
+            a string like "[akLeft, akTop]".
+          - Made a breaking change when dealing with property enumerations:
+            return a string representing its value instead of the ordinal value.
+          - You don't need to call explicitely RegisterClass for your registered Python types as it will be done
+            automatically for you in RegisterDelphiWrapper. But it is still usefull if you need to create VCL objects
+            that have no wrapper, using the CreateComponent helper function.
+          - Thanks to Fabio Chelly who used WrapDelphi, reported errors and contributed.
+
+----------------------------------------------------------------------
+3.31  5/3/2006
+
+      * Added support for Delphi 2006
+      * Updated WrapDelphi:
+          - Wrapped TPageControl
+          - Wrapped TTabSheet
+      * Fixed a very rare but nasty bug thanks to Samuel Iseli - Vertec AG [samuel.iseli@vertec.ch]
+        On some Windows Server 2003 machines, a P4D application using custom Types or Modules would
+        crash. After investigation, Samuel found out that this was related to a Bios feature
+        that would prevent code from running when the code was located on a memory page that was
+        not flagged as executable. This was the case for all the generated callbacks that would
+        wrap Delphi methods. After looking at Borland's solution regarding the MakeObjectInstance code
+        we knew that we had do a VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE).
+        Samuel wrote a simple memory allocator using pages of virtual alloc, and replaced the old
+        GetMem/FreeMem calls. And we could also get rid of the list of created callbacks as we have
+        now our own custom allocator, which should speed up application's exit as we can free pages
+        instead of blocks.
+      * Simplified PythonEngine.pas to take into account an excellent suggestion of Samuel Iseli:
+        the TPythonType was registering callbacks for each type's service, where the type's method
+        would simply forward the work to the TPyObject instance. Instead of using callbacks,
+        we can now use simple static functions which should also speed up a P4D application a little.
+      * Added version 1.5 of PyScripter source code.
+
+
+----------------------------------------------------------------------
+3.32  8/10/2006
+
+      * Added support for loading the Python 2.5. No change was introduced yet to take into account
+        the 2.5 specificity.
+        I had to disable the following 2 APIs which are not exported anymore: PyRange_New and PySymtableEntry_Type.
+        I removed the exception PyExc_OverflowWarning.
+        I added EPyBaseException exception and changed the hierarchy to reflect latest changes:
+
+BaseException       # New in Python 2.5
+|- KeyboardInterrupt
+|- SystemExit
+|- Exception
+   |- (all other current built-in exceptions)
+
+        
+      * Introduced a potential breaking change to P4D: the conditional symbol PREFER_UNICODE is now defined
+        by default. Which means that any string stored in a variant will be converted to a Python unicode string.
+        If you don't want that, then make sure that this symbol is not defined in definition.inc
+        Note also that PyString_Check has been modified to accept unicode strings. If you want to 
+        discriminate, use PyString_CheckExact.
+      * Kiriakos made changes to TPythonInputOutput to allow wide strings in I/O and thus support
+        international chars. It introduces 2 news events OnSendUniData/OnReceiveUniData.
+        This new behaviour will be activated only if you define the PREFER_UNICODE symbol and set
+        the new UnicodeIO property.
+      * Fixed bug into the new callback allocator thanks to Samuel Iseli. In some very rare cases,
+        the empty space of a memory page was wrong and could crash the application.
+      * Fixed a bug into TPythonEngine.PyObject_AsVariant that prevented a date to be converted
+        to a real date variant. It was considered as a float, thanks to Oliver Bock <oliver@g7.org>.
+      * Fixed a bug in TPythonEngine.PyObjectAsString when the submitted object is a unicode string.
+      * Added api PySeqIter_New to TPythonEngine
+      * Added api PyObject_CallMethodStr and PyObject_CallMethodWithArgs to TPythonEngine
+        thanks to Dietmar Budelsky.
+      * Added methods Repaint and Invalidate to the TControl wrapper 
+      * Added package files for C++Builder 6 thanks to Philippe BOURGAULT
+      * Created a Wiki at http://py4d.pbwiki.com/ thanks to a suggestion of Oliver Bock
+        This will allow any person involved with P4D to collaborate on building 
+        a useful documentation (at last ;-)
+      * Added methods ClientToScreen and ScreenToClient to the TControl wrapper thanks to Joachim.
+      * Added changes made by Samuel Iseli to WrapDelphiGrids:
+          I added an indexed property for setting column widths (ColWidths[i]) and methods to get / set cell contents of stringgrid to the gridwrapper.
+          I thought it was easier to do the cell get/set with separate methods GetCell(col,row), SetCell(col, row, value) instead of trying to imitate the Delphi 2dim array property (Cells[col, row]).
+      * Made fields fDefaultIterType and fDefaultContainerType of TPyDelphiWrapper protected as a
+        request made by Samuel Iseli.
+      * Added new property "Version" to TPythonEngine returning the current version of P4D as a string as a
+        request made by Roar Larsen.
