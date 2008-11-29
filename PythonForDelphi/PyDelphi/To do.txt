@@ -1,0 +1,10 @@
+- Add preferences for:
+    Autosave before Execute
+    AutoIndent (yes/no)
+
+- Add a menu entry Indent/Unindent selection
+
+
+
+
+

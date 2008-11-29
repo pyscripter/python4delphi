@@ -1,0 +1,19 @@
+See document "Deploying P4D.PDF" first.
+
+When you want to distribute your Delphi application using Python, 
+here's what you have to do:
+- install the whole Lib directory of the standard Python distribution
+(i.e. c:\program files\Python\Lib)
+This folder is necessary for the exceptions.py module that defines the Exception
+objects, if you're using them.
+Note that the file exceptions.py does not exist any more with versions of Python
+equal or greater than 2.0
+- optionally install the whole DLLs directory of the standard Python distribution
+(i.e. c:\program files\Python\DLLs)
+- install the python15.dll in the system folder
+- In your application, use the OnPathInitialization of the TPythonEngine
+and define the path with the Lib and DLLs folders you have installed. Add your
+own folders that contain your python modules.
+Note that each folder must be separated with a semi-colon (;) in the path string.
+
+That's all !
