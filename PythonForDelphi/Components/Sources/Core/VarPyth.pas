@@ -39,6 +39,10 @@ unit VarPyth;
 
 {$I Definition.Inc}
 
+{$IFNDEF DELPHI6_OR_HIGHER}
+  This unit requires Delphi6 or later to compile!!!
+{$ENDIF}
+
 interface
 uses
   Variants, PythonEngine;
@@ -103,7 +107,7 @@ function NewPythonDict: Variant;
 function None : Variant;
 function Ellipsis : Variant;
 function MainModule : Variant; // return the main module that's used for executing a script.
-function BuiltinModule : Variant; // return the builtin module '__builtin__'
+function BuiltinModule : Variant; // return the builtin module 
 function SysModule : Variant; // return the builtin module 'sys'
 function DatetimeModule : Variant; // return the builtin module 'datetime'
 function Import( const AModule : String ) : Variant; // import a Python module and return the module object.
@@ -694,7 +698,7 @@ end;
 
 function BuiltinModule : Variant;
 begin
-  Result := Import('__builtin__');
+  Result := Import(GetPythonEngine.BuiltInModuleName);
 end;
 
 function SysModule : Variant;
@@ -1035,6 +1039,7 @@ var
           LArguments[I].VOleStr := PWideChar(BStr);
         end;
         Inc(LStrCount);
+        Inc(Integer(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
       end
       else
       begin
@@ -2026,7 +2031,10 @@ function TPythonData.Equal(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
   begin
-    Result := PyObject_Compare(PyObject, Right.PyObject) = 0;
+    if IsPython3000 then
+      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_EQ) = 1
+    else
+      Result := PyObject_Compare(PyObject, Right.PyObject) = 0;
     CheckError;
   end; // of with
 end;
@@ -2059,12 +2067,24 @@ end;
 
 function TPythonData.GreaterOrEqualThan(const Right: TPythonData): Boolean;
 begin
-  Result := Compare(Right) >= 0;
+  with GetPythonEngine do
+  begin
+    if IsPython3000 then
+      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GE) = 1
+    else
+      Result := Self.Compare(Right) >= 0;
+  end;
 end;
 
 function TPythonData.GreaterThan(const Right: TPythonData): Boolean;
 begin
-  Result := Compare(Right) > 0;
+  with GetPythonEngine do
+  begin
+    if IsPython3000 then
+      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GT) = 1
+    else
+      Result := Self.Compare(Right) > 0;
+  end;
 end;
 
 function TPythonData.IsNone: Boolean;
@@ -2074,12 +2094,24 @@ end;
 
 function TPythonData.LessOrEqualThan(const Right: TPythonData): Boolean;
 begin
-  Result := Compare(Right) <= 0;
+  with GetPythonEngine do
+  begin
+    if IsPython3000 then
+      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LE) = 1
+    else
+      Result := Self.Compare(Right) <= 0;
+  end;
 end;
 
 function TPythonData.LessThan(const Right: TPythonData): Boolean;
 begin
-  Result := Compare(Right) < 0;
+  with GetPythonEngine do
+  begin
+    if IsPython3000 then
+      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LT) = 1
+    else
+      Result := Self.Compare(Right) < 0;
+  end;
 end;
 
 procedure TPythonData.SetPyObject(const Value: PPyObject);

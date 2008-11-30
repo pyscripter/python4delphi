@@ -658,7 +658,7 @@ begin
   begin
     if PyString_Check(AValue) then
     begin
-      S := PyString_AsString(AValue);
+      S := PyString_AsDelphiString(AValue);
       for i := 0 to Container.ComponentCount-1 do
         if SameText( Container.Components[i].Name, S) then
         begin
@@ -736,6 +736,7 @@ var
   _comp : TComponent;
   _pair : PPyObject;
   _bindings : PPyObject;
+  _type : PPyTypeObject;
 begin
   _prefix := 'handle_';
   with GetPythonEngine do begin
@@ -749,86 +750,91 @@ begin
         _prefix := s;
       _bindings := PyList_New(0);
       try
-        d := GetSelf.ob_type.tp_dict;
-        if Assigned(d) and PyDict_Check(d) then
+        _type := GetSelf.ob_type;
+        while _type <> nil do
         begin
-          keys := PyDict_Keys(d);
-          try
-            if PySequence_Check(keys) = 1 then
-              for i := 0 to PySequence_Length(keys)-1 do
-              begin
-                key := PySequence_GetItem(keys, i);
-                obj := PyDict_GetItem(d, key); // borrowed ref
-                objComp := nil;
-                try
-                  if PyCallable_Check(obj) = 1 then
-                  begin
-                    _name := PyObjectAsString(key);
-                    if SameText(Copy(_name, 1, Length(_prefix)), _prefix) then
+          d := _type.tp_dict;
+          if Assigned(d) and PyDict_Check(d) then
+          begin
+            keys := PyDict_Keys(d);
+            try
+              if PySequence_Check(keys) = 1 then
+                for i := 0 to PySequence_Length(keys)-1 do
+                begin
+                  key := PySequence_GetItem(keys, i);
+                  obj := PyDict_GetItem(d, key); // borrowed ref
+                  objComp := nil;
+                  try
+                    if PyCallable_Check(obj) = 1 then
                     begin
-                      System.Delete(_name, 1, Length(_prefix));
-                      _idx := -1;
-                      for j := Length(_name) downto 1 do
-                        if _name[j] = '_' then
-                        begin
-                          _idx := j;
-                          Break;
-                        end;
-                      if _idx > -1 then
+                      _name := PyObjectAsString(key);
+                      if SameText(Copy(_name, 1, Length(_prefix)), _prefix) then
                       begin
-                        _compName := Copy(_name, 1, _idx-1);
-                        _eventName := Copy(_name, _idx+1, MaxInt);
-                        if SameText(_compName, 'Self') then
-                        begin
-                          _comp := Self.DelphiObject;
-                          objComp := GetSelf;
-                          Py_IncRef(objComp);
-                        end
-                        else
-                        begin
-                          _comp := Self.DelphiObject.FindComponent(_compName);
-                          if Assigned(_comp) then
-                            objComp := Wrap(_comp);
-                        end;
-                        if not Assigned(_comp) and not Assigned(objComp) then
-                        begin
-                          objComp := PyObject_GetAttrString(GetSelf, PChar(_compName));
-                          if Assigned(objComp) then
+                        System.Delete(_name, 1, Length(_prefix));
+                        _idx := -1;
+                        for j := Length(_name) downto 1 do
+                          if _name[j] = '_' then
                           begin
-                            if IsDelphiObject(objComp) and (PythonToDelphi(objComp) is TPyDelphiComponent) then
-                              _comp := TPyDelphiComponent(PythonToDelphi(objComp)).DelphiObject;
+                            _idx := j;
+                            Break;
+                          end;
+                        if _idx > -1 then
+                        begin
+                          _compName := Copy(_name, 1, _idx-1);
+                          _eventName := Copy(_name, _idx+1, MaxInt);
+                          if SameText(_compName, 'Self') then
+                          begin
+                            _comp := Self.DelphiObject;
+                            objComp := GetSelf;
+                            Py_IncRef(objComp);
                           end
                           else
-                            PyErr_Clear;
-                        end;
-                        if Assigned(_comp) and Assigned(objComp) and IsPublishedProp(_comp, _eventName) then
-                        begin
-                          objMethod := PyObject_GenericGetAttr(GetSelf, key);
-                          if PyErr_Occurred <> nil then
-                            Exit;
-                          PyObject_SetAttrString(objComp, PChar(_eventName), objMethod);
-                          if PyErr_Occurred <> nil then
-                            Exit
-                          else
                           begin
-                            _pair := PyTuple_New(3);
-                            PyTuple_SetItem(_pair, 0, PyString_FromString(PChar(_compName)));
-                            PyTuple_SetItem(_pair, 1, PyString_FromString(PChar(_eventName)));
-                            PyTuple_SetItem(_pair, 2, objMethod);
-                            PyList_Append(_bindings, _pair);
+                            _comp := Self.DelphiObject.FindComponent(_compName);
+                            if Assigned(_comp) then
+                              objComp := Wrap(_comp);
+                          end;
+                          if not Assigned(_comp) and not Assigned(objComp) then
+                          begin
+                            objComp := PyObject_GetAttrString(GetSelf, PChar(_compName));
+                            if Assigned(objComp) then
+                            begin
+                              if IsDelphiObject(objComp) and (PythonToDelphi(objComp) is TPyDelphiComponent) then
+                                _comp := TPyDelphiComponent(PythonToDelphi(objComp)).DelphiObject;
+                            end
+                            else
+                              PyErr_Clear;
+                          end;
+                          if Assigned(_comp) and Assigned(objComp) and IsPublishedProp(_comp, _eventName) then
+                          begin
+                            objMethod := PyObject_GenericGetAttr(GetSelf, key);
+                            if PyErr_Occurred <> nil then
+                              Exit;
+                            PyObject_SetAttrString(objComp, PChar(_eventName), objMethod);
+                            if PyErr_Occurred <> nil then
+                              Exit
+                            else
+                            begin
+                              _pair := PyTuple_New(3);
+                              PyTuple_SetItem(_pair, 0, PyString_FromString(PChar(_compName)));
+                              PyTuple_SetItem(_pair, 1, PyString_FromString(PChar(_eventName)));
+                              PyTuple_SetItem(_pair, 2, objMethod);
+                              PyList_Append(_bindings, _pair);
+                            end;
                           end;
                         end;
                       end;
                     end;
+                  finally
+                    Py_XDecRef(objComp);
+                    Py_DecRef(key);
                   end;
-                finally
-                  Py_XDecRef(objComp);
-                  Py_DecRef(key);
-                end;
-              end; // for
-          finally
-            Py_DecRef(keys);
+                end; // for
+            finally
+              Py_DecRef(keys);
+            end;
           end;
+          _type := _type.tp_base;
         end;
         Result := _bindings;
         _bindings := nil;
@@ -900,7 +906,7 @@ begin
   begin
     if GetPythonEngine.PyString_Check(Key) then
     begin
-      Name := GetPythonEngine.PyString_AsString(Key);
+      Name := GetPythonEngine.PyString_AsDelphiString(Key);
       // try a sub component
       Component := DelphiObject.FindComponent(Name);
       if Component <> nil then
@@ -982,7 +988,7 @@ begin
       Result := SqItem(PyInt_AsLong(obj))
     else if PyString_Check(obj) then
     begin
-      _name := String(PyString_AsString(obj));
+      _name := String(PyString_AsDelphiString(obj));
       _comp := DelphiObject.FindComponent(_name);
       if Assigned(_comp) then
         Result := Wrap(_comp)
@@ -1092,7 +1098,7 @@ begin
   begin
     if PyString_Check(AValue) then
     begin
-      Container[AIndex] := PyString_AsString(AValue);
+      Container[AIndex] := PyString_AsDelphiString(AValue);
       Result := True;
     end
     else
