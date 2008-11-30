@@ -552,6 +552,7 @@ Type
     function  SetAttrO( key, value: PPyObject) : Integer; override;
     // Objects are equal when they refer to the same DelphiObject
     function  Compare( obj: PPyObject) : Integer; override;
+    function  RichCompare( obj : PPyObject; Op : TRichComparisonOpcode) : PPyObject; override;
     function  Repr : PPyObject; override;
     // automatic iterator support when the wrapper implements IContainerAccessProvider
     function  Iter : PPyObject; override;
@@ -900,7 +901,7 @@ function CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : String
 begin
   if GetPythonEngine.PyString_Check(AAttribute) then
   begin
-    AValue := GetPythonEngine.PyString_AsString(AAttribute);
+    AValue := GetPythonEngine.PyString_AsDelphiString(AAttribute);
     Result := True;
   end
   else
@@ -1752,7 +1753,7 @@ var
 begin
   Result := nil;
   if GetPythonEngine.PyString_Check(Key) then
-    Name := GetPythonEngine.PyString_AsString(Key)
+    Name := GetPythonEngine.PyString_AsDelphiString(Key)
   else
     Name := '';
 
@@ -2020,6 +2021,27 @@ begin
            [DelphiObjectClass.ClassName, Integer(Self)])) );
 end;
 
+function TPyDelphiObject.RichCompare(obj: PPyObject;
+  Op: TRichComparisonOpcode): PPyObject;
+Var
+  Res : Boolean;
+begin
+  Res := False;
+  case Op of
+    pyLT: Res := Compare(obj) < 0;
+    pyLE: Res := Compare(obj) <= 0;
+    pyEQ: Res := Compare(obj) = 0;
+    pyNE: Res := Compare(obj) <> 0;
+    pyGT: Res := Compare(obj) > 0;
+    pyGE: Res := Compare(obj) >= 0;
+  end;
+  if Res then
+    Result := PPyObject(GetPythonEngine.Py_True)
+  else
+    Result := PPyObject(GetPythonEngine.Py_False);
+  GetPythonEngine.Py_INCREF( Result );
+end;
+
 function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
 
   function HandleEvent(PropInfo: PPropInfo) : Integer;
@@ -2075,9 +2097,15 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
   end;
 
   function HandleOtherTypes(PropInfo: PPropInfo) : Integer;
+  Var
+    V : Variant;
   begin
     try
-      SetPropValue(DelphiObject, PropInfo, GetPythonEngine.PyObjectAsVariant(Value));
+      V := GetPythonEngine.PyObjectAsVariant(Value);
+      if (PropInfo.PropType^^.Kind = tkEnumeration) and (VarType(V) = varOleStr) then
+        // Special case that occurs in Python3000
+        V := VarAsType(V, varString);  //Downcast to string
+      SetPropValue(DelphiObject, PropInfo, V);
       Result := 0;
     except
       on E: Exception do with GetPythonEngine do
@@ -2095,7 +2123,7 @@ begin
 
   if Assigned(DelphiObject) then
   begin
-    Name := GetPythonEngine.PyString_AsString(Key);
+    Name := GetPythonEngine.PyString_AsDelphiString(Key);
     PropInfo := GetPropInfo(DelphiObject, Name);
   end
   else
@@ -2174,10 +2202,10 @@ begin
   inherited;
   PythonType.TypeName := GetTypeName;
   PythonType.Name := PythonType.TypeName + 'Type';
-  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
+  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType, tpfHaveRichCompare];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare, bsRichCompare];
   _ContainerAccessClass := GetContainerAccessClass;
   if Assigned(_ContainerAccessClass) then
   begin
