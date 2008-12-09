@@ -33,6 +33,8 @@
 //{$DEFINE PYTHON23}
 //{$DEFINE PYTHON24}
 //{$DEFINE PYTHON25}
+//{$DEFINE PYTHON26}
+//{$DEFINE PYTHON30}
 
 /////////////////////////////////////////////////////////////////////////////
 // Python for Delphi settings. Comment out the setting you want to enable.
@@ -65,7 +67,7 @@
 {$ENDIF}
 {$IFDEF VER110} // C++ Builder 3.0
   {$DEFINE CBUILDER3}
-  {$DEFINE DELPHI4_OR_HIGHER}
+  {$DEFINE DELPHI3_OR_HIGHER}
   {$ObjExportAll On}
 {$ENDIF}
 {$IFDEF VER120} // Delphi 4.0
@@ -125,7 +127,7 @@
   {$DEFINE DELPHI8_OR_HIGHER}
   {$DEFINE DELPHI2005_OR_HIGHER}
 {$ENDIF}
-{$IFDEF VER180} // Delphi 2006
+{$IFDEF VER180} // Delphi 2006 and 2007
   {$DEFINE DELPHI2006}
   {$DEFINE DELPHI4_OR_HIGHER}
   {$DEFINE DELPHI5_OR_HIGHER}
@@ -134,6 +136,10 @@
   {$DEFINE DELPHI8_OR_HIGHER}
   {$DEFINE DELPHI2005_OR_HIGHER}
   {$DEFINE DELPHI2006_OR_HIGHER}
+  {$IFDEF VER185} // Delphi 2007
+    {$DEFINE DELPHI2007}
+    {$DEFINE DELPHI2007_OR_HIGHER}
+  {$ENDIF}
 {$ENDIF}
 
 
@@ -145,17 +151,21 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON25}
-  {$IFNDEF PYTHON24}
-    {$IFNDEF PYTHON23}
-      {$IFNDEF PYTHON22}
-        {$IFNDEF PYTHON21}
-          {$IFNDEF PYTHON20}
-             {$IFNDEF PYTHON15}
-{---<START OF DEFAULT PYTHON VERSION>---}
-{$DEFINE PYTHON25}
-{---<END OF DEFAULT PYTHON VERSION>---}
-             {$ENDIF}
+{$IFNDEF PYTHON30}
+  {$IFNDEF PYTHON26}
+    {$IFNDEF PYTHON25}
+      {$IFNDEF PYTHON24}
+        {$IFNDEF PYTHON23}
+          {$IFNDEF PYTHON22}
+            {$IFNDEF PYTHON21}
+              {$IFNDEF PYTHON20}
+                 {$IFNDEF PYTHON15}
+  {---<START OF DEFAULT PYTHON VERSION>---}
+      {$DEFINE PYTHON25}
+  {---<END OF DEFAULT PYTHON VERSION>---}
+                 {$ENDIF}
+              {$ENDIF}
+            {$ENDIF}
           {$ENDIF}
         {$ENDIF}
       {$ENDIF}
@@ -195,6 +205,25 @@
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON26}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
+  {$DEFINE PYTHON23_OR_HIGHER}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON30}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
+  {$DEFINE PYTHON23_OR_HIGHER}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+  {$DEFINE PYTHON30_OR_HIGHER}
 {$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
