@@ -458,7 +458,7 @@ begin
   begin
     if PyString_Check(AValue) then
     begin
-      S := PyString_AsString(AValue);
+      S := PyString_AsDelphiString(AValue);
       for i := 0 to Container.ControlCount-1 do
         if SameText( Container.Controls[i].Name, S) then
         begin
@@ -706,7 +706,7 @@ begin
             Key := #0
           else if PyString_Check(_varParam.Value) then
           begin
-            _key := PyString_AsString(_varParam.Value);
+            _key := PyString_AsDelphiString(_varParam.Value);
             if Length(_key) > 0 then
               Key := _key[1];
           end;

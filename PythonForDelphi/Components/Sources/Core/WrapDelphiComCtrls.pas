@@ -516,7 +516,7 @@ begin
   begin
     if PyString_Check(AValue) then
     begin
-      S := PyString_AsString(AValue);
+      S := PyString_AsDelphiString(AValue);
       for i := 0 to Container.PageCount-1 do
         if SameText( Container.Pages[i].Name, S) then
         begin
