@@ -6129,7 +6129,7 @@ const
          '  def write(self,message):'+LF+
          '     self.pyio.write(message)'+LF+
          '  def readline(self, size=None):'+LF+
-         '     return self.pyio.read(size)'+LF+ 
+         '     return self.pyio.read(size)'+LF+
          '  def flush(self):' + LF +
          '     pass' + LF +
          'sys.old_stdin=sys.stdin'+LF+
