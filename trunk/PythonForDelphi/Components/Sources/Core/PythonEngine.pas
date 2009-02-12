@@ -894,7 +894,8 @@ type
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
 {$ENDIF}
-{$IFDEF PYTHON20}
+//{$IFDEF PYTHON20}
+{$IFDEF PYTHON22_OR_HIGHER}
     //More spares
     tp_xxx7:        LongInt;
     tp_xxx8:        LongInt;
@@ -8340,17 +8341,26 @@ begin
 end;
 
 function  TPyObject.GetAttr(key : PChar) : PPyObject;
+var
+  PyKey : PPyObject;
 begin
   with GetPythonEngine do
     begin
-      // check for a method
-      if IsPython3000 then
-        // I think Python 3000 from beta 2 gets the methods from the tp_methods field
-        Result := nil
-      else
-        Result := Py_FindMethod( PythonType.MethodsData, GetSelf, key);
-      if not Assigned(Result) then
-        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
+      PyKey := PyString_FromString(key);
+      try
+        Result := PyObject_GenericGetAttr(GetSelf, PyKey)
+      finally
+        Py_XDecRef(PyKey);
+      end;
+
+//      // check for a method
+//      if IsPython3000 then
+//        // I think Python 3000 from beta 2 gets the methods from the tp_methods field
+//        Result := nil
+//      else
+//        Result := Py_FindMethod( PythonType.MethodsData, GetSelf, key);
+//      if not Assigned(Result) then
+//        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
     end;
 end;
 
