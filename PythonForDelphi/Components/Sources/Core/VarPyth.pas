@@ -1010,7 +1010,10 @@ var
           BStr := System.Copy(PString(LParamPtr)^, 1, MaxInt);
           PStr := nil;
           LArguments[I].VType := varOleStr;
-          LArguments[I].VOleStr := PWideChar(BStr);
+          if BStr = '' then
+            LArguments[I].VOleStr := nil
+          else
+            LArguments[I].VOleStr := PWideChar(BStr);
         end;
       Inc(LStrCount);
     end
