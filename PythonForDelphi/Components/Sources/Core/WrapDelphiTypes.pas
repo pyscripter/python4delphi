@@ -179,7 +179,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PChar(Format('%s receives only Point objects', [AAttributeName])));
+          PAnsiChar(Format('%s receives only Point objects', [AAttributeName])));
     end;
   end;
 end;
@@ -198,7 +198,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PChar(Format('%s receives only Rect objects', [AAttributeName])));
+          PAnsiChar(Format('%s receives only Rect objects', [AAttributeName])));
     end;
   end;
 end;
@@ -217,7 +217,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PChar(Format('%s receives only Size objects', [AAttributeName])));
+          PAnsiChar(Format('%s receives only Size objects', [AAttributeName])));
     end;
   end;
 end;
@@ -296,7 +296,7 @@ end;
 function TPyDelphiPoint.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PChar(Format('<Point (%d, %d)>', [Value.X, Value.Y])));
+    Result := PyString_FromString(PAnsiChar(Format('<Point (%d, %d)>', [Value.X, Value.Y])));
 end;
 
 class procedure TPyDelphiPoint.SetupType(PythonType: TPythonType);
@@ -439,7 +439,7 @@ end;
 function TPyDelphiRect.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PChar(Format('<Rect (%d, %d, %d, %d)>', [Value.Left, Value.Top, Value.Right, Value.Bottom])));
+    Result := PyString_FromString(PAnsiChar(Format('<Rect (%d, %d, %d, %d)>', [Value.Left, Value.Top, Value.Right, Value.Bottom])));
 end;
 
 function TPyDelphiRect.Set_Bottom(AValue: PPyObject;
@@ -605,7 +605,7 @@ end;
 function TPyDelphiSize.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PChar(Format('<Size (%d, %d)>', [Value.cx, Value.cy])));
+    Result := PyString_FromString(PAnsiChar(Format('<Size (%d, %d)>', [Value.cx, Value.cy])));
 end;
 
 class procedure TPyDelphiSize.SetupType(PythonType: TPythonType);

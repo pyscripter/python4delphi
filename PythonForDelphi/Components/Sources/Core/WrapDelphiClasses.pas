@@ -296,7 +296,7 @@ function ShiftToPython(AShift : TShiftState) : PPyObject;
   begin
     with GetPythonEngine do
     begin
-      _item := PyString_FromString(PChar(AString));
+      _item := PyString_FromString(PAnsiChar(AString));
       PyList_Append(AList, _item);
       Py_XDecRef(_item);
     end;
@@ -370,7 +370,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     if PyArg_ParseTuple( args, ':GetNamePath', [] ) <> 0 then begin
-      Result := PyString_FromString(PChar(DelphiObject.GetNamePath))
+      Result := PyString_FromString(PAnsiChar(DelphiObject.GetNamePath))
     end else
       Result := nil;
   end;
@@ -722,7 +722,7 @@ var
   i : Integer;
   j : Integer;
   d : PPyObject;
-  s : PChar;
+  s : PAnsiChar;
   obj : PPyObject;
   objMethod : PPyObject;
   objComp : PPyObject;
@@ -796,7 +796,7 @@ begin
                           end;
                           if not Assigned(_comp) and not Assigned(objComp) then
                           begin
-                            objComp := PyObject_GetAttrString(GetSelf, PChar(_compName));
+                            objComp := PyObject_GetAttrString(GetSelf, PAnsiChar(_compName));
                             if Assigned(objComp) then
                             begin
                               if IsDelphiObject(objComp) and (PythonToDelphi(objComp) is TPyDelphiComponent) then
@@ -810,14 +810,14 @@ begin
                             objMethod := PyObject_GenericGetAttr(GetSelf, key);
                             if PyErr_Occurred <> nil then
                               Exit;
-                            PyObject_SetAttrString(objComp, PChar(_eventName), objMethod);
+                            PyObject_SetAttrString(objComp, PAnsiChar(_eventName), objMethod);
                             if PyErr_Occurred <> nil then
                               Exit
                             else
                             begin
                               _pair := PyTuple_New(3);
-                              PyTuple_SetItem(_pair, 0, PyString_FromString(PChar(_compName)));
-                              PyTuple_SetItem(_pair, 1, PyString_FromString(PChar(_eventName)));
+                              PyTuple_SetItem(_pair, 0, PyString_FromString(PAnsiChar(_compName)));
+                              PyTuple_SetItem(_pair, 1, PyString_FromString(PAnsiChar(_eventName)));
                               PyTuple_SetItem(_pair, 2, objMethod);
                               PyList_Append(_bindings, _pair);
                             end;
@@ -995,7 +995,7 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_KeyError^, PChar(_name));
+        PyErr_SetString (PyExc_KeyError^, PAnsiChar(_name));
       end;
     end
     else
@@ -1079,7 +1079,7 @@ end;
 
 function TStringsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromString( PChar(Container[AIndex]) );
+  Result := GetPythonEngine.PyString_FromString( PAnsiChar(Container[AIndex]) );
 end;
 
 function TStringsAccess.GetSize: Integer;
@@ -1177,7 +1177,7 @@ end;
 
 function TPyDelphiStrings.AddObject_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PChar;
+  PStr : PAnsiChar;
   _obj : PPyObject;
   _value : TObject;
 begin
@@ -1197,7 +1197,7 @@ end;
 
 function TPyDelphiStrings.Add_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PChar;
+  PStr : PAnsiChar;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
@@ -1330,13 +1330,13 @@ function TPyDelphiStrings.Get_Text(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(GetPythonEngine.CleanString(DelphiObject.Text)));
+    Result := PyString_FromString(PAnsiChar(GetPythonEngine.CleanString(DelphiObject.Text)));
   end;
 end;
 
 function TPyDelphiStrings.IndexOf_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PChar;
+  PStr : PAnsiChar;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
@@ -1348,7 +1348,7 @@ end;
 
 function TPyDelphiStrings.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PChar;
+  PStr : PAnsiChar;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
@@ -1386,7 +1386,7 @@ begin
           else
             Result := GetPythonEngine.ReturnNone;
         end else with GetPythonEngine do begin
-          PyErr_SetString (PyExc_KeyError^, PChar(S));
+          PyErr_SetString (PyExc_KeyError^, PAnsiChar(S));
           Result := nil;
         end;
       end else with GetPythonEngine do begin
@@ -1446,13 +1446,13 @@ end;
 function TPyDelphiStrings.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PChar(Format('<Delphi TStrings at %x>',
+    Result := PyString_FromString( PAnsiChar(Format('<Delphi TStrings at %x>',
          [Integer(self)])) );
 end;
 
 function TPyDelphiStrings.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PChar;
+  PStr : PAnsiChar;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);

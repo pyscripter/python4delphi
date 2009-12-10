@@ -440,7 +440,7 @@ end;
 
 function TPyDelphiGraphic.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PChar;
+  _pFileName : PAnsiChar;
   _FileName : String;
 begin
   with GetPythonEngine do begin
@@ -553,7 +553,7 @@ end;
 
 function TPyDelphiGraphic.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PChar;
+  _pFileName : PAnsiChar;
   _FileName : String;
 begin
   with GetPythonEngine do begin
@@ -872,7 +872,7 @@ function TPyDelphiBitmap.LoadFromResourceName_Wrapper(
   args: PPyObject): PPyObject;
 var
   _instance : Integer;
-  _resName : PChar;
+  _resName : PAnsiChar;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
@@ -1046,7 +1046,7 @@ begin
         DelphiObject.HandleType := bmDDB
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown THandleType value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown THandleType value "%s"', [_value])));
         Result := -1;
         Exit;
       end;
@@ -1137,7 +1137,7 @@ begin
         DelphiObject.PixelFormat := pfCustom
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown TPixelFormat value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown TPixelFormat value "%s"', [_value])));
         Result := -1;
         Exit;
       end;
@@ -1180,7 +1180,7 @@ begin
         DelphiObject.TransparentMode := tmFixed
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown TTransparentMode value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown TTransparentMode value "%s"', [_value])));
         Result := -1;
         Exit;
       end;
@@ -1376,7 +1376,7 @@ end;
 function TPyDelphiCanvas.FloodFill_Wrapper(args: PPyObject): PPyObject;
 var
   x, y, _color: Integer;
-  _pFillStyle : PChar;
+  _pFillStyle : PAnsiChar;
   _sFillStyle : String;
   _FillStyle : TFillStyle;
 begin
@@ -2048,7 +2048,7 @@ end;
 
 function TPyDelphiCanvas.TextExtent_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PChar;
+  _pText : PAnsiChar;
   _Text : String;
 begin
   with GetPythonEngine do begin
@@ -2069,7 +2069,7 @@ end;
 
 function TPyDelphiCanvas.TextHeight_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PChar;
+  _pText : PAnsiChar;
   _Text : String;
 begin
   with GetPythonEngine do begin
@@ -2091,7 +2091,7 @@ end;
 function TPyDelphiCanvas.TextOut_Wrapper(args: PPyObject): PPyObject;
 var
   x, y : Integer;
-  _text : PChar;
+  _text : PAnsiChar;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
@@ -2114,7 +2114,7 @@ var
   x, y : Integer;
   _rectO : PPyObject;
   _rect : TRect;
-  _text : PChar;
+  _text : PAnsiChar;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
@@ -2137,7 +2137,7 @@ end;
 
 function TPyDelphiCanvas.TextWidth_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PChar;
+  _pText : PAnsiChar;
   _Text : String;
 begin
   with GetPythonEngine do begin
@@ -2217,7 +2217,7 @@ function TPyDelphiMetaFile.Get_CreatedBy(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.CreatedBy));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.CreatedBy));
   end;
 end;
 
@@ -2225,7 +2225,7 @@ function TPyDelphiMetaFile.Get_Description(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.Description));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.Description));
   end;
 end;
 
@@ -2572,7 +2572,7 @@ end;
 
 function TPyDelphiPicture.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PChar;
+  _pFileName : PAnsiChar;
   _FileName : String;
 begin
   with GetPythonEngine do begin
@@ -2625,7 +2625,7 @@ end;
 
 function TPyDelphiPicture.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PChar;
+  _pFileName : PAnsiChar;
   _FileName : String;
 begin
   with GetPythonEngine do begin

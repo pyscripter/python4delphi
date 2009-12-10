@@ -736,7 +736,7 @@ end; end;
 
 function TPyImage.DoLoadFromFile(Args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:LoadFromFile', [@s])<>0) then begin
     result:= ReturnNone;
@@ -748,7 +748,7 @@ end; end;
 
 function TPyImage.DoSaveToFile(Args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:SaveToFile', [@s])<>0) then begin
     result:= ReturnNone;
@@ -847,7 +847,7 @@ end; end;
 
 function TPyPicture.DoLoadFromFile(args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:LoadFromFile', [@s])<>0) then begin
     result:= ReturnNone;
@@ -859,7 +859,7 @@ end; end;
 
 function TPyPicture.DoSaveToFile(args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:SaveToFile', [@s])<>0) then begin
     result:= ReturnNone;
@@ -1102,7 +1102,7 @@ end; end;
 function TPyCanvas.DoFloodFill(Args: PPyObject): PPyObject;
 var
   x,y: integer;
-  col: PChar;
+  col: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 'iis:FloodFill', [@x, @y, @col])<>0) then begin
     result:= ReturnNone;
@@ -1246,7 +1246,7 @@ end; end;
 
 function TPyCanvas.DoTextHeight(Args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:TextHeight', [@s])<>0) then begin
     result:= ReturnNone;
@@ -1259,7 +1259,7 @@ end; end;
 function TPyCanvas.DoTextOut(Args: PPyObject): PPyObject;
 var
   x,y: integer;
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 'iis:TextOut', [@x, @y, @s])<>0) then begin
     result:= ReturnNone;
@@ -1271,7 +1271,7 @@ end; end;
 
 function TPyCanvas.DoTextWidth(Args: PPyObject): PPyObject;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:TextWidth', [@s])<>0) then begin
     result:= ReturnNone;
@@ -1618,7 +1618,7 @@ end; end;
 
 function TPyGraphic.DoLoadFromFile(args: PPO): PPO;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:LoadFromFile', [@s])<>0) then begin
     result:= ReturnNone;
@@ -1630,7 +1630,7 @@ end; end;
 
 function TPyGraphic.DoSaveToFile(args: PPO): PPO;
 var
-  s: PChar;
+  s: PAnsiChar;
 begin with GetPythonEngine do begin Adjust(@Self);
   if(PyArg_ParseTuple(args, 's:SaveToFile', [@s])<>0) then begin
     result:= ReturnNone;

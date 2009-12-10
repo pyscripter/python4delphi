@@ -374,8 +374,8 @@ procedure TFormsRegistration.DefineFunctions(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
-  APyDelphiWrapper.RegisterFunction(PChar('FreeConsole'), FreeConsole_Wrapper,
-       PChar('FreeConsole_Wrapper()'#10 +
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('FreeConsole'), FreeConsole_Wrapper,
+       PAnsiChar('FreeConsole_Wrapper()'#10 +
        'Frees the MS-DOS console associated with the process.'));
 end;
 
@@ -477,7 +477,7 @@ begin
         Result := ReturnNone;
       end else begin
         PyErr_SetString (PyExc_AttributeError^,
-          PChar('The Delphi form cannot be released, since it is not Owned'));
+          PAnsiChar('The Delphi form cannot be released, since it is not Owned'));
         Result := nil;
       end;
     end
@@ -745,7 +745,7 @@ function TPyDelphiScreen.Get_DefaultIme(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.DefaultIme));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.DefaultIme));
   end;
 end;
 
@@ -1632,7 +1632,7 @@ end;
 
 function TPyDelphiApplication.HelpJump_Wrapper(args: PPyObject): PPyObject;
 var
-  _jumpID : PChar;
+  _jumpID : PAnsiChar;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
@@ -1648,7 +1648,7 @@ end;
 function TPyDelphiApplication.HelpKeyword_Wrapper(
   args: PPyObject): PPyObject;
 var
-  _keyword : PChar;
+  _keyword : PAnsiChar;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
@@ -1704,8 +1704,8 @@ end;
 function TPyDelphiApplication.MessageBox_Wrapper(
   args: PPyObject): PPyObject;
 var
-  _text : PChar;
-  _caption : PChar;
+  _text : PAnsiChar;
+  _caption : PAnsiChar;
   _flags : Integer;
 begin
   with GetPythonEngine do begin
@@ -2138,7 +2138,7 @@ function TPyDelphiApplication.Get_BiDiKeyboard(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.BiDiKeyboard));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.BiDiKeyboard));
   end;
 end;
 
@@ -2155,7 +2155,7 @@ function TPyDelphiApplication.Get_CurrentHelpFile(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.CurrentHelpFile));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.CurrentHelpFile));
   end;
 end;
 
@@ -2172,7 +2172,7 @@ function TPyDelphiApplication.Get_ExeName(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.ExeName));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.ExeName));
   end;
 end;
 
@@ -2188,7 +2188,7 @@ function TPyDelphiApplication.Get_HelpFile(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.HelpFile));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.HelpFile));
   end;
 end;
 
@@ -2196,7 +2196,7 @@ function TPyDelphiApplication.Get_Hint(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.Hint));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.Hint));
   end;
 end;
 
@@ -2264,7 +2264,7 @@ function TPyDelphiApplication.Get_NonBiDiKeyboard(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.NonBiDiKeyboard));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.NonBiDiKeyboard));
   end;
 end;
 
@@ -2297,7 +2297,7 @@ function TPyDelphiApplication.Get_Title(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PChar(DelphiObject.Title));
+    Result := PyString_FromString(PAnsiChar(DelphiObject.Title));
   end;
 end;
 

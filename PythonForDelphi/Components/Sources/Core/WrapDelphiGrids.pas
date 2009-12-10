@@ -669,7 +669,7 @@ begin
     // adjust the transmitted self argument
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'ii:GetCell', [@col, @row] ) <> 0 then
-      Result := PyString_FromString(PChar(DelphiObject.Cells[col, row]))
+      Result := PyString_FromString(PAnsiChar(DelphiObject.Cells[col, row]))
     else
       Result := nil;
   end;
@@ -678,7 +678,7 @@ end;
 function TPyDelphiStringGrid.SetCell(args: PPyObject): PPyObject;
 var
   col, row: integer;
-  value: PChar;
+  value: PAnsiChar;
 begin
   with GetPythonEngine do begin
     // adjust the transmitted self argument

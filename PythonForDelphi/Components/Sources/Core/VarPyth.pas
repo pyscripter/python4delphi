@@ -88,10 +88,8 @@ function VarIsPythonDate(const AValue: Variant): Boolean;
 function VarIsPythonTime(const AValue: Variant): Boolean;
 function VarIsPythonDateTimeDelta(const AValue: Variant): Boolean;
 function VarIsPythonTZInfo(const AValue: Variant): Boolean;
-{$IFDEF PYTHON23_OR_HIGHER}
 function VarIsBool(const AValue: Variant): Boolean;
 function VarIsEnum(const AValue: Variant): Boolean;
-{$ENDIF}
 function VarIsInstanceOf(const AInstance, AClass : Variant): Boolean;
 function VarIsSubclassOf(const ADerived, AClass : Variant): Boolean;
 function VarIsSubtypeOf(const ADerived, AType : Variant): Boolean;
@@ -505,12 +503,8 @@ end;
 
 function VarIsPythonIterator(const AValue: Variant): Boolean;
 begin
-{$IFDEF PYTHON20_OR_HIGHER}
   Result := VarIsPython(AValue) and
             (GetPythonEngine.PyIter_Check(ExtractPythonObjectFrom(AValue)));
-{$ELSE}
-  Result := False;
-{$ENDIF}
 end;
 
 {$IFDEF UNICODE_SUPPORT}
@@ -551,7 +545,6 @@ begin
             GetPythonEngine.PyTZInfo_Check(ExtractPythonObjectFrom(AValue));
 end;
 
-{$IFDEF PYTHON23_OR_HIGHER}
 function VarIsBool(const AValue: Variant): Boolean;
 begin
   Result := VarIsPython(AValue) and
@@ -563,11 +556,9 @@ begin
   Result := VarIsPython(AValue) and
             GetPythonEngine.PyEnum_Check(ExtractPythonObjectFrom(AValue));
 end;
-{$ENDIF}
 
 function VarIsInstanceOf(const AInstance, AClass : Variant): Boolean;
 begin
-{$IFDEF PYTHON21_OR_HIGHER}
   with GetPythonEngine do
   begin
     Result := VarIsPython(AInstance) and VarIsPython(AClass) and
@@ -575,14 +566,10 @@ begin
                                     ExtractPythonObjectFrom(AClass)) <> 0);
     CheckError;
   end; // of with
-{$ELSE}
-  raise Exception.Create('Not implemented in this version of Python');
-{$ENDIF}
 end;
 
 function VarIsSubclassOf(const ADerived, AClass : Variant): Boolean;
 begin
-{$IFDEF PYTHON21_OR_HIGHER}
   with GetPythonEngine do
   begin
     Result := VarIsPython(ADerived) and VarIsPython(AClass) and
@@ -590,14 +577,10 @@ begin
                                     ExtractPythonObjectFrom(AClass)) <> 0);
     CheckError;
   end; // of with
-{$ELSE}
-  raise Exception.Create('Not implemented in this version of Python');
-{$ENDIF}
 end;
 
 function VarIsSubtypeOf(const ADerived, AType : Variant): Boolean;
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   with GetPythonEngine do
   begin
     Result := VarIsPython(ADerived) and VarIsPython(AType) and
@@ -605,9 +588,6 @@ begin
                                  PPyTypeObject(ExtractPythonObjectFrom(AType))) <> 0);
     CheckError;
   end; // of with
-{$ELSE}
-  raise Exception.Create('Not implemented in this version of Python');
-{$ENDIF}
 end;
 
 function VarIsNone(const AValue : Variant): Boolean;
@@ -627,7 +607,7 @@ begin
     Result := VarIsPython(AModule) and
               PyModule_Check(ExtractPythonObjectFrom(AModule)) and
               Assigned(PyDict_GetItemString(
-                PyModule_GetDict(ExtractPythonObjectFrom(AModule)),PChar(aObj)));
+                PyModule_GetDict(ExtractPythonObjectFrom(AModule)),PAnsiChar(aObj)));
 end;
 
 function NewPythonList( const ASize : Integer = 0 ): Variant;
@@ -718,7 +698,7 @@ var
 begin
   with GetPythonEngine do
   begin
-    _module_name := PyString_FromString(PChar(AModule));
+    _module_name := PyString_FromString(PAnsiChar(AModule));
     try
       _module := PyImport_Import(_module_name);
       CheckError;
@@ -766,7 +746,6 @@ var
   _iter : PPyObject;
 begin
   if VarIsPython(AValue) then
-{$IFDEF PYTHON20_OR_HIGHER}
     with GetPythonEngine do
     begin
       PyErr_Clear;
@@ -778,9 +757,6 @@ begin
         Py_XDecRef(_iter);
       end;
     end
-{$ELSE}
-    raise Exception.Create(SNoIterators);
-{$ENDIF}
   else
     raise Exception.Create(SExpectedPythonVariant);
 end;
@@ -968,7 +944,7 @@ var
   LStrCount: Integer;
   LParamPtr: Pointer;
   LNamedArgStart : Integer;     //arg position of 1st named argument (if any)
-  LNamePtr: PChar;
+  LNamePtr: PAnsiChar;
 
   procedure ParseParam(I: Integer);
   const
@@ -1091,7 +1067,7 @@ begin
   LArgCount := CallDesc^.ArgCount;
   //After arg types, method name and named arg names are stored
   //Position pointer on method name
-  LNamePtr := PChar(@CallDesc^.ArgTypes[LArgCount]);
+  LNamePtr := PAnsiChar(@CallDesc^.ArgTypes[LArgCount]);
   LIdent := String(LNamePtr);
   //Named params must be after positional params
   LNamedArgStart := CallDesc^.ArgCount - CallDesc^.NamedArgCount;
@@ -1378,12 +1354,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
       if not Assigned(_value) then
         raise Exception.Create(SCantConvertValueToPythonObject);
       try
-{$IFDEF PYTHON20_OR_HIGHER}
         _result := PySequence_Contains( AObject, _value );
-{$ELSE}
-        Result := nil;
-        raise Exception.Create('Not implemented in this version of Python');
-{$ENDIF}
         CheckError;
         Result := PyInt_FromLong(_result);
       finally
@@ -1408,7 +1379,7 @@ begin
     _container := TPythonVarData(V).VPython.PyObject;
 
     // extract the key from the container object
-    _obj := PyObject_GetAttrString(_container, PChar(AName));
+    _obj := PyObject_GetAttrString(_container, PAnsiChar(AName));
     try
       try
         // if the container object does not have the key AName
@@ -1477,7 +1448,7 @@ begin
               for i := 0 to _ArgLen-1 do
                 PyTuple_SetItem( _Args, i, ArgAsPythonObject(i) );
               for i := 0 to Length(fNamedParams)-1 do
-                PyDict_SetItemString(_KW, PChar(fNamedParams[i].Name), ArgAsPythonObject(fNamedParams[i].Index));
+                PyDict_SetItemString(_KW, PAnsiChar(fNamedParams[i].Name), ArgAsPythonObject(fNamedParams[i].Index));
 
               // call the func or method, with or without named parameters (KW)
               if Assigned(_KW) then
@@ -1534,7 +1505,7 @@ var
 begin
   with GetPythonEngine do
   begin
-    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PChar(AName));
+    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
     // if we could not find the property
     if (PyErr_Occurred <> nil) or not Assigned(_prop) then
     begin
@@ -1603,7 +1574,7 @@ begin
   with GetPythonEngine do
   begin
     _result := nil;
-    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PChar(AName));
+    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
     CheckError;
     if Assigned(_prop) then
     begin
@@ -1717,7 +1688,7 @@ begin
   begin
     _newValue := VarDataToPythonObject(Value);
     try
-      PyObject_SetAttrString(TPythonVarData(V).VPython.PyObject, PChar(AName), _newValue );
+      PyObject_SetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName), _newValue );
       CheckError;
     finally
       Py_XDecRef(_newValue);
@@ -1852,11 +1823,7 @@ var
 begin
   with GetPythonEngine do
   begin
-{$IFDEF PYTHON22_OR_HIGHER}
     _result := PyNumber_TrueDivide(PyObject, Right.PyObject);
-{$ELSE}
-    _result := PyNumber_Divide(PyObject, Right.PyObject);
-{$ENDIF}
     CheckError;
     if Assigned(_result) then
     begin
@@ -1869,22 +1836,11 @@ end;
 procedure TPythonData.DoIntDivide(const Right: TPythonData);
 var
   _result : PPyObject;
-{$IFNDEF PYTHON22_OR_HIGHER}
   _op1, _op2 : Integer;
-{$ENDIF}
 begin
   with GetPythonEngine do
   begin
-{$IFDEF PYTHON22_OR_HIGHER}
     _result := PyNumber_FloorDivide( PyObject, Right.PyObject );
-{$ELSE}
-    //TODO: check for long objects
-    if not PyInt_Check(PyObject) or not PyInt_Check(Right.PyObject) then
-      raise Exception.Create(SBothOperandsOfIntDivideMustBeIntegers);
-    _op1 := PyInt_AsLong(PyObject);
-    _op2 := PyInt_AsLong(Right.PyObject);
-    _result := PyInt_FromLong( _op1 div _op2 );
-{$ENDIF}
     CheckError;
     if Assigned(_result) then
     begin

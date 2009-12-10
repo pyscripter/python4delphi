@@ -20,16 +20,22 @@
 (* header and its copyright text is intact.                               *)
 (* Dr. Dietmar Budelsky, 1998-01-07                                       *)
 (**************************************************************************)
+(* Removing support for Delphi < 6 and Python < 2.3                       *)
+(* PyScripter, 2009-10-09                                                 *)
+(**************************************************************************)
+
+
+// TODO
+// Remove DELPHI6_OR_HIGHER, UNICODE_SUPPORT
+// String to AnsiString
+// Deal with TVarRec, TVarData
+// Consider what could become UnicodeString
 
 /////////////////////////////////////////////////////////////////////////////
 // Select a Python version by commenting out the corresponding line, or
 // modify the default Python version below, in the Python versions section.
 /////////////////////////////////////////////////////////////////////////////
 
-//{$DEFINE PYTHON15}
-//{$DEFINE PYTHON20}
-//{$DEFINE PYTHON21}
-//{$DEFINE PYTHON22}
 //{$DEFINE PYTHON23}
 //{$DEFINE PYTHON24}
 //{$DEFINE PYTHON25}
@@ -158,17 +164,9 @@
       {$IFNDEF PYTHON25}
         {$IFNDEF PYTHON24}
           {$IFNDEF PYTHON23}
-            {$IFNDEF PYTHON22}
-              {$IFNDEF PYTHON21}
-                {$IFNDEF PYTHON20}
-                   {$IFNDEF PYTHON15}
     {---<START OF DEFAULT PYTHON VERSION>---}
         {$DEFINE PYTHON25}
     {---<END OF DEFAULT PYTHON VERSION>---}
-                   {$ENDIF}
-                {$ENDIF}
-              {$ENDIF}
-            {$ENDIF}
           {$ENDIF}
         {$ENDIF}
       {$ENDIF}
@@ -176,52 +174,25 @@
   {$ENDIF}
 {$ENDIF}
 
-{$IFDEF PYTHON20}
-  {$DEFINE PYTHON20_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON21}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON22}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
-{$ENDIF}
 {$IFDEF PYTHON23}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON24}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON25}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON26}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
   {$DEFINE PYTHON26_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON30}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
@@ -229,9 +200,6 @@
   {$DEFINE PYTHON30_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON31}
-  {$DEFINE PYTHON20_OR_HIGHER}
-  {$DEFINE PYTHON21_OR_HIGHER}
-  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
@@ -244,10 +212,8 @@
 // Misc
 /////////////////////////////////////////////////////////////////////////////
 
-{$IFDEF PYTHON20_OR_HIGHER}
-  {$IFDEF DELPHI4_OR_HIGHER}
-    {$DEFINE UNICODE_SUPPORT}
-  {$ENDIF}
+{$IFDEF DELPHI4_OR_HIGHER}
+  {$DEFINE UNICODE_SUPPORT}
 {$ENDIF}
 
 {$IFNDEF UNICODE_SUPPORT}
