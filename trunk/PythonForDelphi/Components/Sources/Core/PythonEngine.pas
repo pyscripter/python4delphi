@@ -1,4 +1,4 @@
-(**************************************************************************)
+﻿(**************************************************************************)
 (*                                                                        *)
 (* Module:  Unit 'PythonEngine'     Copyright (c) 1997                    *)
 (*                                                                        *)
@@ -58,6 +58,10 @@ unit PythonEngine;
 
 {$I Definition.Inc}
 
+{$IFNDEF DELPHI6_OR_HIGHER}
+    Error! Delphi 6 or higher is required!
+{$ENDIF}
+
 {$IFDEF PYTHON30_OR_HIGHER}
   {$IFNDEF UNICODE_SUPPORT}
     Error! Python 3.0 only supports UNICODE!
@@ -108,14 +112,8 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
-  ( (DllName: 'python14.dll'; RegVersion: '1.4'; APIVersion: 1006; CanUseLatest: False),
-    (DllName: 'python15.dll'; RegVersion: '1.5'; APIVersion: 1007; CanUseLatest: False),
-    (DllName: 'python16.dll'; RegVersion: '1.6'; APIVersion: 1008; CanUseLatest: False),
-    (DllName: 'python20.dll'; RegVersion: '2.0'; APIVersion: 1009; CanUseLatest: True),
-    (DllName: 'python21.dll'; RegVersion: '2.1'; APIVersion: 1010; CanUseLatest: True),
-    (DllName: 'python22.dll'; RegVersion: '2.2'; APIVersion: 1011; CanUseLatest: True),
-    (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
@@ -123,55 +121,31 @@ const
     (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
-  ( (DllName: 'libpython1.4.so'; RegVersion: '1.4'; APIVersion: 1006; CanUseLatest: False),
-    (DllName: 'libpython1.5.so'; RegVersion: '1.5'; APIVersion: 1007; CanUseLatest: False),
-    (DllName: 'libpython1.6.so'; RegVersion: '1.6'; APIVersion: 1008; CanUseLatest: False),
-    (DllName: 'libpython2.0.so'; RegVersion: '2.0'; APIVersion: 1009; CanUseLatest: True),
-    (DllName: 'libpython2.1.so'; RegVersion: '2.1'; APIVersion: 1010; CanUseLatest: True),
-    (DllName: 'libpython2.2.so'; RegVersion: '2.2'; APIVersion: 1011; CanUseLatest: True),
-    (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.0.so'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
-{$IFDEF PYTHON14}
+{$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
 {$ENDIF}
-{$IFDEF PYTHON15}
+{$IFDEF PYTHON24}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 2;
 {$ENDIF}
-{$IFDEF PYTHON16}
+{$IFDEF PYTHON25}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 3;
 {$ENDIF}
-{$IFDEF PYTHON20}
+{$IFDEF PYTHON26}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
 {$ENDIF}
-{$IFDEF PYTHON21}
+{$IFDEF PYTHON30}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
 {$ENDIF}
-{$IFDEF PYTHON22}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
-{$ENDIF}
-{$IFDEF PYTHON23}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
-{$ENDIF}
-{$IFDEF PYTHON24}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
-{$ENDIF}
-{$IFDEF PYTHON25}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
-{$ENDIF}
-{$IFDEF PYTHON26}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
-{$ENDIF}
-{$IFDEF PYTHON30}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
-{$ENDIF}
 {$IFDEF PYTHON31}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
 {$ENDIF}
 
   PYT_METHOD_BUFFER_INCREASE = 10;
@@ -241,7 +215,6 @@ given type object has a specified feature.
 
   Py_TPFLAGS_HAVE_WEAKREFS = (1 shl 6);
 
-{$IFDEF PYTHON22_OR_HIGHER}
 // tp_iter is defined
   Py_TPFLAGS_HAVE_ITER = (1 shl 7);
 
@@ -262,17 +235,14 @@ given type object has a specified feature.
 
 // Objects support garbage collection (see objimp.h)
   Py_TPFLAGS_HAVE_GC = (1 shl 14);
-{$ENDIF}
 
   Py_TPFLAGS_DEFAULT  =      Py_TPFLAGS_HAVE_GETCHARBUFFER
                              or Py_TPFLAGS_HAVE_SEQUENCE_IN
                              or Py_TPFLAGS_HAVE_INPLACEOPS
                              or Py_TPFLAGS_HAVE_RICHCOMPARE
                              or Py_TPFLAGS_HAVE_WEAKREFS
-{$IFDEF PYTHON22_OR_HIGHER}
                              or Py_TPFLAGS_HAVE_ITER
                              or Py_TPFLAGS_HAVE_CLASS
-{$ENDIF}
                              ;
 
 // See function PyType_HasFeature below for testing the flags.
@@ -281,21 +251,16 @@ given type object has a specified feature.
 type
   TPFlag = (tpfHaveGetCharBuffer, tpfHaveSequenceIn, tpfGC, tpfHaveInplaceOps,
             tpfCheckTypes, tpfHaveRichCompare, tpfHaveWeakRefs
-{$IFDEF PYTHON22_OR_HIGHER}
             ,tpfHaveIter, tpfHaveClass, tpfHeapType, tpfBaseType, tpfReady, tpfReadying, tpfHaveGC
-{$ENDIF}
             );
   TPFlags = set of TPFlag;
 const
   TPFLAGS_DEFAULT = [tpfHaveGetCharBuffer, tpfHaveSequenceIn, tpfHaveInplaceOps,
                      tpfHaveRichCompare, tpfHaveWeakRefs
-{$IFDEF PYTHON22_OR_HIGHER}
                      , tpfHaveIter, tpfHaveClass
-{$ENDIF}
                     ];
 //-------  Python opcodes  ----------//
 Const
-{$IFDEF PYTHON20_OR_HIGHER}
    single_input                 = 256;
    file_input                   = 257;
    eval_input                   = 258;
@@ -360,67 +325,7 @@ Const
    list_iter                    = 317;
    list_for                     = 318;
    list_if                      = 319;
-{$ENDIF}
-{$IFDEF PYTHON15}
-   single_input                 = 256;
-   file_input                   = 257;
-   eval_input                   = 258;
-   funcdef                      = 259;
-   parameters                   = 260;
-   varargslist                  = 261;
-   fpdef                        = 262;
-   fplist                       = 263;
-   stmt                         = 264;
-   simple_stmt                  = 265;
-   small_stmt                   = 266;
-   expr_stmt                    = 267;
-   print_stmt                   = 268;
-   del_stmt                     = 269;
-   pass_stmt                    = 270;
-   flow_stmt                    = 271;
-   break_stmt                   = 272;
-   continue_stmt                = 273;
-   return_stmt                  = 274;
-   raise_stmt                   = 275;
-   import_stmt                  = 276;
-   dotted_name                  = 277;
-   global_stmt                  = 278;
-   exec_stmt                    = 279;
-   compound_stmt                = 280;
-   if_stmt                      = 281;
-   while_stmt                   = 282;
-   for_stmt                     = 283;
-   try_stmt                     = 284;
-   except_clause                = 285;
-   suite                        = 286;
-   test                         = 287;
-   and_test                     = 288;
-   not_test                     = 289;
-   comparison                   = 290;
-   comp_op                      = 291;
-   expr                         = 292;
-   xor_expr                     = 293;
-   and_expr                     = 294;
-   shift_expr                   = 295;
-   arith_expr                   = 296;
-   term                         = 297;
-   factor                       = 298;
-   power                        = 299;
-   atom                         = 300;
-   lambdef                      = 301;
-   trailer                      = 302;
-   subscriptlist                = 303;
-   subscript                    = 304;
-   sliceop                      = 305;
-   exprlist                     = 306;
-   testlist                     = 307;
-   dictmaker                    = 308;
-   classdef                     = 309;
-   arglist                      = 310;
-   argument                     = 311;
-{$ENDIF}
 
-{$IFDEF PYTHON22_OR_HIGHER}
   // structmember.h
 const
 //* Types */
@@ -458,7 +363,6 @@ type
                    mtChar, mtByte, mtUByte, mtUShort, mtUInt, mtULong,
                    mtStringInplace, mtObjectEx);
   TPyMemberFlag = (mfDefault, mfReadOnly, mfReadRestricted, mfWriteRestricted, mfRestricted);
-{$ENDIF}
 
 //#######################################################
 //##                                                   ##
@@ -482,16 +386,16 @@ const
 //#######################################################
 
 type
-   TPChar     = array[0..16000] of PChar;
+   TPAnsiChar     = array[0..16000] of PAnsiChar;
    TPWideChar = array[0..16000] of PWideChar;
-   PPChar     = ^TPChar;
+   PPAnsiChar     = ^TPAnsiChar;
    PPWideChar = ^TPWideChar;
    PInt	      = ^Integer;
    PDouble    = ^Double;
    PFloat     = ^Real;
    PLong      = ^LongInt;
    PShort     = ^ShortInt;
-   PString    = ^PChar;
+   PString    = ^PAnsiChar;
 
 
 //#######################################################
@@ -531,30 +435,25 @@ type
 
   pydestructor      = procedure(ob: PPyObject); cdecl;
   printfunc         = function( ob: PPyObject; var f: file; i: integer): integer; cdecl;
-  getattrfunc       = function( ob1: PPyObject; name: PChar): PPyObject; cdecl;
-  setattrfunc       = function( ob1: PPyObject; name: PChar; ob2: PPyObject): integer; cdecl;
+  getattrfunc       = function( ob1: PPyObject; name: PAnsiChar): PPyObject; cdecl;
+  setattrfunc       = function( ob1: PPyObject; name: PAnsiChar; ob2: PPyObject): integer; cdecl;
   cmpfunc           = function( ob1,ob2: PPyObject): integer; cdecl;
   reprfunc          = function( ob: PPyObject): PPyObject; cdecl;
   hashfunc          = function( ob: PPyObject): LongInt; cdecl;
   getattrofunc      = function( ob1,ob2: PPyObject): PPyObject; cdecl;
   setattrofunc      = function( ob1,ob2,ob3: PPyObject): integer; cdecl;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from object.h
   getreadbufferproc = function ( ob1: PPyObject; i: integer; ptr: Pointer): integer; cdecl;
   getwritebufferproc= function ( ob1: PPyObject; i: integer; ptr: Pointer): integer; cdecl;
   getsegcountproc   = function ( ob1: PPyObject; i: integer): integer; cdecl;
-  getcharbufferproc = function ( ob1: PPyObject; i: integer; const pstr: PChar): integer; cdecl;
+  getcharbufferproc = function ( ob1: PPyObject; i: integer; const pstr: PAnsiChar): integer; cdecl;
   objobjproc        = function ( ob1, ob2: PPyObject): integer; cdecl;
   visitproc         = function ( ob1: PPyObject; ptr: Pointer): integer; cdecl;
   traverseproc      = function ( ob1: PPyObject; proc: visitproc; ptr: Pointer): integer; cdecl;
-{$ENDIF}
 
-{$IFDEF PYTHON21_OR_HIGHER}
   richcmpfunc       = function ( ob1, ob2 : PPyObject; i : Integer) : PPyObject; cdecl;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   getiterfunc       = function ( ob1 : PPyObject) : PPyObject; cdecl;
   iternextfunc      = function ( ob1 : PPyObject) : PPyObject; cdecl;
   descrgetfunc      = function ( ob1, ob2, ob3 : PPyObject) : PPyObject; cdecl;
@@ -562,7 +461,6 @@ type
   initproc          = function ( self, args, kwds : PPyObject) : Integer; cdecl;
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
   allocfunc         = function ( self: PPyTypeObject; nitems : integer) : PPyObject; cdecl;
-{$ENDIF}
 
   PyNumberMethods = packed record
      nb_add           : binaryfunc;
@@ -588,7 +486,7 @@ type
      nb_float         : unaryfunc;
      nb_oct           : unaryfunc;
      nb_hex           : unaryfunc;
-{$IFDEF PYTHON20_OR_HIGHER}
+
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from .h
      nb_inplace_add       : binaryfunc;
@@ -602,15 +500,13 @@ type
      nb_inplace_and       : binaryfunc;
      nb_inplace_xor       : binaryfunc;
      nb_inplace_or        : binaryfunc;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
+
      // Added in release 2.2
      // The following require the Py_TPFLAGS_HAVE_CLASS flag
      nb_floor_divide         : binaryfunc;
      nb_true_divide          : binaryfunc;
      nb_inplace_floor_divide : binaryfunc;
      nb_inplace_true_divide  : binaryfunc;
-{$ENDIF}
   end;
   PPyNumberMethods = ^PyNumberMethods;
 
@@ -622,13 +518,12 @@ type
      sq_slice     : intintargfunc;
      sq_ass_item  : intobjargproc;
      sq_ass_slice : intintobjargproc;
-{$IFDEF PYTHON20_OR_HIGHER}
+
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from .h
      sq_contains        : objobjproc;
      sq_inplace_concat  : binaryfunc;
      sq_inplace_repeat  : intargfunc;
-{$ENDIF}
   end;
   PPySequenceMethods = ^PySequenceMethods;
 
@@ -639,7 +534,6 @@ type
   end;
   PPyMappingMethods = ^PyMappingMethods;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from .h
   PyBufferProcs = packed record
@@ -649,7 +543,6 @@ type
      bf_getcharbuffer   : getcharbufferproc;
   end;
   PPyBufferProcs = ^PyBufferProcs;
-{$ENDIF}
 
   Py_complex =  packed record
      real : double;
@@ -668,7 +561,7 @@ type
   end;
 
   _frozen = packed record
-     name	: PChar;
+     name	: PAnsiChar;
      code	: PByte;
      size	: Integer;
   end;
@@ -681,21 +574,20 @@ type
 
   PPyMethodDef = ^PyMethodDef;
   PyMethodDef  = packed record
-     ml_name:  PChar;
+     ml_name:  PAnsiChar;
      ml_meth:  PyCFunction;
      ml_flags: Integer;
-     ml_doc:   PChar;
+     ml_doc:   PAnsiChar;
   end;
 
-{$IFDEF PYTHON22_OR_HIGHER}
   // structmember.h
   PPyMemberDef = ^PyMemberDef;
   PyMemberDef = packed record
-    name : PChar;
+    name : PAnsiChar;
     _type : integer;
     offset : integer;
     flags : integer;
-    doc : PChar;
+    doc : PAnsiChar;
   end;
 
   // descrobject.h
@@ -707,10 +599,10 @@ type
 
   PPyGetSetDef = ^PyGetSetDef;
   PyGetSetDef = packed record
-    name : PChar;
+    name : PAnsiChar;
     get : getter;
     _set : setter;
-    doc : PChar;
+    doc : PAnsiChar;
     closure : Pointer;
   end;
 
@@ -718,9 +610,9 @@ type
 
   pwrapperbase = ^wrapperbase;
   wrapperbase = packed record
-    name : PChar;
+    name : PAnsiChar;
     wrapper : wrapperfunc;
-    doc : PChar;
+    doc : PAnsiChar;
   end;
 
   // Various kinds of descriptor objects
@@ -808,8 +700,8 @@ type
   PPyModuleDef = ^PyModuleDef;
   PyModuleDef = packed record
     m_base : PyModuleDef_Base;
-    m_name : PChar;
-    m_doc : PChar;
+    m_name : PAnsiChar;
+    m_doc : PAnsiChar;
     m_size : Integer;
     m_methods : PPyMethodDef;
     m_reload : inquiry;
@@ -818,14 +710,13 @@ type
     m_free : inquiry;
   end;
 
-{$ENDIF}
 
   // object.h
   PyTypeObject = packed record
     ob_refcnt:      Integer;
     ob_type:        PPyTypeObject;
     ob_size:        Integer; // Number of items in variable part
-    tp_name:        PChar;   // For printing
+    tp_name:        PAnsiChar;   // For printing
     tp_basicsize, tp_itemsize: Integer; // For allocation
 
     // Methods to implement standard operations
@@ -851,7 +742,6 @@ type
     tp_getattro:    getattrofunc;
     tp_setattro:    setattrofunc;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 /// jah 29-sep-2000 : updated for python 2.0
 
     // Functions to access object as input/output buffer
@@ -859,22 +749,19 @@ type
     // Flags to define presence of optional/expanded features
     tp_flags:       LongInt;
 
-    tp_doc:         PChar; // Documentation string
+    tp_doc:         PAnsiChar; // Documentation string
 
     // call function for all accessible objects
     tp_traverse:    traverseproc;
 
     // delete references to contained objects
     tp_clear:       inquiry;
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
+
     // rich comparisons
     tp_richcompare: richcmpfunc;
 
     // weak reference enabler
     tp_weaklistoffset: Longint;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     // Iterators
     tp_iter : getiterfunc;
     tp_iternext : iternextfunc;
@@ -898,18 +785,9 @@ type
     tp_cache            : PPyObject;
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
-{$ENDIF}
-//{$IFDEF PYTHON20}
-{$IFDEF PYTHON22_OR_HIGHER}
     //More spares
     tp_xxx7:        LongInt;
     tp_xxx8:        LongInt;
-{$ENDIF}
-{$IFDEF PYTHON15}
-    //More spares
-    tp_xxx7:        LongInt;
-    tp_xxx8:        LongInt;
-{$ENDIF}
   end;
 
   PPyMethodChain = ^PyMethodChain;
@@ -974,10 +852,8 @@ type
     co_consts      : PPyObject;       // list (constants used)
     co_names       : PPyObject;       // list of strings (names used)
     co_varnames    : PPyObject;       // tuple of strings (local variable names)
-{$IFDEF PYTHON21_OR_HIGHER}
     co_freevars    : PPyObject;	      // tuple of strings (free variable names)
     co_cellvars    : PPyObject;       // tuple of strings (cell variable names)
-{$ENDIF}
     // The rest doesn't count for hash/cmp
     co_filename    : PPyObject;       // string (where it was loaded from)
     co_name        : PPyObject;       // string (name, for reference)
@@ -1013,10 +889,8 @@ type
     ticker         : integer;
     tracing        : integer;
 
-{$IFDEF PYTHON23_OR_HIGHER}
     sys_profilefn  : Pointer;           // c-functions for profile/trace
     sys_tracefn    : Pointer;
-{$ENDIF}
     sys_profilefunc: PPyObject;
     sys_tracefunc  : PPyObject;
 
@@ -1029,7 +903,6 @@ type
     exc_traceback  : PPyObject;
 
     dict           : PPyObject;
-{$IFDEF PYTHON23_OR_HIGHER}
     tick_counter      :Integer;
     gilstate_counter  :Integer;
 
@@ -1037,7 +910,6 @@ type
     thread_id         :LongInt;   { Thread id where this tstate was created }
 
     { XXX signal handlers should also be here }
-{$ENDIF}
   end;
 
   // from frameobject.h
@@ -1054,9 +926,7 @@ type
     // Start of the VAR_HEAD of an object.
     ob_refcnt    : Integer;
     ob_type      : PPyTypeObject;
-{$IFDEF PYTHON22_OR_HIGHER}
     ob_size      : Integer;           // Number of items in variable part
-{$ENDIF}
     // End of the Head of an object
     f_back       : PPyFrameObject;    // previous frame, or NULL
     f_code       : PPyCodeObject;     // code segment
@@ -1064,12 +934,10 @@ type
     f_globals    : PPyObject;         // global symbol table (PyDictObject)
     f_locals     : PPyObject;         // local symbol table (PyDictObject)
     f_valuestack : PPPyObject;        // points after the last local
-{$IFDEF PYTHON22_OR_HIGHER}
     (* Next free slot in f_valuestack.  Frame creation sets to f_valuestack.
        Frame evaluation usually NULLs it, but a frame that yields sets it
        to the current stack top. *)
     f_stacktop   : PPPyObject;
-{$ENDIF}
     f_trace      : PPyObject;         // Trace function
     f_exc_type, f_exc_value, f_exc_traceback: PPyObject;
     f_tstate     : PPyThreadState;
@@ -1080,10 +948,8 @@ type
     f_iblock     : Integer;           // index in f_blockstack
     f_blockstack : array[CO_MAXBLOCKS] of PyTryBlock; // for try and loop blocks
     f_nlocals    : Integer;           // number of locals
-{$IFDEF PYTHON22_OR_HIGHER}
     f_ncells     : Integer;
     f_nfreevars  : Integer;
-{$ENDIF}
     f_stacksize  : Integer;           // size of value stack
     f_localsplus : array[0..0] of PPyObject; // locals+stack, dynamically sized
   end;
@@ -1106,7 +972,7 @@ type
   PNode = ^node;
   node = packed record
     n_type      : smallint;
-    n_str       : PChar;
+    n_str       : PAnsiChar;
     n_lineno    : smallint;
     n_nchildren : smallint;
     n_child     : PNode;
@@ -1323,7 +1189,6 @@ type
 
   // Standard exception classes of Python
 
-{$IFDEF PYTHON20_OR_HIGHER}
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   base classes updated according python documentation
 
@@ -1430,61 +1295,22 @@ Exception\n\
    EPyUnboundLocalError = class (EPyNameError);
    EPyValueError = class (EPyStandardError);
    EPyUnicodeError = class (EPyValueError);
-{$IFDEF PYTHON23_OR_HIGHER}
    UnicodeEncodeError = class (EPyUnicodeError);
    UnicodeDecodeError = class (EPyUnicodeError);
    UnicodeTranslateError = class (EPyUnicodeError);
-{$ENDIF}
    EPyZeroDivisionError = class (EPyArithmeticError);
    EPyStopIteration = class(EPyException);
    EPyWarning = class (EPyException);
    EPyUserWarning = class (EPyWarning);
    EPyDeprecationWarning = class (EPyWarning);
-{$IFDEF PYTHON23_OR_HIGHER}
    PendingDeprecationWarning = class (EPyWarning);
    FutureWarning = class (EPyWarning);
-{$ENDIF}
    EPySyntaxWarning = class (EPyWarning);
    EPyRuntimeWarning = class (EPyWarning);
    EPyReferenceError = class (EPyStandardError);
  {$IFDEF MSWINDOWS}
    EPyWindowsError = class (EPyOSError);
  {$ENDIF}
-{$ENDIF}
-{$IFDEF PYTHON15}
-   EPyException = class (EPythonError);
-   EPyStandardError = class (EPyException);
-
-   EPyAttributeError = class (EPythonError);
-   EPyEOFError = class (EPyException);
-   EPyIOError = class (EPyException);
-   EPyImportError = class (EPyException);
-   EPyKeyboardInterrupt = class (EPyException);
-   EPyMemoryError = class (EPyException);
-   EPyNameError = class (EPyException);
-   EPyRuntimeError = class (EPyException);
-   EPySystemError = class (EPyException);
-   EPySystemExit = class (EPyException);
-   EPyTypeError = class (EPyException);
-   EPyValueError = class (EPyException);
-   EPySyntaxError = class (EPyException)
-   public
-      EFileName: string;
-      ELineStr: string;
-      ELineNumber: Integer;
-      EOffset: Integer;
-   end;
-
-   EPyArithmeticError = class (EPyStandardError);
-   EPyOverflowError = class (EPyArithmeticError);
-   EPyZeroDivisionError = class (EPyArithmeticError);
-   EPyFloatingPointError = class (EPyArithmeticError);
-
-   EPyLookupError = class (EPyStandardError);
-   EPyIndexError = class (EPyLookupError);
-   EPyKeyError = class (EPyLookupError);
-{$ENDIF}
-
 
 {$IFNDEF HAS_SYNCOBJS_UNIT}
   {$IFDEF MSWINDOWS}
@@ -1536,9 +1362,9 @@ type
 
   TPythonInputOutput = class(TComponent)
   private
-    { D�clarations priv�es }
+    { DΞΉclarations privΞΉes }
   protected
-    { D�clarations prot�g�es }
+    { DΞΉclarations protΞΉgΞΉes }
     FMaxLines        : Integer;
     FLine_Buffer     : IOString;
     FLinesPerThread  : TIOStringList;
@@ -1571,7 +1397,7 @@ type
     procedure UpdateCurrentThreadLine;
 
   public
-    { D�clarations publiques }
+    { DΞΉclarations publiques }
     constructor Create( AOwner : TComponent ); override;
     destructor  Destroy; override;
 
@@ -1579,7 +1405,7 @@ type
     procedure WriteLine( const str : IOString );
 
   published
-    { D�clarations publi�es }
+    { DΞΉclarations publiΞΉes }
     property MaxLines : Integer read FMaxLines write FMaxLines default kMaxLines;
     property MaxLineLength : Integer read FMaxLineLength write FMaxLineLength default kMaxLineLength;
     property DelayWrites : Boolean read FDelayWrites write FDelayWrites default False;
@@ -1669,21 +1495,21 @@ type
 type
   TPythonInterface=class(TDynamicDll)
   private
-    DLL_PyArg_Parse: function( args: PPyObject; format: PChar {;....}) :
+    DLL_PyArg_Parse: function( args: PPyObject; format: PAnsiChar {;....}) :
                      Integer; cdecl;
     DLL_PyArg_ParseTuple:
-                     function( args: PPyObject; format: PChar {;...}):
+                     function( args: PPyObject; format: PAnsiChar {;...}):
                      Integer; cdecl;
     DLL_Py_BuildValue:
-                     function( format: PChar {;...}): PPyObject; cdecl;
+                     function( format: PAnsiChar {;...}): PPyObject; cdecl;
     DLL_PyCode_Addr2Line:
                      function ( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
     DLL_Py_GetBuildInfo:
-                     function : PChar; cdecl;
+                     function : PAnsiChar; cdecl;
     DLL_PyImport_ExecCodeModule:
                      function ( const name : String; codeobject : PPyObject) : PPyObject; cdecl;
 
-    DLL_PyString_FromString:  function( str: PChar): PPyObject; cdecl;
+    DLL_PyString_FromString:  function( str: PAnsiChar): PPyObject; cdecl;
     DLL_Py_FlushLine:procedure; cdecl;
 
   protected
@@ -1708,13 +1534,9 @@ type
     Py_UseClassExceptionsFlag: PInt;
     Py_FrozenFlag: PInt;
     Py_TabcheckFlag: PInt;
-{$IFDEF PYTHON20_OR_HIGHER}
     Py_UnicodeFlag: PInt;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     Py_IgnoreEnvironmentFlag: PInt;
     Py_DivisionWarningFlag: PInt;
-{$ENDIF}
     //_PySys_TraceFunc:    PPPyObject;
     //_PySys_ProfileFunc: PPPPyObject;
 
@@ -1724,9 +1546,7 @@ type
     Py_Ellipsis:        PPyObject;
     Py_False:           PPyIntObject;
     Py_True:            PPyIntObject;
-{$IFDEF PYTHON21_OR_HIGHER}
     Py_NotImplemented:  PPyObject;
-{$ENDIF}
 
     PyExc_AttributeError: PPPyObject;
     PyExc_EOFError: PPPyObject;
@@ -1750,7 +1570,6 @@ type
     PyExc_FloatingPointError: PPPyObject;
     PyExc_LookupError: PPPyObject;
     PyExc_StandardError: PPPyObject;
-{$IFDEF PYTHON20_OR_HIGHER}
     PyExc_AssertionError: PPPyObject;
     PyExc_EnvironmentError: PPPyObject;
     PyExc_IndentationError: PPPyObject;
@@ -1763,25 +1582,18 @@ type
  {$IFDEF MSWINDOWS}
     PyExc_WindowsError: PPPyObject;
  {$ENDIF}
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
     PyExc_Warning: PPPyObject;
     PyExc_DeprecationWarning: PPPyObject;
     PyExc_RuntimeWarning: PPPyObject;
     PyExc_SyntaxWarning: PPPyObject;
     PyExc_UserWarning: PPPyObject;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     PyExc_ReferenceError: PPPyObject;
     PyExc_StopIteration: PPPyObject;
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
     PyExc_FutureWarning: PPPyObject;
     PyExc_PendingDeprecationWarning: PPPyObject;
     PyExc_UnicodeDecodeError: PPPyObject;
     PyExc_UnicodeEncodeError: PPPyObject;
     PyExc_UnicodeTranslateError: PPPyObject;
-{$ENDIF}
 
     PyType_Type: PPyTypeObject;
     PyCFunction_Type: PPyTypeObject;
@@ -1805,7 +1617,6 @@ type
     PySlice_Type: PPyTypeObject;
     PyString_Type: PPyTypeObject;
     PyTuple_Type: PPyTypeObject;
-{$IFDEF PYTHON20_OR_HIGHER}
     PyBaseObject_Type: PPyTypeObject;
     PyBuffer_Type: PPyTypeObject;
     PyCallIter_Type: PPyTypeObject;
@@ -1821,26 +1632,21 @@ type
     PyTraceBack_Type: PPyTypeObject;
     PyUnicode_Type: PPyTypeObject;
     PyWrapperDescr_Type: PPyTypeObject;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     _PyWeakref_RefType: PPyTypeObject;
     _PyWeakref_ProxyType: PPyTypeObject;
     _PyWeakref_CallableProxyType: PPyTypeObject;
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
     PyBaseString_Type: PPyTypeObject;
     PyBool_Type: PPyTypeObject;
     PyEnum_Type: PPyTypeObject;
-{$ENDIF}
 
     //PyArg_GetObject: function(args : PPyObject; nargs, i: integer; p_a: PPPyObject): integer; cdecl;
     //PyArg_GetLong:   function(args : PPyObject; nargs, i: integer; p_a: PLong): integer; cdecl;
     //PyArg_GetShort:  function(args : PPyObject; nargs, i: integer; p_a: PShort): integer; cdecl;
     //PyArg_GetFloat:  function(args : PPyObject; nargs, i: integer; p_a: PFloat): integer; cdecl;
     //PyArg_GetString: function(args : PPyObject; nargs, i: integer; p_a: PString): integer; cdecl;
-    //PyArgs_VaParse:  function (args : PPyObject; format: PChar; va_list: array of const): integer; cdecl;
+    //PyArgs_VaParse:  function (args : PPyObject; format: PAnsiChar; va_list: array of const): integer; cdecl;
     // Does not work!
-    // Py_VaBuildValue: function (format: PChar; va_list: array of const): PPyObject; cdecl;
+    // Py_VaBuildValue: function (format: PAnsiChar; va_list: array of const): PPyObject; cdecl;
     //PyBuiltin_Init:     procedure; cdecl;
 
     PyComplex_FromCComplex: function(c: Py_complex):PPyObject; cdecl;
@@ -1856,7 +1662,7 @@ type
     PyClass_New: function (ob1,ob2,ob3 :  PPyObject): PPyObject; cdecl;
     PyClass_IsSubclass: function (ob1, ob2 : PPyObject): integer cdecl;
 
-    Py_InitModule4: function( name: PChar; methods: PPyMethodDef; doc: PChar;
+    Py_InitModule4: function( name: PAnsiChar; methods: PPyMethodDef; doc: PAnsiChar;
                               passthrough: PPyObject; Api_Version: Integer):PPyObject; cdecl;
     PyModule_Create2:   function(moduledef: PPyModuleDef; Api_Version: Integer):PPyObject; cdecl;
     PyErr_BadArgument:  function: integer; cdecl;
@@ -1871,7 +1677,7 @@ type
     PyErr_SetFromErrno: function (ob :  PPyObject):PPyObject; cdecl;
     PyErr_SetNone:      procedure(value: PPyObject); cdecl;
     PyErr_SetObject:    procedure  (ob1, ob2	: PPyObject); cdecl;
-    PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PChar); cdecl;
+    PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
     PyInt_FromLong:     function( x: LongInt):PPyObject; cdecl;
     Py_Initialize:      procedure; cdecl;
@@ -1887,21 +1693,19 @@ type
     PyDict_Values:      function(mp: PPyObject):PPyObject; cdecl;
     PyDict_Items:       function(mp: PPyObject):PPyObject; cdecl;
     PyDict_Size:        function(mp: PPyObject):integer; cdecl;
-    PyDict_DelItemString: function(dp : PPyObject;key : PChar ):integer; cdecl;
+    PyDict_DelItemString: function(dp : PPyObject;key : PAnsiChar ):integer; cdecl;
     PyDict_New: function: PPyObject; cdecl;
-    PyDict_GetItemString: function( dp: PPyObject; key: PChar): PPyObject; cdecl;
-    PyDict_SetItemString: function( dp: PPyObject; key: PChar; item: PPyObject):
+    PyDict_GetItemString: function( dp: PPyObject; key: PAnsiChar): PPyObject; cdecl;
+    PyDict_SetItemString: function( dp: PPyObject; key: PAnsiChar; item: PPyObject):
                           Integer; cdecl;
-{$IFDEF PYTHON22_OR_HIGHER}
     PyDictProxy_New: function (obj : PPyObject) : PPyObject; cdecl;
-{$ENDIF}
     PyModule_GetDict:     function( module:PPyObject): PPyObject; cdecl;
     PyObject_Str:         function( v: PPyObject): PPyObject; cdecl;
-    PyRun_String:         function( str: PChar; start: Integer; globals: PPyObject;
+    PyRun_String:         function( str: PAnsiChar; start: Integer; globals: PPyObject;
                                     locals: PPyObject): PPyObject; cdecl;
-    PyRun_SimpleString:   function( str: PChar): Integer; cdecl;
-    PyString_AsString:    function( ob: PPyObject): PChar; cdecl;
-    PySys_SetArgv:        procedure( argc: Integer; argv: PPChar); cdecl;
+    PyRun_SimpleString:   function( str: PAnsiChar): Integer; cdecl;
+    PyString_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
+    PySys_SetArgv:        procedure( argc: Integer; argv: PPAnsiChar); cdecl;
     PySys_SetArgv3000:    procedure( argc: Integer; argv: PPWideChar); cdecl;
 
 {+ means, Grzegorz or me has tested his non object version of this function}
@@ -1918,23 +1722,23 @@ type
 {-} PyEval_RestoreThread:procedure( tstate: PPyThreadState); cdecl;
 {-} PyEval_SaveThread:function :PPyThreadState; cdecl;
 
-{-} PyFile_FromString:function (pc1,pc2:PChar):PPyObject; cdecl;
+{-} PyFile_FromString:function (pc1,pc2:PAnsiChar):PPyObject; cdecl;
 {-} PyFile_GetLine:function (ob:PPyObject;i:integer):PPyObject; cdecl;
 {-} PyFile_Name:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyFile_SetBufSize:procedure(ob:PPyObject;i:integer); cdecl;
 {-} PyFile_SoftSpace:function (ob:PPyObject;i:integer):integer; cdecl;
 {-} PyFile_WriteObject:function (ob1,ob2:PPyObject;i:integer):integer; cdecl;
-{-} PyFile_WriteString:procedure(s:PChar;ob:PPyObject); cdecl;
+{-} PyFile_WriteString:procedure(s:PAnsiChar;ob:PPyObject); cdecl;
 {+} PyFloat_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
 {+} PyFloat_FromDouble:function (db:double):PPyObject; cdecl;
 {-} PyFunction_GetCode:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyFunction_GetGlobals:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyImport_AddModule:function (name:PChar):PPyObject; cdecl;
+{-} PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
 {-} PyImport_Cleanup:procedure; cdecl;
 {-} PyImport_GetMagicNumber:function :LONGINT; cdecl;
-{+} PyImport_ImportFrozenModule:function (key:PChar):integer; cdecl;
-{+} PyImport_ImportModule:function (name:PChar):PPyObject; cdecl;
+{+} PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
+{+} PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
 {+} PyImport_Import:function (name:PPyObject):PPyObject; cdecl;
 {-} //PyImport_Init:procedure; cdecl;
 {-} PyImport_ReloadModule:function (ob:PPyObject):PPyObject; cdecl;
@@ -1955,7 +1759,7 @@ type
 {+} PyLong_AsLong:function (ob:PPyObject):LONGINT; cdecl;
 {+} PyLong_FromDouble:function (db:double):PPyObject; cdecl;
 {+} PyLong_FromLong:function (l:longint):PPyObject; cdecl;
-{-} PyLong_FromString:function (pc:PChar;var ppc:PChar;i:integer):PPyObject; cdecl;
+{-} PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
 {-} PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
 {-} PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
 {$IFDEF UNICODE_SUPPORT}
@@ -1966,27 +1770,25 @@ type
 {-} PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
 {$ENDIF}
 {-} PyMapping_Check:function (ob:PPyObject):integer; cdecl;
-{-} PyMapping_GetItemString:function (ob:PPyObject;key:PChar):PPyObject; cdecl;
+{-} PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
-{-} PyMapping_HasKeyString:function (ob:PPyObject;key:PChar):integer; cdecl;
+{-} PyMapping_HasKeyString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
 {-} PyMapping_Length:function (ob:PPyObject):integer; cdecl;
-{-} PyMapping_SetItemString:function (ob:PPyObject; key:PChar; value:PPyObject):integer; cdecl;
+{-} PyMapping_SetItemString:function (ob:PPyObject; key:PAnsiChar; value:PPyObject):integer; cdecl;
 {-} PyMethod_Class:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyMethod_Function:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyMethod_New:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
 {-} PyMethod_Self:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyModule_GetName:function (ob:PPyObject):PChar; cdecl;
-{-} PyModule_New:function (key:PChar):PPyObject; cdecl;
+{-} PyModule_GetName:function (ob:PPyObject):PAnsiChar; cdecl;
+{-} PyModule_New:function (key:PAnsiChar):PPyObject; cdecl;
 {-} PyNumber_Absolute:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyNumber_Add:function (ob1,ob2:PPyObject):PPyObject; cdecl;
 {-} PyNumber_And:function (ob1,ob2:PPyObject):PPyObject; cdecl;
 {-} PyNumber_Check:function (ob:PPyObject):integer; cdecl;
 {-} PyNumber_Coerce:function (var ob1,ob2:PPyObject):integer; cdecl;
 {-} PyNumber_Divide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{$IFDEF PYTHON22_OR_HIGHER}
 {-} PyNumber_FloorDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
 {-} PyNumber_TrueDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{$ENDIF}
 {-} PyNumber_Divmod:function (ob1,ob2:PPyObject):PPyObject; cdecl;
 {-} PyNumber_Float:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyNumber_Int:function (ob:PPyObject):PPyObject; cdecl;
@@ -2005,23 +1807,22 @@ type
 {-} PyOS_InitInterrupts:procedure; cdecl;
 {-} PyOS_InterruptOccurred:function :integer; cdecl;
 {+} PyObject_CallObject:function (ob,args:PPyObject):PPyObject; cdecl;
-    PyObject_CallMethodStr: function ( obj : PPyObject; method, format, value : PChar ) : PPyObject; cdecl;
+    PyObject_CallMethodStr: function ( obj : PPyObject; method, format, value : PAnsiChar ) : PPyObject; cdecl;
     PyObject_Compare: function (ob1,ob2:PPyObject):integer; cdecl;
     PyObject_RichCompare:function (ob1,ob2:PPyObject;opid:integer):PPyObject; cdecl;
     PyObject_RichCompareBool:function (ob1,ob2:PPyObject;opid:integer):Integer; cdecl;
 {-} PyObject_GetAttr:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{+} PyObject_GetAttrString:function (ob:PPyObject;c:PChar):PPyObject; cdecl;
+{+} PyObject_GetAttrString:function (ob:PPyObject;c:PAnsiChar):PPyObject; cdecl;
 {-} PyObject_GetItem:function (ob,key:PPyObject):PPyObject; cdecl;
 {-} PyObject_DelItem:function (ob,key:PPyObject):PPyObject; cdecl;
-{-} PyObject_HasAttrString:function (ob:PPyObject;key:PChar):integer; cdecl;
+{-} PyObject_HasAttrString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
 {-} PyObject_Hash:function (ob:PPyObject):LONGINT; cdecl;
 {-} PyObject_IsTrue:function (ob:PPyObject):integer; cdecl;
 {-} PyObject_Length:function (ob:PPyObject):integer; cdecl;
 {-} PyObject_Repr:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyObject_SetAttr:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
-{-} PyObject_SetAttrString:function (ob:PPyObject;key:Pchar;value:PPyObject):integer; cdecl;
+{-} PyObject_SetAttrString:function (ob:PPyObject;key:PAnsiChar;value:PPyObject):integer; cdecl;
 {-} PyObject_SetItem:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
-{$IFDEF PYTHON20_OR_HIGHER}
 {-} PyObject_Init:function (ob:PPyObject; t:PPyTypeObject):PPyObject; cdecl;
 {-} PyObject_InitVar:function (ob:PPyObject; t:PPyTypeObject; size:integer):PPyObject; cdecl;
 {-} PyObject_New:function (t:PPyTypeObject):PPyObject; cdecl;
@@ -2029,17 +1830,11 @@ type
     PyObject_Free:procedure (ob:PPyObject); cdecl;
     PyObject_GetIter: function (obj: PPyObject) : PPyObject; cdecl;
     PyIter_Next: function (obj: PPyObject) : PPyObject; cdecl;
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
 {-} PyObject_IsInstance:function (inst, cls:PPyObject):integer; cdecl;
 {-} PyObject_IsSubclass:function (derived, cls:PPyObject):integer; cdecl;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     PyObject_Call:function (ob, args, kw:PPyObject):PPyObject; cdecl;
     PyObject_GenericGetAttr:function (obj, name : PPyObject) : PPyObject; cdecl;
     PyObject_GenericSetAttr:function (obj, name, value : PPyObject) : Integer; cdecl;
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
 {-} PyObject_GC_Malloc:function (size:integer):PPyObject; cdecl;
 {-} PyObject_GC_New:function (t:PPyTypeObject):PPyObject; cdecl;
 {-} PyObject_GC_NewVar:function (t:PPyTypeObject; size:integer):PPyObject; cdecl;
@@ -2047,7 +1842,6 @@ type
 {-} PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
 {-} PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
 {-} PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
-{$ENDIF}
 {$IFNDEF PYTHON25_OR_HIGHER}
 {-} PyRange_New:function (l1,l2,l3:longint;i:integer):PPyObject; cdecl;
 {$ENDIF}
@@ -2064,28 +1858,22 @@ type
 {-} PySequence_SetSlice:function (ob:PPyObject;i1,i2:integer;value:PPyObject):integer; cdecl;
 {-} PySequence_DelSlice:function (ob:PPyObject;i1,i2:integer):integer; cdecl;
 {-} PySequence_Tuple:function (ob:PPyObject):PPyObject; cdecl;
-{$IFDEF PYTHON20_OR_HIGHER}
 {-} PySequence_Contains:function (ob, value:PPyObject):integer; cdecl;
     PySeqIter_New: function(obj : PPyObject) : PPyObject; cdecl;
-{$ENDIF}
 {-} PySlice_GetIndices:function (ob:PPySliceObject;length:integer;var start,stop,step:integer):integer; cdecl;
-{$IFDEF PYTHON23_OR_HIGHER}
 {-} PySlice_GetIndicesEx:function (ob:PPySliceObject;length:integer;var start,stop,step,slicelength:integer):integer; cdecl;
-{$ENDIF}
 {-} PySlice_New:function (start,stop,step:PPyObject):PPyObject; cdecl;
 {-} PyString_Concat:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
 {-} PyString_ConcatAndDel:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
 {-} PyString_Format:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyString_FromStringAndSize:function (s:PChar;i:integer):PPyObject; cdecl;
+{-} PyString_FromStringAndSize:function (s:PAnsiChar;i:integer):PPyObject; cdecl;
 {-} PyString_Size:function (ob:PPyObject):integer; cdecl;
-{$IFDEF PYTHON23_OR_HIGHER}
-{-} PyString_DecodeEscape:function(s:PChar; len:integer; errors:PChar; unicode:integer; recode_encoding:PChar):PPyObject; cdecl;
+{-} PyString_DecodeEscape:function(s:PAnsiChar; len:integer; errors:PAnsiChar; unicode:integer; recode_encoding:PAnsiChar):PPyObject; cdecl;
 {-} PyString_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
-{$ENDIF}
-{+} PySys_GetObject:function (s:PChar):PPyObject; cdecl;
+{+} PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
 {-} //PySys_Init:procedure; cdecl;
-{-} PySys_SetObject:function (s:PChar;ob:PPyObject):integer; cdecl;
-{-} PySys_SetPath:procedure(path:PChar); cdecl;
+{-} PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
+{-} PySys_SetPath:procedure(path:PAnsiChar); cdecl;
 {-} //PyTraceBack_Fetch:function :PPyObject; cdecl;
 {-} PyTraceBack_Here:function (p:pointer):integer; cdecl;
 {-} PyTraceBack_Print:function (ob1,ob2:PPyObject):integer; cdecl;
@@ -2095,62 +1883,54 @@ type
 {+} PyTuple_New:function (size:Integer):PPyObject; cdecl;
 {+} PyTuple_SetItem:function (ob:PPyObject;key:integer;value:PPyObject):integer; cdecl;
 {+} PyTuple_Size:function (ob:PPyObject):integer; cdecl;
-{$IFDEF PYTHON22_OR_HIGHER}
 {+} PyType_IsSubtype:function (a, b : PPyTypeObject):integer; cdecl;
     PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:Integer) : PPyObject; cdecl;
     PyType_GenericNew:function(atype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
     PyType_Ready:function(atype: PPyTypeObject) : integer; cdecl;
-{$ENDIF}
 {$IFDEF UNICODE_SUPPORT}
 {+} PyUnicode_FromWideChar:function (const w:PWideChar; size:integer):PPyObject; cdecl;
 {+} PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:integer):integer; cdecl;
-    PyUnicode_Decode:function (const s:PChar; size: integer; const encoding : PChar; const errors: PChar):PPyObject; cdecl;
-    PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PChar; const errors:PChar):PPyObject; cdecl;
-{$IFDEF PYTHON23_OR_HIGHER}
+    PyUnicode_Decode:function (const s:PAnsiChar; size: integer; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
+    PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
 {-} PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
 {$ENDIF}
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWrapper_New: function ( ob1, ob2 : PPyObject) : PPyObject; cdecl;
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
     PyBool_FromLong: function ( ok : Integer) : PPyObject; cdecl;
-    PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;   
-{$ENDIF}
+    PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;
 {-} Py_AtExit:function (proc: AtExitProc):integer; cdecl;
 {-} //Py_Cleanup:procedure; cdecl;
-{-} Py_CompileString:function (s1,s2:PChar;i:integer):PPyObject; cdecl;
-{-} Py_FatalError:procedure(s:PChar); cdecl;
-{-} Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PChar):PPyObject; cdecl;
-{-} Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PChar):PPyObject; cdecl;
+{-} Py_CompileString:function (s1,s2:PAnsiChar;i:integer):PPyObject; cdecl;
+{-} Py_FatalError:procedure(s:PAnsiChar); cdecl;
+{-} Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
+{-} Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} _PyObject_New:function (obt:PPyTypeObject;ob:PPyObject):PPyObject; cdecl;
 {-} _PyString_Resize:function (var ob:PPyObject;i:integer):integer; cdecl;
 {+} Py_Finalize                     : procedure; cdecl;
 {-} PyErr_ExceptionMatches          : function ( exc : PPyObject) : Integer; cdecl;
 {-} PyErr_GivenExceptionMatches     : function ( raised_exc, exc : PPyObject) : Integer; cdecl;
 {-} PyEval_EvalCode                 : function ( co : PPyCodeObject; globals, locals : PPyObject) : PPyObject; cdecl;
-{+} Py_GetVersion                   : function : PChar; cdecl;
-{+} Py_GetCopyright                 : function : PChar; cdecl;
-{+} Py_GetExecPrefix                : function : PChar; cdecl;
-{+} Py_GetPath                      : function : PChar; cdecl;
-{+} Py_GetPrefix                    : function : PChar; cdecl;
-{+} Py_GetProgramName               : function : PChar; cdecl;
+{+} Py_GetVersion                   : function : PAnsiChar; cdecl;
+{+} Py_GetCopyright                 : function : PAnsiChar; cdecl;
+{+} Py_GetExecPrefix                : function : PAnsiChar; cdecl;
+{+} Py_GetPath                      : function : PAnsiChar; cdecl;
+{+} Py_GetPrefix                    : function : PAnsiChar; cdecl;
+{+} Py_GetProgramName               : function : PAnsiChar; cdecl;
 
-{-} PyParser_SimpleParseString      : function ( str : PChar; start : Integer) : PNode; cdecl;
+{-} PyParser_SimpleParseString      : function ( str : PAnsiChar; start : Integer) : PNode; cdecl;
 {-} PyNode_Free                     : procedure( n : PNode ); cdecl;
-{-} PyErr_NewException              : function ( name : PChar; base, dict : PPyObject ) : PPyObject; cdecl;
+{-} PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
 {-} Py_Malloc                       : function ( size : Integer ) : Pointer;
 {-} PyMem_Malloc                    : function ( size : Integer ) : Pointer;
-{-} PyObject_CallMethod             : function ( obj : PPyObject; method, format : PChar ) : PPyObject; cdecl;
+{-} PyObject_CallMethod             : function ( obj : PPyObject; method, format : PAnsiChar ) : PPyObject; cdecl;
 
 {New exported Objects in Python 1.5}
-    Py_SetProgramName               : procedure( name: PChar); cdecl;
+    Py_SetProgramName               : procedure( name: PAnsiChar); cdecl;
     Py_SetProgramName3000           : procedure( name: PWideChar); cdecl;
     Py_IsInitialized                : function : integer; cdecl;
-    Py_GetProgramFullPath           : function : PChar; cdecl;
+    Py_GetProgramFullPath           : function : PAnsiChar; cdecl;
     Py_NewInterpreter               : function : PPyThreadState; cdecl;
     Py_EndInterpreter               : procedure( tstate: PPyThreadState); cdecl;
     PyEval_AcquireLock              : procedure; cdecl;
@@ -2239,20 +2019,20 @@ type
   procedure   Py_XINCREF  ( op: PPyObject);
   procedure   Py_XDECREF  ( op: PPyObject);
 
-  function    Py_GetPlatform: PChar; cdecl;
+  function    Py_GetPlatform: PAnsiChar; cdecl;
 
-  function PyArg_Parse     ( args: PPyObject; format: PChar;
+  function PyArg_Parse     ( args: PPyObject; format: PAnsiChar;
                              argp: array of Pointer): Integer; cdecl;
-  function PyArg_ParseTuple( args: PPyObject; format: PChar;
+  function PyArg_ParseTuple( args: PPyObject; format: PAnsiChar;
                              argp: array of Pointer): Integer; cdecl;
 // This function handles all cardinals, pointer types (with no adjustment of pointers!)
 // (Extended) floats, which are handled as Python doubles and currencies, handled
 // as (normalized) Python doubles.
-  function Py_BuildValue( format: PChar; args: array of const): PPyObject; cdecl;
+  function Py_BuildValue( format: PAnsiChar; args: array of const): PPyObject; cdecl;
   function PyObject_CallMethodWithArgs( obj : PPyObject; method,
-                                        format: PChar; args: array of const): PPyObject; cdecl;
+                                        format: PAnsiChar; args: array of const): PPyObject; cdecl;
   function PyCode_Addr2Line( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
-  function Py_GetBuildInfo: PChar; cdecl;
+  function Py_GetBuildInfo: PAnsiChar; cdecl;
   function PyImport_ExecCodeModule( const AName : String; codeobject : PPyObject) : PPyObject;
   function PyString_Check( obj : PPyObject ) : Boolean;
   function PyString_CheckExact( obj : PPyObject ) : Boolean;
@@ -2281,24 +2061,18 @@ type
   function PyUnicode_Check( obj : PPyObject ) : Boolean;
   function PyUnicode_CheckExact( obj : PPyObject ) : Boolean;
 {$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   function PyType_IS_GC(t : PPyTypeObject ) : Boolean;
   function PyObject_IS_GC( obj : PPyObject ) : Boolean;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   function PyWeakref_Check( obj : PPyObject ) : Boolean;
   function PyWeakref_CheckRef( obj : PPyObject ) : Boolean;
   function PyWeakref_CheckProxy( obj : PPyObject ) : Boolean;
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
   function PyBool_Check( obj : PPyObject ) : Boolean;
   function PyBaseString_Check( obj : PPyObject ) : Boolean;
   function PyEnum_Check( obj : PPyObject ) : Boolean;
-{$ENDIF}
   function PyObject_TypeCheck(obj:PPyObject; t:PPyTypeObject) : Boolean;
-  function Py_InitModule( const AName : PChar; md : PPyMethodDef) : PPyObject;
+  function Py_InitModule( const AName : PAnsiChar; md : PPyMethodDef) : PPyObject;
   function Py_InitModule3000( const md : PyModuleDef) : PPyObject;
-  function PyString_FromString( str: PChar): PPyObject; virtual; abstract;
+  function PyString_FromString( str: PAnsiChar): PPyObject; virtual; abstract;
   function PyString_AsDelphiString( ob: PPyObject): string;  virtual; abstract;
   procedure Py_FlushLine; cdecl;
 
@@ -2426,22 +2200,20 @@ type
     procedure  Lock;
     procedure  Unlock;
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
-    function   GetAttrString(obj: PPyObject; AName: PChar):PChar;
+    function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
     function   CleanString(const s : string) : string;
     function   Run_CommandAsString(const command : String; mode : Integer) : String;
     function   Run_CommandAsObject(const command : String; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : String; mode : Integer; locals, globals : PPyObject) : PPyObject;
-    procedure  ExecString(const command : String); {$IFDEF DELPHI4_OR_HIGHER}overload;{$ENDIF}
-    procedure  ExecStrings( strings : TStrings ); {$IFDEF DELPHI4_OR_HIGHER}overload;{$ENDIF}
-    function   EvalString(const command : String) : PPyObject; {$IFDEF DELPHI4_OR_HIGHER}overload;{$ENDIF}
+    procedure  ExecString(const command : String); overload;
+    procedure  ExecStrings( strings : TStrings ); overload;
+    function   EvalString(const command : String) : PPyObject; overload;
     function   EvalStringAsStr(const command : String) : String;
-    function   EvalStrings( strings : TStrings ) : PPyObject; {$IFDEF DELPHI4_OR_HIGHER}overload;{$ENDIF}
-{$IFDEF DELPHI4_OR_HIGHER}
+    function   EvalStrings( strings : TStrings ) : PPyObject; overload;
     procedure  ExecString(const command : String; locals, globals : PPyObject ); overload;
     procedure  ExecStrings( strings : TStrings; locals, globals : PPyObject ); overload;
     function   EvalString( const command : String; locals, globals : PPyObject ) : PPyObject; overload;
     function   EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject; overload;
-{$ENDIF}
     function   EvalStringsAsStr( strings : TStrings ) : String;
     function   EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
     function   EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
@@ -2479,7 +2251,7 @@ type
     function   FindFunction(ModuleName,FuncName: String): PPyObject;
     function   SetToList( data : Pointer; size : Integer ) : PPyObject;
     procedure  ListToSet( List : PPyObject; data : Pointer; size : Integer );
-    procedure  CheckError(ACatchStopEx : Boolean {$IFDEF DELPHI4_OR_HIGHER}= False{$ENDIF});
+    procedure  CheckError(ACatchStopEx : Boolean = False);
     function   GetMainModule : PPyObject;
     function   PyTimeStruct_Check( obj : PPyObject ) : Boolean;
     { Date, Time, DateTime and related objects check functions }
@@ -2507,7 +2279,7 @@ type
     function   PyDateTime_TIME_GET_SECOND( obj : PPyObject ) : Integer;
     function   PyDateTime_TIME_GET_MICROSECOND( obj : PPyObject ) : Integer;
     { end date/time functions }
-    function   PyString_FromString( str: PChar): PPyObject; override;
+    function   PyString_FromString( str: PAnsiChar): PPyObject; override;
     function PyString_AsDelphiString( ob: PPyObject): string; override;
 
     // Public Properties
@@ -2660,18 +2432,18 @@ type
       procedure Initialize; override;
       procedure Finalize; override;
 
-      function  AddMethod( AMethodName  : PChar;
+      function  AddMethod( AMethodName  : PAnsiChar;
                            AMethod  : PyCFunction;
-                           ADocString : PChar ) : PPyMethodDef;
-      function  AddMethodWithKeywords( AMethodName  : PChar;
+                           ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddMethodWithKeywords( AMethodName  : PAnsiChar;
                                        AMethod  : PyCFunctionWithKW;
-                                       ADocString : PChar ) : PPyMethodDef;
-      function  AddDelphiMethod( AMethodName  : PChar;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddDelphiMethod( AMethodName  : PAnsiChar;
                                  ADelphiMethod: TDelphiMethod;
-                                 ADocString : PChar ) : PPyMethodDef;
-      function  AddDelphiMethodWithKeywords(  AMethodName  : PChar;
+                                 ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddDelphiMethodWithKeywords(  AMethodName  : PAnsiChar;
                                               ADelphiMethod: TDelphiMethodWithKW;
-                                              ADocString : PChar ) : PPyMethodDef;
+                                              ADocString : PAnsiChar ) : PPyMethodDef;
       procedure ClearMethods;
 
       // properties
@@ -2691,16 +2463,13 @@ type
 //--                                                        --
 //------------------------------------------------------------
 
-{$IFDEF PYTHON22_OR_HIGHER}
   TMemberArray = array[ 0 .. 16000 ] of PyMemberDef;
   PMemberArray = ^TMemberArray;
-{$ENDIF}
 
   // class TMembersContainer
   TMembersContainer = class(TMethodsContainer)
     protected
       function  GetMembersStartOffset : Integer; virtual;
-{$IFDEF PYTHON22_OR_HIGHER}
     private
       FMemberCount : Integer;
       FAllocatedMemberCount : Integer;
@@ -2719,11 +2488,11 @@ type
       destructor  Destroy; override;
 
       // public methods
-      procedure AddMember( MemberName  : PChar;
+      procedure AddMember( MemberName  : PAnsiChar;
                            MemberType  : TPyMemberType;
                            MemberOffset : Integer;
                            MemberFlags : TPyMemberFlag;
-                           MemberDoc : PChar );
+                           MemberDoc : PAnsiChar );
       procedure ClearMembers;
       procedure Finalize; override;
 
@@ -2731,7 +2500,6 @@ type
       property MemberCount : Integer read FMemberCount;
       property Members[ idx : Integer ] : PPyMemberDef read GetMembers;
       property MembersData : PPyMemberDef read FMembers;
-{$ENDIF}
   end;
 
 //------------------------------------------------------------
@@ -2740,15 +2508,12 @@ type
 //--                                                        --
 //------------------------------------------------------------
 
-{$IFDEF PYTHON22_OR_HIGHER}
   TGetSetArray = array[ 0 .. 16000 ] of PyGetSetDef;
   PGetSetArray = ^TGetSetArray;
-{$ENDIF}
 
   // class TGetSetContainer
   TGetSetContainer = class(TMembersContainer)
     private
-{$IFDEF PYTHON22_OR_HIGHER}
       FGetSetCount : Integer;
       FAllocatedGetSetCount : Integer;
       FGetSets : PPyGetSetDef;
@@ -2766,10 +2531,10 @@ type
       destructor  Destroy; override;
 
       // public methods
-      procedure AddGetSet( AName  : PChar;
+      procedure AddGetSet( AName  : PAnsiChar;
                            AGet : getter;
                            ASet : setter;
-                           ADoc : PChar;
+                           ADoc : PAnsiChar;
                            AClosure : Pointer);
       procedure ClearGetSets;
       procedure Finalize; override;
@@ -2778,7 +2543,6 @@ type
       property GetSetCount : Integer read FGetSetCount;
       property GetSet[ idx : Integer ] : PPyGetSetDef read GetGetSet;
       property GetSetData : PPyGetSetDef read FGetSets;
-{$ENDIF}
   end;
 
 //-------------------------------------------------------
@@ -2967,8 +2731,8 @@ type
 
     // Basic services
     function  Print( var f: file; i: integer) : Integer; virtual;
-    function  GetAttr(key : PChar) : PPyObject; virtual;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; virtual;
+    function  GetAttr(key : PAnsiChar) : PPyObject; virtual;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; virtual;
     function  Repr : PPyObject; virtual;
     function  Compare( obj: PPyObject) : Integer; virtual;
     function  Hash : Integer; virtual;
@@ -2976,9 +2740,7 @@ type
     function  GetAttrO( key: PPyObject) : PPyObject; virtual;
     function  SetAttrO( key, value: PPyObject) : Integer; virtual;
     function  Call( ob1, ob2 : PPyObject) : PPyObject; virtual;
-{$IFDEF PYTHON20_OR_HIGHER}
     function  Traverse( proc: visitproc; ptr: Pointer) : integer; virtual;
-{$ENDIF}
     function  Clear: integer; virtual;
     function  RichCompare( obj : PPyObject; Op : TRichComparisonOpcode) : PPyObject; virtual;
     function  Iter : PPyObject; virtual;
@@ -3256,8 +3018,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Class methods
@@ -3342,9 +3104,7 @@ function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
-{$IFDEF PYTHON20_OR_HIGHER}
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
-{$ENDIF}
 
 //#######################################################
 //##                                                   ##
@@ -3586,9 +3346,9 @@ begin
     FDllName := aDllName;
     FDLLHandle := SafeLoadLibrary(
       {$IFDEF FPC}
-        PChar(AnsiString(GetDllPath+DllName))
+        PAnsiChar(AnsiString(GetDllPath+DllName))
       {$ELSE}
-        PChar(GetDllPath+DllName)
+        PAnsiChar(GetDllPath+DllName)
       {$ENDIF}
     );
   end;
@@ -3675,7 +3435,7 @@ begin
 {$ENDIF}
     if FatalMsgDlg then
 {$IFDEF MSWINDOWS}
-      MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+      MessageBox( GetActiveWindow, PAnsiChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
 {$ENDIF}
 {$IFDEF LINUX}
       WriteLn(ErrOutput, s);
@@ -3707,7 +3467,7 @@ function TDynamicDll.Import(const funcname: String; canFail : Boolean = True): P
 var
   E : EDllImportError;
 begin
-  Result := GetProcAddress( FDLLHandle, PChar(funcname) );
+  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
   if (Result = nil) and canFail then begin
     E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
     E.ErrorCode := GetLastError;
@@ -3774,7 +3534,7 @@ procedure TDynamicDll.Quit;
 begin
   if not( csDesigning in ComponentState ) then begin
 {$IFDEF MSWINDOWS}
-    MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+    MessageBox( GetActiveWindow, PAnsiChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
     ExitProcess( 1 );
 {$ENDIF}
 {$IFDEF LINUX}
@@ -3838,7 +3598,7 @@ begin
     on E: Exception do begin
       if FatalMsgDlg then
 {$IFDEF MSWINDOWS}
-        MessageBox( GetActiveWindow, PChar(E.Message), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+        MessageBox( GetActiveWindow, PAnsiChar(E.Message), 'Error', MB_TASKMODAL or MB_ICONSTOP );
 {$ENDIF}
 {$IFDEF LINUX}
         WriteLn( ErrOutput, E.Message );
@@ -3884,16 +3644,12 @@ begin
   Py_NoSiteFlag              := Import('Py_NoSiteFlag');
   Py_UseClassExceptionsFlag  := Import('Py_UseClassExceptionsFlag');
   Py_FrozenFlag              := Import('Py_FrozenFlag');
-{$IFDEF PYTHON20_OR_HIGHER}
   if not IsPython3000 then begin
     Py_TabcheckFlag            := Import('Py_TabcheckFlag');
     Py_UnicodeFlag             := Import('Py_UnicodeFlag');
   end;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   Py_IgnoreEnvironmentFlag   := Import('Py_IgnoreEnvironmentFlag');
   Py_DivisionWarningFlag     := Import('Py_DivisionWarningFlag');
-{$ENDIF}
 
   //_PySys_TraceFunc           := Import('_PySys_TraceFunc');
   //_PySys_ProfileFunc         := Import('_PySys_ProfileFunc');
@@ -3905,9 +3661,7 @@ begin
   else
     Py_False                   := Import('_Py_ZeroStruct');
   Py_True                    := Import('_Py_TrueStruct');
-{$IFDEF PYTHON21_OR_HIGHER}
   Py_NotImplemented          := Import('_Py_NotImplementedStruct');
-{$ENDIF}
 
   PyImport_FrozenModules     := Import('PyImport_FrozenModules');
 
@@ -3934,7 +3688,6 @@ begin
   PyExc_LookupError          := Import('PyExc_LookupError');
   if not IsPython3000 then
     PyExc_StandardError        := Import('PyExc_StandardError');
-{$IFDEF PYTHON20_OR_HIGHER}
   PyExc_AssertionError       := Import('PyExc_AssertionError');
   PyExc_EnvironmentError     := Import('PyExc_EnvironmentError');
   PyExc_IndentationError     := Import('PyExc_IndentationError');
@@ -3947,25 +3700,18 @@ begin
   {$IFDEF MSWINDOWS}
     PyExc_WindowsError       := Import('PyExc_WindowsError');
   {$ENDIF}
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
   PyExc_Warning              := Import('PyExc_Warning');
   PyExc_DeprecationWarning   := Import('PyExc_DeprecationWarning');
   PyExc_RuntimeWarning       := Import('PyExc_RuntimeWarning');
   PyExc_SyntaxWarning        := Import('PyExc_SyntaxWarning');
   PyExc_UserWarning          := Import('PyExc_UserWarning');
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   PyExc_ReferenceError       := Import('PyExc_ReferenceError');
   PyExc_StopIteration        := Import('PyExc_StopIteration');
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
   PyExc_FutureWarning        := Import('PyExc_FutureWarning');
   PyExc_PendingDeprecationWarning:= Import('PyExc_PendingDeprecationWarning');
   PyExc_UnicodeDecodeError   := Import('PyExc_UnicodeDecodeError');
   PyExc_UnicodeEncodeError   := Import('PyExc_UnicodeEncodeError');
   PyExc_UnicodeTranslateError:= Import('PyExc_UnicodeTranslateError');
-{$ENDIF}
   PyType_Type                := Import('PyType_Type');
   PyCFunction_Type           := Import('PyCFunction_Type');
   PyCObject_Type             := Import('PyCObject_Type');
@@ -3998,7 +3744,6 @@ begin
 {$IFDEF UNICODE_SUPPORT}
   PyUnicode_Type             := Import('PyUnicode_Type');
 {$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   PyBaseObject_Type          := Import('PyBaseObject_Type');
   if not IsPython3000 then
     PyBuffer_Type              := Import('PyBuffer_Type');
@@ -4017,13 +3762,10 @@ begin
   _PyWeakref_RefType         := Import('_PyWeakref_RefType');
   _PyWeakref_ProxyType       := Import('_PyWeakref_ProxyType');
   _PyWeakref_CallableProxyType:=Import('_PyWeakref_CallableProxyType');
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
   if not IsPython3000 then
     PyBaseString_Type          := Import('PyBaseString_Type');
   PyBool_Type                := Import('PyBool_Type');
   PyEnum_Type                := Import('PyEnum_Type');
-{$ENDIF}
 
   //@PyArg_GetObject           := Import('PyArg_GetObject');
   //@PyArg_GetLong             := Import('PyArg_GetLong');
@@ -4057,10 +3799,8 @@ begin
   @PyDict_Items              := Import('PyDict_Items');
   @PyDict_Size               := Import('PyDict_Size');
   @PyDict_DelItemString      := Import('PyDict_DelItemString');
-{$IFDEF PYTHON22_OR_HIGHER}
   @PyDict_Copy               := Import('PyDict_Copy');
   @PyDictProxy_New           := Import('PyDictProxy_New');
-{$ENDIF}
   if not IsPython3000 then
     @Py_InitModule4            := Import('Py_InitModule4')
   else
@@ -4198,10 +3938,8 @@ begin
     @PyNumber_Divide           :=Import('PyNumber_TrueDivide')
   else
     @PyNumber_Divide           :=Import('PyNumber_Divide');
-{$IFDEF PYTHON22_OR_HIGHER}
   @PyNumber_FloorDivide      :=Import('PyNumber_FloorDivide');
   @PyNumber_TrueDivide       :=Import('PyNumber_TrueDivide');
-{$ENDIF}
   @PyNumber_Divmod           :=Import('PyNumber_Divmod');
   @PyNumber_Float            :=Import('PyNumber_Float');
   if not IsPython3000 then
@@ -4224,10 +3962,8 @@ begin
   @PyObject_CallMethodStr    :=Import('PyObject_CallMethod');
   if not IsPython3000 then
     @PyObject_Compare          :=Import('PyObject_Compare');
-{$IFDEF PYTHON21_OR_HIGHER}
   @PyObject_RichCompare      :=Import('PyObject_RichCompare');
   @PyObject_RichCompareBool  :=Import('PyObject_RichCompareBool');
-{$ENDIF}
   @PyObject_GetAttr          :=Import('PyObject_GetAttr');
   @PyObject_GetAttrString    :=Import('PyObject_GetAttrString');
   @PyObject_GetItem          :=Import('PyObject_GetItem');
@@ -4240,7 +3976,6 @@ begin
   @PyObject_SetAttr          :=Import('PyObject_SetAttr');
   @PyObject_SetAttrString    :=Import('PyObject_SetAttrString');
   @PyObject_SetItem          :=Import('PyObject_SetItem');
-{$IFDEF PYTHON20_OR_HIGHER}
   @PyObject_Init             :=Import('PyObject_Init');
   @PyObject_InitVar          :=Import('PyObject_InitVar');
   @PyObject_New              :=Import('_PyObject_New');
@@ -4248,17 +3983,11 @@ begin
   @PyObject_Free             :=Import('PyObject_Free');
   @PyObject_GetIter          :=Import('PyObject_GetIter');
   @PyIter_Next               :=Import('PyIter_Next');
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
   @PyObject_IsInstance       :=Import('PyObject_IsInstance');
   @PyObject_IsSubclass       :=Import('PyObject_IsSubclass');
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   @PyObject_Call             :=Import('PyObject_Call');
   @PyObject_GenericGetAttr   :=Import('PyObject_GenericGetAttr');
   @PyObject_GenericSetAttr   :=Import('PyObject_GenericSetAttr');
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
   PyObject_GC_Malloc         :=Import('_PyObject_GC_Malloc');
   PyObject_GC_New            :=Import('_PyObject_GC_New');
   PyObject_GC_NewVar         :=Import('_PyObject_GC_NewVar');
@@ -4266,7 +3995,6 @@ begin
   PyObject_GC_Del            :=Import('PyObject_GC_Del');
   PyObject_GC_Track          :=Import('PyObject_GC_Track');
   PyObject_GC_UnTrack        :=Import('PyObject_GC_UnTrack');
-{$ENDIF}
 {$IFNDEF PYTHON25_OR_HIGHER}
   @PyRange_New               :=Import('PyRange_New', False);
 {$ENDIF}
@@ -4283,14 +4011,10 @@ begin
   @PySequence_SetSlice       :=Import('PySequence_SetSlice');
   @PySequence_DelSlice       :=Import('PySequence_DelSlice');
   @PySequence_Tuple          :=Import('PySequence_Tuple');
-{$IFDEF PYTHON20_OR_HIGHER}
   @PySequence_Contains       :=Import('PySequence_Contains');
-{$ENDIF}
   @PySlice_GetIndices        :=Import('PySlice_GetIndices');
   @PySeqIter_New             :=Import('PySeqIter_New');
-{$IFDEF PYTHON23_OR_HIGHER}
   @PySlice_GetIndicesEx      :=Import('PySlice_GetIndicesEx');
-{$ENDIF}
   @PySlice_New               :=Import('PySlice_New');
   if not IsPython3000 then begin
     @PyString_Concat           :=Import('PyString_Concat');
@@ -4298,10 +4022,8 @@ begin
     @PyString_Format           :=Import('PyString_Format');
     @PyString_FromStringAndSize:=Import('PyString_FromStringAndSize');
     @PyString_Size             :=Import('PyString_Size');
-    {$IFDEF PYTHON23_OR_HIGHER}
       @PyString_DecodeEscape     :=Import('PyString_DecodeEscape');
       @PyString_Repr             :=Import('PyString_Repr');
-    {$ENDIF}
   end else begin
     @PyString_Concat           :=Import('PyBytes_Concat');
     @PyString_ConcatAndDel     :=Import('PyBytes_ConcatAndDel');
@@ -4323,31 +4045,23 @@ begin
   @PyTuple_New               :=Import('PyTuple_New');
   @PyTuple_SetItem           :=Import('PyTuple_SetItem');
   @PyTuple_Size              :=Import('PyTuple_Size');
-{$IFDEF PYTHON22_OR_HIGHER}
   @PyType_IsSubtype          :=Import('PyType_IsSubtype');
   @PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   @PyType_GenericNew         :=Import('PyType_GenericNew');
   @PyType_Ready              :=Import('PyType_Ready');
-{$ENDIF}
 {$IFDEF UNICODE_SUPPORT}
   @PyUnicode_FromWideChar    :=Import(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix]));
   @PyUnicode_AsWideChar      :=Import(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix]));
   @PyUnicode_Decode          :=Import(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix]));
   @PyUnicode_AsEncodedString :=Import(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix]));
-{$IFDEF PYTHON23_OR_HIGHER}
   @PyUnicode_FromOrdinal     :=Import(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix]));
 {$ENDIF}
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   @PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   @PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   @PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
   @PyWrapper_New             :=Import('PyWrapper_New');
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
   @PyBool_FromLong           :=Import('PyBool_FromLong');
   @PyThreadState_SetAsyncExc :=Import('PyThreadState_SetAsyncExc');
-{$ENDIF}
   @Py_AtExit                 :=Import('Py_AtExit');
   //@Py_Cleanup                :=Import('Py_Cleanup');
   @Py_CompileString          :=Import('Py_CompileString');
@@ -4380,20 +4094,15 @@ begin
   @PyParser_SimpleParseString :=Import('PyParser_SimpleParseString');
   @PyNode_Free                :=Import('PyNode_Free');
   @PyErr_NewException         :=Import('PyErr_NewException');
-{$IFDEF PYTHON20_OR_HIGHER}
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   replaced Py_Malloc with PyMem_Malloc
 ///---   @Py_Malloc := Import ('Py_Malloc');
 ///+++   @Py_Malloc := Import ('PyMem_Malloc');
-   try
-     @Py_Malloc := Import ('PyMem_Malloc');
-     @PyMem_Malloc := Import ('PyMem_Malloc');
-   except
-   end;
-{$ENDIF}
-{$IFDEF PYTHON15}
-   @Py_Malloc := Import ('Py_Malloc');
-{$ENDIF}
+  try
+    @Py_Malloc := Import ('PyMem_Malloc');
+    @PyMem_Malloc := Import ('PyMem_Malloc');
+  except
+  end;
   @PyObject_CallMethod        :=Import('PyObject_CallMethod');
   if (APIVersion < 1007) or
      (DllName = PYTHON_KNOWN_VERSIONS[1].DllName) then
@@ -4471,12 +4180,12 @@ begin
   if op <> nil then Py_DECREF(op);
 end;
 
-function TPythonInterface.Py_GetPlatform: PChar; cdecl;
+function TPythonInterface.Py_GetPlatform: PAnsiChar; cdecl;
 begin
   Py_GetPlatform := 'win32';
 end;
 
-function TPythonInterface.Py_BuildValue( format: PChar; args: array of const):
+function TPythonInterface.Py_BuildValue( format: PAnsiChar; args: array of const):
          PPyObject; {$IFNDEF FPC} assembler; {$ENDIF} cdecl;
 const tenthousand:double = 10000.0;
 var temp: Double;
@@ -4521,7 +4230,7 @@ end;
 {$IFDEF FPC} end; {$ENDIF}
 
 function TPythonInterface.PyObject_CallMethodWithArgs(obj: PPyObject; method,
-  format: PChar; args: array of const): PPyObject;
+  format: PAnsiChar; args: array of const): PPyObject;
  {$IFNDEF FPC} assembler; {$ENDIF} cdecl;
 const tenthousand:double = 10000.0;
 var temp: Double;
@@ -4571,7 +4280,7 @@ end;
 
 {DELPHI does the right thing here. It automatically generates
  a copy of the argp on the stack}
-function TPythonInterface.PyArg_Parse ( args: PPyObject; format: PChar;
+function TPythonInterface.PyArg_Parse ( args: PPyObject; format: PAnsiChar;
                        argp: array of Pointer): Integer; cdecl;
 begin
 {$IFDEF DELPHI6_OR_HIGHER}
@@ -4582,7 +4291,7 @@ begin
     lea edx, format
     push [edx]
 
-    sub edx, TYPE PChar
+    sub edx, TYPE PAnsiChar
     push [edx]
 
     mov eax, Self
@@ -4598,7 +4307,7 @@ begin
 {$ENDIF}
 end;
 
-function TPythonInterface.PyArg_ParseTuple ( args: PPyObject; format: PChar;
+function TPythonInterface.PyArg_ParseTuple ( args: PPyObject; format: PAnsiChar;
                             argp: array of Pointer): Integer; cdecl;
 begin
 {$IFDEF DELPHI6_OR_HIGHER}
@@ -4609,7 +4318,7 @@ begin
     lea edx, format
     push [edx]
 
-    sub edx, TYPE PChar
+    sub edx, TYPE PAnsiChar
     push [edx]
 
     mov eax, Self
@@ -4630,7 +4339,7 @@ end;
 function TPythonInterface.PyCode_Addr2Line( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
 var
   size : Integer;
-  p    : PChar;
+  p    : PAnsiChar;
   line : Integer;
   addr : Integer;
   cpt  : Integer;
@@ -4658,7 +4367,7 @@ begin
   Result := line;
 end;
 
-function TPythonInterface.Py_GetBuildInfo : PChar; cdecl;
+function TPythonInterface.Py_GetBuildInfo : PAnsiChar; cdecl;
 begin
   if Assigned(DLL_Py_GetBuildInfo) then
     begin
@@ -4674,11 +4383,11 @@ var
 begin
   if Assigned(DLL_PyImport_ExecCodeModule) then
   begin
-    Result := DLL_PyImport_ExecCodeModule(PChar(AName), codeobject);
+    Result := DLL_PyImport_ExecCodeModule(PAnsiChar(AName), codeobject);
     Exit;
   end;
   CheckPython;
-  m := PyImport_AddModule(PChar(AName));
+  m := PyImport_AddModule(PAnsiChar(AName));
   if not Assigned(m) then
     begin
       Result := nil;
@@ -4704,9 +4413,9 @@ begin
     end;
   Py_XDECREF(v);
   modules := PyImport_GetModuleDict;
-  if PyDict_GetItemString(modules, PChar(AName)) = nil then
+  if PyDict_GetItemString(modules, PAnsiChar(AName)) = nil then
     begin
-      PyErr_SetString(PyExc_ImportError^, PChar(Format('Loaded module %.200s not found in sys.modules', [AName])));
+      PyErr_SetString(PyExc_ImportError^, PAnsiChar(Format('Loaded module %.200s not found in sys.modules', [AName])));
       Result := nil;
       Exit;
     end;
@@ -4838,13 +4547,9 @@ end;
 
 function TPythonInterface.PyIter_Check( obj : PPyObject ) : Boolean;
 begin
-{$IFDEF PYTHON20_OR_HIGHER}
   Result := Assigned( obj ) and
             (IsPython3000 or (PyType_HasFeature(obj^.ob_type, Py_TPFLAGS_HAVE_ITER))
               and Assigned(obj^.ob_type^.tp_iternext));
-{$ELSE}
-  Result := False;
-{$ENDIF}
 end;
 
 {$IFDEF UNICODE_SUPPORT}
@@ -4859,7 +4564,6 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF PYTHON22_OR_HIGHER}
 function TPythonInterface.PyType_IS_GC(t : PPyTypeObject ) : Boolean;
 begin
   Result := PyType_HasFeature(t, Py_TPFLAGS_HAVE_GC);
@@ -4870,9 +4574,7 @@ begin
   Result := PyType_IS_GC(obj^.ob_type) and
             (not Assigned(obj^.ob_type^.tp_is_gc) or (obj^.ob_type^.tp_is_gc(obj) = 1));
 end;
-{$ENDIF}
 
-{$IFDEF PYTHON22_OR_HIGHER}
 function TPythonInterface.PyWeakref_Check( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned( obj ) and (PyWeakref_CheckRef(obj) or PyWeakref_CheckProxy(obj));
@@ -4889,9 +4591,7 @@ begin
             ( (obj^.ob_type = PPyTypeObject(_PyWeakref_ProxyType)) or
               (obj^.ob_type = PPyTypeObject(_PyWeakref_CallableProxyType)) );
 end;
-{$ENDIF}
 
-{$IFDEF PYTHON23_OR_HIGHER}
 function TPythonInterface.PyBool_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PyBool_Type);
@@ -4909,18 +4609,15 @@ function TPythonInterface.PyEnum_Check( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyEnum_Type));
 end;
-{$ENDIF}
 
 function TPythonInterface.PyObject_TypeCheck(obj : PPyObject; t : PPyTypeObject) : Boolean;
 begin
   Result := Assigned(obj) and (obj^.ob_type = t);
-{$IFDEF PYTHON23_OR_HIGHER}
   if not Result and Assigned(obj) and Assigned(t) then
     Result := PyType_IsSubtype(obj^.ob_type, t) = 1;
-{$ENDIF}
 end;
 
-function TPythonInterface.Py_InitModule( const AName : PChar; md : PPyMethodDef) : PPyObject;
+function TPythonInterface.Py_InitModule( const AName : PAnsiChar; md : PPyMethodDef) : PPyObject;
 begin
   CheckPython;
   Result := Py_InitModule4( AName, md, nil, nil, APIVersion );
@@ -5229,7 +4926,7 @@ begin
   if UseLastKnownVersion then
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
     begin
-      FDLLHandle := SafeLoadLibrary(PChar(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName));
+      FDLLHandle := SafeLoadLibrary(PAnsiChar(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName));
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
@@ -5262,16 +4959,12 @@ begin
   SetFlag(Py_NoSiteFlag,      pfNoSite in FPyFlags);
   SetFlag(Py_UseClassExceptionsFlag, pfUseClassExceptionsFlag in FPyFlags);
   SetFlag(Py_FrozenFlag,      pfFrozenFlag in FPyFlags);
-{$IFDEF PYTHON20_OR_HIGHER}
   if not IsPython3000 then begin
     SetFlag(Py_UnicodeFlag,     pfUnicode in FPyFlags);
     SetFlag(Py_TabcheckFlag,    pfTabcheck in FPyFlags);
   end;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
   SetFlag(Py_IgnoreEnvironmentFlag, pfIgnoreEnvironmentFlag in FPyFlags);
   SetFlag(Py_DivisionWarningFlag, pfDivisionWarningFlag in FPyFlags);
-{$ENDIF}
 end;
 
 procedure TPythonEngine.Initialize;
@@ -5287,7 +4980,7 @@ procedure TPythonEngine.Initialize;
 
   function GetVal(AModule : PPyObject; AVarName : String) : PPyObject;
   begin
-    Result := PyObject_GetAttrString(AModule, PChar(AVarName));
+    Result := PyObject_GetAttrString(AModule, PAnsiChar(AVarName));
     if PyErr_Occurred <> nil then
       PyErr_Clear
     else
@@ -5377,7 +5070,7 @@ begin
     if Assigned(Py_SetProgramName) then
     begin
       FProgramName := ParamStr(0);
-      Py_SetProgramName(PChar(FProgramName));
+      Py_SetProgramName(PAnsiChar(FProgramName));
     end
   end;
   AssignPyFlags;
@@ -5514,8 +5207,8 @@ end;
 
 procedure TPythonEngine.SetProgramArgs;
 var
-  buff : PChar;
-  argv : PPChar;
+  buff : PAnsiChar;
+  argv : PPAnsiChar;
   i, argc : Integer;
   L : array of String;
   wbuff : PWideChar;
@@ -5523,18 +5216,18 @@ var
   WL : array of WideString;
 begin
   // we build a string list of the arguments, because ParamStr returns a volatile string
-  // and we want to build an array of PChar, pointing to valid strings.
+  // and we want to build an array of PAnsiChar, pointing to valid strings.
   argc := ParamCount;
   if not IsPython3000 then begin
     SetLength(L, argc+1);
-    GetMem( buff, sizeof(PChar)*(argc+1) );
+    GetMem( buff, sizeof(PAnsiChar)*(argc+1) );
     try
-      argv := PPChar(buff);
+      argv := PPAnsiChar(buff);
       // get the strings
-      // build the PChar array
+      // build the PAnsiChar array
       for i := 0 to argc do begin
         L[i] := ParamStr(i);
-        argv^[i] := PChar(L[i]);
+        argv^[i] := PAnsiChar(L[i]);
       end;
       // set the argv list of the sys module with the application arguments
       PySys_SetArgv( argc+1, argv );
@@ -5547,7 +5240,7 @@ begin
     try
       wargv := PPWideChar(wbuff);
       // get the strings
-      // build the PChar array
+      // build the PAnsiChar array
       for i := 0 to argc do begin
         WL[i] := ParamStr(i);
         wargv^[i] := PWideChar(WL[i]);
@@ -5627,7 +5320,7 @@ begin
   result := ob^.ob_type = obt;
 end;
 
-function TPythonEngine.GetAttrString(obj: PPyObject; AName: PChar):PChar;
+function TPythonEngine.GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
 var
    attr: PPyObject;
 begin
@@ -5776,7 +5469,7 @@ begin
     _globals := PyModule_GetDict(m);
 
   try
-    Result := PyRun_String(PChar(CleanString(command)), mode, _globals, _locals);
+    Result := PyRun_String(PAnsiChar(CleanString(command)), mode, _globals, _locals);
     if Result = nil then
       CheckError(False);
     Py_FlushLine;
@@ -5799,8 +5492,6 @@ begin
   Result := Run_CommandAsObject( CleanString( strings.Text ), eval_input );
 end;
 
-{$IFDEF DELPHI4_OR_HIGHER}
-
 procedure TPythonEngine.ExecString(const command : String; locals, globals : PPyObject );
 begin
   Py_XDecRef( Run_CommandAsObjectWithDict( command, file_input, locals, globals ) );
@@ -5821,8 +5512,6 @@ begin
   Result := Run_CommandAsObjectWithDict( CleanString( strings.Text ), eval_input, locals, globals );
 end;
 
-{$ENDIF}
-
 function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
 begin
   Result := Run_CommandAsString( CleanString( strings.Text ), eval_input );
@@ -5842,7 +5531,7 @@ function TPythonEngine.CheckSyntax( const str : String; mode : Integer ) : Boole
 var
   n : PNode;
 begin
-  n := PyParser_SimpleParseString( PChar(str), mode );
+  n := PyParser_SimpleParseString( PAnsiChar(str), mode );
   result := Assigned(n);
   if Assigned( n ) then
     PyNode_Free(n);
@@ -5971,58 +5660,44 @@ begin
 
       if (PyErr_GivenExceptionMatches(err_type, PyExc_SystemExit^) <> 0) then
         raise Define( EPySystemExit.Create(''), s_type, s_value )
-{$IFDEF PYTHON22_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_StopIteration^) <> 0) then
         raise Define( EPyStopIteration.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_KeyboardInterrupt^) <> 0) then
         raise Define( EPyKeyboardInterrupt.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ImportError^) <> 0) then
         raise Define( EPyImportError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
   {$IFDEF MSWINDOWS}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_WindowsError^) <> 0) then
         raise Define( EPyWindowsError.Create(''), s_type, s_value )
   {$ENDIF}
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_IOError^) <> 0) then
         raise Define( EPyIOError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_OSError^) <> 0) then
         raise Define( EPyOSError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_EnvironmentError^) <> 0) then
         raise Define( EPyEnvironmentError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_EOFError^) <> 0) then
         raise Define( EPyEOFError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_NotImplementedError^) <> 0) then
         raise Define( EPyNotImplementedError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_RuntimeError^) <> 0) then
         raise Define( EPyRuntimeError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnboundLocalError^) <> 0) then
         raise Define( EPyUnboundLocalError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_NameError^) <> 0) then
         raise Define( EPyNameError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_AttributeError^) <> 0) then
         raise Define( EPyAttributeError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_TabError^) <> 0) then
         raise DefineSyntaxError( EPyTabError.Create(''), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_IndentationError^) <> 0) then
         raise DefineSyntaxError( EPyIndentationError.Create(''), s_type, s_value, err_type, err_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_SyntaxError^) <> 0) then
         raise DefineSyntaxError( EPySyntaxError.Create(''), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_TypeError^) <> 0) then
         raise Define( EPyTypeError.Create(''), s_type, s_value )
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_AssertionError^) <> 0) then
         raise Define( EPyAssertionError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_IndexError^) <> 0) then
         raise Define( EPyIndexError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_KeyError^) <> 0) then
@@ -6037,31 +5712,24 @@ begin
         raise Define( EPyFloatingPointError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ArithmeticError^) <> 0) then
         raise Define( EPyArithmeticError.Create(''), s_type, s_value )
-{$IFDEF PYTHON23_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeEncodeError^) <> 0) then
         raise Define( UnicodeEncodeError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeDecodeError^) <> 0) then
         raise Define( UnicodeDecodeError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeTranslateError^) <> 0) then
         raise Define( UnicodeTranslateError.Create(''), s_type, s_value )
-{$ENDIF}
-{$IFDEF PYTHON20_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) <> 0) then
         raise Define( EPyUnicodeError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ValueError^) <> 0) then
         raise Define( EPyValueError.Create(''), s_type, s_value )
-{$IFDEF PYTHON22_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ReferenceError^) <> 0) then
         raise Define( EPyReferenceError.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_SystemError^) <> 0) then
         raise Define( EPySystemError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_MemoryError^) <> 0) then
         raise Define( EPyMemoryError.Create(''), s_type, s_value )
       else if (not IsPython3000) and (PyErr_GivenExceptionMatches(err_type, PyExc_StandardError^) <> 0) then
         raise Define( EPyStandardError.Create(''), s_type, s_value )
-{$IFDEF PYTHON21_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UserWarning^) <> 0) then
         raise Define( EPyUserWarning.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_DeprecationWarning^) <> 0) then
@@ -6070,17 +5738,12 @@ begin
         raise Define( EPySyntaxWarning.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_RuntimeWarning^) <> 0) then
         raise Define( EPyRuntimeWarning.Create(''), s_type, s_value )
-{$ENDIF}
-{$IFDEF PYTHON23_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_FutureWarning^) <> 0) then
         raise Define( FutureWarning.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_PendingDeprecationWarning^) <> 0) then
         raise Define( PendingDeprecationWarning.Create(''), s_type, s_value )
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_Warning^) <> 0) then
         raise Define( EPyWarning.Create(''), s_type, s_value )
-{$ENDIF}
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_Exception^) <> 0) then
         raise Define( EPyException.Create(''), s_type, s_value )
       else  // Else if no known exception was detected,
@@ -6095,7 +5758,7 @@ function TPythonEngine.PyObjectAsString( obj : PPyObject ) : String;
 var
   s : PPyObject;
 //  i : Integer;
-//  tmp : PChar;
+//  tmp : PAnsiChar;
 {$IFDEF UNICODE_SUPPORT}
   w : WideString;
 {$ENDIF}
@@ -6361,7 +6024,7 @@ begin
         begin
           wd := (DayOfWeek( dt ) + 7 - 2) mod 7; // In Python, Monday is the first day (=0)
           jd := Round(EncodeDate(y,m,d)-EncodeDate(y,1,1))+1; // This shoud be the Julian day, the day in a year (0-366)
-          dl := -1; // This is daylight save... ?�?�? I don't know what it is...
+          dl := -1; // This is daylight save... ?Ξ?Ξ? I don't know what it is...
           Result := ArrayToPyTuple( [y, m, d, h, mi, sec, wd, jd, dl] );
         end
         else if (DatetimeConversionMode = dcmToDatetime) then
@@ -6389,13 +6052,13 @@ begin
         Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
       {$ELSE}
         s := wStr;
-        Result := PyString_FromString( PChar(s) );
+        Result := PyString_FromString( PAnsiChar(s) );
       {$ENDIF}
       end;
     varString:
       begin
         s := DeRefV;
-        Result := PyString_FromString( PChar(s) );
+        Result := PyString_FromString( PAnsiChar(s) );
       end;
   else
     if VarType(DeRefV) and varArray <> 0 then
@@ -6414,12 +6077,7 @@ begin
       end
     else
       try
-{$IFDEF DELPHI4_OR_HIGHER}
         Disp := DeRefV;
-{$ELSE}
-        Disp := IUnknown(DeRefV) as IDispatch;
-
-{$ENDIF}
         wStr := '__asPPyObject__';
         // detect if the variant supports this special property
         if Disp.GetIDsOfNames(GUID_NULL, @wStr, 1, 0, @DispID) = S_OK then
@@ -6449,7 +6107,7 @@ function TPythonEngine.PyObjectAsVariant( obj : PPyObject ) : Variant;
     var
       member : PPyObject;
     begin
-      member := PyObject_GetAttrString( obj, PChar(AMember) );
+      member := PyObject_GetAttrString( obj, PAnsiChar(AMember) );
       CheckError(False);
       if PyInt_Check(member) then
         Result := PyInt_AsLong(member)
@@ -6569,10 +6227,8 @@ var
 begin
   if PyFloat_Check(obj) then
     Result := PyFloat_AsDouble(obj)
-{$IFDEF PYTHON23_OR_HIGHER}
   else if PyBool_Check(obj) then // we must check Bool before Int, as Boolean type inherits from Int.
     Result := PyObject_IsTrue(obj) = 1
-{$ENDIF}
 {$IFDEF DELPHI6_OR_HIGHER}
   else if PyLong_Check(obj) then
     Result := PyLong_AsLongLong(obj)
@@ -6623,7 +6279,7 @@ begin
   case v.VType of
     vtInteger:       Result := PyInt_FromLong( v.VInteger );
     vtBoolean:       Result := PyInt_FromLong( Integer(v.VBoolean) );
-    vtChar:          Result := PyString_FromString( PChar(String(v.VChar)) );
+    vtChar:          Result := PyString_FromString( PAnsiChar(String(v.VChar)) );
     vtExtended:      Result := PyFloat_FromDouble( v.VExtended^ );
     vtString:
     begin
@@ -6780,7 +6436,7 @@ begin
         if s = '' then
           PyDict_SetItemString( Result, '', obj )
         else
-          PyDict_SetItemString( Result, PChar(s), obj );
+          PyDict_SetItemString( Result, PAnsiChar(s), obj );
         Py_XDecRef(obj);
         Inc( i, 2 );
       end;
@@ -6797,7 +6453,7 @@ begin
   if not Assigned(Result) then
     raise EPythonError.Create('Could not create a new list object');
   for i := 0 to strings.Count - 1 do
-    PyList_SetItem( Result, i, PyString_FromString( PChar(strings.Strings[i]) ) );
+    PyList_SetItem( Result, i, PyString_FromString( PAnsiChar(strings.Strings[i]) ) );
 end;
 
 function TPythonEngine.StringsToPyTuple( strings : TStrings ) : PPyObject;
@@ -6808,7 +6464,7 @@ begin
   if not Assigned(Result) then
     raise EPythonError.Create('Could not create a new tuple object');
   for i := 0 to strings.Count - 1 do
-    PyTuple_SetItem( Result, i, PyString_FromString( PChar(strings.Strings[i]) ) );
+    PyTuple_SetItem( Result, i, PyString_FromString( PAnsiChar(strings.Strings[i]) ) );
 end;
 
 procedure TPythonEngine.PyListToStrings( list : PPyObject; strings : TStrings );
@@ -6895,7 +6551,7 @@ var
   modules, m : PPyObject;
 begin
   modules := PyImport_GetModuleDict;
-  m := PyDict_GetItemString(modules, PChar(ModuleName) );
+  m := PyDict_GetItemString(modules, PAnsiChar(ModuleName) );
   if (m <> nil) and (PyModule_Check(m)) then
     Result := m
   else
@@ -6909,7 +6565,7 @@ begin
   module := FindModule(ModuleName);
   if module = nil then result := nil
   else begin
-    func := PyObject_GetAttrString(module, PChar(FuncName));
+    func := PyObject_GetAttrString(module, PAnsiChar(FuncName));
     if Assigned(func) then begin
        if PyFunction_Check(func) then
          Result := func
@@ -6929,14 +6585,14 @@ function TPythonEngine.SetToList( data : Pointer; size : Integer ) : PPyObject;
 
   function GetBit( idx : Integer ) : Boolean;
   var
-    tmp : PChar;
+    tmp : PAnsiChar;
   begin
     if idx >= size*8 then
       begin
         Result := False;
         Exit;
       end;
-    tmp := PChar(data);
+    tmp := PAnsiChar(data);
     tmp := tmp + (idx div 8);
     Result := (Ord(tmp^) and (1 shl (idx mod 8))) <> 0;
   end;
@@ -6962,11 +6618,11 @@ procedure TPythonEngine.ListToSet( List : PPyObject; data : Pointer; size : Inte
 
   procedure SetBit( idx : Integer );
   var
-    tmp : PChar;
+    tmp : PAnsiChar;
   begin
     if idx >= size*8 then
       Exit;
-    tmp := PChar(data);
+    tmp := PAnsiChar(data);
     tmp := tmp + (idx div 8);
     tmp^ := Chr((Ord(tmp^) or (1 shl (idx mod 8))));
   end;
@@ -6974,23 +6630,21 @@ procedure TPythonEngine.ListToSet( List : PPyObject; data : Pointer; size : Inte
 var
   i : Integer;
 begin
-  FillChar( PChar(data)^, size, #0 );
+  FillChar( PAnsiChar(data)^, size, #0 );
   for i := 0 to PyList_Size(list)-1 do
     SetBit( PyObjectAsVariant( PyList_GetItem(list, i) ) );
 end;
 
-procedure TPythonEngine.CheckError(ACatchStopEx : Boolean {$IFDEF DELPHI4_OR_HIGHER}= False{$ENDIF});
+procedure TPythonEngine.CheckError(ACatchStopEx : Boolean = False);
 begin
   if PyErr_Occurred <> nil then
   begin
-{$IFDEF PYTHON22_OR_HIGHER}
     if ACatchStopEx and (PyErr_GivenExceptionMatches(PyErr_Occurred, PyExc_StopIteration^) <> 0) then
     begin
       PyErr_Clear;
       raise EPyStopIteration.Create('Stop iteration');
     end
     else
-{$ENDIF}
     begin
       PyErr_Print;
       Traceback.Refresh;
@@ -7001,7 +6655,7 @@ end;
 
 function TPythonEngine.GetMainModule : PPyObject;
 begin
-  Result := PyImport_AddModule(PChar(ExecModule));
+  Result := PyImport_AddModule(PAnsiChar(ExecModule));
 end;
 
 function TPythonEngine.PyTimeStruct_Check( obj : PPyObject ) : Boolean;
@@ -7137,7 +6791,7 @@ begin
     Result := PyString_AsString(ob);
 end;
 
-function TPythonEngine.PyString_FromString( str: PChar): PPyObject;
+function TPythonEngine.PyString_FromString( str: PAnsiChar): PPyObject;
 var
   _text : WideString;
 begin
@@ -7348,7 +7002,7 @@ var
 begin
   for i := 0 to Count - 1 do
     with Items[i] do
-      FMethodsContainer.AddDelphiMethod(PChar(Name), PythonEvent, PChar(GetDocString));
+      FMethodsContainer.AddDelphiMethod(PAnsiChar(Name), PythonEvent, PAnsiChar(GetDocString));
 end;
 
 ////////////////////////////////////////
@@ -7423,9 +7077,9 @@ begin
   inherited;
 end;
 
-function TMethodsContainer.AddMethod( AMethodName  : PChar;
+function TMethodsContainer.AddMethod( AMethodName  : PAnsiChar;
                                       AMethod  : PyCFunction;
-                                      ADocString : PChar ) : PPyMethodDef;
+                                      ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   if FMethodCount = FAllocatedMethodCount then
     ReallocMethods;
@@ -7437,9 +7091,9 @@ begin
   Inc( FMethodCount );
 end;
 
-function  TMethodsContainer.AddMethodWithKeywords( AMethodName  : PChar;
+function  TMethodsContainer.AddMethodWithKeywords( AMethodName  : PAnsiChar;
                                                    AMethod  : PyCFunctionWithKW;
-                                                   ADocString : PChar ) : PPyMethodDef;
+                                                   ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
                        PyCFunction(AMethod),
@@ -7447,18 +7101,18 @@ begin
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
 
-function  TMethodsContainer.AddDelphiMethod( AMethodName  : PChar;
+function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADelphiMethod: TDelphiMethod;
-                                             ADocString : PChar ) : PPyMethodDef;
+                                             ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
                        GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, ctCDECL),
                        ADocString );
 end;
 
-function  TMethodsContainer.AddDelphiMethodWithKeywords(  AMethodName  : PChar;
+function  TMethodsContainer.AddDelphiMethodWithKeywords(  AMethodName  : PAnsiChar;
                                                           ADelphiMethod: TDelphiMethodWithKW;
-                                                          ADocString : PChar ) : PPyMethodDef;
+                                                          ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
                        GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, ctCDECL),
@@ -7480,9 +7134,8 @@ begin
   Result := 0;
 end;
 
-{$IFDEF PYTHON22_OR_HIGHER}
-procedure TMembersContainer.AddMember(MemberName: PChar; MemberType : TPyMemberType;
-  MemberOffset : Integer; MemberFlags: TPyMemberFlag; MemberDoc: PChar);
+procedure TMembersContainer.AddMember(MemberName: PAnsiChar; MemberType : TPyMemberType;
+  MemberOffset : Integer; MemberFlags: TPyMemberFlag; MemberDoc: PAnsiChar);
 begin
   if FMemberCount = FAllocatedMemberCount then
     ReallocMembers;
@@ -7582,15 +7235,13 @@ begin
   MemberPtr :=@(PMemberArray(FMembers)^[MemberCount+1]);
   FillChar( MemberPtr^,SizeOf(PyMemberDef)*PYT_MEMBER_BUFFER_INCREASE,0);
 end;
-{$ENDIF}
 
 ////////////////////////////////////////
 // class TGetSetContainer
 
-{$IFDEF PYTHON22_OR_HIGHER}
 
-procedure TGetSetContainer.AddGetSet(AName: PChar; AGet: getter;
-  ASet: setter; ADoc: PChar; AClosure: Pointer);
+procedure TGetSetContainer.AddGetSet(AName: PAnsiChar; AGet: getter;
+  ASet: setter; ADoc: PAnsiChar; AClosure: Pointer);
 begin
   if FGetSetCount = FAllocatedGetSetCount then
     ReallocGetSets;
@@ -7664,7 +7315,6 @@ begin
   GetSetPtr :=@(PGetSetArray(FGetSets)^[GetSetCount+1]);
   FillChar( GetSetPtr^,SizeOf(PyGetSetDef)*PYT_GETSET_BUFFER_INCREASE,0);
 end;
-{$ENDIF}
 
 (*******************************************************)
 (**                                                   **)
@@ -7815,14 +7465,14 @@ procedure TError.BuildError( const ModuleName : String );
     with Owner.Owner.Engine do
       begin
         if ParentClass.Module <> '' then
-          //m := PyImport_ImportModule( PChar(ParentClass.Module) )
-          m := PyImport_AddModule( PChar(ParentClass.Module) )
+          //m := PyImport_ImportModule( PAnsiChar(ParentClass.Module) )
+          m := PyImport_AddModule( PAnsiChar(ParentClass.Module) )
         else
           m := FindModule( ModuleName );
         if not Assigned(m) then
           raise Exception.CreateFmt('Could not find module containing the parent class of error "%s"', [Self.Name]);
         d := PyModule_GetDict(m);
-        Result := PyDict_GetItemString( d, PChar(ParentClass.Name) );
+        Result := PyDict_GetItemString( d, PAnsiChar(ParentClass.Name) );
         if not Assigned(Result) then
           raise Exception.CreateFmt('Could not find the parent class "%s" of error "%s"', [ParentClass.Name, Self.Name]);
         if not PyClass_Check( Result ) and not PyType_CheckExact( Result ) then
@@ -7844,14 +7494,14 @@ begin
   with Owner.Owner.Engine do
     begin
       if ErrorType = etString then
-        Error := PyString_FromString( PChar(Text) )
+        Error := PyString_FromString( PAnsiChar(Text) )
       else if ErrorType = etClass then
         begin
           if FParentClass.Name <> '' then
             parent := FindParentClass
           else
             parent := nil;
-          Error := PyErr_NewException( PChar(Format('%s.%s', [ModuleName, Self.Name])),
+          Error := PyErr_NewException( PAnsiChar(Format('%s.%s', [ModuleName, Self.Name])),
                                        parent, nil );
         end;
     end;
@@ -7863,19 +7513,17 @@ procedure TError.RaiseError( const msg : String );
 begin
   Owner.Owner.CheckEngine;
   with Owner.Owner.Engine do
-    PyErr_SetString( Error, PChar(msg) );
+    PyErr_SetString( Error, PAnsiChar(msg) );
 end;
 
 procedure TError.RaiseErrorObj( const msg : String; obj : PPyObject );
 var
   args, res, str : PPyObject;
   inst : PPyInstanceObject;
-{$IFDEF PYTHON23_OR_HIGHER}
   i : Integer;
   keys : PPyObject;
   key : PPyObject;
   val : PPyObject;
-{$ENDIF}
 begin
   Owner.Owner.CheckEngine;
   with Owner.Owner.Engine do
@@ -7895,17 +7543,16 @@ begin
             inst := PPyInstanceObject(res);
             Py_XDECREF( inst^.in_dict );
             inst^.in_dict := obj;
-            str := PyString_FromString( PChar(msg) );
+            str := PyString_FromString( PAnsiChar(msg) );
             PyDict_SetItemString( obj, 'args', str );
             Py_XDecRef(str);
           end
-{$IFDEF PYTHON23_OR_HIGHER}
         else if PyObject_TypeCheck(res, PPyTypeObject(PyExc_Exception^)) then
           begin
             args := PyTuple_New(1);
             if not Assigned(args) then
               raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
-            str := PyString_FromString( PChar(msg) );
+            str := PyString_FromString( PAnsiChar(msg) );
             PyTuple_SetItem(args, 0, str);
             res := PyEval_CallObject(Error, args);
             Py_DECREF(args);
@@ -7925,7 +7572,6 @@ begin
             end;
             Py_XDECREF(keys);
           end
-{$ENDIF}
         else
           raise Exception.Create('TError.RaiseErrorObj: I didn''t get an instance' );
         PyErr_SetObject( Error, res );
@@ -8054,7 +7700,7 @@ begin
     begin
       if DocString.Text <> '' then
         begin
-          doc := PyString_FromString( PChar(CleanString(FDocString.Text)) );
+          doc := PyString_FromString( PAnsiChar(CleanString(FDocString.Text)) );
           PyObject_SetAttrString( FModule, '__doc__', doc );
           Py_XDecRef(doc);
           CheckError(False);
@@ -8072,12 +7718,12 @@ begin
       if IsPython3000 then begin
         FillChar(FModuleDef, SizeOf(FModuleDef), 0);
         FModuleDef.m_base.ob_refcnt := 1;
-        FModuleDef.m_name := PChar(ModuleName);
+        FModuleDef.m_name := PAnsiChar(ModuleName);
         FModuleDef.m_methods := MethodsData;
         FModuleDef.m_size := -1;
         FModule := Py_InitModule3000( ModuleDef );
       end else
-        FModule := Py_InitModule( PChar(ModuleName), MethodsData );
+        FModule := Py_InitModule( PAnsiChar(ModuleName), MethodsData );
       DefineDocString;
     end;
 end;
@@ -8161,7 +7807,7 @@ begin
         with Errors.Items[i] do
           begin
             BuildError( ModuleName );
-            PyDict_SetItemString( d, PChar(Name), Error );
+            PyDict_SetItemString( d, PAnsiChar(Name), Error );
           end;
     end;
 end;
@@ -8173,7 +7819,7 @@ procedure TPythonModule.SetVar( const varName : String; value : PPyObject );
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
     begin
-      if Engine.PyObject_SetAttrString(Module, PChar(varName), value ) <> 0 then
+      if Engine.PyObject_SetAttrString(Module, PAnsiChar(varName), value ) <> 0 then
         raise EPythonError.CreateFmt( 'Could not set var "%s" in module "%s"', [varName, ModuleName] );
     end
   else
@@ -8187,7 +7833,7 @@ function  TPythonModule.GetVar( const varName : String ) : PPyObject;
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
   begin
-    Result := Engine.PyObject_GetAttrString(Module, PChar(varName) );
+    Result := Engine.PyObject_GetAttrString(Module, PAnsiChar(varName) );
     Engine.PyErr_Clear;
   end
   else
@@ -8203,7 +7849,7 @@ begin
     begin
       dict := PyModule_GetDict( Module );
       if not Assigned(dict) then raise EPythonError.CreateFmt( 'Can''t get __dict__ of module "%s"', [ModuleName] );
-      PyDict_DelItemString( dict, PChar(varName) );
+      PyDict_DelItemString( dict, PAnsiChar(varName) );
     end
   else
     raise EPythonError.CreateFmt( 'Can''t delete var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
@@ -8283,7 +7929,7 @@ end;
 
 class function TPyObject.NewInstance: TObject;
 var
-  mem : PChar;
+  mem : PAnsiChar;
 begin
   GetMem(mem, InstanceSize + Sizeof(PyObject));
   PPyObject(mem)^.ob_refcnt := 1;
@@ -8295,13 +7941,13 @@ procedure TPyObject.FreeInstance;
 begin
   CleanupInstance;
   if not PythonAlloc then
-    FreeMem(PChar(Self)-Sizeof(PyObject));
+    FreeMem(PAnsiChar(Self)-Sizeof(PyObject));
 end;
 
 // Misc
 function  TPyObject.GetSelf : PPyObject;
 begin
-  Result := PPyObject( PChar(Self)-Sizeof(PyObject) )
+  Result := PPyObject( PAnsiChar(Self)-Sizeof(PyObject) )
 end;
 
 procedure TPyObject.IncRef;
@@ -8354,7 +8000,7 @@ begin
   Result := -1;
 end;
 
-function  TPyObject.GetAttr(key : PChar) : PPyObject;
+function  TPyObject.GetAttr(key : PAnsiChar) : PPyObject;
 var
   PyKey : PPyObject;
 begin
@@ -8374,23 +8020,23 @@ begin
 //      else
 //        Result := Py_FindMethod( PythonType.MethodsData, GetSelf, key);
 //      if not Assigned(Result) then
-//        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
+//        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
     end;
 end;
 
-function  TPyObject.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyObject.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   with GetPythonEngine do
     begin
       Result := -1;
-      PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
+      PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
     end;
 end;
 
 function  TPyObject.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PChar(Format('<%s at %x>', [PythonType.TypeName, Integer(self)])) );
+    Result := PyString_FromString( PAnsiChar(Format('<%s at %x>', [PythonType.TypeName, Integer(self)])) );
 end;
 
 function  TPyObject.Compare( obj: PPyObject) : Integer;
@@ -8410,20 +8056,12 @@ end;
 
 function  TPyObject.GetAttrO( key: PPyObject) : PPyObject;
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   Result := GetPythonEngine.PyObject_GenericGetAttr(GetSelf, key);
-{$ELSE}
-  Result := nil;
-{$ENDIF}
 end;
 
 function  TPyObject.SetAttrO( key, value: PPyObject) : Integer;
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   Result := GetPythonEngine.PyObject_GenericSetAttr(GetSelf, key, value);
-{$ELSE}
-  Result := -1;
-{$ENDIF}
 end;
 
 function  TPyObject.Call( ob1, ob2 : PPyObject) : PPyObject;
@@ -8431,12 +8069,10 @@ begin
   Result := nil;
 end;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 function  TPyObject.Traverse( proc: visitproc; ptr: Pointer) : integer;
 begin
   Result := 0;
 end;
-{$ENDIF}
 
 function  TPyObject.Clear: integer;
 begin
@@ -8771,28 +8407,22 @@ end;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 begin
   if IsDelphiObject( obj ) then
-    Result := TPyObject(PChar(obj)+Sizeof(PyObject))
+    Result := TPyObject(PAnsiChar(obj)+Sizeof(PyObject))
   else
     raise EPythonError.CreateFmt( 'Python object "%s" is not a Delphi class', [GetPythonEngine.PyObjectAsString(obj)] );
 end;
 
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 var
-{$IFDEF PYTHON22_OR_HIGHER}
   call_tp_free : Boolean;
-{$ENDIF}
   obj : TPyObject;
 begin
   obj := PythonToDelphi(pSelf);
-{$IFDEF PYTHON22_OR_HIGHER}
   call_tp_free := obj.PythonAlloc;
-{$ENDIF}
   if PythonOk then
     obj.Free;
-{$IFDEF PYTHON22_OR_HIGHER}
   if call_tp_free and Assigned(pSelf.ob_type) and Assigned(pSelf.ob_type^.tp_free) then
     pSelf.ob_type^.tp_free(pSelf);
-{$ENDIF}
 end;
 
 procedure TPythonType.Notification( AComponent: TComponent;
@@ -8811,10 +8441,8 @@ begin
       if Assigned(FPyObjectClass) then
       begin
         ClearMethods;
-{$IFDEF PYTHON22_OR_HIGHER}
         ClearMembers;
         ClearGetSets;
-{$ENDIF}
       end;
       FPyObjectClass := val;
       if Assigned(val) then
@@ -8869,29 +8497,23 @@ end;
 procedure TPythonType.ReallocGetSets;
 begin
   inherited;
-{$IFDEF PYTHON22_OR_HIGHER}
   if tpfBaseType in TypeFlags then
     FType.tp_getset := GetSetData;
-{$ENDIF}
 end;
 
 procedure TPythonType.ReallocMembers;
 begin
   inherited;
-{$IFDEF PYTHON22_OR_HIGHER}
   if tpfBaseType in TypeFlags then
     FType.tp_members := MembersData;
-{$ENDIF}
 end;
 
 procedure TPythonType.ReallocMethods;
 begin
   inherited;
 exit;
-{$IFDEF PYTHON22_OR_HIGHER}
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
-{$ENDIF}
 end;
 
 procedure TPythonType.SetDocString( value : TStringList );
@@ -8916,7 +8538,6 @@ begin
     Result := Result or Py_TPFLAGS_HAVE_RICHCOMPARE;
   if tpfHaveWeakRefs in TypeFlags then
     Result := Result or Py_TPFLAGS_HAVE_WEAKREFS;
-{$IFDEF PYTHON22_OR_HIGHER}
   if tpfHaveIter in TypeFlags then
     Result := Result or Py_TPFLAGS_HAVE_ITER;
   if tpfHaveClass in TypeFlags then
@@ -8931,7 +8552,6 @@ begin
     Result := Result or Py_TPFLAGS_READYING;
   if tpfHaveGC in TypeFlags then
     Result := Result or Py_TPFLAGS_HAVE_GC;
-{$ENDIF}
 end;
 
 // Type services
@@ -8947,12 +8567,12 @@ begin
   Result := PythonToDelphi(pSelf).Print( f, i );
 end;
 
-function  TPythonType_GetAttr( pSelf : PPyObject; key : PChar) : PPyObject; cdecl;
+function  TPythonType_GetAttr( pSelf : PPyObject; key : PAnsiChar) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).GetAttr( key );
 end;
 
-function  TPythonType_SetAttr( pSelf : PPyObject; key : PChar; value : PPyObject) : Integer; cdecl;
+function  TPythonType_SetAttr( pSelf : PPyObject; key : PAnsiChar; value : PPyObject) : Integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SetAttr( key, value );
 end;
@@ -8992,12 +8612,10 @@ begin
   Result := PythonToDelphi(pSelf).Call( ob1, ob2 );
 end;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 function  TPythonType_Traverse( pSelf: PPyObject; proc: visitproc; ptr: Pointer) : integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).Traverse( proc, ptr );
 end;
-{$ENDIF}
 
 function  TPythonType_Clear( pSelf: PPyObject): integer; cdecl;
 begin
@@ -9027,12 +8645,9 @@ begin
 end;
 
 function  TPythonType.NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject;
-{$IFDEF PYTHON22_OR_HIGHER}
 var
   obj : TPyObject;
-{$ENDIF}
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   Result := aType^.tp_alloc(aType, 0);
   if Assigned(Result) then
   begin
@@ -9048,25 +8663,16 @@ begin
       Result := nil;
     end;
   end;
-{$ELSE}
-  Result := nil;
-{$ENDIF}
 end;
 
 function  TPythonType_AllocSubtypeInst( pSelf: PPyTypeObject; nitems : integer) : PPyObject; cdecl;
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   Result := GetPythonEngine.PyType_GenericAlloc(pSelf, nitems);
-{$ELSE}
-  Result := nil;
-{$ENDIF}
 end;
 
 procedure FreeSubtypeInst(ob:PPyObject);
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   GetPythonEngine.PyObject_Free(ob);
-{$ENDIF}
 end;
 
 
@@ -9340,9 +8946,7 @@ begin
       if FDocString.Count > 0 then
         begin
           FCurrentDocString := GetPythonEngine.CleanString(FDocString.Text);
-{$IFDEF PYTHON20_OR_HIGHER}
-          tp_doc := PChar(FCurrentDocString);
-{$ENDIF}
+          tp_doc := PAnsiChar(FCurrentDocString);
         end;
       tp_dealloc   := @PyObjectDestructor;
       if bsGetAttr in Services.Basic then
@@ -9363,17 +8967,12 @@ begin
         tp_setattro  := TPythonType_SetAttrO;
       if bsCall in Services.Basic then
         tp_call      := TPythonType_Call;
-{$IFDEF PYTHON20_OR_HIGHER}
       if bsTraverse in Services.Basic then
         tp_traverse := TPythonType_Traverse;
       if bsClear in Services.Basic then
         tp_clear := TPythonType_Clear;
-{$ENDIF}
-{$IFDEF PYTHON21_OR_HIGHER}
       if bsRichCompare in Services.Basic then
         tp_richcompare := TPythonType_RichCmp;
-{$ENDIF}
-{$IFDEF PYTHON22_OR_HIGHER}
       if bsIter in Services.Basic then
         tp_iter := TPythonType_Iter;
       if bsIterNext in Services.Basic then
@@ -9388,7 +8987,6 @@ begin
         tp_members          := MembersData;
         tp_getset           := GetSetData;
       end;
-{$ENDIF}
 
       // Number services
       if Services.Number <> [] then
@@ -9403,12 +9001,10 @@ begin
             nb_multiply := TPythonType_NbMultiply;
           if nsDivide in Services.Number then
             nb_divide := TPythonType_NbDivide;
-{$IFDEF PYTHON22_OR_HIGHER}
           if nsFloorDivide in Services.Number then
             nb_floor_divide := TPythonType_NbFloorDivide;
           if nsTrueDivide in Services.Number then
             nb_true_divide := TPythonType_NbTrueDivide;
-{$ENDIF}
           if nsRemainder in Services.Number then
             nb_remainder := TPythonType_NbRemainder;
           if nsDivmod in Services.Number then
@@ -9447,7 +9043,6 @@ begin
             nb_oct := TPythonType_NbOct;
           if nsHex in Services.Number then
             nb_hex := TPythonType_NbHex;
-{$IFDEF PYTHON20_OR_HIGHER}
           if nsInplaceAdd in Services.InplaceNumber then
             nb_inplace_add       := TPythonType_NbInplaceAdd;
           if nsInplaceSubtract in Services.InplaceNumber then
@@ -9456,12 +9051,10 @@ begin
             nb_inplace_multiply  := TPythonType_NbInplaceMultiply;
           if nsInplaceDivide in Services.InplaceNumber then
             nb_inplace_divide    := TPythonType_NbInplaceDivide;
-{$IFDEF PYTHON22_OR_HIGHER}
           if nsInplaceFloorDivide in Services.InplaceNumber then
             nb_inplace_floor_divide := TPythonType_NbInplaceFloorDivide;
           if nsInplaceTrueDivide in Services.InplaceNumber then
             nb_inplace_true_divide := TPythonType_NbInplaceTrueDivide;
-{$ENDIF}
           if nsInplaceRemainder in Services.InplaceNumber then
             nb_inplace_remainder := TPythonType_NbInplaceRemainder;
           if nsInplacePower in Services.InplaceNumber then
@@ -9476,7 +9069,6 @@ begin
             nb_inplace_xor       := TPythonType_NbInplaceXor;
           if nsInplaceOr in Services.InplaceNumber then
             nb_inplace_or        := TPythonType_NbInplaceOr;
-{$ENDIF}
         end;
 
       // Sequence services
@@ -9499,14 +9091,12 @@ begin
             sq_ass_item := TPythonType_SqAssItem;
           if ssAssSlice in Services.Sequence then
             sq_ass_slice := TPythonType_SqAssSlice;
-{$IFDEF PYTHON20_OR_HIGHER}
           if ssContains in Services.Sequence then
             sq_contains := TPythonType_SqContains;
           if ssInplaceConcat in Services.Sequence then
             sq_inplace_concat  := TPythonType_SqInplaceConcat;
           if ssInplaceRepeat in Services.Sequence then
             sq_inplace_repeat  := TPythonType_SqInplaceRepeat;
-{$ENDIF}
         end;
 
       // Mapping services
@@ -9558,10 +9148,8 @@ begin
     begin
       ob_type   := PPyTypeObject(PyType_Type);
       ob_refcnt := 1;
-      tp_name   := PChar(FTypeName);
-{$IFDEF PYTHON20_OR_HIGHER}
+      tp_name   := PAnsiChar(FTypeName);
       tp_flags  := TypeFlagsAsInt;
-{$ENDIF}
     end;
   if Assigned(FModule) then
     begin
@@ -9634,10 +9222,10 @@ begin
     if not Assigned(FCreateFunc) then
     begin
       meth := CreateMethod;
-      FCreateFuncDef.ml_name  := PChar(FCreateFuncName);
+      FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
       FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, ctCDECL);
       FCreateFuncDef.ml_flags := METH_VARARGS;
-      FCreateFuncDef.ml_doc   := PChar(FCreateFuncDoc);
+      FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_New(@FCreateFuncDef, nil);
     end;
     Assert(Assigned(FCreateFunc));
@@ -9646,9 +9234,9 @@ begin
     begin
       d := PyModule_GetDict( Module.Module );
       Assert(Assigned(d));
-      PyDict_SetItemString( d, PChar(TypeName), PPyObject(TheTypePtr) );
+      PyDict_SetItemString( d, PAnsiChar(TypeName), PPyObject(TheTypePtr) );
       if FGenerateCreateFunction then
-        PyDict_SetItemString( d, PChar(FCreateFuncName), FCreateFunc );
+        PyDict_SetItemString( d, PAnsiChar(FCreateFuncName), FCreateFunc );
     end;
 end;
 
@@ -9694,13 +9282,13 @@ begin
       v := TPyVar(PythonToDelphi(FVarObject));
       v.dv_component := Self;
       // Add a reference to this var in the module
-      m := PyImport_AddModule(PChar(Module));
+      m := PyImport_AddModule(PAnsiChar(Module));
       if m = nil then
         raise EPythonError.CreateFmt('CreateVar: can''t create module "%s"', [Module]);
       d := PyModule_GetDict(m);
       if @PyDict_SetItemString = nil then
         raise Exception.Create('nil');
-      PyDict_SetItemString( d, PChar(VarName), FVarObject );
+      PyDict_SetItemString( d, PAnsiChar(VarName), FVarObject );
     end;
 end;
 
@@ -9898,7 +9486,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyVar.GetAttr(key : PChar) : PPyObject;
+function  TPyVar.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -9909,7 +9497,7 @@ begin
     end;
 end;
 
-function  TPyVar.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyVar.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := 0;
   with GetPythonEngine do
@@ -9929,7 +9517,7 @@ begin
     begin
       obj := GetValue;
       try
-        Result := PyString_FromString( PChar(Format('<%s: %s>', [PythonType.TypeName, PyObjectAsString(obj)])) );
+        Result := PyString_FromString( PAnsiChar(Format('<%s: %s>', [PythonType.TypeName, PyObjectAsString(obj)])) );
       finally
         Py_XDecRef(obj);
       end;
@@ -10181,13 +9769,13 @@ begin
                 Result := nil
               else
               // KV!!!!!!
-                Result := PyString_FromString(PChar(txt));
+                Result := PyString_FromString(PAnsiChar(txt));
             end
           else
-            Result := PyString_FromString(PChar(txt));
+            Result := PyString_FromString(PAnsiChar(txt));
 {$ELSE}
             txt := IO.ReceiveData;
-          Result := PyString_FromString(PChar(txt));
+          Result := PyString_FromString(PAnsiChar(txt));
 {$ENDIF}
         end
       else
@@ -10242,7 +9830,7 @@ function pyio_GetTypesStats(self, args : PPyObject) : PPyObject;
     with GetPythonEngine do
       begin
         Result := PyTuple_New(4);
-        PyTuple_SetItem( Result, 0, PyString_FromString(PChar(T.TypeName)) );
+        PyTuple_SetItem( Result, 0, PyString_FromString(PAnsiChar(T.TypeName)) );
         PyTuple_SetItem( Result, 1, PyInt_FromLong(T.InstanceCount) );
         PyTuple_SetItem( Result, 2, PyInt_FromLong(T.CreateHits) );
         PyTuple_SetItem( Result, 3, PyInt_FromLong(T.DeleteHits) );
@@ -10341,11 +9929,7 @@ begin
         Result := True;
         Break;
       end;
-{$IFDEF PYTHON22_OR_HIGHER}
       t := t^.tp_base;
-{$ELSE}
-      t := nil;
-{$ENDIF}
     end;
   end;
 end;
@@ -10356,15 +9940,15 @@ begin
                                 TPythonType, TPythonModule, TPythonDelphiVar]);
 end;
 
-{$IFDEF PYTHON20_OR_HIGHER}
 function PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 begin
   //(((t)->tp_flags & (f)) != 0)
   Result := (((AType)^.tp_flags and (AFlag)) <> 0);
 end;
-{$ENDIF}
 
 end.
+
+
 
 
 

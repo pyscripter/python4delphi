@@ -133,11 +133,7 @@ type
         The result of the call is set into varResult, if any. }
     function Invoke(DispID: Integer; const IID: TGUID; LocaleID: Integer; Flags: Word; var Params; VarResult, ExcepInfo, ArgErr: Pointer): HResult; stdcall;
     { TPythonAtom }
-    {$IFDEF DELPHI4_OR_HIGHER}
-      constructor Create(pObject : PPyObject = nil); virtual;
-    {$ELSE}
-      constructor Create(pObject : PPyObject); virtual;
-    {$ENDIF}
+    constructor Create(pObject : PPyObject = nil); virtual;
     {** Before being destroyed, PythonObject is set to nil. This way, the python
         reference counter is handled correctly.}
     destructor Destroy; override;
@@ -257,14 +253,14 @@ begin
     end
   else
     begin
-      if GetPythonEngine.PyObject_HasAttrString(FPythonObject, pChar(lLongName))=0
+      if GetPythonEngine.PyObject_HasAttrString(FPythonObject, PAnsiChar(lLongName))=0
       then
         begin
           result := E_NOINTERFACE;
         end
       else
         begin
-          lObject := GetPythonEngine.PyString_FromString(PChar(lLongName));
+          lObject := GetPythonEngine.PyString_FromString(PAnsiChar(lLongName));
           lDispIds[0]:= Integer(lObject);  // Dirty storage !
           result := S_OK;
         end;

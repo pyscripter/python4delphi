@@ -107,15 +107,15 @@ begin
 	begin
 		fClearname := 'Clear' + Name;
 		docString := 'Claer all events of "' + Owner.Name + '.' + Name + '" action';
-		PythonModule.AddDelphiMethod(PChar(fClearname), PythonClear, PChar(docString));
+		PythonModule.AddDelphiMethod(PAnsiChar(fClearname), PythonClear, PAnsiChar(docString));
 
 		fRegistername := 'Register' + Name;
 		docString := 'Register an event againt the "' + Owner.Name + '.' + Name + '" action';
-		PythonModule.AddDelphiMethod(PChar(fRegistername), PythonRegister, PChar(docString));
+		PythonModule.AddDelphiMethod(PAnsiChar(fRegistername), PythonRegister, PAnsiChar(docString));
 
 		fUnregistername := 'Unregister' + Name;
 		docString := 'Unregister an event againt the "' + Owner.Name + '.' + Name + '" action';
-		PythonModule.AddDelphiMethod(PChar(fUnregistername), PythonUnregister, PChar(docString));
+		PythonModule.AddDelphiMethod(PAnsiChar(fUnregistername), PythonUnregister, PAnsiChar(docString));
 	end;
 end;
 
@@ -139,7 +139,7 @@ begin
        ( not PyFunction_Check(func)) then
     begin
       s := fRegistername + '(function)';
-      PyErr_SetString(PyExc_TypeError^,PChar(s));
+      PyErr_SetString(PyExc_TypeError^,PAnsiChar(s));
     end
     else
       with RegisteredMethods do
@@ -161,7 +161,7 @@ begin
        (RegisteredMethods.IndexOf(func) = -1) then
     begin
       s := fUnregistername + '(function)';
-      PyErr_SetString(PyExc_TypeError^,PChar(s));
+      PyErr_SetString(PyExc_TypeError^,PAnsiChar(s));
     end
     else
       with RegisteredMethods do
