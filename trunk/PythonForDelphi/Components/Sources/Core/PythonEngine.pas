@@ -74,9 +74,7 @@ uses
 {$ENDIF}
   Classes,
   SysUtils,
-{$IFDEF HAS_SYNCOBJS_UNIT}
   SyncObjs,
-{$ENDIF}
   Variants,
 {$IFDEF DELPHI2005_OR_HIGHER}
   WideStrings,
@@ -100,20 +98,22 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python30.dll'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.0.so'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
@@ -129,11 +129,14 @@ const
 {$IFDEF PYTHON26}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
 {$ENDIF}
+{$IFDEF PYTHON27}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
+{$ENDIF}
 {$IFDEF PYTHON30}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
 {$ENDIF}
 {$IFDEF PYTHON31}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
 {$ENDIF}
 
   PYT_METHOD_BUFFER_INCREASE = 10;
@@ -1300,22 +1303,6 @@ Exception\n\
  {$IFDEF MSWINDOWS}
    EPyWindowsError = class (EPyOSError);
  {$ENDIF}
-
-{$IFNDEF HAS_SYNCOBJS_UNIT}
-  {$IFDEF MSWINDOWS}
-    TCriticalSection = class
-    protected
-      FSection: TRTLCriticalSection;
-    public
-      constructor Create;
-      destructor Destroy; override;
-      procedure Acquire;
-      procedure Release;
-      procedure Enter;
-      procedure Leave;
-    end;
-  {$ENDIF}
-{$ENDIF}
 
 //#######################################################
 //##                                                   ##
@@ -3097,47 +3084,6 @@ var
   gPythonEngine : TPythonEngine;
   gVarType : TPythonType;
 
-(*******************************************************)
-(**                                                   **)
-(**            class TCriticalSection                 **)
-(**                                                   **)
-(*******************************************************)
-{$IFNDEF HAS_SYNCOBJS_UNIT}
-  {$IFDEF MSWINDOWS}
-  // Note that this default implementation is needed to compile under Delphi3.
-constructor TCriticalSection.Create;
-begin
-  inherited Create;
-  InitializeCriticalSection(FSection);
-end;
-
-destructor TCriticalSection.Destroy;
-begin
-  DeleteCriticalSection(FSection);
-  inherited Destroy;
-end;
-
-procedure TCriticalSection.Acquire;
-begin
-  EnterCriticalSection(FSection);
-end;
-
-procedure TCriticalSection.Release;
-begin
-  LeaveCriticalSection(FSection);
-end;
-
-procedure TCriticalSection.Enter;
-begin
-  Acquire;
-end;
-
-procedure TCriticalSection.Leave;
-begin
-  Release;
-end;
-  {$ENDIF}
-{$ENDIF}
 
 (*******************************************************)
 (**                                                   **)
