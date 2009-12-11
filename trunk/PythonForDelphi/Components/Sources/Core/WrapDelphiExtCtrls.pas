@@ -129,7 +129,6 @@ type
     property DelphiObject: TControlBar read GetDelphiObject write SetDelphiObject;
   end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
   TPyDelphiBoundLabel = class (TPyDelphiControl)
   private
     function  GetDelphiObject: TBoundLabel;
@@ -139,9 +138,7 @@ type
     // Properties
     property DelphiObject: TBoundLabel read GetDelphiObject write SetDelphiObject;
   end;
-{$ENDIF}
 
-{$IFDEF DELPHI6_OR_HIGHER}
   TPyDelphiLabeledEdit = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: TLabeledEdit;
@@ -151,9 +148,7 @@ type
     // Properties
     property DelphiObject: TLabeledEdit read GetDelphiObject write SetDelphiObject;
   end;
-{$ENDIF}
 
-{$IFDEF DELPHI6_OR_HIGHER}
   TPyDelphiColorBox = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: TColorBox;
@@ -163,7 +158,6 @@ type
     // Properties
     property DelphiObject: TColorBox read GetDelphiObject write SetDelphiObject;
   end;
-{$ENDIF}
 
 implementation
 
@@ -203,11 +197,9 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRadioGroup);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSplitter);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlBar);
-{$IFDEF DELPHI6_OR_HIGHER}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBoundLabel);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLabeledEdit);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiColorBox);
-{$ENDIF}
 end;
 
 
@@ -426,8 +418,6 @@ begin
   inherited DelphiObject := Value;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
-
 { TPyDelphiBoundLabel }
 
 class function TPyDelphiBoundLabel.DelphiObjectClass: TClass;
@@ -481,11 +471,9 @@ begin
   inherited DelphiObject := Value;
 end;
 
-{$ENDIF}
 
 initialization
   RegisteredUnits.Add( TExtCtrlsRegistration.Create );
   Classes.RegisterClasses([TShape, TPaintBox, TImage, TBevel, TTimer, TPanel, TPage, TNotebook, THeader,
-                           TRadioGroup, TSplitter, TControlBar
-                           {$IFDEF DELPHI6_OR_HIGHER}, TBoundLabel, TLabeledEdit, TColorBox{$ENDIF}]);
+                           TRadioGroup, TSplitter, TControlBar, TBoundLabel, TLabeledEdit, TColorBox]);
 end.

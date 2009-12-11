@@ -63,9 +63,7 @@ type
     // Property Getters
     function Get_Canvas( AContext : Pointer) : PPyObject; cdecl;
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_HandleAllocated( AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
     function Get_HandleType( AContext : Pointer) : PPyObject; cdecl;
     function Get_IgnorePalette( AContext : Pointer) : PPyObject; cdecl;
     function Get_MaskHandle( AContext : Pointer) : PPyObject; cdecl;
@@ -105,9 +103,7 @@ type
     function Get_Description( AContext : Pointer) : PPyObject; cdecl;
     function Get_Enhanced( AContext : Pointer) : PPyObject; cdecl;
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_HandleAllocated( AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
     function Get_MMWidth( AContext : Pointer) : PPyObject; cdecl;
     function Get_MMHeight( AContext : Pointer) : PPyObject; cdecl;
     function Get_Inch( AContext : Pointer) : PPyObject; cdecl;
@@ -136,9 +132,7 @@ type
 
     // Property Getters
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_HandleAllocated( AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
     // Property Setters
     function Set_Handle( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
   public
@@ -220,9 +214,7 @@ type
     function GetPixel(args : PPyObject) : PPyObject; cdecl;
     function SetPixel(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_HandleAllocated( AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
     function Get_ClipRect( AContext : Pointer) : PPyObject; cdecl;
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
     function Get_LockCount( AContext : Pointer) : PPyObject; cdecl;
@@ -248,9 +240,7 @@ type
 implementation
 
 uses
-{$IFDEF DELPHI6_OR_HIGHER}
   Types,
-{$ENDIF}
   WrapDelphiTypes;
 
 { Register the wrappers, the globals and the constants }
@@ -292,13 +282,11 @@ begin
   APyDelphiWrapper.DefineVar('cl3DLight', cl3DLight);
   APyDelphiWrapper.DefineVar('clInfoText', clInfoText);
   APyDelphiWrapper.DefineVar('clInfoBk', clInfoBk);
-  {$IFDEF DELPHI6_OR_HIGHER}
   APyDelphiWrapper.DefineVar('clHotLight', clHotLight);
   APyDelphiWrapper.DefineVar('clGradientActiveCaption', clGradientActiveCaption);
   APyDelphiWrapper.DefineVar('clGradientInactiveCaption', clGradientInactiveCaption);
   APyDelphiWrapper.DefineVar('clMenuHighlight', clMenuHighlight);
   APyDelphiWrapper.DefineVar('clMenuBar', clMenuBar);
-  {$ENDIF}
 
   APyDelphiWrapper.DefineVar('clBlack', clBlack);
   APyDelphiWrapper.DefineVar('clMaroon', clMaroon);
@@ -319,12 +307,10 @@ begin
   APyDelphiWrapper.DefineVar('clDkGray', clDkGray);
   APyDelphiWrapper.DefineVar('clWhite', clWhite);
 
-  {$IFDEF DELPHI6_OR_HIGHER}
   APyDelphiWrapper.DefineVar('clMoneyGreen', clMoneyGreen);
   APyDelphiWrapper.DefineVar('clSkyBlue', clSkyBlue);
   APyDelphiWrapper.DefineVar('clCream', clCream);
   APyDelphiWrapper.DefineVar('clMedGray', clMedGray);
-  {$ENDIF}
 
   APyDelphiWrapper.DefineVar('clNone', clNone);
   APyDelphiWrapper.DefineVar('clDefault', clDefault);
@@ -760,7 +746,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiBitmap.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -768,7 +753,6 @@ begin
     Result := VariantAsPyObject(DelphiObject.HandleAllocated);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiBitmap.Get_HandleType(AContext: Pointer): PPyObject;
 begin
@@ -915,10 +899,8 @@ begin
         '', nil);
       AddGetSet('Handle', @TPyDelphiBitmap.Get_Handle, @TPyDelphiBitmap.Set_Handle,
         '', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('HandleAllocated', @TPyDelphiBitmap.Get_HandleAllocated, nil,
         '', nil);
-{$ENDIF}
       AddGetSet('HandleType', @TPyDelphiBitmap.Get_HandleType, @TPyDelphiBitmap.Set_HandleType,
         '', nil);
       AddGetSet('IgnorePalette', @TPyDelphiBitmap.Get_IgnorePalette, @TPyDelphiBitmap.Set_IgnorePalette,
@@ -1446,7 +1428,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiCanvas.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -1454,7 +1435,6 @@ begin
     Result := VariantAsPyObject(DelphiObject.HandleAllocated);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiCanvas.Get_LockCount(AContext: Pointer): PPyObject;
 begin
@@ -1807,10 +1787,8 @@ begin
   inherited;
   with PythonType do
     begin
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('HandleAllocated', @TPyDelphiCanvas.Get_HandleAllocated, nil,
         '', nil);
-{$ENDIF}
       AddGetSet('ClipRect', @TPyDelphiCanvas.Get_ClipRect, nil,
         'Specifies the boundaries of the clipping rectangle.', nil);
       AddGetSet('Handle', @TPyDelphiCanvas.Get_Handle, @TPyDelphiCanvas.Set_Handle,
@@ -2245,7 +2223,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiMetaFile.Get_HandleAllocated(
   AContext: Pointer): PPyObject;
 begin
@@ -2254,7 +2231,6 @@ begin
     Result := VariantAsPyObject(DelphiObject.HandleAllocated);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiMetaFile.Get_Inch(AContext: Pointer): PPyObject;
 begin
@@ -2293,10 +2269,8 @@ begin
         '', nil);
       AddGetSet('Handle', @TPyDelphiMetaFile.Get_Handle, @TPyDelphiMetaFile.Set_Handle,
         '', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('HandleAllocated', @TPyDelphiMetaFile.Get_HandleAllocated, nil,
         '', nil);
-{$ENDIF}
       AddGetSet('MMWidth', @TPyDelphiMetaFile.Get_MMWidth, @TPyDelphiMetaFile.Set_MMWidth,
         '', nil);
       AddGetSet('MMHeight', @TPyDelphiMetaFile.Get_MMHeight, @TPyDelphiMetaFile.Set_MMHeight,
@@ -2442,7 +2416,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiIcon.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -2450,7 +2423,6 @@ begin
     Result := VariantAsPyObject(DelphiObject.HandleAllocated);
   end;
 end;
-{$ENDIF}
 
 class procedure TPyDelphiIcon.RegisterGetSets(PythonType: TPythonType);
 begin
@@ -2459,10 +2431,8 @@ begin
     begin
       AddGetSet('Handle', @TPyDelphiIcon.Get_Handle, @TPyDelphiIcon.Set_Handle,
         '', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('HandleAllocated', @TPyDelphiIcon.Get_HandleAllocated, nil,
         '', nil);
-{$ENDIF}
     end;
 end;
 

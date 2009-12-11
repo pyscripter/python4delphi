@@ -54,11 +54,7 @@ implementation
 
 uses
   Windows,
-{$IFDEF DELPHI6_OR_HIGHER}
   RTLConsts
-{$ELSE}
-  Consts
-{$ENDIF}
   ;
 
 { TWideStringList }

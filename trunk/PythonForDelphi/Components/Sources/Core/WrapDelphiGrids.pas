@@ -30,7 +30,7 @@ type
 
   TGridColWidthsAccess = class(TContainerAccess)
   private
-    function GetContainer: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF};
+    function GetContainer: TCustomDrawGrid;
   public
     function GetItem(AIndex : Integer) : PPyObject; override;
     function GetSize : Integer; override;
@@ -40,7 +40,7 @@ type
     class function SupportsWrite : Boolean; override;
     class function Name : String; override;
 
-    property Container : {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF} read GetContainer;
+    property Container : TCustomDrawGrid read GetContainer;
   end;
 
   TPyDelphiCustomGrid = class (TPyDelphiWinControl)
@@ -55,8 +55,8 @@ type
 
   TPyDelphiCustomDrawGrid = class (TPyDelphiCustomGrid)
   private
-    function  GetDelphiObject: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF};
-    procedure SetDelphiObject(const Value: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF});
+    function  GetDelphiObject: TCustomDrawGrid;
+    procedure SetDelphiObject(const Value: TCustomDrawGrid);
   protected
     // methods
     //function CellRect(ACol, ARow: Longint): TRect;
@@ -91,7 +91,7 @@ type
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
 
     // Properties
-    property DelphiObject: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF} read GetDelphiObject write SetDelphiObject;
+    property DelphiObject: TCustomDrawGrid read GetDelphiObject write SetDelphiObject;
   end;
 
   TPyDelphiDrawGrid = class (TPyDelphiCustomDrawGrid)
@@ -300,14 +300,9 @@ begin
   result:=TCustomGrid;
 end;
 
-function TGridColWidthsAccess.GetContainer: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF};
+function TGridColWidthsAccess.GetContainer: TCustomDrawGrid;
 begin
-{$IFDEF DELPHI6_OR_HIGHER}
   result:=TCustomDrawGrid(inherited Container);
-{$ELSE}
-  result:=TDrawGrid(inherited Container);
-{$ENDIF}
-
 end;
 
 function TGridColWidthsAccess.GetItem(AIndex: Integer): PPyObject;
@@ -316,23 +311,17 @@ begin
     Result:=PyInt_FromLong(Container.ColWidths[AIndex]);
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 type
   TCustomDrawGridAccess = class(TCustomDrawGrid);
-{$ENDIF}
+
 function TGridColWidthsAccess.GetSize: Integer;
 begin
-{$IFDEF DELPHI6_OR_HIGHER}
   result:=TCustomDrawGridAccess(Container).ColCount;
-{$ELSE}
-  result:=Container.ColCount;
-{$ENDIF}
 end;
 
 class function TGridColWidthsAccess.Name: String;
 begin
   result:='TCustomGrid.ColWidths';
-
 end;
 
 function TGridColWidthsAccess.SetItem(AIndex: Integer;
@@ -369,12 +358,12 @@ end;
 
 class function TPyDelphiCustomDrawGrid.DelphiObjectClass: TClass;
 begin
-  Result := {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF};
+  Result := TCustomDrawGrid;
 end;
 
-function TPyDelphiCustomDrawGrid.GetDelphiObject: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF};
+function TPyDelphiCustomDrawGrid.GetDelphiObject: TCustomDrawGrid;
 begin
-  Result := {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF}(inherited DelphiObject);
+  Result := TCustomDrawGrid(inherited DelphiObject);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_Canvas(AContext: Pointer): PPyObject;
@@ -499,7 +488,7 @@ begin
 end;
 
 procedure TPyDelphiCustomDrawGrid.SetDelphiObject(
-  const Value: {$IFDEF DELPHI6_OR_HIGHER}TCustomDrawGrid{$ELSE}TDrawGrid{$ENDIF});
+  const Value: TCustomDrawGrid);
 begin
   inherited DelphiObject := Value;
 end;

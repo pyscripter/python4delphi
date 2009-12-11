@@ -56,10 +56,8 @@ begin
   APyDelphiWrapper.DefineVar('IDNO', IDNO);
   APyDelphiWrapper.DefineVar('IDCLOSE', IDCLOSE);
   APyDelphiWrapper.DefineVar('IDHELP', IDHELP);
-  {$IFDEF DELPHI6_OR_HIGHER}
   APyDelphiWrapper.DefineVar('IDTRYAGAIN', IDTRYAGAIN);
   APyDelphiWrapper.DefineVar('IDCONTINUE', IDCONTINUE);
-  {$ENDIF}
 end;
 
 function TWindowsRegistration.Name: String;

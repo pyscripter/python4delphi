@@ -151,7 +151,7 @@ type
 
   {** This helper function converts a python object into a python atom. Look at
       the trivial implementation of this function for more informations.} 
-  function GetAtom(pObject : PPyObject) : OleVariant; {$IFDEF DELPHI6_OR_HIGHER}deprecated{$ENDIF}
+  function GetAtom(pObject : PPyObject) : OleVariant; deprecated;
 
   {$IFDEF DEBUG}
   {** If this variable is set, (and DEBUG directive is defined) the strings is

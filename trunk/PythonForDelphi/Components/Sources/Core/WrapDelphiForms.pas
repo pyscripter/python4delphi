@@ -80,11 +80,9 @@ type
     function Get_Height(AContext : Pointer): PPyObject; cdecl;
     function Get_Top(AContext : Pointer): PPyObject; cdecl;
     function Get_Width(AContext : Pointer): PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_BoundsRect(AContext : Pointer): PPyObject; cdecl;
     function Get_WorkareaRect(AContext : Pointer): PPyObject; cdecl;
     function Get_Primary(AContext : Pointer): PPyObject; cdecl;
-{$ENDIF}
   public
     // Class methods
     class function  DelphiObjectClass : TClass; override;
@@ -184,12 +182,10 @@ type
     // Exposed Methods
     function DisableAlign_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function EnableAlign_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function MonitorFromPoint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     //TODO: implementation
     //function MonitorFromRect(const Rect: TRect; MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
     //function MonitorFromWindow(const Handle: THandle; MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
-{$ENDIF}
     function Realign_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ResetFonts_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
@@ -204,7 +200,6 @@ type
     function Get_DataModuleCount(AContext : Pointer) : PPyObject; cdecl;
     function Get_MonitorCount(AContext : Pointer) : PPyObject; cdecl;
     function Get_Monitors(AContext : Pointer) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_DesktopRect(AContext : Pointer) : PPyObject; cdecl;
     function Get_DesktopHeight(AContext : Pointer) : PPyObject; cdecl;
     function Get_DesktopLeft(AContext : Pointer) : PPyObject; cdecl;
@@ -215,7 +210,6 @@ type
     function Get_WorkAreaLeft(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaTop(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaWidth(AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
     function Get_HintFont(AContext : Pointer) : PPyObject; cdecl;
     function Get_IconFont(AContext : Pointer) : PPyObject; cdecl;
     function Get_MenuFont(AContext : Pointer) : PPyObject; cdecl;
@@ -262,9 +256,7 @@ type
     function HelpCommand_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HelpContext_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HelpJump_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function HelpKeyword_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$ENDIF}
     function HideHint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Initialize_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function IsRightToLeft_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -289,9 +281,7 @@ type
     // property getters
     function Get_Active(AContext : Pointer): PPyObject; cdecl;
     function Get_AllowTesting(AContext : Pointer): PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_AutoDragDocking(AContext : Pointer): PPyObject; cdecl;
-{$ENDIF}
     function Get_CurrentHelpFile(AContext : Pointer): PPyObject; cdecl;
     function Get_DialogHandle(AContext : Pointer): PPyObject; cdecl;
     function Get_ExeName(AContext : Pointer): PPyObject; cdecl;
@@ -316,9 +306,7 @@ type
     function Get_UpdateMetricSettings(AContext : Pointer): PPyObject; cdecl;
     // property setters
     function Set_AllowTesting(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Set_AutoDragDocking(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
-{$ENDIF}
     function Set_DialogHandle(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_Handle(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_HelpFile(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
@@ -409,12 +397,10 @@ begin
   APyDelphiWrapper.DefineVar('caFree',      caFree);
   APyDelphiWrapper.DefineVar('caMinimize',  caMinimize);
 
-{$IFDEF DELPHI6_OR_HIGHER}
   // TMonitorDefaultTo enum
   APyDelphiWrapper.DefineVar('mdNearest',   mdNearest);
   APyDelphiWrapper.DefineVar('mdNull',      mdNull);
   APyDelphiWrapper.DefineVar('mdPrimary',   mdPrimary);
-{$ENDIF}
 end;
 
 function TFormsRegistration.Name: String;
@@ -757,7 +743,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiScreen.Get_DesktopHeight(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -797,7 +782,6 @@ begin
     Result := PyInt_FromLong(DelphiObject.DesktopWidth);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiScreen.Get_Fonts(AContext: Pointer): PPyObject;
 begin
@@ -929,7 +913,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiScreen.Get_WorkAreaHeight(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -969,7 +952,6 @@ begin
     Result := PyInt_FromLong(DelphiObject.WorkAreaWidth);
   end;
 end;
-{$ENDIF}
 
 procedure TPyDelphiScreen.HandleOnActiveControlChange(Sender: TObject);
 begin
@@ -981,7 +963,6 @@ begin
   RaiseNotifyEvent(PyDelphiWrapper, fOnActiveFormChange, Sender);
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiScreen.MonitorFromPoint_Wrapper(args: PPyObject): PPyObject;
 var
   p : TPoint;
@@ -1005,7 +986,6 @@ begin
       Result := nil;
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiScreen.Realign_Wrapper(args: PPyObject): PPyObject;
 begin
@@ -1047,7 +1027,6 @@ begin
         'Specifies the number of monitors used to comprise the desktop.', nil);
       AddGetSet('Monitors', @TPyDelphiScreen.Get_Monitors, nil,
         'Provides access to an individual monitor used to comprise the desktop.', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('DesktopRect', @TPyDelphiScreen.Get_DesktopRect, nil,
         'Specifies the boundaries of the virtual desktop relative to the upper-left corner of the primary monitor.', nil);
       AddGetSet('DesktopHeight', @TPyDelphiScreen.Get_DesktopHeight, nil,
@@ -1068,7 +1047,6 @@ begin
         'Specifies the top edge of the work area on the primary monitor.', nil);
       AddGetSet('WorkAreaWidth', @TPyDelphiScreen.Get_WorkAreaWidth, nil,
         'Specifies the width of the work area on the primary monitor.', nil);
-{$ENDIF}
       AddGetSet('HintFont', @TPyDelphiScreen.Get_HintFont, @TPyDelphiScreen.Set_HintFont,
         'Specifies the font used to display help hints.', nil);
       AddGetSet('IconFont', @TPyDelphiScreen.Get_IconFont, @TPyDelphiScreen.Set_IconFont,
@@ -1115,11 +1093,9 @@ begin
   PythonType.AddMethod('ResetFonts', @TPyDelphiScreen.ResetFonts_Wrapper,
     'TScreen.ResetFonts()'#10 +
     'Reinitializes the fonts listed in the Fonts property.');
-{$IFDEF DELPHI6_OR_HIGHER}
   PythonType.AddMethod('MonitorFromPoint', @TPyDelphiScreen.MonitorFromPoint_Wrapper,
     'TScreen.MonitorFromPoint(APoint, AMonitorDefault)'#10 +
     'Returns the monitor where a specified point is located.');
-{$ENDIF}
 end;
 
 function TPyDelphiScreen.ResetFonts_Wrapper(args: PPyObject): PPyObject;
@@ -1359,7 +1335,6 @@ end;
 
 { TPyDelphiMonitor }
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiMonitor.Get_BoundsRect(AContext : Pointer): PPyObject;
 begin
   with GetPythonEngine do
@@ -1368,7 +1343,6 @@ begin
     Result := WrapRect(PyDelphiWrapper, DelphiObject.BoundsRect);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiMonitor.Get_Handle(AContext : Pointer): PPyObject;
 begin
@@ -1406,7 +1380,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiMonitor.Get_Primary(AContext : Pointer): PPyObject;
 begin
   with GetPythonEngine do
@@ -1415,7 +1388,7 @@ begin
     Result := VariantAsPyObject(DelphiObject.Primary);
   end;
 end;
-{$ENDIF}
+
 function TPyDelphiMonitor.Get_Top(AContext : Pointer): PPyObject;
 begin
   with GetPythonEngine do
@@ -1434,7 +1407,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiMonitor.Get_WorkareaRect(AContext : Pointer): PPyObject;
 begin
   with GetPythonEngine do
@@ -1443,7 +1415,6 @@ begin
     Result := WrapRect(PyDelphiWrapper, DelphiObject.WorkareaRect);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiMonitor.GetDelphiObject: TMonitor;
 begin
@@ -1467,14 +1438,12 @@ begin
               'Indicates the logical position of the top edge of the monitor.', nil);
     AddGetSet('Width', @TPyDelphiMonitor.Get_Width, nil,
               'Indicates the horizontal size of the monitor in pixels.', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
     AddGetSet('BoundsRect', @TPyDelphiMonitor.Get_BoundsRect, nil,
               'Indicates the dimensions of the monitor in pixels.', nil);
     AddGetSet('WorkareaRect', @TPyDelphiMonitor.Get_WorkareaRect, nil,
               'Indicates the dimensions of the usable area on the monitor.', nil);
     AddGetSet('Primary', @TPyDelphiMonitor.Get_Primary, nil,
               'Indicates whether this is the primary monitor.', nil);
-{$ENDIF}
   end;
 end;
 
@@ -1644,7 +1613,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiApplication.HelpKeyword_Wrapper(
   args: PPyObject): PPyObject;
 var
@@ -1659,7 +1627,6 @@ begin
       Result := nil;
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiApplication.HideHint_Wrapper(args: PPyObject): PPyObject;
 begin
@@ -1815,10 +1782,8 @@ begin
       'Specifies whether the application is active and has focus.', nil);
     AddGetSet('AllowTesting', @TPyDelphiApplication.Get_AllowTesting, @TPyDelphiApplication.Set_AllowTesting,
       'Represents information for the IDE.', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
     AddGetSet('AutoDragDocking', @TPyDelphiApplication.Get_AutoDragDocking, @TPyDelphiApplication.Set_AutoDragDocking,
       'Indicates whether dragged windows are automatically docked.', nil);
-{$ENDIF}
     AddGetSet('CurrentHelpFile', @TPyDelphiApplication.Get_CurrentHelpFile, nil,
       'Indicates the current help file.', nil);
     AddGetSet('DialogHandle', @TPyDelphiApplication.Get_DialogHandle, @TPyDelphiApplication.Set_DialogHandle,
@@ -1897,11 +1862,9 @@ begin
   PythonType.AddMethod('HelpJump', @TPyDelphiApplication.HelpJump_Wrapper,
     'TApplication.HelpJump()'#10 +
     'Displays a specified help topic.');
-{$IFDEF DELPHI6_OR_HIGHER}
   PythonType.AddMethod('HelpKeyword', @TPyDelphiApplication.HelpKeyword_Wrapper,
     'TApplication.HelpKeyword()'#10 +
     'Displays a specified help topic.');
-{$ENDIF}
   PythonType.AddMethod('HideHint', @TPyDelphiApplication.HideHint_Wrapper,
     'TApplication.HideHint()'#10 +
     'Hides the current hint.');
@@ -2122,7 +2085,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiApplication.Get_AutoDragDocking(
   AContext: Pointer): PPyObject;
 begin
@@ -2131,7 +2093,6 @@ begin
     Result := VariantAsPyObject(DelphiObject.AutoDragDocking);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiApplication.Get_BiDiKeyboard(
   AContext: Pointer): PPyObject;
@@ -2336,7 +2297,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiApplication.Set_AutoDragDocking(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -2353,7 +2313,6 @@ begin
       Result := -1;
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiApplication.Set_BiDiKeyboard(AValue: PPyObject;
   AContext: Pointer): Integer;

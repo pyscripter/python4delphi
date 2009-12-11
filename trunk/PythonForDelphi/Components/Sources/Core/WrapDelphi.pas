@@ -322,12 +322,7 @@ interface
 
 uses
   SysUtils, Classes, PythonEngine,  TypInfo,
-{$IFNDEF DELPHI6_OR_HIGHER}
-  Windows,
-{$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
   Variants,
-{$ENDIF}
 {$IFDEF DELPHI7_OR_HIGHER}
   ObjAuto,
 {$ENDIF}
@@ -496,7 +491,7 @@ Type
   {
     Base class allowing us to implement interfaces.
   }
-  TPyInterfacedObject = class(TPyObject, {$IFDEF DELPHI6_OR_HIGHER}IInterface{$ELSE}IUnknown{$ENDIF})
+  TPyInterfacedObject = class(TPyObject, IInterface)
   private
     // implementation of interface IInterface
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
@@ -837,7 +832,7 @@ implementation
 
 Uses
   Math
-  {$IFDEF DELPHI6_OR_HIGHER}, RTLConsts {$ELSE}, Consts{$ENDIF};
+  RTLConsts;
 
 var
   gRegisteredUnits : TRegisteredUnits;
@@ -1099,147 +1094,6 @@ begin
 end;
 
 {$IFNDEF DELPHI7_OR_HIGHER}
-
-{$IFNDEF DELPHI6_OR_HIGHER}
-resourcestring
-  SInvalidPropertyType = 'Invalid property type: %s';
-procedure AssignWideStr(var Dest: WideString; const Source: WideString);
-begin
-  Dest := Source;
-end;
-
-procedure _GetWideStrProp(Instance: TObject; PropInfo: PPropInfo;
-  var Value: WideString); assembler;
-asm
-        { ->    EAX Pointer to instance         }
-        {       EDX Pointer to property info    }
-        {       ECX Pointer to result string    }
-
-        PUSH    ESI
-        PUSH    EDI
-        MOV     EDI,EDX
-
-        MOV     EDX,[EDI].TPropInfo.Index       { pass index in EDX }
-        CMP     EDX,$80000000
-        JNE     @@hasIndex
-        MOV     EDX,ECX                         { pass value in EDX }
-@@hasIndex:
-        MOV     ESI,[EDI].TPropInfo.GetProc
-        CMP     [EDI].TPropInfo.GetProc.Byte[3],$FE
-        JA      @@isField
-        JB      @@isStaticMethod
-
-@@isVirtualMethod:
-        MOVSX   ESI,SI                          { sign extend slot offset }
-        ADD     ESI,[EAX]                       { vmt + slot offset }
-        CALL    DWORD PTR [ESI]
-        JMP     @@exit
-
-@@isStaticMethod:
-        CALL    ESI
-        JMP     @@exit
-
-@@isField:
-  AND  ESI,$00FFFFFF
-  MOV  EDX,[EAX+ESI]
-  MOV  EAX,ECX
-  CALL  AssignWideStr
-
-@@exit:
-        POP     EDI
-        POP     ESI
-end;
-
-function GetWideStrProp(Instance: TObject; PropInfo: PPropInfo) : WideString;
-begin
-  _GetWideStrProp(Instance, PropInfo, Result);
-end;
-
-procedure SetWideStrProp(Instance: TObject; PropInfo: PPropInfo;
-  const Value: WideString); assembler;
-asm
-        { ->    EAX Pointer to instance         }
-        {       EDX Pointer to property info    }
-        {       ECX Pointer to string value     }
-
-        PUSH    ESI
-        PUSH    EDI
-        MOV     ESI,EDX
-
-        MOV     EDX,[ESI].TPropInfo.Index       { pass index in EDX }
-        CMP     EDX,$80000000
-        JNE     @@hasIndex
-        MOV     EDX,ECX                         { pass value in EDX }
-@@hasIndex:
-        MOV     EDI,[ESI].TPropInfo.SetProc
-        CMP     [ESI].TPropInfo.SetProc.Byte[3],$FE
-        JA      @@isField
-        JB      @@isStaticMethod
-
-@@isVirtualMethod:
-        MOVSX   EDI,DI
-        ADD     EDI,[EAX]
-        CALL    DWORD PTR [EDI]
-        JMP     @@exit
-
-@@isStaticMethod:
-        CALL    EDI
-        JMP     @@exit
-
-@@isField:
-  AND  EDI,$00FFFFFF
-  ADD  EAX,EDI
-  MOV  EDX,ECX
-  CALL  AssignWideStr
-
-@@exit:
-        POP     EDI
-        POP     ESI
-end;
-
-function VarToWideStrDef(const V: Variant; const ADefault: WideString): WideString;
-begin
-  if not VarIsNull(V) then
-    Result := V
-  else
-    Result := ADefault;
-end;
-
-var
-  // This is the value returned when a NULL is converted into a string.  Other
-  //  environments return 'NULL' instead of Delphi's default of an empty string.
-  NullAsStringValue: string = '';
-function VarToWideStr(const V: Variant): WideString;
-begin
-  Result := VarToWideStrDef(V, NullAsStringValue);
-end;
-
-function Sign(AValue : Integer) : Integer;
-begin
-  Result := 0;
-  if AValue < 0 then
-    Result := -1
-  else if AValue > 0 then
-    Result := 1;
-end;
-
-function GetPropList(TypeInfo: PTypeInfo; out PropList: PPropList): Integer; overload;
-begin
-  Result := GetTypeData(TypeInfo)^.PropCount;
-  if Result > 0 then
-  begin
-    GetMem(PropList, Result * SizeOf(Pointer));
-    GetPropInfos(TypeInfo, PropList);
-  end;
-end;
-
-function GetPropList(AObject: TObject; out PropList: PPropList): Integer; overload;
-begin
-  Result := GetPropList(PTypeInfo(AObject.ClassInfo), PropList);
-end;
-
-{$ENDIF}
-
 // Copied from unit ObjAuto.pas, available only in Delphi7 or later
 function GetPropValue(Instance: TObject; PropInfo: PPropInfo): Variant;
 begin
@@ -1267,10 +1121,8 @@ begin
       Result := GetWideStrProp(Instance, PropInfo);
     tkVariant:
       Result := GetVariantProp(Instance, PropInfo);
-{$IFDEF DELPHI6_OR_HIGHER}
     tkInt64:
       Result := GetInt64Prop(Instance, PropInfo);
-{$ENDIF}
     tkDynArray:
       DynArrayToVariant(Result, Pointer(GetOrdProp(Instance, PropInfo)), PropInfo^.PropType^);
   else

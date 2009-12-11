@@ -361,7 +361,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'OO:SelectNextPage', [@_pGoForward, @_pCheckTabVisible] ) <> 0 then begin
-      DelphiObject.SelectNextPage(PyObject_IsTrue(_pGoForward)<>0{$IFDEF DELPHI6_OR_HIGHER}, PyObject_IsTrue(_pCheckTabVisible)<>0{$ENDIF});
+      DelphiObject.SelectNextPage(PyObject_IsTrue(_pGoForward)<>0, PyObject_IsTrue(_pCheckTabVisible)<>0);
       Result := ReturnNone;
     end else
       Result := nil;

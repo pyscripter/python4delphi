@@ -6,11 +6,7 @@ interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, Controls,
-  TypInfo
-{$IFDEF DELPHI6_OR_HIGHER}
-  , Types
-{$ENDIF}
-  ;
+  TypInfo, Types;
 
 type
   {

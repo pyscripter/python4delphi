@@ -31,9 +31,7 @@ unit AtomPythonEngine;
 interface
 
 uses
-{$IFDEF DELPHI6_OR_HIGHER}
   Variants,
-{$ENDIF}
   PythonEngine;
 
 type
@@ -47,7 +45,7 @@ type
     function PyObjectAsVariant( obj : PPyObject ) : Variant; override;
   published
     { Published declarations }
-  end {$IFDEF DELPHI6_OR_HIGHER}deprecated{$ENDIF};
+  end deprecated;
 
 procedure Register;
 

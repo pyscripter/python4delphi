@@ -8,11 +8,7 @@ uses
   Classes,
   SysUtils,
   PythonEngine,
-{$IFDEF DELPHI6_OR_HIGHER}
   Types,
-{$ELSE}
-  Windows,
-{$ENDIF}
   WrapDelphi;
 
 type
@@ -221,19 +217,6 @@ begin
     end;
   end;
 end;
-
-{$IFNDEF DELPHI6_OR_HIGHER}
-function CompareValue(A, B : Integer) : Integer;
-begin
-  if A < B then
-    Result := -1
-  else if A = B then
-    Result := 0
-  else
-    Result := 1;
-end;
-
-{$ENDIF}
 
 { TPyDelphiPoint }
 

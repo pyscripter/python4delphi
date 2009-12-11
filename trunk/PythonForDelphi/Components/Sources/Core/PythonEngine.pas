@@ -62,12 +62,6 @@ unit PythonEngine;
     Error! Delphi 6 or higher is required!
 {$ENDIF}
 
-{$IFDEF PYTHON30_OR_HIGHER}
-  {$IFNDEF UNICODE_SUPPORT}
-    Error! Python 3.0 only supports UNICODE!
-  {$ENDIF}
-{$ENDIF}
-
 interface
 
 uses
@@ -83,13 +77,7 @@ uses
 {$IFDEF HAS_SYNCOBJS_UNIT}
   SyncObjs,
 {$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
   Variants,
-{$ELSE}
-  {$IFDEF FPC}
-    Variants,
-  {$ENDIF}
-{$ENDIF}
 {$IFDEF DELPHI2005_OR_HIGHER}
   WideStrings,
 {$ELSE}
@@ -243,6 +231,7 @@ given type object has a specified feature.
                              or Py_TPFLAGS_HAVE_WEAKREFS
                              or Py_TPFLAGS_HAVE_ITER
                              or Py_TPFLAGS_HAVE_CLASS
+                             or Py_TPFLAGS_BASETYPE
                              ;
 
 // See function PyType_HasFeature below for testing the flags.
@@ -1348,17 +1337,11 @@ const
 type
   TSendDataEvent = procedure (Sender: TObject; const Data : String ) of object;
   TReceiveDataEvent = procedure (Sender: TObject; var Data : String ) of object;
-{$IFDEF UNICODE_SUPPORT}
   TSendUniDataEvent = procedure (Sender: TObject; const Data : WideString ) of object;
   TReceiveUniDataEvent = procedure (Sender: TObject; var Data : WideString ) of object;
   IOChar = WideChar;
   IOString = WideString;
   TIOStringList = TWideStringList;
-{$ELSE}
-  IOChar = Char;
-  IOString = String;
-  TIOStringList = TStringList;
-{$ENDIF}
 
   TPythonInputOutput = class(TComponent)
   private
@@ -1374,10 +1357,8 @@ type
     FMaxLineLength   : Integer;
     FOnSendData      : TSendDataEvent;
     FOnReceiveData   : TReceiveDataEvent;
-{$IFDEF UNICODE_SUPPORT}
     FOnSendUniData   : TSendUniDataEvent;
     FOnReceiveUniData: TReceiveUniDataEvent;
-{$ENDIF}
     FUnicodeIO       : Boolean;
     FRawOutput       : Boolean;
 
@@ -1387,10 +1368,8 @@ type
     // Virtual methods for handling the input/output of text
     procedure SendData( const Data : String ); virtual;
     function  ReceiveData : String; virtual;
-{$IFDEF UNICODE_SUPPORT}
     procedure SendUniData( const Data : WideString ); virtual;
     function  ReceiveUniData : WideString; virtual;
-{$ENDIF}
     procedure AddPendingWrite; virtual;
     function  GetCurrentThreadSlotIdx : Integer;
     function  GetCurrentThreadLine : IOString;
@@ -1411,12 +1390,10 @@ type
     property DelayWrites : Boolean read FDelayWrites write FDelayWrites default False;
     property OnSendData    : TSendDataEvent read FOnSendData write FOnSendData;
     property OnReceiveData : TReceiveDataEvent read FOnReceiveData write FOnReceiveData;
-{$IFDEF UNICODE_SUPPORT}
     property OnSendUniData    : TSendUniDataEvent read FOnSendUniData write FOnSendUniData;
     property OnReceiveUniData : TReceiveUniDataEvent read FOnReceiveUniData write FOnReceiveUniData;
     property UnicodeIO: Boolean read FUnicodeIO write FUnicodeIO;
     property RawOutput: Boolean read FRawOutput write FRawOutput;
-{$ENDIF}
   end;
 
 //-------------------------------------------------------
@@ -1762,13 +1739,9 @@ type
 {-} PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
 {-} PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
 {-} PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
-{$IFDEF UNICODE_SUPPORT}
 {-} PyLong_FromUnicode:function(ob:PPyObject; a, b : integer) : PPyObject; cdecl;
-{$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
 {-} PyLong_FromLongLong:function(val:Int64) : PPyObject; cdecl;
 {-} PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
-{$ENDIF}
 {-} PyMapping_Check:function (ob:PPyObject):integer; cdecl;
 {-} PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
@@ -1887,13 +1860,11 @@ type
     PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:Integer) : PPyObject; cdecl;
     PyType_GenericNew:function(atype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
     PyType_Ready:function(atype: PPyTypeObject) : integer; cdecl;
-{$IFDEF UNICODE_SUPPORT}
 {+} PyUnicode_FromWideChar:function (const w:PWideChar; size:integer):PPyObject; cdecl;
 {+} PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:integer):integer; cdecl;
     PyUnicode_Decode:function (const s:PAnsiChar; size: integer; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
 {-} PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
-{$ENDIF}
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
@@ -2057,10 +2028,8 @@ type
   function PySlice_Check( obj : PPyObject ) : Boolean;
   function PyFunction_Check( obj : PPyObject ) : Boolean;
   function PyIter_Check( obj : PPyObject ) : Boolean;
-{$IFDEF UNICODE_SUPPORT}
   function PyUnicode_Check( obj : PPyObject ) : Boolean;
   function PyUnicode_CheckExact( obj : PPyObject ) : Boolean;
-{$ENDIF}
   function PyType_IS_GC(t : PPyTypeObject ) : Boolean;
   function PyObject_IS_GC( obj : PPyObject ) : Boolean;
   function PyWeakref_Check( obj : PPyObject ) : Boolean;
@@ -2242,10 +2211,8 @@ type
     function   StringsToPyTuple( strings : TStrings ) : PPyObject;
     procedure  PyListToStrings( list : PPyObject; strings : TStrings );
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
-{$IFDEF UNICODE_SUPPORT}
     function   PyUnicode_AsWideString( obj : PPyObject ) : WideString;
     function   PyUnicode_FromWideString( const AString : WideString) : PPyObject;
-{$ENDIF}
     function   ReturnNone : PPyObject;
     function   FindModule( const ModuleName : String ) : PPyObject;
     function   FindFunction(ModuleName,FuncName: String): PPyObject;
@@ -3216,11 +3183,9 @@ procedure TPythonInputOutput.Write( const str : IOString );
       AddWrite( FLine_Buffer )
     else
 {$ENDIF}
-{$IFDEF UNICODE_SUPPORT}
       if UnicodeIO then
         SendUniData( FLine_Buffer )
       else
-{$ENDIF}
         SendData( FLine_Buffer );
     FLine_Buffer := '';
     UpdateCurrentThreadLine;
@@ -3233,12 +3198,10 @@ begin
   Lock;
   try
     FLine_Buffer := GetCurrentThreadLine;
-{$IFDEF UNICODE_SUPPORT}
     if FRawOutput then begin
       FLine_Buffer := FLine_Buffer  + str;
       DropLine;
     end else begin
-{$ENDIF}
       for i := 1 to length(str) do
         begin
           c := str[i];
@@ -3251,9 +3214,7 @@ begin
                 DropLine;
             end;
         end;
-{$IFDEF UNICODE_SUPPORT}
     end;
-{$ENDIF}
     UpdateCurrentThreadLine;
   finally
     Unlock;
@@ -3280,13 +3241,11 @@ begin
     FOnSendData( Self, Data );
 end;
 
-{$IFDEF UNICODE_SUPPORT}
 procedure TPythonInputOutput.SendUniData(const Data: WideString);
 begin
   if Assigned(FOnSendUniData) then
     FOnSendUniData( Self, Data );
 end;
-{$ENDIF}
 
 function  TPythonInputOutput.ReceiveData : String;
 begin
@@ -3295,14 +3254,12 @@ begin
     FOnReceiveData( Self, Result );
 end;
 
-{$IFDEF UNICODE_SUPPORT}
 function TPythonInputOutput.ReceiveUniData: WideString;
 begin
   Result := '';
   if Assigned(FOnReceiveUniData) then
     FOnReceiveUniData( Self, Result );
 end;
-{$ENDIF}
 
 procedure TPythonInputOutput.AddPendingWrite;
 begin
@@ -3405,12 +3362,7 @@ begin
 
   if Result <> '' then
   begin
-{$IFDEF DELPHI6_OR_HIGHER}
     Result := IncludeTrailingPathDelimiter(Result);
-{$ELSE}
-    if Result[Length(Result)] <> '\' then
-      Result := Result + '\';
-{$ENDIF}
   end;
 end;
 
@@ -3741,9 +3693,7 @@ begin
   else
     PyString_Type              := Import('PyBytes_Type');
   PyTuple_Type               := Import('PyTuple_Type');
-{$IFDEF UNICODE_SUPPORT}
   PyUnicode_Type             := Import('PyUnicode_Type');
-{$ENDIF}
   PyBaseObject_Type          := Import('PyBaseObject_Type');
   if not IsPython3000 then
     PyBuffer_Type              := Import('PyBuffer_Type');
@@ -3908,13 +3858,9 @@ begin
   @PyLong_FromString         :=Import('PyLong_FromString');
   @PyLong_FromUnsignedLong   :=Import('PyLong_FromUnsignedLong');
   @PyLong_AsUnsignedLong     :=Import('PyLong_AsUnsignedLong');
-{$IFDEF UNICODE_SUPPORT}
   @PyLong_FromUnicode        :=Import('PyLong_FromUnicode');
-{$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
   @PyLong_FromLongLong       :=Import('PyLong_FromLongLong');
   @PyLong_AsLongLong         :=Import('PyLong_AsLongLong');
-{$ENDIF}
   @PyMapping_Check           :=Import('PyMapping_Check');
   @PyMapping_GetItemString   :=Import('PyMapping_GetItemString');
   @PyMapping_HasKey          :=Import('PyMapping_HasKey');
@@ -4049,13 +3995,11 @@ begin
   @PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   @PyType_GenericNew         :=Import('PyType_GenericNew');
   @PyType_Ready              :=Import('PyType_Ready');
-{$IFDEF UNICODE_SUPPORT}
   @PyUnicode_FromWideChar    :=Import(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix]));
   @PyUnicode_AsWideChar      :=Import(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix]));
   @PyUnicode_Decode          :=Import(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix]));
   @PyUnicode_AsEncodedString :=Import(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix]));
   @PyUnicode_FromOrdinal     :=Import(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix]));
-{$ENDIF}
   @PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   @PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   @PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
@@ -4283,7 +4227,6 @@ end;
 function TPythonInterface.PyArg_Parse ( args: PPyObject; format: PAnsiChar;
                        argp: array of Pointer): Integer; cdecl;
 begin
-{$IFDEF DELPHI6_OR_HIGHER}
   Result := 0;
   { Do not optimize this to a "pure" assembler routine, because such
     a routine does not copy the array arguments in the prologue code }
@@ -4302,15 +4245,11 @@ begin
     pop edx
     mov Result, eax
   end;
-{$ELSE}
-  Result := DLL_PyArg_Parse( args, format );
-{$ENDIF}
 end;
 
 function TPythonInterface.PyArg_ParseTuple ( args: PPyObject; format: PAnsiChar;
                             argp: array of Pointer): Integer; cdecl;
 begin
-{$IFDEF DELPHI6_OR_HIGHER}
   Result := 0;
   { Do not optimize this to a "pure" assembler routine, because such
     a routine does not copy the array arguments in the prologue code }
@@ -4329,9 +4268,6 @@ begin
     pop edx
     mov Result, eax
   end;
-{$ELSE}
-  Result := DLL_PyArg_ParseTuple( args, format );
-{$ENDIF}
 end;
 
 // This function is copied from compile.c because it was not
@@ -4426,10 +4362,8 @@ end;
 function TPythonInterface.PyString_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PyString_Type);
-{$IFDEF UNICODE_SUPPORT}
   if not Result then
     Result := PyObject_TypeCheck(obj, PyUnicode_Type);
-{$ENDIF}
 end;
 
 function TPythonInterface.PyString_CheckExact(obj: PPyObject): Boolean;
@@ -4552,7 +4486,6 @@ begin
               and Assigned(obj^.ob_type^.tp_iternext));
 end;
 
-{$IFDEF UNICODE_SUPPORT}
 function TPythonInterface.PyUnicode_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PyUnicode_Type);
@@ -4562,7 +4495,6 @@ function TPythonInterface.PyUnicode_CheckExact(obj: PPyObject): Boolean;
 begin
   Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyUnicode_Type));
 end;
-{$ENDIF}
 
 function TPythonInterface.PyType_IS_GC(t : PPyTypeObject ) : Boolean;
 begin
@@ -5759,23 +5691,19 @@ var
   s : PPyObject;
 //  i : Integer;
 //  tmp : PAnsiChar;
-{$IFDEF UNICODE_SUPPORT}
   w : WideString;
-{$ENDIF}
 begin
   CheckPython;
   Result := '';
   if not Assigned( obj ) then
     Exit;
 
-{$IFDEF UNICODE_SUPPORT}
   if PyUnicode_Check(obj) then
   begin
     w := PyUnicode_AsWideString(obj);
     Result := w;
     Exit;
   end;
-{$ENDIF}
   s := PyObject_Str( obj );
   if Assigned(s) and PyString_Check(s) then
     begin
@@ -6003,15 +5931,11 @@ begin
     end;
     varSmallint,
     varByte,
-{$IFDEF DELPHI6_OR_HIGHER}
     varShortInt,
     varWord,
     varLongWord,
-{$ENDIF}
     varInteger:  Result := PyInt_FromLong( DeRefV );
-{$IFDEF DELPHI6_OR_HIGHER}
     varInt64:    Result := PyLong_FromLongLong( DeRefV );
-{$ENDIF}
     varSingle,
     varDouble,
     varCurrency: Result := PyFloat_FromDouble( DeRefV );
@@ -6229,17 +6153,13 @@ begin
     Result := PyFloat_AsDouble(obj)
   else if PyBool_Check(obj) then // we must check Bool before Int, as Boolean type inherits from Int.
     Result := PyObject_IsTrue(obj) = 1
-{$IFDEF DELPHI6_OR_HIGHER}
   else if PyLong_Check(obj) then
     Result := PyLong_AsLongLong(obj)
-{$ENDIF}
   // changed the order of Long and int check (KV)
   else if PyInt_Check(obj) then
     Result := PyInt_AsLong(obj)
-{$IFDEF UNICODE_SUPPORT}
   else if PyUnicode_Check(obj) then
     Result := PyUnicode_AsWideString(obj)
-{$ENDIF}
   else if PyString_Check(obj) then
     Result := PyObjectAsString(obj)
   else if ExtractDate( Result ) then
@@ -6299,10 +6219,7 @@ begin
     vtCurrency:      Result := PyFloat_FromDouble( v.VCurrency^ );
     vtVariant:       Result := VariantAsPyObject( v.VVariant^ );
     vtPointer:       Result := v.VPointer;
-{$IFDEF DELPHI6_OR_HIGHER}
     vtInt64:         Result := PyLong_FromLongLong( v.VInt64^ );
-{$ENDIF}
-{$IFDEF UNICODE_SUPPORT}
     vtWideChar:      Result := PyUnicode_FromWideString( v.VWideChar );
     vtPWideChar:
     begin
@@ -6318,7 +6235,6 @@ begin
       else
         Result := PyUnicode_FromWideString( '' );
     end;
-{$ENDIF}
   else
     Raise Exception.Create('Argument type not allowed');
   end;
@@ -6489,7 +6405,6 @@ begin
     strings.Add( PyObjectAsString( PyTuple_GetItem( tuple, i ) ) );
 end;
 
-{$IFDEF UNICODE_SUPPORT}
 function TPythonEngine.PyUnicode_AsWideString( obj : PPyObject ) : WideString;
 var
   _size : Integer;
@@ -6538,7 +6453,6 @@ begin
   Result := PyUnicode_FromWideChar( PWideChar(AString), Length(AString) );
 {$ENDIF}
 end;
-{$ENDIF}
 
 function TPythonEngine.ReturnNone : PPyObject;
 begin
@@ -9721,11 +9635,9 @@ begin
           a1 := PyTuple_GetItem(args, 0);
           if RedirectIO and (IO <> nil) and Assigned(a1) then
           begin
-{$IFDEF UNICODE_SUPPORT}
             if PyUnicode_Check(a1) then
               IO.Write(PyUnicode_AsWideString(a1))
             else
-{$ENDIF}
               if PyString_Check(a1) then
                 IO.Write(PyObjectAsString(a1));
           end;
@@ -9742,9 +9654,7 @@ end;
 function pyio_read(self, args : PPyObject) : PPyObject;
 var
   txt, msg : String;
-{$IFDEF UNICODE_SUPPORT}
   Widetxt : WideString;
-{$ENDIF}
 begin
   with GetPythonEngine do
     begin
@@ -9753,7 +9663,6 @@ begin
           txt := '';
           msg := 'Enter text';
           if Assigned(IO) then
-{$IFDEF UNICODE_SUPPORT}
             if IO.UnicodeIO then begin
               Widetxt := IO.ReceiveUniData;
               // KV!!!!!!
@@ -9773,10 +9682,6 @@ begin
             end
           else
             Result := PyString_FromString(PAnsiChar(txt));
-{$ELSE}
-            txt := IO.ReceiveData;
-          Result := PyString_FromString(PAnsiChar(txt));
-{$ENDIF}
         end
       else
         Result := ReturnNone;
