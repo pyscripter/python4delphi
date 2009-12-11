@@ -39,10 +39,6 @@ unit VarPyth;
 
 {$I Definition.Inc}
 
-{$IFNDEF DELPHI6_OR_HIGHER}
-  This unit requires Delphi6 or later to compile!!!
-{$ENDIF}
-
 interface
 uses
   Variants, PythonEngine;
@@ -80,9 +76,7 @@ function VarIsPythonFunction(const AValue: Variant): Boolean;
 function VarIsPythonModule(const AValue: Variant): Boolean;
 function VarIsPythonCallable(const AValue: Variant): Boolean;
 function VarIsPythonIterator(const AValue: Variant): Boolean;
-{$IFDEF UNICODE_SUPPORT}
 function VarIsPythonUnicode(const AValue: Variant): Boolean;
-{$ENDIF}
 function VarIsPythonDateTime(const AValue: Variant): Boolean;
 function VarIsPythonDate(const AValue: Variant): Boolean;
 function VarIsPythonTime(const AValue: Variant): Boolean;
@@ -507,13 +501,11 @@ begin
             (GetPythonEngine.PyIter_Check(ExtractPythonObjectFrom(AValue)));
 end;
 
-{$IFDEF UNICODE_SUPPORT}
 function VarIsPythonUnicode(const AValue: Variant): Boolean;
 begin
   Result := VarIsPython(AValue) and
             GetPythonEngine.PyUnicode_Check(ExtractPythonObjectFrom(AValue));
 end;
-{$ENDIF}
 
 function VarIsPythonDateTime(const AValue: Variant): Boolean;
 begin
@@ -2027,11 +2019,9 @@ end;
 
 function TPythonData.GetAsWideString: WideString;
 begin
-{$IFDEF UNICODE_SUPPORT}
   if Assigned(PyObject) and GetPythonEngine.PyUnicode_Check(PyObject) then
     Result := GetPythonEngine.PyUnicode_AsWideString(PyObject)
   else
-{$ENDIF}
     Result := GetAsString;
 end;
 

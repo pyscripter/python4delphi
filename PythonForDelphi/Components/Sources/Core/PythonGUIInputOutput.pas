@@ -270,11 +270,7 @@ begin
     Exit;
   s := FQueue.Strings[ 0 ];
   FQueue.Delete(0);
-{$IFDEF UNICODE_SUPPORT}
   SendUniData( s );
-{$ELSE}
-  SendData( s );
-{$ENDIF}
 end;
 
 {PUBLIC METHODS}

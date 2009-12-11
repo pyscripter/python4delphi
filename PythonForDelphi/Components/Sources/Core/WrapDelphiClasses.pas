@@ -65,9 +65,7 @@ type
     // Property Getters
     function Get_Count( AContext : Pointer) : PPyObject; cdecl;
     function Get_Items( AContext : Pointer) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     function Get_Owner( AContext : Pointer) : PPyObject; cdecl;
-{$ENDIF}
   public
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -224,12 +222,10 @@ type
     // Exposed Methods
     function Execute_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Update_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$IFDEF DELPHI6_OR_HIGHER}
     // Property Getters
     function Get_ActionComponent( AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
     function Set_ActionComponent( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
-{$ENDIF}
   public
     // Class methods
     class function  DelphiObjectClass : TClass; override;
@@ -556,7 +552,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiCollection.Get_Owner(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -564,7 +559,6 @@ begin
     Result := Wrap(DelphiObject.Owner);
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiCollection.Insert_Wrapper(args: PPyObject): PPyObject;
 Var
@@ -587,10 +581,8 @@ begin
         'Returns the count of collection items', nil);
       AddGetSet('Items', @TPyDelphiCollection.Get_Items, nil,
         'Returns an iterator over the collection items', nil);
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('Owner', @TPyDelphiCollection.Get_Owner, nil,
         'Returns the Owner of the collection', nil);
-{$ENDIF}
     end;
 end;
 
@@ -1500,7 +1492,6 @@ begin
   Result := TBasicAction(inherited DelphiObject);
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiBasicAction.Get_ActionComponent(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -1508,7 +1499,6 @@ begin
     Result := Wrap(DelphiObject.ActionComponent);
   end;
 end;
-{$ENDIF}
 
 class procedure TPyDelphiBasicAction.RegisterGetSets(
   PythonType: TPythonType);
@@ -1516,10 +1506,8 @@ begin
   inherited;
   with PythonType do
     begin
-{$IFDEF DELPHI6_OR_HIGHER}
       AddGetSet('ActionComponent', @TPyDelphiBasicAction.Get_ActionComponent, @TPyDelphiBasicAction.Set_ActionComponent,
         'Indicates the client component that caused this action to execute.', nil);
-{$ENDIF}
     end;
 end;
 
@@ -1540,7 +1528,6 @@ begin
   inherited DelphiObject := Value;
 end;
 
-{$IFDEF DELPHI6_OR_HIGHER}
 function TPyDelphiBasicAction.Set_ActionComponent(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -1557,7 +1544,6 @@ begin
       Result := -1;
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiBasicAction.Update_Wrapper(args: PPyObject): PPyObject;
 begin

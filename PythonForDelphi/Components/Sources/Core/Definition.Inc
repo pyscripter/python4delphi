@@ -20,13 +20,13 @@
 (* header and its copyright text is intact.                               *)
 (* Dr. Dietmar Budelsky, 1998-01-07                                       *)
 (**************************************************************************)
-(* Removing support for Delphi < 6 and Python < 2.3                       *)
+(* Removing support for Kylix, Delphi < 6 and Python < 2.3                *)
+(* Adding support for FPC                                                 *)
 (* PyScripter, 2009-10-09                                                 *)
 (**************************************************************************)
 
 
 // TODO
-// Remove DELPHI6_OR_HIGHER, UNICODE_SUPPORT
 // String to AnsiString
 // Deal with TVarRec, TVarData
 // Consider what could become UnicodeString
@@ -211,14 +211,6 @@
 /////////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////////
-
-{$IFDEF DELPHI4_OR_HIGHER}
-  {$DEFINE UNICODE_SUPPORT}
-{$ENDIF}
-
-{$IFNDEF UNICODE_SUPPORT}
-  {$UNDEF PREFER_UNICODE}
-{$ENDIF}
 
 {$IFDEF DELPHI4_OR_HIGHER}
   {$DEFINE HAS_SYNCOBJS_UNIT}
