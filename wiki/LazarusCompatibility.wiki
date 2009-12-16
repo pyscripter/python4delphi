@@ -1,0 +1,15 @@
+#labels Featured
+= FPC-Lazarus compatibility  =
+
+The main parts of Python4Delphi are:
+
+# PythonEngine.pas 
+  A collection of relatively low-level routines for communicating with Python, creating
+  Python types in Delphi etc.
+# VarPyth.pas
+  Very high-level and convenient use of Python objects in Delphi using custom variants.
+# WrapDelphi classes
+  Units that allow easy manipulation of standard GUI Delphi objects in Python scripts.
+
+Basic compatibility of the low-level layer with FPC and Lazarus is now in SVN. However Lazarus support for custom variants is incomplete and although VarPyth compiles fine, it is not usable yet.  VarPyth compatibility will be revisited when better FPC support for custom variants is in place.  Regarding the WrapDelphi unitss they are not currently compatible and I am waiting for someone to provide a new patch to make the compile with FPC.
+
