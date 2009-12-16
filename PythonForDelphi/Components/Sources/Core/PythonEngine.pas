@@ -387,7 +387,6 @@ type
    PFloat     = ^Real;
    PLong      = ^LongInt;
    PShort     = ^ShortInt;
-   PString    = ^PAnsiChar;
 
 
 //#######################################################
@@ -1322,8 +1321,8 @@ const
   kMaxLineLength = 256;
 
 type
-  TSendDataEvent = procedure (Sender: TObject; const Data : String ) of object;
-  TReceiveDataEvent = procedure (Sender: TObject; var Data : String ) of object;
+  TSendDataEvent = procedure (Sender: TObject; const Data : AnsiString ) of object;
+  TReceiveDataEvent = procedure (Sender: TObject; var Data : AnsiString ) of object;
   TSendUniDataEvent = procedure (Sender: TObject; const Data : WideString ) of object;
   TReceiveUniDataEvent = procedure (Sender: TObject; var Data : WideString ) of object;
   IOChar = WideChar;
@@ -1353,8 +1352,8 @@ type
     procedure Unlock;
     procedure AddWrite( const str : IOString );
     // Virtual methods for handling the input/output of text
-    procedure SendData( const Data : String ); virtual;
-    function  ReceiveData : String; virtual;
+    procedure SendData( const Data : AnsiString ); virtual;
+    function  ReceiveData : AnsiString; virtual;
     procedure SendUniData( const Data : WideString ); virtual;
     function  ReceiveUniData : WideString; virtual;
     procedure AddPendingWrite; virtual;
@@ -1607,7 +1606,7 @@ type
     //PyArg_GetLong:   function(args : PPyObject; nargs, i: integer; p_a: PLong): integer; cdecl;
     //PyArg_GetShort:  function(args : PPyObject; nargs, i: integer; p_a: PShort): integer; cdecl;
     //PyArg_GetFloat:  function(args : PPyObject; nargs, i: integer; p_a: PFloat): integer; cdecl;
-    //PyArg_GetString: function(args : PPyObject; nargs, i: integer; p_a: PString): integer; cdecl;
+    //PyArg_GetString: function(args : PPyObject; nargs, i: integer; p_a: PAnsiString): integer; cdecl;
     //PyArgs_VaParse:  function (args : PPyObject; format: PAnsiChar; va_list: array of const): integer; cdecl;
     // Does not work!
     // Py_VaBuildValue: function (format: PAnsiChar; va_list: array of const): PPyObject; cdecl;
@@ -2326,8 +2325,8 @@ type
     FDocString: TStringList;
  	 procedure SetDocString(const Value: TStringList);
   protected
-    function  GetDisplayName: String; {$IFNDEF FPC} override; {$ENDIF}
-    procedure SetDisplayName(const Value: String); {$IFNDEF FPC} override; {$ENDIF}
+    function  GetDisplayName: String; override;
+    procedure SetDisplayName(const Value: String); override;
   public
     constructor Create(ACollection: TCollection); override;
     destructor  Destroy; override;
@@ -2529,7 +2528,7 @@ type
     FErrorType   : TErrorType;
     FParentClass : TParentClassError;
 
-    function GetDisplayName: string; {$IFNDEF FPC} override; {$ENDIF}
+    function GetDisplayName: string; override;
     procedure SetName( const Value : String );
     procedure SetText( const Value : String );
     procedure SetErrorType( Value : TErrorType );
@@ -3181,7 +3180,7 @@ begin
     AddPendingWrite;
 end;
 
-procedure TPythonInputOutput.SendData( const Data : String );
+procedure TPythonInputOutput.SendData( const Data : AnsiString );
 begin
   if Assigned(FOnSendData) then
     FOnSendData( Self, Data );
@@ -3193,7 +3192,7 @@ begin
     FOnSendUniData( Self, Data );
 end;
 
-function  TPythonInputOutput.ReceiveData : String;
+function  TPythonInputOutput.ReceiveData : AnsiString;
 begin
   Result := '';
   if Assigned(FOnReceiveData) then
@@ -3514,7 +3513,7 @@ end;
 function TPythonInterface.GetInitialized: Boolean;
 begin
   if Assigned(Py_IsInitialized) then
-    Result := Py_IsInitialized{$IFDEF FPC}(){$ENDIF} <> 0
+    Result := Py_IsInitialized() <> 0
   else
     Result := FInitialized;
 end;
@@ -4706,12 +4705,16 @@ begin
   GlobalVars := nil;
   Destroying;
   Finalize;
-  // Free our objects
+{$IFDEF FPC}
+  inherited;
+{$ENDIF}  // Free our objects
   FClients.Free;
   FInitScript.Free;
   FTraceback.Free;
   FLock.Free;
+{$IFNDEF FPC}
   inherited;
+{$ENDIF}
 end;
 
 procedure TPythonEngine.Finalize;
@@ -9599,7 +9602,7 @@ end;
 
 function pyio_read(self, args : PPyObject) : PPyObject;
 var
-  txt, msg : String;
+  txt : AnsiString;
   Widetxt : WideString;
 begin
   with GetPythonEngine do
@@ -9607,7 +9610,6 @@ begin
       if RedirectIO  then
         begin
           txt := '';
-          msg := 'Enter text';
           if Assigned(IO) then
             if IO.UnicodeIO then begin
               Widetxt := IO.ReceiveUniData;

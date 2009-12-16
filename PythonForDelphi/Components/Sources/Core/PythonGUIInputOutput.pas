@@ -75,8 +75,8 @@ type
     procedure pyGUIOutputWndProc (var Message: TMessage);
 {$ENDIF}
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    procedure SendData( const Data : String ); override;
-    function  ReceiveData : String; override;
+    procedure SendData( const Data : AnsiString ); override;
+    function  ReceiveData : AnsiString; override;
     procedure AddPendingWrite; override;
     procedure WriteOutput;
   public
@@ -233,7 +233,7 @@ begin
 end;
 {$ENDIF}
 {------------------------------------------------------------------------------}
-procedure TPythonGUIInputOutput.SendData( const Data : String );
+procedure TPythonGUIInputOutput.SendData( const Data : AnsiString );
 begin
   if Assigned(FOnSendData) then
     inherited
@@ -242,7 +242,7 @@ begin
 end;
 
 {------------------------------------------------------------------------------}
-function  TPythonGUIInputOutput.ReceiveData : String;
+function  TPythonGUIInputOutput.ReceiveData : AnsiString;
 begin
   if Assigned( FOnReceiveData ) then
     Result := inherited ReceiveData
@@ -270,7 +270,7 @@ begin
     Exit;
   s := FQueue.Strings[ 0 ];
   FQueue.Delete(0);
-  SendUniData( s );
+  DisplayString( s )
 end;
 
 {PUBLIC METHODS}
@@ -283,15 +283,10 @@ begin
   // Create an internal window for use in delayed writes
   // This will allow writes from multiple threads to be queue up and
   // then written out to the associated TCustomMemo by the main UI thread.
-  {$IFDEF DELPHI6_OR_HIGHER}
-    fWinHandle := Classes.AllocateHWnd(pyGUIOutputWndProc);
+  {$IFDEF FPC}
+    fWinHandle := AllocateGUIOutputWindow(pyGUIOutputWndProc);
   {$ELSE}
-    {$IFDEF FPC}
-      {$HINT Complete Here...}
-      fWinHandle := AllocateGUIOutputWindow(pyGUIOutputWndProc);
-    {$ELSE}
-      fWinHandle := AllocateHWnd(pyGUIOutputWndProc);
-    {$ENDIF}
+    fWinHandle := Classes.AllocateHWnd(pyGUIOutputWndProc);
   {$ENDIF}
 {$ENDIF}
 end;
@@ -301,15 +296,10 @@ destructor TPythonGUIInputOutput.Destroy;
 begin
 {$IFDEF MSWINDOWS}
   // Destroy the internal window used for Delayed write operations
-  {$IFDEF DELPHI6_OR_HIGHER}
-    Classes.DeallocateHWnd(fWinHandle);
+  {$IFDEF FPC}
+    DeallocateHWnd(fWinHandle);
   {$ELSE}
-    {$IFDEF FPC}
-      {$HINT Complete here...}
-      DeallocateHWnd(fWinHandle);
-    {$ELSE}
-      DeallocateHWnd(fWinHandle);
-    {$ENDIF}
+    Classes.DeallocateHWnd(fWinHandle);
   {$ENDIF}
 {$ENDIF}
   inherited Destroy;

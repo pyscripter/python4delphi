@@ -53,7 +53,6 @@ type
 implementation
 
 uses
-  Windows,
   RTLConsts
   ;
 

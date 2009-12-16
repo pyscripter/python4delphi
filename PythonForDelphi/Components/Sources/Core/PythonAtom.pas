@@ -48,7 +48,7 @@
  ---------------------------------------------------------------------------}
 
 (* Note : the comments "{**" of this units are formated for Time2Help *)
-unit PythonAtom;
+unit PythonAtom deprecated;
 {$I definition.inc}
 
 interface
