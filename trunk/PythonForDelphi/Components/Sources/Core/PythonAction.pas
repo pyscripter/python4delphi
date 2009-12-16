@@ -1,4 +1,4 @@
-unit PythonAction;
+unit PythonAction deprecated;
 
 interface
 
@@ -106,7 +106,7 @@ begin
 	if not (csDesigning in ComponentState) and Assigned(PythonModule) then
 	begin
 		fClearname := 'Clear' + Name;
-		docString := 'Claer all events of "' + Owner.Name + '.' + Name + '" action';
+		docString := 'Clear all events of "' + Owner.Name + '.' + Name + '" action';
 		PythonModule.AddDelphiMethod(PAnsiChar(fClearname), PythonClear, PAnsiChar(docString));
 
 		fRegistername := 'Register' + Name;

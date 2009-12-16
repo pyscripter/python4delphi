@@ -223,6 +223,13 @@
 /////////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////////
+{$IFDEF FPC}
+  {$DEFINE DELPHI4_OR_HIGHER}
+  {$DEFINE DELPHI5_OR_HIGHER}
+  {$DEFINE DELPHI6_OR_HIGHER}
+  {$DEFINE DELPHI7_OR_HIGHER}
+  {$H+}
+{$ENDIF}
 
 {$IFDEF LINUX}
   {$IFDEF VER140} // Kylix 1 or 2

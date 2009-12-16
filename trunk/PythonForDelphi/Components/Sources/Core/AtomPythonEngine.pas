@@ -24,7 +24,7 @@
 (**************************************************************************)
 
 
-unit AtomPythonEngine;
+unit AtomPythonEngine deprecated;
 
 {$I Definition.Inc}
 
@@ -45,7 +45,7 @@ type
     function PyObjectAsVariant( obj : PPyObject ) : Variant; override;
   published
     { Published declarations }
-  end deprecated;
+  end;
 
 procedure Register;
 

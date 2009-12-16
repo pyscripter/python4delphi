@@ -118,11 +118,6 @@ type
     Name : String;
   end;
   TNamedParamArray = array of TNamedParamDesc;
-  {$IFDEF FPC}
-  PString = ^AnsiString;
-  {$ELSE}
-  PString = System.PString;
-  {$ENDIF}
 
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
@@ -140,6 +135,12 @@ type
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
     procedure DoDispInvoke(Dest: PVarData; const Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); virtual;
+    {$IFDEF FPC}
+    procedure VarDataClear(var Dest: TVarData);
+    procedure VarDataCopyNoInd(var Dest: TVarData; const Source: TVarData);
+    procedure VarDataCastTo(var Dest: TVarData; const Source: TVarData;
+      const AVarType: TVarType); overload;
+    {$ENDIF}
   public
     procedure Clear(var V: TVarData); override;
     function IsClear(const V: TVarData): Boolean; override;
@@ -152,12 +153,8 @@ type
     procedure BinaryOp(var Left: TVarData; const Right: TVarData;
       const AOperator: TVarOp); override;
     procedure UnaryOp(var Right: TVarData; const AOperator: TVarOp); override;
-    {$IFDEF FPC}
-      {$HINT CompareOp not supported in FPC}
-    {$ELSE}
     function CompareOp(const Left: TVarData; const Right: TVarData;
-      const AOperator: Integer): Boolean; override;
-    {$ENDIF}
+      const AOperator: TVarOp): Boolean; override;
     function DoFunction(var Dest: TVarData; const V: TVarData;
       const AName: string; const Arguments: TVarDataArray): Boolean; override;
     function DoProcedure(const V: TVarData; const AName: string;
@@ -250,26 +247,7 @@ resourcestring
   SCantConvertValueToPythonObject = 'Can''t convert Value into a Python object';
   SCantCreateNewSequenceObject = 'Can''t create a new sequence object';
   SExpectedPythonVariant = 'Expected a Python variant';
-  SNoIterators = 'This version of Python does not support iterators';
 
-//------------------------------------------------------------------------------
-{ Helper functions for porting VarPyth to FPC (Free Pascal Compiler) }
-{$IFDEF FPC}
-  procedure VarClear(var V : Variant);
-  begin
-    V := Unassigned;
-  end;
-
-  procedure VarCast(var Dest: Variant; const Source: Variant; VarType: Integer);
-  begin
-    if VarType = varPython then
-      PythonVariantType.Cast(TVarData(Dest), TVarData(Source))
-    else
-      Dest := Source;
-  end;
-{$ENDIF}
-
-//------------------------------------------------------------------------------
 { Python variant creation utils }
 
 function VarPythonCreate( AObject : PPyObject ) : Variant;
@@ -844,15 +822,33 @@ begin
     inherited;
 end;
 
+{$IFDEF FPC}
+procedure TPythonVariantType.VarDataClear(var Dest: TVarData);
+begin
+  VarClear(Variant(Dest));
+end;
+
+procedure TPythonVariantType.VarDataCopyNoInd(var Dest: TVarData; const Source: TVarData);
+begin
+  VarCopyNoInd(Variant(Dest), Variant(Source));
+end;
+
+procedure TPythonVariantType.VarDataCastTo(var Dest: TVarData; const Source: TVarData;
+      const AVarType: TVarType); overload;
+begin
+  VarCast(Variant(Dest), Variant(Source), AVarType);
+end;
+
+{$ENDIF}
+
 procedure TPythonVariantType.Clear(var V: TVarData);
 begin
   V.VType := varEmpty;
   FreeAndNil(TPythonVarData(V).VPython);
 end;
 
-{$IFNDEF FPC}
 function TPythonVariantType.CompareOp(const Left, Right: TVarData;
-  const AOperator: Integer): Boolean;
+  const AOperator: TVarOp): Boolean;
 begin
   Result := False;
   if (Left.VType = VarType) and (Right.VType = VarType) then
@@ -875,7 +871,6 @@ begin
   else
     RaiseInvalidOp;
 end;
-{$ENDIF}
 
 procedure TPythonVariantType.Copy(var Dest: TVarData;
   const Source: TVarData; const Indirect: Boolean);
@@ -924,7 +919,7 @@ type
   TParamRec = array[0..3] of LongInt;
   TStringDesc = record
     BStr: WideString;
-    PStr: {$IFNDEF FPC}System.{$ENDIF}PString;
+    PStr: PAnsiString;
   end;
 const
   CDoMethod    = $01;
@@ -966,16 +961,16 @@ var
       with LStrings[LStrCount] do
         if LArgByRef then
         begin
-          //BStr := StringToOleStr(PString(ParamPtr^)^);
-          BStr := System.Copy(PString(LParamPtr^)^, 1, MaxInt);
-          PStr := PString(LParamPtr^);
+          //BStr := StringToOleStr(PAnsiString(ParamPtr^)^);
+          BStr := System.Copy(PAnsiString(LParamPtr^)^, 1, MaxInt);
+          PStr := PAnsiString(LParamPtr^);
           LArguments[I].VType := varOleStr or varByRef;
           LArguments[I].VOleStr := @BStr;
         end
         else
         begin
-          //BStr := StringToOleStr(PString(LParamPtr)^);
-          BStr := System.Copy(PString(LParamPtr)^, 1, MaxInt);
+          //BStr := StringToOleStr(PAnsiString(LParamPtr)^);
+          BStr := System.Copy(PAnsiString(LParamPtr)^, 1, MaxInt);
           PStr := nil;
           LArguments[I].VType := varOleStr;
           if BStr = '' then
@@ -1828,7 +1823,6 @@ end;
 procedure TPythonData.DoIntDivide(const Right: TPythonData);
 var
   _result : PPyObject;
-  _op1, _op2 : Integer;
 begin
   with GetPythonEngine do
   begin

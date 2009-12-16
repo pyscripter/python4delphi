@@ -48,7 +48,7 @@
   and each time after you have added a variable.  You can do this with the line
     GetPythonEngine.ExecString('import * from MyClasses');
 }
-unit PythonD6Decs;
+unit PythonD6Decs deprecated;
 
 interface
 
