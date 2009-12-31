@@ -2234,6 +2234,8 @@ type
     { end date/time functions }
     function   PyString_FromString( str: PAnsiChar): PPyObject; override;
     function PyString_AsDelphiString( ob: PPyObject): string; override;
+    function PyString_AsAnsiString( ob: PPyObject): AnsiString;
+    function PyString_AsWideString( ob: PPyObject): WideString;
 
     // Public Properties
     property ClientCount : Integer read GetClientCount;
@@ -6647,6 +6649,22 @@ begin
 end;
 
 function TPythonEngine.PyString_AsDelphiString(ob: PPyObject): string;
+begin
+  if PyUnicode_Check(ob) then
+    Result := PyUnicode_AsWideString(ob)
+  else
+    Result := PyString_AsString(ob);
+end;
+
+function TPythonEngine.PyString_AsAnsiString( ob: PPyObject): AnsiString;
+begin
+  if PyUnicode_Check(ob) then
+    Result := PyUnicode_AsWideString(ob)
+  else
+    Result := PyString_AsString(ob);
+end;
+
+function TPythonEngine.PyString_AsWideString( ob: PPyObject): WideString;
 begin
   if PyUnicode_Check(ob) then
     Result := PyUnicode_AsWideString(ob)
