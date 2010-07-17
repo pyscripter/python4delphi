@@ -2882,7 +2882,7 @@ begin
     begin
       L := ArrayToPyTuple( Args );
       try
-        Result := PyEval_CallObject( Event, L );
+        Result := PyEval_CallObjectWithKeywords( Event, L, nil );
       finally
         Py_XDecRef(Result);
         Py_XDecRef(L);
