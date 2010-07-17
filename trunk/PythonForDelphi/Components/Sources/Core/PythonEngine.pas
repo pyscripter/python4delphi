@@ -1673,7 +1673,8 @@ type
 
 {+ means, Grzegorz or me has tested his non object version of this function}
 {+} PyCFunction_New: function(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
-{+} PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
+// Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
+//{+} PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
 {-} PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
 {-} PyEval_GetFrame:function :PPyObject; cdecl;
 {-} PyEval_GetGlobals:function :PPyObject; cdecl;
@@ -3745,7 +3746,6 @@ begin
   @Py_Exit                   := Import('Py_Exit');
 
   @PyCFunction_New           :=Import('PyCFunction_New');
-  @PyEval_CallObject         :=Import('PyEval_CallObject');
   @PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
   @PyEval_GetFrame           :=Import('PyEval_GetFrame');
   @PyEval_GetGlobals         :=Import('PyEval_GetGlobals');
@@ -5241,7 +5241,7 @@ begin
   Result := -1;
   if pyfunc = nil then exit;
   try
-    presult := PyEval_CallObject(pyfunc,pyargs);
+    presult := PyEval_CallObjectWithKeywords(pyfunc,pyargs, nil);
     CheckError(False);
     if presult = nil then
       begin
@@ -5908,7 +5908,7 @@ begin
             raise EPythonError.Create('dcmToDatetime DatetimeConversionMode cannot be used with this version of python. Missing module datetime');
           args := ArrayToPyTuple([y, m, d, h, mi, sec, ms*1000]);
           try
-            Result := PyEval_CallObject(FPyDateTime_DateTimeType, args);
+            Result := PyEval_CallObjectWithKeywords(FPyDateTime_DateTimeType, args, nil);
             CheckError(False);
           finally
             Py_DecRef(args);
@@ -7415,7 +7415,7 @@ begin
         args := PyTuple_New(0);
         if not Assigned(args) then
           raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
-        res := PyEval_CallObject(Error, args);
+        res := PyEval_CallObjectWithKeywords(Error, args, nil);
         Py_DECREF(args);
         if not Assigned(res) then
           raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);
@@ -7435,7 +7435,7 @@ begin
               raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
             str := PyString_FromString( PAnsiChar(msg) );
             PyTuple_SetItem(args, 0, str);
-            res := PyEval_CallObject(Error, args);
+            res := PyEval_CallObjectWithKeywords(Error, args, nil);
             Py_DECREF(args);
             if not Assigned(res) then
               raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);

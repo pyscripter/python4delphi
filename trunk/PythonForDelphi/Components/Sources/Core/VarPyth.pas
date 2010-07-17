@@ -1441,7 +1441,7 @@ begin
               if Assigned(_KW) then
                 Result := PyEval_CallObjectWithKeywords(_obj, _Args, _KW)
               else
-                Result := PyEval_CallObject(_obj, _Args);
+                Result := PyEval_CallObjectWithKeywords(_obj, _Args, nil);
               CheckError(True);
             finally
               Py_XDecRef(_Args);
