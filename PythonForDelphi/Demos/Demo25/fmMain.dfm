@@ -5,7 +5,6 @@ object Main: TMain
   Height = 561
   VertScrollBar.Range = 356
   ActiveControl = Memo1
-  AutoScroll = False
   Caption = 'VarPyth unit tests'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -21,15 +20,16 @@ object Main: TMain
   object Splitter1: TSplitter
     Left = 0
     Top = 249
-    Width = 761
+    Width = 753
     Height = 5
     Cursor = crVSplit
     Align = alTop
+    ExplicitWidth = 761
   end
   object Memo1: TMemo
     Left = 0
     Top = 0
-    Width = 761
+    Width = 753
     Height = 249
     Align = alTop
     ScrollBars = ssVertical
@@ -37,8 +37,8 @@ object Main: TMain
   end
   object Panel1: TPanel
     Left = 0
-    Top = 425
-    Width = 761
+    Top = 421
+    Width = 753
     Height = 102
     Align = alBottom
     BevelOuter = bvNone
@@ -53,7 +53,7 @@ object Main: TMain
     object ProgressBar1: TProgressBar
       Left = 0
       Top = 86
-      Width = 761
+      Width = 753
       Height = 16
       Align = alBottom
       TabOrder = 15
@@ -231,8 +231,8 @@ object Main: TMain
   object Memo2: TMemo
     Left = 0
     Top = 254
-    Width = 761
-    Height = 171
+    Width = 753
+    Height = 167
     Align = alClient
     Lines.Strings = (
       'class XYZ(object):'
@@ -281,6 +281,8 @@ object Main: TMain
     Top = 48
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = False
+    RawOutput = False
     Output = Memo1
     Left = 232
     Top = 48
