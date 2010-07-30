@@ -508,7 +508,6 @@ begin
   Assert(a = '');
   Assert(String(a) = '');
 
-{$IFDEF UNICODE_SUPPORT}
   // Unicode strings
   b := VarPythonEval( 'u"Hello world!"' );
   Assert( VarIsPythonUnicode(b) );
@@ -555,8 +554,6 @@ begin
   Assert(a = '');
   Assert(String(a) = '');
   Assert(WideString(a) = '');
-
-{$ENDIF}
 
   // Done!
   Log('String test was Ok.');
