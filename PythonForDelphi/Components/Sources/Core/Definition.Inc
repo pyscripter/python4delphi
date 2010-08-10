@@ -20,29 +20,23 @@
 (* header and its copyright text is intact.                               *)
 (* Dr. Dietmar Budelsky, 1998-01-07                                       *)
 (**************************************************************************)
-(* Removing support for Kylix, Delphi < 6 and Python < 2.3                *)
-(* Adding support for FPC                                                 *)
-(* PyScripter, 2009-10-09                                                 *)
-(**************************************************************************)
-
-
-// TODO
-// String to AnsiString
-// Deal with TVarRec, TVarData
-// Consider what could become UnicodeString
 
 /////////////////////////////////////////////////////////////////////////////
 // Select a Python version by commenting out the corresponding line, or
 // modify the default Python version below, in the Python versions section.
 /////////////////////////////////////////////////////////////////////////////
 
+//{$DEFINE PYTHON15}
+//{$DEFINE PYTHON20}
+//{$DEFINE PYTHON21}
+//{$DEFINE PYTHON22}
 //{$DEFINE PYTHON23}
 //{$DEFINE PYTHON24}
 //{$DEFINE PYTHON25}
 //{$DEFINE PYTHON26}
-//{$DEFINE PYTHON27}
 //{$DEFINE PYTHON30}
 //{$DEFINE PYTHON31}
+//{$DEFINE PYTHON32}
 
 /////////////////////////////////////////////////////////////////////////////
 // Python for Delphi settings. Comment out the setting you want to enable.
@@ -159,16 +153,24 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON31}
-  {$IFNDEF PYTHON30}
-    {$IFNDEF PYTHON27}
+{$IFNDEF PYTHON32}
+  {$IFNDEF PYTHON31}
+    {$IFNDEF PYTHON30}
       {$IFNDEF PYTHON26}
         {$IFNDEF PYTHON25}
           {$IFNDEF PYTHON24}
             {$IFNDEF PYTHON23}
+              {$IFNDEF PYTHON22}
+                {$IFNDEF PYTHON21}
+                  {$IFNDEF PYTHON20}
+                     {$IFNDEF PYTHON15}
       {---<START OF DEFAULT PYTHON VERSION>---}
           {$DEFINE PYTHON25}
       {---<END OF DEFAULT PYTHON VERSION>---}
+                     {$ENDIF}
+                  {$ENDIF}
+                {$ENDIF}
+              {$ENDIF}
             {$ENDIF}
           {$ENDIF}
         {$ENDIF}
@@ -177,58 +179,98 @@
   {$ENDIF}
 {$ENDIF}
 
+{$IFDEF PYTHON20}
+  {$DEFINE PYTHON20_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON21}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON22}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
+{$ENDIF}
 {$IFDEF PYTHON23}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON24}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON25}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON26}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
   {$DEFINE PYTHON26_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON26}
-  {$DEFINE PYTHON23_OR_HIGHER}
-  {$DEFINE PYTHON24_OR_HIGHER}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON30}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
   {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
   {$DEFINE PYTHON30_OR_HIGHER}
 {$ENDIF}
 {$IFDEF PYTHON31}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
   {$DEFINE PYTHON23_OR_HIGHER}
   {$DEFINE PYTHON24_OR_HIGHER}
   {$DEFINE PYTHON25_OR_HIGHER}
   {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
   {$DEFINE PYTHON30_OR_HIGHER}
   {$DEFINE PYTHON31_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON32}
+  {$DEFINE PYTHON20_OR_HIGHER}
+  {$DEFINE PYTHON21_OR_HIGHER}
+  {$DEFINE PYTHON22_OR_HIGHER}
+  {$DEFINE PYTHON23_OR_HIGHER}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+  {$DEFINE PYTHON30_OR_HIGHER}
+  {$DEFINE PYTHON31_OR_HIGHER}
+  {$DEFINE PYTHON32_OR_HIGHER}
 {$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
 // Misc
 /////////////////////////////////////////////////////////////////////////////
-{$IFDEF FPC}
-  {$DEFINE DELPHI4_OR_HIGHER}
-  {$DEFINE DELPHI5_OR_HIGHER}
-  {$DEFINE DELPHI6_OR_HIGHER}
-  {$DEFINE DELPHI7_OR_HIGHER}
-  {$H+}
+
+{$IFDEF PYTHON20_OR_HIGHER}
+  {$IFDEF DELPHI4_OR_HIGHER}
+    {$DEFINE UNICODE_SUPPORT}
+  {$ENDIF}
+{$ENDIF}
+
+{$IFNDEF UNICODE_SUPPORT}
+  {$UNDEF PREFER_UNICODE}
+{$ENDIF}
+
+{$IFDEF DELPHI4_OR_HIGHER}
+  {$DEFINE HAS_SYNCOBJS_UNIT}
 {$ENDIF}
 
 {$IFDEF LINUX}
