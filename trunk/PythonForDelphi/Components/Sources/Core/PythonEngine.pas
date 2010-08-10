@@ -98,24 +98,26 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python30.dll'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.0.so'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -137,6 +139,9 @@ const
 {$ENDIF}
 {$IFDEF PYTHON31}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
+{$ENDIF}
+{$IFDEF PYTHON32}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
 {$ENDIF}
 
   PYT_METHOD_BUFFER_INCREASE = 10;
@@ -3614,9 +3619,10 @@ begin
   PyExc_UnicodeTranslateError:= Import('PyExc_UnicodeTranslateError');
   PyType_Type                := Import('PyType_Type');
   PyCFunction_Type           := Import('PyCFunction_Type');
-  PyCObject_Type             := Import('PyCObject_Type');
-  if not IsPython3000 then
+  if not IsPython3000 then begin
+    PyCObject_Type             := Import('PyCObject_Type');   // Removed in Python 3.2
     PyClass_Type               := Import('PyClass_Type');
+  end;
   PyCode_Type                := Import('PyCode_Type');
   PyComplex_Type             := Import('PyComplex_Type');
   PyDict_Type                := Import('PyDict_Type');
@@ -3681,12 +3687,12 @@ begin
   @PyCFunction_GetFunction   := Import('PyCFunction_GetFunction');
   @PyCFunction_GetSelf       := Import('PyCFunction_GetSelf');
   @PyCallable_Check          := Import('PyCallable_Check');
-  @PyCObject_FromVoidPtr     := Import('PyCObject_FromVoidPtr');
-  @PyCObject_AsVoidPtr       := Import('PyCObject_AsVoidPtr');
-  if not IsPython3000 then
+  if not IsPython3000 then begin
     @PyClass_New               := Import('PyClass_New');
-  if not IsPython3000 then
     @PyClass_IsSubclass        := Import('PyClass_IsSubclass');
+    @PyCObject_FromVoidPtr     := Import('PyCObject_FromVoidPtr'); // Removed in Python 3.2
+    @PyCObject_AsVoidPtr       := Import('PyCObject_AsVoidPtr');
+  end;
   @PyDict_GetItem            := Import('PyDict_GetItem');
   @PyDict_SetItem            := Import('PyDict_SetItem');
   @PyDict_DelItem            := Import('PyDict_DelItem');
