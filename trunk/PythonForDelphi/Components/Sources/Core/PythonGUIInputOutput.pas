@@ -77,6 +77,8 @@ type
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SendData( const Data : AnsiString ); override;
     function  ReceiveData : AnsiString; override;
+    procedure SendUniData( const Data : UnicodeString ); override;
+    function  ReceiveUniData : UnicodeString; override;
     procedure AddPendingWrite; override;
     procedure WriteOutput;
   public
@@ -84,7 +86,7 @@ type
     constructor Create( AOwner : TComponent ); override;
     destructor  Destroy; override;
 
-    procedure DisplayString( const str : String );
+    procedure DisplayString( const str : string );
 
   published
     { Published declarations }
@@ -238,18 +240,42 @@ begin
   if Assigned(FOnSendData) then
     inherited
   else
+    DisplayString( string(Data) );
+end;
+
+procedure TPythonGUIInputOutput.SendUniData(const Data: UnicodeString);
+begin
+  inherited;
+  if Assigned(FOnSendUniData) then
+    inherited
+  else
     DisplayString( Data );
 end;
 
 {------------------------------------------------------------------------------}
 function  TPythonGUIInputOutput.ReceiveData : AnsiString;
+Var
+  S : string;
 begin
   if Assigned( FOnReceiveData ) then
     Result := inherited ReceiveData
   else
   begin
-    Result := '';
-    InputQuery( 'Query for Python', 'Enter text', Result);
+    InputQuery( 'Query from Python', 'Enter text', S);
+    Result := AnsiString(S);
+  end;
+end;
+
+function TPythonGUIInputOutput.ReceiveUniData: UnicodeString;
+Var
+  S : string;
+begin
+  if Assigned( FOnReceiveUniData ) then
+    Result := inherited ReceiveUniData
+  else
+  begin
+    InputQuery( 'Query from Python', 'Enter text', S);
+    Result := S;
   end;
 end;
 
@@ -264,13 +290,13 @@ end;
 {------------------------------------------------------------------------------}
 procedure TPythonGUIInputOutput.WriteOutput;
 var
-  s : IOString;
+  S : IOString;
 begin
   if FQueue.Count = 0 then
     Exit;
-  s := FQueue.Strings[ 0 ];
+  S := FQueue.Strings[ 0 ];
   FQueue.Delete(0);
-  DisplayString( s )
+  DisplayString( S )
 end;
 
 {PUBLIC METHODS}
@@ -288,6 +314,9 @@ begin
   {$ELSE}
     fWinHandle := Classes.AllocateHWnd(pyGUIOutputWndProc);
   {$ENDIF}
+{$ENDIF}
+{$IFDEF UNICODE}
+   UnicodeIO := True;
 {$ENDIF}
 end;
 
@@ -308,7 +337,8 @@ end;
 {------------------------------------------------------------------------------}
 type
   TMyCustomMemo = class(TCustomMemo);
-procedure TPythonGUIInputOutput.DisplayString( const str : String );
+
+procedure TPythonGUIInputOutput.DisplayString( const str : string );
 begin
   if Assigned(Output) then
   begin

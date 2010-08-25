@@ -175,7 +175,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(Format('%s receives only Point objects', [AAttributeName])));
+          PAnsiChar(AnsiString(Format('%s receives only Point objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -194,7 +194,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(Format('%s receives only Rect objects', [AAttributeName])));
+          PAnsiChar(AnsiString(Format('%s receives only Rect objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -213,7 +213,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(Format('%s receives only Size objects', [AAttributeName])));
+          PAnsiChar(AnsiString(Format('%s receives only Size objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -279,14 +279,14 @@ end;
 function TPyDelphiPoint.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(Format('<Point (%d, %d)>', [Value.X, Value.Y])));
+    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Point (%d, %d)>', [Value.X, Value.Y]))));
 end;
 
 class procedure TPyDelphiPoint.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Point';
-  PythonType.Name := PythonType.TypeName + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TPoint type';
@@ -422,7 +422,7 @@ end;
 function TPyDelphiRect.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(Format('<Rect (%d, %d, %d, %d)>', [Value.Left, Value.Top, Value.Right, Value.Bottom])));
+    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Rect (%d, %d, %d, %d)>', [Value.Left, Value.Top, Value.Right, Value.Bottom]))));
 end;
 
 function TPyDelphiRect.Set_Bottom(AValue: PPyObject;
@@ -519,7 +519,7 @@ class procedure TPyDelphiRect.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Rect';
-  PythonType.Name := PythonType.TypeName + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TRect type';
@@ -588,14 +588,14 @@ end;
 function TPyDelphiSize.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(Format('<Size (%d, %d)>', [Value.cx, Value.cy])));
+    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Size (%d, %d)>', [Value.cx, Value.cy]))));
 end;
 
 class procedure TPyDelphiSize.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Size';
-  PythonType.Name := PythonType.TypeName + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TSize type';

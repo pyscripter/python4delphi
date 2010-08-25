@@ -566,7 +566,7 @@ begin
   // instead of only using a blank form.
   if ob_type <> PythonType.TheTypePtr then
   begin
-    _className := ob_type.tp_name;
+    _className := string(ob_type.tp_name);
     _class := GetClass(_className);
     if not Assigned(_class) then
       _class := GetClass('T'+_className);
@@ -731,7 +731,7 @@ function TPyDelphiScreen.Get_DefaultIme(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.DefaultIme));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.DefaultIme)));
   end;
 end;
 
@@ -1679,7 +1679,8 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'ssi:MessageBox', [@_text, @_caption, @_flags] ) <> 0 then begin
-      Result := PyInt_FromLong( DelphiObject.MessageBox(_text, _caption, _flags) );
+      Result := PyInt_FromLong(
+        DelphiObject.MessageBox(PChar(string(_text)), PChar(string(_caption)), _flags) );
     end else
       Result := nil;
   end;
@@ -2099,7 +2100,7 @@ function TPyDelphiApplication.Get_BiDiKeyboard(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.BiDiKeyboard));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.BiDiKeyboard)));
   end;
 end;
 
@@ -2116,7 +2117,7 @@ function TPyDelphiApplication.Get_CurrentHelpFile(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.CurrentHelpFile));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.CurrentHelpFile)));
   end;
 end;
 
@@ -2133,7 +2134,7 @@ function TPyDelphiApplication.Get_ExeName(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.ExeName));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.ExeName)));
   end;
 end;
 
@@ -2149,7 +2150,7 @@ function TPyDelphiApplication.Get_HelpFile(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.HelpFile));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.HelpFile)));
   end;
 end;
 
@@ -2157,7 +2158,7 @@ function TPyDelphiApplication.Get_Hint(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.Hint));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.Hint)));
   end;
 end;
 
@@ -2225,7 +2226,7 @@ function TPyDelphiApplication.Get_NonBiDiKeyboard(
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.NonBiDiKeyboard));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.NonBiDiKeyboard)));
   end;
 end;
 
@@ -2258,7 +2259,7 @@ function TPyDelphiApplication.Get_Title(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.Title));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.Title)));
   end;
 end;
 
