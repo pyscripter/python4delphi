@@ -262,8 +262,8 @@ type
   TPFlags = set of TPFlag;
 const
   TPFLAGS_DEFAULT = [tpfHaveGetCharBuffer, tpfHaveSequenceIn, tpfHaveInplaceOps,
-                     tpfHaveRichCompare, tpfHaveWeakRefs
-                     , tpfHaveIter, tpfHaveClass
+                     tpfHaveRichCompare, tpfHaveWeakRefs, tpfHaveIter,
+                     tpfHaveClass, tpfBaseType
                     ];
 //-------  Python opcodes  ----------//
 Const
