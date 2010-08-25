@@ -109,14 +109,14 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
 end;
 
 // get/set functions
 function TPyPoint_GetName( obj : PPyObject; context : Pointer) : PPyObject; cdecl;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PChar(TPyPoint(PythonToDelphi(obj)).Name));
+    Result := PyString_FromString(PAnsiChar(AnsiString(TPyPoint(PythonToDelphi(obj)).Name)));
 end;
 
 function TPyPoint_SetName( obj, value : PPyObject; context : Pointer) : integer; cdecl;

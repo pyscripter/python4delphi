@@ -77,7 +77,7 @@ end;
 
 function TForm1.GetProperty(pSelf, Args : PPyObject) : PPyObject; cdecl;
 var
-  key : PChar;
+  key : PAnsiChar;
 begin
   with GetPythonEngine do
     if PyArg_ParseTuple( args, 's:GetProperty', [@key] ) <> 0 then
@@ -96,7 +96,7 @@ begin
           Result := VariantAsPyObject(rgSex.ItemIndex)
         else
           begin
-            PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown property "%s"', [key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown property "%s"', [key])));
             Result := nil;
           end;
       end
@@ -106,7 +106,7 @@ end;
 
 function TForm1.SetProperty(pSelf, Args : PPyObject) : PPyObject; cdecl;
 var
-  key : PChar;
+  key : PAnsiChar;
   value : PPyObject;
 begin
   with GetPythonEngine do
@@ -144,7 +144,7 @@ begin
           end
         else
           begin
-            PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown property "%s"', [key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown property "%s"', [key])));
             Result := nil;
           end;
       end

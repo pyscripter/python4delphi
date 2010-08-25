@@ -28,8 +28,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -59,8 +59,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -85,8 +85,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -142,8 +142,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -195,7 +195,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyBDEDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyBDEDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -221,7 +221,7 @@ begin
     end;
 end;
 
-function  TPyBDEDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyBDEDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -351,7 +351,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyDBDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyDBDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -377,7 +377,7 @@ begin
     end;
 end;
 
-function  TPyDBDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyDBDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -460,7 +460,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyTable.GetAttr(key : PChar) : PPyObject;
+function  TPyTable.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -492,7 +492,7 @@ begin
     end;
 end;
 
-function  TPyTable.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyTable.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -1010,7 +1010,7 @@ end;
 
 function TPyTable.DoAddIndex( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName, fields : PChar;
+  aName, fields : PAnsiChar;
   options : PPyObject;
 begin
   with GetPythonEngine do
@@ -1039,7 +1039,7 @@ end;
 
 function TPyTable.DoCloseIndexFile( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1093,7 +1093,7 @@ end;
 
 function TPyTable.DoDeleteIndex( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1197,7 +1197,7 @@ end;
 
 function TPyTable.DoOpenIndexFile( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1225,7 +1225,7 @@ end;
 
 function TPyTable.DoRenameTable( args : PPyObject ) : PPyObject; cdecl;
 var
-  newName : PChar;
+  newName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1400,7 +1400,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyQuery.GetAttr(key : PChar) : PPyObject;
+function  TPyQuery.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -1440,7 +1440,7 @@ begin
     end;
 end;
 
-function  TPyQuery.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyQuery.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do

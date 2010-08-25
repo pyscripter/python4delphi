@@ -44,7 +44,7 @@ type
     function  GetProperties : PPyObject;
     procedure AppendProperties( List : PPyObject ); virtual;
     procedure AppendProp( List : PPyObject; const prop : String );
-    function  GetAttr(key : PChar) : PPyObject; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
     procedure RaiseDBError( E : Exception );
     function  EventBelongsToObject( Event : TCallbackSplit ) : Boolean;
   end;
@@ -73,8 +73,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Class methods
@@ -143,8 +143,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Sequence services
@@ -231,8 +231,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
   end;
 
@@ -342,13 +342,13 @@ var
 begin
   with GetPythonEngine do
     begin
-      obj := PyString_FromString(PChar(prop));
+      obj := PyString_FromString(PAnsiChar(prop));
       PyList_Append( List, obj );
       Py_XDecRef(obj);
     end;
 end;
 
-function  TCommon.GetAttr(key : PChar) : PPyObject;
+function  TCommon.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   try
     if (CompareText( key, '__properties__' ) = 0) or
@@ -427,7 +427,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyField.GetAttr(key : PChar) : PPyObject;
+function  TPyField.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -547,7 +547,7 @@ begin
     end;
 end;
 
-function  TPyField.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyField.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -974,7 +974,7 @@ end;
 function TPyField.DoIsValidChar( args : PPyObject ) : PPyObject;
 var
   c : Char;
-  s : PChar;
+  s : PAnsiChar;
   str : String;
 begin
   with GetPythonEngine do
@@ -1179,7 +1179,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -1271,7 +1271,7 @@ begin
     end;
 end;
 
-function  TPyDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -1506,7 +1506,7 @@ begin
         begin
           Result := nil;
           with GetPythonEngine do
-            PyErr_SetString (PyExc_IndexError^, PChar('Table is empty'));
+            PyErr_SetString (PyExc_IndexError^, PAnsiChar('Table is empty'));
           Exit;
         end;
       // Check range
@@ -1514,7 +1514,7 @@ begin
         begin
           Result := nil;
           with GetPythonEngine do
-            PyErr_SetString (PyExc_IndexError^, PChar(Format('Index %d out of range (%d,%d)',[idx, 0, Dataset.RecordCount-1])));
+            PyErr_SetString (PyExc_IndexError^, PAnsiChar(Format('Index %d out of range (%d,%d)',[idx, 0, Dataset.RecordCount-1])));
           Exit;
         end;
       try
@@ -1604,7 +1604,7 @@ begin
       Result := PyTuple_New(Dataset.FieldCount);
       for i := 0 to Dataset.FieldCount - 1 do
         with Dataset.Fields[i] do
-          PyTuple_SetItem( Result, i, PyString_FromString( PChar(FieldName) ) );
+          PyTuple_SetItem( Result, i, PyString_FromString( PAnsiChar(FieldName) ) );
     end;
 end;
 
@@ -1633,7 +1633,7 @@ begin
         with Dataset.Fields[i] do
         begin
           obj := VariantAsPyObject( AsVariant );
-          PyDict_SetItemString( Result, PChar(FieldName), obj );
+          PyDict_SetItemString( Result, PAnsiChar(FieldName), obj );
           Py_XDecRef(obj);
         end;
     end;
@@ -2065,7 +2065,7 @@ end;
 
 function TPyDataset.DoLocate( args : PPyObject ) : PPyObject;
 var
-  keyFields : PChar;
+  keyFields : PAnsiChar;
   keyValues, options : PPyObject;
 begin
   with GetPythonEngine do
@@ -2092,7 +2092,7 @@ end;
 
 function TPyDataset.DoLookup( args : PPyObject ) : PPyObject;
 var
-  keyFields, resultFields : PChar;
+  keyFields, resultFields : PAnsiChar;
   keyValues : PPyObject;
 begin
   with GetPythonEngine do
@@ -2194,7 +2194,7 @@ begin
             else
               begin
                 Result := nil;
-                PyErr_SetString (PyExc_AttributeError^, PChar(Format('Value out of range : %d', [idx])));
+                PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Value out of range : %d', [idx])));
               end;
           end
         else // the arguments were not right
@@ -2211,7 +2211,7 @@ end;
 
 function TPyDataset.DoFieldByName( args : PPyObject ) : PPyObject;
 var
-  s : PChar;
+  s : PAnsiChar;
   fld : TField;
   F : TPyField;
 begin
@@ -2235,7 +2235,7 @@ begin
             else
               begin
                 Result := nil;
-                PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown field "%s"', [String(s)])));
+                PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown field "%s"', [String(s)])));
               end;
           end
         else // the arguments were not right
@@ -2252,7 +2252,7 @@ end;
 
 function TPyDataset.DoFindField( args : PPyObject ) : PPyObject;
 var
-  s : PChar;
+  s : PAnsiChar;
   fld : TField;
   F : TPyField;
 begin
@@ -2577,7 +2577,7 @@ end;
 
 
 // Basic services
-function  TVarArg.GetAttr(key : PChar) : PPyObject;
+function  TVarArg.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -2593,7 +2593,7 @@ begin
     end;
 end;
 
-function  TVarArg.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TVarArg.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   with GetPythonEngine do
     begin
@@ -2612,7 +2612,7 @@ end;
 function  TVarArg.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PChar(PyObjectAsString(FValue)) );
+    Result := PyString_FromString( PAnsiChar(PyObjectAsString(FValue)) );
 end;
 
 {*********************************************************************
