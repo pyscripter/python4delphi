@@ -53,8 +53,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -84,8 +84,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -110,8 +110,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -172,8 +172,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -273,7 +273,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyBDEDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyBDEDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -283,9 +283,9 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'OnUpdateError' ) = 0 then
+        if CompareText( string(key), 'OnUpdateError' ) = 0 then
           Result := ReturnEvent( FOnUpdateError )
-        else if CompareText( key, 'OnUpdateRecord' ) = 0 then
+        else if CompareText( string(key), 'OnUpdateRecord' ) = 0 then
           Result := ReturnEvent( FOnUpdateRecord )
         else
           Result := inherited GetAttr(key);
@@ -299,7 +299,7 @@ begin
     end;
 end;
 
-function  TPyBDEDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyBDEDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -307,7 +307,7 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'OnUpdateError' ) = 0 then
+        if CompareText( string(key), 'OnUpdateError' ) = 0 then
           begin
             SetEvent( FOnUpdateError, Value, 'OnUpdateError', 'TField' );
             if Assigned(FOnUpdateError) then
@@ -316,7 +316,7 @@ begin
               BDEDataset.OnUpdateError := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnUpdateRecord' ) = 0 then
+        else if CompareText( string(key), 'OnUpdateRecord' ) = 0 then
           begin
             SetEvent( FOnUpdateRecord, Value, 'OnUpdateRecord', 'TField' );
             if Assigned(FOnUpdateRecord) then
@@ -428,7 +428,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyDBDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyDBDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -438,9 +438,9 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'DatabaseName' ) = 0 then
+        if CompareText( string(key), 'DatabaseName' ) = 0 then
           Result := VariantAsPyObject( DBDataset.DatabaseName )
-        else if CompareText( key, 'SessionName' ) = 0 then
+        else if CompareText( string(key), 'SessionName' ) = 0 then
           Result := VariantAsPyObject( DBDataset.SessionName )
         else
           Result := inherited GetAttr(key);
@@ -454,7 +454,7 @@ begin
     end;
 end;
 
-function  TPyDBDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyDBDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -462,12 +462,12 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'DatabaseName' ) = 0 then
+        if CompareText( string(key), 'DatabaseName' ) = 0 then
           begin
             DBDataset.DatabaseName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'SessionName' ) = 0 then
+        else if CompareText( string(key), 'SessionName' ) = 0 then
           begin
             DBDataset.SessionName := PyObjectAsVariant( value );
             Result := 0;
@@ -537,7 +537,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyTable.GetAttr(key : PChar) : PPyObject;
+function  TPyTable.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -547,15 +547,15 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'IndexName' ) = 0 then
+        if CompareText( string(key), 'IndexName' ) = 0 then
           Result := VariantAsPyObject( Table.IndexName )
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           Result := VariantAsPyObject( Table.ReadOnly )
-        else if CompareText( key, 'TableLevel' ) = 0 then
+        else if CompareText( string(key), 'TableLevel' ) = 0 then
           Result := VariantAsPyObject( Table.TableLevel )
-        else if CompareText( key, 'TableName' ) = 0 then
+        else if CompareText( string(key), 'TableName' ) = 0 then
           Result := VariantAsPyObject( Table.TableName )
-        else if CompareText( key, 'TableType' ) = 0 then
+        else if CompareText( string(key), 'TableType' ) = 0 then
           Result := VariantAsPyObject( Integer(Table.TableType) )
         else
           Result := inherited GetAttr(key);
@@ -569,7 +569,7 @@ begin
     end;
 end;
 
-function  TPyTable.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyTable.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -577,27 +577,27 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'IndexName' ) = 0 then
+        if CompareText( string(key), 'IndexName' ) = 0 then
           begin
             Table.IndexName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           begin
             Table.ReadOnly := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableLevel' ) = 0 then
+        else if CompareText( string(key), 'TableLevel' ) = 0 then
           begin
             Table.TableLevel := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableName' ) = 0 then
+        else if CompareText( string(key), 'TableName' ) = 0 then
           begin
             Table.TableName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableType' ) = 0 then
+        else if CompareText( string(key), 'TableType' ) = 0 then
           begin
             Table.TableType := TTableType(PyObjectAsVariant( value ));
             Result := 0;
@@ -1087,7 +1087,7 @@ end;
 
 function TPyTable.DoAddIndex( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName, fields : PChar;
+  aName, fields : PAnsiChar;
   options : PPyObject;
 begin
   with GetPythonEngine do
@@ -1098,7 +1098,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 'ssO:TTable.AddIndex', [@aName, @fields, @options] ) <> 0) then
           begin
             // Do action
-            AddIndex( aName, fields, options );
+            AddIndex( string(aName), string(fields), options );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1116,7 +1116,7 @@ end;
 
 function TPyTable.DoCloseIndexFile( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1126,7 +1126,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.CloseIndexFile', [@aName] ) <> 0) then
           begin
             // Do action
-            Table.CloseIndexFile( aName );
+            Table.CloseIndexFile( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1170,7 +1170,7 @@ end;
 
 function TPyTable.DoDeleteIndex( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1180,7 +1180,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.DeleteIndex', [@aName] ) <> 0) then
           begin
             // Do action
-            Table.DeleteIndex( aName );
+            Table.DeleteIndex( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1274,7 +1274,7 @@ end;
 
 function TPyTable.DoOpenIndexFile( args : PPyObject ) : PPyObject; cdecl;
 var
-  aName : PChar;
+  aName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1284,7 +1284,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.OpenIndexFile', [@aName] ) <> 0) then
           begin
             // Do action
-            Table.OpenIndexFile( aName );
+            Table.OpenIndexFile( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1302,7 +1302,7 @@ end;
 
 function TPyTable.DoRenameTable( args : PPyObject ) : PPyObject; cdecl;
 var
-  newName : PChar;
+  newName : PAnsiChar;
 begin
   with GetPythonEngine do
     begin
@@ -1312,7 +1312,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.RenameTable', [@newName] ) <> 0) then
           begin
             // Do action
-            Table.RenameTable( newName );
+            Table.RenameTable( string(newName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1491,7 +1491,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyQuery.GetAttr(key : PChar) : PPyObject;
+function  TPyQuery.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -1501,23 +1501,23 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'Constrained' ) = 0 then
+        if CompareText( string(key), 'Constrained' ) = 0 then
           Result := VariantAsPyObject( Query.Constrained )
-        else if CompareText( key, 'Local' ) = 0 then
+        else if CompareText( string(key), 'Local' ) = 0 then
           Result := VariantAsPyObject( Query.Local)
-        else if CompareText( key, 'ParamCheck' ) = 0 then
+        else if CompareText( string(key), 'ParamCheck' ) = 0 then
           Result := VariantAsPyObject( Query.ParamCheck )
-        else if CompareText( key, 'ParamCount' ) = 0 then
+        else if CompareText( string(key), 'ParamCount' ) = 0 then
           Result := VariantAsPyObject( Query.ParamCount )
-        else if CompareText( key, 'Prepared' ) = 0 then
+        else if CompareText( string(key), 'Prepared' ) = 0 then
           Result := VariantAsPyObject( Query.Prepared )
-        else if CompareText( key, 'RequestLive' ) = 0 then
+        else if CompareText( string(key), 'RequestLive' ) = 0 then
           Result := VariantAsPyObject( Query.RequestLive )
-        else if CompareText( key, 'RowsAffected' ) = 0 then
+        else if CompareText( string(key), 'RowsAffected' ) = 0 then
           Result := VariantAsPyObject( Query.RowsAffected )
-        else if CompareText( key, 'SQL' ) = 0 then
+        else if CompareText( string(key), 'SQL' ) = 0 then
           Result := StringsToPyList( Query.SQL)
-        else if CompareText( key, 'UniDirectional' ) = 0 then
+        else if CompareText( string(key), 'UniDirectional' ) = 0 then
           Result := VariantAsPyObject( Query.UniDirectional )
         else
           Result := inherited GetAttr(key);
@@ -1531,7 +1531,7 @@ begin
     end;
 end;
 
-function  TPyQuery.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyQuery.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -1539,44 +1539,44 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'Constrained' ) = 0 then
+        if CompareText( string(key), 'Constrained' ) = 0 then
           begin
             Query.Constrained := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Local' ) = 0 then
+        else if CompareText( string(key), 'Local' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'ParamCheck' ) = 0 then
+        else if CompareText( string(key), 'ParamCheck' ) = 0 then
           begin
             Query.ParamCheck := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ParamCount' ) = 0 then
+        else if CompareText( string(key), 'ParamCount' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Prepared' ) = 0 then
+        else if CompareText( string(key), 'Prepared' ) = 0 then
           begin
             Query.Prepared := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'RequestLive' ) = 0 then
+        else if CompareText( string(key), 'RequestLive' ) = 0 then
           begin
             Query.RequestLive := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'RowsAffected' ) = 0 then
+        else if CompareText( string(key), 'RowsAffected' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'SQL' ) = 0 then
+        else if CompareText( string(key), 'SQL' ) = 0 then
           begin
             PyListToStrings( value, Query.SQL );
             Result := 0;
           end
-        else if CompareText( key, 'UniDirectional' ) = 0 then
+        else if CompareText( string(key), 'UniDirectional' ) = 0 then
           begin
             Query.UniDirectional := PyObjectAsVariant( value );
             Result := 0;

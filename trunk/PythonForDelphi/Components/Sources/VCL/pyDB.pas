@@ -71,7 +71,7 @@ type
     function  GetProperties : PPyObject;
     procedure AppendProperties( List : PPyObject ); virtual;
     procedure AppendProp( List : PPyObject; const prop : String );
-    function  GetAttr(key : PChar) : PPyObject; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
     procedure RaiseDBError( E : Exception );
     function  EventBelongsToObject( Event : TCallbackSplit ) : Boolean;
   end;
@@ -100,8 +100,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Class methods
@@ -175,8 +175,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Sequence services
@@ -268,8 +268,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
   end;
 
@@ -469,17 +469,17 @@ var
 begin
   with GetPythonEngine do
     begin
-      obj := PyString_FromString(PChar(prop));
+      obj := PyString_FromString(PAnsiChar(AnsiString(prop)));
       PyList_Append( List, obj );
       Py_XDecRef(obj);
     end;
 end;
 
-function  TCommon.GetAttr(key : PChar) : PPyObject;
+function  TCommon.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   try
-    if (CompareText( key, '__properties__' ) = 0) or
-       (CompareText( key, '__members__' ) = 0) then
+    if (CompareText( string(key), '__properties__' ) = 0) or
+       (CompareText( string(key), '__members__' ) = 0) then
       Result := GetProperties
     else
       Result := inherited GetAttr(key);
@@ -495,7 +495,7 @@ end;
 procedure TCommon.RaiseDBError( E : Exception );
 begin
   if gDBModule <> nil then
-    gDBModule.RaiseError( 'DBError', E.Message );
+    gDBModule.RaiseError( 'DBError', AnsiString(E.Message) );
 end;
 
 function TCommon.EventBelongsToObject( Event : TCallbackSplit ) : Boolean;
@@ -554,7 +554,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyField.GetAttr(key : PChar) : PPyObject;
+function  TPyField.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -564,103 +564,103 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'Alignment' ) = 0 then
+        if CompareText( string(key), 'Alignment' ) = 0 then
           Result := VariantAsPyObject( Integer(FField.Alignment) )
-        else if CompareText( key, 'AsBoolean' ) = 0 then
+        else if CompareText( string(key), 'AsBoolean' ) = 0 then
           Result := VariantAsPyObject( FField.AsBoolean )
-        else if CompareText( key, 'AsDateTime' ) = 0 then
+        else if CompareText( string(key), 'AsDateTime' ) = 0 then
           Result := VariantAsPyObject( FField.AsDateTime )
-        else if CompareText( key, 'AsFloat' ) = 0 then
+        else if CompareText( string(key), 'AsFloat' ) = 0 then
           Result := VariantAsPyObject( FField.AsFloat )
-        else if CompareText( key, 'AsInteger' ) = 0 then
+        else if CompareText( string(key), 'AsInteger' ) = 0 then
           Result := VariantAsPyObject( FField.AsInteger )
-        else if CompareText( key, 'AsString' ) = 0 then
+        else if CompareText( string(key), 'AsString' ) = 0 then
           Result := VariantAsPyObject( FField.AsString )
-        else if CompareText( key, 'CanModify' ) = 0 then
+        else if CompareText( string(key), 'CanModify' ) = 0 then
           Result := VariantAsPyObject( FField.CanModify )
-        else if CompareText( key, 'ConstraintErrorMessage' ) = 0 then
+        else if CompareText( string(key), 'ConstraintErrorMessage' ) = 0 then
           Result := VariantAsPyObject( FField.ConstraintErrorMessage )
-        else if CompareText( key, 'CurValue' ) = 0 then
+        else if CompareText( string(key), 'CurValue' ) = 0 then
           Result := VariantAsPyObject( FField.CurValue )
-        else if CompareText( key, 'CustomConstraint' ) = 0 then
+        else if CompareText( string(key), 'CustomConstraint' ) = 0 then
           Result := VariantAsPyObject( FField.CustomConstraint )
-        else if CompareText( key, 'DataSize' ) = 0 then
+        else if CompareText( string(key), 'DataSize' ) = 0 then
           Result := VariantAsPyObject( FField.DataSize )
-        else if CompareText( key, 'DataType' ) = 0 then
+        else if CompareText( string(key), 'DataType' ) = 0 then
           Result := VariantAsPyObject( FField.DataType )
-        else if CompareText( key, 'DefaultExpression' ) = 0 then
+        else if CompareText( string(key), 'DefaultExpression' ) = 0 then
           Result := VariantAsPyObject( FField.DefaultExpression )
-        else if CompareText( key, 'DisplayLabel' ) = 0 then
+        else if CompareText( string(key), 'DisplayLabel' ) = 0 then
           Result := VariantAsPyObject( FField.DisplayLabel )
-        else if CompareText( key, 'DisplayName' ) = 0 then
+        else if CompareText( string(key), 'DisplayName' ) = 0 then
           Result := VariantAsPyObject( FField.DisplayName )
-        else if CompareText( key, 'DisplayText' ) = 0 then
+        else if CompareText( string(key), 'DisplayText' ) = 0 then
           Result := VariantAsPyObject( FField.DisplayText )
-        else if CompareText( key, 'DisplayWidth' ) = 0 then
+        else if CompareText( string(key), 'DisplayWidth' ) = 0 then
           Result := VariantAsPyObject( FField.DisplayWidth )
-        else if CompareText( key, 'EditMask' ) = 0 then
+        else if CompareText( string(key), 'EditMask' ) = 0 then
           Result := VariantAsPyObject( FField.EditMask )
-        else if CompareText( key, 'FieldKind' ) = 0 then
+        else if CompareText( string(key), 'FieldKind' ) = 0 then
           Result := VariantAsPyObject( FField.FieldKind )
-        else if CompareText( key, 'FieldName' ) = 0 then
+        else if CompareText( string(key), 'FieldName' ) = 0 then
           Result := VariantAsPyObject( FField.FieldName)
-        else if CompareText( key, 'FieldNo' ) = 0 then
+        else if CompareText( string(key), 'FieldNo' ) = 0 then
           Result := VariantAsPyObject( FField.FieldNo )
-        else if CompareText( key, 'HasConstraints' ) = 0 then
+        else if CompareText( string(key), 'HasConstraints' ) = 0 then
           Result := VariantAsPyObject( FField.HasConstraints )
-        else if CompareText( key, 'ImportedConstraint' ) = 0 then
+        else if CompareText( string(key), 'ImportedConstraint' ) = 0 then
           Result := VariantAsPyObject( FField.ImportedConstraint )
-        else if CompareText( key, 'Index' ) = 0 then
+        else if CompareText( string(key), 'Index' ) = 0 then
           Result := VariantAsPyObject( FField.Index )
-        else if CompareText( key, 'IsBlob' ) = 0 then
+        else if CompareText( string(key), 'IsBlob' ) = 0 then
           Result := VariantAsPyObject( FField.IsBlob)
-        else if CompareText( key, 'IsIndexField' ) = 0 then
+        else if CompareText( string(key), 'IsIndexField' ) = 0 then
           Result := VariantAsPyObject( FField.IsIndexField )
-        else if CompareText( key, 'IsNull' ) = 0 then
+        else if CompareText( string(key), 'IsNull' ) = 0 then
           Result := VariantAsPyObject( FField.IsNull )
-        else if CompareText( key, 'KeyFields' ) = 0 then
+        else if CompareText( string(key), 'KeyFields' ) = 0 then
           Result := VariantAsPyObject( FField.KeyFields )
-        else if CompareText( key, 'Lookup' ) = 0 then
+        else if CompareText( string(key), 'Lookup' ) = 0 then
           Result := VariantAsPyObject( FField.Lookup )
-        else if CompareText( key, 'LookupCache' ) = 0 then
+        else if CompareText( string(key), 'LookupCache' ) = 0 then
           Result := VariantAsPyObject( FField.LookupCache )
-        else if CompareText( key, 'LookupDataset' ) = 0 then
+        else if CompareText( string(key), 'LookupDataset' ) = 0 then
           Result := ReturnNone
-        else if CompareText( key, 'LookupKeyFields' ) = 0 then
+        else if CompareText( string(key), 'LookupKeyFields' ) = 0 then
           Result := VariantAsPyObject( FField.LookupKeyFields )
-        else if CompareText( key, 'LookupList' ) = 0 then
+        else if CompareText( string(key), 'LookupList' ) = 0 then
           Result := ReturnNone
-        else if CompareText( key, 'LookupResultField' ) = 0 then
+        else if CompareText( string(key), 'LookupResultField' ) = 0 then
           Result := VariantAsPyObject( FField.LookupResultField )
-        else if CompareText( key, 'NewValue' ) = 0 then
+        else if CompareText( string(key), 'NewValue' ) = 0 then
           Result := VariantAsPyObject( FField.NewValue )
-        else if CompareText( key, 'Offset' ) = 0 then
+        else if CompareText( string(key), 'Offset' ) = 0 then
           Result := VariantAsPyObject( FField.Offset )
-        else if CompareText( key, 'OldValue' ) = 0 then
+        else if CompareText( string(key), 'OldValue' ) = 0 then
           Result := VariantAsPyObject( FField.OldValue )
-        else if CompareText( key, 'Origin' ) = 0 then
+        else if CompareText( string(key), 'Origin' ) = 0 then
           Result := VariantAsPyObject( FField.Origin )
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           Result := VariantAsPyObject( FField.ReadOnly )
-        else if CompareText( key, 'Required' ) = 0 then
+        else if CompareText( string(key), 'Required' ) = 0 then
           Result := VariantAsPyObject( FField.Required )
-        else if CompareText( key, 'Size' ) = 0 then
+        else if CompareText( string(key), 'Size' ) = 0 then
           Result := VariantAsPyObject( FField.Size )
-        else if CompareText( key, 'Text' ) = 0 then
+        else if CompareText( string(key), 'Text' ) = 0 then
           Result := VariantAsPyObject( FField.Text )
-        else if CompareText( key, 'ValidChars' ) = 0 then
+        else if CompareText( string(key), 'ValidChars' ) = 0 then
           Result := ReturnNone
-        else if CompareText( key, 'Value' ) = 0 then
+        else if CompareText( string(key), 'Value' ) = 0 then
           Result := VariantAsPyObject( FField.Value )
-        else if CompareText( key, 'Visible' ) = 0 then
+        else if CompareText( string(key), 'Visible' ) = 0 then
           Result := VariantAsPyObject( FField.Visible )
-        else if CompareText( key, 'OnChange' ) = 0 then
+        else if CompareText( string(key), 'OnChange' ) = 0 then
           Result := ReturnEvent( FOnChange )
-        else if CompareText( key, 'OnGetText' ) = 0 then
+        else if CompareText( string(key), 'OnGetText' ) = 0 then
           Result := ReturnEvent( FOnGetText )
-        else if CompareText( key, 'OnSetText' ) = 0 then
+        else if CompareText( string(key), 'OnSetText' ) = 0 then
           Result := ReturnEvent( FOnSetText )
-        else if CompareText( key, 'OnValidate' ) = 0 then
+        else if CompareText( string(key), 'OnValidate' ) = 0 then
           Result := ReturnEvent( FOnValidate )
         else
           Result := inherited GetAttr(key);
@@ -674,7 +674,7 @@ begin
     end;
 end;
 
-function  TPyField.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyField.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -682,216 +682,216 @@ begin
       if not CheckField then
         Exit;
       try
-        if CompareText( key, 'Alignment' ) = 0 then
+        if CompareText( string(key), 'Alignment' ) = 0 then
           begin
             FField.Alignment := TAlignment(PyObjectAsVariant( value ));
             Result := 0;
           end
-        else if CompareText( key, 'AsBoolean' ) = 0 then
+        else if CompareText( string(key), 'AsBoolean' ) = 0 then
           begin
             FField.AsBoolean := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'AsDateTime' ) = 0 then
+        else if CompareText( string(key), 'AsDateTime' ) = 0 then
           begin
             FField.AsDateTime := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'AsFloat' ) = 0 then
+        else if CompareText( string(key), 'AsFloat' ) = 0 then
           begin
             FField.AsFloat := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'AsInteger' ) = 0 then
+        else if CompareText( string(key), 'AsInteger' ) = 0 then
           begin
             FField.AsInteger := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'AsString' ) = 0 then
+        else if CompareText( string(key), 'AsString' ) = 0 then
           begin
             FField.AsString := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'CanModify' ) = 0 then
+        else if CompareText( string(key), 'CanModify' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'ConstraintErrorMessage' ) = 0 then
+        else if CompareText( string(key), 'ConstraintErrorMessage' ) = 0 then
           begin
             FField.ConstraintErrorMessage := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'CurValue' ) = 0 then
+        else if CompareText( string(key), 'CurValue' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'CustomConstraint' ) = 0 then
+        else if CompareText( string(key), 'CustomConstraint' ) = 0 then
           begin
             FField.CustomConstraint := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'DataSize' ) = 0 then
+        else if CompareText( string(key), 'DataSize' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'DataType' ) = 0 then
+        else if CompareText( string(key), 'DataType' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'DefaultExpression' ) = 0 then
+        else if CompareText( string(key), 'DefaultExpression' ) = 0 then
           begin
             FField.DefaultExpression := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'DisplayLabel' ) = 0 then
+        else if CompareText( string(key), 'DisplayLabel' ) = 0 then
           begin
             FField.DisplayLabel := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'DisplayName' ) = 0 then
+        else if CompareText( string(key), 'DisplayName' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'DisplayText' ) = 0 then
+        else if CompareText( string(key), 'DisplayText' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'DisplayWidth' ) = 0 then
+        else if CompareText( string(key), 'DisplayWidth' ) = 0 then
           begin
             FField.DisplayWidth := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'EditMask' ) = 0 then
+        else if CompareText( string(key), 'EditMask' ) = 0 then
           begin
             FField.EditMask := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'FieldKind' ) = 0 then
+        else if CompareText( string(key), 'FieldKind' ) = 0 then
           begin
             FField.FieldKind := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'FieldName' ) = 0 then
+        else if CompareText( string(key), 'FieldName' ) = 0 then
           begin
             FField.FieldName:= PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'FieldNo' ) = 0 then
+        else if CompareText( string(key), 'FieldNo' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'HasConstraints' ) = 0 then
+        else if CompareText( string(key), 'HasConstraints' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'ImportedConstraint' ) = 0 then
+        else if CompareText( string(key), 'ImportedConstraint' ) = 0 then
           begin
             FField.ImportedConstraint := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Index' ) = 0 then
+        else if CompareText( string(key), 'Index' ) = 0 then
           begin
             FField.Index := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'IsBlob' ) = 0 then
+        else if CompareText( string(key), 'IsBlob' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'IsIndexField' ) = 0 then
+        else if CompareText( string(key), 'IsIndexField' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'IsNull' ) = 0 then
+        else if CompareText( string(key), 'IsNull' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'KeyFields' ) = 0 then
+        else if CompareText( string(key), 'KeyFields' ) = 0 then
           begin
             FField.KeyFields := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Lookup' ) = 0 then
+        else if CompareText( string(key), 'Lookup' ) = 0 then
           begin
             FField.Lookup := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'LookupCache' ) = 0 then
+        else if CompareText( string(key), 'LookupCache' ) = 0 then
           begin
             FField.LookupCache := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'LookupDataset' ) = 0 then
+        else if CompareText( string(key), 'LookupDataset' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'LookupKeyFields' ) = 0 then
+        else if CompareText( string(key), 'LookupKeyFields' ) = 0 then
           begin
             FField.LookupKeyFields := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'LookupList' ) = 0 then
+        else if CompareText( string(key), 'LookupList' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'LookupResultField' ) = 0 then
+        else if CompareText( string(key), 'LookupResultField' ) = 0 then
           begin
             FField.LookupResultField := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'NewValue' ) = 0 then
+        else if CompareText( string(key), 'NewValue' ) = 0 then
           begin
             FField.NewValue := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Offset' ) = 0 then
+        else if CompareText( string(key), 'Offset' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'OldValue' ) = 0 then
+        else if CompareText( string(key), 'OldValue' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Origin' ) = 0 then
+        else if CompareText( string(key), 'Origin' ) = 0 then
           begin
             FField.Origin := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           begin
             FField.ReadOnly := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Required' ) = 0 then
+        else if CompareText( string(key), 'Required' ) = 0 then
           begin
             FField.Required := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Size' ) = 0 then
+        else if CompareText( string(key), 'Size' ) = 0 then
           begin
             FField.Size := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Text' ) = 0 then
+        else if CompareText( string(key), 'Text' ) = 0 then
           begin
             FField.Text := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ValidChars' ) = 0 then
+        else if CompareText( string(key), 'ValidChars' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Value' ) = 0 then
+        else if CompareText( string(key), 'Value' ) = 0 then
           begin
             FField.Value := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Visible' ) = 0 then
+        else if CompareText( string(key), 'Visible' ) = 0 then
           begin
             FField.Visible := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'OnChange' ) = 0 then
+        else if CompareText( string(key), 'OnChange' ) = 0 then
           begin
             SetEvent( FOnChange, Value, 'OnChange', 'TField' );
             if Assigned(FOnChange) then
@@ -900,7 +900,7 @@ begin
               FField.OnChange := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnGetText' ) = 0 then
+        else if CompareText( string(key), 'OnGetText' ) = 0 then
           begin
             SetEvent( FOnGetText, Value, 'OnGetText', 'TField' );
             if Assigned(FOnGetText) then
@@ -909,7 +909,7 @@ begin
               FField.OnGetText := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnSetText' ) = 0 then
+        else if CompareText( string(key), 'OnSetText' ) = 0 then
           begin
             SetEvent( FOnSetText, Value, 'OnSetText', 'TField' );
             if Assigned(FOnSetText) then
@@ -918,7 +918,7 @@ begin
               FField.OnSetText := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnValidate' ) = 0 then
+        else if CompareText( string(key), 'OnValidate' ) = 0 then
           begin
             SetEvent( FOnValidate, Value, 'OnValidate', 'TField' );
             if Assigned(FOnValidate) then
@@ -1101,7 +1101,7 @@ end;
 function TPyField.DoIsValidChar( args : PPyObject ) : PPyObject;
 var
   c : Char;
-  s : PChar;
+  s : PAnsiChar;
   str : String;
 begin
   with GetPythonEngine do
@@ -1114,7 +1114,7 @@ begin
           begin
             if PyArg_ParseTuple( args, 's:TField.IsValidChar', [@s] ) <> 0 then
               begin
-                str := s;
+                str := string(s);
                 if Length(str) > 0 then
                   c := str[1]
                 else
@@ -1207,6 +1207,7 @@ begin
   Name := 'typeField';
   TypeName := 'TField';
   Module := gDBModule;
+  TypeFlags := TypeFlags + [tpfBaseType];
   PyObjectClass := TPyField;
   with DocString do
     begin
@@ -1319,7 +1320,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyDataset.GetAttr(key : PChar) : PPyObject;
+function  TPyDataset.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -1329,75 +1330,75 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'Active' ) = 0 then
+        if CompareText( string(key), 'Active' ) = 0 then
           Result := VariantAsPyObject( Dataset.Active )
-        else if CompareText( key, 'BOF' ) = 0 then
+        else if CompareText( string(key), 'BOF' ) = 0 then
           Result := VariantAsPyObject( Dataset.BOF )
-        else if CompareText( key, 'CanModify' ) = 0 then
+        else if CompareText( string(key), 'CanModify' ) = 0 then
           Result := VariantAsPyObject( Dataset.CanModify )
-        else if CompareText( key, 'EOF' ) = 0 then
+        else if CompareText( string(key), 'EOF' ) = 0 then
           Result := VariantAsPyObject( Dataset.EOF )
-        else if CompareText( key, 'FieldCount' ) = 0 then
+        else if CompareText( string(key), 'FieldCount' ) = 0 then
           Result := VariantAsPyObject( Dataset.FieldCount )
-        else if CompareText( key, 'Filter' ) = 0 then
+        else if CompareText( string(key), 'Filter' ) = 0 then
           Result := VariantAsPyObject( Dataset.Filter )
-        else if CompareText( key, 'Filtered' ) = 0 then
+        else if CompareText( string(key), 'Filtered' ) = 0 then
           Result := VariantAsPyObject( Dataset.Filtered )
-        else if CompareText( key, 'Found' ) = 0 then
+        else if CompareText( string(key), 'Found' ) = 0 then
           Result := VariantAsPyObject( Dataset.Found )
-        else if CompareText( key, 'Modified' ) = 0 then
+        else if CompareText( string(key), 'Modified' ) = 0 then
           Result := VariantAsPyObject( Dataset.Modified )
-        else if CompareText( key, 'RecNo' ) = 0 then
+        else if CompareText( string(key), 'RecNo' ) = 0 then
           Result := VariantAsPyObject( Dataset.RecNo )
-        else if CompareText( key, 'RecordCount' ) = 0 then
+        else if CompareText( string(key), 'RecordCount' ) = 0 then
           Result := VariantAsPyObject( Dataset.RecordCount )
-        else if CompareText( key, 'RecordSize' ) = 0 then
+        else if CompareText( string(key), 'RecordSize' ) = 0 then
           Result := VariantAsPyObject( Dataset.RecordSize )
-        else if CompareText( key, 'State' ) = 0 then
+        else if CompareText( string(key), 'State' ) = 0 then
           Result := VariantAsPyObject( Integer(Dataset.State) )
-        else if CompareText( key, 'AfterClose' ) = 0 then
+        else if CompareText( string(key), 'AfterClose' ) = 0 then
           Result := ReturnEvent( FAfterClose )
-        else if CompareText( key, 'AfterOpen' ) = 0 then
+        else if CompareText( string(key), 'AfterOpen' ) = 0 then
           Result := ReturnEvent( FAfterOpen )
-        else if CompareText( key, 'AfterScroll' ) = 0 then
+        else if CompareText( string(key), 'AfterScroll' ) = 0 then
           Result := ReturnEvent( FAfterScroll )
-        else if CompareText( key, 'BeforeClose' ) = 0 then
+        else if CompareText( string(key), 'BeforeClose' ) = 0 then
           Result := ReturnEvent( FBeforeClose )
-        else if CompareText( key, 'BeforeOpen' ) = 0 then
+        else if CompareText( string(key), 'BeforeOpen' ) = 0 then
           Result := ReturnEvent( FBeforeOpen )
-        else if CompareText( key, 'BeforeScroll' ) = 0 then
+        else if CompareText( string(key), 'BeforeScroll' ) = 0 then
           Result := ReturnEvent( FBeforeScroll )
-        else if CompareText( key, 'AfterCancel' ) = 0 then
+        else if CompareText( string(key), 'AfterCancel' ) = 0 then
           Result := ReturnEvent( FAfterCancel)
-        else if CompareText( key, 'AfterDelete' ) = 0 then
+        else if CompareText( string(key), 'AfterDelete' ) = 0 then
           Result := ReturnEvent( FAfterDelete)
-        else if CompareText( key, 'AfterEdit' ) = 0 then
+        else if CompareText( string(key), 'AfterEdit' ) = 0 then
           Result := ReturnEvent( FAfterEdit)
-        else if CompareText( key, 'AfterInsert' ) = 0 then
+        else if CompareText( string(key), 'AfterInsert' ) = 0 then
           Result := ReturnEvent( FAfterInsert)
-        else if CompareText( key, 'AfterPost' ) = 0 then
+        else if CompareText( string(key), 'AfterPost' ) = 0 then
           Result := ReturnEvent( FAfterPost)
-        else if CompareText( key, 'BeforeCancel' ) = 0 then
+        else if CompareText( string(key), 'BeforeCancel' ) = 0 then
           Result := ReturnEvent( FBeforeCancel)
-        else if CompareText( key, 'BeforeDelete' ) = 0 then
+        else if CompareText( string(key), 'BeforeDelete' ) = 0 then
           Result := ReturnEvent( FBeforeDelete)
-        else if CompareText( key, 'BeforeEdit' ) = 0 then
+        else if CompareText( string(key), 'BeforeEdit' ) = 0 then
           Result := ReturnEvent( FBeforeEdit)
-        else if CompareText( key, 'BeforeInsert' ) = 0 then
+        else if CompareText( string(key), 'BeforeInsert' ) = 0 then
           Result := ReturnEvent( FBeforeInsert)
-        else if CompareText( key, 'BeforePost' ) = 0 then
+        else if CompareText( string(key), 'BeforePost' ) = 0 then
           Result := ReturnEvent( FBeforePost)
-        else if CompareText( key, 'OnCalcFields' ) = 0 then
+        else if CompareText( string(key), 'OnCalcFields' ) = 0 then
           Result := ReturnEvent( FOnCalcFields)
-        else if CompareText( key, 'OnDeleteError' ) = 0 then
+        else if CompareText( string(key), 'OnDeleteError' ) = 0 then
           Result := ReturnEvent( FOnDeleteError)
-        else if CompareText( key, 'OnEditError' ) = 0 then
+        else if CompareText( string(key), 'OnEditError' ) = 0 then
           Result := ReturnEvent( FOnEditError)
-        else if CompareText( key, 'OnFilterRecord' ) = 0 then
+        else if CompareText( string(key), 'OnFilterRecord' ) = 0 then
           Result := ReturnEvent( FOnFilterRecord)
-        else if CompareText( key, 'OnNewRecord' ) = 0 then
+        else if CompareText( string(key), 'OnNewRecord' ) = 0 then
           Result := ReturnEvent( FOnNewRecord)
-        else if CompareText( key, 'OnPostError' ) = 0 then
+        else if CompareText( string(key), 'OnPostError' ) = 0 then
           Result := ReturnEvent( FOnPostError)
         else
           Result := inherited GetAttr(key);
@@ -1411,7 +1412,7 @@ begin
     end;
 end;
 
-function  TPyDataset.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := -1;
   with GetPythonEngine do
@@ -1419,177 +1420,177 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'Active' ) = 0 then
+        if CompareText( string(key), 'Active' ) = 0 then
           begin
             Dataset.Active := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'BOF' ) = 0 then
+        else if CompareText( string(key), 'BOF' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'CanModify' ) = 0 then
+        else if CompareText( string(key), 'CanModify' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'EOF' ) = 0 then
+        else if CompareText( string(key), 'EOF' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'FieldCount' ) = 0 then
+        else if CompareText( string(key), 'FieldCount' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Filter' ) = 0 then
+        else if CompareText( string(key), 'Filter' ) = 0 then
           begin
             Dataset.Filter := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Filtered' ) = 0 then
+        else if CompareText( string(key), 'Filtered' ) = 0 then
           begin
             Dataset.Filtered := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Found' ) = 0 then
+        else if CompareText( string(key), 'Found' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Modified' ) = 0 then
+        else if CompareText( string(key), 'Modified' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'RecNo' ) = 0 then
+        else if CompareText( string(key), 'RecNo' ) = 0 then
           begin
             Dataset.RecNo := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'RecordCount' ) = 0 then
+        else if CompareText( string(key), 'RecordCount' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'RecordSize' ) = 0 then
+        else if CompareText( string(key), 'RecordSize' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'State' ) = 0 then
+        else if CompareText( string(key), 'State' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'AfterClose' ) = 0 then
+        else if CompareText( string(key), 'AfterClose' ) = 0 then
           begin
             SetEvent( FAfterClose, Value, 'AfterClose', 'TDataset' );
             Dataset.AfterClose := SetDatasetEvent( FAfterClose, AfterClose );
             Result := 0;
           end
-        else if CompareText( key, 'AfterOpen' ) = 0 then
+        else if CompareText( string(key), 'AfterOpen' ) = 0 then
           begin
             SetEvent( FAfterOpen, Value, 'AfterOpen', 'TDataset' );
             Dataset.AfterOpen := SetDatasetEvent( FAfterOpen, AfterOpen );
             Result := 0;
           end
-        else if CompareText( key, 'AfterScroll' ) = 0 then
+        else if CompareText( string(key), 'AfterScroll' ) = 0 then
           begin
             SetEvent( FAfterScroll, Value, 'AfterScroll', 'TDataset' );
             Dataset.AfterScroll := SetDatasetEvent( FAfterScroll, AfterScroll );
             Result := 0;
           end
-        else if CompareText( key, 'BeforeClose' ) = 0 then
+        else if CompareText( string(key), 'BeforeClose' ) = 0 then
           begin
             SetEvent( FBeforeClose, Value, 'BeforeClose', 'TDataset' );
             Dataset.BeforeClose := SetDatasetEvent( FBeforeClose, BeforeClose );
             Result := 0;
           end
-        else if CompareText( key, 'BeforeOpen' ) = 0 then
+        else if CompareText( string(key), 'BeforeOpen' ) = 0 then
           begin
             SetEvent( FBeforeOpen, Value, 'BeforeOpen', 'TDataset' );
             Dataset.BeforeOpen := SetDatasetEvent( FBeforeOpen, BeforeOpen );
             Result := 0;
           end
-        else if CompareText( key, 'BeforeScroll' ) = 0 then
+        else if CompareText( string(key), 'BeforeScroll' ) = 0 then
           begin
             SetEvent( FBeforeScroll, Value, 'BeforeScroll', 'TDataset' );
             Dataset.BeforeScroll := SetDatasetEvent( FBeforeScroll, BeforeScroll );
             Result := 0;
           end
-        else if CompareText( key, 'AfterCancel' ) = 0 then
+        else if CompareText( string(key), 'AfterCancel' ) = 0 then
           begin
             SetEvent( FAfterCancel, Value, 'AfterCancel', 'TDataset' );
             Dataset.AfterCancel := SetDatasetEvent( FAfterCancel, AfterCancel);
             Result := 0;
           end
-        else if CompareText( key, 'AfterDelete' ) = 0 then
+        else if CompareText( string(key), 'AfterDelete' ) = 0 then
           begin
             SetEvent( FAfterDelete, Value, 'AfterDelete', 'TDataset' );
             Dataset.AfterDelete := SetDatasetEvent( FAfterDelete, AfterDelete);
             Result := 0;
           end
-        else if CompareText( key, 'AfterEdit' ) = 0 then
+        else if CompareText( string(key), 'AfterEdit' ) = 0 then
           begin
             SetEvent( FAfterEdit, Value, 'AfterEdit', 'TDataset' );
             Dataset.AfterEdit := SetDatasetEvent( FAfterEdit, AfterEdit);
             Result := 0;
           end
-        else if CompareText( key, 'AfterInsert' ) = 0 then
+        else if CompareText( string(key), 'AfterInsert' ) = 0 then
           begin
             SetEvent( FAfterInsert, Value, 'AfterInsert', 'TDataset' );
             Dataset.AfterInsert := SetDatasetEvent( FAfterInsert, AfterInsert);
             Result := 0;
           end
-        else if CompareText( key, 'AfterPost' ) = 0 then
+        else if CompareText( string(key), 'AfterPost' ) = 0 then
           begin
             SetEvent( FAfterPost, Value, 'AfterPost', 'TDataset' );
             Dataset.AfterPost := SetDatasetEvent( FAfterPost, AfterPost);
             Result := 0;
           end
-        else if CompareText( key, 'BeforeCancel' ) = 0 then
+        else if CompareText( string(key), 'BeforeCancel' ) = 0 then
           begin
             SetEvent( FBeforeCancel, Value, 'BeforeCancel', 'TDataset' );
             Dataset.BeforeCancel := SetDatasetEvent( FBeforeCancel, BeforeCancel);
             Result := 0;
           end
-        else if CompareText( key, 'BeforeDelete' ) = 0 then
+        else if CompareText( string(key), 'BeforeDelete' ) = 0 then
           begin
             SetEvent( FBeforeDelete, Value, 'BeforeDelete', 'TDataset' );
             Dataset.BeforeDelete := SetDatasetEvent( FBeforeDelete, BeforeDelete);
             Result := 0;
           end
-        else if CompareText( key, 'BeforeEdit' ) = 0 then
+        else if CompareText( string(key), 'BeforeEdit' ) = 0 then
           begin
             SetEvent( FBeforeEdit, Value, 'BeforeEdit', 'TDataset' );
             Dataset.BeforeEdit := SetDatasetEvent( FBeforeEdit, BeforeEdit);
             Result := 0;
           end
-        else if CompareText( key, 'BeforeInsert' ) = 0 then
+        else if CompareText( string(key), 'BeforeInsert' ) = 0 then
           begin
             SetEvent( FBeforeInsert, Value, 'BeforeInsert', 'TDataset' );
             Dataset.BeforeInsert := SetDatasetEvent( FBeforeInsert, BeforeInsert);
             Result := 0;
           end
-        else if CompareText( key, 'BeforePost' ) = 0 then
+        else if CompareText( string(key), 'BeforePost' ) = 0 then
           begin
             SetEvent( FBeforePost, Value, 'BeforePost', 'TDataset' );
             Dataset.BeforePost := SetDatasetEvent( FBeforePost, BeforePost);
             Result := 0;
           end
-        else if CompareText( key, 'OnCalcFields' ) = 0 then
+        else if CompareText( string(key), 'OnCalcFields' ) = 0 then
           begin
             SetEvent( FOnCalcFields, Value, 'OnCalcFields', 'TDataset' );
             Dataset.OnCalcFields := SetDatasetEvent( FOnCalcFields, OnCalcFields);
             Result := 0;
           end
-        else if CompareText( key, 'OnDeleteError' ) = 0 then
+        else if CompareText( string(key), 'OnDeleteError' ) = 0 then
           begin
             SetEvent( FOnDeleteError, Value, 'OnDeleteError', 'TDataset' );
             Dataset.OnDeleteError := SetDatasetErrorEvent( FOnDeleteError, OnDeleteError );
             Result := 0;
           end
-        else if CompareText( key, 'OnEditError' ) = 0 then
+        else if CompareText( string(key), 'OnEditError' ) = 0 then
           begin
             SetEvent( FOnEditError, Value, 'OnEditError', 'TDataset' );
             Dataset.OnEditError := SetDatasetErrorEvent( FOnEditError, OnEditError );
             Result := 0;
           end
-        else if CompareText( key, 'OnFilterRecord' ) = 0 then
+        else if CompareText( string(key), 'OnFilterRecord' ) = 0 then
           begin
             SetEvent( FOnFilterRecord, Value, 'OnFilterRecord', 'TDataset' );
             if Assigned(FOnFilterRecord) then
@@ -1598,13 +1599,13 @@ begin
               Dataset.OnFilterRecord := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnNewRecord' ) = 0 then
+        else if CompareText( string(key), 'OnNewRecord' ) = 0 then
           begin
             SetEvent( FOnNewRecord, Value, 'OnNewRecord', 'TDataset' );
             Dataset.OnNewRecord := SetDatasetEvent( FOnNewRecord, OnNewRecord);
             Result := 0;
           end
-        else if CompareText( key, 'OnPostError' ) = 0 then
+        else if CompareText( string(key), 'OnPostError' ) = 0 then
           begin
             SetEvent( FOnPostError, Value, 'OnPostError', 'TDataset' );
             Dataset.OnPostError := SetDatasetErrorEvent( FOnPostError, OnPostError );
@@ -1646,7 +1647,7 @@ begin
         begin
           Result := nil;
           with GetPythonEngine do
-            PyErr_SetString (PyExc_IndexError^, PChar('Table is empty'));
+            PyErr_SetString (PyExc_IndexError^, PAnsiChar('Table is empty'));
           Exit;
         end;
       // Check range
@@ -1654,7 +1655,7 @@ begin
         begin
           Result := nil;
           with GetPythonEngine do
-            PyErr_SetString (PyExc_IndexError^, PChar(Format('Index %d out of range (%d,%d)',[idx, 0, Dataset.RecordCount-1])));
+            PyErr_SetString (PyExc_IndexError^, PAnsiChar(AnsiString(Format('Index %d out of range (%d,%d)',[idx, 0, Dataset.RecordCount-1]))));
           Exit;
         end;
       try
@@ -2213,7 +2214,7 @@ end;
 
 function TPyDataset.DoLocate( args : PPyObject ) : PPyObject;
 var
-  keyFields : PChar;
+  keyFields : PAnsiChar;
   keyValues, options : PPyObject;
 begin
   with GetPythonEngine do
@@ -2240,7 +2241,7 @@ end;
 
 function TPyDataset.DoLookup( args : PPyObject ) : PPyObject;
 var
-  keyFields, resultFields : PChar;
+  keyFields, resultFields : PAnsiChar;
   keyValues : PPyObject;
 begin
   with GetPythonEngine do
@@ -2342,7 +2343,7 @@ begin
             else
               begin
                 Result := nil;
-                PyErr_SetString (PyExc_AttributeError^, PChar(Format('Value out of range : %d', [idx])));
+                PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Value out of range : %d', [idx]))));
               end;
           end
         else // the arguments were not right
@@ -2359,7 +2360,7 @@ end;
 
 function TPyDataset.DoFieldByName( args : PPyObject ) : PPyObject;
 var
-  s : PChar;
+  s : PAnsiChar;
   fld : TField;
   F : TPyField;
 begin
@@ -2383,7 +2384,7 @@ begin
             else
               begin
                 Result := nil;
-                PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown field "%s"', [String(s)])));
+                PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))));
               end;
           end
         else // the arguments were not right
@@ -2400,7 +2401,7 @@ end;
 
 function TPyDataset.DoFindField( args : PPyObject ) : PPyObject;
 var
-  s : PChar;
+  s : PAnsiChar;
   fld : TField;
   F : TPyField;
 begin
@@ -2704,6 +2705,7 @@ begin
   TypeName := 'TDataset';
   Services.Sequence := [ssLength, ssItem];
   Module := gDBModule;
+  TypeFlags := TypeFlags + [tpfBaseType];
   PyObjectClass := TPyDataset;
   with DocString do
     begin
@@ -2742,11 +2744,11 @@ end;
 
 
 // Basic services
-function  TVarArg.GetAttr(key : PChar) : PPyObject;
+function  TVarArg.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
-      if CompareText( key, 'Value' ) = 0 then
+      if CompareText( string(key), 'Value' ) = 0 then
         begin
           Result := FValue;
           if not Assigned(Result) then
@@ -2758,11 +2760,11 @@ begin
     end;
 end;
 
-function  TVarArg.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TVarArg.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   with GetPythonEngine do
     begin
-      if CompareText( key, 'Value' ) = 0 then
+      if CompareText( string(key), 'Value' ) = 0 then
         begin
           Py_XDecRef(FValue);
           FValue := value;
@@ -2777,7 +2779,7 @@ end;
 function  TVarArg.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PChar(PyObjectAsString(FValue)) );
+    Result := PyString_FromString( PAnsiChar(AnsiString(PyObjectAsString(FValue))) );
 end;
 
 constructor TPythonVarArg.Create( AOwner : TComponent );
