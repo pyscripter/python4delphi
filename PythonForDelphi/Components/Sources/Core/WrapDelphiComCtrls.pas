@@ -188,7 +188,7 @@ function TPyDelphiPageControl.GetHitTestInfoAt_Wrapper(
   begin
     with GetPythonEngine do
     begin
-      _text := PyString_FromString(PAnsiChar(AText));
+      _text := PyString_FromString(PAnsiChar(AnsiString(AText)));
       PyList_Append(Result, _text);
       Py_DecRef(_text);
     end;

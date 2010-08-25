@@ -50,7 +50,7 @@ type
 function VarPythonCreate( AObject : PPyObject ) : Variant; overload;
 function VarPythonCreate( const AValue : Variant ) : Variant; overload;
 function VarPythonCreate( const AValues : array of const; ASequenceType : TSequenceType = stList ) : Variant; overload;
-function VarPythonEval( const APythonExpression : String) : Variant;
+function VarPythonEval( const APythonExpression : AnsiString) : Variant;
 function GetAtom( AObject : PPyObject ) : Variant; // compatibility function with PythonAtom.pas
 
 { Python variant helper functions }
@@ -90,7 +90,7 @@ function VarIsSubtypeOf(const ADerived, AType : Variant): Boolean;
 function VarIsNone(const AValue : Variant): Boolean;
 function VarIsTrue(const AValue : Variant): Boolean;
 
-function VarModuleHasObject(const AModule : Variant; aObj: String): Boolean;
+function VarModuleHasObject(const AModule : Variant; aObj: AnsiString): Boolean;
 
 function NewPythonList( const ASize : Integer = 0 ): Variant;
 function NewPythonTuple( const ASize : Integer ): Variant;
@@ -102,7 +102,7 @@ function MainModule : Variant; // return the main module that's used for executi
 function BuiltinModule : Variant; // return the builtin module 
 function SysModule : Variant; // return the builtin module 'sys'
 function DatetimeModule : Variant; // return the builtin module 'datetime'
-function Import( const AModule : String ) : Variant; // import a Python module and return the module object.
+function Import( const AModule : AnsiString ) : Variant; // import a Python module and return the module object.
 function len(const AValue : Variant ) : Integer; // return the length of a Python collection.
 function _type(const AValue : Variant ) : Variant; // return the type object of a Python object.
 function iter(const AValue : Variant ) : Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
@@ -115,7 +115,7 @@ uses
 type
   TNamedParamDesc = record
     Index : Integer;
-    Name : String;
+    Name : AnsiString;
   end;
   TNamedParamArray = array of TNamedParamDesc;
 
@@ -128,7 +128,7 @@ type
     function RightPromotion(const V: TVarData; const AOperator: TVarOp;
       out RequiredVarType: TVarType): Boolean; override;
     function GetInstance(const V: TVarData): TObject;
-    function EvalPython(const V: TVarData; const AName: string;
+    function EvalPython(const V: TVarData; const AName: AnsiString;
       const Arguments: TVarDataArray): PPyObject;
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
     procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
@@ -162,7 +162,7 @@ type
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
     function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
-      const AName: string; AArg : TVarData): Boolean; virtual;
+      const AName: AnsiString; AArg : TVarData): Boolean; virtual;
     function SetProperty(const V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
 {$IFDEF HAS_MODIFIED_DISPINVOKE}
@@ -187,7 +187,7 @@ type
     function GetAsString: String;
     procedure SetPyObject(const Value: PPyObject);
     function GetAsVariant: Variant;
-    function GetAsWideString: WideString;
+    function GetAsWideString: UnicodeString;
   public
     constructor Create(AObject : PPyObject); overload;
     constructor Create(AObject : PPyObject; APythonAtomCompatible : Boolean); overload;
@@ -222,7 +222,7 @@ type
     // conversion
     property AsString: String read GetAsString;
     property AsVariant: Variant read GetAsVariant;
-    property AsWideString: WideString read GetAsWideString;
+    property AsWideString: UnicodeString read GetAsWideString;
 
     // data
     property PyObject : PPyObject read fPyObject write SetPyObject;
@@ -313,7 +313,7 @@ begin
   end; // of with
 end;
 
-function VarPythonEval( const APythonExpression : String) : Variant;
+function VarPythonEval( const APythonExpression : AnsiString) : Variant;
 var
   _obj : PPyObject;
 begin
@@ -571,7 +571,7 @@ begin
   Result := AValue; // the cast into a boolean will call the PyObject_IsTrue API.
 end;
 
-function VarModuleHasObject(const AModule : Variant; aObj: String): Boolean;
+function VarModuleHasObject(const AModule : Variant; aObj: AnsiString): Boolean;
 begin
   with GetPythonEngine do
     Result := VarIsPython(AModule) and
@@ -648,7 +648,7 @@ end;
 
 function BuiltinModule : Variant;
 begin
-  Result := Import(GetPythonEngine.BuiltInModuleName);
+  Result := Import(AnsiString(GetPythonEngine.BuiltInModuleName));
 end;
 
 function SysModule : Variant;
@@ -661,7 +661,7 @@ begin
   Result := Import('datetime');
 end;
 
-function Import( const AModule : String ) : Variant;
+function Import( const AModule : AnsiString ) : Variant;
 var
   _module : PPyObject;
   _module_name : PPyObject;
@@ -739,7 +739,7 @@ procedure TPythonVariantType.BinaryOp(var Left: TVarData;
 begin
   if Right.VType = VarType then
     case Left.VType of
-      varString:
+      varString {$IFDEF UNICODE}, varUString {$ENDIF}:
         case AOperator of
           opAdd:
             Variant(Left) := Variant(Left) + TPythonVarData(Right).VPython.AsString;
@@ -801,9 +801,8 @@ var
 begin
   if Source.VType = VarType then
     case AVarType of
-      varOleStr:
+      varOleStr {$IFDEF UNICODE}, varUString {$ENDIF} :
         VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
-
       varString:
         VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsString);
     else
@@ -948,7 +947,7 @@ var
     begin
       LNamePtr := LNamePtr + Succ(StrLen(LNamePtr));
       fNamedParams[I-LNamedArgStart].Index := I;
-      fNamedParams[I-LNamedArgStart].Name  := String(LNamePtr);
+      fNamedParams[I-LNamedArgStart].Name  := AnsiString(LNamePtr);
     end;
 
     // error is an easy expansion
@@ -962,7 +961,7 @@ var
         if LArgByRef then
         begin
           //BStr := StringToOleStr(PAnsiString(ParamPtr^)^);
-          BStr := System.Copy(PAnsiString(LParamPtr^)^, 1, MaxInt);
+          BStr := WideString(System.Copy(PAnsiString(LParamPtr^)^, 1, MaxInt));
           PStr := PAnsiString(LParamPtr^);
           LArguments[I].VType := varOleStr or varByRef;
           LArguments[I].VOleStr := @BStr;
@@ -970,7 +969,7 @@ var
         else
         begin
           //BStr := StringToOleStr(PAnsiString(LParamPtr)^);
-          BStr := System.Copy(PAnsiString(LParamPtr)^, 1, MaxInt);
+          BStr := WideString(System.Copy(PAnsiString(LParamPtr)^, 1, MaxInt));
           PStr := nil;
           LArguments[I].VType := varOleStr;
           if BStr = '' then
@@ -985,7 +984,11 @@ var
     else if LArgByRef then
     begin
       if (LArgType = varVariant) and
-         (PVarData(LParamPtr^)^.VType = varString) then
+         (PVarData(LParamPtr^)^.VType = varString)
+         {$IFDEF UNICODE}
+           or (PVarData(LParamPtr)^.VType = varUString)
+         {$ENDIF}
+      then
         //VarCast(PVariant(ParamPtr^)^, PVariant(ParamPtr^)^, varOleStr);
         VarDataCastTo(PVarData(LParamPtr^)^, PVarData(LParamPtr^)^, varOleStr);
       LArguments[I].VType := LArgType or varByRef;
@@ -994,12 +997,23 @@ var
 
     // value is a variant
     else if LArgType = varVariant then
-      if PVarData(LParamPtr)^.VType = varString then
+      if (PVarData(LParamPtr)^.VType = varString)
+      {$IFDEF UNICODE}
+        or (PVarData(LParamPtr)^.VType = varUString)
+      {$ENDIF}
+      then
       begin
         with LStrings[LStrCount] do
         begin
-          //BStr := StringToOleStr(string(PVarData(LParamPtr)^.VString));
-          BStr := System.Copy(string(PVarData(LParamPtr)^.VString), 1, MaxInt);
+          //BStr := StringToOleStr(AnsiString(PVarData(LParamPtr)^.VString));
+          {$IFDEF UNICODE}
+          if (PVarData(LParamPtr)^.VType = varString) then
+            BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
+          else
+            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VUString), 1, MaxInt);
+          {$ELSE}
+          BStr := System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt);
+          {$ENDIF}
           PStr := nil;
           LArguments[I].VType := varOleStr;
           LArguments[I].VOleStr := PWideChar(BStr);
@@ -1040,7 +1054,7 @@ var
 
 var
   I, LArgCount: Integer;
-  LIdent: string;
+  LIdent: AnsiString;
   LTemp: TVarData;
 begin
   //------------------------------------------------------------------------------------
@@ -1055,7 +1069,7 @@ begin
   //After arg types, method name and named arg names are stored
   //Position pointer on method name
   LNamePtr := PAnsiChar(@CallDesc^.ArgTypes[LArgCount]);
-  LIdent := String(LNamePtr);
+  LIdent := AnsiString(LNamePtr);
   //Named params must be after positional params
   LNamedArgStart := CallDesc^.ArgCount - CallDesc^.NamedArgCount;
   SetLength(fNamedParams, CallDesc^.NamedArgCount);
@@ -1074,7 +1088,7 @@ begin
       // procedure with N arguments
       if Dest = nil then
       begin
-        if not DoProcedure(Source, LIdent, LArguments) then
+        if not DoProcedure(Source, string(LIdent), LArguments) then
         begin
 
           // ok maybe its a function but first we must make room for a result
@@ -1087,7 +1101,7 @@ begin
             SetClearVarToEmptyParam(LTemp);
 
             // ok lets try for that function
-            if not DoFunction(LTemp, Source, LIdent, LArguments) then
+            if not DoFunction(LTemp, Source, string(LIdent), LArguments) then
               RaiseDispError;
           finally
             VarDataClear(LTemp);
@@ -1098,13 +1112,13 @@ begin
       // property get or function with 0 argument
       else if LArgCount = 0 then
       begin
-        if not GetProperty(Dest^, Source, LIdent) and
-           not DoFunction(Dest^, Source, LIdent, LArguments) then
+        if not GetProperty(Dest^, Source, string(LIdent)) and
+           not DoFunction(Dest^, Source, string(LIdent), LArguments) then
           RaiseDispError;
       end
 
       // function with N arguments
-      else if not DoFunction(Dest^, Source, LIdent, LArguments) then
+      else if not DoFunction(Dest^, Source, string(LIdent), LArguments) then
         RaiseDispError;
 
     CPropertyGet:
@@ -1115,7 +1129,7 @@ begin
         RaiseDispError;
       if LArgCount = 0 then // no args
       begin
-        if not GetProperty(Dest^, Source, LIdent) then   // get op be valid
+        if not GetProperty(Dest^, Source, string(LIdent)) then   // get op be valid
           RaiseDispError;
       end
       else if LArgCount = 1 then // only one arg
@@ -1130,7 +1144,7 @@ begin
     CPropertySet:
       if not ((Dest = nil) and                         // there can't be a dest
               (LArgCount = 1) and                       // can only be one arg
-              SetProperty(Source, LIdent, LArguments[0])) then // set op be valid
+              SetProperty(Source, string(LIdent), LArguments[0])) then // set op be valid
         RaiseDispError;
   else
     RaiseDispError;
@@ -1143,7 +1157,7 @@ begin
     Dec(I);
     with LStrings[I] do
       if Assigned(PStr) then
-        PStr^ := System.Copy(BStr, 1, MaxInt);
+        PStr^ := AnsiString(System.Copy(BStr, 1, MaxInt));
   end;
 end;
 
@@ -1154,7 +1168,7 @@ var
   _PyResult : PPyObject;
 begin
   // eval the function call
-  _PyResult := EvalPython(V, AName, Arguments);
+  _PyResult := EvalPython(V, AnsiString(AName), Arguments);
   try
     Result := Assigned(_PyResult);
     // if the evaluation returned a result
@@ -1171,13 +1185,13 @@ function TPythonVariantType.DoProcedure(const V: TVarData;
 var
   _PyResult : PPyObject;
 begin
-  _PyResult := EvalPython(V, AName, Arguments);
+  _PyResult := EvalPython(V, AnsiString(AName), Arguments);
   Result := Assigned(_PyResult);
   GetPythonEngine.Py_XDecRef( _PyResult );
 end;
 
 function TPythonVariantType.EvalPython(const V: TVarData;
-  const AName: string; const Arguments: TVarDataArray): PPyObject;
+  const AName: AnsiString; const Arguments: TVarDataArray): PPyObject;
 
   function ArgAsPythonObject( AArgIndex : Integer ) : PPyObject;
   begin
@@ -1385,21 +1399,21 @@ begin
           // myList = [0, 1, 2, 3]; myList.GetSlice(1, 2) --> [1, 2]
           // myList.Contains(2) <-> 2 in myList
 
-          if (Length(Arguments) = 1) and SameText(AName, 'GetItem') then
+          if (Length(Arguments) = 1) and SameText(string(AName), 'GetItem') then
             Result := GetObjectItem(_container, Arguments[0])
-          else if (Length(Arguments) = 2) and SameText(AName, 'SetItem') then
+          else if (Length(Arguments) = 2) and SameText(string(AName), 'SetItem') then
             Result := SetObjectItem(_container, Arguments[0], Arguments[1])
-          else if (Length(Arguments) = 1) and SameText(AName, 'DeleteItem') then
+          else if (Length(Arguments) = 1) and SameText(string(AName), 'DeleteItem') then
             Result := DeleteObjectItem(_container, Arguments[0])
-          else if (Length(Arguments) = 2) and SameText(AName, 'GetSlice') then
+          else if (Length(Arguments) = 2) and SameText(string(AName), 'GetSlice') then
             Result := GetSequenceSlice(_container, Arguments[0], Arguments[1])
-          else if (Length(Arguments) = 3) and SameText(AName, 'SetSlice') then
+          else if (Length(Arguments) = 3) and SameText(string(AName), 'SetSlice') then
             Result := SetSequenceSlice(_container, Arguments[0], Arguments[1], Arguments[2])
-          else if (Length(Arguments) = 2) and SameText(AName, 'DelSlice') then
+          else if (Length(Arguments) = 2) and SameText(string(AName), 'DelSlice') then
             Result := DelSequenceSlice(_container, Arguments[0], Arguments[1])
-          else if (Length(Arguments) = 1) and SameText(AName, 'Contains') then
+          else if (Length(Arguments) = 1) and SameText(string(AName), 'Contains') then
             Result := SequenceContains(_container, Arguments[0])
-          else if SameText(AName, 'Length') then
+          else if SameText(string(AName), 'Length') then
             Result := PyInt_FromLong( GetObjectLength(_container) );
         end; // of if
       finally
@@ -1492,7 +1506,7 @@ var
 begin
   with GetPythonEngine do
   begin
-    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
+    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AnsiString(AName)));
     // if we could not find the property
     if (PyErr_Occurred <> nil) or not Assigned(_prop) then
     begin
@@ -1554,7 +1568,7 @@ begin
 end;
 
 function TPythonVariantType.GetPropertyWithArg(var Dest: TVarData;
-  const V: TVarData; const AName: string; AArg: TVarData): Boolean;
+  const V: TVarData; const AName: AnsiString; AArg: TVarData): Boolean;
 var
   _prop, _result : PPyObject;
 begin
@@ -1598,7 +1612,11 @@ function TPythonVariantType.LeftPromotion(const V: TVarData;
 begin
   { TypeX Op Python }
   if (AOperator = opAdd) and VarDataIsStr(V) then
+    {$IFDEF UNICODE}
+    RequiredVarType := varUString
+    {$ELSE}
     RequiredVarType := varString
+    {$ENDIF}
   else
     RequiredVarType := VarType;
 
@@ -1675,7 +1693,7 @@ begin
   begin
     _newValue := VarDataToPythonObject(Value);
     try
-      PyObject_SetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName), _newValue );
+      PyObject_SetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AnsiString(AName)), _newValue );
       CheckError;
     finally
       Py_XDecRef(_newValue);
@@ -2011,7 +2029,7 @@ begin
     Result := Null;
 end;
 
-function TPythonData.GetAsWideString: WideString;
+function TPythonData.GetAsWideString: UnicodeString;
 begin
   if Assigned(PyObject) and GetPythonEngine.PyUnicode_Check(PyObject) then
     Result := GetPythonEngine.PyUnicode_AsWideString(PyObject)

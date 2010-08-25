@@ -658,7 +658,7 @@ begin
     // adjust the transmitted self argument
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'ii:GetCell', [@col, @row] ) <> 0 then
-      Result := PyString_FromString(PAnsiChar(DelphiObject.Cells[col, row]))
+      Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.Cells[col, row])))
     else
       Result := nil;
   end;

@@ -845,10 +845,11 @@ end;
 
 var
   gNames : TStringList;
+
 function AddName(const AName : String) : PAnsiChar;
 begin
   gNames.Add(AName);
-  Result := PAnsiChar(gNames[gNames.Count-1]);
+  Result := PAnsiChar(AnsiString(gNames[gNames.Count-1]));
 end;
 
 procedure Register;
@@ -865,7 +866,7 @@ begin
     begin
       Result := False;
       PyErr_SetString (PyExc_IndexError^,
-          PAnsiChar(Format('%s "%d" out of range',[AIndexName, AIndex])));
+          PAnsiChar(AnsiString(Format('%s "%d" out of range',[AIndexName, AIndex]))));
     end
   else
     Result := True;
@@ -883,7 +884,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(Format('%s receives only integer values', [AAttributeName])));
+        PAnsiChar(AnsiString(Format('%s receives only integer values', [AAttributeName]))));
   end;
 end;
 
@@ -905,7 +906,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(Format('%s receives only string values', [AAttributeName])));
+        PAnsiChar(AnsiString(Format('%s receives only string values', [AAttributeName]))));
   end;
 end;
 
@@ -918,7 +919,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(Format('%s accepts only None or Callable values', [AAttributeName])));
+        PAnsiChar(AnsiString(Format('%s accepts only None or Callable values', [AAttributeName]))));
   end;
 end;
 
@@ -931,7 +932,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(Format('Enum %s accepts values between %d and %d. Received %d.', [AEnumName, AMinValue, AMaxValue, AValue])));
+        PAnsiChar(AnsiString(Format('Enum %s accepts values between %d and %d. Received %d.', [AEnumName, AMinValue, AMaxValue, AValue]))));
   end;
 end;
 
@@ -955,7 +956,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(Format('%s receives only Delphi objects of type %s', [AAttributeName, AExpectedClass.ClassName])));
+          PAnsiChar(AnsiString(Format('%s receives only Delphi objects of type %s', [AAttributeName, AExpectedClass.ClassName]))));
     end
     else
     begin
@@ -968,7 +969,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(Format('%s receives only Delphi objects', [AAttributeName])));
+        PAnsiChar(AnsiString(Format('%s receives only Delphi objects', [AAttributeName]))));
   end;
 end;
 
@@ -1046,7 +1047,7 @@ begin
   for I := 0 to SizeOf(Integer) * 8 - 1 do
     if I in S then
     begin
-      _name := GetPythonEngine.PyString_FromString(PAnsiChar(GetEnumName(ATypeInfo, I)));
+      _name := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(ATypeInfo, I))));
       GetPythonEngine.PyList_Append(Result, _name);
       GetPythonEngine.Py_XDecRef(_name);
     end;
@@ -1095,6 +1096,7 @@ end;
 
 {$IFNDEF DELPHI7_OR_HIGHER}
 // Copied from unit ObjAuto.pas, available only in Delphi7 or later
+// In delphi 2010 and propbably earlier it is part of TypInfo
 function GetPropValue(Instance: TObject; PropInfo: PPropInfo): Variant;
 begin
   // assume failure
@@ -1338,8 +1340,8 @@ end;
 function TPyDelphiContainer.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(Format('<Delphi %s at %x>',
-         [ContainerAccess.Name, Integer(Self)])) );
+    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %s at %x>',
+         [ContainerAccess.Name, Integer(Self)]))) );
 end;
 
 procedure TPyDelphiContainer.Setup(APyDelphiWrapper : TPyDelphiWrapper;
@@ -1379,7 +1381,7 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Container %s does not support indexed write (f[i] = x)', [fContainerAccess.Name])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Container %s does not support indexed write (f[i] = x)', [fContainerAccess.Name]))) );
   end;
 end;
 
@@ -1396,7 +1398,7 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Container %s does not support the Contains protocol', [fContainerAccess.Name])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Container %s does not support the Contains protocol', [fContainerAccess.Name]))) );
   end;
 end;
 
@@ -1446,8 +1448,8 @@ end;
 function TPyDelphiIterator.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(Format('<Delphi %sIterator at %x>',
-         [ContainerAccess.Name, Integer(Self)])) );
+    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %sIterator at %x>',
+         [ContainerAccess.Name, Integer(Self)]))) );
 end;
 
 procedure TPyDelphiIterator.Setup(AContainerAccess : TContainerAccess);
@@ -1495,7 +1497,7 @@ begin
   Result := Assigned(DelphiObject);
   if not Result then
     with GetPythonEngine do
-      PyErr_SetString(PyExc_AttributeError^, PAnsiChar(Format('Delphi wrapper %s is not bound', [ClassName])));
+      PyErr_SetString(PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Delphi wrapper %s is not bound', [ClassName]))));
 end;
 
 function TPyDelphiObject.Compare(obj: PPyObject): Integer;
@@ -1606,7 +1608,7 @@ var
 begin
   Result := nil;
   if GetPythonEngine.PyString_Check(Key) then
-    Name := GetPythonEngine.PyString_AsDelphiString(Key)
+    Name := ShortString(GetPythonEngine.PyString_AsDelphiString(Key))
   else
     Name := '';
 
@@ -1621,7 +1623,7 @@ begin
     // Ensure the method information has enough type information
     if Info.Len <= SizeOf(Info^) - SizeOf(ShortString) + 1 + Length(Info.Name) then
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[Name])))
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown attribute "%s"',[Name]))))
     else
     begin
       Result := PyDelphiWrapper.DelphiMethodType.CreateInstance;
@@ -1634,7 +1636,7 @@ begin
   else{$ENDIF} if Assigned(DelphiObject) and (Name <> '') then
   begin
     // Not a  method, try a property.
-    PropInfo := GetPropInfo(DelphiObject, Name);
+    PropInfo := GetPropInfo(DelphiObject, string(Name));
     if PropInfo <> nil then
     begin
       // we have a property
@@ -1650,7 +1652,7 @@ begin
         if GetTypeData(PropInfo^.PropType^)^.BaseType^ = TypeInfo(Boolean) then
           Result := GetPythonEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
         else
-          Result := GetPythonEngine.PyString_FromString(PAnsiChar(GetEnumName(PropInfo^.PropType^, GetOrdProp(Self.DelphiObject, PropInfo))));
+          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType^, GetOrdProp(Self.DelphiObject, PropInfo)))));
       end
       end else
          Result := GetPythonEngine.VariantAsPyObject(GetPropValue(DelphiObject, PropInfo));
@@ -1692,7 +1694,7 @@ begin
     if CheckBound then
     begin
       S := DelphiObject.ClassName;
-      Result := PyString_FromString(PAnsiChar(S));
+      Result := PyString_FromString(PAnsiChar(AnsiString(S)));
     end
     else
       Result := nil;
@@ -1726,7 +1728,7 @@ begin
     begin
       try
         for i := 0 to _propCount-1 do
-          PyList_SetItem(Result, i, PyString_FromString(PAnsiChar(String(_PropList^[i].Name))));
+          PyList_SetItem(Result, i, PyString_FromString(PAnsiChar(AnsiString(_PropList^[i].Name))));
       finally
         FreeMem(_PropList);
       end;
@@ -1789,7 +1791,7 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Wrapper %s does not support iterators', [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support iterators', [Self.ClassName]))) );
   end;
 end;
 
@@ -1822,7 +1824,7 @@ begin
         for i := 0 to _propCount-1 do
         begin
           _doc := Format('Published property %s : %s', [_PropList^[i].Name, _PropList^[i].PropType^.Name]);
-          PythonType.AddGetSet(AddName(_PropList^[i].Name), @TPyDelphiObject.Dummy_Getter, @TPyDelphiObject.Dummy_Setter,
+          PythonType.AddGetSet(AddName(string(_PropList^[i].Name)), @TPyDelphiObject.Dummy_Getter, @TPyDelphiObject.Dummy_Setter,
           AddName(_doc), nil);
         end;
       finally
@@ -1867,11 +1869,11 @@ function TPyDelphiObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
     if Assigned(DelphiObject) then
-      Result := PyString_FromString( PAnsiChar(Format('<Delphi object of type %s at %x>',
-           [DelphiObject.ClassName, Integer(Self)])) )
+      Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi object of type %s at %x>',
+           [DelphiObject.ClassName, Integer(Self)]))) )
     else
-      Result := PyString_FromString( PAnsiChar(Format('<Unbound Delphi wrapper of type %s at %x>',
-           [DelphiObjectClass.ClassName, Integer(Self)])) );
+      Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Unbound Delphi wrapper of type %s at %x>',
+           [DelphiObjectClass.ClassName, Integer(Self)]))) );
 end;
 
 function TPyDelphiObject.RichCompare(obj: PPyObject;
@@ -1944,7 +1946,7 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
       on E: Exception do with GetPythonEngine do
       begin
         Result := -1;
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(E.Message));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(E.Message)));
       end;
     end;
   end;
@@ -1964,7 +1966,7 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
       on E: Exception do with GetPythonEngine do
       begin
         Result := -1;
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(E.Message));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(E.Message)));
       end;
     end;
   end;
@@ -2053,8 +2055,8 @@ var
   _ContainerAccessClass : TContainerAccessClass;
 begin
   inherited;
-  PythonType.TypeName := GetTypeName;
-  PythonType.Name := PythonType.TypeName + 'Type';
+  PythonType.TypeName := AnsiString(GetTypeName);
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType, tpfHaveRichCompare];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
@@ -2087,7 +2089,7 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Wrapper %s does not support indexed write (f[i] = x)', [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support indexed write (f[i] = x)', [Self.ClassName]))) );
   end;
 end;
 
@@ -2117,7 +2119,7 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Wrapper %s does not support sequences', [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
   end;
 end;
 
@@ -2153,7 +2155,7 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Wrapper %s does not support sequences', [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToList', [] ) <> 0 then
     with GetPythonEngine do
@@ -2176,7 +2178,7 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(Format('Wrapper %s does not support sequences', [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToTuple', [] ) <> 0 then
     with GetPythonEngine do
@@ -2236,7 +2238,7 @@ begin
       begin
         Result := nil;
         PyErr_SetString (PyExc_TypeError^,
-          PAnsiChar(Format('"%s" called with invalid arguments: %s',[MethodInfo.Name, E.Message])));
+          PAnsiChar(AnsiString(Format('"%s" called with invalid arguments: %s',[MethodInfo.Name, E.Message]))));
       end;
     end;
 end;
@@ -2244,8 +2246,8 @@ end;
 function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(Format('<Delphi method %s of class %s at %x>',
-         [MethodInfo.Name, DelphiObject.ClassName, Integer(Self)])) );
+    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi method %s of class %s at %x>',
+         [MethodInfo.Name, DelphiObject.ClassName, Integer(Self)]))) );
 end;
 
 class procedure TPyDelphiMethodObject.SetupType( PythonType : TPythonType );
@@ -2322,7 +2324,7 @@ begin
   else
     _value := GetPythonEngine.PyObject_Repr(Value);
   try
-    Result := GetPythonEngine.PyString_FromString(PAnsiChar(Format('<VarParameter containing: %s>', [GetPythonEngine.PyObjectAsString(_value)])));
+    Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(Format('<VarParameter containing: %s>', [GetPythonEngine.PyObjectAsString(_value)]))));
   finally
     GetPythonEngine.Py_DECREF(_value);
   end;
@@ -2347,7 +2349,7 @@ class procedure TPyDelphiVarParameter.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'VarParameter';
-  PythonType.Name := PythonType.TypeName + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Container object allowing modification of Delphi var parameters from Python';
@@ -2590,11 +2592,11 @@ begin
       end
       else
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(Format('Class %s does not support events because it must either inherit from TComponent or implement interface IFreeNotification', [AComponent.ClassName])));
+          PAnsiChar(AnsiString(Format('Class %s does not support events because it must either inherit from TComponent or implement interface IFreeNotification', [AComponent.ClassName]))));
     end
     else
       PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar('You can only assign a callable to a method property'));
+        PAnsiChar(AnsiString('You can only assign a callable to a method property')));
   end;
 end;
 
@@ -2691,7 +2693,7 @@ begin
   with Engine do begin
     if PyArg_ParseTuple( args, 'sO:CreateDelphiComponent', [@KlassName, @_obj] ) <> 0 then begin
       try
-        Klass := GetClass(KlassName);
+        Klass := GetClass(string(KlassName));
       except
         Klass := nil;
       end;
@@ -2786,7 +2788,7 @@ begin
   CheckEngine;
   Assert(Assigned(Module));
   _obj := Engine.VariantAsPyObject(AValue);
-  Module.SetVar(AName, _obj);
+  Module.SetVar(AnsiString(AName), _obj);
   Engine.Py_DECREF(_obj);
 end;
 
@@ -2796,7 +2798,7 @@ var
 begin
   Assert(Assigned(Module));
   _obj := Wrap(AValue);
-  Module.SetVar(AName, _obj);
+  Module.SetVar(AnsiString(AName), _obj);
   Engine.Py_DECREF(_obj);
 end;
 

@@ -1028,7 +1028,7 @@ begin
         DelphiObject.HandleType := bmDDB
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown THandleType value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown THandleType value "%s"', [_value]))));
         Result := -1;
         Exit;
       end;
@@ -1119,7 +1119,7 @@ begin
         DelphiObject.PixelFormat := pfCustom
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown TPixelFormat value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TPixelFormat value "%s"', [_value]))));
         Result := -1;
         Exit;
       end;
@@ -1162,7 +1162,7 @@ begin
         DelphiObject.TransparentMode := tmFixed
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown TTransparentMode value "%s"', [_value])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TTransparentMode value "%s"', [_value]))));
         Result := -1;
         Exit;
       end;
@@ -2195,7 +2195,7 @@ function TPyDelphiMetaFile.Get_CreatedBy(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.CreatedBy));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.CreatedBy)));
   end;
 end;
 
@@ -2203,7 +2203,7 @@ function TPyDelphiMetaFile.Get_Description(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(DelphiObject.Description));
+    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.Description)));
   end;
 end;
 

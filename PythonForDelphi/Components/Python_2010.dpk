@@ -1,7 +1,4 @@
-// JCL_DEBUG_EXPERT_GENERATEJDBG OFF
-// JCL_DEBUG_EXPERT_INSERTJDBG OFF
-// JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
-package Python_bds3;
+package Python_2010;
 
 {$R *.res}
 {$R 'Sources\Core\PythonEngine.dcr'}
