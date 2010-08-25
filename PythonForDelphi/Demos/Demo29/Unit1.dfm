@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 218
   Top = 18
-  Width = 686
-  Height = 878
   Caption = 'Form1'
+  ClientHeight = 731
+  ClientWidth = 668
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,11 +17,11 @@ object Form1: TForm1
     Left = 8
     Top = 8
     Width = 657
-    Height = 385
+    Height = 329
   end
   object Button1: TButton
     Left = 8
-    Top = 400
+    Top = 352
     Width = 97
     Height = 25
     Caption = 'Open Picture...'
@@ -29,8 +29,8 @@ object Form1: TForm1
     OnClick = Button1Click
   end
   object Button2: TButton
-    Left = 8
-    Top = 808
+    Left = 196
+    Top = 352
     Width = 105
     Height = 25
     Caption = 'Execute'
@@ -39,9 +39,9 @@ object Form1: TForm1
   end
   object Memo1: TMemo
     Left = 8
-    Top = 568
+    Top = 520
     Width = 657
-    Height = 233
+    Height = 281
     Lines.Strings = (
       'import StringIO'
       'import Image'
@@ -65,9 +65,9 @@ object Form1: TForm1
   end
   object Memo2: TMemo
     Left = 8
-    Top = 432
+    Top = 392
     Width = 657
-    Height = 129
+    Height = 113
     ScrollBars = ssBoth
     TabOrder = 3
   end
@@ -89,6 +89,8 @@ object Form1: TForm1
     Top = 624
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
     Output = Memo2
     Left = 208
     Top = 624

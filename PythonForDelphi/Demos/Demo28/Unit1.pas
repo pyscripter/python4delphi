@@ -230,7 +230,7 @@ begin
   with GetPythonEngine do
   begin
     if idx < Strings.Count then
-      Result := PyString_FromString(PChar(Strings[idx]))
+      Result := PyString_FromString(PAnsiChar(AnsiString(Strings[idx])))
     else
     begin
       PyErr_SetString(PyExc_IndexError^, 'list index out of range');
@@ -292,7 +292,7 @@ begin
     end
     else
     begin
-      Result := PyString_FromString(PChar(StringList.Strings[fCurrentIndex]));
+      Result := PyString_FromString(PAnsiChar(AnsiString(StringList.Strings[fCurrentIndex])));
     end;
   end;
 end;

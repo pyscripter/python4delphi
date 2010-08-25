@@ -127,7 +127,7 @@ end;
 }
 function DoCreateTable( Self, Args : PPyObject ) : PPyObject; cdecl;
 var
-  DBName, TblName : PChar;
+  DBName, TblName : PAnsiChar;
   ds : TDataset;
 begin
   with GetPythonEngine do

@@ -79,7 +79,7 @@ procedure TForm1.PythonInputOutput1SendData(Sender: TObject;
   const Data: String);
 begin
 {$IFDEF MSWINDOWS}
-  OutputDebugString( PChar(Data) );
+  OutputDebugString( PAnsiChar(Data) );
 {$ENDIF}
 {$IFDEF LINUX}
   WriteLn( ErrOutput, Data );

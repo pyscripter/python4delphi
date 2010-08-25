@@ -52,7 +52,7 @@ function BinStrToPyStr(const AString : String) : Variant;
 var
   _str : PPyObject;
 begin
-  _str := GetPythonEngine.PyString_FromStringAndSize(PChar(AString), Length(AString));
+  _str := GetPythonEngine.PyString_FromStringAndSize(PAnsiChar(AString), Length(AString));
   Result := VarPythonCreate(_str);
   GetPythonEngine.Py_DECREF(_str);
 end;

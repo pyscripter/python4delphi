@@ -533,7 +533,11 @@ begin
   Assert( c = b );
   Assert( c = w );
   Assert( c = 'Hello world!');
+  {$IFDEF UNICODE}
+  Assert( VarType(c) and VarTypeMask = varUString );
+  {$ELSE}
   Assert( VarType(c) and VarTypeMask = varOleStr );
+  {$ENDIF}
   c := VarPythonCreate(w);
   Assert( c = 'Hello world!');
   Assert( c = w );
@@ -605,11 +609,23 @@ begin
   Assert(String(b) = '[4, 5, 6]');
   // now with a litteral: note that with D6 SP1, we can't concatenate a custom variant with an var array of variants
   c := a + b + VarPythonCreate(['Hello', 'World!', 3.14]);
+  {$IFDEF UNICODE}
+  Assert( String(c) = '[1, 2, 3, 4, 5, 6, u''Hello'', u''World!'', 3.1400000000000001]' );
+  {$ELSE}
   Assert( String(c) = '[1, 2, 3, 4, 5, 6, ''Hello'', ''World!'', 3.1400000000000001]' );
+  {$ENDIF}
   c := a + VarPythonCreate(['Hello', 'World!', 3.14]) + b;
+  {$IFDEF UNICODE}
+  Assert( String(c) = '[1, 2, 3, u''Hello'', u''World!'', 3.1400000000000001, 4, 5, 6]' );
+  {$ELSE}
   Assert( String(c) = '[1, 2, 3, ''Hello'', ''World!'', 3.1400000000000001, 4, 5, 6]' );
+  {$ENDIF}
   c := VarPythonCreate(['Hello', 'World!', 3.14]) + a + b;
+  {$IFDEF UNICODE}
+  Assert( String(c) = '[u''Hello'', u''World!'', 3.1400000000000001, 1, 2, 3, 4, 5, 6]' );
+  {$ELSE}
   Assert( String(c) = '[''Hello'', ''World!'', 3.1400000000000001, 1, 2, 3, 4, 5, 6]' );
+  {$ENDIF}
 
   // multiplication
   c := a * 3; // in Python the multiplication of sequence concatenates n times the sequence
@@ -758,30 +774,31 @@ begin
   Assert(VarIsPython(a));
   Assert(VarIsPythonMapping(a));
   Assert(VarIsPythonDict(a));
-  a.SetItem( 'a', 1 );
-  a.SetItem( 'b', 2 );
-  a.SetItem( 'c', 3 );
+  // There is a bug in D2010 in which Char('a') gets translated to integer parameter
+  a.SetItem( string('a'), 1 );
+  a.SetItem( string('b'), 2 );
+  a.SetItem( string('c'), 3 );
   Assert(a.Length = 3); // this is a special property that does the same as: len(a) in Python
   Assert(a.Length() = 3); // this is a special method that does the same as the special property
   Assert(len(a) = 3);
-  Assert(a.GetItem('a') = 1); // this is a special method that lets you do the same as: a[0] in Python
-  Assert(a.GetItem('b') = 2);
-  Assert(a.GetItem('c') = 3);
+  Assert(a.GetItem(string('a')) = 1); // this is a special method that lets you do the same as: a[0] in Python
+  Assert(a.GetItem(string('b')) = 2);
+  Assert(a.GetItem(string('c')) = 3);
 
 
   b := NewPythonDict;
   Assert(VarIsPython(b));
   Assert(VarIsPythonMapping(b));
   Assert(VarIsPythonDict(b));
-  b.SetItem( 'd', 4 );
-  b.SetItem( 'e', 5 );
-  b.SetItem( 'f', 6 );
+  b.SetItem( string('d'), 4 );
+  b.SetItem( string('e'), 5 );
+  b.SetItem( string('f'), 6 );
   Assert(b.Length = 3);
   Assert(b.Length() = 3);
   Assert(len(b) = 3);
-  Assert(b.GetItem('d') = 4);
-  Assert(b.GetItem('e') = 5);
-  Assert(b.GetItem('f') = 6);
+  Assert(b.GetItem(string('d')) = 4);
+  Assert(b.GetItem(string('e')) = 5);
+  Assert(b.GetItem(string('f')) = 6);
 
   // copy
   c := a;
@@ -789,7 +806,7 @@ begin
   Assert( VarIsSame(c, a) ); // checks if 2 variants share the same Python object.
 
   // dict methods
-  Assert( Boolean(a.has_key('a')) );
+  Assert( Boolean(a.has_key(string('a'))) );
   Assert( not Boolean(a.has_key('abc')) );
   keys := a.keys();
   keys.sort();
@@ -798,17 +815,17 @@ begin
   values.sort();
   Assert( values = VarPythonCreate(VarArrayOf([1, 2, 3])));
   c := a;
-  c.DeleteItem('a');
-  Assert( not Boolean(c.has_key('a')) );
+  c.DeleteItem(string('a'));
+  Assert( not Boolean(c.has_key(string('a'))) );
 
   // test string values
   a := NewPythonDict;
-  a.SetItem( 'a', 'Hello');
-  a.SetItem( 'b', 'World!');
-  a.SetItem( 'c', '');
-  Assert(a.GetItem('a') = 'Hello');
-  Assert(a.GetItem('b') = 'World!');
-  Assert(a.GetItem('c') = '');
+  a.SetItem( string('a'), 'Hello');
+  a.SetItem( string('b'), 'World!');
+  a.SetItem( string('c'), '');
+  Assert(a.GetItem(string('a')) = 'Hello');
+  Assert(a.GetItem(string('b')) = 'World!');
+  Assert(a.GetItem(string('c')) = '');
 
   // Done!
   Log('Mapping test was Ok.');
@@ -875,6 +892,14 @@ begin
   Assert(VarIsPythonDate(a));
   Assert(not VarIsPythonTime(a));
   Assert(not VarIsPythonDateTimeDelta(a));
+  Assert(a.year  = 2002);
+  Assert(a.month = 12);
+  Assert(a.day   = 30);
+  Assert(a.hour  = 22);
+  Assert(a.minute   = 15);
+  Assert(a.second   = 38);
+  Assert(a.microsecond  = 827738);
+
   _date := a;
   DecodeDate( _date, _year, _month, _day );
   DecodeTime( _date, _hour, _min, _sec, _msec );
@@ -885,13 +910,6 @@ begin
   Assert(_min   = 15);
   Assert(_sec   = 38);
   Assert(_msec  = 827738 div 1000);
-  Assert(a.year  = 2002);
-  Assert(a.month = 12);
-  Assert(a.day   = 30);
-  Assert(a.hour  = 22);
-  Assert(a.minute   = 15);
-  Assert(a.second   = 38);
-  Assert(a.microsecond  = 827738);
 
   a := _timeMod.date(2002, 12, 30);
   Assert(not VarIsPythonDateTime(a));
@@ -917,20 +935,16 @@ begin
   Assert(not VarIsPythonDate(a));
   Assert(VarIsPythonTime(a));
   Assert(not VarIsPythonDateTimeDelta(a));
-  _date := a;
-  DecodeDate( _date, _year, _month, _day );
-  DecodeTime( _date, _hour, _min, _sec, _msec );
-  Assert(_year  = 1899);
-  Assert(_month = 12);
-  Assert(_day   = 30);
-  Assert(_hour  = 22);
-  Assert(_min   = 15);
-  Assert(_sec   = 38);
-  Assert(_msec  = 827738 div 1000);
   Assert(a.hour  = 22);
   Assert(a.minute   = 15);
   Assert(a.second   = 38);
   Assert(a.microsecond  = 827738);
+  _date := a;
+  DecodeTime( _date, _hour, _min, _sec, _msec );
+  Assert(_hour  = 22);
+  Assert(_min   = 15);
+  Assert(_sec   = 38);
+  Assert(_msec  = 827738 div 1000);
 
   a := DatetimeModule.datetime(2002, 12, 30, 22, 15, 38, 827738);
   b := _timeMod.datetime(2002, 12, 30, 22, 16, 38, 827738);
@@ -1041,8 +1055,8 @@ begin
   Assert( VarIsInstanceOf(_main.b, _main.Foo) );
   Assert( not VarIsInstanceOf(_main.f, _main.Bar) );
 {$ENDIF}
-  Assert( VarIsTrue( BuiltinModule.vars(_main).has_key('f') ) );
-  Assert( VarIsTrue( BuiltinModule.dir(_main).Contains('f') ) );
+  Assert( VarIsTrue( BuiltinModule.vars(_main).has_key(string('f')) ) );
+  Assert( VarIsTrue( BuiltinModule.dir(_main).Contains(string('f')) ) );
 
   f := _main.Foo(); // new instance of class Foo
   Log('Instanciate class Foo: ' + f);
@@ -1146,12 +1160,12 @@ begin
   // call one of his functions
   Assert( _myModule.Add(2, 2) = 4 );
   // delete module var f
-  _main.__dict__.DeleteItem('f');
-  Assert( _main.__dict__.has_key('f') = False );
+  _main.__dict__.DeleteItem(string('f'));
+  Assert( _main.__dict__.has_key(string('f')) = False );
   // open a file using Python
   if FileExists('MyModule.py') then
   begin
-    f := BuiltinModule.open('MyModule.py', 'r').readlines();
+    f := BuiltinModule.open('MyModule.py', string('r')).readlines();
     with TStringList.Create do
     try
       LoadFromFile('MyModule.py');

@@ -138,7 +138,7 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine, DelphiObject as TPoint do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
 end;
 
 /////////////////////////////////////////////////
@@ -157,6 +157,7 @@ begin
   p := PyDelphiWrapper.Wrap(DelphiPoint, soOwned);
 
   PythonModule1.SetVar( 'myPoint', p );
+
   // Note, that you must not free the delphi point yourself.
   // Instead use the GetPythonEngine.Py_XDECREF(obj) method,
   // because the object may be used by another Python object.
@@ -164,6 +165,7 @@ begin
 
   // Excecute the script
   PythonEngine1.ExecStrings( memo1.Lines );
+
 end;
 
 procedure TForm1.PyDelphiWrapperInitialization(Sender: TObject);

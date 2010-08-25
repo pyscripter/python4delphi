@@ -59,8 +59,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PChar) : PPyObject; override;
-    function  SetAttr(key : PChar; value : PPyObject) : Integer; override;
+    function  GetAttr(key : PAnsiChar) : PPyObject; override;
+    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Methods of TPyPoint
@@ -100,7 +100,7 @@ end;
 
 // Then we override the needed services
 
-function  TPyPoint.GetAttr(key : PChar) : PPyObject;
+function  TPyPoint.GetAttr(key : PAnsiChar) : PPyObject;
 begin
   with GetPythonEngine do
     begin
@@ -115,7 +115,7 @@ begin
     end;
 end;
 
-function  TPyPoint.SetAttr(key : PChar; value : PPyObject) : Integer;
+function  TPyPoint.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
 begin
   Result := 0;
   with GetPythonEngine do
@@ -139,7 +139,7 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
 end;
 
 // Methods of TPyPoint

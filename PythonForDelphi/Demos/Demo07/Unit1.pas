@@ -61,8 +61,8 @@ type
   PPyPoint = ^PyPointRec;
 
   procedure PyPoint_dealloc(obj : PPyObject); cdecl;
-  function  PyPoint_getattr(obj : PPyObject; key : PChar) : PPyObject; cdecl;
-  function  PyPoint_setattrfunc(obj : PPyObject; key : PChar; value : PPyObject) : Integer; cdecl;
+  function  PyPoint_getattr(obj : PPyObject; key : PAnsiChar) : PPyObject; cdecl;
+  function  PyPoint_setattrfunc(obj : PPyObject; key : PAnsiChar; value : PPyObject) : Integer; cdecl;
   function  PyPoint_repr(obj : PPyObject) : PPyObject; cdecl;
 
 var
@@ -120,7 +120,7 @@ end;
 function TForm1.spam_getdouble( pself, args : PPyObject ) : PPyObject; cdecl;
 var x: Currency;
     y: Double;
-    s: PChar;
+    s: PAnsiChar;
     i: integer;
 begin
   with GetPythonEngine do
@@ -137,7 +137,7 @@ end;
 function TForm1.spam_getdouble2( pself, args : PPyObject ) : PPyObject; cdecl;
 var x: Currency;
     y: Double;
-    s: PChar;
+    s: PAnsiChar;
     i: integer;
 begin
   // this is the same function as the previous one,
@@ -191,7 +191,7 @@ end;
 // In fact it is called each time you write:
 // object.value
 // object.method(args)
-function  PyPoint_getattr(obj : PPyObject; key : PChar) : PPyObject; cdecl;
+function  PyPoint_getattr(obj : PPyObject; key : PAnsiChar) : PPyObject; cdecl;
 begin
   with GetPythonEngine, PPyPoint(obj)^ do
     begin
@@ -208,7 +208,7 @@ begin
           // or we could write, because it's quicker:
           // Result := Py_FindMethod( Form1.PythonType1.MethodsData, obj, key);
           if not Assigned(Result) then
-            PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
         end;
     end;
 end;
@@ -216,7 +216,7 @@ end;
 // Here's the write access to the attributes of an object.
 // In fact it is called each time you write:
 // object.value = 1
-function  PyPoint_setattrfunc(obj : PPyObject; key : PChar; value : PPyObject) : Integer; cdecl;
+function  PyPoint_setattrfunc(obj : PPyObject; key : PAnsiChar; value : PPyObject) : Integer; cdecl;
 begin
   Result := -1;
   with GetPythonEngine, PPyPoint(obj)^ do
@@ -229,7 +229,7 @@ begin
             Result := 0;
           end
         else
-          PyErr_SetString (PyExc_AttributeError^, PChar(Format('Attribute "%s" needs an integer',[key])));
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Attribute "%s" needs an integer',[key])));
       // Check for attribute y
       end else if key = 'y' then begin
         if PyInt_Check(value) then
@@ -238,9 +238,9 @@ begin
             Result := 0;
           end
         else
-          PyErr_SetString (PyExc_AttributeError^, PChar(Format('Attribute "%s" needs an integer',[key])));
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Attribute "%s" needs an integer',[key])));
       end else
-        PyErr_SetString (PyExc_AttributeError^, PChar(Format('Unknown attribute "%s"',[key])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
     end;
 end;
 
@@ -249,7 +249,7 @@ function  PyPoint_repr(obj : PPyObject) : PPyObject; cdecl;
 begin
   with GetPythonEngine, PPyPoint(obj)^ do
     begin
-      Result := PyString_FromString( PChar(Format('(%d, %d)',[po_x, po_y]) ) );
+      Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[po_x, po_y]) ) );
     end;
 end;
 
@@ -272,12 +272,15 @@ begin
 end;
 
 procedure TForm1.PythonType1Initialization(Sender: TObject);
+Var
+  PyType : PyTypeObject;
 begin
   with (Sender as TPythonType) do
     begin
       // In the initialization of a new type, we must
       // define the attributes of this type
-      with TheType do
+      PyType := TheType;
+      with PyType do
         begin
           tp_basicsize := sizeof(PyPointRec);
           tp_dealloc   := PyPoint_dealloc;
@@ -286,6 +289,7 @@ begin
           tp_repr      := PyPoint_repr;
           tp_str       := PyPoint_repr;
         end;
+        TheType := PyType;
       // And then add the methods of the object, if needed
       AddMethod( 'OffsetBy', PyPoint_OffsetBy, 'OffsetBy(dx, dy)' );
     end;

@@ -9,7 +9,7 @@ library database;
   qui sont imbriquées dans des enregistrements ou des classes. ShareMem est
   l'unité d'interface au gestionnaire de mémoire partagée DELPHIMM.DLL, qui
   doit être déployé avec vos propres DLLs. Pour éviter l'emploi de DELPHIMM.DLL,
-  passez vos chaînes en utilisant des paramètres PChar ou ShortString. }
+  passez vos chaînes en utilisant des paramètres PAnsiChar ou ShortString. }
 
 uses
   SysUtils,
