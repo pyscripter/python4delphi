@@ -1747,7 +1747,7 @@ begin
       for i := 0 to Dataset.FieldCount - 1 do
         with Dataset.Fields[i] do
         begin
-          _fieldName := VariantAsPyObject(FieldName);
+          _fieldName := VariantAsPyObject(Variant(FieldName));
           PyTuple_SetItem( Result, i, _fieldName );
           Py_DecRef(_fieldName);
         end;
@@ -1780,7 +1780,7 @@ begin
         with Dataset.Fields[i] do
         begin
           obj := VariantAsPyObject( AsVariant );
-          _fieldName := VariantAsPyObject(FieldName);
+          _fieldName := VariantAsPyObject(Variant(FieldName));
           PyDict_SetItem( Result, _fieldName, obj );
           Py_XDecRef(obj);
           Py_XDecRef(_fieldName);

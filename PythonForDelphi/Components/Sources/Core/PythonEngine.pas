@@ -5864,7 +5864,7 @@ var
   dt : TDateTime;
   dl : Integer;
   myInt : Integer;
-  wStr : WideString;
+  wStr : UnicodeString;
   Disp : IDispatch;
   DispID : Integer;
   args : PPyObject;
