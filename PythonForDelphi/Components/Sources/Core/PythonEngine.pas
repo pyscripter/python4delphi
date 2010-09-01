@@ -5875,7 +5875,7 @@ begin
   while VarType(DeRefV) = varByRef or varVariant do
     DeRefV := Variant(PVarData(TVarData(DeRefV).VPointer)^);
 
-  case VarType(DeRefV) and VarTypeMask of
+  case VarType(DeRefV) and (VarTypeMask or VarArray) of
     varBoolean: begin
       if DeRefV = true then
         Result := PPyObject(Py_True)
