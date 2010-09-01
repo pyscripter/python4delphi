@@ -1739,18 +1739,13 @@ end;
 function  TPyDataset.FieldNamesAsTuple : PPyObject;
 var
   i : Integer;
-  _fieldName : PPyObject;
 begin
   with GetPythonEngine do
     begin
       Result := PyTuple_New(Dataset.FieldCount);
       for i := 0 to Dataset.FieldCount - 1 do
         with Dataset.Fields[i] do
-        begin
-          _fieldName := VariantAsPyObject(Variant(FieldName));
-          PyTuple_SetItem( Result, i, _fieldName );
-          Py_DecRef(_fieldName);
-        end;
+          PyTuple_SetItem( Result, i, VariantAsPyObject(Variant(FieldName)) );
     end;
 end;
 

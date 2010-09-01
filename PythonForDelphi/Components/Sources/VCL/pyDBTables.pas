@@ -1467,6 +1467,7 @@ begin
   TypeName := 'TTable';
   Services.Sequence := [ssLength, ssItem];
   Module := gDBTablesModule;
+  TypeFlags := TypeFlags + [tpfBaseType];
   PyObjectClass := TPyTable;
   with DocString do
     begin

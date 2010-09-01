@@ -66,7 +66,8 @@ def PrintDocOf( inst ):
   if type(inst).__doc__:
     print type(inst).__doc__
   print "Methods:"
-  for i in inst.__methods__:
+  for i in dir(inst):
+    print inst
     doc = getattr(inst, i).__doc__
     if doc:
       print "    ", doc
