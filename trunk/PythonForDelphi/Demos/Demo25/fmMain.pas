@@ -151,12 +151,8 @@ begin
 
   // division: in Python a division between 2 integers is the same as the integer division
   c := b / a;
-{$IFDEF PYTHON22_OR_HIGHER}
   Assert( c = 1.5 );
   Assert( Integer(c) = 2 );
-{$ELSE}
-  Assert( Integer(c) = 1 );
-{$ENDIF}
 
   // modulus
   c := b mod a;
@@ -273,9 +269,7 @@ begin
   Assert( MaxInt < b );
   Assert( b+1 = big+1 );
   Assert( b*2 = big*2 );
-{$IFDEF PYTHON22_OR_HIGHER}
   Assert( b div 2 = big div 2 );
-{$ENDIF}
 {$IFDEF PYTHON23_OR_HIGHER}
   c := VarPythonCreate(True);
   Assert(VarIsBool(c));
@@ -1046,7 +1040,6 @@ begin
   Assert( VarIsTrue(BuiltinModule.callable(_main.f.Inc)) );
   Assert( VarIsPythonFunction(_main.Add) );
   Assert( VarIsPythonCallable(_main.Add) );
-{$IFDEF PYTHON21_OR_HIGHER}
   Assert( VarIsInstanceOf(_main.f, _main.Foo) );
   Assert( VarIsTrue(BuiltinModule.isinstance(_main.f, _main.Foo)) );
   Assert( VarIsSubclassOf(_main.Bar, _main.Foo) );
@@ -1054,7 +1047,6 @@ begin
   Assert( not VarIsSubclassOf(_main.Foo, _main.Bar) );
   Assert( VarIsInstanceOf(_main.b, _main.Foo) );
   Assert( not VarIsInstanceOf(_main.f, _main.Bar) );
-{$ENDIF}
   Assert( VarIsTrue( BuiltinModule.vars(_main).has_key(string('f')) ) );
   Assert( VarIsTrue( BuiltinModule.dir(_main).Contains(string('f')) ) );
 

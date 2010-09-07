@@ -151,23 +151,19 @@ end;
 
 class procedure TPyPoint.RegisterMembers( PythonType : TPythonType );
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   with PythonType do
     begin
       AddMember( 'x', mtInt, Integer(@TPyPoint(nil).x), mfDefault, 'x coordinate');
       AddMember( 'y', mtInt, Integer(@TPyPoint(nil).y), mfDefault, 'y coordinate');
     end;
-{$ENDIF}
 end;
 
 class procedure TPyPoint.RegisterGetSets( PythonType : TPythonType );
 begin
-{$IFDEF PYTHON22_OR_HIGHER}
   with PythonType do
     begin
       AddGetSet('Name', TPyPoint_GetName, TPyPoint_SetName, 'Name of a point', nil);
     end;
-{$ENDIF}
 end;
 
 // Methods of TPyPoint
