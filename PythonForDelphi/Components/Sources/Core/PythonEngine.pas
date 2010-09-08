@@ -3997,55 +3997,29 @@ begin
   except
   end;
   @PyObject_CallMethod        :=Import('PyObject_CallMethod');
-  if (APIVersion < 1007) or
-     (DllName = PYTHON_KNOWN_VERSIONS[1].DllName) then
-  begin
-    @Py_SetProgramName         := nil;
-    @Py_SetProgramName3000     := nil;
-    @Py_IsInitialized          := nil;
-    @Py_GetProgramFullPath     := nil;
-    @DLL_Py_GetBuildInfo       := nil;
-    @Py_NewInterpreter         := nil;
-    @Py_EndInterpreter         := nil;
-    @PyEval_AcquireLock        := nil;
-    @PyEval_ReleaseLock        := nil;
-    @PyEval_AcquireThread      := nil;
-    @PyEval_ReleaseThread      := nil;
-    @PyInterpreterState_New    := nil;
-    @PyInterpreterState_Clear  := nil;
-    @PyInterpreterState_Delete := nil;
-    @PyThreadState_New         := nil;
-    @PyThreadState_Clear       := nil;
-    @PyThreadState_Delete      := nil;
-    @PyThreadState_Get         := nil;
-    @PyThreadState_Swap        := nil;
-    @PyErr_SetInterrupt        := nil; 
-  end else
-  begin
-    if not IsPython3000 then
-      @Py_SetProgramName        := Import('Py_SetProgramName')
-    else
-      @Py_SetProgramName3000    := Import('Py_SetProgramName');
-    @Py_IsInitialized         := Import('Py_IsInitialized');
-    @Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
-    if getProcAddress( FDLLHandle, 'Py_GetBuildInfo' ) <> nil then
-      @DLL_Py_GetBuildInfo    := Import('Py_GetBuildInfo');
-    @Py_NewInterpreter        := Import('Py_NewInterpreter');
-    @Py_EndInterpreter        := Import('Py_EndInterpreter');
-    @PyEval_AcquireLock       := Import('PyEval_AcquireLock');
-    @PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
-    @PyEval_AcquireThread     := Import('PyEval_AcquireThread');
-    @PyEval_ReleaseThread     := Import('PyEval_ReleaseThread');
-    @PyInterpreterState_New   := Import('PyInterpreterState_New');
-    @PyInterpreterState_Clear := Import('PyInterpreterState_Clear');
-    @PyInterpreterState_Delete:= Import('PyInterpreterState_Delete');
-    @PyThreadState_New        := Import('PyThreadState_New');
-    @PyThreadState_Clear      := Import('PyThreadState_Clear');
-    @PyThreadState_Delete     := Import('PyThreadState_Delete');
-    @PyThreadState_Get        := Import('PyThreadState_Get');
-    @PyThreadState_Swap       := Import('PyThreadState_Swap');
-    @PyErr_SetInterrupt       := Import('PyErr_SetInterrupt'); 
-  end;
+  if not IsPython3000 then
+    @Py_SetProgramName        := Import('Py_SetProgramName')
+  else
+    @Py_SetProgramName3000    := Import('Py_SetProgramName');
+  @Py_IsInitialized         := Import('Py_IsInitialized');
+  @Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
+  if getProcAddress( FDLLHandle, 'Py_GetBuildInfo' ) <> nil then
+    @DLL_Py_GetBuildInfo    := Import('Py_GetBuildInfo');
+  @Py_NewInterpreter        := Import('Py_NewInterpreter');
+  @Py_EndInterpreter        := Import('Py_EndInterpreter');
+  @PyEval_AcquireLock       := Import('PyEval_AcquireLock');
+  @PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
+  @PyEval_AcquireThread     := Import('PyEval_AcquireThread');
+  @PyEval_ReleaseThread     := Import('PyEval_ReleaseThread');
+  @PyInterpreterState_New   := Import('PyInterpreterState_New');
+  @PyInterpreterState_Clear := Import('PyInterpreterState_Clear');
+  @PyInterpreterState_Delete:= Import('PyInterpreterState_Delete');
+  @PyThreadState_New        := Import('PyThreadState_New');
+  @PyThreadState_Clear      := Import('PyThreadState_Clear');
+  @PyThreadState_Delete     := Import('PyThreadState_Delete');
+  @PyThreadState_Get        := Import('PyThreadState_Get');
+  @PyThreadState_Swap       := Import('PyThreadState_Swap');
+  @PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
 end;
 
 procedure TPythonInterface.Py_INCREF(op: PPyObject);
@@ -4877,55 +4851,37 @@ procedure TPythonEngine.Initialize;
   var
     timeModule : PPyObject;
   begin
-    if APIVersion >= 1011 then // from Python 2.2
-    begin
-      timeModule := PyImport_ImportModule('time');
-      try
-        if Assigned(timeModule) then
-          FTimeStruct := GetVal(timeModule, 'struct_time')
-        else
-          PyErr_Clear;
-      finally
-        Py_XDecRef(timeModule);
-      end;
-    end
-    else
-      FTimeStruct := nil;
+    timeModule := PyImport_ImportModule('time');
+    try
+      if Assigned(timeModule) then
+        FTimeStruct := GetVal(timeModule, 'struct_time')
+      else
+        PyErr_Clear;
+    finally
+      Py_XDecRef(timeModule);
+    end;
   end;
 
   procedure GetDateTimeTypes;
   var
     dateTimeModule : PPyObject;
   begin
-    if APIVersion >= 1012 then // from Python 2.3
-    begin
-      dateTimeModule := PyImport_ImportModule('datetime');
-      try
-        if Assigned(dateTimeModule) then
-        begin
-          FPyDateTime_DateType        := GetVal(dateTimeModule, 'date');
-          FPyDateTime_DateTimeType    := GetVal(dateTimeModule, 'datetime');
-          FPyDateTime_DeltaType       := GetVal(dateTimeModule, 'timedelta');
-          FPyDateTime_TimeType        := GetVal(dateTimeModule, 'time');
-          FPyDateTime_TZInfoType      := GetVal(dateTimeModule, 'tzinfo');
-          FPyDateTime_TimeTZType      := GetVal(dateTimeModule, 'timetz');
-          FPyDateTime_DateTimeTZType  := GetVal(dateTimeModule, 'datetimetz');
-        end
-        else
-          PyErr_Clear;
-      finally
-        Py_XDecRef(dateTimeModule);
-      end;
-    end
-    else
-    begin
-      FPyDateTime_DateType        := nil;
-      FPyDateTime_DateTimeType    := nil;
-      FPyDateTime_DeltaType       := nil;
-      FPyDateTime_TimeType        := nil;
-      FPyDateTime_TZInfoType      := nil;
-      FPyDateTime_TimeTZType      := nil;
-      FPyDateTime_DateTimeTZType  := nil;
+    dateTimeModule := PyImport_ImportModule('datetime');
+    try
+      if Assigned(dateTimeModule) then
+      begin
+        FPyDateTime_DateType        := GetVal(dateTimeModule, 'date');
+        FPyDateTime_DateTimeType    := GetVal(dateTimeModule, 'datetime');
+        FPyDateTime_DeltaType       := GetVal(dateTimeModule, 'timedelta');
+        FPyDateTime_TimeType        := GetVal(dateTimeModule, 'time');
+        FPyDateTime_TZInfoType      := GetVal(dateTimeModule, 'tzinfo');
+        FPyDateTime_TimeTZType      := GetVal(dateTimeModule, 'timetz');
+        FPyDateTime_DateTimeTZType  := GetVal(dateTimeModule, 'datetimetz');
+      end
+      else
+        PyErr_Clear;
+    finally
+      Py_XDecRef(dateTimeModule);
     end;
   end;
 
