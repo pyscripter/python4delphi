@@ -4812,12 +4812,12 @@ begin
   if UseLastKnownVersion then
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
     begin
+      RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
       FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
         APIVersion := PYTHON_KNOWN_VERSIONS[i].APIVersion;
-        RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
         Exit;
       end;
       if not PYTHON_KNOWN_VERSIONS[i].CanUseLatest then
