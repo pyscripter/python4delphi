@@ -267,70 +267,70 @@ const
                     ];
 //-------  Python opcodes  ----------//
 Const
-   single_input                 = 256;
-   file_input                   = 257;
-   eval_input                   = 258;
-   funcdef                      = 259;
-   parameters                   = 260;
-   varargslist                  = 261;
-   fpdef                        = 262;
-   fplist                       = 263;
-   stmt                         = 264;
-   simple_stmt                  = 265;
-   small_stmt                   = 266;
-   expr_stmt                    = 267;
-   augassign                    = 268;
-   print_stmt                   = 269;
-   del_stmt                     = 270;
-   pass_stmt                    = 271;
-   flow_stmt                    = 272;
-   break_stmt                   = 273;
-   continue_stmt                = 274;
-   return_stmt                  = 275;
-   raise_stmt                   = 276;
-   import_stmt                  = 277;
-   import_as_name               = 278;
-   dotted_as_name               = 279;
-   dotted_name                  = 280;
-   global_stmt                  = 281;
-   exec_stmt                    = 282;
-   assert_stmt                  = 283;
-   compound_stmt                = 284;
-   if_stmt                      = 285;
-   while_stmt                   = 286;
-   for_stmt                     = 287;
-   try_stmt                     = 288;
-   except_clause                = 289;
-   suite                        = 290;
-   test                         = 291;
-   and_test                     = 291;
-   not_test                     = 293;
-   comparison                   = 294;
-   comp_op                      = 295;
-   expr                         = 296;
-   xor_expr                     = 297;
-   and_expr                     = 298;
-   shift_expr                   = 299;
-   arith_expr                   = 300;
-   term                         = 301;
-   factor                       = 302;
-   power                        = 303;
-   atom                         = 304;
-   listmaker                    = 305;
-   lambdef                      = 306;
-   trailer                      = 307;
-   subscriptlist                = 308;
-   subscript                    = 309;
-   sliceop                      = 310;
-   exprlist                     = 311;
-   testlist                     = 312;
-   dictmaker                    = 313;
-   classdef                     = 314;
-   arglist                      = 315;
-   argument                     = 316;
-   list_iter                    = 317;
-   list_for                     = 318;
-   list_if                      = 319;
+   single_input                     = 256;
+   file_input                       = 257;
+   eval_input                       = 258;
+   p4d_funcdef                      = 259;
+   p4d_parameters                   = 260;
+   p4d_varargslist                  = 261;
+   p4d_fpdef                        = 262;
+   p4d_fplist                       = 263;
+   p4d_stmt                         = 264;
+   p4d_simple_stmt                  = 265;
+   p4d_small_stmt                   = 266;
+   p4d_expr_stmt                    = 267;
+   p4d_augassign                    = 268;
+   p4d_print_stmt                   = 269;
+   p4d_del_stmt                     = 270;
+   p4d_pass_stmt                    = 271;
+   p4d_flow_stmt                    = 272;
+   p4d_break_stmt                   = 273;
+   p4d_continue_stmt                = 274;
+   p4d_return_stmt                  = 275;
+   p4d_raise_stmt                   = 276;
+   p4d_import_stmt                  = 277;
+   p4d_import_as_name               = 278;
+   p4d_dotted_as_name               = 279;
+   p4d_dotted_name                  = 280;
+   p4d_global_stmt                  = 281;
+   p4d_exec_stmt                    = 282;
+   p4d_assert_stmt                  = 283;
+   p4d_compound_stmt                = 284;
+   p4d_if_stmt                      = 285;
+   p4d_while_stmt                   = 286;
+   p4d_for_stmt                     = 287;
+   p4d_try_stmt                     = 288;
+   p4d_except_clause                = 289;
+   p4d_suite                        = 290;
+   p4d_test                         = 291;
+   p4d_and_test                     = 291;
+   p4d_not_test                     = 293;
+   p4d_comparison                   = 294;
+   p4d_comp_op                      = 295;
+   p4d_expr                         = 296;
+   p4d_xor_expr                     = 297;
+   p4d_and_expr                     = 298;
+   p4d_shift_expr                   = 299;
+   p4d_arith_expr                   = 300;
+   p4d_term                         = 301;
+   p4d_factor                       = 302;
+   p4d_power                        = 303;
+   p4d_atom                         = 304;
+   p4d_listmaker                    = 305;
+   p4d_lambdef                      = 306;
+   p4d_trailer                      = 307;
+   p4d_subscriptlist                = 308;
+   p4d_subscript                    = 309;
+   p4d_sliceop                      = 310;
+   p4d_exprlist                     = 311;
+   p4d_testlist                     = 312;
+   p4d_dictmaker                    = 313;
+   p4d_classdef                     = 314;
+   p4d_arglist                      = 315;
+   p4d_argument                     = 316;
+   p4d_list_iter                    = 317;
+   p4d_list_for                     = 318;
+   p4d_list_if                      = 319;
 
   // structmember.h
 const
@@ -3062,6 +3062,13 @@ procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
+(*
+  Mask FPU Excptions - Useful for importing SciPy and other Python libs
+  See http://bugs.python.org/issue9980 and
+  http://stackoverflow.com/questions/3933851/
+*)
+procedure MaskFPUExceptions(ExceptionsMasked : boolean;
+  MatchPythonPrecision : Boolean = True);
 
 //#######################################################
 //##                                                   ##
@@ -9765,6 +9772,22 @@ function PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 begin
   //(((t)->tp_flags & (f)) != 0)
   Result := (((AType)^.tp_flags and (AFlag)) <> 0);
+end;
+
+procedure MaskFPUExceptions(ExceptionsMasked : boolean;
+  MatchPythonPrecision : Boolean);
+begin
+  if MatchPythonPrecision then begin
+    if ExceptionsMasked then
+      Set8087CW($1232 or $3F)
+    else
+      Set8087CW($1232);
+  end else begin
+    if ExceptionsMasked then
+      Set8087CW($1332 or $3F)
+    else
+      Set8087CW($1332);
+  end;
 end;
 
 end.
