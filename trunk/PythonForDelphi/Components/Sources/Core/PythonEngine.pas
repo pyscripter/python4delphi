@@ -3594,12 +3594,13 @@ begin
   PyExc_Exception            := Import('PyExc_Exception');
   PyExc_FloatingPointError   := Import('PyExc_FloatingPointError');
   PyExc_LookupError          := Import('PyExc_LookupError');
-  if not IsPython3000 then
+  if not IsPython3000 then begin
     PyExc_StandardError        := Import('PyExc_StandardError');
+    PyExc_MemoryErrorInst      := Import('PyExc_MemoryErrorInst');
+  end;
   PyExc_AssertionError       := Import('PyExc_AssertionError');
   PyExc_EnvironmentError     := Import('PyExc_EnvironmentError');
   PyExc_IndentationError     := Import('PyExc_IndentationError');
-  PyExc_MemoryErrorInst      := Import('PyExc_MemoryErrorInst');
   PyExc_NotImplementedError  := Import('PyExc_NotImplementedError');
   PyExc_OSError              := Import('PyExc_OSError');
   PyExc_TabError             := Import('PyExc_TabError');
