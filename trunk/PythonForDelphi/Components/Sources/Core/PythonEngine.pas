@@ -3062,6 +3062,15 @@ procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
+
+{ Helper functions}
+(*
+    Checks whether the PythonVersion x.x is Registered
+*)
+{$IFDEF MSWINDOWS}
+function IsPythonVersionRegistered(PythonVersion : string;
+  out InstallPath: string; out AllUserInstall: Boolean) : Boolean;
+{$ENDIF}
 (*
   Mask FPU Excptions - Useful for importing SciPy and other Python libs
   See http://bugs.python.org/issue9980 and
@@ -3270,51 +3279,16 @@ end;
 function  TDynamicDll.GetDllPath : String;
 {$IFDEF MSWINDOWS}
 var
-  key : String;
-  AllUserInstall : Boolean;
+  AllUserInstall: Boolean;
 {$ENDIF}
 begin
   Result := DllPath;
 
   {$IFDEF MSWINDOWS}
-
-  // Python provides for All user and Current user installations
-  // All User installations place the Python DLL in the Windows System directory
-  // and write registry info to HKEY_LOCAL_MACHINE
-  // Current User installations place the DLL in the install path and
-  // the registry info in HKEY_CURRENT_USER.
-  // Hence, for Current user installations we need to try and find the install path
-  // since it may not be on the system path.
-
   if DLLPath = '' then begin
-    AllUserInstall := False;
-    try
-      key := Format('\Software\Python\PythonCore\%s\InstallPath', [RegVersion]);
-      with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
-        try
-          RootKey := HKEY_LOCAL_MACHINE;
-          if KeyExists( key ) then
-            AllUserInstall := True;
-        finally
-          Free;
-        end;
-    except
-      // under WinNT, with a user without admin rights, the access to the
-      // LocalMachine keys would raise an exception.
-    end;
-    // We do not seem to have an All User Python Installation.
-    // Check whether we have a current user installation
-    if not AllUserInstall then
-      with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
-        try
-          RootKey := HKEY_CURRENT_USER;
-          if OpenKey(Key, False) then
-            Result := ReadString('');
-        finally
-          Free;
-        end;
+    IsPythonVersionRegistered(RegVersion, Result, AllUserInstall);
   end;
-{$ENDIF}
+  {$ENDIF}
 
   if Result <> '' then
   begin
@@ -9790,6 +9764,52 @@ begin
       Set8087CW($1332);
   end;
 end;
+
+{$IFDEF MSWINDOWS}
+function IsPythonVersionRegistered(PythonVersion : string;
+  out InstallPath: string; out AllUserInstall: Boolean) : Boolean;
+  // Python provides for All user and Current user installations
+  // All User installations place the Python DLL in the Windows System directory
+  // and write registry info to HKEY_LOCAL_MACHINE
+  // Current User installations place the DLL in the install path and
+  // the registry info in HKEY_CURRENT_USER.
+  // Hence, for Current user installations we need to try and find the install path
+  // since it may not be on the system path.
+var
+  key: string;
+begin
+  Result := False;
+  InstallPath := '';
+  AllUserInstall := False;
+  try
+    key := Format('\Software\Python\PythonCore\%s\InstallPath', [PythonVersion]);
+    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+      try
+        RootKey := HKEY_LOCAL_MACHINE;
+        if KeyExists(key) then begin
+          AllUserInstall := True;
+          Result := True;
+        end;
+      finally
+        Free;
+      end;
+  except
+  end;
+  // We do not seem to have an All User Python Installation.
+  // Check whether we have a current user installation
+  if not AllUserInstall then
+    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+      try
+        RootKey := HKEY_CURRENT_USER;
+        if OpenKey(Key, False) then begin
+          InstallPath := ReadString('');
+          Result := True;
+        end;
+      finally
+        Free;
+      end;
+end;
+{$ENDIF}
 
 end.
 
