@@ -1168,6 +1168,12 @@ type
   end;
   PPyDateTime_DateTime = ^PyDateTime_DateTime;
 
+//#######################################################
+//##                                                   ##
+//##         GIL state                                 ##
+//##                                                   ##
+//#######################################################
+  PyGILState_STATE = (PyGILState_LOCKED, PyGILState_UNLOCKED);
 
 //#######################################################
 //##                                                   ##
@@ -1918,7 +1924,8 @@ type
     PyThreadState_Get               : function : PPyThreadState; cdecl;
     PyThreadState_Swap              : function ( tstate: PPyThreadState): PPyThreadState; cdecl;
     PyErr_SetInterrupt              : procedure; cdecl;
-
+    PyGILState_Ensure               : function() : PyGILstate_STATE; cdecl;
+    PyGILState_Release              : procedure(gilstate : PyGILState_STATE); cdecl;
 {Further exported Objects, may be implemented later}
 {
     PyCode_New: Pointer;
@@ -4002,6 +4009,8 @@ begin
   @PyThreadState_Get        := Import('PyThreadState_Get');
   @PyThreadState_Swap       := Import('PyThreadState_Swap');
   @PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
+  @PyGILState_Ensure        := Import('PyGILState_Ensure');
+  @PyGILState_Release       := Import('PyGILState_Release');
 end;
 
 procedure TPythonInterface.Py_INCREF(op: PPyObject);
@@ -9444,6 +9453,8 @@ end;
 procedure TPythonThread.Execute;
 var
   withinterp: Boolean;
+  global_state : PPyThreadState;
+  gilstate : PyGILState_STATE;
 begin
   withinterp := Assigned( fInterpreterState);
   with GetPythonEngine do
@@ -9464,13 +9475,18 @@ begin
     end else {withinterp}
     begin
       fThreadExecMode := emNewInterpreter;
-      PyEval_AcquireLock;
+      gilstate := PyGILState_Ensure();
+      global_state := PyThreadState_Get;
+      PyThreadState_Swap(nil);
       fThreadState := Py_NewInterpreter;
+
       if Assigned( fThreadState) then
       begin
+        PyThreadState_Swap(fThreadState);
         ExecuteWithPython;
         Py_EndInterpreter( fThreadState);
-        PyEval_ReleaseLock;
+        PyThreadState_Swap(global_state);
+        PyGILState_Release(gilstate);
       end else
         raise EPythonError.Create( 'Could not create a new thread state');
     end; {withinterp}
