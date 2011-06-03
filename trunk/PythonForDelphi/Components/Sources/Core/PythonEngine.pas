@@ -2255,6 +2255,7 @@ type
     property Traceback : TPythonTraceback read FTraceback;
     property LocalVars : PPyObject read FLocalVars Write SetLocalVars;
     property GlobalVars : PPyObject read FGlobalVars Write SetGlobalVars;
+    property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
     property DatetimeConversionMode: TDatetimeConversionMode read FDatetimeConversionMode write FDatetimeConversionMode default DEFAULT_DATETIME_CONVERSION_MODE;
