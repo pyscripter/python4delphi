@@ -13,7 +13,7 @@ uses
 {$IFDEF LINUX}
   QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
 {$ENDIF}
-  PythonEngine;
+  PythonEngine, PythonGUIInputOutput, SortThds;
 
 type
   TThreadSortForm = class(TForm)
@@ -29,12 +29,13 @@ type
     Label3: TLabel;
     PythonMemo: TMemo;
     PythonEngine1: TPythonEngine;
+    SortModule: TPythonModule;
     Start2Btn: TButton;
     LoadBtn: TButton;
     PythonDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
     SaveBtn: TButton;
-    SortModule: TPythonModule;
+    Button1: TButton;
     procedure BubbleSortBoxPaint(Sender: TObject);
     procedure SelectionSortBoxPaint(Sender: TObject);
     procedure QuickSortBoxPaint(Sender: TObject);
@@ -45,6 +46,7 @@ type
     procedure SaveBtnClick(Sender: TObject);
     procedure SortModuleInitialization(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure Button1Click(Sender: TObject);
   private
     OwnThreadState: PPyThreadState;
     ThreadsRunning: Integer;
@@ -55,6 +57,10 @@ type
     function SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
     function SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
   public
+    Thread1 : TSortThread;
+    Thread2 : TSortThread;
+    Thread3 : TSortThread;
+
     procedure PaintArray(Box: TPaintBox; const A: array of Integer);
   end;
 
@@ -63,7 +69,7 @@ var
 
 implementation
 
-uses SortThds;
+
 
 {$R *.dfm}
 
@@ -117,15 +123,18 @@ begin
     OwnThreadState := PyThreadState_Get;
     PyEval_ReleaseThread(OwnThreadState);
 
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc1',
-                             BubbleSortBox, BubbleSortArray) do
-      OnTerminate := ThreadDone;
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc2',
-                                SelectionSortBox, SelectionSortArray) do
-      OnTerminate := ThreadDone;
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc3',
-                            QuickSortBox, QuickSortArray) do
-      OnTerminate := ThreadDone;
+    Thread1 := TSortThread.Create( interp, script, SortModule, 'SortFunc1',
+                           BubbleSortBox, BubbleSortArray);
+    Thread1.OnTerminate := ThreadDone;
+
+    Thread2 := TSortThread.Create( interp, script, SortModule, 'SortFunc2',
+                           SelectionSortBox, SelectionSortArray);
+    Thread2.OnTerminate := ThreadDone;
+
+    Thread3 := TSortThread.Create( interp, script, SortModule, 'SortFunc3',
+                           QuickSortBox, QuickSortArray);
+    Thread3.OnTerminate := ThreadDone;
+
   end;
 
   StartBtn.Enabled := False;
@@ -187,12 +196,16 @@ begin
   end;
 end;
 
+{Checking for PyErr_Occurred() is very important if you want to properly terminate script
+if PyErr_Occurred() not nil - you should return nil from your mapped function
+}
+
 function TThreadSortForm.SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
 var psort,index: integer;
 begin
   with GetPythonEngine do
   begin
-    if PyArg_ParseTuple( args, 'ii', [@psort, @index]) <> 0 then
+    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'ii', [@psort, @index]) <> 0) then
     begin
       Result := PyInt_FromLong(TSortThread(psort)[index]);
     end else
@@ -200,12 +213,15 @@ begin
   end;
 end;
 
+
+
 function TThreadSortForm.SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
 var psort,i,j: integer;
 begin
+
   with GetPythonEngine do
   begin
-    if PyArg_ParseTuple( args, 'iii', [@psort, @i, @j]) <> 0 then
+    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'iii', [@psort, @i, @j]) <> 0) then
     begin
       TSortThread(psort).VisualSwap(i,j);
       Result := ReturnNone;
@@ -213,6 +229,8 @@ begin
       Result := nil;
   end;
 end;
+
+
 
 procedure TThreadSortForm.SortModuleInitialization(Sender: TObject);
 begin
@@ -225,6 +243,13 @@ begin
                        SortModule_Swap,
                        'swap(handle,index1,index2)');
     end;
+end;
+
+procedure TThreadSortForm.Button1Click(Sender: TObject);
+begin
+  Thread1.Stop();
+  Thread2.Stop();
+  Thread3.Stop();
 end;
 
 procedure TThreadSortForm.FormCloseQuery(Sender: TObject;

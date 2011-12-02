@@ -525,12 +525,8 @@ located in the Demos folder.
 --------------------------------------------------------------
 11) Using Threads inside Python. (Kylix ready)
 --------------------------------------------------------------
-    Look at Demo11.
-    Note: there's a bug with the multi-interpreter method.
-          if you click 3 times on the button "three interpreters"
-          then 1 time on the button "one interpreter", you'll get
-          an exception that will terminate the application.
-          So, use the "one" interpreter method, it's safer.
+    Demonstrates how you can execute python code that interacts with
+    Delphi in threads.
 
 --------------------------------------------------------------
 12) Using PythonAtom. (Deprecated since Delphi 6, See VarPyth instead)
@@ -830,6 +826,13 @@ This Demo shows how you can expose a Delphi class much simpler
 using WrapDelphi.
 
 --------------------------------------------------------------
+33) Using Threads inside Python  II. 
+--------------------------------------------------------------
+Enhanced Demo 11 showing how to properly interrupt running 
+threads.
+--------------------------------------------------------------
+
+
 That's all folks !!!
 Hope this helps to build cool Python/Delphi applications.
 
