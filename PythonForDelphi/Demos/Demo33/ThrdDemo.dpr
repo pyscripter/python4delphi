@@ -3,21 +3,16 @@
 // JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
 program ThrdDemo;
 
-{$I Definition.Inc}
-
 uses
-{$IFDEF MSWINDOWS}
   Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
-{$ENDIF}
-  ThSort in 'ThSort.pas' {ThreadSortForm},
-  SortThds in 'SortThds.pas';
+  SortThds in 'SortThds.pas',
+  ThSort in 'ThSort.pas' {ThreadSortForm};
 
 {$R *.res}
 
 begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
   Application.CreateForm(TThreadSortForm, ThreadSortForm);
   Application.Run;
 end.
