@@ -4,10 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils,
-{$IFDEF DELPHI6_OR_HIGHER}
-  Variants,
-{$ENDIF}
-  Classes, Graphics, Controls, Forms,
+  Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls;
 
 type

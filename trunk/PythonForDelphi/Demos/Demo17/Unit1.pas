@@ -13,10 +13,7 @@ uses
 {$IFDEF LINUX}
   QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
 {$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
-  Variants,
-{$ENDIF}
-  PythonEngine, PythonGUIInputOutput;
+  Variants, PythonEngine, PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)
