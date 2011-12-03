@@ -50,10 +50,8 @@ Uses
 {$IFDEF DELPHI7_OR_HIGHER}
   ObjAuto,
 {$ENDIF}
-{$IFDEF DELPHI6_OR_HIGHER}
   Variants,
   VarPyth,
-{$ENDIF}
   WrapDelphiVCL;
 
 
@@ -81,7 +79,7 @@ end;
 type
 {$TYPEINFO ON}
 {$IFDEF DELPHI7_OR_HIGHER}{$METHODINFO ON}{$ENDIF}
-TTestClass = class(TTestBase, IFreeNotification, {$IFDEF DELPHI6_OR_HIGHER}IInterface{$ELSE}IUnknown{$ENDIF})
+TTestClass = class(TTestBase, IFreeNotification, IInterface)
 private
   fSValue : string;
   fIValue : integer;
@@ -183,12 +181,8 @@ begin
 {$IFDEF DELPHI7_OR_HIGHER}
   p := PyEngine.PyInt_FromLong(7);
 {$ELSE}
-  {$IFDEF DELPHI6_OR_HIGHER}
     p := PyEngine.PyInt_FromLong(6);
-  {$ELSE}
-    p := PyEngine.PyInt_FromLong(5);
   {$ENDIF}
-{$ENDIF}
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 
@@ -208,38 +202,14 @@ end;
 procedure TForm1.PythonModuleEvents0Execute(Sender: TObject; PSelf,
   Args: PPyObject; var Result: PPyObject);
 begin
-{$IFDEF DELPHI6_OR_HIGHER}
   ShowMessage(VarPythonCreate(Args).GetItem(0));
-{$ELSE}
-  ShowMessage(PyEngine.PyObjectAsString(Args));
-{$ENDIF}
   Result :=  PyEngine.ReturnNone;
 end;
 
 procedure TForm1.actTestExecute(Sender: TObject);
-{$IFNDEF DELPHI6_OR_HIGHER}
-var
-  _dvar : PPyObject;
-  _test : TTestClass;
-{$ENDIF}
 begin
   Memo2.Lines.Add('Delphi event actTestExecute fired');
-{$IFDEF DELPHI6_OR_HIGHER}
   Import('spam').DVar.IValue := 1;
-{$ELSE}
-  _dvar := PythonModule.GetVar('DVar');
-  if Assigned(_dvar) then
-  begin
-    if PythonToDelphi(_dvar) is TPyDelphiObject then
-    begin
-      _test := TPyDelphiObject(PythonToDelphi(_dvar)).DelphiObject as TTestClass;
-      _test.IValue := 1;
-    end;
-    PyEngine.Py_DECREF(_dvar);
-  end
-  else
-    PyEngine.RaiseError;
-{$ENDIF}
 end;
 
 end.

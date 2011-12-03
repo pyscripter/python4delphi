@@ -6,10 +6,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-{$IFDEF DELPHI6_OR_HIGHER}
-  Variants,
-{$ENDIF}
-  PythonEngine, StdCtrls, ExtCtrls, ComCtrls,
+  Variants, PythonEngine, StdCtrls, ExtCtrls, ComCtrls,
   DB, DBTables, pyDB;
 type
 
