@@ -61,7 +61,6 @@ unit PythonEngine;
     { TODO -opyscripter : Py_ssize_t }
     { TODO -opyscripter : packed records }
     { TODO -opyscripter : assempler stuff }
-    { TODO -opyscripter : XE2 packages }
 { TODO -opyscripter : FPC compatibility }
 
 {$IFNDEF FPC}
