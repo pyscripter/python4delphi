@@ -109,8 +109,8 @@ type
 {$IFNDEF FPC}
   {$IF CompilerVersion < 21}
     NativeInt = integer;
-    PNativeInt = ^NativeInt;
   {$IFEND}
+  PNativeInt = ^NativeInt;
 {$ELSE}
   PNativeInt = ^NativeInt;
 {$ENDIF}
