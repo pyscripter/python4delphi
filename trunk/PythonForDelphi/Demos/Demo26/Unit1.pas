@@ -153,8 +153,8 @@ class procedure TPyPoint.RegisterMembers( PythonType : TPythonType );
 begin
   with PythonType do
     begin
-      AddMember( 'x', mtInt, Integer(@TPyPoint(nil).x), mfDefault, 'x coordinate');
-      AddMember( 'y', mtInt, Integer(@TPyPoint(nil).y), mfDefault, 'y coordinate');
+      AddMember( 'x', mtInt, NativeInt(@TPyPoint(nil).x), mfDefault, 'x coordinate');
+      AddMember( 'y', mtInt, NativeInt(@TPyPoint(nil).y), mfDefault, 'y coordinate');
     end;
 end;
 

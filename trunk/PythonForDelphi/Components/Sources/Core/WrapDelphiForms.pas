@@ -1,8 +1,8 @@
+{$I Definition.Inc}
+
 unit WrapDelphiForms;
 
 interface
-
-{$I Definition.Inc}
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapDelphiControls,
@@ -262,10 +262,8 @@ type
     function IsRightToLeft_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function MessageBox_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Minimize_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$IFDEF DELPHI7_OR_HIGHER}
     function ModalStarted_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ModalFinished_Wrapper(args : PPyObject) : PPyObject; cdecl;
-{$ENDIF}
     function NormalizeAllTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function NormalizeTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ProcessMessages_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -1699,7 +1697,6 @@ begin
   end;
 end;
 
-{$IFDEF DELPHI7_OR_HIGHER}
 function TPyDelphiApplication.ModalFinished_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -1713,9 +1710,7 @@ begin
       Result := nil;
   end;
 end;
-{$ENDIF}
 
-{$IFDEF DELPHI7_OR_HIGHER}
 function TPyDelphiApplication.ModalStarted_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -1729,7 +1724,6 @@ begin
       Result := nil;
   end;
 end;
-{$ENDIF}
 
 function TPyDelphiApplication.NormalizeAllTopMosts_Wrapper(
   args: PPyObject): PPyObject;
@@ -1881,14 +1875,12 @@ begin
   PythonType.AddMethod('Minimize', @TPyDelphiApplication.Minimize_Wrapper,
     'TApplication.Minimize()'#10 +
     'Shrinks an application to the Windows task bar.');
-{$IFDEF DELPHI7_OR_HIGHER}
   PythonType.AddMethod('ModalStarted', @TPyDelphiApplication.ModalStarted_Wrapper,
     'TApplication.ModalStarted()'#10 +
     'Track opening of modal form.');
   PythonType.AddMethod('ModalFinished', @TPyDelphiApplication.ModalFinished_Wrapper,
     'TApplication.ModalFinished()'#10 +
     'Track closing of modal form.');
-{$ENDIF}
   PythonType.AddMethod('NormalizeAllTopMosts', @TPyDelphiApplication.NormalizeAllTopMosts_Wrapper,
     'TApplication.NormalizeAllTopMosts()'#10 +
     'Makes forms that have been designated as topmost forms (their FormStyle is fsStayOnTop) behave as if they were not topmost forms. ');
@@ -2698,7 +2690,7 @@ begin
   if Assigned(Callable) and PythonOK then
     with GetPythonEngine do begin
       PyObject := PyDelphiWrapper.Wrap(Sender);
-      PyAction := CreateVarParam(PyDelphiWrapper, Integer(Action));
+      PyAction := CreateVarParam(PyDelphiWrapper, NativeInt(Action));
       _varParam := PythonToDelphi(PyAction) as TPyDelphiVarParameter;
       PyTuple := PyTuple_New(2);
       GetPythonEngine.PyTuple_SetItem(PyTuple, 0, PyObject);

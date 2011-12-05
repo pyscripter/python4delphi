@@ -23,9 +23,9 @@
 (* Dr. Dietmar Budelsky, 1998-01-07                                       *)
 (**************************************************************************)
 
-unit MethodCallBack;
-
 {$I Definition.Inc}
+
+unit MethodCallBack;
 
 interface
 uses SysUtils;

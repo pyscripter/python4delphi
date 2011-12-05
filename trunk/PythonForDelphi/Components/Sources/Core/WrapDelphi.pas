@@ -313,17 +313,16 @@ class TTestForm(Form):
     will return None.
 
  -----------------------------------------------------------------------------*)
+{$I Definition.Inc}
 
 unit WrapDelphi;
-
-{$I Definition.Inc}
 
 interface
 
 uses
   SysUtils, Classes, PythonEngine,  TypInfo,
   Variants,
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
   ObjAuto,
 {$ENDIF}
   Contnrs;
@@ -753,7 +752,7 @@ Type
     // Stores Created Event Handlers
     fEventHandlerList : TEventHandlers;
     fVarParamType: TPythonType;
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
     fDelphiMethodType: TPythonType;
 {$ENDIF}
     // Exposed Module level function CreateComponent(ComponentClass, Owner)
@@ -794,7 +793,7 @@ Type
     // Helper types
     property DefaultContainerType : TPythonType read fDefaultContainerType;
     property DefaultIterType : TPythonType read fDefaultIterType;
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
     property DelphiMethodType : TPythonType read fDelphiMethodType;
 {$ENDIF}
     property VarParamType : TPythonType read fVarParamType;
@@ -1094,108 +1093,15 @@ begin
   end;
 end;
 
-{$IFNDEF DELPHI7_OR_HIGHER}
-// Copied from unit ObjAuto.pas, available only in Delphi7 or later
-// In delphi 2010 and propbably earlier it is part of TypInfo
+{$IFDEF FPC}
 function GetPropValue(Instance: TObject; PropInfo: PPropInfo): Variant;
 begin
-  // assume failure
-  Result := Null;
-
-  // return the right type
-  case PropInfo^.PropType^^.Kind of
-    tkInteger, tkChar, tkWChar, tkClass:
-      Result := GetOrdProp(Instance, PropInfo);
-    tkEnumeration:
-      if GetTypeData(PropInfo^.PropType^)^.BaseType^ = TypeInfo(Boolean) then
-        Result := Boolean(GetOrdProp(Instance, PropInfo))
-      else
-        Result := GetOrdProp(Instance, PropInfo);
-    tkSet:
-      Result := GetOrdProp(Instance, PropInfo);
-    tkFloat:
-      Result := GetFloatProp(Instance, PropInfo);
-    tkMethod:
-      Result := PropInfo^.PropType^.Name;
-    tkString, tkLString:
-      Result := GetStrProp(Instance, PropInfo);
-    tkWString:
-      Result := GetWideStrProp(Instance, PropInfo);
-    tkVariant:
-      Result := GetVariantProp(Instance, PropInfo);
-    tkInt64:
-      Result := GetInt64Prop(Instance, PropInfo);
-    tkDynArray:
-      DynArrayToVariant(Result, Pointer(GetOrdProp(Instance, PropInfo)), PropInfo^.PropType^);
-  else
-    raise EPropertyConvertError.CreateResFmt(@SInvalidPropertyType, [PropInfo.PropType^^.Name]);
-  end;
+  Result := Variants.GetPropValue(Instance, PropInfo^.Name);
 end;
 
-// Copied from unit ObjAuto.pas, available only in Delphi7 or later
 procedure SetPropValue(Instance: TObject; PropInfo: PPropInfo; const Value: Variant);
-
-  function RangedValue(const AMin, AMax: Int64): Int64;
-  begin
-    Result := Trunc(Value);
-    if Result < AMin then
-      Result := AMin;
-    if Result > AMax then
-      Result := AMax;
-  end;
-
-var
-  TypeData: PTypeData;
-  DynArray: Pointer;
 begin
-  // get the prop info
-  TypeData := GetTypeData(PropInfo^.PropType^);
-
-  // set the right type
-  case PropInfo.PropType^^.Kind of
-    tkInteger, tkChar, tkWChar:
-      if TypeData^.MinValue < TypeData^.MaxValue then
-        SetOrdProp(Instance, PropInfo, RangedValue(TypeData^.MinValue,
-          TypeData^.MaxValue))
-      else
-        // Unsigned type
-        SetOrdProp(Instance, PropInfo,
-          RangedValue(LongWord(TypeData^.MinValue),
-          LongWord(TypeData^.MaxValue)));
-    tkEnumeration:
-      if VarType(Value) = varString then
-        SetEnumProp(Instance, PropInfo, VarToStr(Value))
-      else if VarType(Value) = varBoolean then
-        // Need to map variant boolean values -1,0 to 1,0
-        SetOrdProp(Instance, PropInfo, Abs(Trunc(Value)))
-      else
-        SetOrdProp(Instance, PropInfo, RangedValue(TypeData^.MinValue,
-          TypeData^.MaxValue));
-    tkSet:
-      if VarType(Value) = varInteger then
-        SetOrdProp(Instance, PropInfo, Value)
-      else
-        SetSetProp(Instance, PropInfo, VarToStr(Value));
-    tkFloat:
-      SetFloatProp(Instance, PropInfo, Value);
-    tkString, tkLString:
-      SetStrProp(Instance, PropInfo, VarToStr(Value));
-    tkWString:
-      SetWideStrProp(Instance, PropInfo, VarToWideStr(Value));
-    tkVariant:
-      SetVariantProp(Instance, PropInfo, Value);
-    tkInt64:
-      SetInt64Prop(Instance, PropInfo, RangedValue(TypeData^.MinInt64Value,
-        TypeData^.MaxInt64Value));
-    tkDynArray:
-      begin
-        DynArrayFromVariant(DynArray, Value, PropInfo^.PropType^);
-        SetOrdProp(Instance, PropInfo, Integer(DynArray));
-      end;
-  else
-    raise EPropertyConvertError.CreateResFmt(@SInvalidPropertyType,
-      [PropInfo.PropType^^.Name]);
-  end;
+  Variants.SetPropValue(Instance, PropInfo^.Name, Value);
 end;
 {$ENDIF}
 
@@ -1212,7 +1118,7 @@ Type
     PythonType : TPythonType;
   end;
 
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
 Type
   //  PyObject wrapping TObject method call
   //  Helper object used by TPyDelphiObject
@@ -1341,7 +1247,7 @@ function TPyDelphiContainer.Repr: PPyObject;
 begin
   with GetPythonEngine do
     Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %s at %x>',
-         [ContainerAccess.Name, Integer(Self)]))) );
+         [ContainerAccess.Name, NativeInt(Self)]))) );
 end;
 
 procedure TPyDelphiContainer.Setup(APyDelphiWrapper : TPyDelphiWrapper;
@@ -1449,7 +1355,7 @@ function TPyDelphiIterator.Repr: PPyObject;
 begin
   with GetPythonEngine do
     Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %sIterator at %x>',
-         [ContainerAccess.Name, Integer(Self)]))) );
+         [ContainerAccess.Name, NativeInt(Self)]))) );
 end;
 
 procedure TPyDelphiIterator.Setup(AContainerAccess : TContainerAccess);
@@ -1507,7 +1413,7 @@ begin
   if IsDelphiObject(obj) then begin
     PyObject := PythonToDelphi(obj);
     if PyObject is TPyDelphiObject then
-      Result := Sign(Integer(TPyDelphiObject(PyObject).DelphiObject) - Integer(DelphiObject))
+      Result := Sign(NativeInt(TPyDelphiObject(PyObject).DelphiObject) - NativeInt(DelphiObject))
     else
       Result := -1;  // not equal
   end else
@@ -1600,7 +1506,7 @@ function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
 *)
 var
   Name: ShortString;
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
   Info: PMethodInfoHeader;
 {$ENDIF}
   PropInfo: PPropInfo;
@@ -1612,7 +1518,7 @@ begin
   else
     Name := '';
 
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
   if Assigned(DelphiObject) and (Name <> '') then
     Info := GetMethodInfo(DelphiObject, Name)
   else
@@ -1870,10 +1776,10 @@ begin
   with GetPythonEngine do
     if Assigned(DelphiObject) then
       Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi object of type %s at %x>',
-           [DelphiObject.ClassName, Integer(Self)]))) )
+           [DelphiObject.ClassName, NativeInt(Self)]))) )
     else
       Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Unbound Delphi wrapper of type %s at %x>',
-           [DelphiObjectClass.ClassName, Integer(Self)]))) );
+           [DelphiObjectClass.ClassName, NativeInt(Self)]))) );
 end;
 
 function TPyDelphiObject.RichCompare(obj: PPyObject;
@@ -1921,7 +1827,7 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
         Obj := TPyDelphiObject(PyObject).DelphiObject;
         if Obj.ClassType.InheritsFrom(GetTypeData(PropInfo^.PropType^).ClassType) then
         begin
-          SetOrdProp(DelphiObject, PropInfo, Integer(Obj));
+          SetOrdProp(DelphiObject, PropInfo, NativeInt(Obj));
           Result := 0;
         end
         else
@@ -2206,7 +2112,7 @@ begin
   Result := PyDelphiWrapper.Wrap(AObject, AOwnership);
 end;
 
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
 { TPyDelphiMethodObject }
 
 function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
@@ -2247,7 +2153,7 @@ function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
     Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi method %s of class %s at %x>',
-         [MethodInfo.Name, DelphiObject.ClassName, Integer(Self)]))) );
+         [MethodInfo.Name, DelphiObject.ClassName, NativeInt(Self)]))) );
 end;
 
 class procedure TPyDelphiMethodObject.SetupType( PythonType : TPythonType );
@@ -2763,7 +2669,7 @@ var
   i : Integer;
 begin
   // Helper Types
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
   fDelphiMethodType := RegisterHelperType(TPyDelphiMethodObject);
 {$ENDIF}
   fDefaultIterType      := RegisterHelperType(TPyDelphiIterator);

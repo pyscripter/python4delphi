@@ -1,7 +1,7 @@
+{$I Definition.Inc}
+
 unit TinyWideStrings;
 //  Tiny WideStringList implementation for versions of Delphi prior to BDS2006
-
-{$I Definition.Inc}
 
 interface
 
@@ -59,14 +59,8 @@ uses
 { TWideStringList }
 
 procedure TWideStringList.Error(const Msg: WideString; Data: Integer);
-
-  function ReturnAddr: Pointer;
-  asm
-          MOV     EAX,[EBP+4]
-  end;
-
 begin
-  raise EStringListError.CreateFmt(Msg, [Data]) at ReturnAddr;
+  raise EStringListError.CreateFmt(Msg, [Data]) ;
 end;
 
 procedure TWideStringList.Error(Msg: PResStringRec; Data: Integer);

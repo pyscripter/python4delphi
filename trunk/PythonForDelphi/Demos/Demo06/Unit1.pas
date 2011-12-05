@@ -49,7 +49,7 @@ type
   end;
 
   PyPointRec = record
-    ob_refcnt      : Integer;
+    ob_refcnt      : NativeInt;
     ob_type        : PPyTypeObject;
     po_x           : Integer;
     po_y           : Integer;

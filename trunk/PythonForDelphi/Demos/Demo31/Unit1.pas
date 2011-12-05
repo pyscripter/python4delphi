@@ -47,7 +47,7 @@ implementation
 
 Uses
   TypInfo,
-{$IFDEF DELPHI7_OR_HIGHER}
+{$IFNDEF FPC}
   ObjAuto,
 {$ENDIF}
   Variants,
@@ -62,7 +62,7 @@ Uses
 //////////////////////////////////////////////////////////////////////////
 
 {$TYPEINFO OFF}
-{$IFDEF DELPHI7_OR_HIGHER}{$METHODINFO OFF}{$ENDIF}
+{$IFNDEF FPC}{$METHODINFO OFF}{$ENDIF}
 Type
 TTestBase = class
   fdouble : double;
@@ -78,7 +78,7 @@ end;
 
 type
 {$TYPEINFO ON}
-{$IFDEF DELPHI7_OR_HIGHER}{$METHODINFO ON}{$ENDIF}
+{$IFNDEF FPC}{$METHODINFO ON}{$ENDIF}
 TTestClass = class(TTestBase, IFreeNotification, IInterface)
 private
   fSValue : string;
@@ -105,7 +105,7 @@ published
   property OnChange : TNotifyEvent read fOnChange write fOnChange;
 end;
 {$TYPEINFO OFF}
-{$IFDEF DELPHI7_OR_HIGHER}{$METHODINFO OFF}{$ENDIF}
+{$IFNDEF FPC}{$METHODINFO OFF}{$ENDIF}
 
 constructor TTestClass.Create;
 begin
@@ -178,11 +178,7 @@ begin
   PythonModule.SetVar( 'DVar', p );
   PyEngine.Py_DecRef(p);
 
-{$IFDEF DELPHI7_OR_HIGHER}
-  p := PyEngine.PyInt_FromLong(7);
-{$ELSE}
-    p := PyEngine.PyInt_FromLong(6);
-  {$ENDIF}
+  p := PyEngine.PyInt_FromLong(System.CompilerVersion);
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 
