@@ -1166,6 +1166,8 @@ begin
       Free; // TStringList
     end; // of try
   end; // of if
+  // Done!
+  Log('Objects test was Ok.');
 end;
 
 procedure TMain.RunSelectedTests;
