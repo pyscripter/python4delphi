@@ -1,28 +1,30 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Package Version="2">
+  <Package Version="4">
     <PathDelim Value="\"/>
     <Name Value="P4DLaz"/>
+    <AddToProjectUsesSection Value="True"/>
     <CompilerOptions>
-      <Version Value="5"/>
+      <Version Value="10"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="$(PackageDir)\"/>
+        <OtherUnitFiles Value="$(PackageDir);$(PackageDir)\Sources\Core"/>
         <UnitOutputDirectory Value="C:\P4D\temp"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
-          <DelphiCompat Value="True"/>
+          <SyntaxMode Value="Delphi"/>
+          <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
-      <CodeGeneration>
-        <Generate Value="Faster"/>
-      </CodeGeneration>
       <Other>
+        <CompilerMessages>
+          <UseMsgFile Value="True"/>
+        </CompilerMessages>
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="6">
+    <Files Count="5">
       <Item1>
         <Filename Value="PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
@@ -46,10 +48,6 @@
         <Filename Value="VarPyth.pas"/>
         <UnitName Value="VarPyth"/>
       </Item5>
-      <Item6>
-        <Filename Value="PythonD6Decs.pas"/>
-        <UnitName Value="PythonD6Decs"/>
-      </Item6>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
@@ -63,7 +61,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgOutDir)\"/>
+      <UnitPath Value="$(PkgOutDir)"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>

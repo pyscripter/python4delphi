@@ -301,12 +301,12 @@ begin
   IncRef;
   with GetPythonEngine do
     begin
-      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( Integer(ua) ) );
+      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( NativeInt(ua) ) );
       Py_XIncRef(v);
       try
         ExecuteEvent( FOnUpdateError, [GetSelf, ArrayToPyTuple([E.ClassName, E.Message]), Integer(UpdateKind), v] );
         with PythonToDelphi(v) as TVarArg do
-          ua := TUpdateAction(Integer(PyObjectAsVariant(FValue)));
+          ua := TUpdateAction(NativeInt(PyObjectAsVariant(FValue)));
       finally
         Py_XDecRef(v);
       end;
@@ -320,12 +320,12 @@ begin
   IncRef;
   with GetPythonEngine do
     begin
-      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( Integer(ua) ) );
+      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( NativeInt(ua) ) );
       Py_XIncRef(v);
       try
         ExecuteEvent( FOnUpdateError, [GetSelf, Integer(UpdateKind), v] );
         with PythonToDelphi(v) as TVarArg do
-          ua := TUpdateAction(Integer(PyObjectAsVariant(FValue)));
+          ua := TUpdateAction(NativeInt(PyObjectAsVariant(FValue)));
       finally
         Py_XDecRef(v);
       end;

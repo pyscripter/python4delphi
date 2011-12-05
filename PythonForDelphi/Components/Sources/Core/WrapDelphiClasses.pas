@@ -1,6 +1,6 @@
-unit WrapDelphiClasses;
-
 {$I Definition.Inc}
+
+unit WrapDelphiClasses;
 
 interface
 
@@ -1439,7 +1439,7 @@ function TPyDelphiStrings.Repr: PPyObject;
 begin
   with GetPythonEngine do
     Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi TStrings at %x>',
-         [Integer(self)]))) );
+         [NativeInt(self)]))) );
 end;
 
 function TPyDelphiStrings.SaveToFile_Wrapper(args: PPyObject): PPyObject;

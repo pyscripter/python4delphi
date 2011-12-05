@@ -1,3 +1,5 @@
+{$I Definition.Inc}
+
 unit VarPyth;
 
 (**************************************************************************)
@@ -37,9 +39,8 @@ unit VarPyth;
 (* or to generate a diff file to my or other original sources.            *)
 (**************************************************************************)
 
-{$I Definition.Inc}
-
 interface
+
 uses
   Variants, PythonEngine;
 
@@ -165,13 +166,8 @@ type
       const AName: AnsiString; AArg : TVarData): Boolean; virtual;
     function SetProperty(const V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
-{$IFDEF HAS_MODIFIED_DISPINVOKE}
     procedure DispInvoke(Dest: PVarData; const Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); override;
-{$ELSE}
-    procedure DispInvoke(var Dest: TVarData; const Source: TVarData;
-      CallDesc: PCallDesc; Params: Pointer); override;
-{$ENDIF}
   end;
 
 var
@@ -886,30 +882,21 @@ end;
 
 procedure SetClearVarToEmptyParam(var V: TVarData);
 begin
-{$IFDEF DELPHI7_OR_HIGHER}
   VarClear(Variant(V));
   V.VType := varError;
+{$IFNDEF FPC}
   V.VError := VAR_PARAMNOTFOUND;
 {$ELSE}
-  V.VType := varError;
-  V.VError := $80020004; {DISP_E_PARAMNOTFOUND}
+  V.VError := HRESULT($80020004); {DISP_E_PARAMNOTFOUND}
 {$ENDIF}
 end;
 
-{$IFDEF HAS_MODIFIED_DISPINVOKE}
   // Note that DispInvoke has a different interface in Kylix2 only!
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 begin
   DoDispInvoke(Dest, Source, CallDesc, Params);
 end;
-{$ELSE}
-procedure TPythonVariantType.DispInvoke(var Dest: TVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
-begin
-  DoDispInvoke(@Dest, Source, CallDesc, Params);
-end;
-{$ENDIF}
 
 procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
@@ -1019,12 +1006,12 @@ var
           LArguments[I].VOleStr := PWideChar(BStr);
         end;
         Inc(LStrCount);
-        Inc(Integer(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
+        Inc(NativeInt(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
       end
       else
       begin
         LArguments[I] := PVarData(LParamPtr)^;
-        Inc(Integer(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
+        Inc(NativeInt(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
       end
     else
     begin
@@ -1042,14 +1029,14 @@ var
         begin
           LArguments[I].VLongs[1] := PParamRec(LParamPtr)^[0];
           LArguments[I].VLongs[2] := PParamRec(LParamPtr)^[1];
-          Inc(Integer(LParamPtr), 8 - SizeOf(Pointer));
+          Inc(NativeInt(LParamPtr), 8 - SizeOf(Pointer));
         end;
       else
         RaiseDispError;
       end;
       {$ENDIF}
     end;
-    Inc(Integer(LParamPtr), SizeOf(Pointer));
+    Inc(NativeInt(LParamPtr), SizeOf(Pointer));
   end;
 
 var
@@ -1531,7 +1518,11 @@ begin
         // clear the error state of Python
         PyErr_Clear;
         // return the Python object pointer as an Integer;
-        _prop := PyInt_FromLong( Integer(TPythonVarData(V).VPython.PyObject) );
+        {$IFDEF CPUX64}
+        _prop := PyInt_FromLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
+        {$ELSE}
+        _prop := PyInt_FromLongLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
+        {$ENDIF}
       end;
     end // of if
     // if we found a property that's a callable object and if we're in

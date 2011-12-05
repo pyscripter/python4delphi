@@ -1,42 +1,42 @@
 {**
- Module:  Unit 'PythonAtom'          Copyright (c) 1999                         <BR>
- Author : Olivier Deckmyn (olivier.deckmyn@mail.dotcom.fr)                      <BR>
-                                                                                <BR>
- Version: 1.1                                                                   <BR>
-                                                                                <BR>
- Look Python-Delpi page at: Deploying P4D.PDF                                   <BR>
-************************************************************************        <BR>
-  Functionality:                                                                <BR>
-                  This unit allows the developper to manipulate any             <BR>
-                  python object directly in the Delphi source code !            <BR>
-                  This way, the developper can easily access python             <BR>
-                  objects (of any kind) without using the GetAttrXXXX           <BR>
-                  methods.                                                      <BR>
-                  See TPythonAtom documentation for more explanations           <BR>
-                  on how to use this new feature.                               <BR>
-                                                                                <BR>
-************************************************************************        <BR>
-  Contributors:                                                                 <BR>
-      Morgan Martinet                                                           <BR>
-      Gene Chiaramonte (gchiaramonte@yahoo.com)                                 <BR>
-      Sigve Tjora (public@tjora.no)                                             <BR>
-      Stefan Franke (franke@meso.net)                                           <BR>
-************************************************************************        <BR>
- This source code is distributed with no WARRANTY, for no reason or use.        <BR>
- Everyone is allowed to use and change this code free for his own tasks         <BR>
- and projects, as long as this header and its copyright text is intact.         <BR>
- For changed versions of this code, which are public distributed the            <BR>
- following additional conditions have to be fullfilled:                         <BR>
- 1) The header has to contain a comment on the change and the author of         <BR>
-    it.                                                                         <BR>
- 2) A copy of the changed source has to be sent to the above E-Mail             <BR>
-    address or my then valid address, if this is possible to the                <BR>
-    author.                                                                     <BR>
- The second condition has the target to maintain an up to date central          <BR>
- version of the component. If this condition is not acceptable for              <BR>
- confidential or legal reasons, everyone is free to derive a component          <BR>
- or to generate a diff file to my or other original sources.                    <BR>
-************************************************************************        <BR>
+ Module:  Unit 'PythonAtom'          Copyright (c) 1999
+ Author : Olivier Deckmyn (olivier.deckmyn@mail.dotcom.fr)
+
+ Version: 1.1
+
+ Look Python-Delpi page at: Deploying P4D.PDF
+************************************************************************
+  Functionality:
+                  This unit allows the developper to manipulate any
+                  python object directly in the Delphi source code !
+                  This way, the developper can easily access python
+                  objects (of any kind) without using the GetAttrXXXX
+                  methods.
+                  See TPythonAtom documentation for more explanations
+                  on how to use this new feature.
+
+************************************************************************
+  Contributors:
+      Morgan Martinet
+      Gene Chiaramonte (gchiaramonte@yahoo.com)
+      Sigve Tjora (public@tjora.no)
+      Stefan Franke (franke@meso.net)
+************************************************************************
+ This source code is distributed with no WARRANTY, for no reason or use.
+ Everyone is allowed to use and change this code free for his own tasks
+ and projects, as long as this header and its copyright text is intact.
+ For changed versions of this code, which are public distributed the
+ following additional conditions have to be fullfilled:
+ 1) The header has to contain a comment on the change and the author of
+    it.
+ 2) A copy of the changed source has to be sent to the above E-Mail
+    address or my then valid address, if this is possible to the
+    author.
+ The second condition has the target to maintain an up to date central
+ version of the component. If this condition is not acceptable for
+ confidential or legal reasons, everyone is free to derive a component
+ or to generate a diff file to my or other original sources.
+************************************************************************
 }
 {---------------------------------------------------------------------------
   $Header: /P4D/PythonForDelphi/Components/Sources/Core/PythonAtom.pas 1     03-04-09 19:24 Morgan $
@@ -48,8 +48,14 @@
  ---------------------------------------------------------------------------}
 
 (* Note : the comments "{**" of this units are formated for Time2Help *)
-unit PythonAtom deprecated 'consider using VarPyth instead';
+
 {$I definition.inc}
+
+{$IFDEF CPUX64}
+  Error!! This unit is not supported in 64bit due dirty casts of pointers to DISPIDS
+{$ENDIF}
+
+unit PythonAtom deprecated 'consider using VarPyth instead';
 
 interface
 
@@ -323,13 +329,13 @@ begin
       lParams := TDispParams(Params);
       lVarResult:= PVariant(varResult);
       if (lParams.cArgs=1) and (lParams.rgvarg^[0].vt=VT_ERROR) then lParams.cArgs:=0; // This is the case when invoking method with ()
-      {$IFDEF DEBUG}DebugMessageFmt('TPythonAtom.Invoke(DispID=%d, IID=%s, LocaleID=%d, Flags=%s, argCount=%d, VarResult=%d)',[DispID, GuidToString(IID), LocaleID, lFlags, lParams.cArgs, INteger(VarREsult)]);{$ENDIF}
+      {$IFDEF DEBUG}DebugMessageFmt('TPythonAtom.Invoke(DispID=%d, IID=%s, LocaleID=%d, Flags=%s, argCount=%d, VarResult=%d)',[DispID, GuidToString(IID), LocaleID, lFlags, lParams.cArgs, Integer(VarResult)]);{$ENDIF}
       if ((Flags and DISPATCH_METHOD)>0) or ((Flags and DISPATCH_PROPERTYGET)>0) // If we have a method invocation or a property get
       then
         if dispId = -2  //Special case when invoking __asPPyObject__
         then
           begin
-            myVariant := Integer(FPythonObject); //Not so dirty!
+            myVariant := NativeInt(FPythonObject); //Not so dirty!
             if Assigned(lVarResult) then
               lvarResult^ := myVariant;
           end // of if

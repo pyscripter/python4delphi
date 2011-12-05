@@ -1,3 +1,5 @@
+{$I Definition.Inc}
+
 unit PythonDatabase;
 
 {-------------------------------------------------------------------------------
@@ -15,8 +17,6 @@ unit PythonDatabase;
  * initial check-in
 
 -------------------------------------------------------------------------------}
-
-{$I Definition.Inc}
 
 interface
 uses Classes, PythonEngine;

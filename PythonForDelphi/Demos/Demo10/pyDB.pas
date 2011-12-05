@@ -2474,12 +2474,12 @@ begin
   IncRef;
   with GetPythonEngine do
     begin
-      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( Integer(Action) ) );
+      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( NativeInt(Action) ) );
       Py_XIncRef(v);
       try
         ExecuteEvent( FOnDeleteError, [GetSelf, ArrayToPyTuple([E.ClassName, E.Message]), v] );
         with PythonToDelphi(v) as TVarArg do
-          Action := TDataAction(Integer(PyObjectAsVariant(FValue)));
+          Action := TDataAction(NativeInt(PyObjectAsVariant(FValue)));
       finally
         Py_XDecRef(v);
       end;
@@ -2493,12 +2493,12 @@ begin
   IncRef;
   with GetPythonEngine do
     begin
-      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( Integer(Action) ) );
+      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( NativeInt(Action) ) );
       Py_XIncRef(v);
       try
         ExecuteEvent( FOnEditError, [GetSelf, ArrayToPyTuple([E.ClassName, E.Message]), v] );
         with PythonToDelphi(v) as TVarArg do
-          Action := TDataAction(Integer(PyObjectAsVariant(FValue)));
+          Action := TDataAction(NativeInt(PyObjectAsVariant(FValue)));
       finally
         Py_XDecRef(v);
       end;
@@ -2537,12 +2537,12 @@ begin
   IncRef;
   with GetPythonEngine do
     begin
-      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( Integer(Action) ) );
+      v := gVarArgType.CreateInstanceWith( VariantAsPyObject( NativeInt(Action) ) );
       Py_XIncRef(v);
       try
         ExecuteEvent( FOnPostError, [GetSelf, ArrayToPyTuple([E.ClassName, E.Message]), v] );
         with PythonToDelphi(v) as TVarArg do
-          Action := TDataAction(Integer(PyObjectAsVariant(FValue)));
+          Action := TDataAction(NativeInt(PyObjectAsVariant(FValue)));
       finally
         Py_XDecRef(v);
       end;

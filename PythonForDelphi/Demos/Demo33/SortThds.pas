@@ -135,7 +135,7 @@ begin
     pyfunc :=  FindFunction( ExecModule, fpyfuncname);
     if Assigned(pyfunc) then
       try
-        EvalFunction(pyfunc,[Integer(self),0,FSize]);
+        EvalFunction(pyfunc,[NativeInt(self),0,FSize]);
       except
       
       end;

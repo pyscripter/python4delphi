@@ -12,8 +12,7 @@
 (*                                  CANADA                                *)
 (*                                  e-mail: p4d@mmm-experts.com           *)
 (*                                                                        *)
-(*  look at our page at: http://mmm-experts.com/                          *)
-(*      and our Wiki at: http://py4d.pbwiki.com/                          *)
+(*  look at the project page at: http://python4Delphi.googlecode.com/     *)
 (**************************************************************************)
 (*  Functionality:  Delphi Components that provide an interface to the    *)
 (*                  Python language (see python.txt for more infos on     *)
@@ -51,15 +50,24 @@
 (* Dr. Dietmar Budelsky, 1997-11-17                                       *)
 (**************************************************************************)
 
+{$I Definition.Inc}
+
 unit PythonEngine;
 
 { TODO -oMMM : implement tp_as_buffer slot }
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
 
-{$I Definition.Inc}
+{ TODO -opyscripter : Win64 compatibility }
+    { TODO -opyscripter : Py_ssize_t }
+    { TODO -opyscripter : packed records }
+    { TODO -opyscripter : assempler stuff }
+    { TODO -opyscripter : XE2 packages }
+{ TODO -opyscripter : FPC compatibility }
 
-{$IFNDEF DELPHI6_OR_HIGHER}
-    Error! Delphi 6 or higher is required!
+{$IFNDEF FPC}
+  {$IFNDEF DELPHI7_OR_HIGHER}
+      Error! Delphi 7 or higher is required!
+  {$ENDIF}
 {$ENDIF}
 
 interface
@@ -98,6 +106,17 @@ type
 {$ELSE}
   TUnicodeStringList = TStringList;
 {$ENDIF}
+
+{$IFNDEF FPC}
+  {$IF CompilerVersion < 21}
+    NativeInt = integer;
+    PNativeInt = ^NativeInt;
+  {$IFEND}
+{$ELSE}
+  PNativeInt = ^NativeInt;
+{$ENDIF}
+
+
 
   TPythonVersionProp = packed record
     DllName      : String;
@@ -555,12 +574,12 @@ type
   end;
 
   PyObject = packed record
-    ob_refcnt: Integer;
+    ob_refcnt: NativeInt;
     ob_type:   PPyTypeObject;
   end;
 
   PyIntObject = packed record
-    ob_refcnt : Integer;
+    ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
     ob_ival   : LongInt;
   end;
@@ -572,7 +591,7 @@ type
   end;
 
   PySliceObject = packed record
-    ob_refcnt:          Integer;
+    ob_refcnt:          NativeInt;
     ob_type:            PPyTypeObject;
     start, stop, step:  PPyObject;
   end;
@@ -590,7 +609,7 @@ type
   PyMemberDef = packed record
     name : PAnsiChar;
     _type : integer;
-    offset : integer;
+    offset : NativeInt;
     flags : integer;
     doc : PAnsiChar;
   end;
@@ -631,7 +650,7 @@ type
   PPyDescrObject = ^PyDescrObject;
   PyDescrObject = packed record
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -642,7 +661,7 @@ type
   PyMethodDescrObject = packed record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -655,7 +674,7 @@ type
   PyMemberDescrObject = packed record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -668,7 +687,7 @@ type
   PyGetSetDescrObject = packed record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -681,7 +700,7 @@ type
   PyWrapperDescrObject = packed record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -694,7 +713,7 @@ type
   PPyModuleDef_Base = ^PyModuleDef_Base;
   PyModuleDef_Base = packed record
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     m_init     : function( ) : PPyObject; cdecl;
@@ -718,7 +737,7 @@ type
 
   // object.h
   PyTypeObject = packed record
-    ob_refcnt:      Integer;
+    ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
     ob_size:        Integer; // Number of items in variable part
     tp_name:        PAnsiChar;   // For printing
@@ -804,7 +823,7 @@ type
   PPyClassObject = ^PyClassObject;
   PyClassObject = packed record
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     cl_bases   : PPyObject;       // A tuple of class objects
@@ -819,7 +838,7 @@ type
   PPyInstanceObject = ^PyInstanceObject;
   PyInstanceObject = packed record
     // Start of the Head of an object
-    ob_refcnt : Integer;
+    ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
     // End of the Head of an object
     in_class  : PPyClassObject;      // The class object
@@ -835,7 +854,7 @@ type
   PPyMethodObject = ^PyMethodObject;
   PyMethodObject = packed record
     // Start of the Head of an object
-    ob_refcnt : Integer;
+    ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
     // End of the Head of an object
     im_func  : PPyObject;      // The function implementing the method
@@ -847,7 +866,7 @@ type
   // Bytecode object, compile.h
   PPyCodeObject = ^PyCodeObject;
   PyCodeObject = packed record
-    ob_refcnt      : Integer;
+    ob_refcnt      : NativeInt;
     ob_type        : PPyTypeObject;
     co_argcount    : Integer;         // #arguments, except *args
     co_nlocals     : Integer;         // #local variables
@@ -929,7 +948,7 @@ type
   CO_MAXBLOCKS  = 0..19;
   PyFrameObject = packed record
     // Start of the VAR_HEAD of an object.
-    ob_refcnt    : Integer;
+    ob_refcnt    : NativeInt;
     ob_type      : PPyTypeObject;
     ob_size      : Integer;           // Number of items in variable part
     // End of the Head of an object
@@ -963,7 +982,7 @@ type
   PPyTraceBackObject = ^PyTraceBackObject;
   PyTraceBackObject = packed record
     // Start of the Head of an object
-    ob_refcnt : Integer;
+    ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
     // End of the Head of an object
     tb_next   : PPyTraceBackObject;
@@ -988,12 +1007,12 @@ type
   PPyWeakReference = ^PyWeakReference;
   PyWeakReference = packed record
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     wr_object   : PPyObject;
     wr_callback : PPyObject;
-    hash        : longint;
+    hash        : NativeInt;
     wr_prev     : PPyWeakReference;
     wr_next     : PPyWeakReference;
   end;
@@ -1027,7 +1046,7 @@ const
 type
   PyDateTime_Delta = packed record
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode    : Integer;  // -1 when unknown
@@ -1039,7 +1058,7 @@ type
 
   PyDateTime_TZInfo = packed record // a pure abstract base clase
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
   end;
@@ -1062,7 +1081,7 @@ type
   _PyDateTime_BaseTZInfo = packed record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -1086,7 +1105,7 @@ type
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -1101,7 +1120,7 @@ type
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -1123,7 +1142,7 @@ type
   PyDateTime_Date = packed record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -1142,7 +1161,7 @@ type
   _PyDateTime_BaseDateTime = packed record // hastzinfo false
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : Integer;
+    ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -1156,7 +1175,7 @@ type
     // Start of _PyDateTime_DATETIMEHEAD
       // Start of _PyTZINFO_HEAD
         // Start of the Head of an object
-        ob_refcnt  : Integer;
+        ob_refcnt  : NativeInt;
         ob_type    : PPyTypeObject;
         // End of the Head of an object
       hashcode   : Integer;
@@ -1350,10 +1369,7 @@ type
   TIOStringList = TUnicodeStringList;
 
   TPythonInputOutput = class(TComponent)
-  private
-    { DΞΉclarations privΞΉes }
   protected
-    { DΞΉclarations protΞΉgΞΉes }
     FMaxLines        : Integer;
     FLine_Buffer     : IOString;
     FLinesPerThread  : TIOStringList;
@@ -1382,7 +1398,6 @@ type
     procedure UpdateCurrentThreadLine;
 
   public
-    { DΞΉclarations publiques }
     constructor Create( AOwner : TComponent ); override;
     destructor  Destroy; override;
 
@@ -1390,7 +1405,6 @@ type
     procedure WriteLine( const str : IOString );
 
   published
-    { DΞΉclarations publiΞΉes }
     property MaxLines : Integer read FMaxLines write FMaxLines default kMaxLines;
     property MaxLineLength : Integer read FMaxLineLength write FMaxLineLength default kMaxLineLength;
     property DelayWrites : Boolean read FDelayWrites write FDelayWrites default False;
@@ -2455,7 +2469,7 @@ type
       // public methods
       procedure AddMember( MemberName  : PAnsiChar;
                            MemberType  : TPyMemberType;
-                           MemberOffset : Integer;
+                           MemberOffset : NativeInt;
                            MemberFlags : TPyMemberFlag;
                            MemberDoc : PAnsiChar );
       procedure ClearMembers;
@@ -2665,9 +2679,9 @@ type
   // The base class of all new Python types
   TPyObject = class
   private
-    function  Get_ob_refcnt: Integer;
+    function  Get_ob_refcnt: NativeInt;
     function  Get_ob_type: PPyTypeObject;
-    procedure Set_ob_refcnt(const Value: Integer);
+    procedure Set_ob_refcnt(const Value: NativeInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
   public
     PythonType     : TPythonType;
@@ -2688,7 +2702,7 @@ type
     procedure Adjust(PyPointer: Pointer);
     function  GetModule : TPythonModule;
 
-    property ob_refcnt : Integer read Get_ob_refcnt write Set_ob_refcnt;
+    property ob_refcnt : NativeInt read Get_ob_refcnt write Set_ob_refcnt;
     property ob_type   : PPyTypeObject read Get_ob_type write Set_ob_type;
 
     // Type services
@@ -2700,7 +2714,7 @@ type
     function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; virtual;
     function  Repr : PPyObject; virtual;
     function  Compare( obj: PPyObject) : Integer; virtual;
-    function  Hash : Integer; virtual;
+    function  Hash : NativeInt; virtual;
     function  Str: PPyObject; virtual;
     function  GetAttrO( key: PPyObject) : PPyObject; virtual;
     function  SetAttrO( key, value: PPyObject) : Integer; virtual;
@@ -3692,7 +3706,7 @@ begin
   @PyDict_Copy               := Import('PyDict_Copy');
   @PyDictProxy_New           := Import('PyDictProxy_New');
   if not IsPython3000 then
-    @Py_InitModule4            := Import('Py_InitModule4')
+    @Py_InitModule4            := {$IFDEF CPUX64}Import('Py_InitModule4_64'){$ELSE}Import('Py_InitModule4'){$ENDIF}
   else
     @PyModule_Create2           := Import('PyModule_Create2');
   @PyErr_Print               := Import('PyErr_Print');
@@ -5675,8 +5689,11 @@ begin
   // is not predictable and may cause some memory crashes !
   if (csDesigning in ComponentState) then
     FClients.Remove( client )
-  else if Initialized or (ClientCount > 0) then
-    Finalize;
+  else if (Initialized) then begin
+    FClients.Remove( client );
+    if (ClientCount = 0) then
+      Finalize;
+  end;
 end;
 
 function   TPythonEngine.FindClient( const aName : string ) : TEngineClient;
@@ -5811,7 +5828,7 @@ var
   y, m, d, h, mi, sec, ms, jd, wd : WORD;
   dt : TDateTime;
   dl : Integer;
-  myInt : Integer;
+  myInt : NativeInt;
   wStr : UnicodeString;
   Disp : IDispatch;
   DispID : Integer;
@@ -5918,13 +5935,9 @@ begin
         Disp := DeRefV;
         wStr := '__asPPyObject__';
         // detect if the variant supports this special property
-        if Disp.GetIDsOfNames(GUID_NULL, @wStr, 1, 0, @DispID) = S_OK then
+        if Assigned(Disp) and Disp.GetIDsOfNames(GUID_NULL, @wStr, 1, 0, @DispID) = S_OK then
         begin
-          {$IFDEF FPC} {./Uncertain}
-            myInt := Integer(DeRefV);  //Returns the address to PPyObject as integer. (See impl. in PythonAtom.pas)
-          {$ELSE}
           myInt := DeRefV.__asPPyObject__;  //Returns the address to PPyObject as integer. (See impl. in PythonAtom.pas)
-          {$ENDIF}
           Result := PPyObject(myInt);
           Py_XIncRef(Result);
         end
@@ -6949,8 +6962,8 @@ begin
   Result := 0;
 end;
 
-procedure TMembersContainer.AddMember(MemberName: PAnsiChar; MemberType : TPyMemberType;
-  MemberOffset : Integer; MemberFlags: TPyMemberFlag; MemberDoc: PAnsiChar);
+procedure TMembersContainer.AddMember(MemberName: PAnsiChar;  MemberType : TPyMemberType;
+  MemberOffset : NativeInt; MemberFlags: TPyMemberFlag; MemberDoc: PAnsiChar);
 begin
   if FMemberCount = FAllocatedMemberCount then
     ReallocMembers;
@@ -7773,10 +7786,10 @@ end;
 
 procedure TPyObject.Adjust(PyPointer: Pointer);
 var
-  ptr : PInteger;
+  ptr : PNativeInt;
 begin
   ptr := PyPointer;
-  ptr^ := Integer(PythonToDelphi(PPyObject(ptr^)));
+  ptr^ := NativeInt(PythonToDelphi(PPyObject(ptr^)));
 end;
 
 function  TPyObject.GetModule : TPythonModule;
@@ -7787,7 +7800,7 @@ begin
     Result := nil;
 end;
 
-function TPyObject.Get_ob_refcnt: Integer;
+function TPyObject.Get_ob_refcnt: NativeInt;
 begin
   Result := GetSelf^.ob_refcnt;
 end;
@@ -7797,7 +7810,7 @@ begin
   Result := GetSelf^.ob_type;
 end;
 
-procedure TPyObject.Set_ob_refcnt(const Value: Integer);
+procedure TPyObject.Set_ob_refcnt(const Value: NativeInt);
 begin
   GetSelf^.ob_refcnt := Value;
 end;
@@ -7854,7 +7867,7 @@ function  TPyObject.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result :=
-      PyString_FromString( PAnsiChar(AnsiString(Format('<%s at %x>', [PythonType.TypeName, Integer(self)]))) );
+      PyString_FromString( PAnsiChar(AnsiString(Format('<%s at %x>', [PythonType.TypeName, NativeInt(self)]))) );
 end;
 
 function  TPyObject.Compare( obj: PPyObject) : Integer;
@@ -7862,9 +7875,9 @@ begin
   Result := 0;
 end;
 
-function  TPyObject.Hash : Integer;
+function  TPyObject.Hash : NativeInt;
 begin
-  Result := Integer(Self);
+  Result := NativeInt(Self);
 end;
 
 function  TPyObject.Str: PPyObject;

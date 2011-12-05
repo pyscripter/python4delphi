@@ -1,3 +1,4 @@
+{$I Definition.Inc}
 unit PythonGUIInputOutput;
 
 (**************************************************************************)
@@ -42,19 +43,14 @@ unit PythonGUIInputOutput;
 (* Dr. Dietmar Budelsky, 1997-11-17                                       *)
 (**************************************************************************)
 
-{$I Definition.Inc}
-
 interface
 
 uses
 {$IFDEF MSWINDOWS}
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, PythonEngine;
+  Windows, Messages,
 {$ENDIF}
-{$IFDEF LINUX}
-  SysUtils, Types, Classes, Variants, QGraphics, QControls, QForms, QDialogs,
-  QStdCtrls, PythonEngine;
-{$ENDIF}
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, PythonEngine;
 
 {$IFDEF MSWINDOWS}
 const
