@@ -9,7 +9,6 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <OtherUnitFiles Value="$(PackageDir);$(PackageDir)\Sources\Core"/>
-        <UnitOutputDirectory Value="C:\P4D\temp"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
@@ -61,7 +60,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgOutDir)"/>
+      <UnitPath Value="$(PkgOutDir);$(PkgOutDir)\Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
