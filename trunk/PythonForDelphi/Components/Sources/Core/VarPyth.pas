@@ -1521,7 +1521,7 @@ begin
         {$IFDEF CPUX64}
         _prop := PyInt_FromLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
         {$ELSE}
-        _prop := PyInt_FromLongLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
+        _prop := PyLong_FromLongLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
         {$ENDIF}
       end;
     end // of if
