@@ -275,9 +275,14 @@
 // Misc
 /////////////////////////////////////////////////////////////////////////////
 
+{$IFDEF DELPHI2010_OR_HIGHER}
+  {$DEFINE USESYSTEMDISPINVOKE}  //Might work with earlier versions as well
+{$ENDIF}
+
 {$IFDEF FPC}
   {$MODE DELPHI}
   {$IFDEF CPU64}
     {$DEFINE CPUX64}
   {$ENDIF CPU64}
+  {$DEFINE USESYSTEMDISPINVOKE}
 {$ENDIF FPC}

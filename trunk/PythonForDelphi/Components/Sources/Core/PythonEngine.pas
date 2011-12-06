@@ -109,6 +109,7 @@ type
 {$IFNDEF FPC}
   {$IF CompilerVersion < 21}
     NativeInt = integer;
+    NativeUInt = Cardinal;
   {$IFEND}
   PNativeInt = ^NativeInt;
 {$ELSE}
@@ -446,13 +447,14 @@ type
   binaryfunc        = function( ob1,ob2 : PPyObject): PPyObject; cdecl;
   ternaryfunc       = function( ob1,ob2,ob3 : PPyObject): PPyObject; cdecl;
   inquiry           = function( ob1 : PPyObject): integer; cdecl;
+  lenfunc           = function( ob1 : PPyObject): NativeInt; cdecl;
   coercion          = function( ob1,ob2 : PPPyObject): integer; cdecl;
-  intargfunc        = function( ob1 : PPyObject; i: integer): PPyObject; cdecl;
-  intintargfunc     = function( ob1 : PPyObject; i1, i2: integer):
+  ssizeargfunc      = function( ob1 : PPyObject; i: NativeInt): PPyObject; cdecl;
+  ssizessizeargfunc = function( ob1 : PPyObject; i1, i2: NativeInt):
                                 PPyObject; cdecl;
-  intobjargproc     = function( ob1 : PPyObject; i: integer; ob2 : PPyObject):
+  ssizeobjargproc   = function( ob1 : PPyObject; i: NativeInt; ob2 : PPyObject):
                                 integer; cdecl;
-  intintobjargproc  = function( ob1: PPyObject; i1, i2: integer;
+  ssizessizeobjargproc = function( ob1: PPyObject; i1, i2: NativeInt;
                                 ob2: PPyObject): integer; cdecl;
   objobjargproc     = function( ob1,ob2,ob3 : PPyObject): integer; cdecl;
 
@@ -462,16 +464,16 @@ type
   setattrfunc       = function( ob1: PPyObject; name: PAnsiChar; ob2: PPyObject): integer; cdecl;
   cmpfunc           = function( ob1,ob2: PPyObject): integer; cdecl;
   reprfunc          = function( ob: PPyObject): PPyObject; cdecl;
-  hashfunc          = function( ob: PPyObject): LongInt; cdecl;
+  hashfunc          = function( ob: PPyObject): NativeInt; cdecl; // !! in 2.x it is still a LongInt
   getattrofunc      = function( ob1,ob2: PPyObject): PPyObject; cdecl;
   setattrofunc      = function( ob1,ob2,ob3: PPyObject): integer; cdecl;
 
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from object.h
-  getreadbufferproc = function ( ob1: PPyObject; i: integer; ptr: Pointer): integer; cdecl;
-  getwritebufferproc= function ( ob1: PPyObject; i: integer; ptr: Pointer): integer; cdecl;
-  getsegcountproc   = function ( ob1: PPyObject; i: integer): integer; cdecl;
-  getcharbufferproc = function ( ob1: PPyObject; i: integer; const pstr: PAnsiChar): integer; cdecl;
+  getreadbufferproc = function ( ob1: PPyObject; i: NativeInt; ptr: Pointer): NativeInt; cdecl;
+  getwritebufferproc= function ( ob1: PPyObject; i: NativeInt; ptr: Pointer): NativeInt; cdecl;
+  getsegcountproc   = function ( ob1: PPyObject; i: NativeInt): NativeInt; cdecl;
+  getcharbufferproc = function ( ob1: PPyObject; i: NativeInt; const pstr: PAnsiChar): NativeInt; cdecl;
   objobjproc        = function ( ob1, ob2: PPyObject): integer; cdecl;
   visitproc         = function ( ob1: PPyObject; ptr: Pointer): integer; cdecl;
   traverseproc      = function ( ob1: PPyObject; proc: visitproc; ptr: Pointer): integer; cdecl;
@@ -483,7 +485,7 @@ type
   descrsetfunc      = function ( ob1, ob2, ob3 : PPyObject) : Integer; cdecl;
   initproc          = function ( self, args, kwds : PPyObject) : Integer; cdecl;
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
-  allocfunc         = function ( self: PPyTypeObject; nitems : integer) : PPyObject; cdecl;
+  allocfunc         = function ( self: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 
   PyNumberMethods = packed record
      nb_add           : binaryfunc;
@@ -534,24 +536,24 @@ type
   PPyNumberMethods = ^PyNumberMethods;
 
   PySequenceMethods = packed record
-     sq_length    : inquiry;
+     sq_length    : lenfunc;
      sq_concat    : binaryfunc;
-     sq_repeat    : intargfunc;
-     sq_item      : intargfunc;
-     sq_slice     : intintargfunc;
-     sq_ass_item  : intobjargproc;
-     sq_ass_slice : intintobjargproc;
+     sq_repeat    : ssizeargfunc;
+     sq_item      : ssizeargfunc;
+     sq_slice     : ssizessizeargfunc;
+     sq_ass_item  : ssizeobjargproc;
+     sq_ass_slice : ssizessizeobjargproc;
 
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from .h
      sq_contains        : objobjproc;
      sq_inplace_concat  : binaryfunc;
-     sq_inplace_repeat  : intargfunc;
+     sq_inplace_repeat  : ssizeargfunc;
   end;
   PPySequenceMethods = ^PySequenceMethods;
 
   PyMappingMethods = packed record
-     mp_length	      : inquiry;
+     mp_length	      : lenfunc;
      mp_subscript     : binaryfunc;
      mp_ass_subscript : objobjargproc;
   end;
@@ -716,7 +718,7 @@ type
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     m_init     : function( ) : PPyObject; cdecl;
-    m_index     : Integer;
+    m_index     : NativeInt;
     m_copy : PPyObject;
   end;
 
@@ -725,7 +727,7 @@ type
     m_base : PyModuleDef_Base;
     m_name : PAnsiChar;
     m_doc : PAnsiChar;
-    m_size : Integer;
+    m_size : NativeInt;
     m_methods : PPyMethodDef;
     m_reload : inquiry;
     m_traverse : traverseproc;
@@ -738,9 +740,9 @@ type
   PyTypeObject = packed record
     ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
-    ob_size:        Integer; // Number of items in variable part
+    ob_size:        NativeInt; // Number of items in variable part
     tp_name:        PAnsiChar;   // For printing
-    tp_basicsize, tp_itemsize: Integer; // For allocation
+    tp_basicsize, tp_itemsize: NativeInt; // For allocation
 
     // Methods to implement standard operations
 
@@ -784,7 +786,7 @@ type
     tp_richcompare: richcmpfunc;
 
     // weak reference enabler
-    tp_weaklistoffset: Longint;
+    tp_weaklistoffset: NativeInt;
     // Iterators
     tp_iter : getiterfunc;
     tp_iternext : iternextfunc;
@@ -797,7 +799,7 @@ type
     tp_dict             : PPyObject;
     tp_descr_get        : descrgetfunc;
     tp_descr_set        : descrsetfunc;
-    tp_dictoffset       : longint;
+    tp_dictoffset       : NativeInt;
     tp_init             : initproc;
     tp_alloc            : allocfunc;
     tp_new              : newfunc;
@@ -809,8 +811,8 @@ type
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
     //More spares
-    tp_xxx7:        LongInt;
-    tp_xxx8:        LongInt;
+    tp_xxx7             : NativeInt;
+    tp_xxx8             : LongInt;
   end;
 
   PPyMethodChain = ^PyMethodChain;
@@ -949,7 +951,7 @@ type
     // Start of the VAR_HEAD of an object.
     ob_refcnt    : NativeInt;
     ob_type      : PPyTypeObject;
-    ob_size      : Integer;           // Number of items in variable part
+    ob_size      : NativeInt;           // Number of items in variable part
     // End of the Head of an object
     f_back       : PPyFrameObject;    // previous frame, or NULL
     f_code       : PPyCodeObject;     // code segment
@@ -966,14 +968,8 @@ type
     f_tstate     : PPyThreadState;
     f_lasti      : Integer;           // Last instruction if called
     f_lineno     : Integer;           // Current line number
-    f_restricted : Integer;           // Flag set if restricted operations
-                                      // in this scope
     f_iblock     : Integer;           // index in f_blockstack
     f_blockstack : array[CO_MAXBLOCKS] of PyTryBlock; // for try and loop blocks
-    f_nlocals    : Integer;           // number of locals
-    f_ncells     : Integer;
-    f_nfreevars  : Integer;
-    f_stacksize  : Integer;           // size of value stack
     f_localsplus : array[0..0] of PPyObject; // locals+stack, dynamically sized
   end;
 
@@ -996,8 +992,9 @@ type
   node = packed record
     n_type      : smallint;
     n_str       : PAnsiChar;
-    n_lineno    : smallint;
-    n_nchildren : smallint;
+    n_lineno    : integer;
+    n_col_offset: integer;
+    n_nchildren : integer;
     n_child     : PNode;
   end;
 
@@ -1108,7 +1105,7 @@ type
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
-      hastzinfo  : Char;  // boolean flag
+    hastzinfo  : Char;  // boolean flag
       // End of _PyTZINFO_HEAD
     data       : array[0..Pred(_PyDateTime_TIME_DATASIZE)] of Byte;
     // End of _PyDateTime_TIMEHEAD
@@ -1123,7 +1120,7 @@ type
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
-      hastzinfo  : Char;  // boolean flag
+    hastzinfo  : Char;  // boolean flag
       // End of _PyTZINFO_HEAD
     data       : array[0..Pred(_PyDateTime_TIME_DATASIZE)] of Byte;
     // End of _PyDateTime_TIMEHEAD
@@ -1684,11 +1681,11 @@ type
     PyDict_SetItem:     function(mp, key, item :PPyObject ):integer; cdecl;
     PyDict_DelItem:     function(mp, key : PPyObject ):integer; cdecl;
     PyDict_Clear:       procedure(mp : PPyObject); cdecl;
-    PyDict_Next:        function(mp : PPyObject; pos: PInt; key, value: PPPyObject):integer; cdecl;
+    PyDict_Next:        function(mp : PPyObject; pos: PNativeInt; key, value: PPPyObject):integer; cdecl;
     PyDict_Keys:        function(mp: PPyObject):PPyObject; cdecl;
     PyDict_Values:      function(mp: PPyObject):PPyObject; cdecl;
     PyDict_Items:       function(mp: PPyObject):PPyObject; cdecl;
-    PyDict_Size:        function(mp: PPyObject):integer; cdecl;
+    PyDict_Size:        function(mp: PPyObject):NativeInt; cdecl;
     PyDict_DelItemString: function(dp : PPyObject;key : PAnsiChar ):integer; cdecl;
     PyDict_New: function: PPyObject; cdecl;
     PyDict_GetItemString: function( dp: PPyObject; key: PAnsiChar): PPyObject; cdecl;
@@ -1743,14 +1740,14 @@ type
 {+} PyInt_AsLong:function (ob:PPyObject):LONGINT; cdecl;
 {-} PyList_Append:function (ob1,ob2:PPyObject):integer; cdecl;
 {-} PyList_AsTuple:function (ob:PPyObject):PPyObject; cdecl;
-{+} PyList_GetItem:function (ob:PPyObject;i:integer):PPyObject; cdecl;
-{-} PyList_GetSlice:function (ob:PPyObject;i1,i2:integer):PPyObject; cdecl;
-{-} PyList_Insert:function (dp:PPyObject;idx:Integer;item:PPyObject):integer; cdecl;
-{-} PyList_New:function (size:integer):PPyObject; cdecl;
+{+} PyList_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+{-} PyList_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
+{-} PyList_Insert:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
+{-} PyList_New:function (size:NativeInt):PPyObject; cdecl;
 {-} PyList_Reverse:function (ob:PPyObject):integer; cdecl;
-{-} PyList_SetItem:function (dp:PPyObject;idx:Integer;item:PPyObject):integer; cdecl;
-{-} PyList_SetSlice:function (ob:PPyObject;i1,i2:integer;ob2:PPyObject):integer; cdecl;
-{+} PyList_Size:function (ob:PPyObject):integer; cdecl;
+{-} PyList_SetItem:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
+{-} PyList_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;ob2:PPyObject):integer; cdecl;
+{+} PyList_Size:function (ob:PPyObject):NativeInt; cdecl;
 {-} PyList_Sort:function (ob:PPyObject):integer; cdecl;
 {-} PyLong_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
 {+} PyLong_AsLong:function (ob:PPyObject):LONGINT; cdecl;
@@ -1766,7 +1763,7 @@ type
 {-} PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
 {-} PyMapping_HasKeyString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
-{-} PyMapping_Length:function (ob:PPyObject):integer; cdecl;
+{-} PyMapping_Length:function (ob:PPyObject):NativeInt; cdecl;
 {-} PyMapping_SetItemString:function (ob:PPyObject; key:PAnsiChar; value:PPyObject):integer; cdecl;
 {-} PyMethod_Class:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyMethod_Function:function (ob:PPyObject):PPyObject; cdecl;
@@ -1809,17 +1806,17 @@ type
 {-} PyObject_GetItem:function (ob,key:PPyObject):PPyObject; cdecl;
 {-} PyObject_DelItem:function (ob,key:PPyObject):PPyObject; cdecl;
 {-} PyObject_HasAttrString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
-{-} PyObject_Hash:function (ob:PPyObject):LONGINT; cdecl;
+{-} PyObject_Hash:function (ob:PPyObject):NativeInt; cdecl;
 {-} PyObject_IsTrue:function (ob:PPyObject):integer; cdecl;
-{-} PyObject_Length:function (ob:PPyObject):integer; cdecl;
+{-} PyObject_Length:function (ob:PPyObject):NativeInt; cdecl;
 {-} PyObject_Repr:function (ob:PPyObject):PPyObject; cdecl;
 {-} PyObject_SetAttr:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
 {-} PyObject_SetAttrString:function (ob:PPyObject;key:PAnsiChar;value:PPyObject):integer; cdecl;
 {-} PyObject_SetItem:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
 {-} PyObject_Init:function (ob:PPyObject; t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_InitVar:function (ob:PPyObject; t:PPyTypeObject; size:integer):PPyObject; cdecl;
+{-} PyObject_InitVar:function (ob:PPyObject; t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
 {-} PyObject_New:function (t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_NewVar:function (t:PPyTypeObject; size:integer):PPyObject; cdecl;
+{-} PyObject_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
     PyObject_Free:procedure (ob:PPyObject); cdecl;
     PyObject_GetIter: function (obj: PPyObject) : PPyObject; cdecl;
     PyIter_Next: function (obj: PPyObject) : PPyObject; cdecl;
@@ -1828,10 +1825,10 @@ type
     PyObject_Call:function (ob, args, kw:PPyObject):PPyObject; cdecl;
     PyObject_GenericGetAttr:function (obj, name : PPyObject) : PPyObject; cdecl;
     PyObject_GenericSetAttr:function (obj, name, value : PPyObject) : Integer; cdecl;
-{-} PyObject_GC_Malloc:function (size:integer):PPyObject; cdecl;
+{-} PyObject_GC_Malloc:function (size:NativeUInt):PPyObject; cdecl;
 {-} PyObject_GC_New:function (t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_GC_NewVar:function (t:PPyTypeObject; size:integer):PPyObject; cdecl;
-{-} PyObject_GC_Resize:function (t:PPyObject; newsize:integer):PPyObject; cdecl;
+{-} PyObject_GC_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
+{-} PyObject_GC_Resize:function (t:PPyObject; newsize:NativeInt):PPyObject; cdecl;
 {-} PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
 {-} PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
 {-} PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
@@ -1841,27 +1838,27 @@ type
 {-} PySequence_Check:function (ob:PPyObject):integer; cdecl;
 {-} PySequence_Concat:function (ob1,ob2:PPyObject):PPyObject; cdecl;
 {-} PySequence_Count:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PySequence_GetItem:function (ob:PPyObject;i:integer):PPyObject; cdecl;
-{-} PySequence_GetSlice:function (ob:PPyObject;i1,i2:integer):PPyObject; cdecl;
+{-} PySequence_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+{-} PySequence_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
 {-} PySequence_In:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PySequence_Index:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PySequence_Length:function (ob:PPyObject):integer; cdecl;
-{-} PySequence_Repeat:function (ob:PPyObject;count:integer):PPyObject; cdecl;
-{-} PySequence_SetItem:function (ob:PPyObject;i:integer;value:PPyObject):integer; cdecl;
-{-} PySequence_SetSlice:function (ob:PPyObject;i1,i2:integer;value:PPyObject):integer; cdecl;
-{-} PySequence_DelSlice:function (ob:PPyObject;i1,i2:integer):integer; cdecl;
+{-} PySequence_Index:function (ob1,ob2:PPyObject):NativeInt; cdecl;
+{-} PySequence_Length:function (ob:PPyObject):NativeInt; cdecl;
+{-} PySequence_Repeat:function (ob:PPyObject;count:NativeInt):PPyObject; cdecl;
+{-} PySequence_SetItem:function (ob:PPyObject;i:NativeInt;value:PPyObject):integer; cdecl;
+{-} PySequence_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;value:PPyObject):integer; cdecl;
+{-} PySequence_DelSlice:function (ob:PPyObject;i1,i2:NativeInt):integer; cdecl;
 {-} PySequence_Tuple:function (ob:PPyObject):PPyObject; cdecl;
 {-} PySequence_Contains:function (ob, value:PPyObject):integer; cdecl;
     PySeqIter_New: function(obj : PPyObject) : PPyObject; cdecl;
-{-} PySlice_GetIndices:function (ob:PPySliceObject;length:integer;var start,stop,step:integer):integer; cdecl;
-{-} PySlice_GetIndicesEx:function (ob:PPySliceObject;length:integer;var start,stop,step,slicelength:integer):integer; cdecl;
+{-} PySlice_GetIndices:function (ob:PPySliceObject;length:NativeInt;var start,stop,step:NativeInt):integer; cdecl;
+{-} PySlice_GetIndicesEx:function (ob:PPySliceObject;length:NativeInt;var start,stop,step,slicelength:NativeInt):integer; cdecl;
 {-} PySlice_New:function (start,stop,step:PPyObject):PPyObject; cdecl;
 {-} PyString_Concat:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
 {-} PyString_ConcatAndDel:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
 {-} PyString_Format:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyString_FromStringAndSize:function (s:PAnsiChar;i:integer):PPyObject; cdecl;
-{-} PyString_Size:function (ob:PPyObject):integer; cdecl;
-{-} PyString_DecodeEscape:function(s:PAnsiChar; len:integer; errors:PAnsiChar; unicode:integer; recode_encoding:PAnsiChar):PPyObject; cdecl;
+{-} PyString_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
+{-} PyString_Size:function (ob:PPyObject):NativeInt; cdecl;
+{-} PyString_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
 {-} PyString_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
 {+} PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
 {-} //PySys_Init:procedure; cdecl;
@@ -1871,18 +1868,18 @@ type
 {-} PyTraceBack_Here:function (p:pointer):integer; cdecl;
 {-} PyTraceBack_Print:function (ob1,ob2:PPyObject):integer; cdecl;
 {-} //PyTraceBack_Store:function (ob:PPyObject):integer; cdecl;
-{+} PyTuple_GetItem:function (ob:PPyObject;i:integer):PPyObject; cdecl;
-{-} PyTuple_GetSlice:function (ob:PPyObject;i1,i2:integer):PPyObject; cdecl;
-{+} PyTuple_New:function (size:Integer):PPyObject; cdecl;
-{+} PyTuple_SetItem:function (ob:PPyObject;key:integer;value:PPyObject):integer; cdecl;
-{+} PyTuple_Size:function (ob:PPyObject):integer; cdecl;
+{+} PyTuple_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+{-} PyTuple_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
+{+} PyTuple_New:function (size:NativeInt):PPyObject; cdecl;
+{+} PyTuple_SetItem:function (ob:PPyObject;key:NativeInt;value:PPyObject):integer; cdecl;
+{+} PyTuple_Size:function (ob:PPyObject):NativeInt; cdecl;
 {+} PyType_IsSubtype:function (a, b : PPyTypeObject):integer; cdecl;
-    PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:Integer) : PPyObject; cdecl;
+    PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:NativeInt) : PPyObject; cdecl;
     PyType_GenericNew:function(atype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
     PyType_Ready:function(atype: PPyTypeObject) : integer; cdecl;
-{+} PyUnicode_FromWideChar:function (const w:PWideChar; size:integer):PPyObject; cdecl;
-{+} PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:integer):integer; cdecl;
-    PyUnicode_Decode:function (const s:PAnsiChar; size: integer; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
+{+} PyUnicode_FromWideChar:function (const w:PWideChar; size:NativeInt):PPyObject; cdecl;
+{+} PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:NativeInt):integer; cdecl;
+    PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
 {-} PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
@@ -1898,7 +1895,7 @@ type
 {-} Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
 {-} _PyObject_New:function (obt:PPyTypeObject;ob:PPyObject):PPyObject; cdecl;
-{-} _PyString_Resize:function (var ob:PPyObject;i:integer):integer; cdecl;
+{-} _PyString_Resize:function (var ob:PPyObject;i:NativeInt):integer; cdecl;
 {+} Py_Finalize                     : procedure; cdecl;
 {-} PyErr_ExceptionMatches          : function ( exc : PPyObject) : Integer; cdecl;
 {-} PyErr_GivenExceptionMatches     : function ( raised_exc, exc : PPyObject) : Integer; cdecl;
@@ -1913,8 +1910,8 @@ type
 {-} PyParser_SimpleParseString      : function ( str : PAnsiChar; start : Integer) : PNode; cdecl;
 {-} PyNode_Free                     : procedure( n : PNode ); cdecl;
 {-} PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
-{-} Py_Malloc                       : function ( size : Integer ) : Pointer;
-{-} PyMem_Malloc                    : function ( size : Integer ) : Pointer;
+{-} Py_Malloc                       : function ( size : NativeInt ) : Pointer;
+{-} PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
 {-} PyObject_CallMethod             : function ( obj : PPyObject; method, format : PAnsiChar ) : PPyObject; cdecl;
 
 {New exported Objects in Python 1.5}
@@ -2765,18 +2762,18 @@ type
     function  NbInplaceXor( obj : PPyObject): PPyObject; virtual;
     function  NbInplaceOr( obj : PPyObject): PPyObject; virtual;
     // Sequence services
-    function  SqLength : Integer; virtual;
+    function  SqLength : NativeInt; virtual;
     function  SqConcat( obj : PPyObject) : PPyObject; virtual;
-    function  SqRepeat( val : Integer ) : PPyObject; virtual;
-    function  SqItem( idx : Integer ) : PPyObject; virtual;
-    function  SqSlice( idx1, idx2 : Integer ) : PPyObject; virtual;
-    function  SqAssItem( idx : integer; obj : PPyObject) : Integer; virtual;
-    function  SqAssSlice( idx1, idx2 : Integer; obj : PPyObject): integer; virtual;
+    function  SqRepeat( val : NativeInt ) : PPyObject; virtual;
+    function  SqItem( idx : NativeInt ) : PPyObject; virtual;
+    function  SqSlice( idx1, idx2 : NativeInt ) : PPyObject; virtual;
+    function  SqAssItem( idx : NativeInt; obj : PPyObject) : Integer; virtual;
+    function  SqAssSlice( idx1, idx2 : NativeInt; obj : PPyObject): integer; virtual;
     function  SqContains( obj: PPyObject): integer; virtual;
     function  SqInplaceConcat( obj : PPyObject): PPyObject; virtual;
-    function  SqInplaceRepeat( i: integer): PPyObject; virtual;
+    function  SqInplaceRepeat( i: NativeInt): PPyObject; virtual;
     // Mapping services
-    function  MpLength : Integer; virtual;
+    function  MpLength : NativeInt; virtual;
     function  MpSubscript( obj : PPyObject) : PPyObject; virtual;
     function  MpAssSubscript( obj1, obj2 : PPyObject) : Integer; virtual;
 
@@ -8122,7 +8119,7 @@ begin
 end;
 
 // Sequence services
-function  TPyObject.SqLength : Integer;
+function  TPyObject.SqLength : NativeInt;
 begin
   Result := 0;
 end;
@@ -8132,27 +8129,27 @@ begin
   Result := GetPythonEngine.ReturnNone;
 end;
 
-function  TPyObject.SqRepeat( val : Integer ) : PPyObject;
+function  TPyObject.SqRepeat( val : NativeInt ) : PPyObject;
 begin
   Result := GetPythonEngine.ReturnNone;
 end;
 
-function  TPyObject.SqItem( idx : Integer ) : PPyObject;
+function  TPyObject.SqItem( idx : NativeInt ) : PPyObject;
 begin
   Result := GetPythonEngine.ReturnNone;
 end;
 
-function  TPyObject.SqSlice( idx1, idx2 : Integer ) : PPyObject;
+function  TPyObject.SqSlice( idx1, idx2 : NativeInt ) : PPyObject;
 begin
   Result := GetPythonEngine.ReturnNone;
 end;
 
-function  TPyObject.SqAssItem( idx : integer; obj : PPyObject) : Integer;
+function  TPyObject.SqAssItem( idx : NativeInt; obj : PPyObject) : Integer;
 begin
   Result := -1;
 end;
 
-function  TPyObject.SqAssSlice( idx1, idx2 : Integer; obj : PPyObject): integer;
+function  TPyObject.SqAssSlice( idx1, idx2 : NativeInt; obj : PPyObject): integer;
 begin
   Result := -1;
 end;
@@ -8167,13 +8164,13 @@ begin
   Result := nil;
 end;
 
-function TPyObject.SqInplaceRepeat(i: integer): PPyObject;
+function TPyObject.SqInplaceRepeat(i: NativeInt): PPyObject;
 begin
   Result := nil;
 end;
 
 // Mapping services
-function  TPyObject.MpLength : Integer;
+function  TPyObject.MpLength : NativeInt;
 begin
   Result := 0;
 end;
@@ -8417,7 +8414,7 @@ begin
   Result := PythonToDelphi(pSelf).Compare( obj );
 end;
 
-function  TPythonType_Hash( pSelf : PPyObject) : Integer; cdecl;
+function  TPythonType_Hash( pSelf : PPyObject) : NativeInt; cdecl;
 begin
   Result := PythonToDelphi(pSelf).Hash;
 end;
@@ -8495,7 +8492,7 @@ begin
   end;
 end;
 
-function  TPythonType_AllocSubtypeInst( pSelf: PPyTypeObject; nitems : integer) : PPyObject; cdecl;
+function  TPythonType_AllocSubtypeInst( pSelf: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 begin
   Result := GetPythonEngine.PyType_GenericAlloc(pSelf, nitems);
 end;
@@ -8700,7 +8697,7 @@ end;
 
 // Sequence services
 
-function  TPythonType_SqLength( pSelf : PPyObject ) : Integer; cdecl;
+function  TPythonType_SqLength( pSelf : PPyObject ) : NativeInt; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqLength;
 end;
@@ -8710,27 +8707,27 @@ begin
   Result := PythonToDelphi(pSelf).SqConcat( obj );
 end;
 
-function  TPythonType_SqRepeat( pSelf : PPyObject; val : Integer ) : PPyObject; cdecl;
+function  TPythonType_SqRepeat( pSelf : PPyObject; val : NativeInt ) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqRepeat( val );
 end;
 
-function  TPythonType_SqItem( pSelf : PPyObject; idx : Integer ) : PPyObject; cdecl;
+function  TPythonType_SqItem( pSelf : PPyObject; idx : NativeInt ) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqItem( idx );
 end;
 
-function  TPythonType_SqSlice( pSelf : PPyObject; idx1, idx2 : Integer ) : PPyObject; cdecl;
+function  TPythonType_SqSlice( pSelf : PPyObject; idx1, idx2 : NativeInt ) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqSlice( idx1, idx2 );
 end;
 
-function  TPythonType_SqAssItem( pSelf : PPyObject; idx : integer; obj : PPyObject) : Integer; cdecl;
+function  TPythonType_SqAssItem( pSelf : PPyObject; idx : NativeInt; obj : PPyObject) : Integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqAssItem( idx, obj );
 end;
 
-function  TPythonType_SqAssSlice( pSelf : PPyObject; idx1, idx2 : Integer; obj : PPyObject): integer; cdecl;
+function  TPythonType_SqAssSlice( pSelf : PPyObject; idx1, idx2 : NativeInt; obj : PPyObject): integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqAssSlice( idx1, idx2, obj );
 end;
@@ -8738,7 +8735,7 @@ end;
 
 // Mapping services
 
-function  TPythonType_MpLength( pSelf : PPyObject ) : Integer; cdecl;
+function  TPythonType_MpLength( pSelf : PPyObject ) : NativeInt; cdecl;
 begin
   Result := PythonToDelphi(pSelf).MpLength;
 end;
@@ -8763,7 +8760,7 @@ begin
   Result := PythonToDelphi(pSelf).SqInplaceConcat( obj );
 end;
 
-function TPythonType_SqInplaceRepeat(pSelf : PPyObject; i: integer): PPyObject; cdecl;
+function TPythonType_SqInplaceRepeat(pSelf : PPyObject; i: NativeInt): PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).SqInplaceRepeat( i );
 end;

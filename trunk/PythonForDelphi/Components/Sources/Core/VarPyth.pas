@@ -104,7 +104,7 @@ function BuiltinModule : Variant; // return the builtin module
 function SysModule : Variant; // return the builtin module 'sys'
 function DatetimeModule : Variant; // return the builtin module 'datetime'
 function Import( const AModule : AnsiString ) : Variant; // import a Python module and return the module object.
-function len(const AValue : Variant ) : Integer; // return the length of a Python collection.
+function len(const AValue : Variant ) : NativeInt; // return the length of a Python collection.
 function _type(const AValue : Variant ) : Variant; // return the type object of a Python object.
 function iter(const AValue : Variant ) : Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
 
@@ -134,14 +134,21 @@ type
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
     procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
+   {$IFNDEF USESYSTEMDISPINVOKE}
     procedure DoDispInvoke(Dest: PVarData; const Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); virtual;
+    function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
+      const AName: AnsiString; AArg : TVarData): Boolean; virtual;
+    {$ENDIF USESYSTEMDISPINVOKE}
+    {$IFNDEF FPC}
+    function FixupIdent(const AText: string): string; override;
+    {$ENDIF FPC}
     {$IFDEF FPC}
     procedure VarDataClear(var Dest: TVarData);
     procedure VarDataCopyNoInd(var Dest: TVarData; const Source: TVarData);
     procedure VarDataCastTo(var Dest: TVarData; const Source: TVarData;
       const AVarType: TVarType); overload;
-    {$ENDIF}
+    {$ENDIF FPC}
   public
     procedure Clear(var V: TVarData); override;
     function IsClear(const V: TVarData): Boolean; override;
@@ -162,8 +169,6 @@ type
       const Arguments: TVarDataArray): Boolean; override;
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
-    function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
-      const AName: AnsiString; AArg : TVarData): Boolean; virtual;
     function SetProperty(const V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
     procedure DispInvoke(Dest: PVarData; const Source: TVarData;
@@ -680,7 +685,7 @@ begin
   end; // of with
 end;
 
-function GetObjectLength(AObject: PPyObject): Integer;
+function GetObjectLength(AObject: PPyObject): NativeInt;
 begin
   with GetPythonEngine do
   begin
@@ -691,7 +696,7 @@ begin
 end;
 
 // returns the length of a Python collection.
-function len(const AValue : Variant ) : Integer;
+function len(const AValue : Variant ) : NativeInt;
 begin
   if VarIsPython(AValue) then
     Result := GetObjectLength( ExtractPythonObjectFrom(AValue) )
@@ -891,7 +896,49 @@ begin
 {$ENDIF}
 end;
 
-  // Note that DispInvoke has a different interface in Kylix2 only!
+const
+  CDoMethod    = $01;
+  CPropertyGet = $02;
+  CPropertySet = $04;
+
+{$IFDEF USESYSTEMDISPINVOKE}
+procedure TPythonVariantType.DispInvoke(Dest: PVarData;
+  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+
+  procedure GetNamedParams;
+  var
+    LNamePtr: PAnsiChar;
+    LNamedArgStart : Integer;     //arg position of 1st named argument (if any)
+    I : integer;
+  begin
+    LNamePtr := PAnsiChar(@CallDesc^.ArgTypes[CallDesc^.ArgCount]);
+    LNamedArgStart := CallDesc^.ArgCount - CallDesc^.NamedArgCount;
+    SetLength(fNamedParams, CallDesc^.NamedArgCount);
+    // Skip function Name
+    for I := 0 to CallDesc^.NamedArgCount - 1 do begin
+      LNamePtr := LNamePtr + Succ(StrLen(LNamePtr));
+      fNamedParams[I].Index := I+LNamedArgStart;
+      fNamedParams[I].Name  := AnsiString(LNamePtr);
+    end;
+  end;
+
+Var
+  NewCallDesc : TCallDesc;
+begin
+  if CallDesc^.NamedArgCount > 0 then GetNamedParams;
+  try
+    if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
+      NewCallDesc := CallDesc^;
+      NewCallDesc.CallType := CDoMethod;
+      inherited DispInvoke(Dest, Source, @NewCallDesc, Params);
+    end else
+      inherited;
+  finally
+    if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
+  end;
+end;
+
+{$ELSE USESYSTEMDISPINVOKE}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 begin
@@ -907,10 +954,6 @@ type
     BStr: WideString;
     PStr: PAnsiString;
   end;
-const
-  CDoMethod    = $01;
-  CPropertyGet = $02;
-  CPropertySet = $04;
 var
   LArguments: TVarDataArray;
   LStrings: array of TStringDesc;
@@ -1147,6 +1190,41 @@ begin
         PStr^ := AnsiString(System.Copy(BStr, 1, MaxInt));
   end;
 end;
+
+function TPythonVariantType.GetPropertyWithArg(var Dest: TVarData;
+  const V: TVarData; const AName: AnsiString; AArg: TVarData): Boolean;
+var
+  _prop, _result : PPyObject;
+begin
+  with GetPythonEngine do
+  begin
+    _result := nil;
+    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
+    CheckError;
+    if Assigned(_prop) then
+    begin
+      // here we check only sequences, as Delphi does not allow a type different from Integer
+      // to be used within brackets.
+      // But you can still access a dictionary with parenthesis, like: myObj.MyDict('MyKey')
+      // Note that we can't use the brackets on a Python variant that contains a list,
+      // because Delphi thinks it's a variant array, whereas it is not, of course!
+      // So: myList[0] won't work, but myObj.MyList[0] will!!!
+      if PySequence_Check(_prop) <> 0 then
+      begin
+        _result := PySequence_GetItem(_prop, Variant(AArg));
+        CheckError;
+      end; // of if
+    end; // of if
+    Result := Assigned(_result);
+    if Result then
+      try
+        PythonObjectToVarData(Dest, _result, TPythonVarData(V).VPython.PythonAtomCompatible);
+      finally
+        Py_XDecRef(_prop);
+      end; // of try
+  end; // of with
+end;
+{$ENDIF USESYSTEMDISPINVOKE}
 
 function TPythonVariantType.DoFunction(var Dest: TVarData;
   const V: TVarData; const AName: string;
@@ -1478,6 +1556,13 @@ begin
   end; // of with
 end;
 
+{$IFNDEF FPC}
+function TPythonVariantType.FixupIdent(const AText: string): string;
+begin
+  Result := AText;
+end;
+{$ENDIF FPC}
+
 function TPythonVariantType.GetInstance(const V: TVarData): TObject;
 begin
   Result := TPythonVarData(V).VPython;
@@ -1552,40 +1637,6 @@ begin
     if Result then
       try
         PythonObjectToVarData(Dest, _prop, TPythonVarData(V).VPython.PythonAtomCompatible);
-      finally
-        Py_XDecRef(_prop);
-      end; // of try
-  end; // of with
-end;
-
-function TPythonVariantType.GetPropertyWithArg(var Dest: TVarData;
-  const V: TVarData; const AName: AnsiString; AArg: TVarData): Boolean;
-var
-  _prop, _result : PPyObject;
-begin
-  with GetPythonEngine do
-  begin
-    _result := nil;
-    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
-    CheckError;
-    if Assigned(_prop) then
-    begin
-      // here we check only sequences, as Delphi does not allow a type different from Integer
-      // to be used within brackets.
-      // But you can still access a dictionary with parenthesis, like: myObj.MyDict('MyKey')
-      // Note that we can't use the brackets on a Python variant that contains a list,
-      // because Delphi thinks it's a variant array, whereas it is not, of course!
-      // So: myList[0] won't work, but myObj.MyList[0] will!!!
-      if PySequence_Check(_prop) <> 0 then
-      begin
-        _result := PySequence_GetItem(_prop, Variant(AArg));
-        CheckError;
-      end; // of if
-    end; // of if
-    Result := Assigned(_result);
-    if Result then
-      try
-        PythonObjectToVarData(Dest, _result, TPythonVarData(V).VPython.PythonAtomCompatible);
       finally
         Py_XDecRef(_prop);
       end; // of try
