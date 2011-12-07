@@ -58,7 +58,6 @@ unit PythonEngine;
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
 
 { TODO -opyscripter : Win64 compatibility }
-    { TODO -opyscripter : Py_ssize_t }
     { TODO -opyscripter : packed records }
     { TODO -opyscripter : assempler stuff }
 { TODO -opyscripter : FPC compatibility }

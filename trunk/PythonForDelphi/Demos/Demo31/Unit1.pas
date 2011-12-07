@@ -178,7 +178,7 @@ begin
   PythonModule.SetVar( 'DVar', p );
   PyEngine.Py_DecRef(p);
 
-  p := PyEngine.PyInt_FromLong(System.CompilerVersion);
+  p := PyEngine.PyInt_FromLong(Trunc(System.CompilerVersion));
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 

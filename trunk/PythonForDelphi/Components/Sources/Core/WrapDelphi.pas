@@ -454,10 +454,10 @@ Type
     function  Iter : PPyObject; override;
 
     // Sequence services
-    function  SqLength : Integer; override;
-    function  SqItem( idx : Integer ) : PPyObject; override;
-    function  SqAssItem( idx : integer; obj : PPyObject) : Integer; override;
-    function  SqSlice( idx1, idx2 : Integer ) : PPyObject; override;
+    function  SqLength : NativeInt; override;
+    function  SqItem( idx : NativeInt ) : PPyObject; override;
+    function  SqAssItem( idx : NativeInt; obj : PPyObject) : Integer; override;
+    function  SqSlice( idx1, idx2 : NativeInt ) : PPyObject; override;
     function  SqContains( obj: PPyObject): integer; override;
 
     // Properties
@@ -551,11 +551,11 @@ Type
     // automatic iterator support when the wrapper implements IContainerAccessProvider
     function  Iter : PPyObject; override;
     // Sequence services
-    function  SqLength : Integer; override;
-    function  SqItem( idx : Integer ) : PPyObject; override;
-    function  SqSlice( idx1, idx2 : Integer ) : PPyObject; override;
+    function  SqLength : NativeInt; override;
+    function  SqItem( idx : NativeInt ) : PPyObject; override;
+    function  SqSlice( idx1, idx2 : NativeInt ) : PPyObject; override;
     function  SqContains( obj: PPyObject): integer; override;
-    function  SqAssItem( idx : integer; obj : PPyObject) : Integer; override;
+    function  SqAssItem( idx : NativeInt; obj : PPyObject) : Integer; override;
 
     class function  DelphiObjectClass : TClass; virtual;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -1270,8 +1270,8 @@ begin
   PythonType.Services.Sequence := PythonType.Services.Sequence + [ssLength, ssItem, ssAssItem, ssContains, ssSlice];
 end;
 
-function TPyDelphiContainer.SqAssItem(idx: integer;
-  obj: PPyObject): Integer;
+function TPyDelphiContainer.SqAssItem(idx: NativeInt;
+  obj: PPyObject): integer;
 begin
   if ContainerAccess.SupportsWrite then
   begin
@@ -1308,7 +1308,7 @@ begin
   end;
 end;
 
-function TPyDelphiContainer.SqItem(idx: Integer): PPyObject;
+function TPyDelphiContainer.SqItem(idx: NativeInt): PPyObject;
 begin
   if CheckIndex(idx, SqLength) then
     Result := ContainerAccess.GetItem(idx)
@@ -1316,12 +1316,12 @@ begin
     Result := nil;
 end;
 
-function TPyDelphiContainer.SqLength: Integer;
+function TPyDelphiContainer.SqLength: NativeInt;
 begin
   Result := ContainerAccess.GetSize;
 end;
 
-function TPyDelphiContainer.SqSlice(idx1, idx2: Integer): PPyObject;
+function TPyDelphiContainer.SqSlice(idx1, idx2: NativeInt): PPyObject;
 begin
   Result := CreateSlice(Self, idx1, idx2);
 end;
@@ -1979,7 +1979,7 @@ begin
   end;
 end;
 
-function TPyDelphiObject.SqAssItem(idx: integer; obj: PPyObject): Integer;
+function TPyDelphiObject.SqAssItem(idx: NativeInt; obj: PPyObject): integer;
 begin
   if HasContainerAccessClass then
   begin
@@ -2012,7 +2012,7 @@ begin
     Result := 0;
 end;
 
-function TPyDelphiObject.SqItem(idx: Integer): PPyObject;
+function TPyDelphiObject.SqItem(idx: NativeInt): PPyObject;
 begin
   if HasContainerAccessClass then
   begin
@@ -2029,7 +2029,7 @@ begin
   end;
 end;
 
-function TPyDelphiObject.SqLength: Integer;
+function TPyDelphiObject.SqLength: NativeInt;
 begin
   if HasContainerAccessClass then
     Result := ContainerAccess.GetSize
@@ -2037,7 +2037,7 @@ begin
     Result := 0;
 end;
 
-function TPyDelphiObject.SqSlice(idx1, idx2: Integer): PPyObject;
+function TPyDelphiObject.SqSlice(idx1, idx2: NativeInt): PPyObject;
 begin
   Result := CreateSlice(Self, idx1, idx2);
 end;
