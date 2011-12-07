@@ -126,7 +126,7 @@ type
     class procedure SetupType( PythonType : TPythonType ); override;
     class function  GetContainerAccessClass : TContainerAccessClass; override;
     // Mapping services
-    function  MpLength : Integer; override;
+    function  MpLength : NativeInt; override;
     function  MpSubscript( obj : PPyObject) : PPyObject; override;
     // Properties
     property DelphiObject: TComponent read GetDelphiObject write SetDelphiObject;
@@ -197,7 +197,7 @@ type
   public
     function  Repr : PPyObject; override;
     // Mapping services
-    function  MpLength : Integer; override;
+    function  MpLength : NativeInt; override;
     function  MpSubscript( obj : PPyObject) : PPyObject; override;
     // Class methods
     class function  DelphiObjectClass : TClass; override;
@@ -714,7 +714,7 @@ var
   i : Integer;
   j : Integer;
   d : PPyObject;
-  s : PAnsiChar;
+  s : PPyObject;
   obj : PPyObject;
   objMethod : PPyObject;
   objComp : PPyObject;
@@ -736,10 +736,10 @@ begin
     Adjust(@Self);
     Result := nil;
     s := nil;
-    if PyArg_ParseTuple( args, '|s:BindMethodsToEvents', [@s] ) <> 0 then
+    if PyArg_ParseTuple( args, '|O:BindMethodsToEvents', [@s] ) <> 0 then
     begin
-      if (s <> nil) and (s^ <> #0) then
-        _prefix := s;
+      if Assigned(S) then
+        _prefix := PyString_AsDelphiString(s);
       _bindings := PyList_New(0);
       try
         _type := GetSelf.ob_type;
@@ -964,7 +964,7 @@ begin
   Result := TComponentsAccess;
 end;
 
-function TPyDelphiComponent.MpLength: Integer;
+function TPyDelphiComponent.MpLength: NativeInt;
 begin
   Result := SqLength;
 end;
@@ -1169,17 +1169,17 @@ end;
 
 function TPyDelphiStrings.AddObject_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PAnsiChar;
+  PStr : PPyObject;
   _obj : PPyObject;
   _value : TObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 'sO:AddObject', [@PStr, @_obj] ) <> 0 then
+    if PyArg_ParseTuple( args, 'OO:AddObject', [@PStr, @_obj] ) <> 0 then
     begin
       if CheckObjAttribute(_obj, 'The second argument of AddObject', TObject, _value) then
-          Result := PyInt_FromLong(DelphiObject.AddObject(PStr, _value))
+          Result := PyInt_FromLong(DelphiObject.AddObject(PyString_AsDelphiString(PStr), _value))
       else
         Result := nil;
     end
@@ -1189,13 +1189,13 @@ end;
 
 function TPyDelphiStrings.Add_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PAnsiChar;
+  PStr : PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 's:Add', [@PStr] ) <> 0 then
-      Result := PyInt_FromLong(DelphiObject.Add(PStr))
+    if PyArg_ParseTuple( args, 'O:Add', [@PStr] ) <> 0 then
+      Result := PyInt_FromLong(DelphiObject.Add(PyString_AsDelphiString(PStr)))
     else
       Result := nil;
 end;
@@ -1328,14 +1328,15 @@ end;
 
 function TPyDelphiStrings.IndexOf_Wrapper(args: PPyObject): PPyObject;
 Var
-  PStr : PAnsiChar;
+  PStr : PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 's:IndexOf', [@PStr] ) <> 0 then
-    Result := GetPythonEngine.PyInt_FromLong(DelphiObject.IndexOf(PStr))
-  else
-    Result := nil;
+  with GetPythonEngine do
+    if PyArg_ParseTuple( args, 'O:IndexOf', [@PStr] ) <> 0 then
+      Result := GetPythonEngine.PyInt_FromLong(DelphiObject.IndexOf(PyString_AsDelphiString(PStr)))
+    else
+      Result := nil;
 end;
 
 function TPyDelphiStrings.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
@@ -1353,7 +1354,7 @@ begin
     Result := nil;
 end;
 
-function TPyDelphiStrings.MpLength: Integer;
+function TPyDelphiStrings.MpLength: NativeInt;
 begin
   Result := DelphiObject.Count;
 end;

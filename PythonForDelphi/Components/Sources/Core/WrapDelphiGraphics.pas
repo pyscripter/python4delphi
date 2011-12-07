@@ -426,19 +426,14 @@ end;
 
 function TPyDelphiGraphic.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PAnsiChar;
-  _FileName : String;
+  _pFileName : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:LoadFromFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:LoadFromFile', [@_pFileName] ) <> 0 then
     begin
-      if Assigned(_pFileName) then
-        _FileName := _pFileName
-      else
-        _FileName := '';
-      DelphiObject.LoadFromFile(_FileName);
+      DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -539,19 +534,14 @@ end;
 
 function TPyDelphiGraphic.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PAnsiChar;
-  _FileName : String;
+  _pFileName : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:SaveToFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:SaveToFile', [@_pFileName] ) <> 0 then
     begin
-      if Assigned(_pFileName) then
-        _FileName := _pFileName
-      else
-        _FileName := '';
-      DelphiObject.SaveToFile(_FileName);
+      DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -1358,17 +1348,15 @@ end;
 function TPyDelphiCanvas.FloodFill_Wrapper(args: PPyObject): PPyObject;
 var
   x, y, _color: Integer;
-  _pFillStyle : PAnsiChar;
-  _sFillStyle : String;
+  _pFillStyle : PPyObject;
   _FillStyle : TFillStyle;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiis:FloodFill', [@x, @y, @_color, @_pFillStyle] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiO:FloodFill', [@x, @y, @_color, @_pFillStyle] ) <> 0 then
     begin
-      _sFillStyle := _pFillStyle;
-      if SameText(_sFillStyle, 'fsBorder') then
+      if SameText(PyString_AsDelphiString(_pFillStyle), 'fsBorder') then
         _FillStyle := fsBorder
       else
         _FillStyle := fsSurface;
@@ -2026,19 +2014,14 @@ end;
 
 function TPyDelphiCanvas.TextExtent_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PAnsiChar;
-  _Text : String;
+  _pText : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:TextExtent', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextExtent', [@_pText] ) <> 0 then
     begin
-      if Assigned(_pText) then
-        _Text := _pText
-      else
-        _Text := '';
-      Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(_Text));
+      Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(PyString_AsDelphiString(_pText)));
     end
     else
       Result := nil;
@@ -2047,19 +2030,14 @@ end;
 
 function TPyDelphiCanvas.TextHeight_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PAnsiChar;
-  _Text : String;
+  _pText : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:TextHeight', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextHeight', [@_pText] ) <> 0 then
     begin
-      if Assigned(_pText) then
-        _Text := _pText
-      else
-        _Text := '';
-      Result := PyInt_FromLong(DelphiObject.TextHeight(_Text));
+      Result := PyInt_FromLong(DelphiObject.TextHeight(PyString_AsDelphiString(_pText)));
     end
     else
       Result := nil;
@@ -2115,19 +2093,14 @@ end;
 
 function TPyDelphiCanvas.TextWidth_Wrapper(args: PPyObject): PPyObject;
 var
-  _pText : PAnsiChar;
-  _Text : String;
+  _pText : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:TextWidth', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextWidth', [@_pText] ) <> 0 then
     begin
-      if Assigned(_pText) then
-        _Text := _pText
-      else
-        _Text := '';
-      Result := PyInt_FromLong(DelphiObject.TextWidth(_Text));
+      Result := PyInt_FromLong(DelphiObject.TextWidth(PyString_AsDelphiString(_pText)));
     end
     else
       Result := nil;
@@ -2542,19 +2515,14 @@ end;
 
 function TPyDelphiPicture.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PAnsiChar;
-  _FileName : String;
+  _pFileName : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:LoadFromFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:LoadFromFile', [@_pFileName] ) <> 0 then
     begin
-      if Assigned(_pFileName) then
-        _FileName := _pFileName
-      else
-        _FileName := '';
-      DelphiObject.LoadFromFile(_FileName);
+      DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -2595,19 +2563,14 @@ end;
 
 function TPyDelphiPicture.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
-  _pFileName : PAnsiChar;
-  _FileName : String;
+  _pFileName : PPyObject;
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:SaveToFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:SaveToFile', [@_pFileName] ) <> 0 then
     begin
-      if Assigned(_pFileName) then
-        _FileName := _pFileName
-      else
-        _FileName := '';
-      DelphiObject.SaveToFile(_FileName);
+      DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
     end
     else

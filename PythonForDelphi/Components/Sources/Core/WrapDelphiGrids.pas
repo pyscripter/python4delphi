@@ -667,14 +667,14 @@ end;
 function TPyDelphiStringGrid.SetCell(args: PPyObject): PPyObject;
 var
   col, row: integer;
-  value: PAnsiChar;
+  value: PPyObject;
 begin
   with GetPythonEngine do begin
     // adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iis:GetCell', [@col, @row, @value] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiO:GetCell', [@col, @row, @value] ) <> 0 then
     begin
-      DelphiObject.Cells[col, row]:=value;
+      DelphiObject.Cells[col, row]:= PyString_AsDelphiString(value);
       result:=ReturnNone;
     end
     else
