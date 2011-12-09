@@ -3,12 +3,12 @@
   <Package Version="4">
     <PathDelim Value="\"/>
     <Name Value="P4DLaz"/>
-    <AddToProjectUsesSection Value="True"/>
     <CompilerOptions>
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
         <OtherUnitFiles Value="Sources\Core"/>
+        <UnitOutputDirectory Value="FPC_Units"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
@@ -51,7 +51,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgDir);$(PkgDir)\Sources\Core"/>
+      <UnitPath Value="$(PkgOutDir);{PkgDir}\Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
