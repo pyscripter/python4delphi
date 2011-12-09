@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="3">
     <PathDelim Value="\"/>
     <Name Value="P4DLaz"/>
+    <AddToProjectUsesSection Value="False"/>
     <CompilerOptions>
-      <Version Value="11"/>
+      <Version Value="9"/>
       <PathDelim Value="\"/>
       <SearchPaths>
         <OtherUnitFiles Value="Sources\Core"/>
@@ -51,7 +52,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgOutDir);{PkgDir}\Sources\Core"/>
+      <UnitPath Value="$(PkgOutDir);Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
