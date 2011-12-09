@@ -25,28 +25,19 @@
     </CompilerOptions>
     <Files Count="5">
       <Item1>
-        <Filename Value="PythonEngine.pas"/>
+        <Filename Value="$(PackageDir)\Sources\Core\PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonEngine"/>
       </Item1>
       <Item2>
-        <Filename Value="PythonGUIInputOutput.pas"/>
+        <Filename Value="$(PackageDir)\Sources\Core\PythonGUIInputOutput.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonGUIInputOutput"/>
       </Item2>
       <Item3>
-        <Filename Value="PythonAction.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="PythonAction"/>
-      </Item3>
-      <Item4>
-        <Filename Value="MethodCallBack.pas"/>
+        <Filename Value="$(PackageDir)\Sources\Core\MethodCallBack.pas"/>
         <UnitName Value="MethodCallBack"/>
-      </Item4>
-      <Item5>
-        <Filename Value="VarPyth.pas"/>
-        <UnitName Value="VarPyth"/>
-      </Item5>
+      </Item3>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
@@ -60,7 +51,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PkgOutDir);$(PkgOutDir)\Sources\Core"/>
+      <UnitPath Value="$(PackageDir);$(PackageDir)\Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>
