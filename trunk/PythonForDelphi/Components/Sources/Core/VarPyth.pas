@@ -1058,10 +1058,6 @@ var
       end
     else
     begin
-      {$IFDEF FPC}
-        {$HINT CVarTypeToElementInfo not yet implemented}
-        RaiseDispError;
-      {$ELSE}
       LArguments[I].VType := LArgType;
       case CVarTypeToElementInfo[LArgType].Size of
         1, 2, 4:
@@ -1077,7 +1073,6 @@ var
       else
         RaiseDispError;
       end;
-      {$ENDIF}
     end;
     Inc(NativeInt(LParamPtr), SizeOf(Pointer));
   end;
