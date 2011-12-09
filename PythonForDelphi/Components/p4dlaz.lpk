@@ -5,10 +5,10 @@
     <Name Value="P4DLaz"/>
     <AddToProjectUsesSection Value="True"/>
     <CompilerOptions>
-      <Version Value="10"/>
+      <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="$(PackageDir);$(PackageDir)\Sources\Core"/>
+        <OtherUnitFiles Value="Sources\Core"/>
       </SearchPaths>
       <Parsing>
         <SyntaxOptions>
@@ -51,7 +51,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
-      <UnitPath Value="$(PackageDir);$(PackageDir)\Sources\Core"/>
+      <UnitPath Value="$(PkgDir);$(PkgDir)\Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
       <Version Value="2"/>

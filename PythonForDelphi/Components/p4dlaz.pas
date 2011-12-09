@@ -7,16 +7,14 @@ unit P4DLaz;
 interface
 
 uses
-  PythonEngine, PythonGUIInputOutput, PythonAction, MethodCallBack, VarPyth, 
-  LazarusPackageIntf;
+  PythonEngine, PythonGUIInputOutput, MethodCallBack, LazarusPackageIntf;
 
 implementation
-
+{$R Sources\Core\PythonEngine.dcr}
 procedure Register; 
 begin
   RegisterUnit('PythonEngine', @PythonEngine.Register); 
   RegisterUnit('PythonGUIInputOutput', @PythonGUIInputOutput.Register); 
-  RegisterUnit('PythonAction', @PythonAction.Register); 
 end; 
 
 initialization
