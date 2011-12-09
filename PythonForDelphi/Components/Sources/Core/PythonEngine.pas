@@ -112,6 +112,11 @@ type
   {$IFEND}
   PNativeInt = ^NativeInt;
 {$ELSE}
+  {$IF DEFINED(FPC_VER) and (FPC_VER >= 5)}
+  {$ELSE}
+    NativeInt = integer;
+    NativeUInt = Cardinal;
+  {$IFEND}
   PNativeInt = ^NativeInt;
 {$ENDIF}
 
