@@ -438,7 +438,6 @@ type
   PPySliceObject    = ^PySliceObject;
 
   AtExitProc        = procedure;
-
   PyCFunction       = function( self, args:PPyObject): PPyObject; cdecl;
   PyCFunctionWithKW = function( self, args, keywords:PPyObject): PPyObject; cdecl;
 
@@ -1487,6 +1486,7 @@ type
 type
   TPythonInterface=class(TDynamicDll)
   private
+    {$IFNDEF FPC}
     DLL_PyArg_Parse: function( args: PPyObject; format: PAnsiChar {;....}) :
                      Integer; cdecl;
     DLL_PyArg_ParseTuple:
@@ -1494,10 +1494,11 @@ type
                      Integer; cdecl;
     DLL_Py_BuildValue:
                      function( format: PAnsiChar {;...}): PPyObject; cdecl;
-    DLL_PyCode_Addr2Line:
-                     function ( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
     DLL_Py_GetBuildInfo:
                      function : PAnsiChar; cdecl;
+    {$ENDIF FPC}
+    DLL_PyCode_Addr2Line:
+                     function ( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
     DLL_PyImport_ExecCodeModule:
                      function ( const name : AnsiString; codeobject : PPyObject) : PPyObject; cdecl;
 
@@ -1672,6 +1673,12 @@ type
     PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
     PyInt_FromLong:     function( x: LongInt):PPyObject; cdecl;
+    {$IFDEF FPC}
+    // FPC handles varargs much better than Delphi!
+    PyArg_Parse:        function( args: PPyObject; format: PAnsiChar; argp: array of const {;....}) :  Integer; cdecl;
+    PyArg_ParseTuple:   function( args: PPyObject; format: PAnsiChar; argp: array of const  {;...}): Integer; cdecl;
+    Py_BuildValue:      function( format: PAnsiChar; args: array of const  {;...}): PPyObject; cdecl;
+    {$ENDIF FPC}
     Py_Initialize:      procedure; cdecl;
     Py_Exit:            procedure( RetVal: Integer); cdecl;
     PyEval_GetBuiltins: function: PPyObject; cdecl;
@@ -1700,218 +1707,219 @@ type
     PySys_SetArgv:        procedure( argc: Integer; argv: PPAnsiChar); cdecl;
     PySys_SetArgv3000:    procedure( argc: Integer; argv: PPWideChar); cdecl;
 
-{+ means, Grzegorz or me has tested his non object version of this function}
-{+} PyCFunction_New: function(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
+    PyCFunction_New: function(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
 // Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
-//{+} PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
-{-} PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
-{-} PyEval_GetFrame:function :PPyObject; cdecl;
-{-} PyEval_GetGlobals:function :PPyObject; cdecl;
-{-} PyEval_GetLocals:function :PPyObject; cdecl;
-{-} //PyEval_GetOwner:function :PPyObject; cdecl;
-{-} PyEval_GetRestricted:function :integer; cdecl;
+//    PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
+    PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
+    PyEval_GetFrame:function :PPyObject; cdecl;
+    PyEval_GetGlobals:function :PPyObject; cdecl;
+    PyEval_GetLocals:function :PPyObject; cdecl;
+    //PyEval_GetOwner:function :PPyObject; cdecl;
+    PyEval_GetRestricted:function :integer; cdecl;
 
-{-} PyEval_InitThreads:procedure; cdecl;
-{-} PyEval_RestoreThread:procedure( tstate: PPyThreadState); cdecl;
-{-} PyEval_SaveThread:function :PPyThreadState; cdecl;
+    PyEval_InitThreads:procedure; cdecl;
+    PyEval_RestoreThread:procedure( tstate: PPyThreadState); cdecl;
+    PyEval_SaveThread:function :PPyThreadState; cdecl;
 
-{-} PyFile_FromString:function (pc1,pc2:PAnsiChar):PPyObject; cdecl;
-{-} PyFile_GetLine:function (ob:PPyObject;i:integer):PPyObject; cdecl;
-{-} PyFile_Name:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyFile_SetBufSize:procedure(ob:PPyObject;i:integer); cdecl;
-{-} PyFile_SoftSpace:function (ob:PPyObject;i:integer):integer; cdecl;
-{-} PyFile_WriteObject:function (ob1,ob2:PPyObject;i:integer):integer; cdecl;
-{-} PyFile_WriteString:procedure(s:PAnsiChar;ob:PPyObject); cdecl;
-{+} PyFloat_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
-{+} PyFloat_FromDouble:function (db:double):PPyObject; cdecl;
-{-} PyFunction_GetCode:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyFunction_GetGlobals:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
-{-} PyImport_Cleanup:procedure; cdecl;
-{-} PyImport_GetMagicNumber:function :LONGINT; cdecl;
-{+} PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
-{+} PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
-{+} PyImport_Import:function (name:PPyObject):PPyObject; cdecl;
-{-} //PyImport_Init:procedure; cdecl;
-{-} PyImport_ReloadModule:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyInstance_New:function (obClass, obArg, obKW:PPyObject):PPyObject; cdecl;
-{+} PyInt_AsLong:function (ob:PPyObject):LONGINT; cdecl;
-{-} PyList_Append:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PyList_AsTuple:function (ob:PPyObject):PPyObject; cdecl;
-{+} PyList_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
-{-} PyList_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
-{-} PyList_Insert:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
-{-} PyList_New:function (size:NativeInt):PPyObject; cdecl;
-{-} PyList_Reverse:function (ob:PPyObject):integer; cdecl;
-{-} PyList_SetItem:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
-{-} PyList_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;ob2:PPyObject):integer; cdecl;
-{+} PyList_Size:function (ob:PPyObject):NativeInt; cdecl;
-{-} PyList_Sort:function (ob:PPyObject):integer; cdecl;
-{-} PyLong_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
-{+} PyLong_AsLong:function (ob:PPyObject):LONGINT; cdecl;
-{+} PyLong_FromDouble:function (db:double):PPyObject; cdecl;
-{+} PyLong_FromLong:function (l:longint):PPyObject; cdecl;
-{-} PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
-{-} PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
-{-} PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
-{-} PyLong_FromUnicode:function(ob:PPyObject; a, b : integer) : PPyObject; cdecl;
-{-} PyLong_FromLongLong:function(val:Int64) : PPyObject; cdecl;
-{-} PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
-{-} PyMapping_Check:function (ob:PPyObject):integer; cdecl;
-{-} PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
-{-} PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
-{-} PyMapping_HasKeyString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
-{-} PyMapping_Length:function (ob:PPyObject):NativeInt; cdecl;
-{-} PyMapping_SetItemString:function (ob:PPyObject; key:PAnsiChar; value:PPyObject):integer; cdecl;
-{-} PyMethod_Class:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyMethod_Function:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyMethod_New:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
-{-} PyMethod_Self:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyModule_GetName:function (ob:PPyObject):PAnsiChar; cdecl;
-{-} PyModule_New:function (key:PAnsiChar):PPyObject; cdecl;
-{-} PyNumber_Absolute:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Add:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_And:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Check:function (ob:PPyObject):integer; cdecl;
-{-} PyNumber_Coerce:function (var ob1,ob2:PPyObject):integer; cdecl;
-{-} PyNumber_Divide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_FloorDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_TrueDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Divmod:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Float:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Int:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Invert:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Long:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Lshift:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Multiply:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Negative:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Or:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Positive:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Power:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Remainder:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Rshift:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Subtract:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyNumber_Xor:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyOS_InitInterrupts:procedure; cdecl;
-{-} PyOS_InterruptOccurred:function :integer; cdecl;
-{+} PyObject_CallObject:function (ob,args:PPyObject):PPyObject; cdecl;
+    PyFile_FromString:function (pc1,pc2:PAnsiChar):PPyObject; cdecl;
+    PyFile_GetLine:function (ob:PPyObject;i:integer):PPyObject; cdecl;
+    PyFile_Name:function (ob:PPyObject):PPyObject; cdecl;
+    PyFile_SetBufSize:procedure(ob:PPyObject;i:integer); cdecl;
+    PyFile_SoftSpace:function (ob:PPyObject;i:integer):integer; cdecl;
+    PyFile_WriteObject:function (ob1,ob2:PPyObject;i:integer):integer; cdecl;
+    PyFile_WriteString:procedure(s:PAnsiChar;ob:PPyObject); cdecl;
+    PyFloat_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
+    PyFloat_FromDouble:function (db:double):PPyObject; cdecl;
+    PyFunction_GetCode:function (ob:PPyObject):PPyObject; cdecl;
+    PyFunction_GetGlobals:function (ob:PPyObject):PPyObject; cdecl;
+    PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
+    PyImport_Cleanup:procedure; cdecl;
+    PyImport_GetMagicNumber:function :LONGINT; cdecl;
+    PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
+    PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
+    PyImport_Import:function (name:PPyObject):PPyObject; cdecl;
+    //PyImport_Init:procedure; cdecl;
+    PyImport_ReloadModule:function (ob:PPyObject):PPyObject; cdecl;
+    PyInstance_New:function (obClass, obArg, obKW:PPyObject):PPyObject; cdecl;
+    PyInt_AsLong:function (ob:PPyObject):LONGINT; cdecl;
+    PyList_Append:function (ob1,ob2:PPyObject):integer; cdecl;
+    PyList_AsTuple:function (ob:PPyObject):PPyObject; cdecl;
+    PyList_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+    PyList_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
+    PyList_Insert:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
+    PyList_New:function (size:NativeInt):PPyObject; cdecl;
+    PyList_Reverse:function (ob:PPyObject):integer; cdecl;
+    PyList_SetItem:function (dp:PPyObject;idx:NativeInt;item:PPyObject):integer; cdecl;
+    PyList_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;ob2:PPyObject):integer; cdecl;
+    PyList_Size:function (ob:PPyObject):NativeInt; cdecl;
+    PyList_Sort:function (ob:PPyObject):integer; cdecl;
+    PyLong_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
+    PyLong_AsLong:function (ob:PPyObject):LONGINT; cdecl;
+    PyLong_FromDouble:function (db:double):PPyObject; cdecl;
+    PyLong_FromLong:function (l:longint):PPyObject; cdecl;
+    PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
+    PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
+    PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
+    PyLong_FromUnicode:function(ob:PPyObject; a, b : integer) : PPyObject; cdecl;
+    PyLong_FromLongLong:function(val:Int64) : PPyObject; cdecl;
+    PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
+    PyMapping_Check:function (ob:PPyObject):integer; cdecl;
+    PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
+    PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
+    PyMapping_HasKeyString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
+    PyMapping_Length:function (ob:PPyObject):NativeInt; cdecl;
+    PyMapping_SetItemString:function (ob:PPyObject; key:PAnsiChar; value:PPyObject):integer; cdecl;
+    PyMethod_Class:function (ob:PPyObject):PPyObject; cdecl;
+    PyMethod_Function:function (ob:PPyObject):PPyObject; cdecl;
+    PyMethod_New:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
+    PyMethod_Self:function (ob:PPyObject):PPyObject; cdecl;
+    PyModule_GetName:function (ob:PPyObject):PAnsiChar; cdecl;
+    PyModule_New:function (key:PAnsiChar):PPyObject; cdecl;
+    PyNumber_Absolute:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Add:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_And:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Check:function (ob:PPyObject):integer; cdecl;
+    PyNumber_Coerce:function (var ob1,ob2:PPyObject):integer; cdecl;
+    PyNumber_Divide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_FloorDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_TrueDivide:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Divmod:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Float:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Int:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Invert:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Long:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Lshift:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Multiply:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Negative:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Or:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Positive:function (ob:PPyObject):PPyObject; cdecl;
+    PyNumber_Power:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
+    PyNumber_Remainder:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Rshift:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Subtract:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyNumber_Xor:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyOS_InitInterrupts:procedure; cdecl;
+    PyOS_InterruptOccurred:function :integer; cdecl;
+    PyObject_CallObject:function (ob,args:PPyObject):PPyObject; cdecl;
     PyObject_CallMethodStr: function ( obj : PPyObject; method, format, value : PAnsiChar ) : PPyObject; cdecl;
     PyObject_Compare: function (ob1,ob2:PPyObject):integer; cdecl;
     PyObject_RichCompare:function (ob1,ob2:PPyObject;opid:integer):PPyObject; cdecl;
     PyObject_RichCompareBool:function (ob1,ob2:PPyObject;opid:integer):Integer; cdecl;
-{-} PyObject_GetAttr:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{+} PyObject_GetAttrString:function (ob:PPyObject;c:PAnsiChar):PPyObject; cdecl;
-{-} PyObject_GetItem:function (ob,key:PPyObject):PPyObject; cdecl;
-{-} PyObject_DelItem:function (ob,key:PPyObject):PPyObject; cdecl;
-{-} PyObject_HasAttrString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
-{-} PyObject_Hash:function (ob:PPyObject):NativeInt; cdecl;
-{-} PyObject_IsTrue:function (ob:PPyObject):integer; cdecl;
-{-} PyObject_Length:function (ob:PPyObject):NativeInt; cdecl;
-{-} PyObject_Repr:function (ob:PPyObject):PPyObject; cdecl;
-{-} PyObject_SetAttr:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
-{-} PyObject_SetAttrString:function (ob:PPyObject;key:PAnsiChar;value:PPyObject):integer; cdecl;
-{-} PyObject_SetItem:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
-{-} PyObject_Init:function (ob:PPyObject; t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_InitVar:function (ob:PPyObject; t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
-{-} PyObject_New:function (t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
+    PyObject_GetAttr:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyObject_GetAttrString:function (ob:PPyObject;c:PAnsiChar):PPyObject; cdecl;
+    PyObject_GetItem:function (ob,key:PPyObject):PPyObject; cdecl;
+    PyObject_DelItem:function (ob,key:PPyObject):PPyObject; cdecl;
+    PyObject_HasAttrString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
+    PyObject_Hash:function (ob:PPyObject):NativeInt; cdecl;
+    PyObject_IsTrue:function (ob:PPyObject):integer; cdecl;
+    PyObject_Length:function (ob:PPyObject):NativeInt; cdecl;
+    PyObject_Repr:function (ob:PPyObject):PPyObject; cdecl;
+    PyObject_SetAttr:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
+    PyObject_SetAttrString:function (ob:PPyObject;key:PAnsiChar;value:PPyObject):integer; cdecl;
+    PyObject_SetItem:function (ob1,ob2,ob3:PPyObject):integer; cdecl;
+    PyObject_Init:function (ob:PPyObject; t:PPyTypeObject):PPyObject; cdecl;
+    PyObject_InitVar:function (ob:PPyObject; t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
+    PyObject_New:function (t:PPyTypeObject):PPyObject; cdecl;
+    PyObject_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
     PyObject_Free:procedure (ob:PPyObject); cdecl;
     PyObject_GetIter: function (obj: PPyObject) : PPyObject; cdecl;
     PyIter_Next: function (obj: PPyObject) : PPyObject; cdecl;
-{-} PyObject_IsInstance:function (inst, cls:PPyObject):integer; cdecl;
-{-} PyObject_IsSubclass:function (derived, cls:PPyObject):integer; cdecl;
+    PyObject_IsInstance:function (inst, cls:PPyObject):integer; cdecl;
+    PyObject_IsSubclass:function (derived, cls:PPyObject):integer; cdecl;
     PyObject_Call:function (ob, args, kw:PPyObject):PPyObject; cdecl;
     PyObject_GenericGetAttr:function (obj, name : PPyObject) : PPyObject; cdecl;
     PyObject_GenericSetAttr:function (obj, name, value : PPyObject) : Integer; cdecl;
-{-} PyObject_GC_Malloc:function (size:NativeUInt):PPyObject; cdecl;
-{-} PyObject_GC_New:function (t:PPyTypeObject):PPyObject; cdecl;
-{-} PyObject_GC_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
-{-} PyObject_GC_Resize:function (t:PPyObject; newsize:NativeInt):PPyObject; cdecl;
-{-} PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
-{-} PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
-{-} PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
-{$IFNDEF PYTHON25_OR_HIGHER}
-{-} PyRange_New:function (l1,l2,l3:longint;i:integer):PPyObject; cdecl;
-{$ENDIF}
-{-} PySequence_Check:function (ob:PPyObject):integer; cdecl;
-{-} PySequence_Concat:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PySequence_Count:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PySequence_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
-{-} PySequence_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
-{-} PySequence_In:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} PySequence_Index:function (ob1,ob2:PPyObject):NativeInt; cdecl;
-{-} PySequence_Length:function (ob:PPyObject):NativeInt; cdecl;
-{-} PySequence_Repeat:function (ob:PPyObject;count:NativeInt):PPyObject; cdecl;
-{-} PySequence_SetItem:function (ob:PPyObject;i:NativeInt;value:PPyObject):integer; cdecl;
-{-} PySequence_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;value:PPyObject):integer; cdecl;
-{-} PySequence_DelSlice:function (ob:PPyObject;i1,i2:NativeInt):integer; cdecl;
-{-} PySequence_Tuple:function (ob:PPyObject):PPyObject; cdecl;
-{-} PySequence_Contains:function (ob, value:PPyObject):integer; cdecl;
+    PyObject_GC_Malloc:function (size:NativeUInt):PPyObject; cdecl;
+    PyObject_GC_New:function (t:PPyTypeObject):PPyObject; cdecl;
+    PyObject_GC_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
+    PyObject_GC_Resize:function (t:PPyObject; newsize:NativeInt):PPyObject; cdecl;
+    PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
+    PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
+    PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
+    PySequence_Check:function (ob:PPyObject):integer; cdecl;
+    PySequence_Concat:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PySequence_Count:function (ob1,ob2:PPyObject):integer; cdecl;
+    PySequence_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+    PySequence_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
+    PySequence_In:function (ob1,ob2:PPyObject):integer; cdecl;
+    PySequence_Index:function (ob1,ob2:PPyObject):NativeInt; cdecl;
+    PySequence_Length:function (ob:PPyObject):NativeInt; cdecl;
+    PySequence_Repeat:function (ob:PPyObject;count:NativeInt):PPyObject; cdecl;
+    PySequence_SetItem:function (ob:PPyObject;i:NativeInt;value:PPyObject):integer; cdecl;
+    PySequence_SetSlice:function (ob:PPyObject;i1,i2:NativeInt;value:PPyObject):integer; cdecl;
+    PySequence_DelSlice:function (ob:PPyObject;i1,i2:NativeInt):integer; cdecl;
+    PySequence_Tuple:function (ob:PPyObject):PPyObject; cdecl;
+    PySequence_Contains:function (ob, value:PPyObject):integer; cdecl;
     PySeqIter_New: function(obj : PPyObject) : PPyObject; cdecl;
-{-} PySlice_GetIndices:function (ob:PPySliceObject;length:NativeInt;var start,stop,step:NativeInt):integer; cdecl;
-{-} PySlice_GetIndicesEx:function (ob:PPySliceObject;length:NativeInt;var start,stop,step,slicelength:NativeInt):integer; cdecl;
-{-} PySlice_New:function (start,stop,step:PPyObject):PPyObject; cdecl;
-{-} PyString_Concat:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
-{-} PyString_ConcatAndDel:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
-{-} PyString_Format:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-{-} PyString_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
-{-} PyString_Size:function (ob:PPyObject):NativeInt; cdecl;
-{-} PyString_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
-{-} PyString_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
-{+} PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
-{-} //PySys_Init:procedure; cdecl;
-{-} PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
-{-} PySys_SetPath:procedure(path:PAnsiChar); cdecl;
-{-} //PyTraceBack_Fetch:function :PPyObject; cdecl;
-{-} PyTraceBack_Here:function (p:pointer):integer; cdecl;
-{-} PyTraceBack_Print:function (ob1,ob2:PPyObject):integer; cdecl;
-{-} //PyTraceBack_Store:function (ob:PPyObject):integer; cdecl;
-{+} PyTuple_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
-{-} PyTuple_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
-{+} PyTuple_New:function (size:NativeInt):PPyObject; cdecl;
-{+} PyTuple_SetItem:function (ob:PPyObject;key:NativeInt;value:PPyObject):integer; cdecl;
-{+} PyTuple_Size:function (ob:PPyObject):NativeInt; cdecl;
-{+} PyType_IsSubtype:function (a, b : PPyTypeObject):integer; cdecl;
+    PySlice_GetIndices:function (ob:PPySliceObject;length:NativeInt;var start,stop,step:NativeInt):integer; cdecl;
+    PySlice_GetIndicesEx:function (ob:PPySliceObject;length:NativeInt;var start,stop,step,slicelength:NativeInt):integer; cdecl;
+    PySlice_New:function (start,stop,step:PPyObject):PPyObject; cdecl;
+    PyString_Concat:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
+    PyString_ConcatAndDel:procedure(var ob1:PPyObject;ob2:PPyObject); cdecl;
+    PyString_Format:function (ob1,ob2:PPyObject):PPyObject; cdecl;
+    PyString_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
+    PyString_Size:function (ob:PPyObject):NativeInt; cdecl;
+    PyString_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
+    PyString_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
+    PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
+    //PySys_Init:procedure; cdecl;
+    PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
+    PySys_SetPath:procedure(path:PAnsiChar); cdecl;
+    //PyTraceBack_Fetch:function :PPyObject; cdecl;
+    PyTraceBack_Here:function (p:pointer):integer; cdecl;
+    PyTraceBack_Print:function (ob1,ob2:PPyObject):integer; cdecl;
+    //PyTraceBack_Store:function (ob:PPyObject):integer; cdecl;
+    PyTuple_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
+    PyTuple_GetSlice:function (ob:PPyObject;i1,i2:NativeInt):PPyObject; cdecl;
+    PyTuple_New:function (size:NativeInt):PPyObject; cdecl;
+    PyTuple_SetItem:function (ob:PPyObject;key:NativeInt;value:PPyObject):integer; cdecl;
+    PyTuple_Size:function (ob:PPyObject):NativeInt; cdecl;
+    PyType_IsSubtype:function (a, b : PPyTypeObject):integer; cdecl;
     PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:NativeInt) : PPyObject; cdecl;
     PyType_GenericNew:function(atype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
     PyType_Ready:function(atype: PPyTypeObject) : integer; cdecl;
-{+} PyUnicode_FromWideChar:function (const w:PWideChar; size:NativeInt):PPyObject; cdecl;
-{+} PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:NativeInt):integer; cdecl;
+    PyUnicode_FromWideChar:function (const w:PWideChar; size:NativeInt):PPyObject; cdecl;
+    PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:NativeInt):integer; cdecl;
     PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
-{-} PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
+    PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWrapper_New: function ( ob1, ob2 : PPyObject) : PPyObject; cdecl;
     PyBool_FromLong: function ( ok : Integer) : PPyObject; cdecl;
     PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;
-{-} Py_AtExit:function (proc: AtExitProc):integer; cdecl;
-{-} //Py_Cleanup:procedure; cdecl;
-{-} Py_CompileString:function (s1,s2:PAnsiChar;i:integer):PPyObject; cdecl;
-{-} Py_FatalError:procedure(s:PAnsiChar); cdecl;
-{-} Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
-{-} Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
-{-} _PyObject_New:function (obt:PPyTypeObject;ob:PPyObject):PPyObject; cdecl;
-{-} _PyString_Resize:function (var ob:PPyObject;i:NativeInt):integer; cdecl;
-{+} Py_Finalize                     : procedure; cdecl;
-{-} PyErr_ExceptionMatches          : function ( exc : PPyObject) : Integer; cdecl;
-{-} PyErr_GivenExceptionMatches     : function ( raised_exc, exc : PPyObject) : Integer; cdecl;
-{-} PyEval_EvalCode                 : function ( co : PPyCodeObject; globals, locals : PPyObject) : PPyObject; cdecl;
-{+} Py_GetVersion                   : function : PAnsiChar; cdecl;
-{+} Py_GetCopyright                 : function : PAnsiChar; cdecl;
-{+} Py_GetExecPrefix                : function : PAnsiChar; cdecl;
-{+} Py_GetPath                      : function : PAnsiChar; cdecl;
-{+} Py_GetPrefix                    : function : PAnsiChar; cdecl;
-{+} Py_GetProgramName               : function : PAnsiChar; cdecl;
+    Py_AtExit:function (proc: AtExitProc):integer; cdecl;
+    //Py_Cleanup:procedure; cdecl;
+    Py_CompileString:function (s1,s2:PAnsiChar;i:integer):PPyObject; cdecl;
+    Py_FatalError:procedure(s:PAnsiChar); cdecl;
+    Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
+    Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
+    _PyObject_New:function (obt:PPyTypeObject;ob:PPyObject):PPyObject; cdecl;
+    _PyString_Resize:function (var ob:PPyObject;i:NativeInt):integer; cdecl;
+    Py_Finalize                     : procedure; cdecl;
+    PyErr_ExceptionMatches          : function ( exc : PPyObject) : Integer; cdecl;
+    PyErr_GivenExceptionMatches     : function ( raised_exc, exc : PPyObject) : Integer; cdecl;
+    PyEval_EvalCode                 : function ( co : PPyCodeObject; globals, locals : PPyObject) : PPyObject; cdecl;
+    Py_GetVersion                   : function : PAnsiChar; cdecl;
+    Py_GetCopyright                 : function : PAnsiChar; cdecl;
+    Py_GetExecPrefix                : function : PAnsiChar; cdecl;
+    Py_GetPath                      : function : PAnsiChar; cdecl;
+    Py_GetPrefix                    : function : PAnsiChar; cdecl;
+    Py_GetProgramName               : function : PAnsiChar; cdecl;
 
-{-} PyParser_SimpleParseString      : function ( str : PAnsiChar; start : Integer) : PNode; cdecl;
-{-} PyNode_Free                     : procedure( n : PNode ); cdecl;
-{-} PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
-{-} Py_Malloc                       : function ( size : NativeInt ) : Pointer;
-{-} PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
-{-} PyObject_CallMethod             : function ( obj : PPyObject; method, format : PAnsiChar ) : PPyObject; cdecl;
+    PyParser_SimpleParseString      : function ( str : PAnsiChar; start : Integer) : PNode; cdecl;
+    PyNode_Free                     : procedure( n : PNode ); cdecl;
+    PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
+    Py_Malloc                       : function ( size : NativeInt ) : Pointer;
+    PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
+    {$IFDEF FPC}
+    PyObject_CallMethod,
+    PyObject_CallMethodWithArgs      : function ( obj : PPyObject; method, format : PAnsiChar; args: array of const ) : PPyObject; cdecl;
+    {$ELSE FPC}
+    PyObject_CallMethod             : function ( obj : PPyObject; method, format : PAnsiChar ) : PPyObject; cdecl;
+    {$ENDIF FPC}
 
 {New exported Objects in Python 1.5}
     Py_SetProgramName               : procedure( name: PAnsiChar); cdecl;
@@ -1938,7 +1946,6 @@ type
 {Further exported Objects, may be implemented later}
 {
     PyCode_New: Pointer;
-    PyErr_SetInterrupt: Pointer;
     PyFile_AsFile: Pointer;
     PyFile_FromFile: Pointer;
     PyFloat_AsString: Pointer;
@@ -1969,7 +1976,6 @@ type
     PyOS_strtol: Pointer;
     PyOS_strtoul: Pointer;
     PyObject_CallFunction: Pointer;
-    PyObject_CallMethod: Pointer;
     PyObject_Print: Pointer;
     PyParser_AddToken: Pointer;
     PyParser_Delete: Pointer;
@@ -1990,7 +1996,6 @@ type
     PyTokenizer_FromString: Pointer;
     PyTokenizer_Get: Pointer;
     Py_Main: Pointer;
-    _PyObject_NewVar: Pointer;
     _PyParser_Grammar: Pointer;
     _PyParser_TokenNames: Pointer;
     _PyThread_Started: Pointer;
@@ -2009,6 +2014,7 @@ type
 
   function    Py_GetPlatform: PAnsiChar; cdecl;
 
+  {$IFNDEF FPC}
   function PyArg_Parse     ( args: PPyObject; format: PAnsiChar;
                              argp: array of Pointer): Integer; cdecl;
   function PyArg_ParseTuple( args: PPyObject; format: PAnsiChar;
@@ -2019,6 +2025,7 @@ type
   function Py_BuildValue( format: PAnsiChar; args: array of const): PPyObject; cdecl;
   function PyObject_CallMethodWithArgs( obj : PPyObject; method,
                                         format: PAnsiChar; args: array of const): PPyObject; cdecl;
+  {$ENDIF FPC}
   function PyCode_Addr2Line( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
   function Py_GetBuildInfo: PAnsiChar; cdecl;
   function PyImport_ExecCodeModule( const AName : AnsiString; codeobject : PPyObject) : PPyObject;
@@ -3674,214 +3681,223 @@ begin
   //@PyArgs_VaParse            := Import('PyArgs_VaParse');
   //@Py_VaBuildValue           := Import('Py_VaBuildValue');
   //@PyBuiltin_Init            := Import('PyBuiltin_Init');
-  @PyComplex_FromCComplex    := Import('PyComplex_FromCComplex');
-  @PyComplex_FromDoubles     := Import('PyComplex_FromDoubles');
-  @PyComplex_RealAsDouble    := Import('PyComplex_RealAsDouble');
-  @PyComplex_ImagAsDouble    := Import('PyComplex_ImagAsDouble');
-  @PyComplex_AsCComplex      := Import('PyComplex_AsCComplex');
-  @PyCFunction_GetFunction   := Import('PyCFunction_GetFunction');
-  @PyCFunction_GetSelf       := Import('PyCFunction_GetSelf');
-  @PyCallable_Check          := Import('PyCallable_Check');
+  PyComplex_FromCComplex    := Import('PyComplex_FromCComplex');
+  PyComplex_FromDoubles     := Import('PyComplex_FromDoubles');
+  PyComplex_RealAsDouble    := Import('PyComplex_RealAsDouble');
+  PyComplex_ImagAsDouble    := Import('PyComplex_ImagAsDouble');
+  PyComplex_AsCComplex      := Import('PyComplex_AsCComplex');
+  PyCFunction_GetFunction   := Import('PyCFunction_GetFunction');
+  PyCFunction_GetSelf       := Import('PyCFunction_GetSelf');
+  PyCallable_Check          := Import('PyCallable_Check');
   if not IsPython3000 then begin
-    @PyClass_New               := Import('PyClass_New');
-    @PyClass_IsSubclass        := Import('PyClass_IsSubclass');
-    @PyCObject_FromVoidPtr     := Import('PyCObject_FromVoidPtr'); // Removed in Python 3.2
-    @PyCObject_AsVoidPtr       := Import('PyCObject_AsVoidPtr');
+    PyClass_New               := Import('PyClass_New');
+    PyClass_IsSubclass        := Import('PyClass_IsSubclass');
+    PyCObject_FromVoidPtr     := Import('PyCObject_FromVoidPtr'); // Removed in Python 3.2
+    PyCObject_AsVoidPtr       := Import('PyCObject_AsVoidPtr');
   end;
-  @PyDict_GetItem            := Import('PyDict_GetItem');
-  @PyDict_SetItem            := Import('PyDict_SetItem');
-  @PyDict_DelItem            := Import('PyDict_DelItem');
-  @PyDict_Clear              := Import('PyDict_Clear');
-  @PyDict_Next               := Import('PyDict_Next');
-  @PyDict_Keys               := Import('PyDict_Keys');
-  @PyDict_Values             := Import('PyDict_Values');
-  @PyDict_Items              := Import('PyDict_Items');
-  @PyDict_Size               := Import('PyDict_Size');
-  @PyDict_DelItemString      := Import('PyDict_DelItemString');
-  @PyDict_Copy               := Import('PyDict_Copy');
-  @PyDictProxy_New           := Import('PyDictProxy_New');
+  PyDict_GetItem            := Import('PyDict_GetItem');
+  PyDict_SetItem            := Import('PyDict_SetItem');
+  PyDict_DelItem            := Import('PyDict_DelItem');
+  PyDict_Clear              := Import('PyDict_Clear');
+  PyDict_Next               := Import('PyDict_Next');
+  PyDict_Keys               := Import('PyDict_Keys');
+  PyDict_Values             := Import('PyDict_Values');
+  PyDict_Items              := Import('PyDict_Items');
+  PyDict_Size               := Import('PyDict_Size');
+  PyDict_DelItemString      := Import('PyDict_DelItemString');
+  PyDict_Copy               := Import('PyDict_Copy');
+  PyDictProxy_New           := Import('PyDictProxy_New');
   if not IsPython3000 then
-    @Py_InitModule4            := {$IFDEF CPUX64}Import('Py_InitModule4_64'){$ELSE}Import('Py_InitModule4'){$ENDIF}
+    Py_InitModule4            := {$IFDEF CPUX64}Import('Py_InitModule4_64'){$ELSE}Import('Py_InitModule4'){$ENDIF}
   else
-    @PyModule_Create2           := Import('PyModule_Create2');
-  @PyErr_Print               := Import('PyErr_Print');
-  @PyErr_SetNone             := Import('PyErr_SetNone');
-  @PyErr_SetObject           := Import('PyErr_SetObject');
-  @PyErr_Restore             := Import('PyErr_Restore');
-  @PyErr_BadArgument         := Import('PyErr_BadArgument');
-  @PyErr_NoMemory            := Import('PyErr_NoMemory');
-  @PyErr_SetFromErrno        := Import('PyErr_SetFromErrno');
-  @PyErr_BadInternalCall     := Import('PyErr_BadInternalCall');
-  @PyErr_CheckSignals        := Import('PyErr_CheckSignals');
-  @PyErr_Occurred            := Import('PyErr_Occurred');
-  @PyErr_Clear               := Import('PyErr_Clear');
-  @PyErr_Fetch               := Import('PyErr_Fetch');
-  @PyErr_SetString           := Import('PyErr_SetString');
-  @PyEval_GetBuiltins        := Import('PyEval_GetBuiltins');
-  @PyImport_GetModuleDict    := Import('PyImport_GetModuleDict');
+    PyModule_Create2           := Import('PyModule_Create2');
+  PyErr_Print               := Import('PyErr_Print');
+  PyErr_SetNone             := Import('PyErr_SetNone');
+  PyErr_SetObject           := Import('PyErr_SetObject');
+  PyErr_Restore             := Import('PyErr_Restore');
+  PyErr_BadArgument         := Import('PyErr_BadArgument');
+  PyErr_NoMemory            := Import('PyErr_NoMemory');
+  PyErr_SetFromErrno        := Import('PyErr_SetFromErrno');
+  PyErr_BadInternalCall     := Import('PyErr_BadInternalCall');
+  PyErr_CheckSignals        := Import('PyErr_CheckSignals');
+  PyErr_Occurred            := Import('PyErr_Occurred');
+  PyErr_Clear               := Import('PyErr_Clear');
+  PyErr_Fetch               := Import('PyErr_Fetch');
+  PyErr_SetString           := Import('PyErr_SetString');
+  PyEval_GetBuiltins        := Import('PyEval_GetBuiltins');
+  PyImport_GetModuleDict    := Import('PyImport_GetModuleDict');
   if IsPython3000 then
-    @PyInt_FromLong            := Import('PyLong_FromLong')
+    PyInt_FromLong          := Import('PyLong_FromLong')
   else
-    @PyInt_FromLong            := Import('PyInt_FromLong');
-  @DLL_PyArg_ParseTuple      := Import('PyArg_ParseTuple');
-  @DLL_PyArg_Parse           := Import('PyArg_Parse');
-  @DLL_Py_BuildValue         := Import('Py_BuildValue');
-  @Py_Initialize             := Import('Py_Initialize');
-  @PyDict_New                := Import('PyDict_New');
-  @PyDict_SetItemString      := Import('PyDict_SetItemString');
-  @PyModule_GetDict          := Import('PyModule_GetDict');
-  @PyObject_Str              := Import('PyObject_Str');
-  @PyRun_String              := Import('PyRun_String');
-  @PyRun_SimpleString        := Import('PyRun_SimpleString');
-  @PyDict_GetItemString      := Import('PyDict_GetItemString');
+    PyInt_FromLong          := Import('PyInt_FromLong');
+  {$IFDEF FPC}
+  PyArg_ParseTuple          := Import('PyArg_ParseTuple');
+  PyArg_Parse               := Import('PyArg_Parse');
+  Py_BuildValue             := Import('Py_BuildValue');
+  {$ELSE FPC}
+  DLL_PyArg_ParseTuple      := Import('PyArg_ParseTuple');
+  DLL_PyArg_Parse           := Import('PyArg_Parse');
+  DLL_Py_BuildValue         := Import('Py_BuildValue');
+  {$ENDIF FPC}
+  Py_Initialize             := Import('Py_Initialize');
+  PyDict_New                := Import('PyDict_New');
+  PyDict_SetItemString      := Import('PyDict_SetItemString');
+  PyModule_GetDict          := Import('PyModule_GetDict');
+  PyObject_Str              := Import('PyObject_Str');
+  PyRun_String              := Import('PyRun_String');
+  PyRun_SimpleString        := Import('PyRun_SimpleString');
+  PyDict_GetItemString      := Import('PyDict_GetItemString');
   if not IsPython3000 then
-    @PyString_AsString         := Import('PyString_AsString')
+    PyString_AsString         := Import('PyString_AsString')
   else
-    @PyString_AsString         := Import('PyBytes_AsString');
+    PyString_AsString         := Import('PyBytes_AsString');
   if not IsPython3000 then
-    @DLL_PyString_FromString   := Import('PyString_FromString');
+    DLL_PyString_FromString   := Import('PyString_FromString');
   if not IsPython3000 then
-    @PySys_SetArgv             := Import('PySys_SetArgv')
+    PySys_SetArgv             := Import('PySys_SetArgv')
   else
-    @PySys_SetArgv3000         := Import('PySys_SetArgv');
-  @Py_Exit                   := Import('Py_Exit');
+    PySys_SetArgv3000         := Import('PySys_SetArgv');
+  Py_Exit                   := Import('Py_Exit');
 
-  @PyCFunction_New           :=Import('PyCFunction_New');
-  @PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
-  @PyEval_GetFrame           :=Import('PyEval_GetFrame');
-  @PyEval_GetGlobals         :=Import('PyEval_GetGlobals');
-  @PyEval_GetLocals          :=Import('PyEval_GetLocals');
+  PyCFunction_New           :=Import('PyCFunction_New');
+  PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
+  PyEval_GetFrame           :=Import('PyEval_GetFrame');
+  PyEval_GetGlobals         :=Import('PyEval_GetGlobals');
+  PyEval_GetLocals          :=Import('PyEval_GetLocals');
   //@PyEval_GetOwner           :=Import('PyEval_GetOwner');
   if not IsPython3000 then
-    @PyEval_GetRestricted      :=Import('PyEval_GetRestricted');
-  @PyEval_InitThreads        :=Import('PyEval_InitThreads');
-  @PyEval_RestoreThread      :=Import('PyEval_RestoreThread');
-  @PyEval_SaveThread         :=Import('PyEval_SaveThread');
+    PyEval_GetRestricted      :=Import('PyEval_GetRestricted');
+  PyEval_InitThreads        :=Import('PyEval_InitThreads');
+  PyEval_RestoreThread      :=Import('PyEval_RestoreThread');
+  PyEval_SaveThread         :=Import('PyEval_SaveThread');
   if not IsPython3000 then
-    @PyFile_FromString         :=Import('PyFile_FromString');
-  @PyFile_GetLine            :=Import('PyFile_GetLine');
+    PyFile_FromString         :=Import('PyFile_FromString');
+  PyFile_GetLine            :=Import('PyFile_GetLine');
   if not IsPython3000 then
-    @PyFile_Name               :=Import('PyFile_Name');
+    PyFile_Name               :=Import('PyFile_Name');
   if not IsPython3000 then
-    @PyFile_SetBufSize         :=Import('PyFile_SetBufSize');
+    PyFile_SetBufSize         :=Import('PyFile_SetBufSize');
   if not IsPython3000 then
-    @PyFile_SoftSpace          :=Import('PyFile_SoftSpace');
-  @PyFile_WriteObject        :=Import('PyFile_WriteObject');
-  @PyFile_WriteString        :=Import('PyFile_WriteString');
-  @PyFloat_AsDouble          :=Import('PyFloat_AsDouble');
-  @PyFloat_FromDouble        :=Import('PyFloat_FromDouble');
-  @PyFunction_GetCode        :=Import('PyFunction_GetCode');
-  @PyFunction_GetGlobals     :=Import('PyFunction_GetGlobals');
-  @PyFunction_New            :=Import('PyFunction_New');
-  @PyImport_AddModule        :=Import('PyImport_AddModule');
-  @PyImport_Cleanup          :=Import('PyImport_Cleanup');
-  @PyImport_GetMagicNumber   :=Import('PyImport_GetMagicNumber');
-  @PyImport_ImportFrozenModule:=Import('PyImport_ImportFrozenModule');
-  @PyImport_ImportModule     :=Import('PyImport_ImportModule');
-  @PyImport_Import           :=Import('PyImport_Import');
-  //@PyImport_Init             :=Import('PyImport_Init');
-  @PyImport_ReloadModule     :=Import('PyImport_ReloadModule');
+    PyFile_SoftSpace          :=Import('PyFile_SoftSpace');
+  PyFile_WriteObject        :=Import('PyFile_WriteObject');
+  PyFile_WriteString        :=Import('PyFile_WriteString');
+  PyFloat_AsDouble          :=Import('PyFloat_AsDouble');
+  PyFloat_FromDouble        :=Import('PyFloat_FromDouble');
+  PyFunction_GetCode        :=Import('PyFunction_GetCode');
+  PyFunction_GetGlobals     :=Import('PyFunction_GetGlobals');
+  PyFunction_New            :=Import('PyFunction_New');
+  PyImport_AddModule        :=Import('PyImport_AddModule');
+  PyImport_Cleanup          :=Import('PyImport_Cleanup');
+  PyImport_GetMagicNumber   :=Import('PyImport_GetMagicNumber');
+  PyImport_ImportFrozenModule:=Import('PyImport_ImportFrozenModule');
+  PyImport_ImportModule     :=Import('PyImport_ImportModule');
+  PyImport_Import           :=Import('PyImport_Import');
+  //PyImport_Init             :=Import('PyImport_Init');
+  PyImport_ReloadModule     :=Import('PyImport_ReloadModule');
   if not IsPython3000 then
-    @PyInstance_New            :=Import('PyInstance_New');
+    PyInstance_New            :=Import('PyInstance_New');
   if IsPython3000 then
-    @PyInt_AsLong              :=Import('PyLong_AsLong')
+    PyInt_AsLong              :=Import('PyLong_AsLong')
   else
-    @PyInt_AsLong              :=Import('PyInt_AsLong');
-  @PyList_Append             :=Import('PyList_Append');
-  @PyList_AsTuple            :=Import('PyList_AsTuple');
-  @PyList_GetItem            :=Import('PyList_GetItem');
-  @PyList_GetSlice           :=Import('PyList_GetSlice');
-  @PyList_Insert             :=Import('PyList_Insert');
-  @PyList_New                :=Import('PyList_New');
-  @PyList_Reverse            :=Import('PyList_Reverse');
-  @PyList_SetItem            :=Import('PyList_SetItem');
-  @PyList_SetSlice           :=Import('PyList_SetSlice');
-  @PyList_Size               :=Import('PyList_Size');
-  @PyList_Sort               :=Import('PyList_Sort');
-  @PyLong_AsDouble           :=Import('PyLong_AsDouble');
-  @PyLong_AsLong             :=Import('PyLong_AsLong');
-  @PyLong_FromDouble         :=Import('PyLong_FromDouble');
-  @PyLong_FromLong           :=Import('PyLong_FromLong');
-  @PyLong_FromString         :=Import('PyLong_FromString');
-  @PyLong_FromString         :=Import('PyLong_FromString');
-  @PyLong_FromUnsignedLong   :=Import('PyLong_FromUnsignedLong');
-  @PyLong_AsUnsignedLong     :=Import('PyLong_AsUnsignedLong');
-  @PyLong_FromUnicode        :=Import('PyLong_FromUnicode');
-  @PyLong_FromLongLong       :=Import('PyLong_FromLongLong');
-  @PyLong_AsLongLong         :=Import('PyLong_AsLongLong');
-  @PyMapping_Check           :=Import('PyMapping_Check');
-  @PyMapping_GetItemString   :=Import('PyMapping_GetItemString');
-  @PyMapping_HasKey          :=Import('PyMapping_HasKey');
-  @PyMapping_HasKeyString    :=Import('PyMapping_HasKeyString');
-  @PyMapping_Length          :=Import('PyMapping_Length');
-  @PyMapping_SetItemString   :=Import('PyMapping_SetItemString');
+    PyInt_AsLong              :=Import('PyInt_AsLong');
+  PyList_Append             :=Import('PyList_Append');
+  PyList_AsTuple            :=Import('PyList_AsTuple');
+  PyList_GetItem            :=Import('PyList_GetItem');
+  PyList_GetSlice           :=Import('PyList_GetSlice');
+  PyList_Insert             :=Import('PyList_Insert');
+  PyList_New                :=Import('PyList_New');
+  PyList_Reverse            :=Import('PyList_Reverse');
+  PyList_SetItem            :=Import('PyList_SetItem');
+  PyList_SetSlice           :=Import('PyList_SetSlice');
+  PyList_Size               :=Import('PyList_Size');
+  PyList_Sort               :=Import('PyList_Sort');
+  PyLong_AsDouble           :=Import('PyLong_AsDouble');
+  PyLong_AsLong             :=Import('PyLong_AsLong');
+  PyLong_FromDouble         :=Import('PyLong_FromDouble');
+  PyLong_FromLong           :=Import('PyLong_FromLong');
+  PyLong_FromString         :=Import('PyLong_FromString');
+  PyLong_FromString         :=Import('PyLong_FromString');
+  PyLong_FromUnsignedLong   :=Import('PyLong_FromUnsignedLong');
+  PyLong_AsUnsignedLong     :=Import('PyLong_AsUnsignedLong');
+  PyLong_FromUnicode        :=Import('PyLong_FromUnicode');
+  PyLong_FromLongLong       :=Import('PyLong_FromLongLong');
+  PyLong_AsLongLong         :=Import('PyLong_AsLongLong');
+  PyMapping_Check           :=Import('PyMapping_Check');
+  PyMapping_GetItemString   :=Import('PyMapping_GetItemString');
+  PyMapping_HasKey          :=Import('PyMapping_HasKey');
+  PyMapping_HasKeyString    :=Import('PyMapping_HasKeyString');
+  PyMapping_Length          :=Import('PyMapping_Length');
+  PyMapping_SetItemString   :=Import('PyMapping_SetItemString');
   if not IsPython3000 then
-    @PyMethod_Class            :=Import('PyMethod_Class');
-  @PyMethod_Function         :=Import('PyMethod_Function');
-  @PyMethod_New              :=Import('PyMethod_New');
-  @PyMethod_Self             :=Import('PyMethod_Self');
-  @PyModule_GetName          :=Import('PyModule_GetName');
-  @PyModule_New              :=Import('PyModule_New');
-  @PyNumber_Absolute         :=Import('PyNumber_Absolute');
-  @PyNumber_Add              :=Import('PyNumber_Add');
-  @PyNumber_And              :=Import('PyNumber_And');
-  @PyNumber_Check            :=Import('PyNumber_Check');
+    PyMethod_Class            :=Import('PyMethod_Class');
+  PyMethod_Function         :=Import('PyMethod_Function');
+  PyMethod_New              :=Import('PyMethod_New');
+  PyMethod_Self             :=Import('PyMethod_Self');
+  PyModule_GetName          :=Import('PyModule_GetName');
+  PyModule_New              :=Import('PyModule_New');
+  PyNumber_Absolute         :=Import('PyNumber_Absolute');
+  PyNumber_Add              :=Import('PyNumber_Add');
+  PyNumber_And              :=Import('PyNumber_And');
+  PyNumber_Check            :=Import('PyNumber_Check');
   if not IsPython3000 then
-    @PyNumber_Coerce           :=Import('PyNumber_Coerce');
+    PyNumber_Coerce           :=Import('PyNumber_Coerce');
   if IsPython3000 then
-    @PyNumber_Divide           :=Import('PyNumber_TrueDivide')
+    PyNumber_Divide           :=Import('PyNumber_TrueDivide')
   else
-    @PyNumber_Divide           :=Import('PyNumber_Divide');
-  @PyNumber_FloorDivide      :=Import('PyNumber_FloorDivide');
-  @PyNumber_TrueDivide       :=Import('PyNumber_TrueDivide');
-  @PyNumber_Divmod           :=Import('PyNumber_Divmod');
-  @PyNumber_Float            :=Import('PyNumber_Float');
+    PyNumber_Divide           :=Import('PyNumber_Divide');
+  PyNumber_FloorDivide      :=Import('PyNumber_FloorDivide');
+  PyNumber_TrueDivide       :=Import('PyNumber_TrueDivide');
+  PyNumber_Divmod           :=Import('PyNumber_Divmod');
+  PyNumber_Float            :=Import('PyNumber_Float');
   if not IsPython3000 then
-    @PyNumber_Int              :=Import('PyNumber_Int');
-  @PyNumber_Invert           :=Import('PyNumber_Invert');
-  @PyNumber_Long             :=Import('PyNumber_Long');
-  @PyNumber_Lshift           :=Import('PyNumber_Lshift');
-  @PyNumber_Multiply         :=Import('PyNumber_Multiply');
-  @PyNumber_Negative         :=Import('PyNumber_Negative');
-  @PyNumber_Or               :=Import('PyNumber_Or');
-  @PyNumber_Positive         :=Import('PyNumber_Positive');
-  @PyNumber_Power            :=Import('PyNumber_Power');
-  @PyNumber_Remainder        :=Import('PyNumber_Remainder');
-  @PyNumber_Rshift           :=Import('PyNumber_Rshift');
-  @PyNumber_Subtract         :=Import('PyNumber_Subtract');
-  @PyNumber_Xor              :=Import('PyNumber_Xor');
-  @PyOS_InitInterrupts       :=Import('PyOS_InitInterrupts');
-  @PyOS_InterruptOccurred    :=Import('PyOS_InterruptOccurred');
-  @PyObject_CallObject       :=Import('PyObject_CallObject');
-  @PyObject_CallMethodStr    :=Import('PyObject_CallMethod');
+    PyNumber_Int              :=Import('PyNumber_Int');
+  PyNumber_Invert           :=Import('PyNumber_Invert');
+  PyNumber_Long             :=Import('PyNumber_Long');
+  PyNumber_Lshift           :=Import('PyNumber_Lshift');
+  PyNumber_Multiply         :=Import('PyNumber_Multiply');
+  PyNumber_Negative         :=Import('PyNumber_Negative');
+  PyNumber_Or               :=Import('PyNumber_Or');
+  PyNumber_Positive         :=Import('PyNumber_Positive');
+  PyNumber_Power            :=Import('PyNumber_Power');
+  PyNumber_Remainder        :=Import('PyNumber_Remainder');
+  PyNumber_Rshift           :=Import('PyNumber_Rshift');
+  PyNumber_Subtract         :=Import('PyNumber_Subtract');
+  PyNumber_Xor              :=Import('PyNumber_Xor');
+  PyOS_InitInterrupts       :=Import('PyOS_InitInterrupts');
+  PyOS_InterruptOccurred    :=Import('PyOS_InterruptOccurred');
+  PyObject_CallObject       :=Import('PyObject_CallObject');
+  PyObject_CallMethodStr    :=Import('PyObject_CallMethod');
+  {$IFDEF FPC}
+    PyObject_CallMethodWithArgs := @PyObject_CallMethod;
+  {$ENDIF}
   if not IsPython3000 then
-    @PyObject_Compare          :=Import('PyObject_Compare');
-  @PyObject_RichCompare      :=Import('PyObject_RichCompare');
-  @PyObject_RichCompareBool  :=Import('PyObject_RichCompareBool');
-  @PyObject_GetAttr          :=Import('PyObject_GetAttr');
-  @PyObject_GetAttrString    :=Import('PyObject_GetAttrString');
-  @PyObject_GetItem          :=Import('PyObject_GetItem');
-  @PyObject_DelItem          :=Import('PyObject_DelItem');
-  @PyObject_HasAttrString    :=Import('PyObject_HasAttrString');
-  @PyObject_Hash             :=Import('PyObject_Hash');
-  @PyObject_IsTrue           :=Import('PyObject_IsTrue');
-  @PyObject_Length           :=Import('PyObject_Length');
-  @PyObject_Repr             :=Import('PyObject_Repr');
-  @PyObject_SetAttr          :=Import('PyObject_SetAttr');
-  @PyObject_SetAttrString    :=Import('PyObject_SetAttrString');
-  @PyObject_SetItem          :=Import('PyObject_SetItem');
-  @PyObject_Init             :=Import('PyObject_Init');
-  @PyObject_InitVar          :=Import('PyObject_InitVar');
-  @PyObject_New              :=Import('_PyObject_New');
-  @PyObject_NewVar           :=Import('_PyObject_NewVar');
-  @PyObject_Free             :=Import('PyObject_Free');
-  @PyObject_GetIter          :=Import('PyObject_GetIter');
-  @PyIter_Next               :=Import('PyIter_Next');
-  @PyObject_IsInstance       :=Import('PyObject_IsInstance');
-  @PyObject_IsSubclass       :=Import('PyObject_IsSubclass');
-  @PyObject_Call             :=Import('PyObject_Call');
-  @PyObject_GenericGetAttr   :=Import('PyObject_GenericGetAttr');
-  @PyObject_GenericSetAttr   :=Import('PyObject_GenericSetAttr');
+    PyObject_Compare          :=Import('PyObject_Compare');
+  PyObject_RichCompare      :=Import('PyObject_RichCompare');
+  PyObject_RichCompareBool  :=Import('PyObject_RichCompareBool');
+  PyObject_GetAttr          :=Import('PyObject_GetAttr');
+  PyObject_GetAttrString    :=Import('PyObject_GetAttrString');
+  PyObject_GetItem          :=Import('PyObject_GetItem');
+  PyObject_DelItem          :=Import('PyObject_DelItem');
+  PyObject_HasAttrString    :=Import('PyObject_HasAttrString');
+  PyObject_Hash             :=Import('PyObject_Hash');
+  PyObject_IsTrue           :=Import('PyObject_IsTrue');
+  PyObject_Length           :=Import('PyObject_Length');
+  PyObject_Repr             :=Import('PyObject_Repr');
+  PyObject_SetAttr          :=Import('PyObject_SetAttr');
+  PyObject_SetAttrString    :=Import('PyObject_SetAttrString');
+  PyObject_SetItem          :=Import('PyObject_SetItem');
+  PyObject_Init             :=Import('PyObject_Init');
+  PyObject_InitVar          :=Import('PyObject_InitVar');
+  PyObject_New              :=Import('_PyObject_New');
+  PyObject_NewVar           :=Import('_PyObject_NewVar');
+  PyObject_Free             :=Import('PyObject_Free');
+  PyObject_GetIter          :=Import('PyObject_GetIter');
+  PyIter_Next               :=Import('PyIter_Next');
+  PyObject_IsInstance       :=Import('PyObject_IsInstance');
+  PyObject_IsSubclass       :=Import('PyObject_IsSubclass');
+  PyObject_Call             :=Import('PyObject_Call');
+  PyObject_GenericGetAttr   :=Import('PyObject_GenericGetAttr');
+  PyObject_GenericSetAttr   :=Import('PyObject_GenericSetAttr');
   PyObject_GC_Malloc         :=Import('_PyObject_GC_Malloc');
   PyObject_GC_New            :=Import('_PyObject_GC_New');
   PyObject_GC_NewVar         :=Import('_PyObject_GC_NewVar');
@@ -3889,138 +3905,135 @@ begin
   PyObject_GC_Del            :=Import('PyObject_GC_Del');
   PyObject_GC_Track          :=Import('PyObject_GC_Track');
   PyObject_GC_UnTrack        :=Import('PyObject_GC_UnTrack');
-{$IFNDEF PYTHON25_OR_HIGHER}
-  @PyRange_New               :=Import('PyRange_New', False);
-{$ENDIF}
-  @PySequence_Check          :=Import('PySequence_Check');
-  @PySequence_Concat         :=Import('PySequence_Concat');
-  @PySequence_Count          :=Import('PySequence_Count');
-  @PySequence_GetItem        :=Import('PySequence_GetItem');
-  @PySequence_GetSlice       :=Import('PySequence_GetSlice');
-  @PySequence_In             :=Import('PySequence_In');
-  @PySequence_Index          :=Import('PySequence_Index');
-  @PySequence_Length         :=Import('PySequence_Length');
-  @PySequence_Repeat         :=Import('PySequence_Repeat');
-  @PySequence_SetItem        :=Import('PySequence_SetItem');
-  @PySequence_SetSlice       :=Import('PySequence_SetSlice');
-  @PySequence_DelSlice       :=Import('PySequence_DelSlice');
-  @PySequence_Tuple          :=Import('PySequence_Tuple');
-  @PySequence_Contains       :=Import('PySequence_Contains');
-  @PySlice_GetIndices        :=Import('PySlice_GetIndices');
-  @PySeqIter_New             :=Import('PySeqIter_New');
-  @PySlice_GetIndicesEx      :=Import('PySlice_GetIndicesEx');
-  @PySlice_New               :=Import('PySlice_New');
+  PySequence_Check          :=Import('PySequence_Check');
+  PySequence_Concat         :=Import('PySequence_Concat');
+  PySequence_Count          :=Import('PySequence_Count');
+  PySequence_GetItem        :=Import('PySequence_GetItem');
+  PySequence_GetSlice       :=Import('PySequence_GetSlice');
+  PySequence_In             :=Import('PySequence_In');
+  PySequence_Index          :=Import('PySequence_Index');
+  PySequence_Length         :=Import('PySequence_Length');
+  PySequence_Repeat         :=Import('PySequence_Repeat');
+  PySequence_SetItem        :=Import('PySequence_SetItem');
+  PySequence_SetSlice       :=Import('PySequence_SetSlice');
+  PySequence_DelSlice       :=Import('PySequence_DelSlice');
+  PySequence_Tuple          :=Import('PySequence_Tuple');
+  PySequence_Contains       :=Import('PySequence_Contains');
+  PySlice_GetIndices        :=Import('PySlice_GetIndices');
+  PySeqIter_New             :=Import('PySeqIter_New');
+  PySlice_GetIndicesEx      :=Import('PySlice_GetIndicesEx');
+  PySlice_New               :=Import('PySlice_New');
   if not IsPython3000 then begin
-    @PyString_Concat           :=Import('PyString_Concat');
-    @PyString_ConcatAndDel     :=Import('PyString_ConcatAndDel');
-    @PyString_Format           :=Import('PyString_Format');
-    @PyString_FromStringAndSize:=Import('PyString_FromStringAndSize');
-    @PyString_Size             :=Import('PyString_Size');
-      @PyString_DecodeEscape     :=Import('PyString_DecodeEscape');
-      @PyString_Repr             :=Import('PyString_Repr');
+    PyString_Concat           :=Import('PyString_Concat');
+    PyString_ConcatAndDel     :=Import('PyString_ConcatAndDel');
+    PyString_Format           :=Import('PyString_Format');
+    PyString_FromStringAndSize:=Import('PyString_FromStringAndSize');
+    PyString_Size             :=Import('PyString_Size');
+    PyString_DecodeEscape     :=Import('PyString_DecodeEscape');
+    PyString_Repr             :=Import('PyString_Repr');
   end else begin
-    @PyString_Concat           :=Import('PyBytes_Concat');
-    @PyString_ConcatAndDel     :=Import('PyBytes_ConcatAndDel');
-    @PyString_FromStringAndSize:=Import('PyBytes_FromStringAndSize');
-    @PyString_Size             :=Import('PyBytes_Size');
-    @PyString_DecodeEscape     :=Import('PyBytes_DecodeEscape');
-    @PyString_Repr             :=Import('PyBytes_Repr');
+    PyString_Concat           :=Import('PyBytes_Concat');
+    PyString_ConcatAndDel     :=Import('PyBytes_ConcatAndDel');
+    PyString_FromStringAndSize:=Import('PyBytes_FromStringAndSize');
+    PyString_Size             :=Import('PyBytes_Size');
+    PyString_DecodeEscape     :=Import('PyBytes_DecodeEscape');
+    PyString_Repr             :=Import('PyBytes_Repr');
   end;
-  @PySys_GetObject           :=Import('PySys_GetObject');
-  //@PySys_Init                :=Import('PySys_Init');
-  @PySys_SetObject           :=Import('PySys_SetObject');
-  @PySys_SetPath             :=Import('PySys_SetPath');
-  //@PyTraceBack_Fetch         :=Import('PyTraceBack_Fetch');
-  @PyTraceBack_Here          :=Import('PyTraceBack_Here');
-  @PyTraceBack_Print         :=Import('PyTraceBack_Print');
+  PySys_GetObject           :=Import('PySys_GetObject');
+  //PySys_Init                :=Import('PySys_Init');
+  PySys_SetObject           :=Import('PySys_SetObject');
+  PySys_SetPath             :=Import('PySys_SetPath');
+  //PyTraceBack_Fetch         :=Import('PyTraceBack_Fetch');
+  PyTraceBack_Here          :=Import('PyTraceBack_Here');
+  PyTraceBack_Print         :=Import('PyTraceBack_Print');
   //@PyTraceBack_Store         :=Import('PyTraceBack_Store');
-  @PyTuple_GetItem           :=Import('PyTuple_GetItem');
-  @PyTuple_GetSlice          :=Import('PyTuple_GetSlice');
-  @PyTuple_New               :=Import('PyTuple_New');
-  @PyTuple_SetItem           :=Import('PyTuple_SetItem');
-  @PyTuple_Size              :=Import('PyTuple_Size');
-  @PyType_IsSubtype          :=Import('PyType_IsSubtype');
-  @PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
-  @PyType_GenericNew         :=Import('PyType_GenericNew');
-  @PyType_Ready              :=Import('PyType_Ready');
-  @PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
-  @PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
-  @PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
-  @PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
-  @PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
-  @PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
-  @PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
-  @PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
-  @PyWrapper_New             :=Import('PyWrapper_New');
-  @PyBool_FromLong           :=Import('PyBool_FromLong');
-  @PyThreadState_SetAsyncExc :=Import('PyThreadState_SetAsyncExc');
-  @Py_AtExit                 :=Import('Py_AtExit');
-  //@Py_Cleanup                :=Import('Py_Cleanup');
-  @Py_CompileString          :=Import('Py_CompileString');
-  @Py_FatalError             :=Import('Py_FatalError');
+  PyTuple_GetItem           :=Import('PyTuple_GetItem');
+  PyTuple_GetSlice          :=Import('PyTuple_GetSlice');
+  PyTuple_New               :=Import('PyTuple_New');
+  PyTuple_SetItem           :=Import('PyTuple_SetItem');
+  PyTuple_Size              :=Import('PyTuple_Size');
+  PyType_IsSubtype          :=Import('PyType_IsSubtype');
+  PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
+  PyType_GenericNew         :=Import('PyType_GenericNew');
+  PyType_Ready              :=Import('PyType_Ready');
+  PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
+  PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
+  PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
+  PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
+  PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
+  PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
+  PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
+  PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
+  PyWrapper_New             :=Import('PyWrapper_New');
+  PyBool_FromLong           :=Import('PyBool_FromLong');
+  PyThreadState_SetAsyncExc :=Import('PyThreadState_SetAsyncExc');
+  Py_AtExit                 :=Import('Py_AtExit');
+  //Py_Cleanup                :=Import('Py_Cleanup');
+  Py_CompileString          :=Import('Py_CompileString');
+  Py_FatalError             :=Import('Py_FatalError');
   if not IsPython3000 then begin
-    @Py_FindMethod             :=Import('Py_FindMethod');
-    @Py_FindMethodInChain      :=Import('Py_FindMethodInChain');
-    @DLL_Py_FlushLine        :=Import('Py_FlushLine');
+    Py_FindMethod             :=Import('Py_FindMethod');
+    Py_FindMethodInChain      :=Import('Py_FindMethodInChain');
+    DLL_Py_FlushLine        :=Import('Py_FlushLine');
   end;
-  @_PyObject_New             :=Import('_PyObject_New');
+  _PyObject_New             :=Import('_PyObject_New');
   if not IsPython3000 then
-    @_PyString_Resize          :=Import('_PyString_Resize')
+    _PyString_Resize          :=Import('_PyString_Resize')
   else
-    @_PyString_Resize          :=Import('_PyBytes_Resize');
-  @Py_Finalize                :=Import('Py_Finalize');
+    _PyString_Resize          :=Import('_PyBytes_Resize');
+  Py_Finalize                :=Import('Py_Finalize');
   if getProcAddress( FDLLHandle, 'PyCode_Addr2Line' ) <> nil then
-    @DLL_PyCode_Addr2Line     := Import('PyCode_Addr2Line');
+    DLL_PyCode_Addr2Line     := Import('PyCode_Addr2Line');
   if getProcAddress( FDLLHandle, 'PyImport_ExecCodeModule' ) <> nil then
-    @DLL_PyImport_ExecCodeModule := Import('PyImport_ExecCodeModule');
+    DLL_PyImport_ExecCodeModule := Import('PyImport_ExecCodeModule');
   //@PyClass_IsSubclass         :=Import('PyClass_IsSubclass');
-  @PyErr_ExceptionMatches     :=Import('PyErr_ExceptionMatches');
-  @PyErr_GivenExceptionMatches:=Import('PyErr_GivenExceptionMatches');
-  @PyEval_EvalCode            :=Import('PyEval_EvalCode');
-  @Py_GetVersion              :=Import('Py_GetVersion');
-  @Py_GetCopyright            :=Import('Py_GetCopyright');
-  @Py_GetExecPrefix           :=Import('Py_GetExecPrefix');
-  @Py_GetPath                 :=Import('Py_GetPath');
-  @Py_GetPrefix               :=Import('Py_GetPrefix');
-  @Py_GetProgramName          :=Import('Py_GetProgramName');
-  @PyParser_SimpleParseString :=Import('PyParser_SimpleParseString');
-  @PyNode_Free                :=Import('PyNode_Free');
-  @PyErr_NewException         :=Import('PyErr_NewException');
+  PyErr_ExceptionMatches     :=Import('PyErr_ExceptionMatches');
+  PyErr_GivenExceptionMatches:=Import('PyErr_GivenExceptionMatches');
+  PyEval_EvalCode            :=Import('PyEval_EvalCode');
+  Py_GetVersion              :=Import('Py_GetVersion');
+  Py_GetCopyright            :=Import('Py_GetCopyright');
+  Py_GetExecPrefix           :=Import('Py_GetExecPrefix');
+  Py_GetPath                 :=Import('Py_GetPath');
+  Py_GetPrefix               :=Import('Py_GetPrefix');
+  Py_GetProgramName          :=Import('Py_GetProgramName');
+  PyParser_SimpleParseString :=Import('PyParser_SimpleParseString');
+  PyNode_Free                :=Import('PyNode_Free');
+  PyErr_NewException         :=Import('PyErr_NewException');
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   replaced Py_Malloc with PyMem_Malloc
 ///---   @Py_Malloc := Import ('Py_Malloc');
 ///+++   @Py_Malloc := Import ('PyMem_Malloc');
   try
-    @Py_Malloc := Import ('PyMem_Malloc');
-    @PyMem_Malloc := Import ('PyMem_Malloc');
+    Py_Malloc := Import ('PyMem_Malloc');
+    PyMem_Malloc := Import ('PyMem_Malloc');
   except
   end;
-  @PyObject_CallMethod        :=Import('PyObject_CallMethod');
+  PyObject_CallMethod        :=Import('PyObject_CallMethod');
   if not IsPython3000 then
-    @Py_SetProgramName        := Import('Py_SetProgramName')
+    Py_SetProgramName        := Import('Py_SetProgramName')
   else
-    @Py_SetProgramName3000    := Import('Py_SetProgramName');
-  @Py_IsInitialized         := Import('Py_IsInitialized');
-  @Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
+    Py_SetProgramName3000    := Import('Py_SetProgramName');
+  Py_IsInitialized         := Import('Py_IsInitialized');
+  Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
   if getProcAddress( FDLLHandle, 'Py_GetBuildInfo' ) <> nil then
-    @DLL_Py_GetBuildInfo    := Import('Py_GetBuildInfo');
-  @Py_NewInterpreter        := Import('Py_NewInterpreter');
-  @Py_EndInterpreter        := Import('Py_EndInterpreter');
-  @PyEval_AcquireLock       := Import('PyEval_AcquireLock');
-  @PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
-  @PyEval_AcquireThread     := Import('PyEval_AcquireThread');
-  @PyEval_ReleaseThread     := Import('PyEval_ReleaseThread');
-  @PyInterpreterState_New   := Import('PyInterpreterState_New');
-  @PyInterpreterState_Clear := Import('PyInterpreterState_Clear');
-  @PyInterpreterState_Delete:= Import('PyInterpreterState_Delete');
-  @PyThreadState_New        := Import('PyThreadState_New');
-  @PyThreadState_Clear      := Import('PyThreadState_Clear');
-  @PyThreadState_Delete     := Import('PyThreadState_Delete');
-  @PyThreadState_Get        := Import('PyThreadState_Get');
-  @PyThreadState_Swap       := Import('PyThreadState_Swap');
-  @PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
-  @PyGILState_Ensure        := Import('PyGILState_Ensure');
-  @PyGILState_Release       := Import('PyGILState_Release');
+    DLL_Py_GetBuildInfo    := Import('Py_GetBuildInfo');
+  Py_NewInterpreter        := Import('Py_NewInterpreter');
+  Py_EndInterpreter        := Import('Py_EndInterpreter');
+  PyEval_AcquireLock       := Import('PyEval_AcquireLock');
+  PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
+  PyEval_AcquireThread     := Import('PyEval_AcquireThread');
+  PyEval_ReleaseThread     := Import('PyEval_ReleaseThread');
+  PyInterpreterState_New   := Import('PyInterpreterState_New');
+  PyInterpreterState_Clear := Import('PyInterpreterState_Clear');
+  PyInterpreterState_Delete:= Import('PyInterpreterState_Delete');
+  PyThreadState_New        := Import('PyThreadState_New');
+  PyThreadState_Clear      := Import('PyThreadState_Clear');
+  PyThreadState_Delete     := Import('PyThreadState_Delete');
+  PyThreadState_Get        := Import('PyThreadState_Get');
+  PyThreadState_Swap       := Import('PyThreadState_Swap');
+  PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
+  PyGILState_Ensure        := Import('PyGILState_Ensure');
+  PyGILState_Release       := Import('PyGILState_Release');
 end;
 
 procedure TPythonInterface.Py_INCREF(op: PPyObject);
@@ -4053,11 +4066,11 @@ begin
   Py_GetPlatform := 'win32';
 end;
 
+{$IFNDEF FPC}
 function TPythonInterface.Py_BuildValue( format: PAnsiChar; args: array of const):
-         PPyObject; {$IFNDEF FPC} assembler; {$ENDIF} cdecl;
+         PPyObject; assembler; cdecl;
 const tenthousand:double = 10000.0;
 var temp: Double;
-{$IFDEF FPC} begin {$ENDIF}
 asm
         push ebx             // save ebx, four registers needed
         mov eax,[args]       // gets args pointer
@@ -4095,14 +4108,11 @@ asm
         mov ebx,[ebp-$c]       // get saved ebx from ebp-based offset
                                // (current esp could not be used!)
 end;
-{$IFDEF FPC} end; {$ENDIF}
 
 function TPythonInterface.PyObject_CallMethodWithArgs(obj: PPyObject; method,
-  format: PAnsiChar; args: array of const): PPyObject;
- {$IFNDEF FPC} assembler; {$ENDIF} cdecl;
+  format: PAnsiChar; args: array of const): PPyObject; assembler; cdecl;
 const tenthousand:double = 10000.0;
 var temp: Double;
-{$IFDEF FPC} begin {$ENDIF}
 asm
         push ebx             // save ebx, four registers needed
         mov eax,[args]       // gets args pointer
@@ -4144,7 +4154,6 @@ asm
         mov ebx,[ebp-$c]       // get saved ebx from ebp-based offset
                                // (current esp could not be used!)
 end;
-{$IFDEF FPC} end; {$ENDIF}
 
 {DELPHI does the right thing here. It automatically generates
  a copy of the argp on the stack}
@@ -4193,6 +4202,7 @@ begin
     mov Result, eax
   end;
 end;
+{$ENDIF FPC}
 
 // This function is copied from compile.c because it was not
 // exported in the Dll

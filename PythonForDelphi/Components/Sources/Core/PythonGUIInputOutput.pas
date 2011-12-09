@@ -95,118 +95,8 @@ implementation
 
 {$IFDEF FPC}
 {$IFDEF MSWINDOWS}
-{$HINTS OFF}
-
-type
-  PObjectInstance = ^TObjectInstance;
-  TObjectInstance = packed record
-    Code: Byte;
-    Offset: Integer;
-    case Integer of
-      0: (Next: PObjectInstance);
-      1: (Method: TWndMethod);
-  end;
-
-  PInstanceBlock = ^TInstanceBlock;
-  TInstanceBlock = packed record
-    Next: PInstanceBlock;
-    Code: array[1..2] of Byte;
-    WndProcPtr: Pointer;
-    Instances: array[0..313] of TObjectInstance;
-  end;
-
-var
-  InstBlockList: PInstanceBlock;
-  InstFreeList: PObjectInstance;
-  GUIIOWindowClass: TWndClass = (
-    style: 0;
-    lpfnWndProc: @DefWindowProc;
-    cbClsExtra: 0;
-    cbWndExtra: 0;
-    hInstance: 0;
-    hIcon: 0;
-    hCursor: 0;
-    hbrBackground: 0;
-    lpszMenuName: nil;
-    lpszClassName: 'TPGUIIO');
-
-function StdWndProc(Window: HWND; Message, WParam: Longint;
-  LParam: Longint): Longint; stdcall; assembler;
-asm
-        XOR     EAX,EAX
-        PUSH    EAX
-        PUSH    LParam
-        PUSH    WParam
-        PUSH    Message
-        MOV     EDX,ESP
-        MOV     EAX,[ECX].Longint[4]
-        CALL    [ECX].Pointer
-        ADD     ESP,12
-        POP     EAX
-end;
-
-function MakeObjectInstance(Method: TWndMethod): Pointer;
-const
-  BlockCode: array[1..2] of Byte = ($59, $E9);
-var
-  Block: PInstanceBlock;
-  Instance: PObjectInstance;
-begin
-  if (InstFreeList = nil) then begin
-    Block := VirtualAlloc(nil, 4096, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-    Block^.Next := InstBlockList;
-    Move(BlockCode, Block^.Code, SizeOf(BlockCode));
-    Block^.WndProcPtr := Pointer(Longint(@StdWndProc) -
-                         (Longint(@Block^.Code[2]) + 5));
-    Instance := @Block^.Instances;
-    repeat
-      Instance^.Code := $E8;  { CALL NEAR PTR Offset }
-      Instance^.Offset := Longint(@Block^.Code) - (Longint(Instance) + 5);
-      Instance^.Next := InstFreeList;
-      InstFreeList := Instance;
-      Inc(Longint(Instance), SizeOf(TObjectInstance));
-    until Longint(Instance) - Longint(Block) >= SizeOf(TInstanceBlock);
-    InstBlockList := Block;
-  end;
-  Result := InstFreeList;
-  Instance := InstFreeList;
-  InstFreeList := Instance^.Next;
-  Instance^.Method := Method;
-end;
-
-function AllocateGUIOutputWindow(Method: TWndMethod): HWND;
-var
-  TempClass: TWndClass;
-  ClassRegistered: Boolean;
-begin
-  GUIIOWindowClass.hInstance := HInstance;
-  ClassRegistered := GetClassInfo(HInstance, GUIIOWindowClass.lpszClassName,
-    TempClass);
-  if not ClassRegistered or (@TempClass.lpfnWndProc <> @DefWindowProc) then
-  begin
-    if ClassRegistered then
-      Windows.UnregisterClass(GUIIOWindowClass.lpszClassName, HInstance);
-    Windows.RegisterClass(GUIIOWindowClass);
-  end;
-  Result := CreateWindowEx(WS_EX_TOOLWINDOW, GUIIOWindowClass.lpszClassName,
-    '', WS_POPUP, 0, 0, 0, 0, 0, 0, HInstance, nil);
-  if Assigned(Method) then
-    SetWindowLong(Result, GWL_WNDPROC, Longint(MakeObjectInstance(Method)));
-end;
-
-procedure DeallocateHWnd(Wnd: HWND);
-var
-  Instance: LongInt;
-begin
-  Instance := GetWindowLong(Wnd, GWL_WNDPROC);
-  DestroyWindow(Wnd);
-  if (Instance <> LongInt(@DefWindowProc)) and (Instance <> 0) then begin
-    PObjectInstance(Instance)^.Next := InstFreeList;
-    InstFreeList := PObjectInstance(Instance);
-  end;
-end;
-
-{$HINTS ON}
+Uses
+  InterfaceBase;
 {$ENDIF}
 {$ENDIF}
 
@@ -306,7 +196,7 @@ begin
   // This will allow writes from multiple threads to be queue up and
   // then written out to the associated TCustomMemo by the main UI thread.
   {$IFDEF FPC}
-    fWinHandle := AllocateGUIOutputWindow(pyGUIOutputWndProc);
+    fWinHandle := WidgetSet.AllocateHWnd(pyGUIOutputWndProc);
   {$ELSE}
     fWinHandle := Classes.AllocateHWnd(pyGUIOutputWndProc);
   {$ENDIF}
@@ -322,7 +212,7 @@ begin
 {$IFDEF MSWINDOWS}
   // Destroy the internal window used for Delayed write operations
   {$IFDEF FPC}
-    DeallocateHWnd(fWinHandle);
+    WidgetSet.DeallocateHWnd(fWinHandle);
   {$ELSE}
     Classes.DeallocateHWnd(fWinHandle);
   {$ENDIF}
