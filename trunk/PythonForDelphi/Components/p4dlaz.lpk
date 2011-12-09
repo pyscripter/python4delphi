@@ -25,17 +25,17 @@
     </CompilerOptions>
     <Files Count="3">
       <Item1>
-        <Filename Value="$(PackageDir)\Sources\Core\PythonEngine.pas"/>
+        <Filename Value="Sources\Core\PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonEngine"/>
       </Item1>
       <Item2>
-        <Filename Value="$(PackageDir)\Sources\Core\PythonGUIInputOutput.pas"/>
+        <Filename Value="Sources\Core\PythonGUIInputOutput.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonGUIInputOutput"/>
       </Item2>
       <Item3>
-        <Filename Value="$(PackageDir)\Sources\Core\MethodCallBack.pas"/>
+        <Filename Value="Sources\Core\MethodCallBack.pas"/>
         <UnitName Value="MethodCallBack"/>
       </Item3>
     </Files>
