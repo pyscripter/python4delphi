@@ -1494,9 +1494,9 @@ type
                      Integer; cdecl;
     DLL_Py_BuildValue:
                      function( format: PAnsiChar {;...}): PPyObject; cdecl;
+    {$ENDIF FPC}
     DLL_Py_GetBuildInfo:
                      function : PAnsiChar; cdecl;
-    {$ENDIF FPC}
     DLL_PyCode_Addr2Line:
                      function ( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
     DLL_PyImport_ExecCodeModule:
@@ -1619,9 +1619,6 @@ type
     PySeqIter_Type: PPyTypeObject;
     PyStaticMethod_Type: PPyTypeObject;
     PySuper_Type: PPyTypeObject;
-  {$IFNDEF PYTHON25_OR_HIGHER}
-    PySymtableEntry_Type: PPyTypeObject;
-  {$ENDIF}
     PyTraceBack_Type: PPyTypeObject;
     PyUnicode_Type: PPyTypeObject;
     PyWrapperDescr_Type: PPyTypeObject;
@@ -3660,9 +3657,6 @@ begin
   PySeqIter_Type             := Import('PySeqIter_Type');
   PyStaticMethod_Type        := Import('PyStaticMethod_Type');
   PySuper_Type               := Import('PySuper_Type');
-  {$IFNDEF PYTHON25_OR_HIGHER}
-    PySymtableEntry_Type     := Import('PySymtableEntry_Type', False);
-  {$ENDIF}
   PyTraceBack_Type           := Import('PyTraceBack_Type');
   PyWrapperDescr_Type        := Import('PyWrapperDescr_Type');
   _PyWeakref_RefType         := Import('_PyWeakref_RefType');
