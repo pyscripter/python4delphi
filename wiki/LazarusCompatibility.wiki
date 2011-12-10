@@ -11,6 +11,8 @@ The main parts of !Python4Delphi are:
  # !WrapDelphi classes
  Units that allow easy manipulation of standard GUI Delphi objects in Python scripts.
 
-All parts of !Python4Delphi now work in FPC-Lazarus Win32.  The only limitation is that due to an FPC issue with variants (http://mantis.freepascal.org/view.php?id=20849) you will find !VarPyth has problems in converting Python Variants to native types and variants.
+All parts of !Python4Delphi now work in FPC-Lazarus Win32.  The only limitation is that due to an FPC issue with variants (http://mantis.freepascal.org/view.php?id=20849) you will find that there are problems in converting Python Variants to native types and variants.
 
 MacOSX and Linux compatibility has not been tested. Please test and if required submit a patch.  
+
+64bit is not supported yet but it is coming soon.
