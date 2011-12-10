@@ -11,4 +11,4 @@ The main parts of Python4Delphi are:
  # !WrapDelphi classes
  Units that allow easy manipulation of standard GUI Delphi objects in Python scripts.
 
-Basic compatibility of the low-level layer with FPC and Lazarus is now in SVN. Also a couple of Lazarus demos have been added. However Lazarus support for custom variants is incomplete and although VarPyth compiles fine, it is not usable yet.  VarPyth compatibility will be revisited when better FPC support for custom variants is in place.  Regarding the WrapDelphi units they are not currently compatible and I am waiting for someone to provide a new patch to make them compile with FPC.
+All parts of Python4Delphi now work in !FPC.  The only limitation is that due to an FPC issue with variants (http://mantis.freepascal.org/view.php?id=20849) you will find !VarPyth has problems in converting Python Variants to native types and variants.
