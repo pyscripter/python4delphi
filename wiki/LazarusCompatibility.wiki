@@ -1,7 +1,7 @@
 #labels Featured
 = FPC-Lazarus compatibility  =
 
-The main parts of Python4Delphi are:
+The main parts of !Python4Delphi are:
 
  # !PythonEngine.pas 
  A collection of relatively low-level routines for communicating with Python, creating
@@ -11,4 +11,4 @@ The main parts of Python4Delphi are:
  # !WrapDelphi classes
  Units that allow easy manipulation of standard GUI Delphi objects in Python scripts.
 
-All parts of Python4Delphi now work in !FPC.  The only limitation is that due to an FPC issue with variants (http://mantis.freepascal.org/view.php?id=20849) you will find !VarPyth has problems in converting Python Variants to native types and variants.
+All parts of !Python4Delphi now work in !FPC.  The only limitation is that due to an FPC issue with variants (http://mantis.freepascal.org/view.php?id=20849) you will find !VarPyth has problems in converting Python Variants to native types and variants.
