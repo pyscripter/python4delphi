@@ -89,6 +89,7 @@ type
     property DelphiObject: TNotebook read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFNDEF FPC}
   TPyDelphiHeader = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: THeader;
@@ -98,6 +99,7 @@ type
     // Properties
     property DelphiObject: THeader read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF FPC}
 
   TPyDelphiRadioGroup = class (TPyDelphiWinControl)
   private
@@ -109,7 +111,11 @@ type
     property DelphiObject: TRadioGroup read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFDEF FPC}
+  TPyDelphiSplitter = class (TPyDelphiWinControl)
+  {$ELSE FPC}
   TPyDelphiSplitter = class (TPyDelphiGraphicControl)
+  {$ENDIF FPC}
   private
     function  GetDelphiObject: TSplitter;
     procedure SetDelphiObject(const Value: TSplitter);
@@ -119,6 +125,7 @@ type
     property DelphiObject: TSplitter read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFNDEF FPC}
   TPyDelphiControlBar = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: TControlBar;
@@ -128,6 +135,7 @@ type
     // Properties
     property DelphiObject: TControlBar read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF FPC}
 
   TPyDelphiBoundLabel = class (TPyDelphiControl)
   private
@@ -149,6 +157,7 @@ type
     property DelphiObject: TLabeledEdit read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFNDEF FPC}
   TPyDelphiColorBox = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: TColorBox;
@@ -158,6 +167,7 @@ type
     // Properties
     property DelphiObject: TColorBox read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF FPC}
 
 implementation
 
@@ -193,13 +203,19 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPanel);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPage);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNotebook);
+  {$IFNDEF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiHeader);
+  {$ENDIF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRadioGroup);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSplitter);
+  {$IFNDEF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlBar);
+  {$ENDIF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBoundLabel);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLabeledEdit);
+  {$IFNDEF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiColorBox);
+  {$ENDIF FPC}
 end;
 
 
@@ -347,6 +363,7 @@ begin
 end;
 
 
+{$IFNDEF FPC}
 { TPyDelphiHeader }
 
 class function TPyDelphiHeader.DelphiObjectClass: TClass;
@@ -363,6 +380,7 @@ procedure TPyDelphiHeader.SetDelphiObject(const Value: THeader);
 begin
   inherited DelphiObject := Value;
 end;
+{$ENDIF FPC}
 
 
 { TPyDelphiRadioGroup }
@@ -401,6 +419,7 @@ begin
 end;
 
 
+{$IFNDEF FPC}
 { TPyDelphiControlBar }
 
 class function TPyDelphiControlBar.DelphiObjectClass: TClass;
@@ -417,6 +436,7 @@ procedure TPyDelphiControlBar.SetDelphiObject(const Value: TControlBar);
 begin
   inherited DelphiObject := Value;
 end;
+{$ENDIF FPC}
 
 { TPyDelphiBoundLabel }
 
@@ -454,6 +474,7 @@ begin
 end;
 
 
+{$IFNDEF FPC}
 { TPyDelphiColorBox }
 
 class function TPyDelphiColorBox.DelphiObjectClass: TClass;
@@ -470,10 +491,16 @@ procedure TPyDelphiColorBox.SetDelphiObject(const Value: TColorBox);
 begin
   inherited DelphiObject := Value;
 end;
+{$ENDIF FPC}
 
 
 initialization
   RegisteredUnits.Add( TExtCtrlsRegistration.Create );
+  {$IFDEF FPC}
+  Classes.RegisterClasses([TShape, TPaintBox, TImage, TBevel, TTimer, TPanel, TPage, TNotebook,
+                           TRadioGroup, TSplitter, TBoundLabel, TLabeledEdit]);
+  {$ELSE FPC}
   Classes.RegisterClasses([TShape, TPaintBox, TImage, TBevel, TTimer, TPanel, TPage, TNotebook, THeader,
                            TRadioGroup, TSplitter, TControlBar, TBoundLabel, TLabeledEdit, TColorBox]);
+  {$ENDIF FPC}
 end.

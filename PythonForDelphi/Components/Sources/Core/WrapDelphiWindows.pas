@@ -45,7 +45,9 @@ begin
   APyDelphiWrapper.DefineVar('MB_SYSTEMMODAL', MB_SYSTEMMODAL);
   APyDelphiWrapper.DefineVar('MB_TASKMODAL', MB_TASKMODAL);
   APyDelphiWrapper.DefineVar('MB_HELP', MB_HELP);
+  {$IFNDEF FPC}
   APyDelphiWrapper.DefineVar('MB_NOFOCUS', MB_NOFOCUS);
+  {$ENDIF FPC}
 
   APyDelphiWrapper.DefineVar('IDOK', IDOK);
   APyDelphiWrapper.DefineVar('IDCANCEL', IDCANCEL);
@@ -56,8 +58,10 @@ begin
   APyDelphiWrapper.DefineVar('IDNO', IDNO);
   APyDelphiWrapper.DefineVar('IDCLOSE', IDCLOSE);
   APyDelphiWrapper.DefineVar('IDHELP', IDHELP);
+  {$IFNDEF FPC}
   APyDelphiWrapper.DefineVar('IDTRYAGAIN', IDTRYAGAIN);
   APyDelphiWrapper.DefineVar('IDCONTINUE', IDCONTINUE);
+  {$ENDIF FPC}
 end;
 
 function TWindowsRegistration.Name: String;

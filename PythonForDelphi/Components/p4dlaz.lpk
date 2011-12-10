@@ -52,6 +52,7 @@
       </Item2>
     </RequiredPkgs>
     <UsageOptions>
+      <IncludePath Value="Sources\Core"/>
       <UnitPath Value="$(PkgOutDir);Sources\Core"/>
     </UsageOptions>
     <PublishOptions>
