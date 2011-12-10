@@ -358,24 +358,17 @@ Type
     private
       fFreeNotifImpl : TFreeNotificationImpl;
     protected
-      property FreeNotifImpl : TFreeNotificationImpl read fFreeNotifImpl implements IFreeNotification;
+      property FreeNotifImpl : IFreeNotification read fFreeNotifImpl implements IFreeNotification;
     public
       constructor Create;
-      destructor Destroy; override;
     end;
 
     constructor TMyClass.Create;
     begin
       fFreeNotifImpl := TFreeNotificationImpl.Create(Self);
     end;
-
-    destructor TMyClass.Destroy;
-    begin
-      fFreeNotifImpl.Free;
-      inherited;
-    end;
   }
-  TFreeNotificationImpl = class(TObject)
+  TFreeNotificationImpl = class(TInterfacedObject, IFreeNotification)
   private
     fSubscribers : TInterfaceList;
     fOwner: TObject;
@@ -1054,7 +1047,11 @@ end;
 
 function SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
 begin
+  {$IFDEF FPC}
+  Result := SetToPython(GetTypeData(APropInfo.PropType)^.CompType, AValue);
+  {$ELSE FPC}
   Result := SetToPython(GetTypeData(APropInfo^.PropType^)^.CompType^, AValue);
+  {$ENDIF FPC}
 end;
 
 function SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
@@ -1076,7 +1073,11 @@ begin
   begin
     Assert(PySequence_Check(ASet) <> 0, 'PythonToSet expects a Python sequence as first parameter');
 
+   {$IFDEF FPC}
+    EnumInfo := GetTypeData(APropInfo^.PropType)^.CompType;
+   {$ELSE FPC}
     EnumInfo := GetTypeData(APropInfo^.PropType^)^.CompType^;
+   {$ENDIF FPC}
     for i := 0 to PySequence_Length(ASet)-1 do
     begin
       EnumObj := PySequence_GetItem(ASet, i);
@@ -1136,6 +1137,7 @@ Type
 
 constructor TFreeNotificationImpl.Create(AOwner: TObject);
 begin
+  inherited Create;
   Assert(Assigned(AOwner));
   fOwner := AOwner;
 end;
@@ -1555,10 +1557,19 @@ begin
         Result := SetToPython(Self.DelphiObject, PropInfo)
       end else if PropInfo^.PropType^.Kind = tkEnumeration then begin
       begin
+        {$IFDEF FPC}
+        if GetTypeData(PropInfo^.PropType)^.BaseType = TypeInfo(Boolean) then
+        {$ELSE FPC}
         if GetTypeData(PropInfo^.PropType^)^.BaseType^ = TypeInfo(Boolean) then
+        {$ENDIF FPC}
           Result := GetPythonEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
         else
-          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType^, GetOrdProp(Self.DelphiObject, PropInfo)))));
+        {$IFDEF FPC}
+          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType,
+        {$ELSE FPC}
+          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType^,
+        {$ENDIF FPC}
+            GetOrdProp(Self.DelphiObject, PropInfo)))));
       end
       end else
          Result := GetPythonEngine.VariantAsPyObject(GetPropValue(DelphiObject, PropInfo));
@@ -1825,7 +1836,11 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
       if PyObject is TPyDelphiObject then
       begin
         Obj := TPyDelphiObject(PyObject).DelphiObject;
+        {$IFDEF FPC}
+        if Obj.ClassType.InheritsFrom(GetTypeData(PropInfo^.PropType).ClassType) then
+        {$ELSE FPC}
         if Obj.ClassType.InheritsFrom(GetTypeData(PropInfo^.PropType^).ClassType) then
+        {$ENDIF FPC}
         begin
           SetOrdProp(DelphiObject, PropInfo, NativeInt(Obj));
           Result := 0;
@@ -1863,7 +1878,7 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
   begin
     try
       V := GetPythonEngine.PyObjectAsVariant(Value);
-      if (PropInfo.PropType^^.Kind = tkEnumeration) and (VarType(V) = varOleStr) then
+      if (PropInfo.PropType^.Kind = tkEnumeration) and (VarType(V) = varOleStr) then
         // Special case that occurs in Python3000
         V := VarAsType(V, varString);  //Downcast to string
       SetPropValue(DelphiObject, PropInfo, V);
@@ -2485,7 +2500,11 @@ begin
     begin
       if SupportsFreeNotification(AComponent) then
       begin
+        {$IFDEF FPC}
+        _handlerClass := FindHandler(APropInfo^.PropType);
+        {$ELSE FPC}
         _handlerClass := FindHandler(APropInfo^.PropType^);
+        {$ENDIF FPC}
         if Assigned(_handlerClass) then
         begin
           Unlink(AComponent, APropInfo);

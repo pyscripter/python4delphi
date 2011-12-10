@@ -1,20 +1,22 @@
 <?xml version="1.0"?>
 <CONFIG>
   <ProjectOptions>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
-    <Version Value="7"/>
     <General>
       <MainUnit Value="0"/>
-      <TargetFileExt Value=".exe"/>
-      <Icon Value="0"/>
       <UseXPManifest Value="True"/>
-      <ActiveEditorIndexAtStart Value="3"/>
+      <Icon Value="0"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <VersionInfo>
-      <ProjectVersion Value=""/>
       <Language Value=""/>
       <CharSet Value=""/>
+      <StringTable ProductVersion=""/>
     </VersionInfo>
+    <BuildModes Count="1">
+      <Item1 Name="default" Default="True"/>
+    </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
       <IgnoreBinaries Value="False"/>
@@ -49,171 +51,93 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <CursorPos X="79" Y="20"/>
-        <TopLine Value="5"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="30"/>
+        <CursorPos X="62" Y="43"/>
         <UsageCount Value="74"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
         <UnitName Value="variants"/>
-        <CursorPos X="9" Y="4225"/>
+        <WindowIndex Value="0"/>
         <TopLine Value="4220"/>
-        <EditorIndex Value="2"/>
+        <CursorPos X="9" Y="4225"/>
         <UsageCount Value="37"/>
-        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\varianth.inc"/>
-        <CursorPos X="94" Y="134"/>
+        <WindowIndex Value="0"/>
         <TopLine Value="115"/>
-        <EditorIndex Value="4"/>
+        <CursorPos X="94" Y="134"/>
         <UsageCount Value="37"/>
-        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
         <UnitName Value="PythonGUIInputOutput"/>
-        <CursorPos X="52" Y="166"/>
-        <TopLine Value="154"/>
         <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="154"/>
+        <CursorPos X="52" Y="166"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <UnitName Value="PythonEngine"/>
-        <CursorPos X="1" Y="1"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <EditorIndex Value="3"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="11"/>
         <Loaded Value="True"/>
-        <SyntaxHighlighter Value="Delphi"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
     </Units>
-    <JumpHistory Count="28" HistoryIndex="27">
+    <JumpHistory Count="6" HistoryIndex="5">
       <Position1>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="367" Column="20" TopLine="355"/>
+        <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position2>
-      <Position3>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="367" Column="20" TopLine="355"/>
-      </Position3>
-      <Position4>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2026" Column="20" TopLine="2014"/>
-      </Position4>
-      <Position5>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2086" Column="20" TopLine="2074"/>
-      </Position5>
-      <Position6>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2103" Column="46" TopLine="2091"/>
-      </Position6>
-      <Position7>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2110" Column="20" TopLine="2091"/>
-      </Position7>
-      <Position8>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2117" Column="16" TopLine="2105"/>
-      </Position8>
-      <Position9>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2122" Column="12" TopLine="2105"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2131" Column="12" TopLine="2119"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2201" Column="16" TopLine="2189"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2311" Column="20" TopLine="2299"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2313" Column="20" TopLine="2299"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="2396" Column="22" TopLine="2384"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="4225" Column="14" TopLine="4213"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="1417" Column="24" TopLine="1405"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="1420" Column="24" TopLine="1405"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="4225" Column="14" TopLine="4213"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\variants.pp"/>
-        <Caret Line="4225" Column="9" TopLine="4220"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\varianth.inc"/>
-        <Caret Line="207" Column="3" TopLine="177"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position23>
-      <Position24>
         <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
         <Caret Line="205" Column="19" TopLine="193"/>
-      </Position24>
-      <Position25>
+      </Position2>
+      <Position3>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
-      </Position25>
-      <Position26>
+      </Position3>
+      <Position4>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <Caret Line="3044" Column="28" TopLine="3032"/>
-      </Position26>
-      <Position27>
+      </Position4>
+      <Position5>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <Caret Line="9602" Column="10" TopLine="9597"/>
-      </Position27>
-      <Position28>
+      </Position5>
+      <Position6>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <Caret Line="2875" Column="61" TopLine="2863"/>
-      </Position28>
+      </Position6>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>
-    <Version Value="8"/>
+    <Version Value="9"/>
     <PathDelim Value="\"/>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir)\"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
     </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <UseAnsiStrings Value="False"/>
+      </SyntaxOptions>
+    </Parsing>
     <Linking>
       <Options>
         <Win32>

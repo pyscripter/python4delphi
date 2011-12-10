@@ -106,7 +106,11 @@ type
     property DelphiObject: TDrawGrid read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFDEF FPC}
+  TPyDelphiStringGrid = class (TPyDelphiCustomDrawGrid)
+  {$ELSE FPC}
   TPyDelphiStringGrid = class (TPyDelphiDrawGrid)
+  {$ENDIF FPC}
   private
     function  GetDelphiObject: TStringGrid;
     procedure SetDelphiObject(const Value: TStringGrid);
@@ -237,7 +241,11 @@ end;
 
 class function TDrawCellEventHandler.GetTypeInfo: PTypeInfo;
 begin
+  {$IFDEF FPC}
+  Result := System.TypeInfo(TOnDrawCell);
+  {$ELSE FPC}
   Result := System.TypeInfo(TDrawCellEvent);
+  {$ENDIF FPC}
 end;
 
 { TSelectCellEventHandler }
@@ -290,7 +298,11 @@ end;
 
 class function TSelectCellEventHandler.GetTypeInfo: PTypeInfo;
 begin
+  {$IFDEF FPC}
+  Result := System.TypeInfo(TOnSelectCellEvent);
+  {$ELSE FPC}
   Result := System.TypeInfo(TSelectCellEvent);
+  {$ENDIF FPC}
 end;
 
 { TGridColWidthsAccess }

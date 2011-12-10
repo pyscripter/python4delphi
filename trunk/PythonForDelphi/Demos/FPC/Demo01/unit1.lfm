@@ -6,7 +6,7 @@ object Form1: TForm1
   Caption = 'Form1'
   ClientHeight = 391
   ClientWidth = 547
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '0.9.30.2'
   object Panel1: TPanel
     Left = 0
     Height = 391

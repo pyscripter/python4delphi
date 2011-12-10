@@ -1,0 +1,60 @@
+object TestForm: TTestForm
+  Left = 725
+  Height = 341
+  Top = 200
+  Width = 614
+  ClientHeight = 341
+  ClientWidth = 614
+  LCLVersion = '0.9.30.2'
+  object CheckBox1: TCheckBox
+    Left = 96
+    Height = 19
+    Top = 16
+    Width = 78
+    Caption = 'CheckBox1'
+    TabOrder = 0
+  end
+  object CheckBox2: TCheckBox
+    Left = 96
+    Height = 19
+    Top = 56
+    Width = 78
+    Caption = 'CheckBox2'
+    Checked = True
+    State = cbChecked
+    TabOrder = 1
+  end
+  object btnClose: TButton
+    Left = 88
+    Height = 25
+    Top = 256
+    Width = 75
+    Caption = 'Close'
+    OnClick = btnCloseClick
+    TabOrder = 2
+  end
+  object Edit1: TEdit
+    Left = 96
+    Height = 23
+    Top = 96
+    Width = 121
+    TabOrder = 3
+    Text = 'Edit1'
+  end
+  object ListBox1: TListBox
+    Left = 328
+    Height = 169
+    Top = 48
+    Width = 249
+    ItemHeight = 0
+    TabOrder = 4
+  end
+  object btnAdd: TButton
+    Left = 104
+    Height = 25
+    Top = 128
+    Width = 75
+    Caption = 'Add'
+    TabOrder = 5
+  end
+end

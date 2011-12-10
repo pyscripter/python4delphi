@@ -43,7 +43,7 @@ var
 
 implementation
 
-{$R *.dfm}
+{$R *.lfm}
 
 Uses
   TypInfo,
@@ -177,7 +177,11 @@ begin
   PythonModule.SetVar( 'DVar', p );
   PyEngine.Py_DecRef(p);
 
-  p := PyEngine.PyInt_FromLong(Trunc(System.CompilerVersion));
+  {$IF DEFINED(FPC_VER) and (FPC_VER >= 5)}
+  p := PyEngine.PyInt_FromLong(FPC_VER);
+  {ELSE}
+  p := PyEngine.PyInt_FromLong(4);
+  {$IFEND}
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 

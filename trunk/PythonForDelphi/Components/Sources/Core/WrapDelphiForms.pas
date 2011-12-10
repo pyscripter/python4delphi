@@ -180,14 +180,18 @@ type
     procedure HandleOnActiveFormChange(Sender : TObject);
   protected
     // Exposed Methods
+    {$IFNDEF FPC}
     function DisableAlign_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function EnableAlign_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function MonitorFromPoint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     //TODO: implementation
     //function MonitorFromRect(const Rect: TRect; MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
     //function MonitorFromWindow(const Handle: THandle; MonitorDefault: TMonitorDefaultTo = mdNearest): TMonitor;
+    {$IFNDEF FPC}
     function Realign_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ResetFonts_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     // Property Getters
     function Get_ActiveControl(AContext : Pointer) : PPyObject; cdecl;
     function Get_ActiveCustomForm(AContext : Pointer) : PPyObject; cdecl;
@@ -200,25 +204,31 @@ type
     function Get_DataModuleCount(AContext : Pointer) : PPyObject; cdecl;
     function Get_MonitorCount(AContext : Pointer) : PPyObject; cdecl;
     function Get_Monitors(AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_DesktopRect(AContext : Pointer) : PPyObject; cdecl;
-    function Get_DesktopHeight(AContext : Pointer) : PPyObject; cdecl;
     function Get_DesktopLeft(AContext : Pointer) : PPyObject; cdecl;
     function Get_DesktopTop(AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_DesktopWidth(AContext : Pointer) : PPyObject; cdecl;
+    function Get_DesktopHeight(AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_WorkAreaRect(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaHeight(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaLeft(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaTop(AContext : Pointer) : PPyObject; cdecl;
     function Get_WorkAreaWidth(AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_HintFont(AContext : Pointer) : PPyObject; cdecl;
     function Get_IconFont(AContext : Pointer) : PPyObject; cdecl;
     function Get_MenuFont(AContext : Pointer) : PPyObject; cdecl;
     function Get_Fonts(AContext : Pointer) : PPyObject; cdecl;
     function Get_FormCount(AContext : Pointer) : PPyObject; cdecl;
     function Get_Forms(AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_Imes(AContext : Pointer) : PPyObject; cdecl;
     function Get_DefaultIme(AContext : Pointer) : PPyObject; cdecl;
     function Get_DefaultKbLayout(AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_Height(AContext : Pointer) : PPyObject; cdecl;
     function Get_PixelsPerInch(AContext : Pointer) : PPyObject; cdecl;
     function Get_Width(AContext : Pointer) : PPyObject; cdecl;
@@ -255,35 +265,45 @@ type
     function HandleMessage_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HelpCommand_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HelpContext_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function HelpJump_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function HelpKeyword_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HideHint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Initialize_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function IsRightToLeft_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function MessageBox_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Minimize_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ModalStarted_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ModalFinished_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function NormalizeAllTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function NormalizeTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    function RestoreTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function ProcessMessages_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Restore_Wrapper(args : PPyObject) : PPyObject; cdecl;
-    function RestoreTopMosts_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Run_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ShowException_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Terminate_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function UpdateAction_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function UseRightToLeftAlignment_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function UseRightToLeftReading_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function UseRightToLeftScrollBar_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     // property getters
     function Get_Active(AContext : Pointer): PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_AllowTesting(AContext : Pointer): PPyObject; cdecl;
     function Get_AutoDragDocking(AContext : Pointer): PPyObject; cdecl;
     function Get_CurrentHelpFile(AContext : Pointer): PPyObject; cdecl;
     function Get_DialogHandle(AContext : Pointer): PPyObject; cdecl;
-    function Get_ExeName(AContext : Pointer): PPyObject; cdecl;
     function Get_Handle(AContext : Pointer): PPyObject; cdecl;
+    {$ENDIF FPC}
+    function Get_ExeName(AContext : Pointer): PPyObject; cdecl;
     function Get_HelpFile(AContext : Pointer): PPyObject; cdecl;
     function Get_Hint(AContext : Pointer): PPyObject; cdecl;
     function Get_HintColor(AContext : Pointer): PPyObject; cdecl;
@@ -294,19 +314,25 @@ type
     function Get_Icon(AContext : Pointer): PPyObject; cdecl;
     function Get_MainForm(AContext : Pointer): PPyObject; cdecl;
     function Get_BiDiMode(AContext : Pointer): PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_BiDiKeyboard(AContext : Pointer): PPyObject; cdecl;
     function Get_NonBiDiKeyboard(AContext : Pointer): PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_ShowHint(AContext : Pointer): PPyObject; cdecl;
     function Get_ShowMainForm(AContext : Pointer): PPyObject; cdecl;
     function Get_Terminated(AContext : Pointer): PPyObject; cdecl;
     function Get_Title(AContext : Pointer): PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_UpdateFormatSettings(AContext : Pointer): PPyObject; cdecl;
     function Get_UpdateMetricSettings(AContext : Pointer): PPyObject; cdecl;
+    {$ENDIF FPC}
     // property setters
+    {$IFNDEF FPC}
     function Set_AllowTesting(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_AutoDragDocking(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_DialogHandle(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_Handle(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
+    {$ENDIF FPC}
     function Set_HelpFile(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_Hint(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_HintColor(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
@@ -316,13 +342,17 @@ type
     function Set_HintShortPause(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_Icon(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_BiDiMode(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
+    {$IFNDEF FPC}
     function Set_BiDiKeyboard(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_NonBiDiKeyboard(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
+    {$ENDIF FPC}
     function Set_ShowHint(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_ShowMainForm(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_Title(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
+    {$IFNDEF FPC}
     function Set_UpdateFormatSettings(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     function Set_UpdateMetricSettings(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
+    {$ENDIF FPC}
   public
     // Class methods
     class function  DelphiObjectClass : TClass; override;
@@ -615,6 +645,7 @@ begin
   inherited;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.DisableAlign_Wrapper(args: PPyObject): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -640,6 +671,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiScreen.GetDelphiObject: TScreen;
 begin
@@ -725,6 +757,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.Get_DefaultIme(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -740,6 +773,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.DefaultKbLayout);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiScreen.Get_DesktopHeight(AContext: Pointer): PPyObject;
 begin
@@ -749,6 +783,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.Get_DesktopLeft(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -772,6 +807,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.DesktopTop);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiScreen.Get_DesktopWidth(AContext: Pointer): PPyObject;
 begin
@@ -831,6 +867,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.Get_Imes(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -838,6 +875,7 @@ begin
     Result := Wrap(DelphiObject.Imes);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiScreen.Get_MenuFont(AContext: Pointer): PPyObject;
 begin
@@ -911,6 +949,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.Get_WorkAreaHeight(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -950,6 +989,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.WorkAreaWidth);
   end;
 end;
+{$ENDIF FPC}
 
 procedure TPyDelphiScreen.HandleOnActiveControlChange(Sender: TObject);
 begin
@@ -985,6 +1025,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiScreen.Realign_Wrapper(args: PPyObject): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -997,6 +1038,20 @@ begin
       Result := nil;
   end;
 end;
+
+function TPyDelphiScreen.ResetFonts_Wrapper(args: PPyObject): PPyObject;
+begin
+  with GetPythonEngine do begin
+    // We adjust the transmitted self argument
+    Adjust(@Self);
+    if PyArg_ParseTuple( args, ':ResetFonts', [] ) <> 0 then begin
+      DelphiObject.ResetFonts;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+{$ENDIF FPC}
 
 class procedure TPyDelphiScreen.RegisterGetSets(PythonType: TPythonType);
 begin
@@ -1025,16 +1080,19 @@ begin
         'Specifies the number of monitors used to comprise the desktop.', nil);
       AddGetSet('Monitors', @TPyDelphiScreen.Get_Monitors, nil,
         'Provides access to an individual monitor used to comprise the desktop.', nil);
+      {$IFNDEF FPC}
       AddGetSet('DesktopRect', @TPyDelphiScreen.Get_DesktopRect, nil,
         'Specifies the boundaries of the virtual desktop relative to the upper-left corner of the primary monitor.', nil);
-      AddGetSet('DesktopHeight', @TPyDelphiScreen.Get_DesktopHeight, nil,
-        'Specifies the height of the entire virtual desktop.', nil);
       AddGetSet('DesktopLeft', @TPyDelphiScreen.Get_DesktopLeft, nil,
         'Specifies the x-coordinate of the desktop’s left edge relative to the upper-left corner of the primary monitor.', nil);
       AddGetSet('DesktopTop', @TPyDelphiScreen.Get_DesktopTop, nil,
         'Specifies the y-coordinate of the entire desktop’s top edge relative to the upper-left corner of the primary monitor.', nil);
+      {$ENDIF FPC}
       AddGetSet('DesktopWidth', @TPyDelphiScreen.Get_DesktopWidth, nil,
         'Specifies the width of the entire virtual desktop.', nil);
+      AddGetSet('DesktopHeight', @TPyDelphiScreen.Get_DesktopHeight, nil,
+        'Specifies the height of the entire virtual desktop.', nil);
+      {$IFNDEF FPC}
       AddGetSet('WorkAreaRect', @TPyDelphiScreen.Get_WorkAreaRect, nil,
         'Specifies the boundaries of the usable work area on the primary monitor.', nil);
       AddGetSet('WorkAreaHeight', @TPyDelphiScreen.Get_WorkAreaHeight, nil,
@@ -1045,6 +1103,7 @@ begin
         'Specifies the top edge of the work area on the primary monitor.', nil);
       AddGetSet('WorkAreaWidth', @TPyDelphiScreen.Get_WorkAreaWidth, nil,
         'Specifies the width of the work area on the primary monitor.', nil);
+      {$ENDIF FPC}
       AddGetSet('HintFont', @TPyDelphiScreen.Get_HintFont, @TPyDelphiScreen.Set_HintFont,
         'Specifies the font used to display help hints.', nil);
       AddGetSet('IconFont', @TPyDelphiScreen.Get_IconFont, @TPyDelphiScreen.Set_IconFont,
@@ -1057,12 +1116,14 @@ begin
         'Indicates the number of forms or property pages displayed on the screen.', nil);
       AddGetSet('Forms', @TPyDelphiScreen.Get_Forms, nil,
         'Lists all the forms currently displayed in the application.', nil);
+      {$IFNDEF FPC}
       AddGetSet('Imes', @TPyDelphiScreen.Get_Imes, nil,
         'Lists all input method editors (IMEs) installed on the system.', nil);
       AddGetSet('DefaultIme', @TPyDelphiScreen.Get_DefaultIme, nil,
         'Indicates which input method editor (IME) is active when the TScreen object is created.', nil);
       AddGetSet('DefaultKbLayout', @TPyDelphiScreen.Get_DefaultKbLayout, nil,
         'Indicates the Windows handle to the keyboard layout that was active when the application started running.', nil);
+      {$ENDIF FPC}
       AddGetSet('Height', @TPyDelphiScreen.Get_Height, nil,
         'Indicates the vertical size of the screen in pixels.', nil);
       AddGetSet('PixelsPerInch', @TPyDelphiScreen.Get_PixelsPerInch, nil,
@@ -1079,6 +1140,7 @@ end;
 class procedure TPyDelphiScreen.RegisterMethods(PythonType: TPythonType);
 begin
   inherited;
+  {$IFNDEF FPC}
   PythonType.AddMethod('DisableAlign', @TPyDelphiScreen.DisableAlign_Wrapper,
     'TScreen.DisableAlign()'#10 +
     'Prevents forms from being aligned in the screen.');
@@ -1091,22 +1153,10 @@ begin
   PythonType.AddMethod('ResetFonts', @TPyDelphiScreen.ResetFonts_Wrapper,
     'TScreen.ResetFonts()'#10 +
     'Reinitializes the fonts listed in the Fonts property.');
+  {$ENDIF FPC}
   PythonType.AddMethod('MonitorFromPoint', @TPyDelphiScreen.MonitorFromPoint_Wrapper,
     'TScreen.MonitorFromPoint(APoint, AMonitorDefault)'#10 +
     'Returns the monitor where a specified point is located.');
-end;
-
-function TPyDelphiScreen.ResetFonts_Wrapper(args: PPyObject): PPyObject;
-begin
-  with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ResetFonts', [] ) <> 0 then begin
-      DelphiObject.ResetFonts;
-      Result := ReturnNone;
-    end else
-      Result := nil;
-  end;
 end;
 
 procedure TPyDelphiScreen.SetDelphiObject(const Value: TScreen);
@@ -1597,6 +1647,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.HelpJump_Wrapper(args: PPyObject): PPyObject;
 var
   _jumpID : PAnsiChar;
@@ -1610,6 +1661,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.HelpKeyword_Wrapper(
   args: PPyObject): PPyObject;
@@ -1653,6 +1705,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.IsRightToLeft_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -1665,6 +1718,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.MessageBox_Wrapper(
   args: PPyObject): PPyObject;
@@ -1725,6 +1779,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.NormalizeAllTopMosts_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -1753,6 +1808,21 @@ begin
   end;
 end;
 
+function TPyDelphiApplication.RestoreTopMosts_Wrapper(
+  args: PPyObject): PPyObject;
+begin
+  with GetPythonEngine do begin
+    // We adjust the transmitted self argument
+    Adjust(@Self);
+    if PyArg_ParseTuple( args, ':RestoreTopMosts', [] ) <> 0 then begin
+      DelphiObject.RestoreTopMosts;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+{$ENDIF FPC}
+
 function TPyDelphiApplication.ProcessMessages_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -1775,18 +1845,22 @@ begin
   begin
     AddGetSet('Active', @TPyDelphiApplication.Get_Active, nil,
       'Specifies whether the application is active and has focus.', nil);
+    {$IFNDEF FPC}
     AddGetSet('AllowTesting', @TPyDelphiApplication.Get_AllowTesting, @TPyDelphiApplication.Set_AllowTesting,
       'Represents information for the IDE.', nil);
     AddGetSet('AutoDragDocking', @TPyDelphiApplication.Get_AutoDragDocking, @TPyDelphiApplication.Set_AutoDragDocking,
       'Indicates whether dragged windows are automatically docked.', nil);
     AddGetSet('CurrentHelpFile', @TPyDelphiApplication.Get_CurrentHelpFile, nil,
       'Indicates the current help file.', nil);
-    AddGetSet('DialogHandle', @TPyDelphiApplication.Get_DialogHandle, @TPyDelphiApplication.Set_DialogHandle,
-      'Provides a mechanism for using non-VCL dialog boxes in an application.', nil);
+    {$ENDIF FPC}
     AddGetSet('ExeName', @TPyDelphiApplication.Get_ExeName, nil,
       'Contains the file name of the application’s executable file including path information.', nil);
+    {$IFNDEF FPC}
+    AddGetSet('DialogHandle', @TPyDelphiApplication.Get_DialogHandle, @TPyDelphiApplication.Set_DialogHandle,
+      'Provides a mechanism for using non-VCL dialog boxes in an application.', nil);
     AddGetSet('Handle', @TPyDelphiApplication.Get_Handle, @TPyDelphiApplication.Set_Handle,
       'Provides access to the window handle of the main form (window) of the application.', nil);
+    {$ENDIF FPC}
     AddGetSet('HelpFile', @TPyDelphiApplication.Get_HelpFile, @TPyDelphiApplication.Set_HelpFile,
       'Specifies the name of the default file the application uses to display Help.', nil);
     AddGetSet('Hint', @TPyDelphiApplication.Get_Hint, @TPyDelphiApplication.Set_Hint,
@@ -1807,10 +1881,12 @@ begin
       'Identifies which form in the application is the main window.', nil);
     AddGetSet('BiDiMode', @TPyDelphiApplication.Get_BiDiMode, @TPyDelphiApplication.Set_BiDiMode,
       'Indicates the layout of the application when running under Middle Eastern versions of Windows.', nil);
+    {$IFNDEF FPC}
     AddGetSet('BiDiKeyboard', @TPyDelphiApplication.Get_BiDiKeyboard, @TPyDelphiApplication.Set_BiDiKeyboard,
       'Specifies the name of the keyboard map that should be used in middle-east locales when text reads from right to left.', nil);
     AddGetSet('NonBiDiKeyboard', @TPyDelphiApplication.Get_NonBiDiKeyboard, @TPyDelphiApplication.Set_NonBiDiKeyboard,
       'Specifies the name of the keyboard map that should be used unless text reads from right to left.', nil);
+    {$ENDIF FPC}
     AddGetSet('ShowHint', @TPyDelphiApplication.Get_ShowHint, @TPyDelphiApplication.Set_ShowHint,
       'Determines whether Help Hints are enabled or disabled for the entire application.', nil);
     AddGetSet('ShowMainForm', @TPyDelphiApplication.Get_ShowMainForm, @TPyDelphiApplication.Set_ShowMainForm,
@@ -1819,10 +1895,12 @@ begin
       'Reports whether the application is in the process of shutting down.', nil);
     AddGetSet('Title', @TPyDelphiApplication.Get_Title, @TPyDelphiApplication.Set_Title,
       'Contains the text that appears below the icon representing the application when it is minimized.', nil);
+    {$IFNDEF FPC}
     AddGetSet('UpdateFormatSettings', @TPyDelphiApplication.Get_UpdateFormatSettings, @TPyDelphiApplication.Set_UpdateFormatSettings,
       'Specifies whether format settings are updated automatically when the user alters the system configuration.', nil);
     AddGetSet('UpdateMetricSettings', @TPyDelphiApplication.Get_UpdateMetricSettings, @TPyDelphiApplication.Set_UpdateMetricSettings,
       'Specifies whether the settings used for the hint window font and the icon title font are updated.', nil);
+    {$ENDIF FPC}
   end;
 end;
 
@@ -1854,9 +1932,11 @@ begin
   PythonType.AddMethod('HelpContext', @TPyDelphiApplication.HelpContext_Wrapper,
     'TApplication.HelpContext()'#10 +
     'Displays a specified help topic.');
+  {$IFNDEF FPC}
   PythonType.AddMethod('HelpJump', @TPyDelphiApplication.HelpJump_Wrapper,
     'TApplication.HelpJump()'#10 +
     'Displays a specified help topic.');
+  {$ENDIF FPC}
   PythonType.AddMethod('HelpKeyword', @TPyDelphiApplication.HelpKeyword_Wrapper,
     'TApplication.HelpKeyword()'#10 +
     'Displays a specified help topic.');
@@ -1866,9 +1946,11 @@ begin
   PythonType.AddMethod('Initialize', @TPyDelphiApplication.Initialize_Wrapper,
     'TApplication.Initialize()'#10 +
     'Provides an opportunity to initialize subsystems.');
+  {$IFNDEF FPC}
   PythonType.AddMethod('IsRightToLeft', @TPyDelphiApplication.IsRightToLeft_Wrapper,
     'TApplication.IsRightToLeft()'#10 +
     'Specifies whether the application adjusts its interface for Middle Eastern locales.');
+  {$ENDIF FPC}
   PythonType.AddMethod('MessageBox', @TPyDelphiApplication.MessageBox_Wrapper,
     'TApplication.MessageBox()'#10 +
     'Displays a specified message to the user.');
@@ -1881,18 +1963,20 @@ begin
   PythonType.AddMethod('ModalFinished', @TPyDelphiApplication.ModalFinished_Wrapper,
     'TApplication.ModalFinished()'#10 +
     'Track closing of modal form.');
+  {$IFNDEF FPC}
   PythonType.AddMethod('NormalizeAllTopMosts', @TPyDelphiApplication.NormalizeAllTopMosts_Wrapper,
     'TApplication.NormalizeAllTopMosts()'#10 +
     'Makes forms that have been designated as topmost forms (their FormStyle is fsStayOnTop) behave as if they were not topmost forms. ');
+  PythonType.AddMethod('RestoreTopMosts', @TPyDelphiApplication.RestoreTopMosts_Wrapper,
+    'TApplication.RestoreTopMosts()'#10 +
+    'Restores forms designated as fsStayOnTop to be topmost again.');
+  {$ENDIF FPC}
   PythonType.AddMethod('ProcessMessages', @TPyDelphiApplication.ProcessMessages_Wrapper,
     'TApplication.ProcessMessages()'#10 +
     'Interrupts the execution of an application so that it can process the message queue.');
   PythonType.AddMethod('Restore', @TPyDelphiApplication.Restore_Wrapper,
     'TApplication.Restore()'#10 +
     'Restores a minimized application to its normal size.');
-  PythonType.AddMethod('RestoreTopMosts', @TPyDelphiApplication.RestoreTopMosts_Wrapper,
-    'TApplication.RestoreTopMosts()'#10 +
-    'Restores forms designated as fsStayOnTop to be topmost again.');
   PythonType.AddMethod('Run', @TPyDelphiApplication.Run_Wrapper,
     'TApplication.Run()'#10 +
     'Executes the application.');
@@ -1905,6 +1989,7 @@ begin
   PythonType.AddMethod('UpdateAction', @TPyDelphiApplication.UpdateAction_Wrapper,
     'TApplication.UpdateAction()'#10 +
     'Generates an OnActionUpdate event.');
+  {$IFNDEF FPC}
   PythonType.AddMethod('UseRightToLeftAlignment', @TPyDelphiApplication.UseRightToLeftAlignment_Wrapper,
     'TApplication.UseRightToLeftAlignment()'#10 +
     'Specifies whether the application object is in a right-to-left alignment mode.');
@@ -1914,6 +1999,7 @@ begin
   PythonType.AddMethod('UseRightToLeftScrollBar', @TPyDelphiApplication.UseRightToLeftScrollBar_Wrapper,
     'TApplication.UseRightToLeftScrollBar()'#10 +
     'Specifies whether the vertical scroll bar appears on the left side controls.');
+  {$ENDIF FPC}
 end;
 
 function TPyDelphiApplication.Restore_Wrapper(args: PPyObject): PPyObject;
@@ -1923,20 +2009,6 @@ begin
     Adjust(@Self);
     if PyArg_ParseTuple( args, ':Restore', [] ) <> 0 then begin
       DelphiObject.Restore;
-      Result := ReturnNone;
-    end else
-      Result := nil;
-  end;
-end;
-
-function TPyDelphiApplication.RestoreTopMosts_Wrapper(
-  args: PPyObject): PPyObject;
-begin
-  with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
-    if PyArg_ParseTuple( args, ':RestoreTopMosts', [] ) <> 0 then begin
-      DelphiObject.RestoreTopMosts;
       Result := ReturnNone;
     end else
       Result := nil;
@@ -2019,6 +2091,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.UseRightToLeftAlignment_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -2060,6 +2133,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Get_Active(AContext: Pointer): PPyObject;
 begin
@@ -2069,6 +2143,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Get_AllowTesting(
   AContext: Pointer): PPyObject;
 begin
@@ -2095,6 +2170,7 @@ begin
     Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.BiDiKeyboard)));
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Get_BiDiMode(AContext: Pointer): PPyObject;
 begin
@@ -2104,6 +2180,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Get_CurrentHelpFile(
   AContext: Pointer): PPyObject;
 begin
@@ -2121,6 +2198,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.DialogHandle);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Get_ExeName(AContext: Pointer): PPyObject;
 begin
@@ -2130,6 +2208,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Get_Handle(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -2137,6 +2216,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.Handle);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Get_HelpFile(AContext: Pointer): PPyObject;
 begin
@@ -2213,6 +2293,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Get_NonBiDiKeyboard(
   AContext: Pointer): PPyObject;
 begin
@@ -2221,6 +2302,7 @@ begin
     Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.NonBiDiKeyboard)));
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Get_ShowHint(AContext: Pointer): PPyObject;
 begin
@@ -2255,6 +2337,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Get_UpdateFormatSettings(
   AContext: Pointer): PPyObject;
 begin
@@ -2323,6 +2406,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Set_BiDiMode(AValue: PPyObject;
   AContext: Pointer): Integer;
@@ -2341,6 +2425,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Set_DialogHandle(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -2374,6 +2459,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Set_HelpFile(AValue: PPyObject;
   AContext: Pointer): Integer;
@@ -2511,6 +2597,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Set_NonBiDiKeyboard(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -2527,6 +2614,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiApplication.Set_ShowHint(AValue: PPyObject;
   AContext: Pointer): Integer;
@@ -2579,6 +2667,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiApplication.Set_UpdateFormatSettings(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -2612,6 +2701,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 class function TPyDelphiApplication.DelphiObjectClass: TClass;
 begin

@@ -51,7 +51,9 @@ type
     procedure SetDelphiObject(const Value: TBitmap);
   protected
    // Exposed Methods
+    {$IFNDEF FPC}
     function Dormant_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function FreeImage_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function LoadFromResourceName_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function LoadFromResourceID_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -65,7 +67,9 @@ type
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
     function Get_HandleAllocated( AContext : Pointer) : PPyObject; cdecl;
     function Get_HandleType( AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_IgnorePalette( AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_MaskHandle( AContext : Pointer) : PPyObject; cdecl;
     function Get_Monochrome( AContext : Pointer) : PPyObject; cdecl;
     function Get_PixelFormat( AContext : Pointer) : PPyObject; cdecl;
@@ -75,7 +79,9 @@ type
     // Property Setters
     function Set_Handle( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_HandleType( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
+    {$IFNDEF FPC}
     function Set_IgnorePalette( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
+    {$ENDIF FPC}
     function Set_MaskHandle( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_Monochrome( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_PixelFormat( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
@@ -89,6 +95,7 @@ type
     property DelphiObject: TBitmap read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFNDEF FPC}
   TPyDelphiMetaFile = class(TPyDelphiGraphic)
   private
     function GetDelphiObject: TMetaFile;
@@ -121,6 +128,7 @@ type
     // Properties
     property DelphiObject: TMetaFile read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF FPC}
 
   TPyDelphiIcon = class(TPyDelphiGraphic)
   private
@@ -157,14 +165,18 @@ type
     function Get_Graphic( AContext : Pointer) : PPyObject; cdecl;
     function Get_Height( AContext : Pointer) : PPyObject; cdecl;
     function Get_Icon( AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_MetaFile( AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Get_Width( AContext : Pointer) : PPyObject; cdecl;
 
     // Property Setters
     function Set_Bitmap( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_Graphic( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_Icon( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
+    {$IFNDEF FPC}
     function Set_MetaFile( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
+    {$ENDIF FPC}
   public
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
@@ -182,7 +194,9 @@ type
   protected
     // Exposed Methods
     function Arc_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function BrushCopy_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Chord_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function CopyRect_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Draw_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -198,7 +212,9 @@ type
     function Polygon_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Polyline_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function PolyBezier_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function PolyBezierTo_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    {$ENDIF FPC}
     function Rectangle_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Refresh_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function RoundRect_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -218,14 +234,18 @@ type
     function Get_ClipRect( AContext : Pointer) : PPyObject; cdecl;
     function Get_Handle( AContext : Pointer) : PPyObject; cdecl;
     function Get_LockCount( AContext : Pointer) : PPyObject; cdecl;
+    {$IFNDEF FPC}
     function Get_CanvasOrientation( AContext : Pointer) : PPyObject; cdecl;
-    function Get_PenPos( AContext : Pointer) : PPyObject; cdecl;
     function Get_TextFlags( AContext : Pointer) : PPyObject; cdecl;
+    {$ENDIF FPC}
+    function Get_PenPos( AContext : Pointer) : PPyObject; cdecl;
     function Get_OnChange( AContext : Pointer) : PPyObject; cdecl;
     function Get_OnChanging( AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
     function Set_Handle( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
+    {$IFNDEF FPC}
     function Set_TextFlags( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
+    {$ENDIF FPC}
     function Set_OnChange( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     function Set_OnChanging( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
   public
@@ -241,6 +261,9 @@ implementation
 
 uses
   Types,
+  {$IFDEF FPC}
+  GraphType,
+  {$ENDIF FPC}
   WrapDelphiTypes;
 
 { Register the wrappers, the globals and the constants }
@@ -329,7 +352,9 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGraphic);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBitmap);
+  {$IFNDEF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMetaFile);
+  {$ENDIF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiIcon);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPicture);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCanvas);
@@ -408,15 +433,23 @@ function TPyDelphiGraphic.LoadFromClipboardFormat_Wrapper(
   args: PPyObject): PPyObject;
 var
   _format : Integer;
+  {$IFNDEF FPC}
   _data : Integer;
   _palette : Integer;
+  {$ENDIF FPC}
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
+    {$IFDEF FPC}
+    if PyArg_ParseTuple( args, 'i:LoadFromClipboardFormat', [@_format] ) <> 0 then
+    begin
+      DelphiObject.LoadFromClipboardFormat(_format);
+    {$ELSE FPC}
     if PyArg_ParseTuple( args, 'iii:LoadFromClipboardFormat', [@_format, @_data, @_palette] ) <> 0 then
     begin
       DelphiObject.LoadFromClipboardFormat(_format, _data, _palette);
+    {$ENDIF FPC}
       Result := ReturnNone;
     end
     else
@@ -513,19 +546,29 @@ function TPyDelphiGraphic.SaveToClipboardFormat_Wrapper(
   args: PPyObject): PPyObject;
 var
   _format : Word;
+  {$IFNDEF FPC}
   _data : THandle;
   _palette : HPALETTE;
+  {$ENDIF FPC}
 begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
+    {$IFDEF FPC}
+    if PyArg_ParseTuple( args, ':SaveToClipboardFormat', [] ) <> 0 then
+    begin
+      DelphiObject.SaveToClipboardFormat(_format);
+    {$ELSE FPC}
     if PyArg_ParseTuple( args, ':SaveToClipboardFormat', [] ) <> 0 then
     begin
       DelphiObject.SaveToClipboardFormat(_format, _data, _palette);
+    {$ENDIF FPC}
       Result := PyTuple_New(3);
       PyTuple_SetItem(Result, 0, PyInt_FromLong(_format));
+      {$IFNDEF FPC}
       PyTuple_SetItem(Result, 1, PyInt_FromLong(_data));
       PyTuple_SetItem(Result, 2, PyInt_FromLong(_palette));
+      {$ENDIF FPC}
     end
     else
       Result := nil;
@@ -685,6 +728,7 @@ begin
   Result := TBitmap;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiBitmap.Dormant_Wrapper(args: PPyObject): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -699,6 +743,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiBitmap.FreeImage_Wrapper(args: PPyObject): PPyObject;
 begin
@@ -757,6 +802,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiBitmap.Get_IgnorePalette(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -764,6 +810,7 @@ begin
     Result := VariantAsPyObject(DelphiObject.IgnorePalette);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiBitmap.Get_MaskHandle(AContext: Pointer): PPyObject;
 begin
@@ -893,8 +940,10 @@ begin
         '', nil);
       AddGetSet('HandleType', @TPyDelphiBitmap.Get_HandleType, @TPyDelphiBitmap.Set_HandleType,
         '', nil);
+      {$IFNDEF FPC}
       AddGetSet('IgnorePalette', @TPyDelphiBitmap.Get_IgnorePalette, @TPyDelphiBitmap.Set_IgnorePalette,
         '', nil);
+      {$ENDIF FPC}
       AddGetSet('MaskHandle', @TPyDelphiBitmap.Get_MaskHandle, @TPyDelphiBitmap.Set_MaskHandle,
         '', nil);
       AddGetSet('Monochrome', @TPyDelphiBitmap.Get_Monochrome, @TPyDelphiBitmap.Set_Monochrome,
@@ -911,9 +960,11 @@ end;
 class procedure TPyDelphiBitmap.RegisterMethods(PythonType: TPythonType);
 begin
   inherited;
+  {$IFNDEF FPC}
   PythonType.AddMethod('Dormant', @TPyDelphiBitmap.Dormant_Wrapper,
     'TBitmap.Dormant()'#10 +
     '');
+  {$ENDIF FPC}
   PythonType.AddMethod('FreeImage', @TPyDelphiBitmap.FreeImage_Wrapper,
     'TBitmap.FreeImage()'#10 +
     '');
@@ -1029,6 +1080,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiBitmap.Set_IgnorePalette(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -1045,6 +1097,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiBitmap.Set_MaskHandle(AValue: PPyObject;
   AContext: Pointer): Integer;
@@ -1182,6 +1235,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiCanvas.BrushCopy_Wrapper(args: PPyObject): PPyObject;
 var
   _obj : TObject;
@@ -1212,6 +1266,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiCanvas.Chord_Wrapper(args: PPyObject): PPyObject;
 var
@@ -1387,6 +1442,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiCanvas.Get_CanvasOrientation(
   AContext: Pointer): PPyObject;
 begin
@@ -1398,6 +1454,7 @@ begin
       Result := PyString_FromString('coLeftToRight');
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiCanvas.Get_ClipRect(AContext: Pointer): PPyObject;
 begin
@@ -1453,6 +1510,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiCanvas.Get_TextFlags(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -1460,6 +1518,7 @@ begin
     Result := PyInt_FromLong(DelphiObject.TextFlags);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiCanvas.GetDelphiObject: TCanvas;
 begin
@@ -1600,6 +1659,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiCanvas.PolyBezierTo_Wrapper(args: PPyObject): PPyObject;
 var
   i : Integer;
@@ -1645,6 +1705,7 @@ begin
       Result := nil;
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiCanvas.Polygon_Wrapper(args: PPyObject): PPyObject;
 var
@@ -1783,12 +1844,16 @@ begin
         'Specifies the handle for this canvas.', nil);
       AddGetSet('LockCount', @TPyDelphiCanvas.Get_LockCount,nil,
         'Indicates the number of times the canvas has been locked to prevent interference from other threads.', nil);
+      {$IFNDEF FPC}
       AddGetSet('CanvasOrientation', @TPyDelphiCanvas.Get_CanvasOrientation, nil,
         'Determines the orientation of the canvas as left-to-right or right-to-left.', nil);
+      {$ENDIF FPC}
       AddGetSet('PenPos', @TPyDelphiCanvas.Get_PenPos, nil,
         'Specifies the current drawing position of the Pen. ', nil);
+      {$IFNDEF FPC}
       AddGetSet('TextFlags', @TPyDelphiCanvas.Get_TextFlags, @TPyDelphiCanvas.Set_TextFlags,
         'Specifies how text is written to the canvas.', nil);
+      {$ENDIF FPC}
       AddGetSet('OnChange', @TPyDelphiCanvas.Get_OnChange, @TPyDelphiCanvas.Set_OnChange,
         'Occurs when the image has just changed.', nil);
       AddGetSet('OnChanging', @TPyDelphiCanvas.Get_OnChanging, @TPyDelphiCanvas.Set_OnChanging,
@@ -1802,9 +1867,11 @@ begin
   PythonType.AddMethod('Arc', @TPyDelphiCanvas.Arc_Wrapper,
     'TCanvas.Arc()'#10 +
     '');
+  {$IFNDEF FPC}
   PythonType.AddMethod('BrushCopy', @TPyDelphiCanvas.BrushCopy_Wrapper,
     'TCanvas.BrushCopy()'#10 +
     '');
+  {$ENDIF FPC}
   PythonType.AddMethod('Chord', @TPyDelphiCanvas.Chord_Wrapper,
     'TCanvas.Chord()'#10 +
     '');
@@ -1850,9 +1917,11 @@ begin
   PythonType.AddMethod('PolyBezier', @TPyDelphiCanvas.PolyBezier_Wrapper,
     'TCanvas.PolyBezier()'#10 +
     '');
+  {$IFNDEF FPC}
   PythonType.AddMethod('PolyBezierTo', @TPyDelphiCanvas.PolyBezierTo_Wrapper,
     'TCanvas.PolyBezierTo()'#10 +
     '');
+  {$ENDIF FPC}
   PythonType.AddMethod('Rectangle', @TPyDelphiCanvas.Rectangle_Wrapper,
     'TCanvas.Rectangle()'#10 +
     '');
@@ -1944,6 +2013,7 @@ begin
   Result := 0;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiCanvas.Set_TextFlags(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -1960,6 +2030,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 procedure TPyDelphiCanvas.SetDelphiObject(const Value: TCanvas);
 begin
@@ -2136,7 +2207,7 @@ begin
   end;
 end;
 
-
+{$IFNDEF FPC}
 { TPyDelphiMetaFile }
 
 function TPyDelphiMetaFile.Clear_Wrapper(args: PPyObject): PPyObject;
@@ -2368,6 +2439,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 { TPyDelphiIcon }
 
@@ -2492,6 +2564,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiPicture.Get_MetaFile(AContext: Pointer): PPyObject;
 begin
   with GetPythonEngine do begin
@@ -2499,6 +2572,7 @@ begin
     Result := Wrap(DelphiObject.MetaFile);
   end;
 end;
+{$ENDIF FPC}
 
 function TPyDelphiPicture.Get_Width(AContext: Pointer): PPyObject;
 begin
@@ -2543,8 +2617,10 @@ begin
         '', nil);
       AddGetSet('Icon', @TPyDelphiPicture.Get_Icon, @TPyDelphiPicture.Set_Icon,
         '', nil);
+      {$IFNDEF FPC}
       AddGetSet('Metafile', @TPyDelphiPicture.Get_Metafile, @TPyDelphiPicture.Set_Metafile,
         '', nil);
+      {$ENDIF FPC}
       AddGetSet('Width', @TPyDelphiPicture.Get_Width, nil,
         '', nil);
     end;
@@ -2629,6 +2705,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiPicture.Set_MetaFile(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
@@ -2645,6 +2722,7 @@ begin
       Result := -1;
   end;
 end;
+{$ENDIF FPC}
 
 procedure TPyDelphiPicture.SetDelphiObject(const Value: TPicture);
 begin
