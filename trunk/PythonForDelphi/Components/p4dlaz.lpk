@@ -24,7 +24,7 @@
         <CompilerPath Value="$(CompPath)"/>
       </Other>
     </CompilerOptions>
-    <Files Count="3">
+    <Files Count="19">
       <Item1>
         <Filename Value="Sources\Core\PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
@@ -39,6 +39,71 @@
         <Filename Value="Sources\Core\MethodCallBack.pas"/>
         <UnitName Value="MethodCallBack"/>
       </Item3>
+      <Item4>
+        <Filename Value="Sources\Core\WrapDelphiWindows.pas"/>
+        <UnitName Value="WrapDelphiWindows"/>
+      </Item4>
+      <Item5>
+        <Filename Value="Sources\Core\TinyWideStrings.pas"/>
+        <UnitName Value="TinyWideStrings"/>
+      </Item5>
+      <Item6>
+        <Filename Value="Sources\Core\VarPyth.pas"/>
+        <UnitName Value="VarPyth"/>
+      </Item6>
+      <Item7>
+        <Filename Value="Sources\Core\WrapDelphi.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="WrapDelphi"/>
+      </Item7>
+      <Item8>
+        <Filename Value="Sources\Core\WrapDelphiActnList.pas"/>
+        <UnitName Value="WrapDelphiActnList"/>
+      </Item8>
+      <Item9>
+        <Filename Value="Sources\Core\WrapDelphiButtons.pas"/>
+        <UnitName Value="WrapDelphiButtons"/>
+      </Item9>
+      <Item10>
+        <Filename Value="Sources\Core\WrapDelphiClasses.pas"/>
+        <UnitName Value="WrapDelphiClasses"/>
+      </Item10>
+      <Item11>
+        <Filename Value="Sources\Core\WrapDelphiComCtrls.pas"/>
+        <UnitName Value="WrapDelphiComCtrls"/>
+      </Item11>
+      <Item12>
+        <Filename Value="Sources\Core\WrapDelphiControls.pas"/>
+        <UnitName Value="WrapDelphiControls"/>
+      </Item12>
+      <Item13>
+        <Filename Value="Sources\Core\WrapDelphiExtCtrls.pas"/>
+        <UnitName Value="WrapDelphiExtCtrls"/>
+      </Item13>
+      <Item14>
+        <Filename Value="Sources\Core\WrapDelphiForms.pas"/>
+        <UnitName Value="WrapDelphiForms"/>
+      </Item14>
+      <Item15>
+        <Filename Value="Sources\Core\WrapDelphiGraphics.pas"/>
+        <UnitName Value="WrapDelphiGraphics"/>
+      </Item15>
+      <Item16>
+        <Filename Value="Sources\Core\WrapDelphiGrids.pas"/>
+        <UnitName Value="WrapDelphiGrids"/>
+      </Item16>
+      <Item17>
+        <Filename Value="Sources\Core\WrapDelphiStdCtrls.pas"/>
+        <UnitName Value="WrapDelphiStdCtrls"/>
+      </Item17>
+      <Item18>
+        <Filename Value="Sources\Core\WrapDelphiTypes.pas"/>
+        <UnitName Value="WrapDelphiTypes"/>
+      </Item18>
+      <Item19>
+        <Filename Value="Sources\Core\WrapDelphiVCL.pas"/>
+        <UnitName Value="WrapDelphiVCL"/>
+      </Item19>
     </Files>
     <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
