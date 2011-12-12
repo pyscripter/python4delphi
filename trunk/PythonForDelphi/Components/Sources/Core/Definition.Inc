@@ -275,7 +275,7 @@
 // Misc
 /////////////////////////////////////////////////////////////////////////////
 
-{$IFDEF DELPHI2010_OR_HIGHER}
+{$IFDEF DELPHIXE2_OR_HIGHER}
   {$DEFINE USESYSTEMDISPINVOKE}  //Might work with earlier versions as well
 {$ENDIF}
 
