@@ -97,7 +97,7 @@ procedure FreeCallBacks;
 implementation
 
 uses
-  Windows, Classes;
+  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Classes;
 
 type
   PByte = ^Byte;
@@ -136,7 +136,11 @@ begin
   if (page = nil) or (Longint(CodeMemPages^.CodeBlocks) - Longint(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
   begin
     // allocate new Page
+	{$IFDEF MSWINDOWS}	
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
+	{$ELSE}
+    page := GetMem(PageSize);
+	{$ENDIF}	
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
     // init pointer to end of page
@@ -189,7 +193,11 @@ begin
             CodeMemPages:=page^.Next;
 
           // free the memory
+	  	  {$IFDEF MSWINDOWS}
           VirtualFree(page, 0, MEM_RELEASE);
+		  {$ELSE}
+		  FreeMem(page);
+		  {$ENDIF}		  
         end;
 
         exit;
@@ -233,6 +241,9 @@ begin
                          argnum, calltype);
 end;
 
+{$IFDEF MSWINDOWS}
+{$IFNDEF CPUX64}
+// win32 inplementation
 function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
 const
@@ -307,6 +318,187 @@ begin
   end;
   result := Q;
 end;
+{$ELSE}
+procedure test;
+asm
+mov r9,[rbp+$2020]
+end;
+
+// win 64 implementation
+function  GetCallBack( self: TObject; method: Pointer;
+                       argnum: Integer; calltype: tcalltype): Pointer;
+const
+// 64 bit
+c64stack: array[0..14] of byte = (
+$48, $81, $ec, 00, 00, 00, 00,//     sub rsp,$0
+$4c, $89, $8c, $24, $20, 00, 00, 00//     mov [rsp+$20],r9
+);
+
+c64copy: array[0..14] of byte = (
+$4c, $8b, $8d,  00, 00, 00, 00,//     mov r9,[rbp+0]
+$4c, $89, $8c, $24, 00, 00, 00, 00//     mov [rsp+0],r9
+);
+
+c64regs: array[0..28] of byte = (
+$4d, $89, $c1,      //   mov r9,r8
+$49, $89, $d0,      //   mov r8,rdx
+$48, $89, $ca,      //   mov rdx,rcx
+$48, $b9, 00, 00, 00, 00, 00, 00, 00, 00, // mov rcx, self
+$48, $b8, 00, 00, 00, 00, 00, 00, 00, 00 // mov rax, method
+);
+
+c64jump: array[0..2] of byte = (
+$48, $ff, $e0  // jump rax
+);
+
+c64call: array[0..10] of byte = (
+$48, $ff, $d0,    //    call rax
+$48, $81,$c4,  00, 00, 00, 00,   //     add rsp,$0
+$c3// ret
+);
+var
+  i: Integer;
+  P,Q: PByte;
+  lCount : integer;
+  lSize : integer;
+  lOffset : integer;
+begin
+//test;
+    lCount := SizeOf(c64regs);
+    if argnum>3 then
+       Inc(lCount,sizeof(c64stack)+(argnum-4)*sizeof(c64copy)+sizeof(c64call))
+    else
+       Inc(lCount,sizeof(c64jump));
+
+    GetCodeMem(Q,lCount);
+    P := Q;
+
+    if argnum>3 then
+    begin
+        move(c64stack,P^,SizeOf(c64stack));
+        Inc(P,3);
+        lSize := (argnum +1 ) * sizeof(Int64);
+        move(lSize,P^,sizeof(Int32));
+        Inc(P,SizeOf(c64stack)-3);
+        for I := 5 to argnum do
+        begin
+            move(c64copy,P^,SizeOf(c64copy));
+            Inc(P,3);
+            lOffset := (i-1)*sizeof(Int64);
+            move(lOffset,P^,sizeof(Int32));
+            Inc(P,8);
+            lOffset := i*sizeof(Int64);
+            move(lOffset,P^,sizeof(Int32));
+            Inc(P,4);
+        end;
+    end;
+
+    move(c64regs,P^,SizeOf(c64regs));
+    Inc(P,11);
+    move(self,P^,SizeOf(self));
+    Inc(P,10);
+    move(method,P^,SizeOf(method));
+
+    Inc(P,SizeOf(c64regs)-21);
+
+    if argnum<4 then
+      move(c64jump,P^,SizeOf(c64jump))
+    else
+    begin
+      move(c64call,P^,SizeOf(c64call));
+      Inc(P,6);
+      lSize := (argnum+1) * sizeof(Int64);
+      move(lSize,P^,sizeof(Int32));
+    end;
+  result := Q;
+end;
+{$ENDIF}
+{$ELSE}
+// 32 bit with stack align
+function  GetCallBack( self: TObject; method: Pointer;
+                       argnum: Integer; calltype: tcalltype): Pointer;
+const
+// Short handling of stdcalls:
+S1: array [0..14] of byte = (
+$5A,            //00  pop  edx  // pop return address
+$B8,0,0,0,0,    //01  mov  eax, self
+$50,            //06  push eax
+$52,            //07  push edx // now push return address
+// call the real callback
+$B8,0,0,0,0,    //08  mov  eax, Method
+$FF,$E0);       //13  jmp  eax
+
+//Handling for ctCDECL:
+C1: array [0..5] of byte = (
+// begin of call
+$55,            //00      push ebp
+$8B,$EC,        //01      mov  ebp, esp
+$83,$EC,$0);    //03      sub  esp, align
+
+// push arguments
+//  for i:= argnum-1 downto 0 do begin
+C2: array [0..3] of byte = (
+$8B,$45,0,      //06+4*s  mov eax,[ebp+8+4*i]
+$50);           //09+4*s  push eax
+//  end;
+
+// self parameter
+C3: array [0..17] of byte = (
+$B8,0,0,0,0,    //06+4*s  mov eax, self
+$50,            //11+4*s  push eax
+// call the real callback
+$B8,0,0,0,0,    //12+4*s  mov  eax,Method
+$FF,$D0,        //17+4*s  call eax
+// clear stack
+$83,$C4,0,      //20+4*s  add esp, 4+bytes+align
+$5D,            //23+4*s  pop  ebp
+$C3);           //24+4*s  ret
+
+
+
+var
+  bytes: Word;
+  i: Integer;
+  P,Q: PByte;
+  align : integer;
+begin
+  if calltype = ctSTDCALL then begin
+    GetCodeMem(Q,15);
+    P := Q;
+    move(S1,P^,SizeOf(S1));
+    Inc(P,2);
+    move(self,P^,SizeOf(self));
+    Inc(P,7);
+    move(method,P^,SizeOf(method));
+    {Inc(P,6); End of proc}
+  end else begin  {ctCDECL}
+    bytes := argnum * 4;
+	align :=  ($10 - (bytes + 4{self} + 4{address} + 4{push bp}) and $f) and $f; // align to $10 for Mac compatibility
+
+    GetCodeMem(Q,24+4*argnum);
+    P := Q;
+    move(C1,P^,SizeOf(C1));
+    Inc(P,SizeOf(C1)-1);
+	  p^ := align;
+    Inc(P);	
+    for i:=argnum-1 downto 0 do begin
+      move(C2,P^,SizeOf(C2));
+      Inc(P,2);
+      P^:=8+4*i;
+      Inc(P,2);
+    end;
+    move(C3,P^,SizeOf(C3));
+    Inc(P,1);
+    move(self,P^,SizeOf(self));
+    Inc(P,6);
+    move(method,P^,SizeOf(method));
+    Inc(P,8);
+    P^ := 4+bytes+align;
+    {Inc(P,3); End of proc}
+  end;
+  result := Q;
+end;
+{$ENDIF}
 
 procedure DeleteCallBack( Proc: Pointer);
 begin
@@ -324,7 +516,11 @@ begin
     nextpage := page^.Next;
 
     // free the memory
+  {$IFDEF MSWINDOWS}
     VirtualFree(page, 0, MEM_RELEASE);
+  {$ELSE}
+	FreeMem(page);
+  {$ENDIF}		  
 
     page := nextpage;
   end;
