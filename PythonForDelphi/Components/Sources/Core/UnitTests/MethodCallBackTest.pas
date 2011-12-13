@@ -24,7 +24,11 @@ uses
 
 implementation
 
+
 type
+  TFourArgStdFunction = function(arg1, arg2, arg3, arg4: integer): integer; stdcall;
+  TFiveArgCdeclFunction = function(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
+
   TTestObj = class(TObject)
   public
     Argument1: string;
@@ -32,6 +36,8 @@ type
     Argument3: string;
     function TwoArgStdFunction(arg1: string; arg2: string): integer; stdcall;
     procedure ThreeArgCdeclProcedure(arg1: string; arg2: string; arg3: string); cdecl;
+    function FourArgStdFunction(arg1, arg2, arg3, arg4: integer): integer; stdcall;
+    function FiveArgCdeclFunction(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
   end;
 
   TMethodCallbackTest = class(TTestCase)
@@ -46,6 +52,8 @@ type
     procedure TestOfObjectCallBackStdCall;
     procedure TestOfObjectCallBackCDecl;
     procedure TestDeleteCallBack;
+    procedure TestFourArgStdFunction;
+    procedure TestFiveArgCdeclFunction;
     procedure TestMemoryMgmt;
     procedure TestBug01;
   end;
@@ -57,6 +65,17 @@ type
   TMyProcCallback = procedure (arg1, arg2, arg3: string) of object; cdecl;
 
 { TTestObj }
+
+function TTestObj.FiveArgCdeclFunction(arg1, arg2, arg3, arg4,
+  arg5: integer): integer;
+begin
+  Result := arg1 * arg4 + arg2 * arg5 + arg3;
+end;
+
+function TTestObj.FourArgStdFunction(arg1, arg2, arg3, arg4: integer): integer;
+begin
+  Result := arg1 * arg3 + arg2 * arg4;
+end;
 
 procedure TTestObj.ThreeArgCdeclProcedure(arg1, arg2, arg3: string);
 begin
@@ -202,6 +221,24 @@ var
 begin
   ptr1 := nil;
   DeleteCallBack(ptr1);
+end;
+
+procedure TMethodCallbackTest.TestFiveArgCdeclFunction;
+Var
+  CallBack : TFiveArgCdeclFunction;
+begin
+   CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgCdeclFunction, 5, ctCDECL);
+   CheckEquals(CallBack(1,2,3,4,5), 1*4+2*5+3);
+   DeleteCallBack(@CallBack);
+end;
+
+procedure TMethodCallbackTest.TestFourArgStdFunction;
+Var
+  CallBack : TFourArgStdFunction;
+begin
+   CallBack := GetCallBack(fTestObj, @TTestObj.FourArgStdFunction, 4, ctSTDCALL);
+   CheckEquals(CallBack(1,2,3,4), 1*3+2*4);
+   DeleteCallBack(@CallBack);
 end;
 
 procedure TMethodCallbackTest.TestMemoryMgmt;
