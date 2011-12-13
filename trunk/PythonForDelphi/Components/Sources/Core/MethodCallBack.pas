@@ -98,7 +98,15 @@ procedure FreeCallBacks;
 implementation
 
 uses
-  {$IFDEF MSWINDOWS}Windows,{$ENDIF} Classes;
+  {$IFDEF MSWINDOWS}
+  Windows,
+  {$ELSE WINDOWS}
+  {$IFDEF FPC}
+  {$ELSE}
+  Posix.SysMMan,
+  {$ENDIF}
+  {$ENDIF WINDOWS}
+  Classes;
 
 type
   PByte = ^Byte;
@@ -121,6 +129,37 @@ const
 
 var
   CodeMemPages: PCodeMemPage;
+  
+type
+{$IFDEF FPC}
+  PtrCalcType = PtrUInt;
+{$ELSE}
+  {$IFDEF CPUX64}
+  PtrCalcType = NativeInt;
+  {$ELSE}
+  PtrCalcType = Longint;
+  {$ENDIF}
+{$ENDIF}
+
+{$IFNDEF MSWINDOWS}
+{$IFDEF FPC}
+function mmap(Addr: Pointer; Len: Integer; Prot: Integer; Flags: Integer; FileDes: Integer; Off: Integer): Pointer; cdecl;
+  external 'c' name 'mmap';
+
+function mprotect(Addr: Pointer; Len: Integer; Prot: Integer): Integer; cdecl;
+  external 'c' name 'mprotect';
+
+function munmap(Addr: Pointer; Len: Integer): Integer; cdecl;
+  external 'c' name 'munmap';
+const  
+  PROT_NONE   =0;
+  PROT_READ   =1;
+  PROT_WRITE  =2;
+  PROT_EXEC   =4;
+  MAP_PRIVATE =2;
+  MAP_ANON=$1000;  
+{$ENDIF}
+{$ENDIF}
 
 procedure GetCodeMem(var ptr: PByte; size: integer);
 var
@@ -134,22 +173,24 @@ begin
   // determine if there is already a page assigned and
   // that it has enough space requested block
   page:=CodeMemPages;
-  if (page = nil) or (Longint(CodeMemPages^.CodeBlocks) - Longint(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
+  if (page = nil) or (PtrCalcType(CodeMemPages^.CodeBlocks) - PtrCalcType(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
   begin
     // allocate new Page
 	{$IFDEF MSWINDOWS}	
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	{$ELSE}
-    page := GetMem(PageSize);
+    //page := GetMem(PageSize);
+    page := mmap($10000000, PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
 	{$ENDIF}	
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
     // init pointer to end of page
-    page^.CodeBlocks:=Pointer(Longint(page) + PageSize);
+    page^.CodeBlocks:=Pointer(PtrCalcType(page) + PageSize);
   end;
 
   //---blocks are assigned starting from the end of the page
-  block:=Pointer(Longint(page^.codeBlocks) - (size + sizeof(PCodeMemBlock)));
+  block:=Pointer(PtrCalcType(page^.codeBlocks) - (size + sizeof(PCodeMemBlock)));
   block^.Next:=page^.CodeBlocks;
   page^.CodeBlocks:=block;
 
@@ -174,7 +215,7 @@ begin
 
   while page <> nil do
   begin
-    while Longint(block) < (Longint(page) + pagesize) do
+    while PtrCalcType(block) < (PtrCalcType(page) + pagesize) do
     begin
       if @(block^.Code[0]) = ptr then
       begin
@@ -186,7 +227,7 @@ begin
           page^.CodeBlocks:=block^.Next;
 
         // return the page if it is empty
-        if Longint(page^.CodeBlocks) = Longint(page) + pagesize then
+        if PtrCalcType(page^.CodeBlocks) = PtrCalcType(page) + pagesize then
         begin
           if lastpage <> nil then
             lastpage^.Next:=page^.Next
@@ -197,7 +238,8 @@ begin
 	  	  {$IFDEF MSWINDOWS}
           VirtualFree(page, 0, MEM_RELEASE);
 		  {$ELSE}
-		  FreeMem(page);
+          // FreeMem(page);
+          munmap(page,PageSize);
 		  {$ENDIF}		  
         end;
 
@@ -242,8 +284,17 @@ begin
                          argnum, calltype);
 end;
 
-{$IFDEF MSWINDOWS}
-{$IFNDEF CPUX64}
+{$IFDEF CPUX64}
+{$DEFINE 64_BIT_CALLBACK}
+{$ELSE}
+{$IFDEF MACOS}
+{$DEFINE ALIGNED_32_BIT_CALLBACK}
+{$ELSE}
+{$DEFINE SIMPLE_32_BIT_CALLBACK}
+{$ENDIF MACOS}
+{$ENDIF CPUX64}
+
+{$IFDEF SIMPLE_32_BIT_CALLBACK}
 // win32 inplementation
 function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
@@ -319,27 +370,42 @@ begin
   end;
   result := Q;
 end;
-{$ELSE}
-procedure test;
-asm
-mov r9,[rbp+$2020]
-end;
+{$ENDIF SIMPLE_32_BIT_CALLBACK}
 
-// win 64 implementation
+{$IFDEF 64_BIT_CALLBACK}
 function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
 const
-// 64 bit
+{$IFDEF MSWINDOWS}
+   RegParamCount = 4;
+   ShadowParamCount = 4;
+{$ELSE}
+   RegParamCount = 6;
+   ShadowParamCount   = 0;
+{$ENDIF}
+
+Size32Bit = 4;
+Size64Bit = 8;
+
+ShadowStack   = ShadowParamCount * Size64Bit;
+SkipParamCount = RegParamCount - ShadowParamCount;
+
+StackSrsOffset = 3;
 c64stack: array[0..14] of byte = (
 $48, $81, $ec, 00, 00, 00, 00,//     sub rsp,$0
-$4c, $89, $8c, $24, $20, 00, 00, 00//     mov [rsp+$20],r9
+$4c, $89, $8c, $24, ShadowStack, 00, 00, 00//     mov [rsp+$20],r9
 );
 
-c64copy: array[0..14] of byte = (
-$4c, $8b, $8d,  00, 00, 00, 00,//     mov r9,[rbp+0]
+CopySrcOffset=4;
+CopyDstOffset=4;
+c64copy: array[0..15] of byte = (
+$4c, $8b, $8c, $24,  00, 00, 00, 00,//     mov r9,[rsp+0]
 $4c, $89, $8c, $24, 00, 00, 00, 00//     mov [rsp+0],r9
 );
 
+RegMethodOffset = 10;
+{$IFDEF MSWINDOWS}
+RegSelfOffset = 11;
 c64regs: array[0..28] of byte = (
 $4d, $89, $c1,      //   mov r9,r8
 $49, $89, $d0,      //   mov r8,rdx
@@ -347,11 +413,25 @@ $48, $89, $ca,      //   mov rdx,rcx
 $48, $b9, 00, 00, 00, 00, 00, 00, 00, 00, // mov rcx, self
 $48, $b8, 00, 00, 00, 00, 00, 00, 00, 00 // mov rax, method
 );
+{$ELSE}
+RegSelfOffset = 17;
+c64regs: array[0..34] of byte = (
+$4d, $89, $c1,      //   mov r9,r8
+$49, $89, $c8,      //   mov r8,rcx
+$48, $89, $d1,      //   mov rcx,rdx
+$48, $89, $f2,      //   mov rdx,rsi
+$48, $89, $fe,      //   mov rsi,rdi
+$48, $bf, 00, 00, 00, 00, 00, 00, 00, 00, // mov rdi, self
+$48, $b8, 00, 00, 00, 00, 00, 00, 00, 00 // mov rax, method
+);
+{$ENDIF}
+
 
 c64jump: array[0..2] of byte = (
 $48, $ff, $e0  // jump rax
 );
 
+CallOffset = 6;
 c64call: array[0..10] of byte = (
 $48, $ff, $d0,    //    call rax
 $48, $81,$c4,  00, 00, 00, 00,   //     add rsp,$0
@@ -359,62 +439,68 @@ $c3// ret
 );
 var
   i: Integer;
-  P,Q: PByte;
+  P,PP,Q: PByte;
   lCount : integer;
   lSize : integer;
   lOffset : integer;
 begin
-//test;
     lCount := SizeOf(c64regs);
-    if argnum>3 then
-       Inc(lCount,sizeof(c64stack)+(argnum-4)*sizeof(c64copy)+sizeof(c64call))
+    if argnum>=RegParamCount then
+       Inc(lCount,sizeof(c64stack)+(argnum-RegParamCount)*sizeof(c64copy)+sizeof(c64call))
     else
        Inc(lCount,sizeof(c64jump));
 
     GetCodeMem(Q,lCount);
     P := Q;
 
-    if argnum>3 then
+    lSize := 0;
+    if argnum>=RegParamCount then
     begin
+        lSize := ( 1+ ((argnum + 1 - SkipParamCount) div 2) * 2 )* Size64Bit;   // 16 byte stack align
+
+        pp := p;
         move(c64stack,P^,SizeOf(c64stack));
-        Inc(P,3);
-        lSize := (argnum +1 ) * sizeof(Int64);
-        move(lSize,P^,sizeof(Int32));
-        Inc(P,SizeOf(c64stack)-3);
-        for I := 5 to argnum do
+        Inc(P,StackSrsOffset);
+        move(lSize,P^,Size32Bit);
+        p := pp;
+        Inc(P,SizeOf(c64stack));
+        for I := 0 to argnum - RegParamCount -1 do
         begin
+            pp := p;
             move(c64copy,P^,SizeOf(c64copy));
-            Inc(P,3);
-            lOffset := (i-1)*sizeof(Int64);
-            move(lOffset,P^,sizeof(Int32));
-            Inc(P,8);
-            lOffset := i*sizeof(Int64);
-            move(lOffset,P^,sizeof(Int32));
-            Inc(P,4);
+            Inc(P,CopySrcOffset);
+            lOffset := lSize + (i+ShadowParamCount+1)*Size64Bit;
+            move(lOffset,P^,Size32Bit);
+            Inc(P,CopyDstOffset+Size32Bit);
+            lOffset := (i+ShadowParamCount+1)*Size64Bit;
+            move(lOffset,P^,Size32Bit);
+            p := pp;
+            Inc(P,SizeOf(c64copy));
         end;
     end;
 
+    pp := p;
     move(c64regs,P^,SizeOf(c64regs));
-    Inc(P,11);
+    Inc(P,RegSelfOffset);
     move(self,P^,SizeOf(self));
-    Inc(P,10);
+    Inc(P,RegMethodOffset);
     move(method,P^,SizeOf(method));
+    p := pp;
+    Inc(P,SizeOf(c64regs));
 
-    Inc(P,SizeOf(c64regs)-21);
-
-    if argnum<4 then
+    if argnum<RegParamCount then
       move(c64jump,P^,SizeOf(c64jump))
     else
     begin
       move(c64call,P^,SizeOf(c64call));
-      Inc(P,6);
-      lSize := (argnum+1) * sizeof(Int64);
-      move(lSize,P^,sizeof(Int32));
+      Inc(P,CallOffset);
+      move(lSize,P^,Size32Bit);
     end;
   result := Q;
 end;
-{$ENDIF}
-{$ELSE}
+{$ENDIF 64_BIT_CALLBACK}
+
+{$IFDEF ALIGNED_32_BIT_CALLBACK}
 // 32 bit with stack align
 function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
@@ -520,7 +606,8 @@ begin
   {$IFDEF MSWINDOWS}
     VirtualFree(page, 0, MEM_RELEASE);
   {$ELSE}
-	FreeMem(page);
+	//FreeMem(page);
+    munmap(page,PageSize);
   {$ENDIF}		  
 
     page := nextpage;
