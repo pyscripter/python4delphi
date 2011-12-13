@@ -110,6 +110,8 @@ begin
 end;
 
 procedure TMethodCallbackTest.TestBug01;
+const
+   AllocCount = {$IFDEF CPUX64}51{$ELSE}90{$ENDIF};
 var
   i: integer;
   ptr, ptr1, ptr2: Pointer;
@@ -142,7 +144,7 @@ I'm sorry about that. Hope it didn't cause too many problems up to now.
 
   CheckEquals(0, CodeMemPageCount);
 
-  for i:=1 to 90 do
+  for i:=1 to AllocCount do
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
 
   // there should still be 1 page allocated
@@ -242,6 +244,8 @@ begin
 end;
 
 procedure TMethodCallbackTest.TestMemoryMgmt;
+const
+   AllocCount = {$IFDEF CPUX64}101{$ELSE}110{$ENDIF};
 var
   i: integer;
   ptr, ptr1, ptr2: Pointer;
@@ -253,7 +257,7 @@ begin
 
   CheckEquals(0, CodeMemPageCount);
 
-  for i:=1 to 110 do
+  for i:=1 to AllocCount do
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
 
   // there should still be 1 page allocated
