@@ -180,7 +180,7 @@ begin
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	{$ELSE}
     //page := GetMem(PageSize);
-    page := mmap($10000000, PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
     mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
 	{$ENDIF}	
     page^.next:=CodeMemPages;
@@ -505,15 +505,6 @@ end;
 function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
 const
-// Short handling of stdcalls:
-S1: array [0..14] of byte = (
-$5A,            //00  pop  edx  // pop return address
-$B8,0,0,0,0,    //01  mov  eax, self
-$50,            //06  push eax
-$52,            //07  push edx // now push return address
-// call the real callback
-$B8,0,0,0,0,    //08  mov  eax, Method
-$FF,$E0);       //13  jmp  eax
 
 //Handling for ctCDECL:
 C1: array [0..5] of byte = (
@@ -530,7 +521,7 @@ $50);           //09+4*s  push eax
 //  end;
 
 // self parameter
-C3: array [0..17] of byte = (
+C3: array [0..19] of byte = (
 $B8,0,0,0,0,    //06+4*s  mov eax, self
 $50,            //11+4*s  push eax
 // call the real callback
@@ -539,9 +530,7 @@ $FF,$D0,        //17+4*s  call eax
 // clear stack
 $83,$C4,0,      //20+4*s  add esp, 4+bytes+align
 $5D,            //23+4*s  pop  ebp
-$C3);           //24+4*s  ret
-
-
+$C2,00,00);           //24+4*s  ret   [0]
 
 var
   bytes: Word;
@@ -549,25 +538,22 @@ var
   P,Q: PByte;
   align : integer;
 begin
-  if calltype = ctSTDCALL then begin
-    GetCodeMem(Q,15);
-    P := Q;
-    move(S1,P^,SizeOf(S1));
-    Inc(P,2);
-    move(self,P^,SizeOf(self));
-    Inc(P,7);
-    move(method,P^,SizeOf(method));
-    {Inc(P,6); End of proc}
-  end else begin  {ctCDECL}
-    bytes := argnum * 4;
-	align :=  ($10 - (bytes + 4{self} + 4{address} + 4{push bp}) and $f) and $f; // align to $10 for Mac compatibility
+// On mac FPC ctSTDCALL and ctCDECL are the same
+    {$IFDEF FPC}
+    {$IFDEF MACOS32}
+    calltype := ctCDECL;
+    {$ENDIF}
+    {$ENDIF}
 
-    GetCodeMem(Q,24+4*argnum);
+    bytes := argnum * 4;
+	  align :=  ($10 - (bytes + 4{self} + 4{address} + 4{push bp}) and $f) and $f; // align to $10 for Mac compatibility
+
+    GetCodeMem(Q,sizeof(c1)+sizeof(c3)+sizeof(c2)*argnum);
     P := Q;
     move(C1,P^,SizeOf(C1));
     Inc(P,SizeOf(C1)-1);
 	  p^ := align;
-    Inc(P);	
+    Inc(P);
     for i:=argnum-1 downto 0 do begin
       move(C2,P^,SizeOf(C2));
       Inc(P,2);
@@ -580,10 +566,19 @@ begin
     Inc(P,6);
     move(method,P^,SizeOf(method));
     Inc(P,8);
-    P^ := 4+bytes+align;
-    {Inc(P,3); End of proc}
-  end;
-  result := Q;
+    if calltype = ctCDECL then
+    begin
+       P^ := 4+bytes+align;
+    end
+    else
+    begin
+       P^ := {4+}align;
+       Inc(P,3);
+       P^ := bytes;
+    end;
+
+
+    result := Q;
 end;
 {$ENDIF}
 
