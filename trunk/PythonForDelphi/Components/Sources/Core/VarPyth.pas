@@ -237,6 +237,9 @@ type
     Reserved1, Reserved2, Reserved3: Word;
     VPython: TPythonData;
     Reserved4: LongInt;
+    {$IFDEF CPUX64}
+    Reserved5: LongInt;  // size is 24 bytes in 64bit
+    {$ENDIF CPUX64}
   end;
 
 

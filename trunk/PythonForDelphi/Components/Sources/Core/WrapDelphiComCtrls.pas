@@ -178,7 +178,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'OOO:FindNextPage', [@_pCurPage, @_pGoForward, @_pCheckTabVisible] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'OOO:FindNextPage',@_pCurPage, @_pGoForward, @_pCheckTabVisible ) <> 0 then begin
       if CheckObjAttribute(_pCurPage, 'CurPage', TTabSheet, _CurPage) then
         Result := Wrap( DelphiObject.FindNextPage(TTabSheet(_CurPage), PyObject_IsTrue(_pGoForward)<>0, PyObject_IsTrue(_pCheckTabVisible)<>0) )
       else
@@ -216,7 +216,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'ii:GetHitTestInfoAt', [@x, @y] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'ii:GetHitTestInfoAt',@x, @y ) <> 0 then begin
       _result := DelphiObject.GetHitTestInfoAt(x, y);
       Result := PyList_New(0);
       if htAbove in _result then
@@ -305,7 +305,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'ii:IndexOfTabAt', [@x, @y] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'ii:IndexOfTabAt',@x, @y ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.IndexOfTabAt(x, y) );
     end else
       Result := nil;
@@ -372,7 +372,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:ScrollTabs', [@delta] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'i:ScrollTabs',@delta ) <> 0 then begin
       DelphiObject.ScrollTabs(delta);
       Result := ReturnNone;
     end else
@@ -390,7 +390,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'OO:SelectNextPage', [@_pGoForward, @_pCheckTabVisible] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'OO:SelectNextPage',@_pGoForward, @_pCheckTabVisible ) <> 0 then begin
       DelphiObject.SelectNextPage(PyObject_IsTrue(_pGoForward)<>0, PyObject_IsTrue(_pCheckTabVisible)<>0);
       Result := ReturnNone;
     end else
@@ -445,7 +445,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:TabRect', [@idx] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'i:TabRect',@idx ) <> 0 then begin
       Result := WrapRect(PyDelphiWrapper, DelphiObject.TabRect(idx));
     end else
       Result := nil;

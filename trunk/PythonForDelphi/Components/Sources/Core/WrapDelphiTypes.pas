@@ -241,7 +241,7 @@ var
   x, y : Integer;
 begin
   inherited;
-  if APythonType.Engine.PyArg_ParseTuple( args, 'ii:Create', [@x, @y] ) <> 0 then
+  if APythonType.Engine.PyArg_ParseTuple( args, 'ii:Create',@x, @y ) <> 0 then
   begin
    fValue.X := x;
    fValue.Y := y;
@@ -348,7 +348,7 @@ constructor TPyDelphiRect.CreateWith(APythonType: TPythonType;
   args: PPyObject);
 begin
   inherited;
-  APythonType.Engine.PyArg_ParseTuple( args, 'iiii:Create', [@fValue.Left, @fValue.Top, @fValue.Right, @fValue.Bottom] );
+  APythonType.Engine.PyArg_ParseTuple( args, 'iiii:Create',@fValue.Left, @fValue.Top, @fValue.Right, @fValue.Bottom );
 end;
 
 function TPyDelphiRect.Get_Bottom(Acontext: Pointer): PPyObject;
@@ -550,7 +550,7 @@ var
   cx, cy : Integer;
 begin
   inherited;
-  if APythonType.Engine.PyArg_ParseTuple( args, 'ii:Create', [@cx, @cy] ) <> 0 then
+  if APythonType.Engine.PyArg_ParseTuple( args, 'ii:Create',@cx, @cy ) <> 0 then
   begin
    fValue.cx := cx;
    fValue.cy := cy;

@@ -58,6 +58,9 @@ const
 {$ENDIF}
 
 type
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonGUIInputOutput = class(TPythonInputOutput)
   private
     { Private declarations }

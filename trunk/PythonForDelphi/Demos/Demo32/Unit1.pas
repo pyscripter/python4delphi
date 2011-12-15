@@ -122,7 +122,7 @@ begin
   inherited;
   with GetPythonEngine, DelphiObject as TPoint do
     begin
-      if PyArg_ParseTuple( args, 'ii:CreatePoint', [@fx, @fy] ) = 0 then
+      if PyArg_ParseTuple( args, 'ii:CreatePoint',@fx, @fy ) = 0 then
         Exit;
     end;
 end;

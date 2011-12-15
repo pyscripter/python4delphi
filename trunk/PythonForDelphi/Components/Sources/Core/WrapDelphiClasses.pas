@@ -342,7 +342,7 @@ begin
   begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:Assign', [@_obj] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:Assign',@_obj ) <> 0 then
       Result := Self.Assign(_obj)
     else
       Result := nil;
@@ -365,7 +365,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':GetNamePath', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':GetNamePath' ) <> 0 then begin
       Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.GetNamePath)))
     end else
       Result := nil;
@@ -459,7 +459,7 @@ function TPyDelphiCollection.Add_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':Add', [] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, ':Add' ) <> 0 then
     Result := Wrap(DelphiObject.Add)
   else
     Result := nil;
@@ -470,7 +470,7 @@ function TPyDelphiCollection.BeginUpdate_Wrapper(
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':BeginUpdate', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':BeginUpdate' ) <> 0 then begin
     DelphiObject.BeginUpdate;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -481,7 +481,7 @@ function TPyDelphiCollection.Clear_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':Clear', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':Clear') <> 0 then begin
     (DelphiObject as TCollection).Clear;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -494,7 +494,7 @@ Var
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Delete', [@Index] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Delete',@Index ) <> 0 then
   begin
     if not CheckIndex(Index, DelphiObject.Count) then
       Result := nil
@@ -517,7 +517,7 @@ function TPyDelphiCollection.EndUpdate_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':EndUpdate', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':EndUpdate') <> 0 then begin
     DelphiObject.EndUpdate;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -566,7 +566,7 @@ Var
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Insert', [@Index] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Insert',@Index ) <> 0 then
     Result := Wrap(DelphiObject.Insert(Index))
   else
     Result := nil;
@@ -736,7 +736,7 @@ begin
     Adjust(@Self);
     Result := nil;
     s := nil;
-    if PyArg_ParseTuple( args, '|O:BindMethodsToEvents', [@s] ) <> 0 then
+    if PyArg_ParseTuple( args, '|O:BindMethodsToEvents',@s ) <> 0 then
     begin
       if Assigned(S) then
         _prefix := PyString_AsDelphiString(s);
@@ -869,7 +869,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':GetParentComponent', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':GetParentComponent') <> 0 then begin
       Result := Wrap(DelphiObject.GetParentComponent)
     end else
       Result := nil;
@@ -881,7 +881,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':HasParent', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':HasParent') <> 0 then begin
       Result := VariantAsPyObject(DelphiObject.HasParent)
     end else
       Result := nil;
@@ -1028,7 +1028,7 @@ var
   _owner : TObject;
 begin
   inherited;
-  if APythonType.Engine.PyArg_ParseTuple( args, 'O:Create', [@_obj] ) <> 0 then
+  if APythonType.Engine.PyArg_ParseTuple( args, 'O:Create',@_obj ) <> 0 then
   begin
     _owner := nil;
     if CheckObjAttribute(_obj, 'Owner', TComponent, _owner) then
@@ -1176,7 +1176,7 @@ begin
   // We adjust the transmitted self argument
   Adjust(@Self);
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 'OO:AddObject', [@PStr, @_obj] ) <> 0 then
+    if PyArg_ParseTuple( args, 'OO:AddObject',@PStr, @_obj ) <> 0 then
     begin
       if CheckObjAttribute(_obj, 'The second argument of AddObject', TObject, _value) then
           Result := PyInt_FromLong(DelphiObject.AddObject(PyString_AsDelphiString(PStr), _value))
@@ -1194,7 +1194,7 @@ begin
   // We adjust the transmitted self argument
   Adjust(@Self);
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 'O:Add', [@PStr] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:Add',@PStr ) <> 0 then
       Result := PyInt_FromLong(DelphiObject.Add(PyString_AsDelphiString(PStr)))
     else
       Result := nil;
@@ -1236,7 +1236,7 @@ function TPyDelphiStrings.BeginUpdate_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':BeginUpdate', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':BeginUpdate') <> 0 then begin
     DelphiObject.BeginUpdate;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -1247,7 +1247,7 @@ function TPyDelphiStrings.Clear_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':Clear', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':Clear') <> 0 then begin
     DelphiObject.Clear;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -1260,7 +1260,7 @@ Var
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Delete', [@Index] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, 'i:Delete',@Index ) <> 0 then
   begin
     if CheckIndex(Index, DelphiObject.Count) then
     begin
@@ -1283,7 +1283,7 @@ function TPyDelphiStrings.EndUpdate_Wrapper(args: PPyObject): PPyObject;
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, ':EndUpdate', [] ) <> 0 then begin
+  if GetPythonEngine.PyArg_ParseTuple( args, ':EndUpdate') <> 0 then begin
     DelphiObject.EndUpdate;
     Result := GetPythonEngine.ReturnNone;
   end else
@@ -1333,7 +1333,7 @@ begin
   // We adjust the transmitted self argument
   Adjust(@Self);
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 'O:IndexOf', [@PStr] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:IndexOf',@PStr ) <> 0 then
       Result := GetPythonEngine.PyInt_FromLong(DelphiObject.IndexOf(PyString_AsDelphiString(PStr)))
     else
       Result := nil;
@@ -1345,7 +1345,7 @@ Var
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 's:LoadFromFile', [@PStr] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, 's:LoadFromFile',@PStr ) <> 0 then
   begin
     DelphiObject.LoadFromFile(String(PStr));
     Result := GetPythonEngine.ReturnNone;
@@ -1449,7 +1449,7 @@ Var
 begin
   // We adjust the transmitted self argument
   Adjust(@Self);
-  if GetPythonEngine.PyArg_ParseTuple( args, 's:SaveToFile', [@PStr] ) <> 0 then
+  if GetPythonEngine.PyArg_ParseTuple( args, 's:SaveToFile',@PStr ) <> 0 then
   begin
     DelphiObject.SaveToFile(String(PStr));
     Result := GetPythonEngine.ReturnNone;
@@ -1481,7 +1481,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Execute', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Execute') <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.Execute );
     end else
       Result := nil;
@@ -1551,7 +1551,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Update', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Update') <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.Update );
     end else
       Result := nil;

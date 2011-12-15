@@ -135,7 +135,7 @@ var
 begin
   Result := nil;
   with GetPythonEngine do
-    if (PyArg_ParseTuple( args, 'O', [@func]) = 0) or
+    if (PyArg_ParseTuple( args, 'O',@func) = 0) or
        ( not PyFunction_Check(func)) then
     begin
       s := fRegistername + '(function)';
@@ -157,7 +157,7 @@ var
 begin
   Result := nil;
   with GetPythonEngine do
-    if (PyArg_ParseTuple( args, 'O', [@func]) = 0) or
+    if (PyArg_ParseTuple( args, 'O',@func) = 0) or
        (RegisteredMethods.IndexOf(func) = -1) then
     begin
       s := fUnregistername + '(function)';

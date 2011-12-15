@@ -205,7 +205,7 @@ var psort,index: integer;
 begin
   with GetPythonEngine do
   begin
-    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'ii', [@psort, @index]) <> 0) then
+    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'ii',@psort, @index) <> 0) then
     begin
       Result := PyInt_FromLong(TSortThread(psort)[index]);
     end else
@@ -221,7 +221,7 @@ begin
 
   with GetPythonEngine do
   begin
-    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'iii', [@psort, @i, @j]) <> 0) then
+    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'iii',@psort, @i, @j) <> 0) then
     begin
       TSortThread(psort).VisualSwap(i,j);
       Result := ReturnNone;

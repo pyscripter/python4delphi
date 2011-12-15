@@ -69,7 +69,7 @@ var
   Form1: TForm1;
 
 implementation
-{$R *.dfm}
+{$R *.lfm}
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin

@@ -80,7 +80,7 @@ var
   key : PAnsiChar;
 begin
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 's:GetProperty', [@key] ) <> 0 then
+    if PyArg_ParseTuple( args, 's:GetProperty',@key ) <> 0 then
       begin
         if key = 'Title' then
           Result := VariantAsPyObject(cbTitle.Text)
@@ -110,7 +110,7 @@ var
   value : PPyObject;
 begin
   with GetPythonEngine do
-    if PyArg_ParseTuple( args, 'sO:SetProperty', [@key, @value] ) <> 0 then
+    if PyArg_ParseTuple( args, 'sO:SetProperty',@key, @value ) <> 0 then
       begin
         if key = 'Title' then
           begin
