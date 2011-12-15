@@ -108,7 +108,7 @@ type
   {$IFEND}
   PNativeInt = ^NativeInt;
 {$ELSE}
-  {$IF DEFINED(FPC_VER) and (FPC_VER >= 5)}
+  {$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
   {$ELSE}
     NativeInt = integer;
     NativeUInt = Cardinal;
@@ -2074,6 +2074,7 @@ type
 
 
   TTracebackItem = class
+  public
     FileName : String;
     LineNo : Integer;
     Context : String;
@@ -2969,6 +2970,7 @@ type
   end;
 
   TPyVar = class(TPyObject)
+  public
     dv_var         : Variant;
     dv_component   : TPythonDelphiVar;
     dv_object      : PPyObject;
