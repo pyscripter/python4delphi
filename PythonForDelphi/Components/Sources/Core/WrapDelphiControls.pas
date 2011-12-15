@@ -195,7 +195,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':BringToFront', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':BringToFront') <> 0 then begin
       DelphiObject.BringToFront;
       Result := ReturnNone;
     end else
@@ -212,7 +212,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:ClientToScreen', [@pt] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:ClientToScreen',@pt ) <> 0 then begin
       if CheckPointAttribute(pt, 'point', p) then
         Result := WrapPoint(PyDelphiWrapper, DelphiObject.ClientToScreen(p))
       else
@@ -245,7 +245,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Hide', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Hide') <> 0 then begin
       DelphiObject.Hide;
       Result := ReturnNone;
     end else
@@ -258,7 +258,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Invalidate', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Invalidate') <> 0 then begin
       DelphiObject.Invalidate;
       Result := ReturnNone;
     end else
@@ -313,7 +313,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Repaint', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Repaint') <> 0 then begin
       DelphiObject.Repaint;
       Result := ReturnNone;
     end else
@@ -330,7 +330,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:ScreenToClient', [@pt] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:ScreenToClient',@pt ) <> 0 then begin
       if CheckPointAttribute(pt, 'point', p) then
         Result := WrapPoint(PyDelphiWrapper, DelphiObject.ScreenToClient(p))
       else
@@ -345,7 +345,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':SendToBack', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':SendToBack') <> 0 then begin
       DelphiObject.SendToBack;
       Result := ReturnNone;
     end else
@@ -363,7 +363,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiii:SetBounds', [@_left, @_top, @_width, @_height] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'iiii:SetBounds',@_left, @_top, @_width, @_height ) <> 0 then begin
       DelphiObject.SetBounds(_left, _top, _width, _height);
       Result := ReturnNone;
     end else
@@ -398,7 +398,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Show', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Show') <> 0 then begin
       DelphiObject.Show;
       Result := ReturnNone;
     end else
@@ -411,7 +411,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Update', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Update') <> 0 then begin
       DelphiObject.Update;
       Result := ReturnNone;
     end else
@@ -500,7 +500,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':CanFocus', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':CanFocus') <> 0 then begin
       Result := VariantAsPyObject(DelphiObject.CanFocus)
     end else
       Result := nil;
@@ -619,7 +619,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':SetFocus', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':SetFocus') <> 0 then begin
       DelphiObject.SetFocus;
       Result := ReturnNone;
     end else

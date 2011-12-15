@@ -32,6 +32,7 @@
 (*      Michiel du Toit (micdutoit@hsbfn.com) - Lazarus Port              *)
 (*      Chris Nicolai (nicolaitanes@gmail.com)                            *)
 (*      Kiriakos Vlahos (kvlahos@london.edu)                              *)
+(*      Andrey Gruzdev      (andrey.gruzdev@gmail.com)                    *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
 (* Everyone is allowed to use and change this code free for his own tasks *)
@@ -56,11 +57,6 @@ unit PythonEngine;
 
 { TODO -oMMM : implement tp_as_buffer slot }
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
-
-{ TODO -opyscripter : Win64 compatibility }
-    { TODO -opyscripter : packed records }
-    { TODO -opyscripter : assempler stuff }
-{ TODO -opyscripter : FPC compatibility }
 
 {$IFNDEF FPC}
   {$IFNDEF DELPHI7_OR_HIGHER}
@@ -490,7 +486,7 @@ type
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
   allocfunc         = function ( self: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 
-  PyNumberMethods = packed record
+  PyNumberMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
      nb_add           : binaryfunc;
      nb_substract     : binaryfunc;
      nb_multiply      : binaryfunc;
@@ -538,7 +534,7 @@ type
   end;
   PPyNumberMethods = ^PyNumberMethods;
 
-  PySequenceMethods = packed record
+  PySequenceMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
      sq_length    : lenfunc;
      sq_concat    : binaryfunc;
      sq_repeat    : ssizeargfunc;
@@ -555,7 +551,7 @@ type
   end;
   PPySequenceMethods = ^PySequenceMethods;
 
-  PyMappingMethods = packed record
+  PyMappingMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
      mp_length	      : lenfunc;
      mp_subscript     : binaryfunc;
      mp_ass_subscript : objobjargproc;
@@ -564,7 +560,7 @@ type
 
 /// jah 29-sep-2000 : updated for python 2.0
 ///                   added from .h
-  PyBufferProcs = packed record
+  PyBufferProcs = {$IFNDEF CPUX64}packed{$ENDIF} record
      bf_getreadbuffer   : getreadbufferproc;
      bf_getwritebuffer  : getwritebufferproc;
      bf_getsegcount     : getsegcountproc;
@@ -572,36 +568,36 @@ type
   end;
   PPyBufferProcs = ^PyBufferProcs;
 
-  Py_complex =  packed record
+  Py_complex =  {$IFNDEF CPUX64}packed{$ENDIF} record
      real : double;
      imag : double;
   end;
 
-  PyObject = packed record
+  PyObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt: NativeInt;
     ob_type:   PPyTypeObject;
   end;
 
-  PyIntObject = packed record
+  PyIntObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
     ob_ival   : LongInt;
   end;
 
-  _frozen = packed record
+  _frozen = {$IFNDEF CPUX64}packed{$ENDIF} record
      name	: PAnsiChar;
      code	: PByte;
      size	: Integer;
   end;
 
-  PySliceObject = packed record
+  PySliceObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt:          NativeInt;
     ob_type:            PPyTypeObject;
     start, stop, step:  PPyObject;
   end;
 
   PPyMethodDef = ^PyMethodDef;
-  PyMethodDef  = packed record
+  PyMethodDef  = {$IFNDEF CPUX64}packed{$ENDIF} record
      ml_name:  PAnsiChar;
      ml_meth:  PyCFunction;
      ml_flags: Integer;
@@ -610,7 +606,7 @@ type
 
   // structmember.h
   PPyMemberDef = ^PyMemberDef;
-  PyMemberDef = packed record
+  PyMemberDef = {$IFNDEF CPUX64}packed{$ENDIF} record
     name : PAnsiChar;
     _type : integer;
     offset : NativeInt;
@@ -626,7 +622,7 @@ type
   setter = function ( obj, value : PPyObject; context : Pointer) : integer; cdecl;
 
   PPyGetSetDef = ^PyGetSetDef;
-  PyGetSetDef = packed record
+  PyGetSetDef = {$IFNDEF CPUX64}packed{$ENDIF} record
     name : PAnsiChar;
     get : getter;
     _set : setter;
@@ -637,7 +633,7 @@ type
   wrapperfunc = function (self, args: PPyObject; wrapped : Pointer) : PPyObject; cdecl;
 
   pwrapperbase = ^wrapperbase;
-  wrapperbase = packed record
+  wrapperbase = {$IFNDEF CPUX64}packed{$ENDIF} record
     name : PAnsiChar;
     wrapper : wrapperfunc;
     doc : PAnsiChar;
@@ -652,7 +648,7 @@ type
   }
 
   PPyDescrObject = ^PyDescrObject;
-  PyDescrObject = packed record
+  PyDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -662,7 +658,7 @@ type
   end;
 
   PPyMethodDescrObject = ^PyMethodDescrObject;
-  PyMethodDescrObject = packed record
+  PyMethodDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -675,7 +671,7 @@ type
   end;
 
   PPyMemberDescrObject = ^PyMemberDescrObject;
-  PyMemberDescrObject = packed record
+  PyMemberDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -688,7 +684,7 @@ type
   end;
 
   PPyGetSetDescrObject = ^PyGetSetDescrObject;
-  PyGetSetDescrObject = packed record
+  PyGetSetDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -701,7 +697,7 @@ type
   end;
 
   PPyWrapperDescrObject = ^PyWrapperDescrObject;
-  PyWrapperDescrObject = packed record
+  PyWrapperDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -715,7 +711,7 @@ type
   end;
 
   PPyModuleDef_Base = ^PyModuleDef_Base;
-  PyModuleDef_Base = packed record
+  PyModuleDef_Base = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -726,7 +722,7 @@ type
   end;
 
   PPyModuleDef = ^PyModuleDef;
-  PyModuleDef = packed record
+  PyModuleDef = {$IFNDEF CPUX64}packed{$ENDIF} record
     m_base : PyModuleDef_Base;
     m_name : PAnsiChar;
     m_doc : PAnsiChar;
@@ -740,7 +736,7 @@ type
 
 
   // object.h
-  PyTypeObject = packed record
+  PyTypeObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
     ob_size:        NativeInt; // Number of items in variable part
@@ -819,13 +815,13 @@ type
   end;
 
   PPyMethodChain = ^PyMethodChain;
-  PyMethodChain = packed record
+  PyMethodChain = {$IFNDEF CPUX64}packed{$ENDIF} record
     methods: PPyMethodDef;
     link:    PPyMethodChain;
   end;
 
   PPyClassObject = ^PyClassObject;
-  PyClassObject = packed record
+  PyClassObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -840,7 +836,7 @@ type
   end;
 
   PPyInstanceObject = ^PyInstanceObject;
-  PyInstanceObject = packed record
+  PyInstanceObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
@@ -856,7 +852,7 @@ type
 }
 
   PPyMethodObject = ^PyMethodObject;
-  PyMethodObject = packed record
+  PyMethodObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
@@ -869,7 +865,7 @@ type
 
   // Bytecode object, compile.h
   PPyCodeObject = ^PyCodeObject;
-  PyCodeObject = packed record
+  PyCodeObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt      : NativeInt;
     ob_type        : PPyTypeObject;
     co_argcount    : Integer;         // #arguments, except *args
@@ -896,7 +892,7 @@ type
   PPyFrameObject = ^PyFrameObject;
 
   // Interpreter environments
-  PyInterpreterState = packed record
+  PyInterpreterState = {$IFNDEF CPUX64}packed{$ENDIF} record
     next           : PPyInterpreterState;
     tstate_head    : PPyThreadState;
 
@@ -908,7 +904,7 @@ type
   end;
 
   // Thread specific information
-  PyThreadState = packed record
+  PyThreadState = {$IFNDEF CPUX64}packed{$ENDIF} record
     next           : PPyThreadState;
     interp         : PPyInterpreterState;
 
@@ -943,14 +939,14 @@ type
   // from frameobject.h
 
   PPyTryBlock = ^PyTryBlock;
-  PyTryBlock = packed record
+  PyTryBlock = {$IFNDEF CPUX64}packed{$ENDIF} record
     b_type    : Integer;       // what kind of block this is
     b_handler : Integer;       // where to jump to find handler
     b_level   : Integer;       // value stack level to pop to
   end;
 
   CO_MAXBLOCKS  = 0..19;
-  PyFrameObject = packed record
+  PyFrameObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the VAR_HEAD of an object.
     ob_refcnt    : NativeInt;
     ob_type      : PPyTypeObject;
@@ -978,7 +974,7 @@ type
 
   // From traceback.c
   PPyTraceBackObject = ^PyTraceBackObject;
-  PyTraceBackObject = packed record
+  PyTraceBackObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt : NativeInt;
     ob_type   : PPyTypeObject;
@@ -992,7 +988,7 @@ type
   // Parse tree node interface
 
   PNode = ^node;
-  node = packed record
+  node = {$IFNDEF CPUX64}packed{$ENDIF} record
     n_type      : smallint;
     n_str       : PAnsiChar;
     n_lineno    : integer;
@@ -1004,7 +1000,7 @@ type
   // From weakrefobject.h
 
   PPyWeakReference = ^PyWeakReference;
-  PyWeakReference = packed record
+  PyWeakReference = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -1043,7 +1039,7 @@ const
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
 type
-  PyDateTime_Delta = packed record
+  PyDateTime_Delta = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -1055,7 +1051,7 @@ type
   end;
   PPyDateTime_Delta = ^PyDateTime_Delta;
 
-  PyDateTime_TZInfo = packed record // a pure abstract base clase
+  PyDateTime_TZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record // a pure abstract base clase
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -1077,7 +1073,7 @@ type
  * convenient to cast to, when getting at the hastzinfo member of objects
  * starting with _PyTZINFO_HEAD.
  *}
-  _PyDateTime_BaseTZInfo = packed record
+  _PyDateTime_BaseTZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -1100,7 +1096,7 @@ type
 	unsigned char data[_PyDateTime_TIME_DATASIZE];
 }
 
-  _PyDateTime_BaseTime = packed record // hastzinfo false
+  _PyDateTime_BaseTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -1115,7 +1111,7 @@ type
   end;
   _PPyDateTime_BaseTime = ^_PyDateTime_BaseTime;
 
-  PyDateTime_Time = packed record // hastzinfo true
+  PyDateTime_Time = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -1138,7 +1134,7 @@ type
  * the plain date type is a base class for datetime, so it must also have
  * a hastzinfo member (although it's unused there).
  *}
-  PyDateTime_Date = packed record
+  PyDateTime_Date = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -1157,7 +1153,7 @@ type
 	unsigned char data[_PyDateTime_DATETIME_DATASIZE];
 }
 
-  _PyDateTime_BaseDateTime = packed record // hastzinfo false
+  _PyDateTime_BaseDateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -1170,7 +1166,7 @@ type
   end;
   _PPyDateTime_BaseDateTime = ^_PyDateTime_BaseDateTime;
 
-  PyDateTime_DateTime = packed record // hastzinfo true
+  PyDateTime_DateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_DATETIMEHEAD
       // Start of _PyTZINFO_HEAD
         // Start of the Head of an object
@@ -1367,6 +1363,9 @@ type
   IOString = UnicodeString;
   TIOStringList = TUnicodeStringList;
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonInputOutput = class(TComponent)
   protected
     FMaxLines        : Integer;
@@ -1491,15 +1490,6 @@ type
 type
   TPythonInterface=class(TDynamicDll)
   private
-    {$IFNDEF FPC}
-    DLL_PyArg_Parse: function( args: PPyObject; format: PAnsiChar {;....}) :
-                     Integer; cdecl;
-    DLL_PyArg_ParseTuple:
-                     function( args: PPyObject; format: PAnsiChar {;...}):
-                     Integer; cdecl;
-    DLL_Py_BuildValue:
-                     function( format: PAnsiChar {;...}): PPyObject; cdecl;
-    {$ENDIF FPC}
     DLL_Py_GetBuildInfo:
                      function : PAnsiChar; cdecl;
     DLL_PyCode_Addr2Line:
@@ -1675,12 +1665,9 @@ type
     PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
     PyInt_FromLong:     function( x: LongInt):PPyObject; cdecl;
-    {$IFDEF FPC}
-    // FPC handles varargs much better than Delphi!
-    PyArg_Parse:        function( args: PPyObject; format: PAnsiChar; argp: array of const {;....}) :  Integer; cdecl;
-    PyArg_ParseTuple:   function( args: PPyObject; format: PAnsiChar; argp: array of const  {;...}): Integer; cdecl;
-    Py_BuildValue:      function( format: PAnsiChar; args: array of const  {;...}): PPyObject; cdecl;
-    {$ENDIF FPC}
+    PyArg_Parse:        function( args: PPyObject; format: PAnsiChar {;....}) :  Integer; cdecl varargs;
+    PyArg_ParseTuple:   function( args: PPyObject; format: PAnsiChar {;...}): Integer; cdecl varargs;
+    Py_BuildValue:      function( format: PAnsiChar {;...}): PPyObject; cdecl varargs;
     Py_Initialize:      procedure; cdecl;
     Py_Exit:            procedure( RetVal: Integer); cdecl;
     PyEval_GetBuiltins: function: PPyObject; cdecl;
@@ -1804,6 +1791,7 @@ type
     PyOS_InitInterrupts:procedure; cdecl;
     PyOS_InterruptOccurred:function :integer; cdecl;
     PyObject_CallObject:function (ob,args:PPyObject):PPyObject; cdecl;
+    PyObject_CallMethod : function ( obj : PPyObject; method, format : PAnsiChar {...}) : PPyObject; cdecl varargs;
     PyObject_CallMethodStr: function ( obj : PPyObject; method, format, value : PAnsiChar ) : PPyObject; cdecl;
     PyObject_Compare: function (ob1,ob2:PPyObject):integer; cdecl;
     PyObject_RichCompare:function (ob1,ob2:PPyObject;opid:integer):PPyObject; cdecl;
@@ -1916,12 +1904,6 @@ type
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
     Py_Malloc                       : function ( size : NativeInt ) : Pointer;
     PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
-    {$IFDEF FPC}
-    PyObject_CallMethod,
-    PyObject_CallMethodWithArgs      : function ( obj : PPyObject; method, format : PAnsiChar; args: array of const ) : PPyObject; cdecl;
-    {$ELSE FPC}
-    PyObject_CallMethod             : function ( obj : PPyObject; method, format : PAnsiChar ) : PPyObject; cdecl;
-    {$ENDIF FPC}
 
 {New exported Objects in Python 1.5}
     Py_SetProgramName               : procedure( name: PAnsiChar); cdecl;
@@ -2014,20 +1996,7 @@ type
   procedure   Py_XINCREF  ( op: PPyObject);
   procedure   Py_XDECREF  ( op: PPyObject);
 
-  function    Py_GetPlatform: PAnsiChar; cdecl;
-
-  {$IFNDEF FPC}
-  function PyArg_Parse     ( args: PPyObject; format: PAnsiChar;
-                             argp: array of Pointer): Integer; cdecl;
-  function PyArg_ParseTuple( args: PPyObject; format: PAnsiChar;
-                             argp: array of Pointer): Integer; cdecl;
-// This function handles all cardinals, pointer types (with no adjustment of pointers!)
-// (Extended) floats, which are handled as Python doubles and currencies, handled
-// as (normalized) Python doubles.
-  function Py_BuildValue( format: PAnsiChar; args: array of const): PPyObject; cdecl;
-  function PyObject_CallMethodWithArgs( obj : PPyObject; method,
-                                        format: PAnsiChar; args: array of const): PPyObject; cdecl;
-  {$ENDIF FPC}
+  function Py_GetPlatform: PAnsiChar; cdecl;
   function PyCode_Addr2Line( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
   function Py_GetBuildInfo: PAnsiChar; cdecl;
   function PyImport_ExecCodeModule( const AName : AnsiString; codeobject : PPyObject) : PPyObject;
@@ -2129,6 +2098,9 @@ type
       property Limit : Integer read FLimit write FLimit;
   end;
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonEngine = class(TPythonInterface)
   private
     FInitScript:                 TStrings;
@@ -2594,6 +2566,9 @@ type
     property Items[Index: Integer]: TError read GetError write SetError; default;
   end;
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonModule = class(TMethodsContainer)
     protected
       FModuleName : AnsiString;
@@ -2856,6 +2831,9 @@ type
 
   // The component that initializes the Python type and
   // that creates instances of itself.
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonType = class(TGetSetContainer)
     protected
       FType : PyTypeObject;
@@ -2941,6 +2919,9 @@ type
   TExtGetDataEvent = procedure ( Sender : TObject; var Data : PPyObject ) of Object;
   TExtSetDataEvent = procedure ( Sender : TObject; Data : PPyObject) of Object;
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  {$IFEND}
   TPythonDelphiVar = class( TEngineClient )
     protected
       FModule    : AnsiString;
@@ -3729,15 +3710,9 @@ begin
     PyInt_FromLong          := Import('PyLong_FromLong')
   else
     PyInt_FromLong          := Import('PyInt_FromLong');
-  {$IFDEF FPC}
-  PyArg_ParseTuple          := Import('PyArg_ParseTuple');
   PyArg_Parse               := Import('PyArg_Parse');
+  PyArg_ParseTuple          := Import('PyArg_ParseTuple');
   Py_BuildValue             := Import('Py_BuildValue');
-  {$ELSE FPC}
-  DLL_PyArg_ParseTuple      := Import('PyArg_ParseTuple');
-  DLL_PyArg_Parse           := Import('PyArg_Parse');
-  DLL_Py_BuildValue         := Import('Py_BuildValue');
-  {$ENDIF FPC}
   Py_Initialize             := Import('Py_Initialize');
   PyDict_New                := Import('PyDict_New');
   PyDict_SetItemString      := Import('PyDict_SetItemString');
@@ -3865,10 +3840,8 @@ begin
   PyOS_InitInterrupts       :=Import('PyOS_InitInterrupts');
   PyOS_InterruptOccurred    :=Import('PyOS_InterruptOccurred');
   PyObject_CallObject       :=Import('PyObject_CallObject');
+  PyObject_CallMethod       :=Import('PyObject_CallMethod');
   PyObject_CallMethodStr    :=Import('PyObject_CallMethod');
-  {$IFDEF FPC}
-    PyObject_CallMethodWithArgs := @PyObject_CallMethod;
-  {$ENDIF}
   if not IsPython3000 then
     PyObject_Compare          :=Import('PyObject_Compare');
   PyObject_RichCompare      :=Import('PyObject_RichCompare');
@@ -4007,7 +3980,6 @@ begin
     PyMem_Malloc := Import ('PyMem_Malloc');
   except
   end;
-  PyObject_CallMethod        :=Import('PyObject_CallMethod');
   if not IsPython3000 then
     Py_SetProgramName        := Import('Py_SetProgramName')
   else
@@ -4064,144 +4036,6 @@ function TPythonInterface.Py_GetPlatform: PAnsiChar; cdecl;
 begin
   Py_GetPlatform := 'win32';
 end;
-
-{$IFNDEF FPC}
-function TPythonInterface.Py_BuildValue( format: PAnsiChar; args: array of const):
-         PPyObject; assembler; cdecl;
-const tenthousand:double = 10000.0;
-var temp: Double;
-asm
-        push ebx             // save ebx, four registers needed
-        mov eax,[args]       // gets args pointer
-        mov edx,[args+$4]    // gets invisible argument count-1 parameter
-@loop1: lea ebx,[eax+edx*8]  // get argument address
-        cmp byte ptr [ebx+$4], vtExtended // Is Extended?
-        jz  @IsDouble
-        cmp byte ptr [ebx+$4], vtCurrency // Is Currency, 64bit integer?
-        jnz @NoDouble
-@IsCurrency:
-        mov ebx,[ebx]        // get 64 bit integer
-        fild qword ptr [ebx] // put on float stack
-        wait
-        fdiv tenthousand     // normalize to double float
-        jmp @PushDouble      // Handle as double value
-@IsDouble:
-        mov ebx,[ebx]        // get extended float
-        fld tbyte ptr [ebx]  // put on float stack
-@PushDouble:
-        wait
-        fstp temp            //get double from float stack
-        wait
-        lea ebx,temp         // get temp
-        mov ecx,[ebx+$4]     // push 4 high bytes of temp
-        push ecx
-@NoDouble:
-        mov ecx,[ebx]        // get one argument
-        push ecx             // push 4 bytes of the argument
-        dec edx              // go to the next argument
-        jns  @loop1          // next argument, if any
-        mov  eax,self        // get invisible self parameter
-        mov  edx,format      // call DLL Py_Builtin function
-        push edx
-        call [eax+DLL_Py_BuildValue]
-        mov ebx,[ebp-$c]       // get saved ebx from ebp-based offset
-                               // (current esp could not be used!)
-end;
-
-function TPythonInterface.PyObject_CallMethodWithArgs(obj: PPyObject; method,
-  format: PAnsiChar; args: array of const): PPyObject; assembler; cdecl;
-const tenthousand:double = 10000.0;
-var temp: Double;
-asm
-        push ebx             // save ebx, four registers needed
-        mov eax,[args]       // gets args pointer
-        mov edx,[args+$4]    // gets invisible argument count-1 parameter
-@loop1: lea ebx,[eax+edx*8]  // get argument address
-        cmp byte ptr [ebx+$4], vtExtended // Is Extended?
-        jz  @IsDouble
-        cmp byte ptr [ebx+$4], vtCurrency // Is Currency, 64bit integer?
-        jnz @NoDouble
-@IsCurrency:
-        mov ebx,[ebx]        // get 64 bit integer
-        fild qword ptr [ebx] // put on float stack
-        wait
-        fdiv tenthousand     // normalize to double float
-        jmp @PushDouble      // Handle as double value
-@IsDouble:
-        mov ebx,[ebx]        // get extended float
-        fld tbyte ptr [ebx]  // put on float stack
-@PushDouble:
-        wait
-        fstp temp            //get double from float stack
-        wait
-        lea ebx,temp         // get temp
-        mov ecx,[ebx+$4]     // push 4 high bytes of temp
-        push ecx
-@NoDouble:
-        mov ecx,[ebx]        // get one argument
-        push ecx             // push 4 bytes of the argument
-        dec edx              // go to the next argument
-        jns  @loop1          // next argument, if any
-        mov  eax,self        // get invisible self parameter
-        mov  edx,format      // call DLL Py_Builtin function
-        push edx
-        mov  edx,method      // call DLL Py_Builtin function
-        push edx
-        mov  edx,obj         // call DLL Py_Builtin function
-        push edx
-        call [eax+PyObject_CallMethod]
-        mov ebx,[ebp-$c]       // get saved ebx from ebp-based offset
-                               // (current esp could not be used!)
-end;
-
-{DELPHI does the right thing here. It automatically generates
- a copy of the argp on the stack}
-function TPythonInterface.PyArg_Parse ( args: PPyObject; format: PAnsiChar;
-                       argp: array of Pointer): Integer; cdecl;
-begin
-  Result := 0;
-  { Do not optimize this to a "pure" assembler routine, because such
-    a routine does not copy the array arguments in the prologue code }
-  asm
-    lea edx, format
-    push [edx]
-
-    sub edx, TYPE PAnsiChar
-    push [edx]
-
-    mov eax, Self
-    mov eax, [eax].DLL_PyArg_Parse
-    call eax
-
-    pop edx
-    pop edx
-    mov Result, eax
-  end;
-end;
-
-function TPythonInterface.PyArg_ParseTuple ( args: PPyObject; format: PAnsiChar;
-                            argp: array of Pointer): Integer; cdecl;
-begin
-  Result := 0;
-  { Do not optimize this to a "pure" assembler routine, because such
-    a routine does not copy the array arguments in the prologue code }
-  asm
-    lea edx, format
-    push [edx]
-
-    sub edx, TYPE PAnsiChar
-    push [edx]
-
-    mov eax, Self
-    mov eax, [eax].DLL_PyArg_ParseTuple
-    call eax
-
-    pop edx
-    pop edx
-    mov Result, eax
-  end;
-end;
-{$ENDIF FPC}
 
 // This function is copied from compile.c because it was not
 // exported in the Dll
@@ -9304,7 +9138,7 @@ begin
   inherited;
   with GetPythonEngine do
     begin
-      if PyArg_ParseTuple( args, 'O:CreateVar', [@dv_object] ) = 0 then
+      if PyArg_ParseTuple( args, 'O:CreateVar',@dv_object ) = 0 then
         exit;
     end;
 end;
@@ -9626,7 +9460,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      if PyArg_ParseTuple( args, 'i:SetDelayWrites', [@val] ) <> 0 then
+      if PyArg_ParseTuple( args, 'i:SetDelayWrites',@val ) <> 0 then
         begin
           if IO <> nil then
             IO.DelayWrites := val <> 0;
@@ -9643,7 +9477,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      if PyArg_ParseTuple( args, 'i:SetMaxLines', [@val] ) <> 0 then
+      if PyArg_ParseTuple( args, 'i:SetMaxLines',@val ) <> 0 then
         begin
           if IO <> nil then
             IO .MaxLines := val;

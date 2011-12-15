@@ -879,7 +879,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'OO:TDataset.SetRange', [@startValues, @endValues] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'OO:TDataset.SetRange',@startValues, @endValues ) <> 0) then
           begin
             // Do action
             Result := SetRange( startValues, endValues );
@@ -1035,7 +1035,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'i:TTable.LockTable', [@t] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'i:TTable.LockTable',@t ) <> 0) then
           begin
             // Do action
             Table.LockTable(TLockType(t));
@@ -1063,7 +1063,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'i:TTable.LockTable', [@t] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'i:TTable.LockTable',@t ) <> 0) then
           begin
             // Do action
             Table.UnlockTable(TLockType(t));
@@ -1092,7 +1092,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'ssO:TTable.AddIndex', [@aName, @fields, @options] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'ssO:TTable.AddIndex',@aName, @fields, @options ) <> 0) then
           begin
             // Do action
             AddIndex( string(aName), string(fields), options );
@@ -1120,7 +1120,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.CloseIndexFile', [@aName] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.CloseIndexFile',@aName ) <> 0) then
           begin
             // Do action
             Table.CloseIndexFile( string(aName) );
@@ -1174,7 +1174,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.DeleteIndex', [@aName] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.DeleteIndex',@aName ) <> 0) then
           begin
             // Do action
             Table.DeleteIndex( string(aName) );
@@ -1278,7 +1278,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.OpenIndexFile', [@aName] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.OpenIndexFile',@aName ) <> 0) then
           begin
             // Do action
             Table.OpenIndexFile( string(aName) );
@@ -1306,7 +1306,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.RenameTable', [@newName] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.RenameTable',@newName ) <> 0) then
           begin
             // Do action
             Table.RenameTable( string(newName) );
@@ -1334,7 +1334,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.GotoCurrent', [@tbl] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.GotoCurrent',@tbl ) <> 0) then
           begin
             // Do action
             GotoCurrent( tbl );
@@ -1412,7 +1412,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.FindKey', [@KeyValues] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.FindKey',@KeyValues ) <> 0) then
           begin
             // Do action
             Result := VariantAsPyObject( FindKey( KeyValues ) );
@@ -1438,7 +1438,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.FindNearest', [@KeyValues] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'O:TTable.FindNearest',@KeyValues ) <> 0) then
           begin
             // Do action
             FindNearest(KeyValues);

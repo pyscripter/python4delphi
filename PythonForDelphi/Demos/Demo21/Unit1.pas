@@ -93,7 +93,7 @@ begin
   inherited;
   with GetPythonEngine do
     begin
-      if PyArg_ParseTuple( args, 'ii:CreatePoint', [@x, @y] ) = 0 then
+      if PyArg_ParseTuple( args, 'ii:CreatePoint',@x, @y ) = 0 then
         exit;
     end;
 end;
@@ -122,12 +122,12 @@ begin
     begin
       if key = 'x' then
         begin
-          if PyArg_Parse( value, 'i:Point.SetAttr', [@x] ) = 0 then
+          if PyArg_Parse( value, 'i:Point.SetAttr', @x ) = 0 then
             Result := -1;
         end
       else if key = 'y' then
         begin
-          if PyArg_Parse( value, 'i:Point.SetAttr', [@y] ) = 0 then
+          if PyArg_Parse( value, 'i:Point.SetAttr', @y ) = 0 then
             Result := -1;
         end
       else
@@ -205,7 +205,7 @@ begin
       // Convert the PSelf Python object to a Delphi instance pointer.
       Instance := TPyPoint(PythonToDelphi(PSelf));
       // first we extract the arguments
-      if PyArg_ParseTuple( args, 'ii:Point.Offset', [@dx, @dy] ) <> 0 then
+      if PyArg_ParseTuple( args, 'ii:Point.Offset',@dx, @dy ) <> 0 then
         begin
           // if it's ok, then we call the method that does the job
           // with the correct arguments

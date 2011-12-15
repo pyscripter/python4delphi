@@ -133,7 +133,7 @@ begin
   with GetPythonEngine do
     begin
       // Extract our arguments
-      if PyArg_ParseTuple( args, 'ss:CreateTable', [@DBName, @TblName] ) <> 0 then
+      if PyArg_ParseTuple( args, 'ss:CreateTable',@DBName, @TblName ) <> 0 then
         begin
           try
             // Try to create our dataset

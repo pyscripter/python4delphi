@@ -397,7 +397,7 @@ begin
   inherited;
   with GetPythonEngine do
     begin
-      //if PyArg_ParseTuple( args, 'ii:CreateTDataset', [@x, @y] ) = 0 then
+      //if PyArg_ParseTuple( args, 'ii:CreateTDataset',@x, @y ) = 0 then
       //  exit;
     end;
 end;
@@ -985,7 +985,7 @@ begin
         // Do action
         if CheckField then
           begin
-            if PyArg_ParseTuple( args, 's:TField.IsValidChar', [@s] ) <> 0 then
+            if PyArg_ParseTuple( args, 's:TField.IsValidChar',@s ) <> 0 then
               begin
                 str := s;
                 if Length(str) > 0 then
@@ -1098,7 +1098,7 @@ begin
   inherited;
   with GetPythonEngine do
     begin
-      //if PyArg_ParseTuple( args, 'ii:CreateTDataset', [@x, @y] ) = 0 then
+      //if PyArg_ParseTuple( args, 'ii:CreateTDataset',@x, @y ) = 0 then
       //  exit;
     end;
 end;
@@ -2073,7 +2073,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'sOO:TDataset.Locate', [@keyFields, @keyValues, @options] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'sOO:TDataset.Locate',@keyFields, @keyValues, @options ) <> 0) then
           begin
             // Do action
             Result := Locate( String(keyFields), keyValues, options );
@@ -2100,7 +2100,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'sOs:TDataset.Lookup', [@keyFields, @keyValues, @resultFields] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'sOs:TDataset.Lookup',@keyFields, @keyValues, @resultFields ) <> 0) then
           begin
             // Do action
             Result := Lookup( String(keyFields), keyValues, String(resultFields) );
@@ -2125,7 +2125,7 @@ begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       try
-        if CheckDataset and (PyArg_ParseTuple( args, 'i:TDataset.MoveBy', [@dist] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'i:TDataset.MoveBy',@dist ) <> 0) then
           begin
             // Do action
             rslt := Dataset.MoveBy( dist );
@@ -2181,7 +2181,7 @@ begin
       Adjust(@Self);
       try
         // first we extract the arguments
-        if CheckDataset and (PyArg_ParseTuple( args, 'i:TDataset.Fields', [@idx] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 'i:TDataset.Fields',@idx ) <> 0) then
           begin
             if (idx >= 0) and (idx < Dataset.FieldCount) then
               begin
@@ -2221,7 +2221,7 @@ begin
       Adjust(@Self);
       try
         // first we extract the arguments
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TDataset.FieldByName', [@s] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TDataset.FieldByName',@s ) <> 0) then
           begin
             fld := Dataset.FindField(String(s));
             if Assigned(fld) then
@@ -2262,7 +2262,7 @@ begin
       Adjust(@Self);
       try
         // first we extract the arguments
-        if CheckDataset and (PyArg_ParseTuple( args, 's:TDataset.FindField', [@s] ) <> 0) then
+        if CheckDataset and (PyArg_ParseTuple( args, 's:TDataset.FindField',@s ) <> 0) then
           begin
             fld := Dataset.FindField(String(s));
             if Assigned(fld) then

@@ -41,16 +41,16 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="21">
+    <Units Count="23">
       <Unit0>
         <Filename Value="Project1.lpr"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="project1"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="2" Y="13"/>
-        <UsageCount Value="106"/>
+        <UsageCount Value="109"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
@@ -64,8 +64,8 @@
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="40"/>
-        <CursorPos X="14" Y="49"/>
-        <UsageCount Value="52"/>
+        <CursorPos X="5" Y="53"/>
+        <UsageCount Value="55"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -78,11 +78,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit2"/>
         <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="52"/>
+        <CursorPos X="28" Y="28"/>
+        <UsageCount Value="55"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -90,310 +90,329 @@
       <Unit3>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
         <UnitName Value="WrapDelphi"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="253"/>
+        <TopLine Value="292"/>
         <CursorPos X="27" Y="292"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
         <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\objpas\typinfo.pp"/>
         <UnitName Value="typinfo"/>
-        <EditorIndex Value="20"/>
+        <EditorIndex Value="22"/>
         <WindowIndex Value="0"/>
         <TopLine Value="197"/>
         <CursorPos X="7" Y="198"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiWindows.pas"/>
         <UnitName Value="WrapDelphiWindows"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="51"/>
         <CursorPos X="10" Y="64"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiGraphics.pas"/>
         <UnitName Value="WrapDelphiGraphics"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="554"/>
         <CursorPos X="1" Y="572"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="C:\lazarus\lcl\graphics.pp"/>
         <UnitName Value="Graphics"/>
-        <EditorIndex Value="17"/>
+        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="151"/>
         <CursorPos X="24" Y="161"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="C:\lazarus\lcl\lcltype.pp"/>
         <UnitName Value="LCLType"/>
-        <EditorIndex Value="19"/>
+        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2592"/>
         <CursorPos X="3" Y="2602"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="C:\lazarus\lcl\graphtype.pp"/>
         <UnitName Value="GraphType"/>
-        <EditorIndex Value="18"/>
+        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="12"/>
         <CursorPos X="3" Y="40"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiForms.pas"/>
         <UnitName Value="WrapDelphiForms"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="14" Y="9"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="15"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiComCtrls.pas"/>
         <UnitName Value="WrapDelphiComCtrls"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="595"/>
         <CursorPos X="36" Y="605"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="C:\lazarus\lcl\comctrls.pp"/>
         <UnitName Value="ComCtrls"/>
-        <EditorIndex Value="16"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="452"/>
         <CursorPos X="25" Y="469"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiExtCtrls.pas"/>
         <UnitName Value="WrapDelphiExtCtrls"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="101"/>
         <CursorPos X="1" Y="119"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="C:\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="113"/>
         <CursorPos X="3" Y="123"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
-        <EditorIndex Value="15"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="109"/>
         <CursorPos X="25" Y="119"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiGrids.pas"/>
         <UnitName Value="WrapDelphiGrids"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="250"/>
         <CursorPos X="43" Y="260"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="C:\lazarus\lcl\grids.pas"/>
         <UnitName Value="Grids"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1423"/>
         <CursorPos X="3" Y="1433"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\objpash.inc"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="255"/>
         <CursorPos X="8" Y="274"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\..\..\Components\Sources\Core\Definition.Inc"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="270"/>
         <CursorPos X="1" Y="290"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="188"/>
         <CursorPos X="17" Y="205"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit20>
+      <Unit21>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\variants.pp"/>
+        <UnitName Value="variants"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="180"/>
+        <CursorPos X="40" Y="184"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\varianth.inc"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="98"/>
+        <CursorPos X="33" Y="113"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit22>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="316" Column="12" TopLine="309"/>
+        <Caret Line="918" Column="32" TopLine="886"/>
       </Position1>
       <Position2>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="813" Column="34" TopLine="781"/>
+        <Caret Line="927" Column="101" TopLine="895"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="918" Column="32" TopLine="886"/>
+        <Caret Line="1042" Column="80" TopLine="1010"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="927" Column="101" TopLine="895"/>
+        <Caret Line="1081" Column="1" TopLine="1072"/>
       </Position4>
       <Position5>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1042" Column="80" TopLine="1010"/>
+        <Caret Line="1083" Column="1" TopLine="1075"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1081" Column="1" TopLine="1072"/>
+        <Caret Line="1084" Column="1" TopLine="1075"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1083" Column="1" TopLine="1075"/>
+        <Caret Line="1085" Column="1" TopLine="1075"/>
       </Position7>
       <Position8>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1084" Column="1" TopLine="1075"/>
+        <Caret Line="1087" Column="1" TopLine="1075"/>
       </Position8>
       <Position9>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1085" Column="1" TopLine="1075"/>
+        <Caret Line="1089" Column="1" TopLine="1075"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1087" Column="1" TopLine="1075"/>
+        <Caret Line="1090" Column="1" TopLine="1075"/>
       </Position10>
       <Position11>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1089" Column="1" TopLine="1075"/>
+        <Caret Line="1102" Column="1" TopLine="1079"/>
       </Position11>
       <Position12>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1090" Column="1" TopLine="1075"/>
+        <Caret Line="1037" Column="1" TopLine="1027"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1102" Column="1" TopLine="1079"/>
+        <Caret Line="1038" Column="1" TopLine="1027"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1037" Column="1" TopLine="1027"/>
+        <Caret Line="1039" Column="1" TopLine="1027"/>
       </Position14>
       <Position15>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1038" Column="1" TopLine="1027"/>
+        <Caret Line="1040" Column="1" TopLine="1027"/>
       </Position15>
       <Position16>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1039" Column="1" TopLine="1027"/>
+        <Caret Line="1042" Column="1" TopLine="1027"/>
       </Position16>
       <Position17>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1040" Column="1" TopLine="1027"/>
+        <Caret Line="1043" Column="1" TopLine="1027"/>
       </Position17>
       <Position18>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1042" Column="1" TopLine="1027"/>
+        <Caret Line="1044" Column="1" TopLine="1027"/>
       </Position18>
       <Position19>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1043" Column="1" TopLine="1027"/>
+        <Caret Line="1040" Column="1" TopLine="1027"/>
       </Position19>
       <Position20>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1044" Column="1" TopLine="1027"/>
+        <Caret Line="1042" Column="1" TopLine="1027"/>
       </Position20>
       <Position21>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1040" Column="1" TopLine="1027"/>
+        <Caret Line="1043" Column="1" TopLine="1027"/>
       </Position21>
       <Position22>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1042" Column="1" TopLine="1027"/>
+        <Caret Line="1044" Column="1" TopLine="1027"/>
       </Position22>
       <Position23>
-        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1043" Column="1" TopLine="1027"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1044" Column="1" TopLine="1027"/>
-      </Position24>
-      <Position25>
         <Filename Value="C:\lazarus\lcl\forms.pp"/>
         <Caret Line="205" Column="17" TopLine="188"/>
-      </Position25>
-      <Position26>
+      </Position23>
+      <Position24>
         <Filename Value="C:\lazarus\lcl\controls.pp"/>
         <Caret Line="1373" Column="97" TopLine="1363"/>
-      </Position26>
-      <Position27>
+      </Position24>
+      <Position25>
         <Filename Value="Unit1.pas"/>
         <Caret Line="42" Column="34" TopLine="40"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
+        <Caret Line="1081" Column="1" TopLine="1071"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
+        <Caret Line="1033" Column="40" TopLine="1027"/>
       </Position27>
       <Position28>
         <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1081" Column="1" TopLine="1071"/>
+        <Caret Line="293" Column="1" TopLine="290"/>
       </Position28>
       <Position29>
-        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="1033" Column="40" TopLine="1027"/>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="53" Column="5" TopLine="40"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
-        <Caret Line="293" Column="1" TopLine="290"/>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\variants.pp"/>
+        <Caret Line="184" Column="40" TopLine="180"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -408,6 +427,13 @@
         <SyntaxMode Value="Delphi"/>
       </SyntaxOptions>
     </Parsing>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
     <Other>
       <CompilerMessages>
         <UseMsgFile Value="True"/>

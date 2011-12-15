@@ -456,7 +456,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Close', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Close') <> 0 then begin
       DelphiObject.Close;
       Result := ReturnNone;
     end else
@@ -469,7 +469,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':CloseQuery', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':CloseQuery') <> 0 then begin
       Result := VariantAsPyObject(DelphiObject.CloseQuery)
     end else
       Result := nil;
@@ -482,7 +482,7 @@ begin
   begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Release', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Release') <> 0 then
     begin
       if Owned then begin
         (DelphiObject as TForm).Release;
@@ -507,7 +507,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ShowModal', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':ShowModal') <> 0 then begin
       ModalResult := (DelphiObject as TForm).ShowModal;
       Result := PyInt_FromLong(ModalResult);
     end else
@@ -651,7 +651,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':DisableAlign', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':DisableAlign') <> 0 then begin
       DelphiObject.DisableAlign;
       Result := ReturnNone;
     end else
@@ -664,7 +664,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':EnableAlign', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':EnableAlign') <> 0 then begin
       DelphiObject.EnableAlign;
       Result := ReturnNone;
     end else
@@ -1010,7 +1010,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'Oi:MonitorFromPoint', [@_pointObj, @_monitorDefault] ) <> 0 then
+    if PyArg_ParseTuple( args, 'Oi:MonitorFromPoint',@_pointObj, @_monitorDefault ) <> 0 then
     begin
       if CheckPointAttribute(_pointObj, 'First parameter', p) and
          CheckEnum('TMonitorDefaultTo', _monitorDefault, Ord(Low(TMonitorDefaultTo)), Ord(High(TMonitorDefaultTo))) then
@@ -1031,7 +1031,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Realign', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Realign') <> 0 then begin
       DelphiObject.Realign;
       Result := ReturnNone;
     end else
@@ -1044,7 +1044,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ResetFonts', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':ResetFonts') <> 0 then begin
       DelphiObject.ResetFonts;
       Result := ReturnNone;
     end else
@@ -1516,7 +1516,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:ActivateHint', [@_obj] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:ActivateHint',@_obj ) <> 0 then begin
       if CheckPointAttribute(_obj, 'The first argument of ActivateHint', _point) then
       begin
         DelphiObject.ActivateHint(_point);
@@ -1534,7 +1534,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':BringToFront', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':BringToFront') <> 0 then begin
       DelphiObject.BringToFront;
       Result := ReturnNone;
     end else
@@ -1548,7 +1548,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':CancelHint', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':CancelHint') <> 0 then begin
       DelphiObject.CancelHint;
       Result := ReturnNone;
     end else
@@ -1565,7 +1565,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:ExecuteAction', [@_obj] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:ExecuteAction',@_obj ) <> 0 then begin
       if CheckObjAttribute(_obj, 'The first argument of ExecuteAction', TBasicAction, _value) then
       begin
         Result := VariantAsPyObject( DelphiObject.ExecuteAction(TBasicAction(_value)) );
@@ -1590,7 +1590,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:HandleException', [@_obj] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:HandleException',@_obj ) <> 0 then begin
       if CheckObjAttribute(_obj, 'The first argument of HandleException', TObject, _sender) then
       begin
         DelphiObject.HandleException(_sender);
@@ -1608,7 +1608,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':HandleMessage', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':HandleMessage') <> 0 then begin
       DelphiObject.HandleMessage;
       Result := ReturnNone;
     end else
@@ -1625,7 +1625,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:HelpCommand', [@_command, @_data] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'i:HelpCommand',@_command, @_data ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.HelpCommand(_command, _data) );
     end else
       Result := nil;
@@ -1640,7 +1640,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:HelpContext', [@_context] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'i:HelpContext',@_context ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.HelpContext(_context) );
     end else
       Result := nil;
@@ -1655,7 +1655,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:HelpJump', [@_jumpID] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 's:HelpJump',@_jumpID ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.HelpJump(String(_jumpID)) );
     end else
       Result := nil;
@@ -1671,7 +1671,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 's:HelpKeyword', [@_keyword] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 's:HelpKeyword',@_keyword ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.HelpKeyword(String(_keyword)) );
     end else
       Result := nil;
@@ -1683,7 +1683,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':HideHint', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':HideHint') <> 0 then begin
       DelphiObject.HideHint;
       Result := ReturnNone;
     end else
@@ -1697,7 +1697,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Initialize', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Initialize') <> 0 then begin
       DelphiObject.Initialize;
       Result := ReturnNone;
     end else
@@ -1712,7 +1712,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':IsRightToLeft', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':IsRightToLeft') <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.IsRightToLeft );
     end else
       Result := nil;
@@ -1730,7 +1730,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'ssi:MessageBox', [@_text, @_caption, @_flags] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'ssi:MessageBox',@_text, @_caption, @_flags ) <> 0 then begin
       Result := PyInt_FromLong(
         DelphiObject.MessageBox(PChar(string(_text)), PChar(string(_caption)), _flags) );
     end else
@@ -1743,7 +1743,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Minimize', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Minimize') <> 0 then begin
       DelphiObject.Minimize;
       Result := ReturnNone;
     end else
@@ -1757,7 +1757,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ModalFinished', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':ModalFinished') <> 0 then begin
       DelphiObject.ModalFinished;
       Result := ReturnNone;
     end else
@@ -1771,7 +1771,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ModalStarted', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':ModalStarted') <> 0 then begin
       DelphiObject.ModalStarted;
       Result := ReturnNone;
     end else
@@ -1786,7 +1786,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':NormalizeAllTopMosts', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':NormalizeAllTopMosts') <> 0 then begin
       DelphiObject.NormalizeAllTopMosts;
       Result := ReturnNone;
     end else
@@ -1800,7 +1800,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':NormalizeTopMosts', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':NormalizeTopMosts') <> 0 then begin
       DelphiObject.NormalizeTopMosts;
       Result := ReturnNone;
     end else
@@ -1814,7 +1814,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':RestoreTopMosts', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':RestoreTopMosts') <> 0 then begin
       DelphiObject.RestoreTopMosts;
       Result := ReturnNone;
     end else
@@ -1829,7 +1829,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ProcessMessages', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':ProcessMessages') <> 0 then begin
       DelphiObject.ProcessMessages;
       Result := ReturnNone;
     end else
@@ -2007,7 +2007,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Restore', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Restore') <> 0 then begin
       DelphiObject.Restore;
       Result := ReturnNone;
     end else
@@ -2020,7 +2020,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Run', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Run') <> 0 then
     begin
       DelphiObject.Run;
       Result := ReturnNone;
@@ -2044,7 +2044,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:ShowException', [@_obj] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:ShowException',@_obj ) <> 0 then begin
       if CheckObjAttribute(_obj, 'The first argument of ShowException', Exception, _value) then
       begin
         DelphiObject.ShowException(Exception(_value));
@@ -2062,7 +2062,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Terminate', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':Terminate') <> 0 then begin
       DelphiObject.Terminate;
       Result := ReturnNone;
     end else
@@ -2079,7 +2079,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:UpdateAction', [@_obj] ) <> 0 then begin
+    if PyArg_ParseTuple( args, 'O:UpdateAction',@_obj ) <> 0 then begin
       if CheckObjAttribute(_obj, 'The first argument of UpdateAction', TBasicAction, _value) then
       begin
         DelphiObject.UpdateAction(TBasicAction(_value));
@@ -2098,7 +2098,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':UseRightToLeftAlignment', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':UseRightToLeftAlignment') <> 0 then begin
       DelphiObject.UseRightToLeftAlignment;
       Result := ReturnNone;
     end else
@@ -2112,7 +2112,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':UseRightToLeftReading', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':UseRightToLeftReading') <> 0 then begin
       DelphiObject.UseRightToLeftReading;
       Result := ReturnNone;
     end else
@@ -2126,7 +2126,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':UseRightToLeftScrollBar', [] ) <> 0 then begin
+    if PyArg_ParseTuple( args, ':UseRightToLeftScrollBar') <> 0 then begin
       DelphiObject.UseRightToLeftScrollBar;
       Result := ReturnNone;
     end else

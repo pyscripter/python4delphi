@@ -20,7 +20,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      if PyArg_ParseTuple( args, 'ii:Add', [@a, @b] ) <> 0 then
+      if PyArg_ParseTuple( args, 'ii:Add',@a, @b ) <> 0 then
         begin
           Result := PyInt_FromLong( a + b );
         end

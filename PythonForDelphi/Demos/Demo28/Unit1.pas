@@ -141,7 +141,7 @@ begin
   begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:add', [@_obj] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:add',@_obj ) <> 0 then
     begin
       Result := PyInt_FromLong(Strings.Add(PyObjectAsString(_obj)));
     end
@@ -260,7 +260,7 @@ begin
   inherited;
   with GetPythonEngine do
   begin
-    if PyArg_ParseTuple( args, 'O:TPyStringListIterator constructor', [@_obj] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TPyStringListIterator constructor',@_obj ) <> 0 then
     begin
       _stringList := PythonToDelphi(_obj) as TPyStringList;
       StringList := _stringList;

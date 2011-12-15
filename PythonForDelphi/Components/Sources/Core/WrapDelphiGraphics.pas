@@ -442,11 +442,11 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     {$IFDEF FPC}
-    if PyArg_ParseTuple( args, 'i:LoadFromClipboardFormat', [@_format] ) <> 0 then
+    if PyArg_ParseTuple( args, 'i:LoadFromClipboardFormat',@_format ) <> 0 then
     begin
       DelphiObject.LoadFromClipboardFormat(_format);
     {$ELSE FPC}
-    if PyArg_ParseTuple( args, 'iii:LoadFromClipboardFormat', [@_format, @_data, @_palette] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iii:LoadFromClipboardFormat',@_format, @_data, @_palette ) <> 0 then
     begin
       DelphiObject.LoadFromClipboardFormat(_format, _data, _palette);
     {$ENDIF FPC}
@@ -464,7 +464,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:LoadFromFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
@@ -485,7 +485,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oStream := nil;
-    if (PyArg_ParseTuple( args, 'O:LoadFromStrea', [@_oStream] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'O:LoadFromStrea',@_oStream ) <> 0) and
        CheckObjAttribute(_oStream, 'Stream', TStream, _obj) then
     begin
       _stream := TStream(_obj);
@@ -555,11 +555,11 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     {$IFDEF FPC}
-    if PyArg_ParseTuple( args, ':SaveToClipboardFormat', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':SaveToClipboardFormat') <> 0 then
     begin
       DelphiObject.SaveToClipboardFormat(_format);
     {$ELSE FPC}
-    if PyArg_ParseTuple( args, ':SaveToClipboardFormat', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':SaveToClipboardFormat') <> 0 then
     begin
       DelphiObject.SaveToClipboardFormat(_format, _data, _palette);
     {$ENDIF FPC}
@@ -582,7 +582,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:SaveToFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
@@ -602,7 +602,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oStream := nil;
-    if (PyArg_ParseTuple( args, 'O:SaveToStream', [@_oStream] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'O:SaveToStream',@_oStream ) <> 0) and
        CheckObjAttribute(_oStream, 'Stream', TStream, _obj) then
     begin
       _stream := TStream(_obj);
@@ -734,7 +734,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Dormant', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Dormant') <> 0 then
     begin
       DelphiObject.Dormant;
       Result := ReturnNone;
@@ -750,7 +750,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':FreeImage', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':FreeImage') <> 0 then
     begin
       DelphiObject.FreeImage;
       Result := ReturnNone;
@@ -879,7 +879,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'ii:LoadFromResourceID', [@_instance, @_resID] ) <> 0 then
+    if PyArg_ParseTuple( args, 'ii:LoadFromResourceID',@_instance, @_resID ) <> 0 then
     begin
       DelphiObject.LoadFromResourceID(_instance, _resID);
       Result := ReturnNone;
@@ -899,7 +899,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _resName := nil;
-    if PyArg_ParseTuple( args, 'is:LoadFromResourceName', [@_instance, @_resName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'is:LoadFromResourceName',@_instance, @_resName ) <> 0 then
     begin
       if _resName <> nil then
         DelphiObject.LoadFromResourceName(_instance, String(_resName));
@@ -917,7 +917,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:Mask', [@_transpColor] ) <> 0 then
+    if PyArg_ParseTuple( args, 'i:Mask',@_transpColor ) <> 0 then
     begin
       DelphiObject.Mask(_transpColor);
       Result := ReturnNone;
@@ -993,7 +993,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ReleaseHandle', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
     end
@@ -1008,7 +1008,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ReleaseMaskHandle', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':ReleaseMaskHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseMaskHandle);
     end
@@ -1023,7 +1023,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ReleasePalette', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':ReleasePalette') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleasePalette);
     end
@@ -1225,7 +1225,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiiiiiii:Arc', [@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiiiiii:Arc',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Arc(x1, y1, x2, y2, x3, y3, x4, y4);
       Result := ReturnNone;
@@ -1253,7 +1253,7 @@ begin
     _oBitmap := nil;
     _oSource := nil;
     _oDest := nil;
-    if (PyArg_ParseTuple( args, 'OOOi:BrushCopy', [@_oDest, @_oBitmap, @_oSource, @_color] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'OOOi:BrushCopy',@_oDest, @_oBitmap, @_oSource, @_color ) <> 0) and
        CheckRectAttribute(_oDest, 'Dest', _dest) and
        CheckRectAttribute(_oSource , 'Source', _source) and
        CheckObjAttribute(_oBitmap, 'Bitmap', TBitmap, _obj) then
@@ -1275,7 +1275,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiiiiiii:Chord', [@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiiiiii:Chord',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Chord(x1, y1, x2, y2, x3, y3, x4, y4);
       Result := ReturnNone;
@@ -1301,7 +1301,7 @@ begin
     _oCanvas := nil;
     _oSource := nil;
     _oDest := nil;
-    if (PyArg_ParseTuple( args, 'OOO:CopyRect', [@_oDest, @_oCanvas, @_oSource] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'OOO:CopyRect',@_oDest, @_oCanvas, @_oSource ) <> 0) and
        CheckRectAttribute(_oDest, 'Dest', _dest) and
        CheckRectAttribute(_oSource, 'Source', _source) and
        CheckObjAttribute(_oCanvas, 'Canvas', TCanvas, _obj) then
@@ -1333,7 +1333,7 @@ begin
     x := 0;
     y := 0;
     _oGraphic := nil;
-    if (PyArg_ParseTuple( args, 'iiO:Draw', [@x, @y, @_oGraphic] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'iiO:Draw',@x, @y, @_oGraphic ) <> 0) and
        CheckObjAttribute(_oGraphic, 'Graphic', TGraphic, _obj) then
     begin
       _graphic := TGraphic(_obj);
@@ -1353,7 +1353,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if (PyArg_ParseTuple( args, 'O:DrawFocusRect', [@_rectO] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'O:DrawFocusRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
       DelphiObject.DrawFocusRect(_rect);
@@ -1371,7 +1371,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiii:Ellipse', [@x1, @y1, @x2, @y2] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiii:Ellipse',@x1, @y1, @x2, @y2 ) <> 0 then
     begin
       DelphiObject.Ellipse(x1, y1, x2, y2);
       Result := ReturnNone;
@@ -1389,7 +1389,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if (PyArg_ParseTuple( args, 'O:FillRect', [@_rectO] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'O:FillRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
       DelphiObject.FillRect(_rect);
@@ -1409,7 +1409,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiiO:FloodFill', [@x, @y, @_color, @_pFillStyle] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiO:FloodFill',@x, @y, @_color, @_pFillStyle ) <> 0 then
     begin
       if SameText(PyString_AsDelphiString(_pFillStyle), 'fsBorder') then
         _FillStyle := fsBorder
@@ -1431,7 +1431,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if (PyArg_ParseTuple( args, 'O:FrameRect', [@_rectO] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'O:FrameRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
       DelphiObject.FrameRect(_rect);
@@ -1534,7 +1534,7 @@ begin
     Adjust(@Self);
     x := 0;
     y := 0;
-    if PyArg_ParseTuple( args, 'ii:GetPixel', [@x, @y] ) <> 0 then
+    if PyArg_ParseTuple( args, 'ii:GetPixel',@x, @y ) <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.Pixels[x, y]);
     end
@@ -1552,7 +1552,7 @@ begin
     Adjust(@Self);
     x := 0;
     y := 0;
-    if PyArg_ParseTuple( args, 'ii:LineTo', [@x, @y] ) <> 0 then
+    if PyArg_ParseTuple( args, 'ii:LineTo',@x, @y ) <> 0 then
     begin
       DelphiObject.LineTo(x, y);
       Result := ReturnNone;
@@ -1567,7 +1567,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Lock', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Lock') <> 0 then
     begin
       DelphiObject.Lock;
       Result := ReturnNone;
@@ -1586,7 +1586,7 @@ begin
     Adjust(@Self);
     x := 0;
     y := 0;
-    if PyArg_ParseTuple( args, 'ii:MoveTo', [@x, @y] ) <> 0 then
+    if PyArg_ParseTuple( args, 'ii:MoveTo',@x, @y ) <> 0 then
     begin
       DelphiObject.MoveTo(x, y);
       Result := ReturnNone;
@@ -1603,7 +1603,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiiiiiii:Pie', [@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiiiiii:Pie',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Pie(x1, y1, x2, y2, x3, y3, x4, y4);
       Result := ReturnNone;
@@ -1625,7 +1625,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oPoints := nil;
-    if PyArg_ParseTuple( args, 'O:PolyBezier', [@_oPoints] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:PolyBezier',@_oPoints ) <> 0 then
     begin
       if PySequence_Check(_oPoints) <> 0 then
       begin
@@ -1672,7 +1672,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oPoints := nil;
-    if PyArg_ParseTuple( args, 'O:PolyBezierTo', [@_oPoints] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:PolyBezierTo',@_oPoints ) <> 0 then
     begin
       if PySequence_Check(_oPoints) <> 0 then
       begin
@@ -1719,7 +1719,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oPoints := nil;
-    if PyArg_ParseTuple( args, 'O:Polygon', [@_oPoints] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:Polygon',@_oPoints ) <> 0 then
     begin
       if PySequence_Check(_oPoints) <> 0 then
       begin
@@ -1765,7 +1765,7 @@ begin
     // We adjust the transmitted self argument
     Adjust(@Self);
     _oPoints := nil;
-    if PyArg_ParseTuple( args, 'O:Polyline', [@_oPoints] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:Polyline',@_oPoints ) <> 0 then
     begin
       if PySequence_Check(_oPoints) <> 0 then
       begin
@@ -1806,7 +1806,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiii:Rectangle', [@x1, @y1, @x2, @y2] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiii:Rectangle',@x1, @y1, @x2, @y2 ) <> 0 then
     begin
       DelphiObject.Rectangle(x1, y1, x2, y2);
       Result := ReturnNone;
@@ -1821,7 +1821,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Refresh', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Refresh') <> 0 then
     begin
       DelphiObject.Refresh;
       Result := ReturnNone;
@@ -1972,7 +1972,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'iiiiii:RoundRect', [@x1, @y1, @x2, @y2, @x3, @y3] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iiiiii:RoundRect',@x1, @y1, @x2, @y2, @x3, @y3 ) <> 0 then
     begin
       DelphiObject.RoundRect(x1, y1, x2, y2, x3, y3);
       Result := ReturnNone;
@@ -2047,7 +2047,7 @@ begin
     Adjust(@Self);
     x := 0;
     y := 0;
-    if PyArg_ParseTuple( args, 'iii:SetPixel', [@x, @y, @_color] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iii:SetPixel',@x, @y, @_color ) <> 0 then
     begin
       DelphiObject.Pixels[x, y] := _color;
       Result := GetPythonEngine.ReturnNone;
@@ -2070,7 +2070,7 @@ begin
     Adjust(@Self);
     _oGraphic := nil;
     _oRect := nil;
-    if (PyArg_ParseTuple( args, 'iiO:StretchDraw', [@_oRect, @_oGraphic] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'iiO:StretchDraw',@_oRect, @_oGraphic ) <> 0) and
        CheckRectAttribute(_oRect, 'Rect', _rect) and
        CheckObjAttribute(_oGraphic, 'Graphic', TGraphic, _obj) then
     begin
@@ -2090,7 +2090,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:TextExtent', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextExtent',@_pText ) <> 0 then
     begin
       Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(PyString_AsDelphiString(_pText)));
     end
@@ -2106,7 +2106,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:TextHeight', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextHeight',@_pText ) <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.TextHeight(PyString_AsDelphiString(_pText)));
     end
@@ -2125,7 +2125,7 @@ begin
     Adjust(@Self);
     x := 0;
     y := 0;
-    if PyArg_ParseTuple( args, 'iis:TextRect', [@x, @y, @_text] ) <> 0 then
+    if PyArg_ParseTuple( args, 'iis:TextRect',@x, @y, @_text ) <> 0 then
     begin
       if _text <> nil then
         DelphiObject.TextOut(x, y, String(_text));
@@ -2150,7 +2150,7 @@ begin
     y := 0;
     _rectO := nil;
     _text := nil;
-    if (PyArg_ParseTuple( args, 'Oiis:TextRect', [@_rectO, @x, @y, @_text] ) <> 0) and
+    if (PyArg_ParseTuple( args, 'Oiis:TextRect',@_rectO, @x, @y, @_text ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
       if _text <> nil then
@@ -2169,7 +2169,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:TextWidth', [@_pText] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:TextWidth',@_pText ) <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.TextWidth(PyString_AsDelphiString(_pText)));
     end
@@ -2183,7 +2183,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Unlock', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Unlock') <> 0 then
     begin
       Result := VariantAsPyObject( DelphiObject.TryLock );
     end
@@ -2197,7 +2197,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Unlock', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Unlock') <> 0 then
     begin
       DelphiObject.Unlock;
       Result := ReturnNone;
@@ -2215,7 +2215,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':Clear', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':Clear') <> 0 then
     begin
       DelphiObject.Clear;
       Result := ReturnNone;
@@ -2341,7 +2341,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ReleaseHandle', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
     end
@@ -2494,7 +2494,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, ':ReleaseHandle', [] ) <> 0 then
+    if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
     end
@@ -2594,7 +2594,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:LoadFromFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;
@@ -2644,7 +2644,7 @@ begin
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
     Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:SaveToFile', [@_pFileName] ) <> 0 then
+    if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
       Result := ReturnNone;

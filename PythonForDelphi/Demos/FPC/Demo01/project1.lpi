@@ -38,7 +38,7 @@
         <PackageName Value="LCL"/>
       </Item2>
     </RequiredPackages>
-    <Units Count="6">
+    <Units Count="8">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -51,7 +51,6 @@
         <ComponentName Value="Form1"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="30"/>
@@ -67,7 +66,6 @@
         <TopLine Value="4220"/>
         <CursorPos X="9" Y="4225"/>
         <UsageCount Value="37"/>
-        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\..\..\..\..\..\lazarus\fpc\2.2.4\source\rtl\inc\varianth.inc"/>
@@ -75,12 +73,11 @@
         <TopLine Value="115"/>
         <CursorPos X="94" Y="134"/>
         <UsageCount Value="37"/>
-        <LoadedDesigner Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
         <UnitName Value="PythonGUIInputOutput"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="154"/>
         <CursorPos X="52" Y="166"/>
@@ -91,7 +88,7 @@
       <Unit5>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <UnitName Value="PythonEngine"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -99,8 +96,30 @@
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\Components\p4dlaz.pas"/>
+        <UnitName Value="P4DLaz"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="36" Y="11"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\Demo06\Unit1.lfm"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="LFM"/>
+      </Unit7>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="7" HistoryIndex="6">
       <Position1>
         <Filename Value="..\..\..\Components\Sources\Core\PythonGUIInputOutput.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
@@ -125,6 +144,10 @@
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
         <Caret Line="2875" Column="61" TopLine="2863"/>
       </Position6>
+      <Position7>
+        <Filename Value="..\..\..\Components\p4dlaz.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position7>
     </JumpHistory>
   </ProjectOptions>
   <CompilerOptions>

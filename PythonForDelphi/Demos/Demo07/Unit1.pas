@@ -98,7 +98,7 @@ begin
   with GetPythonEngine do
     begin
       // We want x and y values as argument
-      if PyArg_ParseTuple( args, 'ii:CreatePoint', [@x, @y]) <> 0 then
+      if PyArg_ParseTuple( args, 'ii:CreatePoint',@x, @y) <> 0 then
         begin
           new(p);
           with p^ do
@@ -118,6 +118,11 @@ begin
 end;
 
 function TForm1.spam_getdouble( pself, args : PPyObject ) : PPyObject; cdecl;
+// you need to pass floating point numbers as doubles to Py_BuildValue
+Const
+  d1 : double = 2.7172;
+  d2 : double = 3.14159;
+  d3 : double = 1.2e-12;
 var x: Currency;
     y: Double;
     s: PAnsiChar;
@@ -130,7 +135,7 @@ begin
       y := 42.0;
       i := 42;
       s := 'Hallo';
-      Result := Py_BuildValue('(sddiiddid)',[s,x,y,i,815,2.7172,3.14159,4711,1.2e-12]);
+      Result := Py_BuildValue('(sddiiddid)',s,x,y,i,815,d1,d2,4711,d3);
     end;
 end;
 
@@ -149,7 +154,6 @@ begin
       y := 42.0;
       i := 42;
       s := 'Hallo';
-      //Result := Py_BuildValue('(sddiiddid)',[s,x,y,i,815,2.7172,3.14159,4711,1.2e-12]);
       Result := ArrayToPyTuple( [ s,x,y,i,815,2.7172,3.14159,4711,1.2e-12, PyInt_FromLong(333) ] );
     end;
 end;
@@ -260,7 +264,7 @@ var
 begin
   with GetPythonEngine, PPyPoint(self)^ do
     begin
-      if PyArg_ParseTuple( args, 'ii:OffsetBy', [@x, @y]) <> 0 then
+      if PyArg_ParseTuple( args, 'ii:OffsetBy',@x, @y) <> 0 then
         begin
           Inc( po_x, x );
           Inc( po_y, y );
