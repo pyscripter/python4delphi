@@ -275,10 +275,6 @@
 // Misc
 /////////////////////////////////////////////////////////////////////////////
 
-{$IFDEF DELPHIXE2_OR_HIGHER}
-  {$DEFINE USESYSTEMDISPINVOKE}  //Might work with earlier versions as well
-{$ENDIF}
-
 {$IFDEF WIN32}
   {$DEFINE CPUX86}
 {$ENDIF}
@@ -291,9 +287,6 @@
   {$IFDEF CPU32}
     {$DEFINE CPUX86}
   {$ENDIF CPU32}
-  {$IF DEFINED(FPC_VER) and (FPC_VER >= 5)}
-    {$DEFINE USESYSTEMDISPINVOKE}
-  {$IFEND}
   {$IFDEF DARWIN}
     {$DEFINE MACOS}
     {$DEFINE ALIGN_STACK}

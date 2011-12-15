@@ -120,6 +120,13 @@ type
   end;
   TNamedParamArray = array of TNamedParamDesc;
 
+{$IFDEF DELPHIXE2_OR_HIGHER}
+  {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
+{$ENDIF}
+{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
+  {$DEFINE USESYSTEMDISPINVOKE}
+{$IFEND}
+
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
   protected

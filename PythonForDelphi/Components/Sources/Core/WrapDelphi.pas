@@ -1118,6 +1118,7 @@ end;
 Type
   //  Used for class registration by TPyDelphiWrapper fClassRegister
   TRegisteredClass = class
+  public
     DelphiClass : TClass;
     PythonType : TPythonType;
   end;
