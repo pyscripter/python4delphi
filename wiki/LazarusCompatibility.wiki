@@ -17,4 +17,4 @@ The !WrapDelphi units have also been ported and Demo31 for Lazarus is included i
 
 MacOSX and Linux compatibility has not been tested. Please test and if required submit a patch.  
 
-64bit is not supported yet but it is coming soon.
+64-bit is supported.
