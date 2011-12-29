@@ -97,10 +97,14 @@ function NewPythonList( const ASize : Integer = 0 ): Variant;
 function NewPythonTuple( const ASize : Integer ): Variant;
 function NewPythonDict: Variant;
 
+// Not really needed since you can assign a PythonVariant to a string anyway
+// but it is slightly faster and in some places avoids the declaration of a variable
+function VarPythonAsString(AValue : Variant) : string;
+
 function None : Variant;
 function Ellipsis : Variant;
 function MainModule : Variant; // return the main module that's used for executing a script.
-function BuiltinModule : Variant; // return the builtin module 
+function BuiltinModule : Variant; // return the builtin module
 function SysModule : Variant; // return the builtin module 'sys'
 function DatetimeModule : Variant; // return the builtin module 'datetime'
 function Import( const AModule : AnsiString ) : Variant; // import a Python module and return the module object.
@@ -635,6 +639,15 @@ begin
     end; // of try
   end; // of with
 end;
+
+function VarPythonAsString(AValue : Variant) : string;
+begin
+  if VarIsPython(AValue) then
+    Result := TPythonVarData(AValue).VPython.AsString
+  else
+    Result := AValue;
+end;
+
 
 function None : Variant;
 begin
