@@ -927,6 +927,102 @@ const
 {$IFDEF USESYSTEMDISPINVOKE}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+{$IFDEF DELPHIXE2}
+  //  Modified to correct memory leak QC102387
+  procedure PatchedDispInvoke(Dest: PVarData;
+    const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+  type
+    PParamRec = ^TParamRec;
+    TParamRec = array[0..3] of LongInt;
+    TStringDesc = record
+      BStr: WideString;
+      PStr: PAnsiString;
+    end;
+  const
+    CDoMethod    = $01;
+    CPropertyGet = $02;
+    CPropertySet = $04;
+  var
+    I, LArgCount: Integer;
+    LIdent: string;
+    LTemp: TVarData;
+    VarParams : TVarDataArray;
+    Strings: TStringRefList;
+  begin
+    // Grab the identifier
+    LArgCount := CallDesc^.ArgCount;
+    LIdent := FixupIdent(AnsiString(PAnsiChar(@CallDesc^.ArgTypes[LArgCount])));
+
+    FillChar(Strings, SizeOf(Strings), 0);
+    VarParams := GetDispatchInvokeArgs(CallDesc, Params, Strings, true);
+
+    // What type of invoke is this?
+    case CallDesc^.CallType of
+      CDoMethod:
+        // procedure with N arguments
+        if Dest = nil then
+        begin
+          if not DoProcedure(Source, LIdent, VarParams) then
+          begin
+
+            // ok maybe its a function but first we must make room for a result
+            VarDataInit(LTemp);
+            try
+
+              // notate that the destination shouldn't be bothered with
+              // functions can still return stuff, we just do this so they
+              //  can tell that they don't need to if they don't want to
+              SetClearVarToEmptyParam(LTemp);
+
+              // ok lets try for that function
+              if not DoFunction(LTemp, Source, LIdent, VarParams) then
+                RaiseDispError;
+            finally
+              VarDataClear(LTemp);
+            end;
+          end
+        end
+
+        // property get or function with 0 argument
+        else if LArgCount = 0 then
+        begin
+          if not GetProperty(Dest^, Source, LIdent) and
+             not DoFunction(Dest^, Source, LIdent, VarParams) then
+            RaiseDispError;
+        end
+
+        // function with N arguments
+        else if not DoFunction(Dest^, Source, LIdent, VarParams) then
+          RaiseDispError;
+
+      CPropertyGet:
+        if not ((Dest <> nil) and                         // there must be a dest
+                (LArgCount = 0) and                       // only no args
+                GetProperty(Dest^, Source, LIdent)) then  // get op be valid
+          RaiseDispError;
+
+      CPropertySet:
+        if not ((Dest = nil) and                          // there can't be a dest
+                (LArgCount = 1) and                       // can only be one arg
+                SetProperty(Source, LIdent, VarParams[0])) then // set op be valid
+          RaiseDispError;
+    else
+      RaiseDispError;
+    end;
+
+    for I := 0 to Length(Strings) - 1 do
+    begin
+      if Pointer(Strings[I].Wide) = nil then
+        Break;
+      if Strings[I].Ansi <> nil then
+        Strings[I].Ansi^ := AnsiString(Strings[I].Wide)
+      else if Strings[I].Unicode <> nil then
+        Strings[I].Unicode^ := UnicodeString(Strings[I].Wide)
+    end;
+    for I := Low(VarParams) to High(VarParams) do
+      VarDataClear(VarParams[I]);
+  end;
+{$ENDIF DELPHIXE2}
 
   procedure GetNamedParams;
   var
@@ -953,9 +1049,17 @@ begin
     if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
       NewCallDesc := CallDesc^;
       NewCallDesc.CallType := CDoMethod;
+    {$IFDEF DELPHIXE2}
+      PatchedDispInvoke(Dest, Source, @NewCallDesc, Params);
+    {$ELSE DELPHIXE2}
       inherited DispInvoke(Dest, Source, @NewCallDesc, Params);
+    {$ENDIF DELPHIXE2}
     end else
+      {$IFDEF DELPHIXE2}
+      PatchedDispInvoke(Dest, Source, CallDesc, Params);
+      {$ELSE DELPHIXE2}
       inherited;
+      {$ENDIF DELPHIXE2}
   finally
     if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
   end;
