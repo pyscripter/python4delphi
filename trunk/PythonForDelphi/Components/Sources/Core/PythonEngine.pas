@@ -126,7 +126,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -134,10 +134,11 @@ const
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python30.dll'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -145,7 +146,8 @@ const
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.0.so'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -170,6 +172,9 @@ const
 {$ENDIF}
 {$IFDEF PYTHON32}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
+{$ENDIF}
+{$IFDEF PYTHON33}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
 {$ENDIF}
 
   PYT_METHOD_BUFFER_INCREASE = 10;
@@ -1504,6 +1509,8 @@ type
     FInitialized:    Boolean;
     FFinalizing:     Boolean;
     FIsPython3000:   Boolean;
+    FMajorVersion:   integer;
+    FMinorVersion:   integer;
     FBuiltInModuleName: String;
     function GetInitialized: Boolean;
 
@@ -2050,6 +2057,8 @@ type
   property Initialized : Boolean read GetInitialized;
   property Finalizing : Boolean read FFinalizing;
   property IsPython3000 : Boolean read FIsPython3000;
+  property MajorVersion : integer read FMajorVersion;
+  property MinorVersion : integer read FMinorVersion;
   property BuiltInModuleName: String read FBuiltInModuleName write FBuiltInModuleName;
 
 end;
@@ -3478,6 +3487,10 @@ procedure TPythonInterface.AfterLoad;
 begin
   inherited;
   FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
+  FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+3{$ENDIF}]);
+
+
   if FIsPython3000 then
     FBuiltInModuleName := 'builtins'
   else
@@ -3520,7 +3533,9 @@ end;
 
 function  TPythonInterface.GetUnicodeTypeSuffix : String;
 begin
-  if APIVersion >= 1011 then
+  if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
+    Result := ''
+  else if APIVersion >= 1011 then
     Result := 'UCS2'
   else
     Result := '';
@@ -3538,9 +3553,9 @@ begin
   if not IsPython3000 then begin
     Py_TabcheckFlag            := Import('Py_TabcheckFlag');
     Py_UnicodeFlag             := Import('Py_UnicodeFlag');
+    Py_DivisionWarningFlag     := Import('Py_DivisionWarningFlag');
   end;
   Py_IgnoreEnvironmentFlag   := Import('Py_IgnoreEnvironmentFlag');
-  Py_DivisionWarningFlag     := Import('Py_DivisionWarningFlag');
 
   //_PySys_TraceFunc           := Import('_PySys_TraceFunc');
   //_PySys_ProfileFunc         := Import('_PySys_ProfileFunc');
@@ -4670,7 +4685,8 @@ begin
     SetFlag(Py_TabcheckFlag,    pfTabcheck in FPyFlags);
   end;
   SetFlag(Py_IgnoreEnvironmentFlag, pfIgnoreEnvironmentFlag in FPyFlags);
-  SetFlag(Py_DivisionWarningFlag, pfDivisionWarningFlag in FPyFlags);
+  if Assigned(Py_DivisionWarningFlag) then
+    SetFlag(Py_DivisionWarningFlag, pfDivisionWarningFlag in FPyFlags);
 end;
 
 procedure TPythonEngine.Initialize;
