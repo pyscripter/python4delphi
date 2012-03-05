@@ -3553,8 +3553,10 @@ begin
   if not IsPython3000 then begin
     Py_TabcheckFlag            := Import('Py_TabcheckFlag');
     Py_UnicodeFlag             := Import('Py_UnicodeFlag');
-    Py_DivisionWarningFlag     := Import('Py_DivisionWarningFlag');
   end;
+  if (fMajorVersion < 3) or ((fMajorVersion = 3) and (fMinorVersion <3)) then
+    Py_DivisionWarningFlag     := Import('Py_DivisionWarningFlag');
+
   Py_IgnoreEnvironmentFlag   := Import('Py_IgnoreEnvironmentFlag');
 
   //_PySys_TraceFunc           := Import('_PySys_TraceFunc');
