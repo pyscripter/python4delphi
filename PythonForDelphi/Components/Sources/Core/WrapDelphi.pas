@@ -486,9 +486,15 @@ Type
   TPyInterfacedObject = class(TPyObject, IInterface)
   private
     // implementation of interface IInterface
+    {$IFDEF FPC_HAS_CONSTREF}
+    function QueryInterface(constref IID: TGUID; out Obj): HResult;  {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _AddRef: Integer; {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};
+    function _Release: Integer; {$IFDEF MSWINDOWS}stdcall{$ELSE}cdecl{$ENDIF};    
+    {$ELSE}
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
+    {$ENDIF}
   end;
 
   {
@@ -1393,7 +1399,7 @@ begin
   Result := -1;
 end;
 
-function TPyInterfacedObject.QueryInterface(const IID: TGUID;
+function TPyInterfacedObject.QueryInterface({$IFDEF FPC_HAS_CONSTREF}constref{$ELSE}const{$ENDIF} IID: TGUID;
   out Obj): HResult;
 begin
   if GetInterface(IID, Obj) then
