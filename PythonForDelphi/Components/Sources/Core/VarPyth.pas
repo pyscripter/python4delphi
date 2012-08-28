@@ -200,6 +200,7 @@ type
     procedure SetPyObject(const Value: PPyObject);
     function GetAsVariant: Variant;
     function GetAsWideString: UnicodeString;
+    function GetAsAnsiString: AnsiString;
   public
     constructor Create(AObject : PPyObject); overload;
     constructor Create(AObject : PPyObject; APythonAtomCompatible : Boolean); overload;
@@ -233,6 +234,7 @@ type
 
     // conversion
     property AsString: String read GetAsString;
+    property AsAnsiString: AnsiString read GetAsAnsiString;
     property AsVariant: Variant read GetAsVariant;
     property AsWideString: UnicodeString read GetAsWideString;
 
@@ -828,7 +830,12 @@ begin
       varOleStr {$IFDEF UNICODE}, varUString {$ENDIF} :
         VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
       varString:
+        {$IFDEF UNICODE}
+        // Preserve AnsiStrings
+        VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);
+        {$ELSE}
         VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsString);
+        {$ENDIF}
     else
       if AVarType and varTypeMask = varBoolean then
       begin
@@ -2175,6 +2182,14 @@ begin
       Result := PyObject_Compare(PyObject, Right.PyObject) = 0;
     CheckError;
   end; // of with
+end;
+
+function TPythonData.GetAsAnsiString: AnsiString;
+begin
+  if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
+    Result := GetPythonEngine.PyString_AsString(PyObject)
+  else
+    result := GetAsString;
 end;
 
 function TPythonData.GetAsString: String;

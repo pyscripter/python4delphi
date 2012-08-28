@@ -2241,7 +2241,7 @@ type
     function   PyTZInfo_Check( obj : PPyObject ) : Boolean;
     function   PyTZInfo_CheckExact( obj : PPyObject ) : Boolean;
     { end date/time functions }
-    function   PyString_FromString( str: PAnsiChar): PPyObject; override;
+    function PyString_FromString( str: PAnsiChar): PPyObject; override;
     function PyString_AsDelphiString( ob: PPyObject): string; override;
     function PyString_AsAnsiString( ob: PPyObject): AnsiString;
     function PyString_AsWideString( ob: PPyObject): UnicodeString;
@@ -5753,13 +5753,13 @@ begin
         Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
       {$ELSE}
         s := wStr;
-        Result := PyString_FromString( PAnsiChar(s) );
+        Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
       {$ENDIF}
       end;
     varString:
       begin
         s := AnsiString(DeRefV);
-        Result := PyString_FromString( PAnsiChar(s) );
+        Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
       end;
    {$IFDEF UNICODE}
     varUString:
@@ -5769,7 +5769,7 @@ begin
         Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
       {$ELSE}
         s := wStr;
-        Result := PyString_FromString( PAnsiChar(s) );
+        Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
       {$ENDIF}
       end;
     {$ENDIF}
