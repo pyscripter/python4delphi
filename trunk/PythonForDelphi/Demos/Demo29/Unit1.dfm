@@ -72,11 +72,13 @@ object Form1: TForm1
     TabOrder = 3
   end
   object chkUseDC: TCheckBox
-    Left = 152
-    Top = 808
+    Left = 336
+    Top = 356
     Width = 193
     Height = 17
     Caption = 'Use Device Context'
+    Checked = True
+    State = cbChecked
     TabOrder = 4
   end
   object OpenPictureDialog1: TOpenPictureDialog
@@ -84,6 +86,11 @@ object Form1: TForm1
     Top = 336
   end
   object PythonEngine1: TPythonEngine
+    AutoUnload = False
+    DllName = 'python27.dll'
+    APIVersion = 1013
+    RegVersion = '2.7'
+    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 168
     Top = 624

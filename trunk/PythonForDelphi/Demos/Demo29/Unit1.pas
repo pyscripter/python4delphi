@@ -35,26 +35,44 @@ uses
 
 {$R *.dfm}
 
-function ImageToString(AGraphic : TGraphic) : String;
+// Old code not compatible with Unicode
+//
+//function ImageToString(AGraphic : TGraphic) : String;
+//var
+//  _stream : TStringStream;
+//begin
+//  _stream := TStringStream.Create('');
+//  try
+//    AGraphic.SaveToStream(_stream);
+//    Result := _stream.DataString;
+//  finally
+//    _stream.Free;
+//  end;
+//end;
+//
+//function BinStrToPyStr(const AString : String) : Variant;
+//var
+//  _str : PPyObject;
+//begin
+//  _str := GetPythonEngine.PyString_FromStringAndSize(PAnsiChar(AString), Length(AString)*SizeOf(Char));
+//  Result := VarPythonCreate(_str);
+//  GetPythonEngine.Py_DECREF(_str);
+//end;
+
+function ImageToPyStr(AGraphic : TGraphic) : Variant;
 var
-  _stream : TStringStream;
+  _stream : TMemoryStream;
+  _str : PPyObject;
 begin
-  _stream := TStringStream.Create('');
+  _stream := TMemoryStream.Create();
   try
-    AGraphic.SaveToStream(_stream);
-    Result := _stream.DataString;
+     AGraphic.SaveToStream(_stream);
+    _str := GetPythonEngine.PyString_FromStringAndSize(_stream.Memory, _stream.Size);
+    Result := VarPythonCreate(_str);
+    GetPythonEngine.Py_DECREF(_str);
   finally
     _stream.Free;
   end;
-end;
-
-function BinStrToPyStr(const AString : String) : Variant;
-var
-  _str : PPyObject;
-begin
-  _str := GetPythonEngine.PyString_FromStringAndSize(PAnsiChar(AString), Length(AString));
-  Result := VarPythonCreate(_str);
-  GetPythonEngine.Py_DECREF(_str);
 end;
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -66,18 +84,28 @@ end;
 procedure TForm1.Button2Click(Sender: TObject);
 var
   _im : Variant;
-  _stream : TStringStream;
+  _stream : TMemoryStream;
   _hdc : Variant;
   _dib : Variant;
+  S : AnsiString;
 begin
   if (Image1.Picture.Graphic = nil) or Image1.Picture.Graphic.Empty then
     raise Exception.Create('You must first select an image');
   PythonEngine1.ExecStrings(Memo1.Lines);
-  _im := MainModule.ProcessImage(BinStrToPyStr(ImageToString(Image1.Picture.Graphic)));
+  _im := MainModule.ProcessImage(ImageToPyStr(Image1.Picture.Graphic));
   if not chkUseDC.Checked then
   begin
-    _stream := TStringStream.Create(MainModule.ImageToString(_im));
+   {
+     TODO :
+        Needs fixing.  Probably has to do with images containing null bytes which
+        cannot be converted to ansistrings.
+   }
+    ShowMessage('This does not work and needs fixing');
+    _stream := TMemoryStream.Create();
     try
+      S := MainModule.ImageToString(_im);
+      _stream.Write(PAnsiChar(S)^, Length(S));
+      _stream.Position := 0;
       Image1.Picture.Graphic.LoadFromStream(_stream);
     finally
       _stream.Free;
