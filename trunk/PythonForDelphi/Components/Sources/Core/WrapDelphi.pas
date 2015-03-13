@@ -2689,7 +2689,10 @@ begin
     begin
       d := PyModule_GetDict(FModule.Module);
       Assert(Assigned(d));
-      PyDict_SetItemString( d, AMethodDef^.ml_name, PyCFunction_New(AMethodDef, nil));
+      if IsPython3000 then
+        PyDict_SetItemString( d, AMethodDef^.ml_name, PyCFunction_NewEx(AMethodDef, nil, nil))
+      else
+        PyDict_SetItemString( d, AMethodDef^.ml_name, PyCFunction_New(AMethodDef, nil));
     end;
 end;
 
