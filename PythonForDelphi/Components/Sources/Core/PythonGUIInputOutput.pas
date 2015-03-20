@@ -134,7 +134,6 @@ end;
 
 procedure TPythonGUIInputOutput.SendUniData(const Data: UnicodeString);
 begin
-  inherited;
   if Assigned(FOnSendUniData) then
     inherited
   else
