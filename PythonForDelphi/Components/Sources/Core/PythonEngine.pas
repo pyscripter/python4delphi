@@ -72,7 +72,7 @@ uses
 {$ENDIF}
 {$IFDEF LINUX}
   Types,
-  Libc,
+  dynlibs,
 {$ENDIF}
   Classes,
   SysUtils,
@@ -3374,8 +3374,12 @@ var
 begin
   Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
   if (Result = nil) and canFail then begin
+    {$IFDEF MSWINDOWS}
     E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
     E.ErrorCode := GetLastError;
+    {$ELSE}
+    E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
+    {$ENDIF}
     E.WrongFunc := funcname;
     raise E;
   end;
@@ -3444,7 +3448,7 @@ begin
 {$ENDIF}
 {$IFDEF LINUX}
     WriteLn(ErrOutput, GetQuitMessage);
-    __exit( 1 );
+    Halt( 1 );
 {$ENDIF}
   end;
 end;
