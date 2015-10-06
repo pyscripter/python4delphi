@@ -3296,6 +3296,28 @@ begin
         GetDllPath+DllName
       {$ENDIF}
     );
+    {$IFDEF LINUX}
+    if FDLLHandle=0 then
+      begin
+        FDLLHandle := LoadLibrary(
+          {$IFDEF FPC}
+            PAnsiChar(AnsiString('/usr/lib/x86_64-linux-gnu/'+DllName))
+          {$ELSE}
+            GetDllPath+DllName
+          {$ENDIF}
+          );
+      end;
+    if FDLLHandle=0 then
+      begin
+        FDLLHandle := LoadLibrary(
+          {$IFDEF FPC}
+            PAnsiChar(AnsiString('/usr/lib/i386-linux-gnu/'+DllName))
+          {$ELSE}
+            GetDllPath+DllName
+          {$ENDIF}
+          );
+      end;
+    {$ENDIF}
   end;
 end;
 
@@ -3496,8 +3518,13 @@ procedure TPythonInterface.AfterLoad;
 begin
   inherited;
   FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
-  FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
+  {$IFDEF WINDOWS}
+  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
   FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+3{$ENDIF}]);
+  {$ELSE}
+  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[9{$IFDEF LINUX}+3{$ENDIF}]);
+  {$ENDIF}
 
 
   if FIsPython3000 then
@@ -3543,6 +3570,8 @@ end;
 function  TPythonInterface.GetUnicodeTypeSuffix : String;
 begin
   if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
+    Result := ''
+  else if ((fMajorVersion = 2) and (fMinorVersion >= 7)) then
     Result := ''
   else if APIVersion >= 1011 then
     Result := 'UCS2'
