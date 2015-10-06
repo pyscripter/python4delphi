@@ -126,7 +126,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -137,7 +137,8 @@ const
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python35.dll'; RegVersion: '3.5-32'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python35.dll'; RegVersion: '3.5-64'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
   PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
@@ -4669,7 +4670,11 @@ begin
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
-      FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      try
+        FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      except
+        FDLLHandle:=0;
+      end;
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
