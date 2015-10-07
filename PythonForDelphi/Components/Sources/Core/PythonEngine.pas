@@ -3996,11 +3996,13 @@ begin
   PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   PyType_GenericNew         :=Import('PyType_GenericNew');
   PyType_Ready              :=Import('PyType_Ready');
+  {$IFNDEF LINUX}
   PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
   PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
   PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
+  {$ENDIF}
   PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
