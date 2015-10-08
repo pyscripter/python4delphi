@@ -3577,8 +3577,6 @@ function  TPythonInterface.GetUnicodeTypeSuffix : String;
 begin
   if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
     Result := ''
-  else if ((fMajorVersion = 2) and (fMinorVersion >= 7)) then
-    Result := ''
   else if APIVersion >= 1011 then
     Result := 'UCS2'
   else
