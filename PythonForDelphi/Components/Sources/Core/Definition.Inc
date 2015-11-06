@@ -2,12 +2,12 @@
 (*                                                                        *)
 (* Module:   'Definition.Inc'          Copyright (c) 1998                 *)
 (*                                                                        *)
-(* Version: 1.5                        Dr. Dietmar Budelsky               *)
+(* Version: 1.6                        Dr. Dietmar Budelsky               *)
 (*                                     budelsky@ibs.bm.eunet.de           *)
 (*                                     IBS Schillings GmbH & Co KG        *)
 (*                                     Ein Unternehmen der KROHNE-Gruppe  *)
 (*                                     Heisenbergstr. 18                  *)
-(*                                     50169 Kerpen-Türnich               *)
+(*                                     50169 Kerpen-TÃ¼rnich               *)
 (*                                     Phone: (49)22 37/97 44-0           *)
 (*                                                                        *)
 (**************************************************************************)
@@ -36,6 +36,7 @@
 //{$DEFINE PYTHON32}
 //{$DEFINE PYTHON33}
 //{$DEFINE PYTHON34}
+//{$DEFINE PYTHON35}
 
 /////////////////////////////////////////////////////////////////////////////
 // Python for Delphi settings. Comment out the setting you want to enable.
@@ -314,6 +315,28 @@
   {$DEFINE DELPHIXE7_OR_HIGHER}
   {$DEFINE DELPHIXE8_OR_HIGHER}
 {$ENDIF}
+{$IFDEF VER300} // Delphi X "10" Seattle
+  {$DEFINE DELPHIX}
+  {$DEFINE DELPHI4_OR_HIGHER}
+  {$DEFINE DELPHI5_OR_HIGHER}
+  {$DEFINE DELPHI6_OR_HIGHER}
+  {$DEFINE DELPHI7_OR_HIGHER}
+  {$DEFINE DELPHI8_OR_HIGHER}
+  {$DEFINE DELPHI2005_OR_HIGHER}
+  {$DEFINE DELPHI2006_OR_HIGHER}
+  {$DEFINE DELPHI2007_OR_HIGHER}
+  {$DEFINE DELPHI2009_OR_HIGHER}
+  {$DEFINE DELPHI2010_OR_HIGHER}
+  {$DEFINE DELPHIXE_OR_HIGHER}
+  {$DEFINE DELPHIXE2_OR_HIGHER}
+  {$DEFINE DELPHIXE3_OR_HIGHER}
+  {$DEFINE DELPHIXE4_OR_HIGHER}
+  {$DEFINE DELPHIXE5_OR_HIGHER}
+  {$DEFINE DELPHIXE6_OR_HIGHER}
+  {$DEFINE DELPHIXE7_OR_HIGHER}
+  {$DEFINE DELPHIXE8_OR_HIGHER}
+  {$DEFINE DELPHIX_OR_HIGHER}
+{$ENDIF}
 /////////////////////////////////////////////////////////////////////////////
 // Python versions
 /////////////////////////////////////////////////////////////////////////////
@@ -322,19 +345,21 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON34}
-  {$IFNDEF PYTHON33}
-    {$IFNDEF PYTHON32}
-      {$IFNDEF PYTHON31}
-        {$IFNDEF PYTHON30}
-          {$IFNDEF PYTHON27}
-            {$IFNDEF PYTHON26}
-              {$IFNDEF PYTHON25}
-                {$IFNDEF PYTHON24}
-                  {$IFNDEF PYTHON23}
-            {---<START OF DEFAULT PYTHON VERSION>---}
-                {$DEFINE PYTHON27}
-            {---<END OF DEFAULT PYTHON VERSION>---}
+{$IFNDEF PYTHON35}
+  {$IFNDEF PYTHON34}
+    {$IFNDEF PYTHON33}
+      {$IFNDEF PYTHON32}
+        {$IFNDEF PYTHON31}
+          {$IFNDEF PYTHON30}
+            {$IFNDEF PYTHON27}
+              {$IFNDEF PYTHON26}
+                {$IFNDEF PYTHON25}
+                  {$IFNDEF PYTHON24}
+                    {$IFNDEF PYTHON23}
+              {---<START OF DEFAULT PYTHON VERSION>---}
+                  {$DEFINE PYTHON27}
+              {---<END OF DEFAULT PYTHON VERSION>---}
+                    {$ENDIF}
                   {$ENDIF}
                 {$ENDIF}
               {$ENDIF}
@@ -415,6 +440,18 @@
   {$DEFINE PYTHON32_OR_HIGHER}
   {$DEFINE PYTHON33_OR_HIGHER}
   {$DEFINE PYTHON34_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON35}
+  {$DEFINE PYTHON23_OR_HIGHER}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+  {$DEFINE PYTHON30_OR_HIGHER}
+  {$DEFINE PYTHON31_OR_HIGHER}
+  {$DEFINE PYTHON32_OR_HIGHER}
+  {$DEFINE PYTHON33_OR_HIGHER}
+  {$DEFINE PYTHON34_OR_HIGHER}
+  {$DEFINE PYTHON35_OR_HIGHER}
 {$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
