@@ -52,8 +52,10 @@
         <ComponentName Value="Form1"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <CursorPos X="39" Y="12"/>
+        <TopLine Value="79"/>
+        <CursorPos X="27" Y="84"/>
         <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -86,10 +88,9 @@
       </Unit4>
       <Unit5>
         <Filename Value="..\..\..\Components\Sources\Core\MethodCallBack.pas"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
-        <TopLine Value="162"/>
-        <CursorPos X="7" Y="183"/>
+        <TopLine Value="149"/>
+        <CursorPos X="51" Y="159"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -98,119 +99,119 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5074" Column="21" TopLine="5059"/>
       </Position1>
       <Position2>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
+        <Caret Line="2145" Column="23" TopLine="2128"/>
       </Position2>
       <Position3>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2145" Column="23" TopLine="2128"/>
+        <Caret Line="2178" Column="35" TopLine="2161"/>
       </Position3>
       <Position4>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2178" Column="35" TopLine="2161"/>
+        <Caret Line="2282" Column="89" TopLine="2265"/>
       </Position4>
       <Position5>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2282" Column="89" TopLine="2265"/>
+        <Caret Line="4634" Column="21" TopLine="4617"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4634" Column="21" TopLine="4617"/>
+        <Caret Line="4742" Column="23" TopLine="4725"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4742" Column="23" TopLine="4725"/>
+        <Caret Line="5070" Column="30" TopLine="5058"/>
       </Position7>
       <Position8>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5070" Column="30" TopLine="5058"/>
       </Position8>
       <Position9>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
+        <Caret Line="2145" Column="23" TopLine="2128"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2145" Column="23" TopLine="2128"/>
+        <Caret Line="2178" Column="35" TopLine="2161"/>
       </Position10>
       <Position11>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2178" Column="35" TopLine="2161"/>
+        <Caret Line="2282" Column="89" TopLine="2265"/>
       </Position11>
       <Position12>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2282" Column="89" TopLine="2265"/>
+        <Caret Line="4634" Column="21" TopLine="4617"/>
       </Position12>
       <Position13>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4634" Column="21" TopLine="4617"/>
+        <Caret Line="4742" Column="23" TopLine="4725"/>
       </Position13>
       <Position14>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4742" Column="23" TopLine="4725"/>
+        <Caret Line="5072" Column="45" TopLine="5055"/>
       </Position14>
       <Position15>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5072" Column="45" TopLine="5055"/>
+        <Caret Line="5074" Column="21" TopLine="5057"/>
       </Position15>
       <Position16>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5074" Column="21" TopLine="5057"/>
       </Position16>
       <Position17>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
+        <Caret Line="2145" Column="23" TopLine="2128"/>
       </Position17>
       <Position18>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2145" Column="23" TopLine="2128"/>
+        <Caret Line="2178" Column="35" TopLine="2161"/>
       </Position18>
       <Position19>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2178" Column="35" TopLine="2161"/>
+        <Caret Line="2282" Column="89" TopLine="2265"/>
       </Position19>
       <Position20>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="2282" Column="89" TopLine="2265"/>
+        <Caret Line="4634" Column="21" TopLine="4617"/>
       </Position20>
       <Position21>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4634" Column="21" TopLine="4617"/>
+        <Caret Line="4743" Column="17" TopLine="4725"/>
       </Position21>
       <Position22>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="4743" Column="17" TopLine="4725"/>
+        <Caret Line="5078" Column="39" TopLine="5007"/>
       </Position22>
       <Position23>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5078" Column="39" TopLine="5007"/>
+        <Caret Line="5027" TopLine="5010"/>
       </Position23>
       <Position24>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5027" TopLine="5010"/>
+        <Caret Line="5084" Column="28" TopLine="5070"/>
       </Position24>
       <Position25>
         <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5084" Column="28" TopLine="5070"/>
+        <Caret Line="5027" TopLine="5017"/>
       </Position25>
       <Position26>
-        <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
-        <Caret Line="5027" TopLine="5017"/>
+        <Filename Value="Project1.lpr"/>
       </Position26>
       <Position27>
-        <Filename Value="Project1.lpr"/>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="294" Column="35"/>
       </Position27>
       <Position28>
         <Filename Value="Unit1.pas"/>
-        <Caret Line="294" Column="35"/>
+        <Caret Line="3"/>
       </Position28>
       <Position29>
         <Filename Value="Unit1.pas"/>
-        <Caret Line="3"/>
+        <Caret Line="12" Column="39"/>
       </Position29>
       <Position30>
-        <Filename Value="Unit1.pas"/>
-        <Caret Line="12" Column="39"/>
+        <Filename Value="..\..\..\Components\Sources\Core\MethodCallBack.pas"/>
+        <Caret Line="183" Column="7" TopLine="162"/>
       </Position30>
     </JumpHistory>
   </ProjectOptions>
@@ -234,15 +235,6 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="..\..\..\Components\Sources\Core\MethodCallBack.pas"/>
-        <Line Value="175"/>
-      </Item1>
-    </BreakPoints>
     <Exceptions Count="3">
       <Item1>
         <Name Value="EAbort"/>
