@@ -1630,7 +1630,7 @@ end;
 
 // Sequence services
 
-function  TPyDataset.SqLength : Integer;
+function  TPyDataset.SqLength : NativeInt;
 begin
   if CheckDataset then
     Result := Dataset.RecordCount
@@ -1638,7 +1638,7 @@ begin
     Result := -1;
 end;
 
-function  TPyDataset.SqItem( idx : Integer ) : PPyObject;
+function  TPyDataset.SqItem( idx : NativeInt ) : PPyObject;
 begin
   if CheckDataset then
     begin

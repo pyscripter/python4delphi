@@ -89,7 +89,7 @@ object Form1: TForm1
     AutoUnload = False
     DllName = 'python27.dll'
     APIVersion = 1013
-    RegVersion = '2.7'
+    RegVersion = '3.4'
     UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 168
