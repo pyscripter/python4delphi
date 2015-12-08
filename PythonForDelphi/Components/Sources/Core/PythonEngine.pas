@@ -69,8 +69,7 @@ interface
 uses
 {$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
   Types,
   dynlibs,
 {$ENDIF}
@@ -153,6 +152,20 @@ const
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
+{$ENDIF}
+{$IFDEF DARWIN}
+  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
+  ( (DllName: 'libpython2.3.dylib'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
+    (DllName: 'libpython2.4.dylib'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
+    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.0.dylib'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.1.dylib'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -3264,6 +3277,7 @@ var
   thread_id : Longint;
   i : Integer;
 begin
+  {$ifndef DARWIN}
   thread_id := GetCurrentThreadId;
   for i := 0 to FLinesPerThread.Count-1 do
     if Longint(FLinesPerThread.Objects[i]) = thread_id then
@@ -3272,6 +3286,7 @@ begin
         Exit;
       end;
   Result := FLinesPerThread.AddObject( '', TObject(thread_id) );
+  {$endif}
 end;
 
 function  TPythonInputOutput.GetCurrentThreadLine : IOString;
@@ -9758,4 +9773,4 @@ end;
 {$ENDIF}
 
 end.
-
+
