@@ -1364,10 +1364,10 @@ const
   kMaxLineLength = 256;
 
 type
-  TSendDataEvent = procedure (Sender: TObject; const Data : AnsiString ) of object;
-  TReceiveDataEvent = procedure (Sender: TObject; var Data : AnsiString ) of object;
-  TSendUniDataEvent = procedure (Sender: TObject; const Data : UnicodeString ) of object;
-  TReceiveUniDataEvent = procedure (Sender: TObject; var Data : UnicodeString ) of object;
+  TSendDataEvent = reference to procedure (Sender: TObject; const Data : AnsiString );
+  TReceiveDataEvent = reference to procedure (Sender: TObject; var Data : AnsiString );
+  TSendUniDataEvent = reference to procedure (Sender: TObject; const Data : UnicodeString );
+  TReceiveUniDataEvent = reference to procedure (Sender: TObject; var Data : UnicodeString );
   IOChar = WideChar;
   IOString = UnicodeString;
   TIOStringList = TUnicodeStringList;
