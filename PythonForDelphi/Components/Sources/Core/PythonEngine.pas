@@ -3111,9 +3111,11 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 
 implementation
 
+uses
 {$IFDEF MSWINDOWS}
-uses Registry;
+  Registry,
 {$ENDIF}
+  System.Types;
 
 
 (*******************************************************)
