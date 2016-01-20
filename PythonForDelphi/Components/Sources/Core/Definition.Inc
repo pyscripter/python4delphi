@@ -443,6 +443,7 @@
       {$DEFINE MACOS32}
     {$ENDIF CPU32}
   {$ENDIF DARWIN}
+  {$H+}
 {$ENDIF FPC}
 
 
