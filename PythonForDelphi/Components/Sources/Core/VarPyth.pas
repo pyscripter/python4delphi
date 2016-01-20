@@ -180,9 +180,9 @@ type
       const Arguments: TVarDataArray): Boolean; override;
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
-    function SetProperty(const V: TVarData; const AName: string;
+    function SetProperty(var V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
-    procedure DispInvoke(Dest: PVarData; const Source: TVarData;
+    procedure DispInvoke(Dest: PVarData; var Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); override;
   end;
 
@@ -877,8 +877,8 @@ begin
   FreeAndNil(TPythonVarData(V).VPython);
 end;
 
-function TPythonVariantType.CompareOp(const Left, Right: TVarData;
-  const AOperator: TVarOp): Boolean;
+function TPythonVariantType.CompareOp(const Left: TVarData;
+  const Right: TVarData; const AOperator: TVarOp): Boolean;
 begin
   Result := False;
   if (Left.VType = VarType) and (Right.VType = VarType) then
@@ -932,8 +932,8 @@ const
   CPropertySet = $04;
 
 {$IFDEF USESYSTEMDISPINVOKE}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+procedure TPythonVariantType.DispInvoke(Dest: PVarData; var Source: TVarData;
+  CallDesc: PCallDesc; Params: Pointer);
 {$IFDEF DELPHIXE2}
   //  Modified to correct memory leak QC102387
   procedure PatchedDispInvoke(Dest: PVarData;
@@ -1855,8 +1855,8 @@ begin
     Result := False;
 end;
 
-function TPythonVariantType.SetProperty(const V: TVarData;
-  const AName: string; const Value: TVarData): Boolean;
+function TPythonVariantType.SetProperty(var V: TVarData; const AName: string;
+  const Value: TVarData): Boolean;
 var
   _newValue : PPyObject;
 begin
