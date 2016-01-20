@@ -1383,10 +1383,10 @@ const
   kMaxLineLength = 256;
 
 type
-  TSendDataEvent = reference to procedure (Sender: TObject; const Data : AnsiString );
-  TReceiveDataEvent = reference to procedure (Sender: TObject; var Data : AnsiString );
-  TSendUniDataEvent = reference to procedure (Sender: TObject; const Data : UnicodeString );
-  TReceiveUniDataEvent = reference to procedure (Sender: TObject; var Data : UnicodeString );
+  TSendDataEvent = procedure (Sender: TObject; const Data : AnsiString ) of object;
+  TReceiveDataEvent = procedure (Sender: TObject; var Data : AnsiString ) of object;
+  TSendUniDataEvent = procedure (Sender: TObject; const Data : UnicodeString ) of object;
+  TReceiveUniDataEvent = procedure (Sender: TObject; var Data : UnicodeString ) of object;
   IOChar = WideChar;
   IOString = UnicodeString;
   TIOStringList = TUnicodeStringList;
@@ -3130,11 +3130,10 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 
 implementation
 
-uses
 {$IFDEF MSWINDOWS}
-  Registry,
+uses
+  Registry;
 {$ENDIF}
-  System.Types;
 
 
 (*******************************************************)
@@ -9775,4 +9774,4 @@ end;
 {$ENDIF}
 
 end.
-
+
