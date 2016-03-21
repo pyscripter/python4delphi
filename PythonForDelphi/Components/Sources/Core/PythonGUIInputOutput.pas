@@ -49,7 +49,7 @@ uses
 {$IFDEF MSWINDOWS}
   Windows, Messages,
 {$ENDIF}
-  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  SysUtils, Classes;//, Graphics, Controls, Forms, Dialogs,
   StdCtrls, PythonEngine;
 
 {$IFDEF MSWINDOWS}
