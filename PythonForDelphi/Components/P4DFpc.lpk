@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0"?>
 <CONFIG>
-  <Package Version="4">
+  <Package Version="3">
     <PathDelim Value="\"/>
     <Name Value="P4DFpc"/>
-    <Type Value="RunAndDesignTime"/>
     <CompilerOptions>
-      <Version Value="11"/>
+      <Version Value="9"/>
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="Sources\Core"/>
@@ -18,11 +17,13 @@
           <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
+      <Other>
+        <CompilerPath Value="$(CompPath)"/>
+      </Other>
     </CompilerOptions>
     <Files Count="6">
       <Item1>
         <Filename Value="Sources\Core\PythonEngine.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="PythonEngine"/>
       </Item1>
       <Item2>
