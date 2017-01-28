@@ -1374,7 +1374,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonInputOutput = class(TComponent)
   protected
     FMaxLines        : Integer;
@@ -2114,7 +2114,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonEngine = class(TPythonInterface)
   private
     FInitScript:                 TStrings;
@@ -2582,7 +2582,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonModule = class(TMethodsContainer)
     protected
       FModuleName : AnsiString;
@@ -2847,7 +2847,7 @@ type
   // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonType = class(TGetSetContainer)
     protected
       FType : PyTypeObject;
@@ -2935,7 +2935,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonDelphiVar = class( TEngineClient )
     protected
       FModule    : AnsiString;
@@ -8216,7 +8216,6 @@ end;
 procedure TPythonType.ReallocMethods;
 begin
   inherited;
-exit;
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
 end;

@@ -1740,7 +1740,4 @@ begin
   gQueryType := TPythonQuery.Create(AOwner);
 end;
 
-{$EndIf}
-{$EndIf}
-
 end.
