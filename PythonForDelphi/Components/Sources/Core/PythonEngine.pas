@@ -69,10 +69,9 @@ interface
 uses
 {$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
   Types,
-  Libc,
+  dynlibs,
 {$ENDIF}
   Classes,
   SysUtils,
@@ -126,7 +125,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -136,10 +135,12 @@ const
     (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python35.dll'; RegVersion: '3.5-32'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python35.dll'; RegVersion: '3.5-64'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -149,7 +150,22 @@ const
     (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
+{$ENDIF}
+{$IFDEF DARWIN}
+  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
+  ( (DllName: 'libpython2.3.dylib'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
+    (DllName: 'libpython2.4.dylib'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
+    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.0.dylib'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.1.dylib'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -180,6 +196,9 @@ const
 {$ENDIF}
 {$IFDEF PYTHON34}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
+{$ENDIF}
+{$IFDEF PYTHON35}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
 {$ENDIF}
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
@@ -3112,7 +3131,8 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 implementation
 
 {$IFDEF MSWINDOWS}
-uses Registry;
+uses
+  Registry;
 {$ENDIF}
 
 
@@ -3258,6 +3278,7 @@ var
   thread_id : Longint;
   i : Integer;
 begin
+  {$ifndef DARWIN}
   thread_id := GetCurrentThreadId;
   for i := 0 to FLinesPerThread.Count-1 do
     if Longint(FLinesPerThread.Objects[i]) = thread_id then
@@ -3266,6 +3287,7 @@ begin
         Exit;
       end;
   Result := FLinesPerThread.AddObject( '', TObject(thread_id) );
+  {$endif}
 end;
 
 function  TPythonInputOutput.GetCurrentThreadLine : IOString;
@@ -3296,6 +3318,28 @@ begin
         GetDllPath+DllName
       {$ENDIF}
     );
+    {$IFDEF LINUX}
+    if FDLLHandle=0 then
+      begin
+        FDLLHandle := LoadLibrary(
+          {$IFDEF FPC}
+            PAnsiChar(AnsiString('/usr/lib/x86_64-linux-gnu/'+DllName))
+          {$ELSE}
+            GetDllPath+DllName
+          {$ENDIF}
+          );
+      end;
+    if FDLLHandle=0 then
+      begin
+        FDLLHandle := LoadLibrary(
+          {$IFDEF FPC}
+            PAnsiChar(AnsiString('/usr/lib/i386-linux-gnu/'+DllName))
+          {$ELSE}
+            GetDllPath+DllName
+          {$ENDIF}
+          );
+      end;
+    {$ENDIF}
   end;
 end;
 
@@ -3374,8 +3418,12 @@ var
 begin
   Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
   if (Result = nil) and canFail then begin
+    {$IFDEF MSWINDOWS}
     E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
     E.ErrorCode := GetLastError;
+    {$ELSE}
+    E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
+    {$ENDIF}
     E.WrongFunc := funcname;
     raise E;
   end;
@@ -3444,7 +3492,7 @@ begin
 {$ENDIF}
 {$IFDEF LINUX}
     WriteLn(ErrOutput, GetQuitMessage);
-    __exit( 1 );
+    Halt( 1 );
 {$ENDIF}
   end;
 end;
@@ -3492,8 +3540,13 @@ procedure TPythonInterface.AfterLoad;
 begin
   inherited;
   FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
-  FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
+  {$IFDEF WINDOWS}
+  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
   FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+3{$ENDIF}]);
+  {$ELSE}
+  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[9{$IFDEF LINUX}+3{$ENDIF}]);
+  {$ENDIF}
 
 
   if FIsPython3000 then
@@ -3957,11 +4010,13 @@ begin
   PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   PyType_GenericNew         :=Import('PyType_GenericNew');
   PyType_Ready              :=Import('PyType_Ready');
+  {$IFNDEF LINUX}
   PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
   PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
   PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
+  {$ENDIF}
   PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
@@ -4660,7 +4715,11 @@ begin
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
-      FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      try
+        FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      except
+        FDLLHandle:=0;
+      end;
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
@@ -9653,6 +9712,7 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
+  {$IFNDEF CPUARM}
   if MatchPythonPrecision then begin
     if ExceptionsMasked then
       Set8087CW($1232 or $3F)
@@ -9664,6 +9724,7 @@ begin
     else
       Set8087CW($1332);
   end;
+  {$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}

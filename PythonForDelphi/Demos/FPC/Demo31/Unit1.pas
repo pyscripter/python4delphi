@@ -1,18 +1,12 @@
 unit Unit1;
 
-{$I Definition.Inc}
+{.$I Definition.Inc}
 
 interface
 
 uses
-  SysUtils, Classes,
-{$IFDEF MSWINDOWS}
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList;
 
 type
@@ -47,12 +41,8 @@ implementation
 
 Uses
   TypInfo,
-{$IFNDEF FPC}
-  ObjAuto,
-{$ENDIF}
   Variants,
-  VarPyth,
-  WrapDelphiVCL;
+  VarPyth;
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -79,7 +69,7 @@ end;
 type
 {$TYPEINFO ON}
 {$IFNDEF FPC}{$METHODINFO ON}{$ENDIF}
-TTestClass = class(TTestBase, IFreeNotification, IInterface)
+TTestClass = class(TTestBase, IFreeNotification)
 private
   fSValue : string;
   fIValue : integer;

@@ -36,6 +36,7 @@
 //{$DEFINE PYTHON32}
 //{$DEFINE PYTHON33}
 //{$DEFINE PYTHON34}
+//{$DEFINE PYTHON35}
 
 /////////////////////////////////////////////////////////////////////////////
 // Python for Delphi settings. Comment out the setting you want to enable.
@@ -322,19 +323,21 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON34}
-  {$IFNDEF PYTHON33}
-    {$IFNDEF PYTHON32}
-      {$IFNDEF PYTHON31}
-        {$IFNDEF PYTHON30}
-          {$IFNDEF PYTHON27}
-            {$IFNDEF PYTHON26}
-              {$IFNDEF PYTHON25}
-                {$IFNDEF PYTHON24}
-                  {$IFNDEF PYTHON23}
-            {---<START OF DEFAULT PYTHON VERSION>---}
-                {$DEFINE PYTHON27}
-            {---<END OF DEFAULT PYTHON VERSION>---}
+{$IFNDEF PYTHON35}
+  {$IFNDEF PYTHON34}
+    {$IFNDEF PYTHON33}
+      {$IFNDEF PYTHON32}
+        {$IFNDEF PYTHON31}
+          {$IFNDEF PYTHON30}
+            {$IFNDEF PYTHON27}
+              {$IFNDEF PYTHON26}
+                {$IFNDEF PYTHON25}
+                  {$IFNDEF PYTHON24}
+                    {$IFNDEF PYTHON23}
+              {---<START OF DEFAULT PYTHON VERSION>---}
+                  {$DEFINE PYTHON27}
+              {---<END OF DEFAULT PYTHON VERSION>---}
+                    {$ENDIF}
                   {$ENDIF}
                 {$ENDIF}
               {$ENDIF}
@@ -440,6 +443,7 @@
       {$DEFINE MACOS32}
     {$ENDIF CPU32}
   {$ENDIF DARWIN}
+  {$H+}
 {$ENDIF FPC}
 
 

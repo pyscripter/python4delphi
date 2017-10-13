@@ -7,7 +7,7 @@ uses
   Forms, Interfaces,
 {$ENDIF}
 {$IFDEF LINUX}
-  QForms,
+  Forms, Interfaces,
 {$ENDIF}
   Unit1 in 'Unit1.pas' {Form1};
 

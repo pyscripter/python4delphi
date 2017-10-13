@@ -102,6 +102,7 @@ uses
   Windows,
   {$ELSE WINDOWS}
   {$IFDEF FPC}
+  BaseUnix,
   {$ELSE}
   Posix.SysMMan,
   {$ENDIF}
@@ -143,19 +144,13 @@ type
 
 {$IFNDEF MSWINDOWS}
 {$IFDEF FPC}
-function mmap(Addr: Pointer; Len: Integer; Prot: Integer; Flags: Integer; FileDes: Integer; Off: Integer): Pointer; cdecl;
-  external 'c' name 'mmap';
-
 function mprotect(Addr: Pointer; Len: Integer; Prot: Integer): Integer; cdecl;
   external 'c' name 'mprotect';
-
-function munmap(Addr: Pointer; Len: Integer): Integer; cdecl;
-  external 'c' name 'munmap';
-const  
-  PROT_NONE   =0;
-  PROT_READ   =1;
-  PROT_WRITE  =2;
-  PROT_EXEC   =4;
+const
+//  PROT_NONE   =0;
+//  PROT_READ   =1;
+//  PROT_WRITE  =2;
+//  PROT_EXEC   =4;
   MAP_PRIVATE =2;
   MAP_ANON=$1000;  
 {$ENDIF}
@@ -179,8 +174,8 @@ begin
 	{$IFDEF MSWINDOWS}	
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	{$ELSE}
-    //page := GetMem(PageSize);
-    page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    page := GetMem(PageSize);
+    //page := fpmmap(nil, PageSize, PROT_NONE, MAP_ANONYMOUS, -1, 0);
     mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
 	{$ENDIF}	
     page^.next:=CodeMemPages;
@@ -238,8 +233,8 @@ begin
 	  	  {$IFDEF MSWINDOWS}
           VirtualFree(page, 0, MEM_RELEASE);
 		  {$ELSE}
-          // FreeMem(page);
-          munmap(page,PageSize);
+          FreeMem(page);
+          //fpmunmap(page,PageSize);
 		  {$ENDIF}		  
         end;
 
@@ -601,8 +596,8 @@ begin
   {$IFDEF MSWINDOWS}
     VirtualFree(page, 0, MEM_RELEASE);
   {$ELSE}
-	//FreeMem(page);
-    munmap(page,PageSize);
+    FreeMem(page);
+    //fpmunmap(page,PageSize);
   {$ENDIF}		  
 
     page := nextpage;
