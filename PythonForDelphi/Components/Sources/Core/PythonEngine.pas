@@ -126,7 +126,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -136,10 +136,12 @@ const
     (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -149,7 +151,9 @@ const
     (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -180,6 +184,12 @@ const
 {$ENDIF}
 {$IFDEF PYTHON34}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
+{$ENDIF}
+{$IFDEF PYTHON35}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
+{$ENDIF}
+{$IFDEF PYTHON36}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
 {$ENDIF}
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
@@ -3493,7 +3503,7 @@ begin
   inherited;
   FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
   FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
-  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+4{$ENDIF}]);
 
 
   if FIsPython3000 then
@@ -9676,8 +9686,14 @@ function IsPythonVersionRegistered(PythonVersion : string;
   // the registry info in HKEY_CURRENT_USER.
   // Hence, for Current user installations we need to try and find the install path
   // since it may not be on the system path.
+
+  // The above convension was changed in Python 3.5.  Now even for all user
+  // installations the dll is located at the InstallPath.
+
 var
   key: string;
+  MajorVersion : integer;
+  MinorVersion : integer;
 begin
   Result := False;
   InstallPath := '';
@@ -9690,6 +9706,11 @@ begin
         if KeyExists(key) then begin
           AllUserInstall := True;
           Result := True;
+          MajorVersion := StrToInt(PythonVersion[1]);
+          MinorVersion := StrToInt(PythonVersion[3]);
+          if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+            if OpenKey(Key, False) then
+              InstallPath := ReadString('');
         end;
       finally
         Free;
