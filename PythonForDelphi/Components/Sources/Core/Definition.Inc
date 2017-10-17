@@ -322,21 +322,23 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON36}
-  {$IFNDEF PYTHON35}
-    {$IFNDEF PYTHON34}
-      {$IFNDEF PYTHON33}
-        {$IFNDEF PYTHON32}
-          {$IFNDEF PYTHON31}
-            {$IFNDEF PYTHON30}
-              {$IFNDEF PYTHON27}
-                {$IFNDEF PYTHON26}
-                  {$IFNDEF PYTHON25}
-                    {$IFNDEF PYTHON24}
-                      {$IFNDEF PYTHON23}
-                {---<START OF DEFAULT PYTHON VERSION>---}
-                    {$DEFINE PYTHON27}
-                {---<END OF DEFAULT PYTHON VERSION>---}
+{$IFNDEF PYTHON37}
+  {$IFNDEF PYTHON36}
+    {$IFNDEF PYTHON35}
+      {$IFNDEF PYTHON34}
+        {$IFNDEF PYTHON33}
+          {$IFNDEF PYTHON32}
+            {$IFNDEF PYTHON31}
+              {$IFNDEF PYTHON30}
+                {$IFNDEF PYTHON27}
+                  {$IFNDEF PYTHON26}
+                    {$IFNDEF PYTHON25}
+                      {$IFNDEF PYTHON24}
+                        {$IFNDEF PYTHON23}
+                  {---<START OF DEFAULT PYTHON VERSION>---}
+                      {$DEFINE PYTHON27}
+                  {---<END OF DEFAULT PYTHON VERSION>---}
+                        {$ENDIF}
                       {$ENDIF}
                     {$ENDIF}
                   {$ENDIF}
@@ -452,6 +454,21 @@
   {$DEFINE PYTHON34_OR_HIGHER}
   {$DEFINE PYTHON35_OR_HIGHER}
   {$DEFINE PYTHON36_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON37}
+  {$DEFINE PYTHON23_OR_HIGHER}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+  {$DEFINE PYTHON27_OR_HIGHER}
+  {$DEFINE PYTHON30_OR_HIGHER}
+  {$DEFINE PYTHON31_OR_HIGHER}
+  {$DEFINE PYTHON32_OR_HIGHER}
+  {$DEFINE PYTHON33_OR_HIGHER}
+  {$DEFINE PYTHON34_OR_HIGHER}
+  {$DEFINE PYTHON35_OR_HIGHER}
+  {$DEFINE PYTHON36_OR_HIGHER}
+  {$DEFINE PYTHON37_OR_HIGHER}
 {$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
