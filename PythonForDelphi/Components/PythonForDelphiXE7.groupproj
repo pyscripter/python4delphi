@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{3F1B5C58-8875-44B9-8208-8138A676D4EC}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Python_XE2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="PythonVCL_XE2.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Python_XE2">
+        <MSBuild Projects="Python_XE2.dproj"/>
+    </Target>
+    <Target Name="Python_XE2:Clean">
+        <MSBuild Projects="Python_XE2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Python_XE2:Make">
+        <MSBuild Projects="Python_XE2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PythonVCL_XE2">
+        <MSBuild Projects="PythonVCL_XE2.dproj"/>
+    </Target>
+    <Target Name="PythonVCL_XE2:Clean">
+        <MSBuild Projects="PythonVCL_XE2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PythonVCL_XE2:Make">
+        <MSBuild Projects="PythonVCL_XE2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Python_XE2;PythonVCL_XE2"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Python_XE2:Clean;PythonVCL_XE2:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Python_XE2:Make;PythonVCL_XE2:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

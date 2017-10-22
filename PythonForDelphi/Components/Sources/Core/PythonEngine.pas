@@ -1389,7 +1389,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonInputOutput = class(TComponent)
   protected
     FMaxLines        : Integer;
@@ -1523,7 +1523,8 @@ type
 
     DLL_PyString_FromString:  function( str: PAnsiChar): PPyObject; cdecl;
     DLL_Py_FlushLine:procedure; cdecl;
-
+    DLL_PyCFunction_New: function(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
+    DLL_PyCFunction_NewEx: function(md:PPyMethodDef;ob:PPyObject; ob1:PPyObject):PPyObject; cdecl;
   protected
     FInitialized:    Boolean;
     FFinalizing:     Boolean;
@@ -1722,8 +1723,6 @@ type
     PySys_SetArgv:        procedure( argc: Integer; argv: PPAnsiChar); cdecl;
     PySys_SetArgv3000:    procedure( argc: Integer; argv: PPWideChar); cdecl;
 
-    PyCFunction_New: function(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
-    PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
 // Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
 //    PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
     PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
@@ -2066,7 +2065,7 @@ type
   function PyString_FromString( str: PAnsiChar): PPyObject; virtual; abstract;
   function PyString_AsDelphiString( ob: PPyObject): string;  virtual; abstract;
   procedure Py_FlushLine; cdecl;
-
+  function PyCFunction_New(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
   // Constructors & Destructors
   constructor Create(AOwner: TComponent); override;
 
@@ -2130,7 +2129,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonEngine = class(TPythonInterface)
   private
     FInitScript:                 TStrings;
@@ -2598,7 +2597,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonModule = class(TMethodsContainer)
     protected
       FModuleName : AnsiString;
@@ -2863,7 +2862,7 @@ type
   // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonType = class(TGetSetContainer)
     protected
       FType : PyTypeObject;
@@ -2951,7 +2950,7 @@ type
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  {$ENDIF}
   TPythonDelphiVar = class( TEngineClient )
     protected
       FModule    : AnsiString;
@@ -3772,11 +3771,10 @@ begin
     PySys_SetArgv3000         := Import('PySys_SetArgv');
   Py_Exit                   := Import('Py_Exit');
 
-  if IsPython3000 then
-    PyCFunction_NewEx           :=Import('PyCFunction_NewEx')
+  if ((FMajorVersion = 3) and (FMinorVersion >= 4)) or (FMajorVersion > 3) then
+    DLL_PyCFunction_NewEx := Import('PyCFunction_NewEx')
   else
-    PyCFunction_New           :=Import('PyCFunction_New');
-
+    DLL_PyCFunction_New   :=Import('PyCFunction_New');
 
   PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
   PyEval_GetFrame           :=Import('PyEval_GetFrame');
@@ -4385,6 +4383,14 @@ procedure TPythonInterface.Py_FlushLine; cdecl;
 begin
   if Assigned(DLL_Py_FlushLine) then
     DLL_Py_FlushLine;
+end;
+
+function TPythonInterface.PyCFunction_New(md:PPyMethodDef;ob:PPyObject):PPyObject; cdecl;
+begin
+  if Assigned(DLL_PyCFunction_New) then
+    Result := DLL_PyCFunction_New(md, ob)
+  else
+    Result := DLL_PyCFunction_NewEx(md, ob, nil);
 end;
 
 (*******************************************************)
@@ -8225,7 +8231,6 @@ end;
 procedure TPythonType.ReallocMethods;
 begin
   inherited;
-exit;
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
 end;
@@ -8940,10 +8945,7 @@ begin
       FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, ctCDECL);
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
-      if GetPythonEngine.IsPython3000 then
-        FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil)
-      else
-        FCreateFunc := Engine.PyCFunction_New(@FCreateFuncDef, nil);
+      FCreateFunc := Engine.PyCFunction_New(@FCreateFuncDef, nil);
     end;
     Assert(Assigned(FCreateFunc));
   end;

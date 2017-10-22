@@ -68,7 +68,6 @@ type
     procedure OnUpdateRecord( Dataset : TDataset; UpdateKind: TUpdateKind; var ua:TUpdateAction);
   end;
 
-
  {*********************************************************************
  *      Interface of TDBDataset                                      *
  *********************************************************************}
@@ -97,7 +96,6 @@ type
  {*********************************************************************
  *      Interface of TTable                                          *
  *********************************************************************}
-
    TPyTable = class(TPyDBDataset)
 
     // Constructors & Destructors
@@ -1741,6 +1739,5 @@ begin
   gTableType := TPythonTable.Create(AOwner);
   gQueryType := TPythonQuery.Create(AOwner);
 end;
-
 
 end.

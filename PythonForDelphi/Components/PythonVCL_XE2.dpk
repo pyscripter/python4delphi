@@ -30,7 +30,7 @@ requires
   rtl,
   vcl,
   dbrtl,
-  bdertl,
+//  bdertl,
   Python_XE2;
 
 contains

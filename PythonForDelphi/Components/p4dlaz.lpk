@@ -1,14 +1,15 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
-  <Package Version="3">
+  <Package Version="4">
     <PathDelim Value="\"/>
     <Name Value="P4DLaz"/>
-    <AddToProjectUsesSection Value="False"/>
+    <Type Value="RunAndDesignTime"/>
     <CompilerOptions>
-      <Version Value="9"/>
+      <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <OtherUnitFiles Value="Sources\Core"/>
+        <Libraries Value="FPC_Units"/>
+        <OtherUnitFiles Value="Sources\Core;."/>
         <UnitOutputDirectory Value="FPC_Units"/>
       </SearchPaths>
       <Parsing>
@@ -17,14 +18,8 @@
           <UseAnsiStrings Value="False"/>
         </SyntaxOptions>
       </Parsing>
-      <Other>
-        <CompilerMessages>
-          <UseMsgFile Value="True"/>
-        </CompilerMessages>
-        <CompilerPath Value="$(CompPath)"/>
-      </Other>
     </CompilerOptions>
-    <Files Count="19">
+    <Files Count="20">
       <Item1>
         <Filename Value="Sources\Core\PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
@@ -104,8 +99,11 @@
         <Filename Value="Sources\Core\WrapDelphiVCL.pas"/>
         <UnitName Value="WrapDelphiVCL"/>
       </Item19>
+      <Item20>
+        <Filename Value="up4dlaz.pas"/>
+        <UnitName Value="uP4DLaz"/>
+      </Item20>
     </Files>
-    <Type Value="RunAndDesignTime"/>
     <RequiredPkgs Count="2">
       <Item1>
         <PackageName Value="LCL"/>
