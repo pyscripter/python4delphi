@@ -10,7 +10,7 @@ object Form1: TForm1
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '1.5'
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0
@@ -91,7 +91,7 @@ object Form1: TForm1
     end
     object Edit1: TEdit
       Left = 368
-      Height = 21
+      Height = 24
       Top = 32
       Width = 161
       TabOrder = 4

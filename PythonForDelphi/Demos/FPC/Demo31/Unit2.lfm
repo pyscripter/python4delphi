@@ -5,20 +5,20 @@ object TestForm: TTestForm
   Width = 614
   ClientHeight = 341
   ClientWidth = 614
-  LCLVersion = '0.9.30.2'
+  LCLVersion = '1.5'
   object CheckBox1: TCheckBox
     Left = 96
-    Height = 19
+    Height = 22
     Top = 16
-    Width = 78
+    Width = 91
     Caption = 'CheckBox1'
     TabOrder = 0
   end
   object CheckBox2: TCheckBox
     Left = 96
-    Height = 19
+    Height = 22
     Top = 56
-    Width = 78
+    Width = 91
     Caption = 'CheckBox2'
     Checked = True
     State = cbChecked
@@ -35,7 +35,7 @@ object TestForm: TTestForm
   end
   object Edit1: TEdit
     Left = 96
-    Height = 23
+    Height = 25
     Top = 96
     Width = 121
     TabOrder = 3
@@ -47,7 +47,9 @@ object TestForm: TTestForm
     Top = 48
     Width = 249
     ItemHeight = 0
+    ScrollWidth = 247
     TabOrder = 4
+    TopIndex = -1
   end
   object btnAdd: TButton
     Left = 104

@@ -179,8 +179,8 @@ begin
 	{$IFDEF MSWINDOWS}	
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	{$ELSE}
-    //page := GetMem(PageSize);
-    page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    page := GetMem(PageSize);
+    //page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
     mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
 	{$ENDIF}	
     page^.next:=CodeMemPages;
