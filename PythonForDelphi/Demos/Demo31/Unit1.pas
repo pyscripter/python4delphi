@@ -13,7 +13,7 @@ uses
 {$IFDEF LINUX}
   QForms, QStdCtrls, QControls, QExtCtrls,
 {$ENDIF}
-  PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList, System.Actions;
+  PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList;
 
 type
   TForm1 = class(TForm)
