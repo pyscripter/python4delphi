@@ -1379,10 +1379,10 @@ const
   kMaxLineLength = 256;
 
 type
-  TSendDataEvent = procedure (Sender: TObject; const Data : AnsiString ) of object;
-  TReceiveDataEvent = procedure (Sender: TObject; var Data : AnsiString ) of object;
-  TSendUniDataEvent = procedure (Sender: TObject; const Data : UnicodeString ) of object;
-  TReceiveUniDataEvent = procedure (Sender: TObject; var Data : UnicodeString ) of object;
+  TSendDataEvent = reference to procedure (Sender: TObject; const Data : AnsiString );
+  TReceiveDataEvent = reference to procedure (Sender: TObject; var Data : AnsiString );
+  TSendUniDataEvent = reference to procedure (Sender: TObject; const Data : UnicodeString );
+  TReceiveUniDataEvent = reference to procedure (Sender: TObject; var Data : UnicodeString );
   IOChar = WideChar;
   IOString = UnicodeString;
   TIOStringList = TUnicodeStringList;
@@ -3126,9 +3126,11 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 
 implementation
 
+uses
 {$IFDEF MSWINDOWS}
-uses Registry;
+  Registry,
 {$ENDIF}
+  System.Types;
 
 
 (*******************************************************)
@@ -5985,17 +5987,19 @@ begin
       seq_length := PySequence_Length( obj );
       // if we have at least one object in the sequence,
       if seq_length > 0 then
+      begin
         // we try to get the first one, simply to test if the sequence API
         // is really implemented.
         Py_XDecRef( PySequence_GetItem( obj, 0 ) );
       // check if the Python object did really implement the sequence API
-      if PyErr_Occurred = nil then
-        begin
-          // Convert a Python sequence into an array of Variant
-          Result := VarArrayCreate( [0, seq_length-1], varVariant );
-          for i := 0 to PySequence_Length( obj )-1 do
-            Result[i] := GetSequenceItem( obj, i );
-        end
+        if PyErr_Occurred = nil then
+          begin
+            // Convert a Python sequence into an array of Variant
+            Result := VarArrayCreate( [0, seq_length-1], varVariant );
+            for i := 0 to PySequence_Length( obj )-1 do
+              Result[i] := GetSequenceItem( obj, i );
+          end
+      end
       else // the object didn't implement the sequence API, so we return Null
         begin
           PyErr_Clear;
