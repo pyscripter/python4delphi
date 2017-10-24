@@ -9698,47 +9698,59 @@ function IsPythonVersionRegistered(PythonVersion : string;
 
   // The above convension was changed in Python 3.5.  Now even for all user
   // installations the dll is located at the InstallPath.
+  // Also from version 3.5 onwards 32 bit version have a suffix -32 e.g. "3.6-32"
+  // See also PEP 514
 
 var
   key: string;
+  VersionSuffix: string;
   MajorVersion : integer;
   MinorVersion : integer;
 begin
   Result := False;
   InstallPath := '';
   AllUserInstall := False;
+  MajorVersion := StrToInt(PythonVersion[1]);
+  MinorVersion := StrToInt(PythonVersion[3]);
+  VersionSuffix := '';
+{$IFDEF CPUX86}
+  if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+    VersionSuffix := '-32';
+{$ENDIF}
+  key := Format('\Software\Python\PythonCore\%s%s\InstallPath', [PythonVersion, VersionSuffix]);
+
+  // First try HKEY_CURRENT_USER as per PEP514
   try
-    key := Format('\Software\Python\PythonCore\%s\InstallPath', [PythonVersion]);
-    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
-      try
-        RootKey := HKEY_LOCAL_MACHINE;
-        if KeyExists(key) then begin
-          AllUserInstall := True;
-          Result := True;
-          MajorVersion := StrToInt(PythonVersion[1]);
-          MinorVersion := StrToInt(PythonVersion[3]);
-          if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
-            if OpenKey(Key, False) then
-              InstallPath := ReadString('');
-        end;
-      finally
-        Free;
-      end;
-  except
-  end;
-  // We do not seem to have an All User Python Installation.
-  // Check whether we have a current user installation
-  if not AllUserInstall then
     with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
       try
         RootKey := HKEY_CURRENT_USER;
         if OpenKey(Key, False) then begin
           InstallPath := ReadString('');
           Result := True;
+          Exit;
         end;
       finally
         Free;
       end;
+  except
+  end;
+
+  //Then try for an all user installation
+  try
+    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+      try
+        RootKey := HKEY_LOCAL_MACHINE;
+        if OpenKey(Key, False) then begin
+          AllUserInstall := True;
+          if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+            InstallPath := ReadString('');
+          Result := True;
+        end;
+      finally
+        Free;
+      end;
+  except
+  end;
 end;
 {$ENDIF}
 
