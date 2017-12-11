@@ -145,7 +145,7 @@ type
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
     procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
-   {$IFNDEF USESYSTEMDISPINVOKE}
+    {$IFNDEF USESYSTEMDISPINVOKE}
     procedure DoDispInvoke(Dest: PVarData; const Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); virtual;
     function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
@@ -934,7 +934,7 @@ const
 {$IFDEF USESYSTEMDISPINVOKE}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
-{$IFDEF DELPHIXE2}
+{$IFDEF DELPHIXE2_OR_HIGHER}
   //  Modified to correct memory leak QC102387
   procedure PatchedDispInvoke(Dest: PVarData;
     const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
@@ -1029,7 +1029,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     for I := Low(VarParams) to High(VarParams) do
       VarDataClear(VarParams[I]);
   end;
-{$ENDIF DELPHIXE2}
+{$ENDIF DELPHIXE2_OR_HIGHER}
 
   procedure GetNamedParams;
   var
@@ -1056,17 +1056,17 @@ begin
     if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
       NewCallDesc := CallDesc^;
       NewCallDesc.CallType := CDoMethod;
-    {$IFDEF DELPHIXE2}
+    {$IFDEF DELPHIXE2_OR_HIGHER}
       PatchedDispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ELSE DELPHIXE2}
+    {$ELSE DELPHIXE2_OR_HIGHER}
       inherited DispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ENDIF DELPHIXE2}
+    {$ENDIF DELPHIXE2_OR_HIGHER}
     end else
-      {$IFDEF DELPHIXE2}
+      {$IFDEF DELPHIXE2_OR_HIGHER}
       PatchedDispInvoke(Dest, Source, CallDesc, Params);
-      {$ELSE DELPHIXE2}
+      {$ELSE DELPHIXE2_OR_HIGHER}
       inherited;
-      {$ENDIF DELPHIXE2}
+      {$ENDIF DELPHIXE2_OR_HIGHER}
   finally
     if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
   end;
