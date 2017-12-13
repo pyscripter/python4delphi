@@ -4899,37 +4899,48 @@ end;
 procedure TPythonEngine.CheckRegistry;
 {$IFDEF MSWINDOWS}
 var
-  key : String;
-  path : String;
+  key : string;
+  Path : string;
+  NewPath : string;
+  MajorVersion : integer;
+  MinorVersion : integer;
+  VersionSuffix: string;
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
+  if Assigned( FOnPathInitialization ) then
   try
-    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+    with TRegistry.Create(KEY_ALL_ACCESS and not KEY_NOTIFY) do
       try
-        //Access := KEY_READ; // works only with Delphi5 or greater
+        MajorVersion := StrToInt(RegVersion[1]);
+        MinorVersion := StrToInt(RegVersion[3]);
+        VersionSuffix := '';
+{$IFDEF CPUX86}
+        if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+          VersionSuffix := '-32';
+{$ENDIF}
+        key := Format('\Software\Python\PythonCore\%s%s\PythonPath', [RegVersion, VersionSuffix]);
+
         RootKey := HKEY_LOCAL_MACHINE;
-        key := Format('\Software\Python\PythonCore\%s\PythonPath', [RegVersion]);
         if not KeyExists( key ) then
+        begin
+          // try a current user installation
+          RootKey := HKEY_CURRENT_USER;
+          if not KeyExists( key ) then  Exit;
+        end;
+        // Key found
+        OpenKey( key, True );
+        try
+          Path := ReadString('');
+          NewPath := Path;
+          FOnPathInitialization( Self, NewPath );
+          if NewPath <> Path then
           begin
-            // try a current user installation
-            RootKey := HKEY_CURRENT_USER;
-            if not KeyExists( key ) then
-            begin
-              if Assigned( FOnPathInitialization ) then
-                begin
-                  path := '';
-                  FOnPathInitialization( Self, path );
-                  if path <> '' then
-                    begin
-                      //Access := KEY_ALL_ACCESS; // works only with Delphi5 or greater
-                      OpenKey( key, True );
-                      WriteString( '', path );
-                      CloseKey;
-                    end;
-                end;
-            end;
+            WriteString( '', NewPath );
           end;
+        finally
+          CloseKey;
+        end;
       finally
         Free;
       end;
