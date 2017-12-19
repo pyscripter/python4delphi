@@ -184,10 +184,10 @@ type
       const Value: TVarData): Boolean; override;
     {$IFDEF DELPHIXE7_OR_HIGHER}
     procedure DispInvoke(Dest: PVarData;
-      [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+      [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ELSE}
     procedure DispInvoke(Dest: PVarData;
-       const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+       const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ENDIF}
   end;
 
