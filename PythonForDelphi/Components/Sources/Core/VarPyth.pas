@@ -182,8 +182,13 @@ type
       const AName: string): Boolean; override;
     function SetProperty(const V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
-    procedure DispInvoke(Dest: PVarData; const Source: TVarData;
-      CallDesc: PCallDesc; Params: Pointer); override;
+    {$IFDEF DELPHIXE7_OR_HIGHER}
+    procedure DispInvoke(Dest: PVarData;
+      [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+    {$ELSE}
+    procedure DispInvoke(Dest: PVarData;
+       const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+    {$ENDIF}
   end;
 
 var
@@ -931,9 +936,14 @@ const
   CPropertyGet = $02;
   CPropertySet = $04;
 
-{$IFDEF USESYSTEMDISPINVOKE}
+{$IFDEF DELPHIXE7_OR_HIGHER}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+  [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+{$ELSE}
+procedure TPythonVariantType.DispInvoke(Dest: PVarData;
+   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+{$ENDIF}
+{$IFDEF USESYSTEMDISPINVOKE}
 {$IFDEF DELPHIXE2_OR_HIGHER}
   //  Modified to correct memory leak QC102387
   procedure PatchedDispInvoke(Dest: PVarData;
@@ -1073,8 +1083,6 @@ begin
 end;
 
 {$ELSE USESYSTEMDISPINVOKE}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 begin
   DoDispInvoke(Dest, Source, CallDesc, Params);
 end;
