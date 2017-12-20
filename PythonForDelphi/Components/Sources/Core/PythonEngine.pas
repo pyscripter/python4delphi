@@ -4902,8 +4902,10 @@ var
   key : string;
   Path : string;
   NewPath : string;
+{$IFDEF CPUX86}
   MajorVersion : integer;
   MinorVersion : integer;
+{$ENDIF}
   VersionSuffix: string;
 {$ENDIF}
 begin
@@ -4912,10 +4914,10 @@ begin
   try
     with TRegistry.Create(KEY_ALL_ACCESS and not KEY_NOTIFY) do
       try
-        MajorVersion := StrToInt(RegVersion[1]);
-        MinorVersion := StrToInt(RegVersion[3]);
         VersionSuffix := '';
 {$IFDEF CPUX86}
+        MajorVersion := StrToInt(RegVersion[1]);
+        MinorVersion := StrToInt(RegVersion[3]);
         if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
           VersionSuffix := '-32';
 {$ENDIF}
