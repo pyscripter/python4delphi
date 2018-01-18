@@ -2197,7 +2197,7 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
     Result := GetPythonEngine.PyString_AsString(PyObject)
   else
-    result := GetAsString;
+   Result := AnsiString(GetAsString);
 end;
 
 function TPythonData.GetAsString: String;

@@ -31,7 +31,7 @@
 (*      Stefan Hoffmeister (Stefan.Hoffmeister@Econos.de)                 *)
 (*      Michiel du Toit (micdutoit@hsbfn.com) - Lazarus Port              *)
 (*      Chris Nicolai (nicolaitanes@gmail.com)                            *)
-(*      Kiriakos Vlahos (kvlahos@london.edu)                              *)
+(*      Kiriakos Vlahos (pyscripter@gmail.com)                              *)
 (*      Andrey Gruzdev      (andrey.gruzdev@gmail.com)                    *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
@@ -196,9 +196,9 @@ const
 {$IFDEF PYTHON37}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 13;
 {$ENDIF}
-  PYT_METHOD_BUFFER_INCREASE = 10;
-  PYT_MEMBER_BUFFER_INCREASE = 10;
-  PYT_GETSET_BUFFER_INCREASE = 10;
+  PYT_METHOD_BUFFER_INCREASE = 100;
+  PYT_MEMBER_BUFFER_INCREASE = 100;
+  PYT_GETSET_BUFFER_INCREASE = 100;
 
   METH_VARARGS  = $0001;
   METH_KEYWORDS = $0002;
@@ -2634,6 +2634,7 @@ type
       procedure SetVar( const varName : AnsiString; value : PPyObject );
       function  GetVar( const varName : AnsiString ) : PPyObject;
       procedure DeleteVar( const varName : AnsiString );
+      procedure ClearVars;
       procedure SetVarFromVariant( const varName : AnsiString; const value : Variant );
       function  GetVarAsVariant( const varName: AnsiString ) : Variant;
 
@@ -4616,13 +4617,17 @@ begin
             Finalize;
         end;
   // Then finalize Python, if we have to
-  if Initialized and FAutoFinalize then
+  if Initialized and FAutoFinalize then begin
     try
-      FFinalizing := True;
-      Py_Finalize;
-    finally
-      FFinalizing := False;
+      try
+        FFinalizing := True;
+        Py_Finalize;
+      finally
+        FFinalizing := False;
+      end;
+    except 
     end;
+  end;
   // Detach our clients, when engine is beeing destroyed or one of its clients.
   canDetachClients := csDestroying in ComponentState;
   if not canDetachClients then
@@ -7584,6 +7589,17 @@ begin
     end
   else
     raise EPythonError.CreateFmt( 'Can''t delete var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
+end;
+
+procedure TPythonModule.ClearVars;
+var
+ dict : PPyObject;
+begin
+ if Assigned(FEngine) and Assigned( FModule ) then
+   with Engine do begin
+     dict := PyModule_GetDict( Module );
+     PyDict_Clear(dict);
+   end;
 end;
 
 procedure TPythonModule.SetVarFromVariant( const varName : AnsiString; const value : Variant );
