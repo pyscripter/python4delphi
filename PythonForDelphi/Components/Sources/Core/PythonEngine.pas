@@ -196,9 +196,9 @@ const
 {$IFDEF PYTHON37}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 13;
 {$ENDIF}
-  PYT_METHOD_BUFFER_INCREASE = 100;
-  PYT_MEMBER_BUFFER_INCREASE = 100;
-  PYT_GETSET_BUFFER_INCREASE = 100;
+  PYT_METHOD_BUFFER_INCREASE = 10;
+  PYT_MEMBER_BUFFER_INCREASE = 10;
+  PYT_GETSET_BUFFER_INCREASE = 10;
 
   METH_VARARGS  = $0001;
   METH_KEYWORDS = $0002;
@@ -8260,7 +8260,6 @@ end;
 procedure TPythonType.ReallocMethods;
 begin
   inherited;
-exit;
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
 end;
