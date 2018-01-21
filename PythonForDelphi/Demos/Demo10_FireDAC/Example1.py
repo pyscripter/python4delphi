@@ -1,7 +1,7 @@
 import DBFireDac
 
 # Create and open the table
-T = DBFireDac.CreateFDTable()
+T = DBFireDac.TFDTable(None)
 T.ConnectionDefName = "SQLite_DB"
 T.TableName = "Customer"
 T.Active = True  #or use T.Open()

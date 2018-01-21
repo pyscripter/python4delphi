@@ -1,9 +1,10 @@
 {$REGION 'Licence'}
 {
-Very important: We need text buffer for AnsiString's
+   Wrapper classes for FireDec TFDTable and TFDQuery
+   Original Code by https://github.com/hartmutdavid
 ==============================================================================}
 {$ENDREGION}
-unit pyDBFireDac;
+unit WrapFireDAC;
 
 interface
 
@@ -18,139 +19,75 @@ uses
 
 type
 
-TPyDBDataset = class;
+{
+   Published properties and events are supported automaitcally
+   by the WrapDelphi infrastructure.  There is no need
+   to exposed them here.
+}
 
-TCallBackSplit = record
-  method: Pointer;
-  self:   TObject;
-end;
-
-TPyDBSharedObject = class
-protected
-  FRefCount : Integer;
-  FData : TObject;
-  FOwner : Boolean;
-  procedure DoDecRef;
-  procedure SetData( value : TObject );
-public
-  constructor Create;
-  constructor CreateWith( value : TObject; isOwner : Boolean );
-  destructor Destroy; override;
-  procedure IncRef;
-  procedure DecRef;
-  procedure FreeData;
-  property Data:  TObject read FData  write SetData;
-  property Owner: Boolean read FOwner write FOwner;
-end;
-
-TPyDBCommon = class(TPyObject)
+TPyDBCommon = class(TPyDelphiComponent)
   function  GetProperties : PPyObject;
   procedure AppendProperties( List : PPyObject ); virtual;
   procedure AppendProp( List : PPyObject; const prop : String );
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
+  function  GetAttrO(key: PPyObject) : PPyObject; override;
   procedure RaiseDBError( E : Exception );
-  function  EventBelongsToObject( Event : TCallbackSplit ) : Boolean;
 end;
 
 TPyDBField = class(TPyDBCommon)
 private
-  m_arAnsiTextBuf: TArray<AnsiString>;
+  function  GetDelphiObject: TField;
+  procedure SetDelphiObject(const Value: TField);
 public
-  FField        : TField;
-  FOnChange     : PPyObject;
-  FOnGetText    : PPyObject;
-  FOnSetText    : PPyObject;
-  FOnValidate   : PPyObject;
-  constructor Create( APythonType : TPythonType ); override;
-  constructor CreateWith( PythonType : TPythonType; args : PPyObject ); override;
-  //
-  class var PyDBFieldType: TPythonType;
-  //
-  destructor  Destroy; override;
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
-  function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
-  function  Repr : PPyObject; override;
+  function  GetAttrO(key: PPyObject) : PPyObject; override;
+  function  SetAttrO(key, value: PPyObject) : Integer; override;
+
+  class function  DelphiObjectClass : TClass; override;
   class procedure RegisterMethods( PythonType : TPythonType ); override;
+
   function  CheckField : Boolean;
   procedure AppendProperties( List : PPyObject ); override;
+
   // Do-Methods
   function Do_Clear( args : PPyObject ) : PPyObject; cdecl;
   function Do_FocusControl( args : PPyObject ) : PPyObject; cdecl;
   function Do_IsValidChar( args : PPyObject ) : PPyObject; cdecl;
   function Do_RefreshLookupList( args : PPyObject ) : PPyObject; cdecl;
-  // Events
-  procedure OnChange( Sender : TField );
-  procedure OnGetText( Sender: TField; var Text: String; DisplayText: Boolean );
-  procedure OnSetText( Sender : TField; const Text: String );
-  procedure OnValidate( Sender : TField );
-end;
 
-TPyDBVarArg = class(TPyObject)
-public
-  FValue : PPyObject;
-  constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
-  destructor Destroy; override;
-  //
-  class var PyDBVarArgType: TPythonType;
-  //
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
-  function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
-  function  Repr : PPyObject; override;
+  property DelphiObject: TField read GetDelphiObject write SetDelphiObject;
 end;
-
-{
-TPyDSRowsRegistration = class(TRegisteredUnit)
-public
-  function Name(): String; override;
-  procedure RegisterWrappers(aPyDelphiWrapper: TPyDelphiWrapper); override;
-  procedure DefineVars(aPyDelphiWrapper: TPyDelphiWrapper); override;
-end;
-}
 
 TDSRowsAccess = class(TContainerAccess)
 private
-  function  GetContainer: TPyDBDataset;
+  function  GetContainer: TFDDataset;
 public
   function GetItem(AIndex : Integer) : PPyObject; override;
   function GetSize : Integer; override;
-  function IndexOf(AValue : PPyObject) : Integer; override;
 
   class function ExpectedContainerClass : TClass; override;
-  class function SupportsIndexOf : Boolean; override;
   class function Name : String; override;
 end;
 
-{DAV>>> $M+ <<<DAV}   // <- Generation of runtime type information (RTTI)
-TPyDBDataset = class (TPyDelphiPersistent)
+TPyDBDataset = class (TPyDelphiComponent)
 private
   function  GetDelphiObject: TFDDataset;
   procedure SetDelphiObject(const Value: TFDDataset);
 protected
-  m_arAnsiTextBuf: TArray<AnsiString>;
-  // Methods
   procedure RaiseDBError( E : Exception );
 public
-  FSharedObject:    TPyDBSharedObject;
-  constructor Create( aPythonType: TPythonType ); override;
-  constructor CreateWith( aPythonType : TPythonType; args : PPyObject ); override;
-  destructor  Destroy; override;
-  //
-  function  CreateContainerAccess : TContainerAccess; override;
-  //
   // Class methodes
   class function  DelphiObjectClass : TClass; override;
   class function  GetContainerAccessClass : TContainerAccessClass; override;
   class procedure RegisterGetSets( PythonType : TPythonType ); override;
-  class procedure RegisterMembers( PythonType : TPythonType ); override;
   class procedure RegisterMethods( PythonType : TPythonType ); override;
+  class procedure SetupType( PythonType : TPythonType ); override;
   //
   // Property Getters
   function Get_RowsCount( AContext : Pointer) : PPyObject; cdecl;
   function Get_Rows( AContext : Pointer) : PPyObject; cdecl;
   //
   // Attributes
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
-  function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
+  function  GetAttrO(key: PPyObject) : PPyObject; override;
+  function  SetAttrO(key, value: PPyObject) : Integer; override;
   //
   // Methods
   function Do_Fields( args : PPyObject ): PPyObject; cdecl;
@@ -171,32 +108,20 @@ public
   property DelphiObject: TFDDataset read GetDelphiObject write SetDelphiObject;
 end;
 
-{DAV>>> $M+ <<<DAV}   // <- Generation of runtime type information (RTTI)
 TPyDBTable = class (TPyDBDataset)
 private
   function CheckActiveDBTable(aMustOpen: Boolean): Boolean;
-protected
-  // Methods
-  //-- function Get_FieldNamesAsTuple( args: PPyObject): PPyObject; overload; cdecl;
 public
-  constructor Create( aPythonType: TPythonType ); override;
-  constructor CreateWith( aPythonType : TPythonType; args : PPyObject ); override;
-  destructor  Destroy; override;
-  //
-  class var PyDBTableType:  TPythonType;
-  //
+  destructor Destroy; override;
+
   function  GetDelphiObject: TFDTable;
   procedure SetDelphiObject(const Value: TFDTable);
   //
   class function  DelphiObjectClass : TClass; override;
-  class procedure RegisterGetSets( PythonType : TPythonType ); override;
-  class procedure RegisterMembers( PythonType : TPythonType ); override;
   class procedure RegisterMethods( PythonType : TPythonType ); override;
-  //
   // Attributes
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
-  function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
-  //
+  function  GetAttrO(key: PPyObject) : PPyObject; override;
+  function  SetAttrO(key, value: PPyObject) : Integer; override;
   // Methods
   function Do_Open( args : PPyObject ) : PPyObject; cdecl;
   function Do_Close( args : PPyObject ) : PPyObject; cdecl;
@@ -214,34 +139,25 @@ public
   function Do_SetRange( args : PPyObject ) : PPyObject; cdecl;
   function Do_CancelRange( args : PPyObject ) : PPyObject; cdecl;
   function Do_GetIndexNames( args : PPyObject ) : PPyObject; cdecl;
-  //
+
   property DelphiObject: TFDTable read GetDelphiObject write SetDelphiObject;
 end;
 
-{DAV>>> $M+ <<<DAV}   // <- Generation of runtime type information (RTTI)
 TPyDBQuery = class (TPyDBDataset)
 private
   function CheckActiveDBQuery(aMustOpen: Boolean): Boolean;
 protected
 public
-  constructor Create( aPythonType: TPythonType ); override;
-  constructor CreateWith( aPythonType : TPythonType; args : PPyObject ); override;
-  destructor  Destroy; override;
-  //
-  class var PyDBQueryType:  TPythonType;
-  //
+  destructor Destroy; override;
+
   function  GetDelphiObject: TFDQuery;
   procedure SetDelphiObject(const Value: TFDQuery);
   //
   class function  DelphiObjectClass : TClass; override;
-  class procedure RegisterGetSets( PythonType : TPythonType ); override;
-  class procedure RegisterMembers( PythonType : TPythonType ); override;
   class procedure RegisterMethods( PythonType : TPythonType ); override;
-  //
   // Attributes
-  function  GetAttr(key : PAnsiChar) : PPyObject; override;
-  function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
-  //
+  function  GetAttrO(key: PPyObject) : PPyObject; override;
+  function  SetAttrO(key, value: PPyObject) : Integer; override;
   // Methods
   function Do_Open( args : PPyObject ) : PPyObject; cdecl;
   function Do_Close( args : PPyObject ) : PPyObject; cdecl;
@@ -252,149 +168,19 @@ public
   property DelphiObject: TFDQuery read GetDelphiObject write SetDelphiObject;
 end;
 
-// Global functions
-procedure SetEvent( var EventSlot : PPyObject; Event : PPyObject; const EventName, ClassName : String );
-procedure ClearEvent( var EventSlot : PPyObject );
-function  ReturnEvent( Event : PPyObject ) : PPyObject;
-procedure ExecuteEvent( Event : PPyObject; Args : array of Const );
-function _PAnsiChar(const aStr: String; var aAnsiStrBuf: AnsiString): PAnsiChar;
-
-// Global variables
-var
-  g_oDBModule:      TPythonModule = Nil;
-
-
-  implementation
-
-// ----------------------- Global functions ------------------------------------
-
-procedure SetEvent( var EventSlot : PPyObject; Event : PPyObject; const EventName, ClassName : String );
-begin
- with GetPythonEngine do begin
-   if Assigned(Event) and not (Event = Py_None) then begin
-     if PyFunction_Check(Event) or PyMethod_Check(Event) then begin
-       EventSlot := Event;
-       Py_IncRef(EventSlot);
-     end
-     else
-       raise Exception.CreateFmt( 'Event %s of class %s needs a function or a method', [EventName, ClassName] );
-   end
-   else begin
-     Py_XDecRef(EventSlot);
-     EventSlot := nil;
-   end;
- end;
+TPyFireDACRegistration = class(TRegisteredUnit)
+public
+  function Name(): String; override;
+  procedure RegisterWrappers(aPyDelphiWrapper: TPyDelphiWrapper); override;
+  procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
 end;
 
-procedure ClearEvent( var EventSlot : PPyObject );
-begin
- with GetPythonEngine do
-   Py_XDecRef( EventSlot );
- EventSlot := nil;
-end;
+function SqlTimeToVarDate(V : Variant) : Variant;
 
-function ReturnEvent( Event : PPyObject ) : PPyObject;
-begin
- with GetPythonEngine do begin
-   if Assigned(Event) then begin
-     Result := Event;
-     Py_IncRef(Event);
-    end
-    else
-      Result := ReturnNone;
- end;
-end;
+implementation
 
-procedure ExecuteEvent( Event : PPyObject; Args : array of Const );
-var
- L: PPyObject;
- R: PPyObject;
-begin
- R := nil;
- if not Assigned(Event) then
-   Exit;
- with GetPythonEngine do begin
-   L := ArrayToPyTuple( Args );
-   try
-     R := PyEval_CallObjectWithKeywords( Event, L, nil );
-   finally
-     Py_XDecRef(R);
-     Py_XDecRef(L);
-   end;
-   CheckError;
- end;
-end;
-
-function _PAnsiChar(const aStr: String; var aAnsiStrBuf: AnsiString): PAnsiChar;
-begin
- if Length(aStr) > 0 then begin
-   aAnsiStrBuf := AnsiString(aStr);
-   Result      := PAnsiChar(aAnsiStrBuf);
- end
- else begin
-   aAnsiStrBuf := '';
-   Result      := Nil;
- end;
-end;
-
-// ----------------------- TPyDBSharedObject -----------------------------------
-
-procedure TPyDBSharedObject.DoDecRef;
-begin
- if FRefCount > 0 then
-   Dec(FRefCount);
- if (FRefCount = 0) then
-   FreeData;
-end;
-
-procedure TPyDBSharedObject.SetData( value : TObject );
-begin
- DoDecRef;
- FRefCount := 0;
- FData := value;
- IncRef;
-end;
-
-constructor TPyDBSharedObject.Create;
-begin
- inherited;
- Owner := True;
-end;
-
-constructor TPyDBSharedObject.CreateWith( value : TObject; isOwner : Boolean );
-begin
- inherited;
- Data := value;
- Owner := isOwner;
-end;
-
-destructor TPyDBSharedObject.Destroy;
-begin
- FreeData;
- inherited;
-end;
-
-procedure TPyDBSharedObject.IncRef;
-begin
- Inc(FRefCount);
-end;
-
-procedure TPyDBSharedObject.DecRef;
-begin
- if not Assigned(Self) then
-   Exit;
- DoDecRef;
- if (FRefCount = 0) then
-   Free;
-end;
-
-procedure TPyDBSharedObject.FreeData;
-begin
- if Owner and Assigned(FData) then
-   FData.Free;
- FData := nil;
-end;
-
+Uses
+  Data.SqlTimSt;
 // ----------------------- TPyDBCommon -----------------------------------------
 
 function  TPyDBCommon.GetProperties : PPyObject;
@@ -417,20 +203,23 @@ var
  obj : PPyObject;
 begin
  with GetPythonEngine do begin
-   obj := PyString_FromString(PAnsiChar(AnsiString(prop)));
+   obj := PyUnicode_FromWideString(prop);
    PyList_Append( List, obj );
    Py_XDecRef(obj);
  end;
 end;
 
-function  TPyDBCommon.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyDBCommon.GetAttrO(key: PPyObject) : PPyObject;
+Var
+  SKey : string;
 begin
  try
-   if (CompareText( String(key), '__properties__' ) = 0) or
-      (CompareText( String(key), '__members__' ) = 0) then
+   SKey := LowerCase(GetPythonEngine.PyString_AsDelphiString(Key));
+   if (SKey = '__properties__' ) or
+      (SKey = '__members__' ) then
      Result := GetProperties
    else
-     Result := inherited GetAttr(key);
+     Result := inherited GetAttrO(key);
  except // Remap Delphi exception to a Python exception
    on E : Exception do begin
      RaiseDBError( E );
@@ -445,52 +234,20 @@ begin
    GetModule.RaiseError( AnsiString('DBError'), AnsiString(E.Message) );
 end;
 
-function TPyDBCommon.EventBelongsToObject( Event : TCallbackSplit ) : Boolean;
-begin
- Result := Event.Self = Self;
-end;
-
 // ----------------------- TPyDBField ------------------------------------------
 
-constructor TPyDBField.Create( APythonType : TPythonType );
+class function TPyDBField.DelphiObjectClass: TClass;
 begin
- inherited;
- SetLength(m_arAnsiTextBuf,0);
+  Result := TField;
 end;
 
-constructor TPyDBField.CreateWith( PythonType : TPythonType; args : PPyObject );
-begin
- inherited;
- SetLength(m_arAnsiTextBuf,0);
-end;
-
-destructor  TPyDBField.Destroy;
-begin
- SetLength(m_arAnsiTextBuf,0);
- if Assigned(FField) then begin
-   if EventBelongsToObject( TCallbackSplit(FField.OnChange) ) then
-     FField.OnChange   := nil;
-   if EventBelongsToObject( TCallbackSplit(FField.OnGetText) ) then
-     FField.OnGetText  := nil;
-   if EventBelongsToObject( TCallbackSplit(FField.OnSetText) ) then
-     FField.OnSetText  := nil;
-   if EventBelongsToObject( TCallbackSplit(FField.OnValidate) ) then
-     FField.OnValidate := nil;
- end;
- FField := nil;
- ClearEvent( FOnChange );
- ClearEvent( FOnGetText );
- ClearEvent( FOnSetText );
- ClearEvent( FOnValidate );
- inherited;
-end;
 
 // Then we override the needed services
 
-function  TPyDBField.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyDBField.GetAttrO(key: PPyObject) : PPyObject;
+{ TODO : Remove published properties }
 var
- l_pAnsiChar: PAnsiChar;
- l_sUpperKey, l_sStr: String;
+ l_sUpperKey: String;
 begin
  with GetPythonEngine do begin
    if not CheckField then begin
@@ -498,115 +255,98 @@ begin
      Exit;
    end;
    try
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'ALIGNMENT' ) = 0 then
-       Result := VariantAsPyObject( Integer(FField.Alignment) )
-     else if CompareText(l_sUpperKey, 'ASBOOLEAN' ) = 0 then
-       Result := VariantAsPyObject( FField.AsBoolean )
-     else if CompareText(l_sUpperKey, 'ASDATETIME' ) = 0 then
-       Result := VariantAsPyObject( FField.AsDateTime )
-     else if CompareText(l_sUpperKey, 'ASFLOAT' ) = 0 then
-       Result := VariantAsPyObject( FField.AsFloat )
-     else if CompareText(l_sUpperKey, 'ASINTEGER' ) = 0 then
-       Result := VariantAsPyObject( FField.AsInteger )
-     else if CompareText(l_sUpperKey, 'ASSTRING' ) = 0 then
-       Result := VariantAsPyObject( FField.AsString )
-     else if CompareText(l_sUpperKey, 'CANMODIFY' ) = 0 then
-       Result := VariantAsPyObject( FField.CanModify )
-     else if CompareText(l_sUpperKey, 'ConstraintErrorMessage' ) = 0 then
-       Result := VariantAsPyObject( FField.ConstraintErrorMessage )
-     else if CompareText(l_sUpperKey, 'CurValue' ) = 0 then
-       Result := VariantAsPyObject( FField.CurValue )
-     else if CompareText(l_sUpperKey, 'CustomConstraint' ) = 0 then
-       Result := VariantAsPyObject( FField.CustomConstraint )
-     else if CompareText(l_sUpperKey, 'DATASIZE' ) = 0 then
-       Result := VariantAsPyObject( FField.DataSize )
-     else if CompareText(l_sUpperKey, 'DATATYPE' ) = 0 then
-       Result := VariantAsPyObject( FField.DataType )
-     else if CompareText(l_sUpperKey, 'DefaultExpression' ) = 0 then
-       Result := VariantAsPyObject( FField.DefaultExpression )
-     else if CompareText(l_sUpperKey, 'DISPLAYLABEL' ) = 0 then
-       Result := VariantAsPyObject( FField.DisplayLabel )
-     else if CompareText(l_sUpperKey, 'DISPLAYNAME' ) = 0 then
-       Result := VariantAsPyObject( FField.DisplayName )
-     else if CompareText(l_sUpperKey, 'DISPLAYTEXT' ) = 0 then
-       Result := VariantAsPyObject( FField.DisplayText )
-     else if CompareText(l_sUpperKey, 'DISPLAYWIDTH' ) = 0 then
-       Result := VariantAsPyObject( FField.DisplayWidth )
-     else if CompareText(l_sUpperKey, 'EDITMASK' ) = 0 then
-       Result := VariantAsPyObject( FField.EditMask )
-     else if CompareText(l_sUpperKey, 'FIELDKIND' ) = 0 then
-       Result := VariantAsPyObject( FField.FieldKind )
-     else if CompareText(l_sUpperKey, 'FIELDNAME' ) = 0 then
-       Result := VariantAsPyObject( FField.FieldName)
-     else if CompareText(l_sUpperKey, 'FIELDNO' ) = 0 then
-       Result := VariantAsPyObject( FField.FieldNo )
-     else if CompareText(l_sUpperKey, 'HASCONSTRAINTS' ) = 0 then
-       Result := VariantAsPyObject( FField.HasConstraints )
-     else if CompareText(l_sUpperKey, 'IMPORTEDCONSTRAINT' ) = 0 then
-       Result := VariantAsPyObject( FField.ImportedConstraint )
-     else if CompareText(l_sUpperKey, 'INDEX' ) = 0 then
-       Result := VariantAsPyObject( FField.Index )
-     else if CompareText(l_sUpperKey, 'ISBLOB' ) = 0 then
-       Result := VariantAsPyObject( FField.IsBlob)
-     else if CompareText(l_sUpperKey, 'ISINDEXFIELD' ) = 0 then
-       Result := VariantAsPyObject( FField.IsIndexField )
-     else if CompareText(l_sUpperKey, 'ISNULL' ) = 0 then
-       Result := VariantAsPyObject( FField.IsNull )
-     else if CompareText(l_sUpperKey, 'KEYFFIELDS' ) = 0 then
-       Result := VariantAsPyObject( FField.KeyFields )
-     else if CompareText(l_sUpperKey, 'LOOKUP' ) = 0 then
-       Result := VariantAsPyObject( FField.Lookup )
-     else if CompareText(l_sUpperKey, 'LOOKUPCACHE' ) = 0 then
-       Result := VariantAsPyObject( FField.LookupCache )
-     else if CompareText(l_sUpperKey, 'LOOKUPDATASET' ) = 0 then
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'ALIGNMENT' then
+       Result := VariantAsPyObject( Integer(DelphiObject.Alignment) )
+     else if l_sUpperKey = 'ASBOOLEAN' then
+       Result := VariantAsPyObject( DelphiObject.AsBoolean )
+     else if l_sUpperKey = 'ASDATETIME' then
+       Result := VariantAsPyObject( DelphiObject.AsDateTime )
+     else if l_sUpperKey = 'ASFLOAT' then
+       Result := VariantAsPyObject( DelphiObject.AsFloat )
+     else if l_sUpperKey = 'ASINTEGER' then
+       Result := VariantAsPyObject( DelphiObject.AsInteger )
+     else if l_sUpperKey = 'ASSTRING' then
+       Result := VariantAsPyObject( DelphiObject.AsString )
+     else if l_sUpperKey = 'CANMODIFY' then
+       Result := VariantAsPyObject( DelphiObject.CanModify )
+     else if l_sUpperKey = 'ConstraintErrorMessage' then
+       Result := VariantAsPyObject( DelphiObject.ConstraintErrorMessage )
+     else if l_sUpperKey = 'CurValue' then
+       Result := VariantAsPyObject( DelphiObject.CurValue )
+     else if l_sUpperKey = 'CustomConstraint' then
+       Result := VariantAsPyObject( DelphiObject.CustomConstraint )
+     else if l_sUpperKey = 'DATASIZE' then
+       Result := VariantAsPyObject( DelphiObject.DataSize )
+     else if l_sUpperKey = 'DATATYPE' then
+       Result := VariantAsPyObject( DelphiObject.DataType )
+     else if l_sUpperKey = 'DefaultExpression' then
+       Result := VariantAsPyObject( DelphiObject.DefaultExpression )
+     else if l_sUpperKey = 'DISPLAYLABEL' then
+       Result := VariantAsPyObject( DelphiObject.DisplayLabel )
+     else if l_sUpperKey = 'DISPLAYNAME' then
+       Result := VariantAsPyObject( DelphiObject.DisplayName )
+     else if l_sUpperKey = 'DISPLAYTEXT' then
+       Result := VariantAsPyObject( DelphiObject.DisplayText )
+     else if l_sUpperKey = 'DISPLAYWIDTH' then
+       Result := VariantAsPyObject( DelphiObject.DisplayWidth )
+     else if l_sUpperKey = 'EDITMASK' then
+       Result := VariantAsPyObject( DelphiObject.EditMask )
+     else if l_sUpperKey = 'FIELDKIND' then
+       Result := VariantAsPyObject( DelphiObject.FieldKind )
+     else if l_sUpperKey = 'FIELDNAME' then
+       Result := VariantAsPyObject( DelphiObject.FieldName)
+     else if l_sUpperKey = 'FIELDNO' then
+       Result := VariantAsPyObject( DelphiObject.FieldNo )
+     else if l_sUpperKey = 'HASCONSTRAINTS' then
+       Result := VariantAsPyObject( DelphiObject.HasConstraints )
+     else if l_sUpperKey = 'IMPORTEDCONSTRAINT' then
+       Result := VariantAsPyObject( DelphiObject.ImportedConstraint )
+     else if l_sUpperKey = 'INDEX' then
+       Result := VariantAsPyObject( DelphiObject.Index )
+     else if l_sUpperKey = 'ISBLOB' then
+       Result := VariantAsPyObject( DelphiObject.IsBlob)
+     else if l_sUpperKey = 'ISINDEXFIELD' then
+       Result := VariantAsPyObject( DelphiObject.IsIndexField )
+     else if l_sUpperKey = 'ISNULL' then
+       Result := VariantAsPyObject( DelphiObject.IsNull )
+     else if l_sUpperKey = 'KEYFFIELDS' then
+       Result := VariantAsPyObject( DelphiObject.KeyFields )
+     else if l_sUpperKey = 'LOOKUP' then
+       Result := VariantAsPyObject( DelphiObject.Lookup )
+     else if l_sUpperKey = 'LOOKUPCACHE' then
+       Result := VariantAsPyObject( DelphiObject.LookupCache )
+     else if l_sUpperKey = 'LOOKUPKeyFields' then
+       Result := VariantAsPyObject( DelphiObject.LookupKeyFields )
+     else if l_sUpperKey = 'LOOKUPLIST' then
        Result := ReturnNone
-     else if CompareText(l_sUpperKey, 'LOOKUPKeyFields' ) = 0 then
-       Result := VariantAsPyObject( FField.LookupKeyFields )
-     else if CompareText(l_sUpperKey, 'LOOKUPLIST' ) = 0 then
+     else if l_sUpperKey = 'LOOKUPRESULTFIELD' then
+       Result := VariantAsPyObject( DelphiObject.LookupResultField )
+     else if l_sUpperKey = 'NEWVALUE' then
+       Result := VariantAsPyObject( DelphiObject.NewValue )
+     else if l_sUpperKey = 'OFFSET' then
+       Result := VariantAsPyObject( DelphiObject.Offset )
+     else if l_sUpperKey = 'OLDVALUE' then
+       Result := VariantAsPyObject( DelphiObject.OldValue )
+     else if l_sUpperKey = 'ORIGIN' then
+       Result := VariantAsPyObject( DelphiObject.Origin )
+     else if l_sUpperKey = 'READONLY' then
+       Result := VariantAsPyObject( DelphiObject.ReadOnly )
+     else if l_sUpperKey = 'REQUIRED' then
+       Result := VariantAsPyObject( DelphiObject.Required )
+     else if l_sUpperKey = 'SIZE' then
+       Result := VariantAsPyObject( DelphiObject.Size )
+     else if l_sUpperKey = 'TEXT' then
+       Result := VariantAsPyObject( DelphiObject.Text )
+     else if l_sUpperKey = 'VALIDCHARS' then
        Result := ReturnNone
-     else if CompareText(l_sUpperKey, 'LOOKUPRESULTFIELD' ) = 0 then
-       Result := VariantAsPyObject( FField.LookupResultField )
-     else if CompareText(l_sUpperKey, 'NEWVALUE' ) = 0 then
-       Result := VariantAsPyObject( FField.NewValue )
-     else if CompareText(l_sUpperKey, 'OFFSET' ) = 0 then
-       Result := VariantAsPyObject( FField.Offset )
-     else if CompareText(l_sUpperKey, 'OLDVALUE' ) = 0 then
-       Result := VariantAsPyObject( FField.OldValue )
-     else if CompareText(l_sUpperKey, 'ORIGIN' ) = 0 then
-       Result := VariantAsPyObject( FField.Origin )
-     else if CompareText(l_sUpperKey, 'READONLY' ) = 0 then
-       Result := VariantAsPyObject( FField.ReadOnly )
-     else if CompareText(l_sUpperKey, 'REQUIRED' ) = 0 then
-       Result := VariantAsPyObject( FField.Required )
-     else if CompareText(l_sUpperKey, 'SIZE' ) = 0 then
-       Result := VariantAsPyObject( FField.Size )
-     else if CompareText(l_sUpperKey, 'TEXT' ) = 0 then
-       Result := VariantAsPyObject( FField.Text )
-     else if CompareText(l_sUpperKey, 'VALIDCHARS' ) = 0 then
-       Result := ReturnNone
-     else if CompareText(l_sUpperKey, 'VALUE' ) = 0 then begin
-       if (FField.DataType = ftString) or (FField.DataType = ftWideString) then begin
-         SetLength(m_arAnsiTextBuf,1);
-         l_sStr := FField.AsString;
-         l_pAnsiChar := _PAnsiChar(l_sStr, m_arAnsiTextBuf[0]);
-         Result := PyString_FromString( l_pAnsiChar );
-       end
-       else
-         Result := VariantAsPyObject( FField.Value );
+     else if l_sUpperKey = 'VALUE' then begin
+       Result := VariantAsPyObject( SqlTimeToVarDate(DelphiObject.Value) );
      end
-     else if CompareText(l_sUpperKey, 'VISIBLE' ) = 0 then
-       Result := VariantAsPyObject( FField.Visible )
-     else if CompareText(l_sUpperKey, 'ONCHANGE' ) = 0 then
-       Result := ReturnEvent( FOnChange )
-     else if CompareText(l_sUpperKey, 'ONGETTEXT' ) = 0 then
-       Result := ReturnEvent( FOnGetText )
-     else if CompareText(l_sUpperKey, 'ONSETTEXT' ) = 0 then
-       Result := ReturnEvent( FOnSetText )
-     else if CompareText(l_sUpperKey, 'ONVALIDATE' ) = 0 then
-       Result := ReturnEvent( FOnValidate )
+     else if l_sUpperKey = 'VISIBLE' then
+       Result := VariantAsPyObject( DelphiObject.Visible )
      else
-       Result := inherited GetAttr(key);
+       Result := inherited GetAttrO(key);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -616,7 +356,13 @@ begin
  end;
 end;
 
-function  TPyDBField.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
+function TPyDBField.GetDelphiObject: TField;
+begin
+ Result := TField(inherited DelphiObject);
+end;
+
+function  TPyDBField.SetAttrO(key, value: PPyObject) : Integer;
+{ TODO : Remove published properties }
 var
  l_sUpperKey: String;
 begin
@@ -625,205 +371,170 @@ begin
    if not CheckField then
      Exit;
    try
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'ALIGNMENT' ) = 0 then begin
-       FField.Alignment := TAlignment(PyObjectAsVariant( value ));
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'ALIGNMENT' then begin
+       DelphiObject.Alignment := TAlignment(PyObjectAsVariant( value ));
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ASBOOLEAN' ) = 0 then begin
-       FField.AsBoolean := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'ASBOOLEAN' then begin
+       DelphiObject.AsBoolean := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ASDATETIME' ) = 0 then begin
-       FField.AsDateTime := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'ASDATETIME' then begin
+       DelphiObject.AsDateTime := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ASFLOAT' ) = 0 then begin
-       FField.AsFloat := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'ASFLOAT' then begin
+       DelphiObject.AsFloat := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ASINTEGER' ) = 0 then begin
-       FField.AsInteger := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'ASINTEGER' then begin
+       DelphiObject.AsInteger := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ASSTRING' ) = 0 then begin
-       FField.AsString := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'ASSTRING' then begin
+       DelphiObject.AsString := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'CANMODIFY' ) = 0 then begin
+     else if l_sUpperKey = 'CANMODIFY' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'CONSTRAINTERRORMESSAGE' ) = 0 then begin
-       FField.ConstraintErrorMessage := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'CONSTRAINTERRORMESSAGE' then begin
+       DelphiObject.ConstraintErrorMessage := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'CURVALUE' ) = 0 then begin
+     else if l_sUpperKey = 'CURVALUE' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'CUSTOMCONSTRAINT' ) = 0 then begin
-       FField.CustomConstraint := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'CUSTOMCONSTRAINT' then begin
+       DelphiObject.CustomConstraint := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DATASIZE' ) = 0 then begin
+     else if l_sUpperKey = 'DATASIZE' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DATATYPE' ) = 0 then begin
+     else if l_sUpperKey = 'DATATYPE' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DEFAULTEXPRESSION' ) = 0 then begin
-       FField.DefaultExpression := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'DEFAULTEXPRESSION' then begin
+       DelphiObject.DefaultExpression := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DISPLAYLABEL' ) = 0 then begin
-       FField.DisplayLabel := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'DISPLAYLABEL' then begin
+       DelphiObject.DisplayLabel := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DISPLAYNAME' ) = 0 then begin
+     else if l_sUpperKey = 'DISPLAYNAME' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DISPLAYTEXT' ) = 0 then begin
+     else if l_sUpperKey = 'DISPLAYTEXT' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'DISPLAYWIDTH' ) = 0 then begin
-       FField.DisplayWidth := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'DISPLAYWIDTH' then begin
+       DelphiObject.DisplayWidth := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'EDITMASK' ) = 0 then begin
-       FField.EditMask := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'EDITMASK' then begin
+       DelphiObject.EditMask := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FIELDKIND' ) = 0 then begin
-       FField.FieldKind := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'FIELDKIND' then begin
+       DelphiObject.FieldKind := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FIELDNAME' ) = 0 then begin
-       FField.FieldName:= PyObjectAsVariant( value );
+     else if l_sUpperKey = 'FIELDNAME' then begin
+       DelphiObject.FieldName:= PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FIELDNO' ) = 0 then begin
+     else if l_sUpperKey = 'FIELDNO' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'HASCONSTRAINTS' ) = 0 then begin
+     else if l_sUpperKey = 'HASCONSTRAINTS' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'IMPORTEDCONSTRAINT' ) = 0 then begin
-       FField.ImportedConstraint := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'IMPORTEDCONSTRAINT' then begin
+       DelphiObject.ImportedConstraint := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'INDEX' ) = 0 then begin
-       FField.Index := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'INDEX' then begin
+       DelphiObject.Index := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ISBLOB' ) = 0 then begin
+     else if l_sUpperKey = 'ISBLOB' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ISINDEXFIELD' ) = 0 then begin
+     else if l_sUpperKey = 'ISINDEXFIELD' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ISNULL' ) = 0 then begin
+     else if l_sUpperKey = 'ISNULL' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'KEYFIELDS' ) = 0 then begin
-       FField.KeyFields := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'KEYFIELDS' then begin
+       DelphiObject.KeyFields := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUP' ) = 0 then begin
-       FField.Lookup := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'LOOKUP' then begin
+       DelphiObject.Lookup := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUPCACHE' ) = 0 then begin
-       FField.LookupCache := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'LOOKUPCACHE' then begin
+       DelphiObject.LookupCache := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUPDATASET' ) = 0 then begin
+     else if l_sUpperKey = 'LOOKUPKEYFIELDS' then begin
+       DelphiObject.LookupKeyFields := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUPKEYFIELDS' ) = 0 then begin
-       FField.LookupKeyFields := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'LOOKUPLIST' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUPLIST' ) = 0 then begin
+     else if l_sUpperKey = 'LOOKUPRESULTFIELD' then begin
+       DelphiObject.LookupResultField := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'LOOKUPRESULTFIELD' ) = 0 then begin
-       FField.LookupResultField := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'NEWVALUE' then begin
+       DelphiObject.NewValue := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'NEWVALUE' ) = 0 then begin
-       FField.NewValue := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'OFFSET' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'OFFSET' ) = 0 then begin
+     else if l_sUpperKey = 'OLDVALUE' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'OLDVALUE' ) = 0 then begin
+     else if l_sUpperKey = 'ORIGIN' then begin
+       DelphiObject.Origin := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ORIGIN' ) = 0 then begin
-       FField.Origin := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'READONLY' then begin
+       DelphiObject.ReadOnly := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'READONLY' ) = 0 then begin
-       FField.ReadOnly := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'REQUIRED' then begin
+       DelphiObject.Required := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'REQUIRED' ) = 0 then begin
-       FField.Required := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'SIZE' then begin
+       DelphiObject.Size := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'SIZE' ) = 0 then begin
-       FField.Size := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'TEXT' then begin
+       DelphiObject.Text := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'TEXT' ) = 0 then begin
-       FField.Text := PyObjectAsVariant( value );
+     else if l_sUpperKey = 'VALIDCHARS' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'VALIDCHARS' ) = 0 then begin
+     else if l_sUpperKey = 'VALUE' then begin
+       DelphiObject.Value := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'VALUE' ) = 0 then begin
-       FField.Value := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'VISIBLE' ) = 0 then begin
-       FField.Visible := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'ONCHANGE' ) = 0 then begin
-       SetEvent( FOnChange, Value, 'OnChange', 'TField' );
-       if Assigned(FOnChange) then
-         FField.OnChange := OnChange
-       else
-         FField.OnChange := nil;
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'ONGETTEXT' ) = 0 then begin
-       SetEvent( FOnGetText, Value, 'OnGetText', 'TField' );
-       if Assigned(FOnGetText) then
-         FField.OnGetText := OnGetText
-       else
-         FField.OnGetText := nil;
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'ONSETTEXT' ) = 0 then begin
-       SetEvent( FOnSetText, Value, 'OnSetText', 'TField' );
-       if Assigned(FOnSetText) then
-         FField.OnSetText := OnSetText
-       else
-         FField.OnSetText := nil;
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'ONVALIDATE' ) = 0 then begin
-       SetEvent( FOnValidate, Value, 'OnValidate', 'TField' );
-       if Assigned(FOnValidate) then
-         FField.OnValidate := OnValidate
-       else
-         FField.OnValidate := nil;
+     else if l_sUpperKey = 'VISIBLE' then begin
+       DelphiObject.Visible := PyObjectAsVariant( value );
        Result := 0;
      end
      else
-       Result := inherited SetAttr(key, value);
+       Result := inherited SetAttrO(key, value);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -833,29 +544,29 @@ begin
  end;
 end;
 
-function  TPyDBField.Repr: PPyObject;
+procedure TPyDBField.SetDelphiObject(const Value: TField);
 begin
- Result := inherited Repr;
+ inherited DelphiObject := Value;
 end;
 
 class procedure TPyDBField.RegisterMethods( PythonType : TPythonType );
 begin
- inherited;
- with PythonType do begin
-   AddMethod(AnsiString('Clear'), @TPyDBField.Do_Clear,
-             AnsiString('DBField.Clear() -> None') );
-   AddMethod(AnsiString('FocusControl'), @TPyDBField.Do_FocusControl,
-             AnsiString('DBField.FocusControl() -> None') );
-   AddMethod(AnsiString('IsValidChar'), @TPyDBField.Do_IsValidChar,
-             AnsiString('DBField.IsValidChar( InputChar : String ) -> True or False') );
-   AddMethod(AnsiString('RefreshLookupList'), @TPyDBField.Do_RefreshLookupList,
-             AnsiString('DBField.RefreshLookupList() -> None') );
- end;
+  inherited;
+  with PythonType do begin
+    AddMethod(AnsiString('Clear'), @TPyDBField.Do_Clear,
+              AnsiString('DBField.Clear() -> None') );
+    AddMethod(AnsiString('FocusControl'), @TPyDBField.Do_FocusControl,
+              AnsiString('DBField.FocusControl() -> None') );
+    AddMethod(AnsiString('IsValidChar'), @TPyDBField.Do_IsValidChar,
+              AnsiString('DBField.IsValidChar( InputChar : String ) -> True or False') );
+    AddMethod(AnsiString('RefreshLookupList'), @TPyDBField.Do_RefreshLookupList,
+              AnsiString('DBField.RefreshLookupList() -> None') );
+  end;
 end;
 
 function TPyDBField.CheckField : Boolean;
 begin
- if not Assigned(FField) then begin
+ if not Assigned(DelphiObject) then begin
    Result := False;
    with GetPythonEngine do
      PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('No field defined !') );
@@ -921,7 +632,7 @@ begin
    Adjust(@Self);  // <- adjust the transmitted self argument
    try
      if CheckField then begin
-       FField.Clear;
+       DelphiObject.Clear;
        Result := ReturnNone;
      end
      else
@@ -941,7 +652,7 @@ begin
    Adjust(@Self);  // <- adjust the transmitted self argument
    try
      if CheckField then begin
-       FField.FocusControl;
+       DelphiObject.FocusControl;
        Result := ReturnNone;
      end
      else
@@ -971,7 +682,7 @@ begin
            c := Char(str[1])
          else
            c := #0;
-         Result := VariantAsPyObject( FField.IsValidChar( c ) )
+         Result := VariantAsPyObject( DelphiObject.IsValidChar( c ) )
        end
        else
          Result := nil;
@@ -993,7 +704,7 @@ begin
    Adjust(@Self);  // <- adjust the transmitted self argument
    try
      if CheckField then begin
-       FField.RefreshLookupList;
+       DelphiObject.RefreshLookupList;
        Result := ReturnNone;
      end
      else
@@ -1007,117 +718,25 @@ begin
  end;
 end;
 
-procedure TPyDBField.OnChange( Sender : TField );
-begin
- IncRef;
- ExecuteEvent( FOnChange, [GetSelf] );
-end;
-
-procedure TPyDBField.OnGetText( Sender: TField; var Text: String; DisplayText: Boolean );
-var
- v : PPyObject;
-begin
- IncRef;
- with GetPythonEngine do begin
-   v := TPyDBVarArg.PyDBVarArgType.CreateInstanceWith( VariantAsPyObject( Text ) );
-   Py_XIncRef(v);
-   try
-     ExecuteEvent( FOnGetText, [GetSelf, v, DisplayText] );
-     with PythonToDelphi(v) as TPyDBVarArg do
-       Text := PyObjectAsVariant(FValue);
-   finally
-     Py_XDecRef(v);
-   end;
- end;
-end;
-
-procedure TPyDBField.OnSetText( Sender : TField; const Text: String );
-begin
- IncRef;
- ExecuteEvent( FOnSetText, [GetSelf, Text] );
-end;
-
-procedure TPyDBField.OnValidate( Sender : TField );
-begin
- IncRef;
- ExecuteEvent( FOnValidate, [GetSelf] );
-end;
-
-// ----------------------- TPyDBVarArg -----------------------------------------
-
-constructor TPyDBVarArg.CreateWith( APythonType : TPythonType; args : PPyObject );
-begin
- inherited;
- with GetPythonEngine do begin
-   if PyTuple_Check(args) and (PyTuple_Size(args)>=1) then begin
-     FValue := PyTuple_GetItem( args, 0 );
-     Py_XIncRef(FValue);
-   end;
- end;
-end;
-
-destructor TPyDBVarArg.Destroy;
-begin
- with GetPythonEngine do
-   Py_XDecRef(FValue);
- inherited;
-end;
-
-function  TPyDBVarArg.GetAttr(key : PAnsiChar) : PPyObject;
-begin
- with GetPythonEngine do begin
-   if CompareText(String(key), 'Value' ) = 0 then begin
-     Result := FValue;
-     if not Assigned(Result) then
-       Result := Py_None;
-     Py_XIncRef(Result);
-   end
-   else
-     Result := inherited GetAttr(key);
- end;
-end;
-
-function  TPyDBVarArg.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
-begin
- with GetPythonEngine do begin
-   if CompareText(String(key), 'Value' ) = 0 then begin
-     Py_XDecRef(FValue);
-     FValue := value;
-     Py_XIncRef(FValue);
-     Result := 0;
-   end
-   else
-     Result := inherited SetAttr(key, value);
- end;
-end;
-
-function  TPyDBVarArg.Repr : PPyObject;
-begin
- with GetPythonEngine do
-   Result := PyString_FromString( PAnsiChar(AnsiString(PyObjectAsString(FValue))) );
-end;
-
 // ----------------------- TDSRowsAccess ---------------------------------------
 
 class function TDSRowsAccess.ExpectedContainerClass: TClass;
 begin
-  Result := TPyDBDataset;
+  Result := TFDDataset;
 end;
 
-function TDSRowsAccess.GetContainer: TPyDBDataset;
+function TDSRowsAccess.GetContainer: TFDDataset;
 begin
- Result := TPyDBDataset(inherited Container);
+ Result := TFDDataset(inherited Container);
 end;
 
 function TDSRowsAccess.GetItem(aIndex: Integer): PPyObject;
 var
  i : Integer;
- l_sStr: String;
- l_pAnsiChar: PAnsiChar;
  l_oDataset: TFDDataset;
 begin
  Result := nil;
- l_oDataset := GetContainer.GetDelphiObject;
+ l_oDataset := GetContainer;
  if (aIndex >= 0) and (aIndex < l_oDataset.RecordCount) then begin
    with GetPythonEngine do begin
      try
@@ -1125,7 +744,7 @@ begin
        Result   := PyTuple_New(l_oDataset.FieldCount);
        for i := 0 to l_oDataset.FieldCount - 1 do begin
          with l_oDataset.Fields[i] do begin
-           PyTuple_SetItem( Result, i,  VariantAsPyObject( Value ) );
+           PyTuple_SetItem( Result, i,  VariantAsPyObject( SqlTimeToVarDate(Value) ) );
          end;
        end;
      except
@@ -1141,93 +760,18 @@ function TDSRowsAccess.GetSize: Integer;
 var
  l_oDataset: TFDDataset;
 begin
- l_oDataset := GetContainer.GetDelphiObject;
+ l_oDataset := GetContainer;
  Result     := l_oDataset.RecordCount;
 end;
 
-function TDSRowsAccess.IndexOf(AValue: PPyObject): Integer;
-var
-  i : Integer;
-  S : string;
-  _obj : TPyObject;
-  _value : TObject;
-  _ds : TFDDataset;
-begin
-  Result := -1;
-  {
-  with GetPythonEngine do
-  begin
-    if PyString_Check(AValue) then
-    begin
-      S := PyString_AsDelphiString(AValue);
-      for i := 0 to Container.ControlCount-1 do
-        if SameText( Container.Controls[i].Name, S) then
-        begin
-          Result := i;
-          Break;
-        end;
-    end
-    else if IsDelphiObject(AValue) then
-    begin
-      _obj := PythonToDelphi(AValue);
-      if _obj is TPyDelphiObject then
-      begin
-        _value := TPyDelphiObject(_obj).DelphiObject;
-        if _value is TControl then
-        begin
-          _ctrl := TControl(_value);
-          for i := 0 to Container.ControlCount-1 do
-            if Container.Controls[i] = _ctrl then
-            begin
-              Result := i;
-              Break;
-            end;
-        end;
-      end;
-    end;
-  end;
-  }
-end;
 
 class function TDSRowsAccess.Name: String;
 begin
   Result := 'DSRows';
 end;
 
-class function TDSRowsAccess.SupportsIndexOf: Boolean;
-begin
-  Result := True;
-end;
 
 // ----------------------- TPyDBDataset ------------------------------------
-
-constructor TPyDBDataset.Create( aPythonType : TPythonType );
-begin
- inherited;
- if not Assigned(DelphiObject) then
-   DelphiObject := TFDDataset.Create(Nil);
-end;
-
-constructor TPyDBDataset.CreateWith( aPythonType : TPythonType; args : PPyObject );
-begin
- inherited;
- if not Assigned(DelphiObject) then
-   DelphiObject := TFDDataset.Create(Nil);
-end;
-
-destructor TPyDBDataset.Destroy;
-var
- l_oDataset: TFDDataset;
-begin
- l_oDataset := DelphiObject;
- if Assigned(l_oDataset) then begin
-   if not ((l_oDataset is TFDTable) or (l_oDataset is TFDQuery)) then begin
-     DelphiObject := Nil;    // <- implizit Free!!!
-   end;
- end;
- SetLength(m_arAnsiTextBuf,0);
- inherited;
-end;
 
 function  TPyDBDataset.GetDelphiObject: TFDDataset;
 begin
@@ -1239,12 +783,12 @@ begin
  inherited DelphiObject := Value;
 end;
 
-function  TPyDBDataset.CreateContainerAccess : TContainerAccess;
-var
- l_ContainerAccessClass : TContainerAccessClass;
+
+class procedure TPyDBDataset.SetupType(PythonType: TPythonType);
 begin
- l_ContainerAccessClass := TDSRowsAccess;
- Result := l_ContainerAccessClass.Create(PyDelphiWrapper, self)
+  inherited;
+  PythonType.GenerateCreateFunction := True;
+  PythonType.Prefix := 'T';
 end;
 
 class function  TPyDBDataset.DelphiObjectClass : TClass;
@@ -1284,11 +828,6 @@ begin
        PAnsiChar('Returns an iterator over contained dataset rows'), nil);
 end;
 
-class procedure TPyDBDataset.RegisterMembers( PythonType : TPythonType );
-begin
- inherited;
-end;
-
 class procedure TPyDBDataset.RegisterMethods( PythonType : TPythonType );
 begin
  inherited;
@@ -1323,7 +862,7 @@ begin
  end;
 end;
 
-function  TPyDBDataset.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyDBDataset.GetAttrO(key: PPyObject) : PPyObject;
 var
  l_sUpperKey: String;
  l_oDataset:  TFDDataset;
@@ -1332,19 +871,19 @@ begin
  with GetPythonEngine do begin
    try
      l_oDataset  := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'BOF' ) = 0 then
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'BOF' then
        Result := VariantAsPyObject( l_oDataset.BOF )
-     else if CompareText(l_sUpperKey, 'CANMODIFY' ) = 0 then
+     else if l_sUpperKey = 'CANMODIFY' then
        Result := VariantAsPyObject( l_oDataset.CanModify )
-     else if CompareText(l_sUpperKey, 'EOF' ) = 0 then
+     else if l_sUpperKey = 'EOF' then
        Result := VariantAsPyObject( l_oDataset.EOF )
-     else if CompareText( string(key), 'FIELDCOUNT' ) = 0 then
+     else if l_sUpperKey = 'FIELDCOUNT'  then
        Result := VariantAsPyObject( l_oDataset.FieldCount )
-     else if CompareText( string(key), 'RECNO' ) = 0 then
+     else if l_sUpperKey = 'RECNO'  then
        Result := VariantAsPyObject( l_oDataset.RecNo )
      else
-       Result := inherited GetAttr(key);
+       Result := inherited GetAttrO(key);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -1354,7 +893,7 @@ begin
  end;
 end;
 
-function  TPyDBDataset.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
+function  TPyDBDataset.SetAttrO(key, value: PPyObject) : Integer;
 var
  l_sUpperKey: String;
  l_oDataset:  TFDDataset;
@@ -1363,30 +902,30 @@ begin
  with GetPythonEngine do begin
    try
      l_oDataset  := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'FILTER' ) = 0 then begin
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'FILTER' then begin
        l_oDataset.Filter := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FILTERED' ) = 0 then begin
+     else if l_sUpperKey = 'FILTERED' then begin
        l_oDataset.Filtered := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'BOF' ) = 0 then begin
+     else if l_sUpperKey = 'BOF' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'CanModify' ) = 0 then begin
+     else if l_sUpperKey = 'CanModify' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'EOF' ) = 0 then begin
+     else if l_sUpperKey = 'EOF' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'RECNO' ) = 0 then begin
+     else if l_sUpperKey = 'RECNO' then begin
        l_oDataset.RecNo := PyObjectAsVariant( value );
        Result := 0;
      end
      else
-       Result := inherited SetAttr(key, value);
+       Result := inherited SetAttrO(key, value);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -1407,8 +946,6 @@ end;
 function TPyDBDataset.Do_Fields( args : PPyObject ): PPyObject;
 var
  idx : Integer;
- fld : TField;
- F : TPyDBField;
  l_oDataset: TFDDataset;
 begin
  with GetPythonEngine do begin
@@ -1417,11 +954,8 @@ begin
    l_oDataset := DelphiObject;
    try
      if PyArg_ParseTuple( args, 'i:DBDataset.Fields',@idx ) <> 0 then begin
-       if (idx >= 0) and (idx < l_oDataset.FieldCount) then begin
-         Result := TPyDBField.PyDBFieldType.CreateInstance;
-         F := PythonToDelphi(Result) as TPyDBField;
-         F.FField := l_oDataset.Fields[idx];
-       end
+       if (idx >= 0) and (idx < l_oDataset.FieldCount) then
+         Result := PyDelphiWrapper.Wrap(l_oDataset.Fields[idx])
        else begin
          Result := nil;
          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Value out of range : %d', [idx]))));
@@ -1443,7 +977,6 @@ var
  l_sAStr: AnsiString;
  s : PAnsiChar;
  fld : TField;
- F : TPyDBField;
  l_oDataset: TFDDataset;
 begin
  with GetPythonEngine do begin
@@ -1454,11 +987,8 @@ begin
      if (PyArg_ParseTuple( args, PAnsiChar('s:DBDataset.FieldByName'),@s ) <> 0) then begin
        l_sAStr := AnsiString(s);
        fld := l_oDataset.FieldByName(String(l_sAStr));
-       if Assigned(fld) then begin
-         Result := TPyDBField.PyDBFieldType.CreateInstance;
-         F := PythonToDelphi(Result) as TPyDBField;
-         F.FField := fld;
-       end
+       if Assigned(fld) then
+         Result := PyDelphiWrapper.Wrap(fld)
        else begin
          Result := nil;
          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))) );
@@ -1478,8 +1008,6 @@ end;
 function TPyDBDataset.Do_FieldNamesAsTuple( args: PPyObject): PPyObject;
 var
  i : Integer;
- l_sStr: String;
- l_pAnsiChar: PAnsiChar;
  l_oDataset: TFDDataset;
 begin
  with GetPythonEngine do begin
@@ -1487,14 +1015,9 @@ begin
    l_oDataset := DelphiObject;
    try
      Result   := PyTuple_New(l_oDataset.FieldCount);
-     SetLength(m_arAnsiTextBuf,l_oDataset.FieldCount);
-     for i := 0 to l_oDataset.FieldCount - 1 do begin
-       with l_oDataset.Fields[i] do begin
-         l_sStr := FieldName;
-         l_pAnsiChar := _PAnsiChar(l_sStr, m_arAnsiTextBuf[i]);
-         PyTuple_SetItem( Result, i, PyString_FromString( l_pAnsiChar ) );
-       end;
-     end;
+     for i := 0 to l_oDataset.FieldCount - 1 do
+       with l_oDataset.Fields[i] do
+         PyTuple_SetItem(Result, i, PyUnicode_FromWideString(FieldName));
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -1507,8 +1030,6 @@ end;
 function TPyDBDataset.Do_FieldsAsTuple( args: PPyObject): PPyObject;
 var
  i : Integer;
- l_sStr: String;
- l_pAnsiChar: PAnsiChar;
  l_oDataset: TFDDataset;
 begin
  Result := nil;
@@ -1517,16 +1038,9 @@ begin
    l_oDataset := DelphiObject;
    try
      Result := PyTuple_New(l_oDataset.FieldCount);
-     SetLength(m_arAnsiTextBuf,l_oDataset.FieldCount);
      for i := 0 to l_oDataset.FieldCount - 1 do begin
-       if (l_oDataset.Fields[i].DataType = ftString) or
-          (l_oDataset.Fields[i].DataType = ftWideString) then begin
-         l_sStr := l_oDataset.Fields[i].AsString;
-         l_pAnsiChar := _PAnsiChar(l_sStr, m_arAnsiTextBuf[i]);
-         PyTuple_SetItem( Result, i, PyString_FromString( l_pAnsiChar ) );
-       end
-       else
-         PyTuple_SetItem( Result, i, VariantAsPyObject( l_oDataset.Fields[i].AsVariant ) );
+       PyTuple_SetItem( Result, i,
+         VariantAsPyObject( SqlTimeToVarDate(l_oDataset.Fields[i].AsVariant )) );
      end;
    except
      on E : Exception do begin
@@ -1538,10 +1052,8 @@ end;
 
 function TPyDBDataset.Do_FieldsAsDict( args: PPyObject): PPyObject;
 var
- i : Integer;
- l_sStr: String;
- l_pAnsiChar: PAnsiChar;
- l_oDataset: TFDDataset;
+  i : Integer;
+  l_oDataset: TFDDataset;
   obj : PPyObject;
   _fieldName : PPyObject;
 begin
@@ -1552,7 +1064,7 @@ begin
      Result := PyDict_New;
      for i := 0 to l_oDataset.FieldCount - 1 do
        with l_oDataset.Fields[i] do begin
-         obj := VariantAsPyObject( AsVariant );
+         obj := VariantAsPyObject( SqlTimeToVarDate(AsVariant) );
          _fieldName := VariantAsPyObject(Variant(FieldName));
          PyDict_SetItem( Result, _fieldName, obj );
          Py_XDecRef(obj);
@@ -1792,37 +1304,6 @@ end;
 
 // ----------------------- TPyDBTable ------------------------------------
 
-constructor TPyDBTable.Create( aPythonType : TPythonType );
-begin
- if not Assigned(DelphiObject) then begin
-   DelphiObject := TFDTable.Create(Nil);
-   self.Owned := True;
- end;
- inherited;
-end;
-
-constructor TPyDBTable.CreateWith( aPythonType : TPythonType; args : PPyObject );
-begin
- if not Assigned(DelphiObject) then begin
-   DelphiObject := TFDTable.Create(Nil);
-   self.Owned := True;
- end;
- inherited;
-end;
-
-destructor TPyDBTable.Destroy;
-var
- l_oTbl: TFDTable;
-begin
- l_oTbl := DelphiObject;
- if Assigned(l_oTbl) then begin
-   if l_oTbl.Active then
-     l_oTbl.Close();
-   DelphiObject := Nil;    // <- implizit Free!!!
- end;
- inherited;
-end;
-
 function TPyDBTable.GetDelphiObject: TFDTable;
 begin
  Result := TFDTable(inherited DelphiObject);
@@ -1836,6 +1317,13 @@ end;
 class function TPyDBTable.DelphiObjectClass: TClass;
 begin
  Result := TFDTable;
+end;
+
+destructor TPyDBTable.Destroy;
+begin
+  if Assigned(DelphiObject) then
+    DelphiObject.Active := False;
+  inherited;
 end;
 
 class procedure TPyDBTable.RegisterMethods( PythonType : TPythonType );
@@ -1877,19 +1365,6 @@ begin
  end;
 end;
 
-class procedure TPyDBTable.RegisterMembers( PythonType : TPythonType );
-begin
- inherited;
- //-- PythonType.AddMember( 'Active', mtInt, NativeInt(@TPyDBTable(nil).x), mfDefault, 'Active');
-end;
-
-class procedure TPyDBTable.RegisterGetSets( PythonType : TPythonType );
-begin
- inherited;
- //-- PythonType.AddGetSet(PAnsiChar('Active'), @TPyDBTable.Get_Active, @TPyDBTable.Set_Active,
- //--                      PAnsiChar('Returns/Sets the Active'), nil);
-end;
-
 function TPyDBTable.CheckActiveDBTable(aMustOpen: Boolean): Boolean;
 begin
  Result := True;
@@ -1909,7 +1384,7 @@ begin
  end;
 end;
 
-function  TPyDBTable.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyDBTable.GetAttrO(key: PPyObject) : PPyObject;
 var
  l_sUpperKey: String;
  l_sConnectionDefName, l_sDatabaseName: String;
@@ -1921,15 +1396,15 @@ begin
    l_oConn := Nil;
    try
      l_oTable    := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'CONNECTIONDEFNAME' ) = 0 then begin
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
        l_oConn := DelphiObject.Connection;
        l_sConnectionDefName := DelphiObject.ConnectionName;
        if Assigned(l_oConn) then
          l_sConnectionDefName := l_oConn.ConnectionName;
        Result := VariantAsPyObject( l_sConnectionDefName )
      end
-     else if CompareText(UpperCase(String(key)), 'DATABASENAME' ) = 0 then begin
+     else if l_sUpperKey = 'DATABASENAME' then begin
        l_oConn := DelphiObject.Connection;
        if Assigned(l_oConn) then
          l_sDatabaseName := l_oConn.Params.Database
@@ -1937,31 +1412,31 @@ begin
          l_sDatabaseName := '';
        Result := VariantAsPyObject( l_sDatabaseName )
     end
-    else if CompareText(l_sUpperKey, 'TABLENAME' ) = 0 then
+    else if l_sUpperKey = 'TABLENAME'then
        Result := VariantAsPyObject( l_oTable.TableName )
-    else if CompareText(l_sUpperKey, 'ACTIVE' ) = 0 then
+    else if l_sUpperKey = 'ACTIVE' then
       Result := VariantAsPyObject( l_oTable.Active )
-    else if CompareText(l_sUpperKey, 'FILTER' ) = 0 then
+    else if l_sUpperKey = 'FILTER' then
        Result := VariantAsPyObject( l_oTable.Filter )
-    else if CompareText(l_sUpperKey, 'FILTERED' ) = 0 then
+    else if l_sUpperKey = 'FILTERED' then
        Result := VariantAsPyObject( l_oTable.Filtered )
-    else if CompareText(l_sUpperKey, 'STATE' ) = 0 then
+    else if l_sUpperKey = 'STATE' then
        Result := VariantAsPyObject( Integer(l_oTable.State) )
-    else if CompareText(l_sUpperKey, 'MODIFIED' ) = 0 then
+    else if l_sUpperKey = 'MODIFIED' then
        Result := VariantAsPyObject( l_oTable.Modified )
-     else if CompareText(l_sUpperKey, 'ISRANGED' ) = 0 then
+     else if l_sUpperKey = 'ISRANGED' then
        // Ermöglicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
        Result := VariantAsPyObject( l_oTable.IsRanged )
-     else if CompareText(l_sUpperKey, 'KEYEXCLUSIVE' ) = 0 then
+     else if l_sUpperKey = 'KEYEXCLUSIVE' then
        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
        Result := VariantAsPyObject( l_oTable.KeyExclusive )
-     else if CompareText(l_sUpperKey, 'KEYFIELDCOUNT' ) = 0 then
+     else if l_sUpperKey = 'KEYFIELDCOUNT' then
        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
        Result := VariantAsPyObject( l_oTable.KeyFieldCount )
-     else if CompareText(l_sUpperKey, 'INDEXNAME' ) = 0 then
+     else if l_sUpperKey = 'INDEXNAME' then
        Result := VariantAsPyObject( l_oTable.IndexName )
     else
-      Result := inherited GetAttr(key);
+      Result := inherited GetAttrO(key);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -1971,7 +1446,7 @@ begin
  end;
 end;
 
-function  TPyDBTable.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
+function  TPyDBTable.SetAttrO(key, value: PPyObject) : Integer;
 var
  i: Integer;
  l_sUpperKey: String;
@@ -1984,8 +1459,8 @@ begin
    l_oConn := Nil;
    try
      l_oTable    := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'CONNECTIONDEFNAME' ) = 0 then begin
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
        if CheckActiveDBTable(False) then begin
          l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
          for i := 0 to FDManager.ConnectionCount-1 do begin
@@ -2003,7 +1478,7 @@ begin
          Result := 0;
        end;
      end
-     else if CompareText(l_sUpperKey, 'DATABASENAME' ) = 0 then begin
+     else if l_sUpperKey = 'DATABASENAME' then begin
        if CheckActiveDBTable(False) then begin
          l_sDatabaseName := PyObjectAsVariant( value );
          l_oConn := DelphiObject.Connection;
@@ -2013,50 +1488,50 @@ begin
          Result := 0;
        end;
      end
-     else if CompareText(l_sUpperKey, 'TABLENAME' ) = 0 then begin
+     else if l_sUpperKey = 'TABLENAME' then begin
        if CheckActiveDBTable(False) then begin
          l_oTable.TableName := PyObjectAsVariant( value );
          Result := 0;
        end;
      end
-     else if CompareText(l_sUpperKey, 'ACTIVE' ) = 0 then begin
+     else if l_sUpperKey = 'ACTIVE' then begin
        l_oTable.Active := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FILTER' ) = 0 then begin
+     else if l_sUpperKey = 'FILTER' then begin
        l_oTable.Filter := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'FILTERED' ) = 0 then begin
+     else if l_sUpperKey = 'FILTERED' then begin
        l_oTable.Filtered := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'STATE' ) = 0 then begin
+     else if l_sUpperKey = 'STATE' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'MODIFIED' ) = 0 then begin
+     else if l_sUpperKey = 'MODIFIED' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ISRANGED' ) = 0 then begin
+     else if l_sUpperKey = 'ISRANGED' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'KEYEXCLUSIVE' ) = 0 then begin
+     else if l_sUpperKey = 'KEYEXCLUSIVE' then begin
        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
        l_oTable.KeyExclusive := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'KEYFIELDCOUNT' ) = 0 then begin
+     else if l_sUpperKey = 'KEYFIELDCOUNT' then begin
        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
        l_oTable.KeyFieldCount := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'INDEXNAME' ) = 0 then begin
+     else if l_sUpperKey = 'INDEXNAME' then begin
        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
        l_oTable.IndexName := PyObjectAsVariant( value );
        Result := 0;
      end
      else
-       Result := inherited SetAttr(key, value);
+       Result := inherited SetAttrO(key, value);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -2420,37 +1895,6 @@ end;
 
 // --------------------- TPyDBQuery --------------------------------------------
 
-constructor TPyDBQuery.Create( aPythonType : TPythonType );
-begin
- if not Assigned(DelphiObject) then begin
-   DelphiObject := TFDQuery.Create(Nil);
-   self.Owned := True;
- end;
- inherited;
-end;
-
-constructor TPyDBQuery.CreateWith( aPythonType : TPythonType; args : PPyObject );
-begin
- if not Assigned(DelphiObject) then begin
-   DelphiObject := TFDQuery.Create(Nil);
-   self.Owned := True;
- end;
- inherited;
-end;
-
-destructor TPyDBQuery.Destroy;
-var
- l_oQry: TFDQuery;
-begin
- l_oQry := DelphiObject;
- if Assigned(l_oQry) then begin
-   if l_oQry.Active then
-     l_oQry.Close();
-   DelphiObject := Nil;    // <- implizit Free!!!
- end;
- inherited;
-end;
-
 function TPyDBQuery.GetDelphiObject: TFDQuery;
 begin
  Result := TFDQuery(inherited DelphiObject);
@@ -2466,34 +1910,28 @@ begin
  Result := TFDQuery;
 end;
 
+destructor TPyDBQuery.Destroy;
+begin
+  if Assigned(DelphiObject) then
+    DelphiObject.Active := False;
+  inherited;
+end;
+
 class procedure TPyDBQuery.RegisterMethods( PythonType : TPythonType );
 begin
- inherited;
- with PythonType do begin
-   AddMethod(AnsiString('Open'), @TPyDBQuery.Do_Open,
-             AnsiString('FDQuery.Open() -> None') );
-   AddMethod(AnsiString('Close'), @TPyDBQuery.Do_Close,
-             AnsiString('FDQuery.Close() -> None') );
-   AddMethod(AnsiString('Prepare'), @TPyDBQuery.Do_Prepare,
-             AnsiString('FDQuery.Prepare() -> None') );
-   AddMethod(AnsiString('Unprepare'), @TPyDBQuery.Do_Unprepare,
-             AnsiString('FDQuery.Unprepare() -> None') );
-   AddMethod(AnsiString('ExecSQL'), @TPyDBQuery.Do_ExecSQL,
-             AnsiString('FDQuery.ExecSQL() -> None') );
- end;
-end;
-
-class procedure TPyDBQuery.RegisterMembers( PythonType : TPythonType );
-begin
- inherited;
- //-- PythonType.AddMember( 'Active', mtInt, NativeInt(@TPyDBTable(nil).x), mfDefault, 'Active');
-end;
-
-class procedure TPyDBQuery.RegisterGetSets( PythonType : TPythonType );
-begin
- inherited;
- //-- PythonType.AddGetSet(PAnsiChar('Active'), @TPyDBTable.Get_Active, @TPyDBTable.Set_Active,
- //--                      PAnsiChar('Returns/Sets the Active'), nil);
+  inherited;
+  with PythonType do begin
+    AddMethod(AnsiString('Open'), @TPyDBQuery.Do_Open,
+              AnsiString('FDQuery.Open() -> None') );
+    AddMethod(AnsiString('Close'), @TPyDBQuery.Do_Close,
+              AnsiString('FDQuery.Close() -> None') );
+    AddMethod(AnsiString('Prepare'), @TPyDBQuery.Do_Prepare,
+              AnsiString('FDQuery.Prepare() -> None') );
+    AddMethod(AnsiString('Unprepare'), @TPyDBQuery.Do_Unprepare,
+              AnsiString('FDQuery.Unprepare() -> None') );
+    AddMethod(AnsiString('ExecSQL'), @TPyDBQuery.Do_ExecSQL,
+              AnsiString('FDQuery.ExecSQL() -> None') );
+  end;
 end;
 
 function TPyDBQuery.CheckActiveDBQuery(aMustOpen: Boolean): Boolean;
@@ -2515,12 +1953,10 @@ begin
  end;
 end;
 
-function  TPyDBQuery.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyDBQuery.GetAttrO(key: PPyObject) : PPyObject;
 var
- i: Integer;
- l_sUpperKey, l_sStr: String;
+ l_sUpperKey: String;
  l_sConnectionDefName, l_sDatabaseName: String;
- l_pAnsiChar: PAnsiChar;
  l_oConn: TFDCustomConnection;
  l_oQuery: TFDQuery;
 begin
@@ -2529,15 +1965,15 @@ begin
    l_oConn := Nil;
    try
      l_oQuery    := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'CONNECTIONDEFNAME' ) = 0 then begin
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
        l_oConn := DelphiObject.Connection;
        l_sConnectionDefName := DelphiObject.ConnectionName;
        if Assigned(l_oConn) then
          l_sConnectionDefName := l_oConn.ConnectionName;
        Result := VariantAsPyObject( l_sConnectionDefName )
      end
-     else if CompareText(UpperCase(String(key)), 'DATABASENAME' ) = 0 then begin
+     else if l_sUpperKey = 'DATABASENAME' then begin
        l_oConn := DelphiObject.Connection;
        if Assigned(l_oConn) then
          l_sDatabaseName := l_oConn.Params.Database
@@ -2545,23 +1981,12 @@ begin
          l_sDatabaseName := '';
        Result := VariantAsPyObject( l_sDatabaseName )
     end
-    else if CompareText(l_sUpperKey, 'PARAMCOUNT' ) = 0 then
+    else if l_sUpperKey = 'PARAMCOUNT' then
        Result := VariantAsPyObject( l_oQuery.ParamCount )
-    else if CompareText(l_sUpperKey, 'ACTIVE' ) = 0 then
-      Result := VariantAsPyObject( l_oQuery.Active )
-    else if CompareText(l_sUpperKey, 'PREPARED' ) = 0 then
+    else if l_sUpperKey = 'PREPARED' then
        Result := VariantAsPyObject( l_oQuery.Prepared )
-    else if CompareText(l_sUpperKey, 'SQL' ) = 0 then begin
-      Result   := PyTuple_New(l_oQuery.SQL.Count);
-      SetLength(m_arAnsiTextBuf,l_oQuery.SQL.Count);
-      for i := 0 to l_oQuery.SQL.Count - 1 do begin
-        l_sStr := l_oQuery.SQL[i];
-        l_pAnsiChar := _PAnsiChar(l_sStr, m_arAnsiTextBuf[i]);
-        PyTuple_SetItem( Result, i, PyString_FromString( l_pAnsiChar ) );
-      end;
-    end
     else
-      Result := inherited GetAttr(key);
+      Result := inherited GetAttrO(key);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -2571,22 +1996,21 @@ begin
  end;
 end;
 
-function  TPyDBQuery.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
+function  TPyDBQuery.SetAttrO(key, value: PPyObject) : Integer;
 var
- i, j: Integer;
- l_sUpperKey, l_sText, l_sStr, l_sSql: String;
+ i: Integer;
+ l_sUpperKey: String;
  l_sName, l_sConnectionDefName, l_sDatabaseName: String;
  l_oConn: TFDCustomConnection;
  l_oQuery: TFDQuery;
- l_pPyObj: PPyObject;
 begin
  Result := -1;
  with GetPythonEngine do begin
    l_oConn := Nil;
    try
      l_oQuery    := DelphiObject;
-     l_sUpperKey := UpperCase(String(key));
-     if CompareText(l_sUpperKey, 'CONNECTIONDEFNAME' ) = 0 then begin
+     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
        if CheckActiveDBQuery(False) then begin
          l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
          for i := 0 to FDManager.ConnectionCount-1 do begin
@@ -2604,7 +2028,7 @@ begin
          Result := 0;
        end;
      end
-     else if CompareText(l_sUpperKey, 'DATABASENAME' ) = 0 then begin
+     else if l_sUpperKey = 'DATABASENAME' then begin
        if CheckActiveDBQuery(False) then begin
          l_sDatabaseName := PyObjectAsVariant( value );
          l_oConn := DelphiObject.Connection;
@@ -2614,39 +2038,15 @@ begin
          Result := 0;
        end;
      end
-     else if CompareText(l_sUpperKey, 'PARAMCOUNT' ) = 0 then begin
+     else if l_sUpperKey = 'PARAMCOUNT' then begin
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'ACTIVE' ) = 0 then begin
-       l_oQuery.Active := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if CompareText(l_sUpperKey, 'PREPARED' ) = 0 then begin
+     else if l_sUpperKey = 'PREPARED' then begin
        l_oQuery.Prepared := PyObjectAsVariant( value );
        Result := 0;
      end
-     else if CompareText(l_sUpperKey, 'SQL' ) = 0 then begin
-       if not PyList_Check(value) then
-         raise EPythonError.Create('the python object is not a list');
-       l_sSql := '';
-       for i := 0 to PyList_Size( value ) - 1 do begin
-         l_pPyObj := PyList_GetItem( value, i );
-         l_sStr   := PyObjectAsString( l_pPyObj );
-         for j := 1 to Length(l_sStr) do begin
-           if (l_sStr[j] > #0) and (l_sStr[j] <= #13) then
-             l_sStr[j] := ' ';
-         end;
-         if (Length(l_sSql) > 0) and (l_sSql[Length(l_sSql)] <> ' ') then
-           l_sSql := l_sSql + ' ';
-         l_sSql := l_sSql + l_sStr;
-       end;
-       l_oQuery.SQL.Clear;
-       l_oQuery.SQL.Add(l_sSql);
-       l_sText := l_oQuery.SQL.Text;
-       Result := 0;
-     end
      else
-       Result := inherited SetAttr(key, value);
+       Result := inherited SetAttrO(key, value);
    except
      on E : Exception do begin
        RaiseDBError( E );
@@ -2753,36 +2153,106 @@ end;
 
 // -----------------------------------------------------------------------------
 
-initialization
+{ TPyDSRowsRegistration }
+
+procedure TPyFireDACRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
- //-- RegisteredUnits.Add( TPyDSRowsRegistration.Create );
- //-- Classes.RegisterClasses([TPyDBTable]);
+  inherited;
+  // Values for type TDatasetState
+  APyDelphiWrapper.DefineVar('dsInactive', 0);
+  APyDelphiWrapper.DefineVar('dsBrowse', 1);
+  APyDelphiWrapper.DefineVar('dsEdit', 2);
+  APyDelphiWrapper.DefineVar('dsInsert', 3);
+  APyDelphiWrapper.DefineVar('dsSetKey', 4);
+  APyDelphiWrapper.DefineVar('dsCalcFields', 5);
+  APyDelphiWrapper.DefineVar('dsFilter', 6);
+  APyDelphiWrapper.DefineVar('dsNewValue', 7);
+  APyDelphiWrapper.DefineVar('dsOldValue', 8);
+  APyDelphiWrapper.DefineVar('dsCurValue', 9);
+  // Values for type TFieldType
+  APyDelphiWrapper.DefineVar('ftUnknown', 0);
+  APyDelphiWrapper.DefineVar('ftString', 1);
+  APyDelphiWrapper.DefineVar('ftSmallint', 2);
+  APyDelphiWrapper.DefineVar('ftInteger', 3);
+  APyDelphiWrapper.DefineVar('ftWord', 4);
+  APyDelphiWrapper.DefineVar('ftBoolean', 5);
+  APyDelphiWrapper.DefineVar('ftFloat', 6);
+  APyDelphiWrapper.DefineVar('ftCurrency', 7);
+  APyDelphiWrapper.DefineVar('ftBCD', 8);
+  APyDelphiWrapper.DefineVar('ftDate', 9);
+  APyDelphiWrapper.DefineVar('ftTime', 10);
+  APyDelphiWrapper.DefineVar('ftDateTime', 11);
+  APyDelphiWrapper.DefineVar('ftBytes', 12);
+  APyDelphiWrapper.DefineVar('ftVarBytes', 13);
+  APyDelphiWrapper.DefineVar('ftAutoInc', 14);
+  APyDelphiWrapper.DefineVar('ftBlob', 15);
+  APyDelphiWrapper.DefineVar('ftMemo', 16);
+  APyDelphiWrapper.DefineVar('ftGraphic', 17);
+  APyDelphiWrapper.DefineVar('ftFmtMemo', 18);
+  APyDelphiWrapper.DefineVar('ftParadoxOle', 19);
+  APyDelphiWrapper.DefineVar('ftDBaseOle', 20);
+  APyDelphiWrapper.DefineVar('ftTypedBinary', 21);
+  APyDelphiWrapper.DefineVar('ftCursor', 22);
+  // Values for type TFieldKind
+  APyDelphiWrapper.DefineVar('fkData', 0);
+  APyDelphiWrapper.DefineVar('fkCalculated', 1);
+  APyDelphiWrapper.DefineVar('fkLookup', 2);
+  APyDelphiWrapper.DefineVar('fkInternalCalc', 3);
+  // Values for type TLocateOption
+  APyDelphiWrapper.DefineVar('loCaseInsensitive', 0);
+  APyDelphiWrapper.DefineVar('loPartialKey', 1);
+  // Values for type TLockType
+  APyDelphiWrapper.DefineVar('ltReadLock', 0);
+  APyDelphiWrapper.DefineVar('ltWriteLock', 1);
+  // Values for type TIndexOptions
+  APyDelphiWrapper.DefineVar('ixPrimary', 0);
+  APyDelphiWrapper.DefineVar('ixUnique', 1);
+  APyDelphiWrapper.DefineVar('ixDescending', 2);
+  APyDelphiWrapper.DefineVar('ixCaseInsensitive', 3);
+  APyDelphiWrapper.DefineVar('ixExpression', 4);
+  // Values for type TDataAction
+  APyDelphiWrapper.DefineVar('daFail', 0);
+  APyDelphiWrapper.DefineVar('daAbort', 1);
+  APyDelphiWrapper.DefineVar('daRetry', 2);
+  // Values for type TUpdateKind
+  APyDelphiWrapper.DefineVar('ukModify', 0);
+  APyDelphiWrapper.DefineVar('ukInsert', 1);
+  APyDelphiWrapper.DefineVar('ukDelete', 2);
+  // Values for type TUpdateAction
+  APyDelphiWrapper.DefineVar('uaFail', 0);
+  APyDelphiWrapper.DefineVar('uaAbort', 1);
+  APyDelphiWrapper.DefineVar('uaSkip', 2);
+  APyDelphiWrapper.DefineVar('uaRetry', 3);
+  APyDelphiWrapper.DefineVar('uaApplied', 4);
 end;
 
-finalization
+function TPyFireDACRegistration.Name: String;
 begin
- {
- if Assigned(g_oDBFieldType) then begin
-   g_oDBFieldType.Free;
-   g_oDBFieldType := Nil;
- end;
- if Assigned(g_oDBVarArgType) then begin
-   g_oDBVarArgType.Free;
-   g_oDBVarArgType := Nil;
- end;
- if Assigned(g_oDBTableType) then begin
-   g_oDBTableType.Free;
-   g_oDBTableType := Nil;
- end;
- if Assigned(g_oDBQueryType) then begin
-   g_oDBQueryType.Free;
-   g_oDBQueryType := Nil;
- end;
- if Assigned(g_oDBModule) then begin
-   g_oDBModule.Free;
-   g_oDBModule := Nil;
- end;
- }
+  Result := 'FireDac';
+end;
+
+procedure TPyFireDACRegistration.RegisterWrappers(
+  aPyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDBDataset);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDBTable);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDBQuery);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDBField);
+end;
+
+function SqlTimeToVarDate(V : Variant) : Variant;
+begin
+  if VarIsSQLTimeStamp(V) or VarIsSQLTimeStampOffset(V) then
+    VarCast(Result, V, varDate)
+  else
+    Result := V;
+end;
+
+
+initialization
+begin
+  RegisteredUnits.Add( TPyFireDACRegistration.Create );
 end;
 
 end.

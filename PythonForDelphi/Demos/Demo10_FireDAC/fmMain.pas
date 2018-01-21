@@ -12,27 +12,22 @@ uses
   FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf, FireDAC.DApt,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Comp.UI,
   FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
-  WrapDelphi, pyDBFireDac, SynEditHighlighter, SynHighlighterPython, SynEdit,
-  SynEditCodeFolding;
+  WrapDelphi, WrapFireDac, SynEditHighlighter, SynHighlighterPython, SynEdit,
+  SynEditCodeFolding, sqlTimSt, FireDAC.VCLUI.Wait;
 
 type
   TMain = class(TForm)
     RichEdit1: TRichEdit;
     Splitter1: TSplitter;
     PythonGUIInputOutput: TPythonGUIInputOutput;
-    typeFDTable: TPythonType;
     modDBFireDac: TPythonModule;
     dsrcCustomer: TDataSource;
-    typeFDQuery: TPythonType;
     DataSource2: TDataSource;
-    typeDBField: TPythonType;
-    typeDBVarArg: TPythonType;
     Panel6: TPanel;
     btnSQLTest: TButton;
     cobxConnSQLServer: TComboBox;
     Label5: TLabel;
     Connection: TFDConnection;
-    FDGUIxWaitCursor: TFDGUIxWaitCursor;
     mqSrcTables: TFDMetaInfoQuery;
     SynPythonSyn: TSynPythonSyn;
     PythonEngine: TPythonEngine;
@@ -62,24 +57,16 @@ type
     Panel2: TPanel;
     btnExecuteExample4: TButton;
     SynEditScript4: TSynEdit;
+    PyDelphiWrapper: TPyDelphiWrapper;
     procedure btnExecuteExample1Click(Sender: TObject);
-    procedure typeFDTableInitialization(Sender: TObject);
     procedure btnExecuteExample2Click(Sender: TObject);
     procedure Table1CalcFields(DataSet: TDataSet);
-    procedure typeFDQueryInitialization(Sender: TObject);
     procedure btnExecuteExample4Click(Sender: TObject);
     procedure btnExecuteExample3Click(Sender: TObject);
-    procedure typeDBFieldInitialization(Sender: TObject);
-    procedure modDBFireDacAfterInitialization(Sender: TObject);
     procedure modDBFireDacInitialization(Sender: TObject);
-    procedure typeDBVarArgInitialization(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnSQLTestClick(Sender: TObject);
-    procedure modDBFireDacFinalization(Sender: TObject);
-    procedure typeFDTableFinalization(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure typeFDQueryFinalization(Sender: TObject);
-    procedure typeDBFieldFinalization(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
   private
     function DBConnectionClosedCheck(aConnectionDefName: String): Boolean;
@@ -91,7 +78,6 @@ var
 
 
 implementation
-
 
 {$R *.DFM}
 
@@ -152,10 +138,6 @@ procedure TMain.FormDestroy(Sender: TObject);
 begin
  if Connection.Connected then
    Connection.Close;
- typeFDTableFinalization(TPyDBTable.PyDBTableType);
- typeFDQueryFinalization(TPyDBQuery.PyDBQueryType);
- typeDBFieldFinalization(TPyDBField.PyDBFieldType);
- modDBFireDacFinalization(pyDBFireDac.g_oDBModule);
 end;
 
 procedure TMain.btnSQLTestClick(Sender: TObject);
@@ -214,169 +196,15 @@ begin
  end;
 end;
 
-procedure TMain.typeFDTableInitialization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   l_oPythonType.PyObjectClass := TPyDBTable;
-   if not Assigned(typeFDTable) then
-     typeFDTable := l_oPythonType;
-   TPyDBTable.PyDBTableType := l_oPythonType;
- end;
-end;
-
-procedure TMain.typeFDTableFinalization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   //-- l_oPythonType.ClearMethods;
- end;
-end;
-
-procedure TMain.typeFDQueryInitialization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   l_oPythonType.PyObjectClass := TPyDBQuery;
-   if not Assigned(typeFDQuery) then
-     typeFDQuery := l_oPythonType;
-   TPyDBQuery.PyDBQueryType := l_oPythonType;
- end;
-end;
-
-procedure TMain.typeFDQueryFinalization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   //-- l_oPythonType.ClearMethods;
- end;
-end;
-
-procedure TMain.typeDBFieldInitialization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   l_oPythonType.PyObjectClass := TPyDBField;
-   if not Assigned(typeDBField) then
-     typeDBField := l_oPythonType;
-   TPyDBField.PyDBFieldType := l_oPythonType;
- end;
-end;
-
-procedure TMain.typeDBFieldFinalization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   //-- l_oPythonType.ClearMethods;
- end;
-end;
-
-procedure TMain.typeDBVarArgInitialization(Sender: TObject);
-var
- l_oPythonType: TPythonType;
-begin
- if Sender is TPythonType then begin
-   l_oPythonType := TPythonType(Sender);
-   l_oPythonType.PyObjectClass := TPyDBVarArg;
-   if not Assigned(typeDBVarArg) then
-     typeDBVarArg := l_oPythonType;
-   TPyDBVarArg.PyDBVarArgType := l_oPythonType;
- end;
-end;
-
 procedure TMain.Table1CalcFields(DataSet: TDataSet);
 begin
  Dataset.FieldByName('Demo').AsString := Dataset.FieldByName('State').AsString + ' - ' +
                                          Dataset.FieldByName('Zip').AsString;
 end;
 
-procedure TMain.modDBFireDacAfterInitialization(Sender: TObject);
-begin
- with Sender as TPythonModule do begin
-   // Values for type TDatasetState
-   SetVarFromVariant( AnsiString('dsInactive'), 0 );
-   SetVarFromVariant( AnsiString('dsBrowse'), 1 );
-   SetVarFromVariant( AnsiString('dsEdit'), 2 );
-   SetVarFromVariant( AnsiString('dsInsert'), 3 );
-   SetVarFromVariant( AnsiString('dsSetKey'), 4 );
-   SetVarFromVariant( AnsiString('dsCalcFields'), 5 );
-   SetVarFromVariant( AnsiString('dsFilter'), 6 );
-   SetVarFromVariant( AnsiString('dsNewValue'), 7 );
-   SetVarFromVariant( AnsiString('dsOldValue'), 8 );
-   SetVarFromVariant( AnsiString('dsCurValue'), 9 );
-   // Values for type TFieldType
-   SetVarFromVariant( AnsiString('ftUnknown'), 0 );
-   SetVarFromVariant( AnsiString('ftString'), 1 );
-   SetVarFromVariant( AnsiString('ftSmallint'), 2 );
-   SetVarFromVariant( AnsiString('ftInteger'), 3 );
-   SetVarFromVariant( AnsiString('ftWord'), 4 );
-   SetVarFromVariant( AnsiString('ftBoolean'), 5 );
-   SetVarFromVariant( AnsiString('ftFloat'), 6 );
-   SetVarFromVariant( AnsiString('ftCurrency'), 7 );
-   SetVarFromVariant( AnsiString('ftBCD'), 8 );
-   SetVarFromVariant( AnsiString('ftDate'), 9 );
-   SetVarFromVariant( AnsiString('ftTime'), 10 );
-   SetVarFromVariant( AnsiString('ftDateTime'), 11 );
-   SetVarFromVariant( AnsiString('ftBytes'), 12 );
-   SetVarFromVariant( AnsiString('ftVarBytes'), 13 );
-   SetVarFromVariant( AnsiString('ftAutoInc'), 14 );
-   SetVarFromVariant( AnsiString('ftBlob'), 15 );
-   SetVarFromVariant( AnsiString('ftMemo'), 16 );
-   SetVarFromVariant( AnsiString('ftGraphic'), 17 );
-   SetVarFromVariant( AnsiString('ftFmtMemo'), 18 );
-   SetVarFromVariant( AnsiString('ftParadoxOle'), 19 );
-   SetVarFromVariant( AnsiString('ftDBaseOle'), 20 );
-   SetVarFromVariant( AnsiString('ftTypedBinary'), 21 );
-   SetVarFromVariant( AnsiString('ftCursor'), 22 );
-   // Values for type TFieldKind
-   SetVarFromVariant( AnsiString('fkData'), 0 );
-   SetVarFromVariant( AnsiString('fkCalculated'), 1 );
-   SetVarFromVariant( AnsiString('fkLookup'), 2 );
-   SetVarFromVariant( AnsiString('fkInternalCalc'), 3 );
-   // Values for type TLocateOption
-   SetVarFromVariant( AnsiString('loCaseInsensitive'), 0 );
-   SetVarFromVariant( AnsiString('loPartialKey'), 1 );
-   // Values for type TLockType
-   SetVarFromVariant( AnsiString('ltReadLock'), 0 );
-   SetVarFromVariant( AnsiString('ltWriteLock'), 1 );
-   // Values for type TIndexOptions
-   SetVarFromVariant( AnsiString('ixPrimary'), 0 );
-   SetVarFromVariant( AnsiString('ixUnique'), 1 );
-   SetVarFromVariant( AnsiString('ixDescending'), 2 );
-   SetVarFromVariant( AnsiString('ixCaseInsensitive'), 3 );
-   SetVarFromVariant( AnsiString('ixExpression'), 4 );
-   // Values for type TDataAction
-   SetVarFromVariant( AnsiString('daFail'), 0 );
-   SetVarFromVariant( AnsiString('daAbort'), 1 );
-   SetVarFromVariant( AnsiString('daRetry'), 2 );
-   // Values for type TUpdateKind
-   SetVarFromVariant( AnsiString('ukModify'), 0 );
-   SetVarFromVariant( AnsiString('ukInsert'), 1 );
-   SetVarFromVariant( AnsiString('ukDelete'), 2 );
-   // Values for type TUpdateAction
-   SetVarFromVariant( AnsiString('uaFail'), 0 );
-   SetVarFromVariant( AnsiString('uaAbort'), 1 );
-   SetVarFromVariant( AnsiString('uaSkip'), 2 );
-   SetVarFromVariant( AnsiString('uaRetry'), 3 );
-   SetVarFromVariant( AnsiString('uaApplied'), 4 );
- end;
-end;
-
 procedure TMain.modDBFireDacInitialization(Sender: TObject);
 begin
- pyDBFireDac.g_oDBModule := Sender as TPythonModule;
+// pyDBFireDac.g_oDBModule := Sender as TPythonModule;
  with Sender as TPythonModule do begin
    with DocString do begin
      Add( 'This module contains several Object Types that' );
@@ -389,15 +217,6 @@ begin
    with Errors.Add do begin
      Name := 'DBError';
      ErrorType := etClass;     // <- !!! Must ...
-   end;
- end;
-end;
-
-procedure TMain.modDBFireDacFinalization(Sender: TObject);
-begin
- if Sender is TPythonModule then begin
-   with Sender as TPythonModule do begin
-     ClearVars;
    end;
  end;
 end;
@@ -429,49 +248,39 @@ end;
 
 procedure TMain.btnExecuteExample2Click(Sender: TObject);
 var
- pyTbl : TPyDBTable;
  pyObj : PPyObject;
 begin
- // Instantiate a new Python object TPyTable
- pyObj := typeFDTable.CreateInstance;
- pyTbl := PythonToDelphi(pyObj) as TPyDBTable;
- // Attach our Delphi table to the Python object
- pyTbl.DelphiObject := tblCustomer;
- pyTbl.Owned        := False;
- with GetPythonEngine do begin
-   // Define a new variable "T" in the DB module
-   modDBFireDac.SetVar( 'T', pyObj );
-   Py_XDecRef(pyObj);
-   // Excecute the script
-   ExecStrings( SynEditScript2.Lines );
- end;
- pyTbl.Free;
+  //  Instantiate a new Python object TPyTable
+  pyObj := PyDelphiWrapper.Wrap(tblCustomer);
+  with GetPythonEngine do begin
+    // Define a new variable "T" in the DB module
+    modDBFireDac.SetVar( 'T', pyObj );
+    Py_XDecRef(pyObj);
+    // Excecute the script
+    ExecStrings( SynEditScript2.Lines );
+  end;
 end;
 
 procedure TMain.btnExecuteExample3Click(Sender: TObject);
 var
- pyTbl : TPyDBTable;
  pyObj : PPyObject;
  l_oTable: TFDTable;
 begin
- // Instantiate a new Python object TPyTable
- pyObj := typeFDTable.CreateInstance;
- pyTbl := PythonToDelphi(pyObj) as TPyDBTable;
- // connect the Datasource2 to the Python Table
- l_oTable := pyTbl.GetDelphiObject;
- l_oTable.TableName := 'Customer';
- l_oTable.Connection := Connection;
- Datasource2.Dataset := l_oTable;
- l_oTable.Open();
- // Datasource2.Dataset.
- with GetPythonEngine do begin
-    // Define a new variable "T" in the DB module
-   modDBFireDac.SetVar( 'T', pyObj );
-   Py_XDecRef(pyObj);
-   // Excecute the script
-   ExecStrings( SynEditScript3.Lines );
- end;
- pyTbl.Free;
+  // connect the Datasource2 to the Python Table
+  l_oTable := TFDTable.Create(Self);
+  l_oTable.TableName := 'Customer';
+  l_oTable.Connection := Connection;
+  Datasource2.Dataset := l_oTable;
+  l_oTable.Open();
+
+  pyObj := PyDelphiWrapper.Wrap(l_oTable, soOwned);
+  with GetPythonEngine do begin
+     // Define a new variable "T" in the DB module
+    modDBFireDac.SetVar( 'T', pyObj );
+    Py_XDecRef(pyObj);
+    // Excecute the script
+    ExecStrings( SynEditScript3.Lines );
+  end;
 end;
 
 procedure TMain.btnExecuteExample4Click(Sender: TObject);
@@ -485,5 +294,9 @@ begin
  end;
 end;
 
+initialization
+  ReportMemoryLeaksOnShutdown := True;
+finalization
+  CheckSynchronize;
 end.
 

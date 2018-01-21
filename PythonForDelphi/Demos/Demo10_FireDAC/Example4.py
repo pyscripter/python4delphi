@@ -1,11 +1,11 @@
 import DBFireDac
 
 # Create and open the Query
-Q = DBFireDac.CreateFDQuery()
+Q = DBFireDac.TFDQuery(None)
 Q.ConnectionDefName = "SQLite_DB"
-Q.SQL = [
-"select *",
-"  from ORDERS" ]
+Q.SQL.Text = """select *
+from ORDERS
+"""
 
 Q.Open()  # or Q.Active = True
 
