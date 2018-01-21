@@ -127,9 +127,9 @@ type
 {$IFDEF DELPHIXE2_OR_HIGHER}
   {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
 {$ENDIF}
-{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {$DEFINE USESYSTEMDISPINVOKE}
-{$IFEND}
+{$.IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
+  {.$DEFINE USESYSTEMDISPINVOKE}
+{.$IFEND}
 
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
@@ -146,7 +146,7 @@ type
     procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
     {$IFNDEF USESYSTEMDISPINVOKE}
-    procedure DoDispInvoke(Dest: PVarData; const Source: TVarData;
+    procedure DoDispInvoke(Dest: PVarData; var Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); virtual;
     function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
       const AName: AnsiString; AArg : TVarData): Boolean; virtual;
@@ -180,14 +180,14 @@ type
       const Arguments: TVarDataArray): Boolean; override;
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
-    function SetProperty(const V: TVarData; const AName: string;
+    function SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
     {$IFDEF DELPHIXE7_OR_HIGHER}
     procedure DispInvoke(Dest: PVarData;
       [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ELSE}
     procedure DispInvoke(Dest: PVarData;
-       const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
+       var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ENDIF}
   end;
 
@@ -941,7 +941,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 {$ELSE}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-   const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+   var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 {$ENDIF}
 {$IFDEF USESYSTEMDISPINVOKE}
 {$IFDEF DELPHIXE2_OR_HIGHER}
@@ -1088,7 +1088,7 @@ begin
 end;
 
 procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+  var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 type
   PParamRec = ^TParamRec;
   TParamRec = array[0..3] of LongInt;
@@ -1863,7 +1863,7 @@ begin
     Result := False;
 end;
 
-function TPythonVariantType.SetProperty(const V: TVarData;
+function TPythonVariantType.SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData;
   const AName: string; const Value: TVarData): Boolean;
 var
   _newValue : PPyObject;

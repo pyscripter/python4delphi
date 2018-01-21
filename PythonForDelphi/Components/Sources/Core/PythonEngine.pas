@@ -67,12 +67,17 @@ unit PythonEngine;
 interface
 
 uses
+  Types,
 {$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
-  Types,
+{$ELSE}
+{$IFDEF FPC}
   dynlibs,
+{$ELSE}
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$ENDIF}
 {$ENDIF}
   Classes,
   SysUtils,
@@ -3462,10 +3467,13 @@ begin
 {$IFDEF MSWINDOWS}
     MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
     ExitProcess( 1 );
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
     WriteLn(ErrOutput, GetQuitMessage);
+{$IFDEF FPC}
     Halt( 1 );
+{$ELSE}
+    __exit(1);
+{$ENDIF}
 {$ENDIF}
   end;
 end;
@@ -3512,7 +3520,7 @@ end;
 procedure TPythonInterface.AfterLoad;
 begin
   inherited;
-  FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
+  FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) >  0;
   FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
   FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+4{$ENDIF}]);
 
@@ -3529,8 +3537,7 @@ begin
       if FatalMsgDlg then
 {$IFDEF MSWINDOWS}
         MessageBox( GetActiveWindow, PChar(E.Message), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
         WriteLn( ErrOutput, E.Message );
 {$ENDIF}
       if FatalAbort then Quit;
