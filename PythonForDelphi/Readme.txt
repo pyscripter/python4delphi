@@ -62,6 +62,8 @@ INSTALLATION:
 
   1) Install the core components
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  For recent versions of Delphi, install the "Python_d" package located in the 
+  Components folder and add the folder "...\Components\Sources\Core".
 
   For Delphi 3, install the "Python_d3" package located in the Components folder
   and add the folder "...\Components\Sources\Core".
@@ -80,6 +82,9 @@ INSTALLATION:
 
   2) Install the VCL components (this is optional)
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+  For recent versions of Delphi, install the "PythonVCL_d" package located in the 
+  Components folder and add the folder "...\Components\Sources\Core".
 
   For Delphi 3, install the "PythonVCL_d3" package located in the Components folder
   and add the folder "...\Components\Sources\VCL".
@@ -119,14 +124,6 @@ NOTE:
 ~~~~~
   Don't forget to look at the tutorial file (tutorial.txt) which introduces the
   demos.
-
-  Visit the site http://starship.python.net/crew/mhammond/ and get the last version
-  of Pythonwin. It's a really good Python IDE, that you must have for serious
-  Python programming and debugging !
-
-UPDATE:
-~~~~~~~
-  You'll find the latest version at http://mmm-experts.com/
 
 DISTRIBUTION:
 ~~~~~~~~~~~~~
