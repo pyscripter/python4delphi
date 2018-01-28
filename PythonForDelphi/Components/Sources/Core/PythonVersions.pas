@@ -44,7 +44,7 @@ type
   TPythonVersions = array of TPythonVersion;
 
   (* Compares two Version strings and returns -1, 0, 1 depending on result *)
-  function  CompareVersions(const A, B : String) : Integer;
+  function  CompareVersions(A, B : String) : Integer;
 
 
   {$IFDEF MSWINDOWS}
@@ -139,67 +139,46 @@ begin
   end;
 end;
 
-function  CompareVersions(const A, B : String) : Integer;
+function  CompareVersions(A, B : String) : Integer;
+
+  function GetNextNumber(var Version: string): Integer;
+  var
+    P: Integer;
+    S: string;
+  begin
+    P := Pos('.', Version);
+    if P > 0 then
+    begin
+      S := Copy(Version, 1, P - 1);
+      Version := Copy(Version, P + 1, Length(Version) - P);
+    end
+    else
+    begin
+      S := Version;
+      Version := '';
+    end;
+    Result := StrToIntDef(S, 0)
+  end;
+
 var
-  i : Integer;
-  _delta : Integer;
-  _version1 : TStringList;
-  _version2 : TStringList;
-  _version : TStringList;
+  N1, N2: Integer;
 begin
   Result := 0;
-  _version1 := TStringList.Create;
-  try
-    _version1.Delimiter := '.';
-    _version1.DelimitedText := A;
-    _version2 := TStringList.Create;
-    try
-      _version2.Delimiter := '.';
-      _version2.DelimitedText := B;
-      for i := 0 to Min(_version1.Count, _version2.Count)-1 do
-      begin
-        try
-          _delta := StrToInt(_version1[i]) - StrToInt(_version2[i]);
-        except
-          _delta := CompareText(_version1[i], _version2[i]);
-        end;
-        if _delta <> 0 then
-        begin
-          if _delta > 0 then
-            Result := 1
-          else
-            Result := -1;
-          Break;
-        end;
-      end;
-      // if we have an equality but the 2 versions don't have the same number of parts
-      // then check the remaining parts of the stronger version, and if it contains
-      // something different from 0, it will win.
-      if Result = 0 then
-        if _version1.Count <> _version2.Count then
-        begin
-          if _version1.Count > _version2.Count then
-            _version := _version1
-          else
-            _version := _version2;
-          for i := Min(_version1.Count, _version2.Count) to _version.Count-1 do
-          begin
-            if StrToIntDef(_version[i], -1) <> 0 then
-            begin
-              if _version1.Count > _version2.Count then
-                Result := 1
-              else
-                Result := -1;
-              Break;
-            end;
-          end;
-        end;
-    finally
-      _version2.Free;
-    end;
-  finally
-    _version1.Free;
-  end;
+  repeat
+    N1 := GetNextNumber(A);
+    N2 := GetNextNumber(B);
+    if N2 > N1 then
+    begin
+      Result := 1;
+      Exit;
+    end
+    else
+    if N2 < N1 then
+    begin
+      Result := -1;
+      Exit;
+    end
+  until (A = '') and (B = '');
 end;
 
 {$IFDEF MSWINDOWS}
