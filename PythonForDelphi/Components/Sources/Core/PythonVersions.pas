@@ -43,7 +43,11 @@ type
 
   TPythonVersions = array of TPythonVersion;
 
-  (* Compares two Version strings and returns -1, 0, 1 depending on result *)
+  (*
+    Compares two Version strings and returns -1, 0, 1 depending on result
+    The function result has the semantics of Delphi compare functions
+    -1: A is bigger (newer), 0: equal versions, 1: B is bigger (newer)
+  *)
   function  CompareVersions(A, B : String) : Integer;
 
 
@@ -206,7 +210,7 @@ function GetRegisterPythonVersion(SysVersion: string;
           RootKey := Root;
           if OpenKey(Key + '\InstallPath', False) then begin
             PythonVersion.InstallPath := ReadString('');
-            if PythonVersion.IsAllUsers and (CompareVersions(SysVersion, '3.5') <  0) then
+            if PythonVersion.IsAllUsers and (CompareVersions(SysVersion, '3.5') > 0) then
               PythonVersion.DLLPath := ''
             else
               PythonVersion.DLLPath := PythonVersion.InstallPath;
@@ -246,7 +250,7 @@ begin
 
   VersionSuffix := '';
 {$IFDEF CPUX86}
-  if CompareVersions(SysVersion, '3.5') >= 0 then
+  if CompareVersions(SysVersion, '3.5') <= 0 then
     VersionSuffix := '-32';
 {$ENDIF}
   key := Format('\Software\Python\PythonCore\%s%s', [SysVersion, VersionSuffix]);
