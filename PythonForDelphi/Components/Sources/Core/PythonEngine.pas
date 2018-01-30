@@ -838,9 +838,20 @@ type
     tp_cache            : PPyObject;
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
+    tp_del              : PyDestructor;
+    tp_version_tag      : NativeUInt;  // Type attribute cache version tag. Added in version 2.6
+    tp_finalize         : PyDestructor;
     //More spares
+    tp_xxx1             : NativeInt;
+    tp_xxx2             : NativeInt;
+    tp_xxx3             : NativeInt;
+    tp_xxx4             : NativeInt;
+    tp_xxx5             : NativeInt;
+    tp_xxx6             : NativeInt;
     tp_xxx7             : NativeInt;
-    tp_xxx8             : LongInt;
+    tp_xxx8             : NativeInt;
+    tp_xxx9             : NativeInt;
+    tp_xxx10            : NativeInt;
   end;
 
   PPyMethodChain = ^PyMethodChain;
