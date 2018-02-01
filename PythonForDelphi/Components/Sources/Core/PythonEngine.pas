@@ -31,7 +31,7 @@
 (*      Stefan Hoffmeister (Stefan.Hoffmeister@Econos.de)                 *)
 (*      Michiel du Toit (micdutoit@hsbfn.com) - Lazarus Port              *)
 (*      Chris Nicolai (nicolaitanes@gmail.com)                            *)
-(*      Kiriakos Vlahos (kvlahos@london.edu)                              *)
+(*      Kiriakos Vlahos (pyscripter@gmail.com)                            *)
 (*      Andrey Gruzdev      (andrey.gruzdev@gmail.com)                    *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
@@ -67,11 +67,17 @@ unit PythonEngine;
 interface
 
 uses
+  Types,
 {$IFDEF MSWINDOWS}
   Windows,
 {$ELSE}
-  Types,
+{$IFDEF FPC}
   dynlibs,
+{$ELSE}
+{$IFDEF LINUX}
+  Libc,
+{$ENDIF}
+{$ENDIF}
 {$ENDIF}
   Classes,
   SysUtils,
@@ -125,7 +131,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
   ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -136,11 +142,12 @@ const
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python35.dll'; RegVersion: '3.5-32'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python35.dll'; RegVersion: '3.5-64'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
   ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
@@ -151,21 +158,9 @@ const
     (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
-{$ENDIF}
-{$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..11] of TPythonVersionProp =
-  ( (DllName: 'libpython2.3.dylib'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'libpython2.4.dylib'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.0.dylib'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.1.dylib'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True) );
+    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
+    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF PYTHON23}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
@@ -199,6 +194,12 @@ const
 {$ENDIF}
 {$IFDEF PYTHON35}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
+{$ENDIF}
+{$IFDEF PYTHON36}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
+{$ENDIF}
+{$IFDEF PYTHON37}
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 13;
 {$ENDIF}
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
@@ -837,9 +838,20 @@ type
     tp_cache            : PPyObject;
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
+    tp_del              : PyDestructor;
+    tp_version_tag      : NativeUInt;  // Type attribute cache version tag. Added in version 2.6
+    tp_finalize         : PyDestructor;
     //More spares
+    tp_xxx1             : NativeInt;
+    tp_xxx2             : NativeInt;
+    tp_xxx3             : NativeInt;
+    tp_xxx4             : NativeInt;
+    tp_xxx5             : NativeInt;
+    tp_xxx6             : NativeInt;
     tp_xxx7             : NativeInt;
-    tp_xxx8             : LongInt;
+    tp_xxx8             : NativeInt;
+    tp_xxx9             : NativeInt;
+    tp_xxx10            : NativeInt;
   end;
 
   PPyMethodChain = ^PyMethodChain;
@@ -1905,6 +1917,7 @@ type
     PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
+    PyUnicode_GetSize:function (unicode:PPyObject):NativeInt; cdecl;
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
@@ -2637,6 +2650,7 @@ type
       procedure SetVar( const varName : AnsiString; value : PPyObject );
       function  GetVar( const varName : AnsiString ) : PPyObject;
       procedure DeleteVar( const varName : AnsiString );
+      procedure ClearVars;
       procedure SetVarFromVariant( const varName : AnsiString; const value : Variant );
       function  GetVarAsVariant( const varName: AnsiString ) : Variant;
 
@@ -3131,8 +3145,7 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 implementation
 
 {$IFDEF MSWINDOWS}
-uses
-  Registry;
+uses Registry;
 {$ENDIF}
 
 
@@ -3278,7 +3291,6 @@ var
   thread_id : Longint;
   i : Integer;
 begin
-  {$ifndef DARWIN}
   thread_id := GetCurrentThreadId;
   for i := 0 to FLinesPerThread.Count-1 do
     if Longint(FLinesPerThread.Objects[i]) = thread_id then
@@ -3287,7 +3299,6 @@ begin
         Exit;
       end;
   Result := FLinesPerThread.AddObject( '', TObject(thread_id) );
-  {$endif}
 end;
 
 function  TPythonInputOutput.GetCurrentThreadLine : IOString;
@@ -3318,28 +3329,6 @@ begin
         GetDllPath+DllName
       {$ENDIF}
     );
-    {$IFDEF LINUX}
-    if FDLLHandle=0 then
-      begin
-        FDLLHandle := LoadLibrary(
-          {$IFDEF FPC}
-            PAnsiChar(AnsiString('/usr/lib/x86_64-linux-gnu/'+DllName))
-          {$ELSE}
-            GetDllPath+DllName
-          {$ENDIF}
-          );
-      end;
-    if FDLLHandle=0 then
-      begin
-        FDLLHandle := LoadLibrary(
-          {$IFDEF FPC}
-            PAnsiChar(AnsiString('/usr/lib/i386-linux-gnu/'+DllName))
-          {$ELSE}
-            GetDllPath+DllName
-          {$ENDIF}
-          );
-      end;
-    {$ENDIF}
   end;
 end;
 
@@ -3489,10 +3478,13 @@ begin
 {$IFDEF MSWINDOWS}
     MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
     ExitProcess( 1 );
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
     WriteLn(ErrOutput, GetQuitMessage);
+{$IFDEF FPC}
     Halt( 1 );
+{$ELSE}
+    __exit(1);
+{$ENDIF}
 {$ENDIF}
   end;
 end;
@@ -3539,14 +3531,9 @@ end;
 procedure TPythonInterface.AfterLoad;
 begin
   inherited;
-  FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) = 1;
-  {$IFDEF WINDOWS}
-  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
-  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+3{$ENDIF}]);
-  {$ELSE}
-  FMajorVersion := StrToInt(DLLName[7{$IFDEF LINUX}+3{$ENDIF}]);
-  FMinorVersion := StrToInt(DLLName[9{$IFDEF LINUX}+3{$ENDIF}]);
-  {$ENDIF}
+  FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) >  0;
+  FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+4{$ENDIF}]);
 
 
   if FIsPython3000 then
@@ -3561,8 +3548,7 @@ begin
       if FatalMsgDlg then
 {$IFDEF MSWINDOWS}
         MessageBox( GetActiveWindow, PChar(E.Message), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
         WriteLn( ErrOutput, E.Message );
 {$ENDIF}
       if FatalAbort then Quit;
@@ -3606,9 +3592,9 @@ begin
   Py_InteractiveFlag         := Import('Py_InteractiveFlag');
   Py_OptimizeFlag            := Import('Py_OptimizeFlag');
   Py_NoSiteFlag              := Import('Py_NoSiteFlag');
-  Py_UseClassExceptionsFlag  := Import('Py_UseClassExceptionsFlag');
   Py_FrozenFlag              := Import('Py_FrozenFlag');
   if not IsPython3000 then begin
+    Py_UseClassExceptionsFlag  := Import('Py_UseClassExceptionsFlag');
     Py_TabcheckFlag            := Import('Py_TabcheckFlag');
     Py_UnicodeFlag             := Import('Py_UnicodeFlag');
   end;
@@ -4010,13 +3996,12 @@ begin
   PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   PyType_GenericNew         :=Import('PyType_GenericNew');
   PyType_Ready              :=Import('PyType_Ready');
-  {$IFNDEF LINUX}
   PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
   PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
   PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
   PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
-  {$ENDIF}
+  PyUnicode_GetSize         :=Import(AnsiString(Format('PyUnicode%s_GetSize',[GetUnicodeTypeSuffix])));
   PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
@@ -4650,13 +4635,17 @@ begin
             Finalize;
         end;
   // Then finalize Python, if we have to
-  if Initialized and FAutoFinalize then
+  if Initialized and FAutoFinalize then begin
     try
-      FFinalizing := True;
-      Py_Finalize;
-    finally
-      FFinalizing := False;
+      try
+        FFinalizing := True;
+        Py_Finalize;
+      finally
+        FFinalizing := False;
+      end;
+    except 
     end;
+  end;
   // Detach our clients, when engine is beeing destroyed or one of its clients.
   canDetachClients := csDestroying in ComponentState;
   if not canDetachClients then
@@ -4715,11 +4704,7 @@ begin
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
-      try
-        FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
-      except
-        FDLLHandle:=0;
-      end;
+      FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
@@ -4749,9 +4734,9 @@ begin
   SetFlag(Py_InteractiveFlag, pfInteractive in FPyFlags);
   SetFlag(Py_OptimizeFlag,    pfOptimize in FPyFlags);
   SetFlag(Py_NoSiteFlag,      pfNoSite in FPyFlags);
-  SetFlag(Py_UseClassExceptionsFlag, pfUseClassExceptionsFlag in FPyFlags);
   SetFlag(Py_FrozenFlag,      pfFrozenFlag in FPyFlags);
   if not IsPython3000 then begin
+    SetFlag(Py_UseClassExceptionsFlag, pfUseClassExceptionsFlag in FPyFlags);
     SetFlag(Py_UnicodeFlag,     pfUnicode in FPyFlags);
     SetFlag(Py_TabcheckFlag,    pfTabcheck in FPyFlags);
   end;
@@ -4939,37 +4924,50 @@ end;
 procedure TPythonEngine.CheckRegistry;
 {$IFDEF MSWINDOWS}
 var
-  key : String;
-  path : String;
+  key : string;
+  Path : string;
+  NewPath : string;
+{$IFDEF CPUX86}
+  MajorVersion : integer;
+  MinorVersion : integer;
+{$ENDIF}
+  VersionSuffix: string;
 {$ENDIF}
 begin
 {$IFDEF MSWINDOWS}
+  if Assigned( FOnPathInitialization ) then
   try
-    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+    with TRegistry.Create(KEY_ALL_ACCESS and not KEY_NOTIFY) do
       try
-        //Access := KEY_READ; // works only with Delphi5 or greater
+        VersionSuffix := '';
+{$IFDEF CPUX86}
+        MajorVersion := StrToInt(RegVersion[1]);
+        MinorVersion := StrToInt(RegVersion[3]);
+        if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+          VersionSuffix := '-32';
+{$ENDIF}
+        key := Format('\Software\Python\PythonCore\%s%s\PythonPath', [RegVersion, VersionSuffix]);
+
         RootKey := HKEY_LOCAL_MACHINE;
-        key := Format('\Software\Python\PythonCore\%s\PythonPath', [RegVersion]);
         if not KeyExists( key ) then
+        begin
+          // try a current user installation
+          RootKey := HKEY_CURRENT_USER;
+          if not KeyExists( key ) then  Exit;
+        end;
+        // Key found
+        OpenKey( key, True );
+        try
+          Path := ReadString('');
+          NewPath := Path;
+          FOnPathInitialization( Self, NewPath );
+          if NewPath <> Path then
           begin
-            // try a current user installation
-            RootKey := HKEY_CURRENT_USER;
-            if not KeyExists( key ) then
-            begin
-              if Assigned( FOnPathInitialization ) then
-                begin
-                  path := '';
-                  FOnPathInitialization( Self, path );
-                  if path <> '' then
-                    begin
-                      //Access := KEY_ALL_ACCESS; // works only with Delphi5 or greater
-                      OpenKey( key, True );
-                      WriteString( '', path );
-                      CloseKey;
-                    end;
-                end;
-            end;
+            WriteString( '', NewPath );
           end;
+        finally
+          CloseKey;
+        end;
       finally
         Free;
       end;
@@ -6299,7 +6297,7 @@ var
 begin
   if PyUnicode_Check(obj) then
   begin
-    _size := PySequence_Length(obj);
+    _size := PyUnicode_GetSize(obj);
     if _size > 0 then
     begin
 {$IFDEF LINUX}
@@ -7611,6 +7609,17 @@ begin
     raise EPythonError.CreateFmt( 'Can''t delete var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
 end;
 
+procedure TPythonModule.ClearVars;
+var
+ dict : PPyObject;
+begin
+ if Assigned(FEngine) and Assigned( FModule ) then
+   with Engine do begin
+     dict := PyModule_GetDict( Module );
+     PyDict_Clear(dict);
+   end;
+end;
+
 procedure TPythonModule.SetVarFromVariant( const varName : AnsiString; const value : Variant );
 var
   obj : PPyObject;
@@ -8269,7 +8278,6 @@ end;
 procedure TPythonType.ReallocMethods;
 begin
   inherited;
-exit;
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
 end;
@@ -9712,7 +9720,6 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
-  {$IFNDEF CPUARM}
   if MatchPythonPrecision then begin
     if ExceptionsMasked then
       Set8087CW($1232 or $3F)
@@ -9724,7 +9731,6 @@ begin
     else
       Set8087CW($1332);
   end;
-  {$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
@@ -9737,19 +9743,55 @@ function IsPythonVersionRegistered(PythonVersion : string;
   // the registry info in HKEY_CURRENT_USER.
   // Hence, for Current user installations we need to try and find the install path
   // since it may not be on the system path.
+
+  // The above convension was changed in Python 3.5.  Now even for all user
+  // installations the dll is located at the InstallPath.
+  // Also from version 3.5 onwards 32 bit version have a suffix -32 e.g. "3.6-32"
+  // See also PEP 514
+
 var
   key: string;
+  VersionSuffix: string;
+  MajorVersion : integer;
+  MinorVersion : integer;
 begin
   Result := False;
   InstallPath := '';
   AllUserInstall := False;
+  MajorVersion := StrToInt(PythonVersion[1]);
+  MinorVersion := StrToInt(PythonVersion[3]);
+  VersionSuffix := '';
+{$IFDEF CPUX86}
+  if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+    VersionSuffix := '-32';
+{$ENDIF}
+  key := Format('\Software\Python\PythonCore\%s%s\InstallPath', [PythonVersion, VersionSuffix]);
+
+  // First try HKEY_CURRENT_USER as per PEP514
   try
-    key := Format('\Software\Python\PythonCore\%s\InstallPath', [PythonVersion]);
+    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
+      try
+        RootKey := HKEY_CURRENT_USER;
+        if OpenKey(Key, False) then begin
+          InstallPath := ReadString('');
+          Result := True;
+          Exit;
+        end;
+      finally
+        Free;
+      end;
+  except
+  end;
+
+  //Then try for an all user installation
+  try
     with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
       try
         RootKey := HKEY_LOCAL_MACHINE;
-        if KeyExists(key) then begin
+        if OpenKey(Key, False) then begin
           AllUserInstall := True;
+          if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+            InstallPath := ReadString('');
           Result := True;
         end;
       finally
@@ -9757,19 +9799,6 @@ begin
       end;
   except
   end;
-  // We do not seem to have an All User Python Installation.
-  // Check whether we have a current user installation
-  if not AllUserInstall then
-    with TRegistry.Create(KEY_READ and not KEY_NOTIFY) do
-      try
-        RootKey := HKEY_CURRENT_USER;
-        if OpenKey(Key, False) then begin
-          InstallPath := ReadString('');
-          Result := True;
-        end;
-      finally
-        Free;
-      end;
 end;
 {$ENDIF}
 

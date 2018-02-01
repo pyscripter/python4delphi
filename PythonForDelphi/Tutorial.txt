@@ -832,6 +832,15 @@ Enhanced Demo 11 showing how to properly interrupt running
 threads.
 --------------------------------------------------------------
 
+--------------------------------------------------------------
+34) Dynamically creating, destroying and recreating PythonEngine
+--------------------------------------------------------------
+Demo 26 revisited to demonstrate the use of the new 
+PythonVersions.pas unit.  It also shows how to create
+destroy and recreate PythonEngine etc. using code without
+the Visual components.
+--------------------------------------------------------------
+
 
 That's all folks !!!
 Hope this helps to build cool Python/Delphi applications.

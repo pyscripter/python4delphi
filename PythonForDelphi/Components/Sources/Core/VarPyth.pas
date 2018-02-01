@@ -127,9 +127,9 @@ type
 {$IFDEF DELPHIXE2_OR_HIGHER}
   {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
 {$ENDIF}
-{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {$DEFINE USESYSTEMDISPINVOKE}
-{$IFEND}
+{.$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
+  {.$DEFINE USESYSTEMDISPINVOKE}
+{.$IFEND}
 
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
@@ -145,8 +145,8 @@ type
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
     procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
-   {$IFNDEF USESYSTEMDISPINVOKE}
-    procedure DoDispInvoke(Dest: PVarData; const Source: TVarData;
+    {$IFNDEF USESYSTEMDISPINVOKE}
+    procedure DoDispInvoke(Dest: PVarData; var Source: TVarData;
       CallDesc: PCallDesc; Params: Pointer); virtual;
     function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
       const AName: AnsiString; AArg : TVarData): Boolean; virtual;
@@ -180,17 +180,15 @@ type
       const Arguments: TVarDataArray): Boolean; override;
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
-    {$if FPC_VERSION>=3}
-    function SetProperty(var V: TVarData; const AName: string;
+    function SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
-    procedure DispInvoke(Dest: PVarData; var Source: TVarData;
-      CallDesc: PCallDesc; Params: Pointer); override;
-    {$else}
-    function SetProperty(const V: TVarData; const AName: string;
-      const Value: TVarData): Boolean; override;
-    procedure DispInvoke(Dest: PVarData; const Source: TVarData;
-      CallDesc: PCallDesc; Params: Pointer); override;
-    {$endif}
+    {$IFDEF DELPHIXE7_OR_HIGHER}
+    procedure DispInvoke(Dest: PVarData;
+      [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
+    {$ELSE}
+    procedure DispInvoke(Dest: PVarData;
+       var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
+    {$ENDIF}
   end;
 
 var
@@ -884,8 +882,8 @@ begin
   FreeAndNil(TPythonVarData(V).VPython);
 end;
 
-function TPythonVariantType.CompareOp(const Left: TVarData;
-  const Right: TVarData; const AOperator: TVarOp): Boolean;
+function TPythonVariantType.CompareOp(const Left, Right: TVarData;
+  const AOperator: TVarOp): Boolean;
 begin
   Result := False;
   if (Left.VType = VarType) and (Right.VType = VarType) then
@@ -938,15 +936,15 @@ const
   CPropertyGet = $02;
   CPropertySet = $04;
 
+{$IFDEF DELPHIXE7_OR_HIGHER}
+procedure TPythonVariantType.DispInvoke(Dest: PVarData;
+  [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+{$ELSE}
+procedure TPythonVariantType.DispInvoke(Dest: PVarData;
+   var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+{$ENDIF}
 {$IFDEF USESYSTEMDISPINVOKE}
-{$if FPC_VERSION>=3}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData; var Source: TVarData;
-  CallDesc: PCallDesc; Params: Pointer);
-{$else}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData; const Source: TVarData;
-  CallDesc: PCallDesc; Params: Pointer);
-{$endif}
-{$IFDEF DELPHIXE2}
+{$IFDEF DELPHIXE2_OR_HIGHER}
   //  Modified to correct memory leak QC102387
   procedure PatchedDispInvoke(Dest: PVarData;
     const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
@@ -1041,7 +1039,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData; const Source: TVarData;
     for I := Low(VarParams) to High(VarParams) do
       VarDataClear(VarParams[I]);
   end;
-{$ENDIF DELPHIXE2}
+{$ENDIF DELPHIXE2_OR_HIGHER}
 
   procedure GetNamedParams;
   var
@@ -1068,36 +1066,29 @@ begin
     if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
       NewCallDesc := CallDesc^;
       NewCallDesc.CallType := CDoMethod;
-    {$IFDEF DELPHIXE2}
+    {$IFDEF DELPHIXE2_OR_HIGHER}
       PatchedDispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ELSE DELPHIXE2}
+    {$ELSE DELPHIXE2_OR_HIGHER}
       inherited DispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ENDIF DELPHIXE2}
+    {$ENDIF DELPHIXE2_OR_HIGHER}
     end else
-      {$IFDEF DELPHIXE2}
+      {$IFDEF DELPHIXE2_OR_HIGHER}
       PatchedDispInvoke(Dest, Source, CallDesc, Params);
-      {$ELSE DELPHIXE2}
+      {$ELSE DELPHIXE2_OR_HIGHER}
       inherited;
-      {$ENDIF DELPHIXE2}
+      {$ENDIF DELPHIXE2_OR_HIGHER}
   finally
     if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
   end;
 end;
 
 {$ELSE USESYSTEMDISPINVOKE}
-{$if FPC_VERSION>=3}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
-{$else}
-procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-  var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
-{$endif}
 begin
   DoDispInvoke(Dest, Source, CallDesc, Params);
 end;
 
 procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
-  const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+  var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 type
   PParamRec = ^TParamRec;
   TParamRec = array[0..3] of LongInt;
@@ -1872,13 +1863,8 @@ begin
     Result := False;
 end;
 
-{$if FPC_VERSION>=3}
-function TPythonVariantType.SetProperty(var V: TVarData; const AName: string;
-  const Value: TVarData): Boolean;
-{$else}
-function TPythonVariantType.SetProperty(const V: TVarData; const AName: string;
-  const Value: TVarData): Boolean;
-{$endif}
+function TPythonVariantType.SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData;
+  const AName: string; const Value: TVarData): Boolean;
 var
   _newValue : PPyObject;
 begin
@@ -2211,7 +2197,7 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
     Result := GetPythonEngine.PyString_AsString(PyObject)
   else
-    result := GetAsString;
+   Result := AnsiString(GetAsString);
 end;
 
 function TPythonData.GetAsString: String;

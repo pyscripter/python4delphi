@@ -177,7 +177,7 @@ begin
     page := GetMem(PageSize);
     //page := fpmmap(nil, PageSize, PROT_NONE, MAP_ANONYMOUS, -1, 0);
     mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
-	{$ENDIF}	
+	{$ENDIF}
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
     // init pointer to end of page

@@ -4,12 +4,13 @@
 
 unit P4DLaz;
 
+{$warn 5023 off : no warning about unused units}
 interface
 
 uses
-  PythonEngine, PythonGUIInputOutput, MethodCallBack, TinyWideStrings, 
-  VarPyth, WrapDelphi, WrapDelphiButtons, WrapDelphiClasses, 
-  WrapDelphiControls, WrapDelphiTypes, LazarusPackageIntf;
+  PythonEngine, PythonGUIInputOutput, MethodCallBack, VarPyth, WrapDelphi, 
+  WrapDelphiButtons, WrapDelphiClasses, WrapDelphiControls, WrapDelphiTypes, 
+  LazarusPackageIntf;
 
 implementation
 

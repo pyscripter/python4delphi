@@ -14,7 +14,11 @@ uses
   PythonEngine, PythonGUIInputOutput;
 
 type
+
+  { TForm1 }
+
   TForm1 = class(TForm)
+    Edit1: TEdit;
     PythonEngine1: TPythonEngine;
     Memo1: TMemo;
     PythonType1: TPythonType;
@@ -28,7 +32,6 @@ type
     SaveDialog1: TSaveDialog;
     PythonDelphiVar1: TPythonDelphiVar;
     Button4: TButton;
-    Edit1: TEdit;
     PythonGUIInputOutput1: TPythonGUIInputOutput;
     Memo2: TMemo;
     procedure Button1Click(Sender: TObject);

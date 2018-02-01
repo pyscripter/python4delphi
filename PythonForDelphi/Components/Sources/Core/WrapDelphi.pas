@@ -1106,12 +1106,12 @@ end;
 {$IFDEF FPC}
 function GetPropValue(Instance: TObject; PropInfo: PPropInfo): Variant;
 begin
-  Result := Variants.GetPropValue(Instance, PropInfo^.Name);
+  Result := Variants.GetPropValue(Instance, PropInfo, False);
 end;
 
 procedure SetPropValue(Instance: TObject; PropInfo: PPropInfo; const Value: Variant);
 begin
-  Variants.SetPropValue(Instance, PropInfo^.Name, Value);
+  Variants.SetPropValue(Instance, PropInfo, Value);
 end;
 {$ENDIF}
 

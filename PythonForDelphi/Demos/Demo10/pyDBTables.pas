@@ -1,14 +1,39 @@
+{$I Definition.Inc}
+
 unit pyDBTables;
+
+{-------------------------------------------------------------------------------
+  $Header: /P4D/PythonForDelphi/Components/Sources/VCL/pyDBTables.pas 1     03-04-09 19:25 Morgan $
+  Copyright © MMM Inc. 2003 - All Rights Reserved.
+  ------------------------------------------------------------------------------
+  Author: Morgan Martinet
+
+  Description:
+
+  ------------------------------------------------------------------------------
+  $Log: /P4D/PythonForDelphi/Components/Sources/VCL/pyDBTables.pas $
+ * 
+ * 1     03-04-09 19:25 Morgan
+ * initial check-in
+
+-------------------------------------------------------------------------------}
 
 interface
 
-{$I Definition.Inc}
-
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, 
   Variants, PythonEngine, StdCtrls, ExtCtrls, ComCtrls,
   DB, DBTables, pyDB;
 type
+
+{*********************************************************************
+ *      DBTables module                                              *
+ *********************************************************************}
+  TPythonDBTables = class(TPythonModule)
+    public
+      constructor Create( AOwner : TComponent ); override;
+      procedure Initialize; override;
+  end;
 
 {*********************************************************************
  *      Interface of TBDEDataset                                     *
@@ -43,7 +68,6 @@ type
     procedure OnUpdateRecord( Dataset : TDataset; UpdateKind: TUpdateKind; var ua:TUpdateAction);
   end;
 
-
  {*********************************************************************
  *      Interface of TDBDataset                                      *
  *********************************************************************}
@@ -72,7 +96,6 @@ type
  {*********************************************************************
  *      Interface of TTable                                          *
  *********************************************************************}
-
    TPyTable = class(TPyDBDataset)
 
     // Constructors & Destructors
@@ -126,6 +149,11 @@ type
     function DoFindNearest( args : PPyObject ) : PPyObject; cdecl;
   end;
 
+  TPythonTable = class( TPythonType)
+    public
+      constructor Create( AOwner : TComponent ); override;
+  end;
+
  {*********************************************************************
  *      Interface of TQuery                                          *
  *********************************************************************}
@@ -155,17 +183,65 @@ type
     function DoExecSQL( args : PPyObject ) : PPyObject; cdecl;
   end;
 
+  TPythonQuery = class( TPythonType)
+    public
+      constructor Create( AOwner : TComponent ); override;
+  end;
+
  {*********************************************************************
   *      Global functions                                             *
   *********************************************************************}
-  procedure Initialize( Owner : TEngineClient );
+  procedure CreateComponents( AOwner : TComponent );
 
  {********************************************************************
  *      Global variables                                             *
  *********************************************************************}
-//var
+var
+  gDBTablesModule : TPythonModule;
+  gTableType : TPythonType;
+  gQueryType : TPythonType;
 
 implementation
+
+{*********************************************************************
+ *      DBTables module                                              *
+ *********************************************************************}
+
+constructor TPythonDBTables.Create( AOwner : TComponent );
+begin
+  inherited;
+  ModuleName := 'DBTables';
+  Name := 'modDBTables';
+  with DocString do
+    begin
+      Add( 'This module contains several Object Types that' );
+      Add( 'will let you work with the Borland BDE and access' );
+      Add( 'a database.' );
+      Add( '' );
+      Add( 'CreateTTable() -> creates a TTable instance' );
+      Add( 'CreateTQuery() -> creates a TQuery instance' );
+    end;
+end;
+
+procedure TPythonDBTables.Initialize;
+begin
+  inherited;
+  // Values for type TLockType
+  SetVarFromVariant( 'ltReadLock', 0 );
+  SetVarFromVariant( 'ltWriteLock', 1 );
+  // Values for type TIndexOptions
+  SetVarFromVariant( 'ixPrimary', 0 );
+  SetVarFromVariant( 'ixUnique', 1 );
+  SetVarFromVariant( 'ixDescending', 2 );
+  SetVarFromVariant( 'ixCaseInsensitive', 3 );
+  SetVarFromVariant( 'ixExpression', 4 );
+  // Values for type TUpdateAction
+  SetVarFromVariant( 'uaFail', 0 );
+  SetVarFromVariant( 'uaAbort', 1 );
+  SetVarFromVariant( 'uaSkip', 2 );
+  SetVarFromVariant( 'uaRetry', 3 );
+  SetVarFromVariant( 'uaApplied', 4 );
+end;
 
 {*********************************************************************
  *      Implementation of TBDEDataset                                *
@@ -202,9 +278,9 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'OnUpdateError' ) = 0 then
+        if CompareText( string(key), 'OnUpdateError' ) = 0 then
           Result := ReturnEvent( FOnUpdateError )
-        else if CompareText( key, 'OnUpdateRecord' ) = 0 then
+        else if CompareText( string(key), 'OnUpdateRecord' ) = 0 then
           Result := ReturnEvent( FOnUpdateRecord )
         else
           Result := inherited GetAttr(key);
@@ -226,7 +302,7 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'OnUpdateError' ) = 0 then
+        if CompareText( string(key), 'OnUpdateError' ) = 0 then
           begin
             SetEvent( FOnUpdateError, Value, 'OnUpdateError', 'TField' );
             if Assigned(FOnUpdateError) then
@@ -235,7 +311,7 @@ begin
               BDEDataset.OnUpdateError := nil;
             Result := 0;
           end
-        else if CompareText( key, 'OnUpdateRecord' ) = 0 then
+        else if CompareText( string(key), 'OnUpdateRecord' ) = 0 then
           begin
             SetEvent( FOnUpdateRecord, Value, 'OnUpdateRecord', 'TField' );
             if Assigned(FOnUpdateRecord) then
@@ -293,7 +369,6 @@ end;
 
 // Events
 ////////////////
-
 procedure TPyBDEDataset.OnUpdateError( Dataset : TDataset; E: EDatabaseError; UpdateKind: TUpdateKind; var ua:TUpdateAction);
 var
   v : PPyObject;
@@ -358,9 +433,9 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'DatabaseName' ) = 0 then
+        if CompareText( string(key), 'DatabaseName' ) = 0 then
           Result := VariantAsPyObject( DBDataset.DatabaseName )
-        else if CompareText( key, 'SessionName' ) = 0 then
+        else if CompareText( string(key), 'SessionName' ) = 0 then
           Result := VariantAsPyObject( DBDataset.SessionName )
         else
           Result := inherited GetAttr(key);
@@ -382,12 +457,12 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'DatabaseName' ) = 0 then
+        if CompareText( string(key), 'DatabaseName' ) = 0 then
           begin
             DBDataset.DatabaseName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'SessionName' ) = 0 then
+        else if CompareText( string(key), 'SessionName' ) = 0 then
           begin
             DBDataset.SessionName := PyObjectAsVariant( value );
             Result := 0;
@@ -467,15 +542,15 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'IndexName' ) = 0 then
+        if CompareText( string(key), 'IndexName' ) = 0 then
           Result := VariantAsPyObject( Table.IndexName )
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           Result := VariantAsPyObject( Table.ReadOnly )
-        else if CompareText( key, 'TableLevel' ) = 0 then
+        else if CompareText( string(key), 'TableLevel' ) = 0 then
           Result := VariantAsPyObject( Table.TableLevel )
-        else if CompareText( key, 'TableName' ) = 0 then
+        else if CompareText( string(key), 'TableName' ) = 0 then
           Result := VariantAsPyObject( Table.TableName )
-        else if CompareText( key, 'TableType' ) = 0 then
+        else if CompareText( string(key), 'TableType' ) = 0 then
           Result := VariantAsPyObject( Integer(Table.TableType) )
         else
           Result := inherited GetAttr(key);
@@ -497,27 +572,27 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'IndexName' ) = 0 then
+        if CompareText( string(key), 'IndexName' ) = 0 then
           begin
             Table.IndexName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ReadOnly' ) = 0 then
+        else if CompareText( string(key), 'ReadOnly' ) = 0 then
           begin
             Table.ReadOnly := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableLevel' ) = 0 then
+        else if CompareText( string(key), 'TableLevel' ) = 0 then
           begin
             Table.TableLevel := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableName' ) = 0 then
+        else if CompareText( string(key), 'TableName' ) = 0 then
           begin
             Table.TableName := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'TableType' ) = 0 then
+        else if CompareText( string(key), 'TableType' ) = 0 then
           begin
             Table.TableType := TTableType(PyObjectAsVariant( value ));
             Result := 0;
@@ -1018,7 +1093,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 'ssO:TTable.AddIndex',@aName, @fields, @options ) <> 0) then
           begin
             // Do action
-            AddIndex( aName, fields, options );
+            AddIndex( string(aName), string(fields), options );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1046,7 +1121,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.CloseIndexFile',@aName ) <> 0) then
           begin
             // Do action
-            Table.CloseIndexFile( aName );
+            Table.CloseIndexFile( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1100,7 +1175,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.DeleteIndex',@aName ) <> 0) then
           begin
             // Do action
-            Table.DeleteIndex( aName );
+            Table.DeleteIndex( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1204,7 +1279,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.OpenIndexFile',@aName ) <> 0) then
           begin
             // Do action
-            Table.OpenIndexFile( aName );
+            Table.OpenIndexFile( string(aName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1232,7 +1307,7 @@ begin
         if CheckDataset and (PyArg_ParseTuple( args, 's:TTable.RenameTable',@newName ) <> 0) then
           begin
             // Do action
-            Table.RenameTable( newName );
+            Table.RenameTable( string(newName) );
             // Finally, we return nothing
             Result := ReturnNone;
           end
@@ -1380,6 +1455,21 @@ begin
     end;
 end;
 
+constructor TPythonTable.Create( AOwner : TComponent );
+begin
+  inherited;
+  Name := 'typeTable';
+  TypeName := 'TTable';
+  Services.Sequence := [ssLength, ssItem];
+  Module := gDBTablesModule;
+  TypeFlags := TypeFlags + [tpfBaseType];
+  PyObjectClass := TPyTable;
+  with DocString do
+    begin
+      Add( 'The TTable type implements the Delphi TTable VCL Object inside Python.' );
+      Add( 'The properties and methods are the same as in Delphi.' );
+    end;
+end;
 
 {*********************************************************************
  *      Implementation of TQuery                                     *
@@ -1407,23 +1497,23 @@ begin
           Exit;
         end;
       try
-        if CompareText( key, 'Constrained' ) = 0 then
+        if CompareText( string(key), 'Constrained' ) = 0 then
           Result := VariantAsPyObject( Query.Constrained )
-        else if CompareText( key, 'Local' ) = 0 then
+        else if CompareText( string(key), 'Local' ) = 0 then
           Result := VariantAsPyObject( Query.Local)
-        else if CompareText( key, 'ParamCheck' ) = 0 then
+        else if CompareText( string(key), 'ParamCheck' ) = 0 then
           Result := VariantAsPyObject( Query.ParamCheck )
-        else if CompareText( key, 'ParamCount' ) = 0 then
+        else if CompareText( string(key), 'ParamCount' ) = 0 then
           Result := VariantAsPyObject( Query.ParamCount )
-        else if CompareText( key, 'Prepared' ) = 0 then
+        else if CompareText( string(key), 'Prepared' ) = 0 then
           Result := VariantAsPyObject( Query.Prepared )
-        else if CompareText( key, 'RequestLive' ) = 0 then
+        else if CompareText( string(key), 'RequestLive' ) = 0 then
           Result := VariantAsPyObject( Query.RequestLive )
-        else if CompareText( key, 'RowsAffected' ) = 0 then
+        else if CompareText( string(key), 'RowsAffected' ) = 0 then
           Result := VariantAsPyObject( Query.RowsAffected )
-        else if CompareText( key, 'SQL' ) = 0 then
+        else if CompareText( string(key), 'SQL' ) = 0 then
           Result := StringsToPyList( Query.SQL)
-        else if CompareText( key, 'UniDirectional' ) = 0 then
+        else if CompareText( string(key), 'UniDirectional' ) = 0 then
           Result := VariantAsPyObject( Query.UniDirectional )
         else
           Result := inherited GetAttr(key);
@@ -1445,44 +1535,44 @@ begin
       if not CheckDataset then
         Exit;
       try
-        if CompareText( key, 'Constrained' ) = 0 then
+        if CompareText( string(key), 'Constrained' ) = 0 then
           begin
             Query.Constrained := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'Local' ) = 0 then
+        else if CompareText( string(key), 'Local' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'ParamCheck' ) = 0 then
+        else if CompareText( string(key), 'ParamCheck' ) = 0 then
           begin
             Query.ParamCheck := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'ParamCount' ) = 0 then
+        else if CompareText( string(key), 'ParamCount' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'Prepared' ) = 0 then
+        else if CompareText( string(key), 'Prepared' ) = 0 then
           begin
             Query.Prepared := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'RequestLive' ) = 0 then
+        else if CompareText( string(key), 'RequestLive' ) = 0 then
           begin
             Query.RequestLive := PyObjectAsVariant( value );
             Result := 0;
           end
-        else if CompareText( key, 'RowsAffected' ) = 0 then
+        else if CompareText( string(key), 'RowsAffected' ) = 0 then
           begin
             Result := 0;
           end
-        else if CompareText( key, 'SQL' ) = 0 then
+        else if CompareText( string(key), 'SQL' ) = 0 then
           begin
             PyListToStrings( value, Query.SQL );
             Result := 0;
           end
-        else if CompareText( key, 'UniDirectional' ) = 0 then
+        else if CompareText( string(key), 'UniDirectional' ) = 0 then
           begin
             Query.UniDirectional := PyObjectAsVariant( value );
             Result := 0;
@@ -1622,18 +1712,32 @@ begin
     end;
 end;
 
+constructor TPythonQuery.Create( AOwner : TComponent );
+begin
+  inherited;
+  Name := 'typeQuery';
+  TypeName := 'TQuery';
+  Services.Sequence := [ssLength, ssItem];
+  Module := gDBTablesModule;
+  PyObjectClass := TPyQuery;
+  with DocString do
+    begin
+      Add( 'The TQuery type implements the Delphi TQuery VCL Object inside Python.' );
+      Add( 'The properties and methods are the same as in Delphi.' );
+    end;
+end;
+
 {*********************************************************************
 *      Global functions                                             *
 *********************************************************************}
 
-var
-  Initialized : Boolean = False;
-procedure Initialize( Owner : TEngineClient );
+procedure CreateComponents( AOwner : TComponent );
 begin
-  if pyDBTables.Initialized then
+  if Assigned(gDBTablesModule) then
     Exit;
-  pyDBTables.Initialized := True;
+  gDBTablesModule := TPythonDBTables.Create(AOwner);
+  gTableType := TPythonTable.Create(AOwner);
+  gQueryType := TPythonQuery.Create(AOwner);
 end;
-
 
 end.

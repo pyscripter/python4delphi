@@ -1,30 +1,32 @@
 object Form1: TForm1
   Left = 233
-  Height = 337
+  Height = 500
   Top = 175
-  Width = 528
+  Width = 800
+  ActiveControl = Button1
   Caption = 'Demo of Python'
-  ClientHeight = 337
-  ClientWidth = 528
+  ClientHeight = 500
+  ClientWidth = 800
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  LCLVersion = '1.5'
+  LCLVersion = '1.8.0.6'
+  Visible = False
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0
     Height = 3
     Top = 145
-    Width = 528
+    Width = 800
     Align = alTop
     ResizeAnchor = akTop
   end
   object Memo1: TMemo
     Left = 0
-    Height = 121
+    Height = 284
     Top = 148
-    Width = 528
+    Width = 800
     Align = alClient
     Lines.Strings = (
       'import sys'
@@ -46,15 +48,15 @@ object Form1: TForm1
   object Panel1: TPanel
     Left = 0
     Height = 68
-    Top = 269
-    Width = 528
+    Top = 432
+    Width = 800
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 68
-    ClientWidth = 528
+    ClientWidth = 800
     TabOrder = 0
     object Button1: TButton
-      Left = 6
+      Left = 40
       Height = 25
       Top = 8
       Width = 115
@@ -90,19 +92,18 @@ object Form1: TForm1
       TabOrder = 3
     end
     object Edit1: TEdit
-      Left = 368
-      Height = 24
-      Top = 32
-      Width = 161
+      Left = 500
+      Height = 20
+      Top = 8
+      Width = 150
       TabOrder = 4
-      Text = 'Edit1'
     end
   end
   object Memo2: TMemo
     Left = 0
     Height = 145
     Top = 0
-    Width = 528
+    Width = 800
     Align = alTop
     Lines.Strings = (
       'Memo2'

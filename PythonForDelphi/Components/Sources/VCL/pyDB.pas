@@ -180,8 +180,8 @@ type
     function  Repr : PPyObject; override;
 
     // Sequence services
-    function  SqLength : Integer; override;
-    function  SqItem( idx : Integer ) : PPyObject; override;
+    function  SqLength : NativeInt; override;
+    function  SqItem( idx : NativeInt ) : PPyObject; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -1630,7 +1630,7 @@ end;
 
 // Sequence services
 
-function  TPyDataset.SqLength : Integer;
+function  TPyDataset.SqLength : NativeInt;
 begin
   if CheckDataset then
     Result := Dataset.RecordCount
@@ -1638,7 +1638,7 @@ begin
     Result := -1;
 end;
 
-function  TPyDataset.SqItem( idx : Integer ) : PPyObject;
+function  TPyDataset.SqItem( idx : NativeInt ) : PPyObject;
 begin
   if CheckDataset then
     begin
