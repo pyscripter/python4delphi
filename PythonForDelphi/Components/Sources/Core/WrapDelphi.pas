@@ -1106,7 +1106,7 @@ end;
 {$IFDEF FPC}
 function GetPropValue(Instance: TObject; PropInfo: PPropInfo): Variant;
 begin
-  {$IF FPC_FULLVERSION<30000}
+  {$IF FPC_FULLVERSION<=30000}
   Result := Variants.GetPropValue(Instance, PropInfo^.Name);
   {$ELSE}
   Result := Variants.GetPropValue(Instance, PropInfo, False);
@@ -1115,7 +1115,7 @@ end;
 
 procedure SetPropValue(Instance: TObject; PropInfo: PPropInfo; const Value: Variant);
 begin
-  {$IF FPC_FULLVERSION<30000}
+  {$IF FPC_FULLVERSION<=30000}
   Variants.SetPropValue(Instance, PropInfo^.Name, Value);
   {$ELSE}
   Variants.SetPropValue(Instance, PropInfo, Value);
