@@ -25,6 +25,7 @@ type
     function GetIsPython3K: Boolean;
     function GetHelpFile: string;
     function GetDisplayName: string;
+    function GetApiVersion: integer;
   public
     IsRegistered: Boolean;
     IsAllUsers: Boolean;
@@ -39,6 +40,7 @@ type
     property IsPython3K: Boolean read GetIsPython3K;
     property HelpFile: string read GetHelpFile write FHelpFile;
     property DisplayName: string read GetDisplayName write FDisplayName;
+    property ApiVersion: integer read GetApiVersion;
   end;
 
   TPythonVersions = array of TPythonVersion;
@@ -106,7 +108,16 @@ begin
     TPythonEngine(PythonEngine).RegVersion := SysVersion;
     TPythonEngine(PythonEngine).DllName := DLLName;
     TPythonEngine(PythonEngine).DllPath := DLLPath;
+    TPythonEngine(PythonEngine).APIVersion := ApiVersion;
   end;
+end;
+
+function TPythonVersion.GetApiVersion: integer;
+begin
+  if  CompareVersions(SysVersion, 2.4) < 0 then
+    Result := 1013
+  else
+    Result := 1012;
 end;
 
 function TPythonVersion.GetDisplayName: string;
