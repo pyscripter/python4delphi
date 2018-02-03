@@ -180,14 +180,14 @@ type
       const Arguments: TVarDataArray): Boolean; override;
     function GetProperty(var Dest: TVarData; const V: TVarData;
       const AName: string): Boolean; override;
-    function SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData; const AName: string;
+    function SetProperty({$IF FPC_FULLVERSION >= 30000}var{$ELSE}const{$ENDIF} V: TVarData; const AName: string;
       const Value: TVarData): Boolean; override;
     {$IFDEF DELPHIXE7_OR_HIGHER}
     procedure DispInvoke(Dest: PVarData;
       [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ELSE}
     procedure DispInvoke(Dest: PVarData;
-       var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
+       {$IF FPC_FULLVERSION >= 30000}var{$ELSE}const{$ENDIF}Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
     {$ENDIF}
   end;
 
@@ -941,7 +941,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 {$ELSE}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
-   var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+   {$IF FPC_FULLVERSION >= 30000}var{$ELSE}const{$ENDIF}Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 {$ENDIF}
 {$IFDEF USESYSTEMDISPINVOKE}
 {$IFDEF DELPHIXE2_OR_HIGHER}
@@ -1083,8 +1083,11 @@ begin
 end;
 
 {$ELSE USESYSTEMDISPINVOKE}
+var
+  aSource: tvardata;
 begin
-  DoDispInvoke(Dest, Source, CallDesc, Params);
+  aSource := Source;
+  DoDispInvoke(Dest, aSource, CallDesc, Params);
 end;
 
 procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
@@ -1863,7 +1866,7 @@ begin
     Result := False;
 end;
 
-function TPythonVariantType.SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData;
+function TPythonVariantType.SetProperty({$IF FPC_FULLVERSION >= 30000}var{$ELSE}const{$ENDIF} V: TVarData;
   const AName: string; const Value: TVarData): Boolean;
 var
   _newValue : PPyObject;

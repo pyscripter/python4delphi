@@ -1,7 +1,5 @@
 unit Unit1;
 
-{$I Definition.Inc}
-
 interface
 
 uses
@@ -11,7 +9,7 @@ uses
   StdCtrls, ComCtrls, ExtCtrls,
 {$ENDIF}
 {$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
+  Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
 {$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
