@@ -9720,7 +9720,7 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
-  {$IFNDEF CPUX86 OR CPUX86_64}
+  {$IFNDEF CPUARM}
   if MatchPythonPrecision then begin
     if ExceptionsMasked then
       Set8087CW($1232 or $3F)
