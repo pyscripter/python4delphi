@@ -9720,6 +9720,7 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
+ {$IFNDEF CPUARM}
   if MatchPythonPrecision then begin
     if ExceptionsMasked then
       Set8087CW($1232 or $3F)
@@ -9731,6 +9732,7 @@ begin
     else
       Set8087CW($1332);
   end;
+ {$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
