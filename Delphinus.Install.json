@@ -22,14 +22,13 @@
             "base": "",
             "recursive": true,
             "filter": "*;*.*"
-        },
+        }
     ],
 
     "projects":
     [
         {
             "project": "PythonForDelphi\\Components\\Python_D.dproj"
-            "compiler_min": 10			
-        },
+        }
     ]
 }
