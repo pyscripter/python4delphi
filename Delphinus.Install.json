@@ -2,7 +2,7 @@
         "search_pathes": 
     [
         {
-            "pathes": "PythonForDelphi\\Components\\Sources\Core",
+            "pathes": "PythonForDelphi\\Components\\Sources\\Core",
             "platforms": "Win32;Win64"
         }
     ],
@@ -10,7 +10,7 @@
     "browsing_pathes": 
     [
         {
-            "pathes": "PythonForDelphi\\Components\\Sources\Core",
+            "pathes": "PythonForDelphi\\Components\\Sources\\Core",
             "platforms": "Win32;Win64"
         }
     ],
