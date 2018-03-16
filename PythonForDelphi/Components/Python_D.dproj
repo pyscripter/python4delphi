@@ -40,7 +40,6 @@
         <SanitizedProjectName>Python_D</SanitizedProjectName>
         <DCC_Description>Components for Python</DCC_Description>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
-        <DllSuffix>25</DllSuffix>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1032</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=;CFBundleName=</VerInfo_Keys>

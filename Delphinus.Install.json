@@ -28,8 +28,7 @@
     "projects":
     [
         {
-            "project": "PythonForDelphi\\Components\\Python_D.dproj",
-            "compiler": 28
+            "project": "PythonForDelphi\\Components\\Python_D.dproj"
         }
     ]
 }
