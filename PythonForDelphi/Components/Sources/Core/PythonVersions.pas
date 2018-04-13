@@ -114,7 +114,7 @@ end;
 
 function TPythonVersion.GetApiVersion: integer;
 begin
-  if  CompareVersions(SysVersion, 2.4) < 0 then
+  if  CompareVersions(SysVersion, '2.4') < 0 then
     Result := 1013
   else
     Result := 1012;

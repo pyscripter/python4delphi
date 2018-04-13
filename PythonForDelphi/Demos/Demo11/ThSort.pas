@@ -50,7 +50,7 @@ type
     ThreadsRunning: Integer;
     procedure RandomizeArrays;
     procedure ThreadDone(Sender: TObject);
-    procedure InitThreads(interp: PPyInterpreterState; script: TStrings);
+    procedure InitThreads(ThreadExecMode: TThreadExecMode; script: TStrings);
 
     function SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
     function SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
@@ -108,22 +108,21 @@ begin
   RandomizeArrays;
 end;
 
-procedure TThreadSortForm.InitThreads(interp: PPyInterpreterState; script: TStrings);
+procedure TThreadSortForm.InitThreads(ThreadExecMode: TThreadExecMode; script: TStrings);
 begin
   RandomizeArrays;
   ThreadsRunning := 3;
   with GetPythonEngine do
   begin
-    OwnThreadState := PyThreadState_Get;
-    PyEval_ReleaseThread(OwnThreadState);
+    OwnThreadState := PyEval_SaveThread;
 
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc1',
+    with TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc1',
                              BubbleSortBox, BubbleSortArray) do
       OnTerminate := ThreadDone;
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc2',
+    with TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc2',
                                 SelectionSortBox, SelectionSortArray) do
       OnTerminate := ThreadDone;
-    with TSortThread.Create( interp, script, SortModule, 'SortFunc3',
+    with TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc3',
                             QuickSortBox, QuickSortArray) do
       OnTerminate := ThreadDone;
   end;
@@ -137,13 +136,13 @@ begin
   with GetPythonEngine do
   begin
     ExecStrings(PythonMemo.Lines);
-    self.InitThreads(PyThreadState_Get.interp,nil);
+    self.InitThreads(emNewState,nil);
   end;
 end;
 
 procedure TThreadSortForm.StartBtnClick(Sender: TObject);
 begin
-  InitThreads(nil,PythonMemo.Lines);
+  InitThreads(emNewInterpreter,PythonMemo.Lines);
 //PythonEngine1.ExecStrings(PythonMemo.Lines);
 end;
 
@@ -180,7 +179,7 @@ begin
   Dec(ThreadsRunning);
   if ThreadsRunning = 0 then
   begin
-    GetPythonEngine.PyEval_AcquireThread(OwnThreadState);
+    GetPythonEngine.PyEval_RestoreThread(OwnThreadState);
     StartBtn.Enabled := True;
     Start2Btn.Enabled := True;
     ArraysRandom := False;

@@ -7,10 +7,10 @@ interface
 uses
   Classes,
 {$IFDEF MSWINDOWS}
-  Graphics, ExtCtrls,
+  Graphics, ExtCtrls, Forms,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, QExtCtrls,
+  QGraphics, QExtCtrls, QForms,
 {$ENDIF}
   PythonEngine;
 
@@ -40,7 +40,7 @@ type
   public
     property value[i: integer]: integer read getvalue; default;
 
-    constructor Create( ainterp: PPyInterpreterState; script: TStrings;
+    constructor Create( AThreadExecMode: TThreadExecMode; script: TStrings;
                         module: TPythonModule; apyfuncname: string;
                         Box: TPaintBox; var SortArray: array of Integer);
 
@@ -59,7 +59,7 @@ end;
 
 { TSortThread }
 
-constructor TSortThread.Create( ainterp: PPyInterpreterState; script: TStrings;
+constructor TSortThread.Create( AThreadExecMode: TThreadExecMode; script: TStrings;
                                 module: TPythonModule; apyfuncname: string;
                                 Box: TPaintBox; var SortArray: array of Integer);
 begin
@@ -70,7 +70,7 @@ begin
   FSortArray := @SortArray;
   FSize := High(SortArray) - Low(SortArray) + 1;
   FreeOnTerminate := True;
-  InterpreterState := ainterp;
+  ThreadExecMode := AThreadExecMode;
   inherited Create(False);
 end;
 
@@ -88,6 +88,7 @@ type
 var t: integer;
     pi,pj: pinteger;
 begin
+  Application.ProcessMessages;
   with FBox do
   begin
     Canvas.Pen.Color := clBtnFace;
@@ -126,24 +127,25 @@ procedure TSortThread.ExecuteWithPython;
 var pyfunc: PPyObject;
 begin
   running := true;
-  with GetPythonEngine do
-  begin
-    if Assigned(FModule) and (ThreadExecMode = emNewInterpreter) then
-      FModule.InitializeForNewInterpreter;
-    if Assigned(fScript) then
-      ExecStrings(fScript);
-    pyfunc :=  FindFunction( ExecModule, fpyfuncname);
-    if Assigned(pyfunc) then
-      try
-        EvalFunction(pyfunc,[NativeInt(self),0,FSize]);
-      except
-      
-      end;
+  try
+    with GetPythonEngine do
+    begin
+      if Assigned(FModule) and (ThreadExecMode = emNewInterpreter) then
+        FModule.InitializeForNewInterpreter;
+      if Assigned(fScript) then
+        ExecStrings(fScript);
+      pyfunc :=  FindFunction( ExecModule, fpyfuncname);
+      if Assigned(pyfunc) then
+        try
+          EvalFunction(pyfunc,[NativeInt(self),0,FSize]);
+        except
+        end;
 
-      Py_DecRef(pyfunc);
-      
+        Py_DecRef(pyfunc);
+    end;
+  finally
+    running := false;
   end;
-  running := false;
 end;
 
 procedure TSortThread.Stop;

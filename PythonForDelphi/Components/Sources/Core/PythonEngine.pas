@@ -121,8 +121,6 @@ type
   PNativeInt = ^NativeInt;
 {$ENDIF}
 
-
-
   TPythonVersionProp = packed record
     DllName      : String;
     RegVersion   : String;
@@ -131,9 +129,8 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
-  ( (DllName: 'python23.dll'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
+  ( (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
@@ -147,9 +144,8 @@ const
     (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
-  ( (DllName: 'libpython2.3.so'; RegVersion: '2.3'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..12] of TPythonVersionProp =
+  ( (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
     (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
@@ -162,44 +158,41 @@ const
     (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True)
     (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
-{$IFDEF PYTHON23}
+{$IFDEF PYTHON24}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
 {$ENDIF}
-{$IFDEF PYTHON24}
+{$IFDEF PYTHON25}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 2;
 {$ENDIF}
-{$IFDEF PYTHON25}
+{$IFDEF PYTHON26}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 3;
 {$ENDIF}
-{$IFDEF PYTHON26}
+{$IFDEF PYTHON27}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
 {$ENDIF}
-{$IFDEF PYTHON27}
+{$IFDEF PYTHON30}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
 {$ENDIF}
-{$IFDEF PYTHON30}
+{$IFDEF PYTHON31}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
 {$ENDIF}
-{$IFDEF PYTHON31}
+{$IFDEF PYTHON32}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
 {$ENDIF}
-{$IFDEF PYTHON32}
+{$IFDEF PYTHON33}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
 {$ENDIF}
-{$IFDEF PYTHON33}
+{$IFDEF PYTHON34}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
 {$ENDIF}
-{$IFDEF PYTHON34}
+{$IFDEF PYTHON35}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
 {$ENDIF}
-{$IFDEF PYTHON35}
+{$IFDEF PYTHON36}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
 {$ENDIF}
-{$IFDEF PYTHON36}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
-{$ENDIF}
 {$IFDEF PYTHON37}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 13;
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
 {$ENDIF}
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
@@ -936,42 +929,78 @@ type
     next           : PPyInterpreterState;
     tstate_head    : PPyThreadState;
 
-    modules        : PPyObject;
-    sysdict        : PPyObject;
-    builtins       : PPyObject;
+//  The strucure has changed between versions beyond this point.
+//  Not safe to use members
+//    modules        : PPyObject;
+//    sysdict        : PPyObject;
+//    builtins       : PPyObject;
 
-    checkinterval  : integer;
+    //Spares
+    is_xxx1             : NativeInt;
+    is_xxx2             : NativeInt;
+    is_xxx3             : NativeInt;
+    is_xxx4             : NativeInt;
+    is_xxx5             : NativeInt;
+    is_xxx6             : NativeInt;
+    is_xxx7             : NativeInt;
+    is_xxx8             : NativeInt;
+    is_xxx9             : NativeInt;
   end;
 
   // Thread specific information
   PyThreadState = {$IFNDEF CPUX64}packed{$ENDIF} record
+    {prev          : PPyThreadState; introduced in python 3.4}
     next           : PPyThreadState;
     interp         : PPyInterpreterState;
+    interp34       : PPyInterpreterState;
 
-    frame          : PPyFrameObject;
-    recursion_depth: integer;
-    ticker         : integer;
-    tracing        : integer;
-
-    sys_profilefn  : Pointer;           // c-functions for profile/trace
-    sys_tracefn    : Pointer;
-    sys_profilefunc: PPyObject;
-    sys_tracefunc  : PPyObject;
-
-    curexc_type    : PPyObject;
-    curexc_value   : PPyObject;
-    curexc_traceback: PPyObject;
-
-    exc_type       : PPyObject;
-    exc_value      : PPyObject;
-    exc_traceback  : PPyObject;
-
-    dict           : PPyObject;
-    tick_counter      :Integer;
-    gilstate_counter  :Integer;
-
-    async_exc         :PPyObject; { Asynchronous exception to raise }
-    thread_id         :LongInt;   { Thread id where this tstate was created }
+//  The strucure has changed between versions beyond this point.
+//  Not safe to use members
+//
+//    frame          : PPyFrameObject;
+//    recursion_depth: integer;
+//    ticker         : integer;
+//    tracing        : integer;
+//
+//    sys_profilefn  : Pointer;           // c-functions for profile/trace
+//    sys_tracefn    : Pointer;
+//    sys_profilefunc: PPyObject;
+//    sys_tracefunc  : PPyObject;
+//
+//    curexc_type    : PPyObject;
+//    curexc_value   : PPyObject;
+//    curexc_traceback: PPyObject;
+//
+//    exc_type       : PPyObject;
+//    exc_value      : PPyObject;
+//    exc_traceback  : PPyObject;
+//
+//    dict           : PPyObject;
+//    tick_counter      :Integer;
+//    gilstate_counter  :Integer;
+//
+//    async_exc         :PPyObject; { Asynchronous exception to raise }
+//    thread_id         :LongInt;   { Thread id where this tstate was created }
+    //Spares
+    ts_xxx1             : NativeInt;
+    ts_xxx2             : NativeInt;
+    ts_xxx3             : NativeInt;
+    ts_xxx4             : NativeInt;
+    ts_xxx5             : NativeInt;
+    ts_xxx6             : NativeInt;
+    ts_xxx7             : NativeInt;
+    ts_xxx8             : NativeInt;
+    ts_xxx9             : NativeInt;
+    ts_xxx10            : NativeInt;
+    ts_xxx11            : NativeInt;
+    ts_xxx12            : NativeInt;
+    ts_xxx13            : NativeInt;
+    ts_xxx14            : NativeInt;
+    ts_xxx15            : NativeInt;
+    ts_xxx16            : NativeInt;
+    ts_xxx17            : NativeInt;
+    ts_xxx18            : NativeInt;
+    ts_xxx19            : NativeInt;
 
     { XXX signal handlers should also be here }
   end;
@@ -3057,9 +3086,8 @@ type
 {$HINTS OFF}
   TPythonThread = class(TThread)
   private
-    f_savethreadstate: PPyThreadState;
-    fInterpreterState: PPyInterpreterState;
     fThreadState:      PPyThreadState;
+    f_savethreadstate: PPyThreadState;
     fThreadExecMode:   TThreadExecMode;
 
 // Do not overwrite Execute! Use ExecuteWithPython instead!
@@ -3075,12 +3103,8 @@ type
     procedure Py_Begin_Unblock_Threads;
 
   public
-    property InterpreterState: PPyInterpreterState read  fInterpreterState
-                                                   write fInterpreterState
-                                                   default nil;
-    property ThreadState: PPyThreadState read  fThreadState
-                                         write fThreadState;
-    property ThreadExecMode: TThreadExecMode read fThreadExecMode;
+    property ThreadState : PPyThreadState read  fThreadState;
+    property ThreadExecMode: TThreadExecMode read fThreadExecMode write fThreadExecMode;
   end;
 {$HINTS ON}
 
@@ -4863,10 +4887,17 @@ end;
 function TPythonEngine.GetInterpreterState: PPyInterpreterState;
 var
   res: PPyThreadState;
+  MajorVersion : integer;
+  MinorVersion : integer;
 begin
+  MajorVersion := StrToInt(RegVersion[1]);
+  MinorVersion := StrToInt(RegVersion[3]);
   if Assigned(PyThreadState_Get) then begin
-    res:= PyThreadState_Get;
-    Result := res^.interp;
+    res:= PyThreadState_Get();
+    if (MajorVersion > 3) or ((MajorVersion = 3) and (MinorVersion >= 4)) then
+      Result := res^.interp34
+    else
+      Result := res^.interp;
   end else
     Result := nil;
 end;
@@ -9404,29 +9435,22 @@ end;
 
 procedure TPythonThread.Execute;
 var
-  withinterp: Boolean;
   global_state : PPyThreadState;
   gilstate : PyGILState_STATE;
 begin
-  withinterp := Assigned( fInterpreterState);
   with GetPythonEngine do
   begin
-    if withinterp then
+    if fThreadExecMode = emNewState then
     begin
-      fThreadExecMode := emNewState;
-      fThreadState := PyThreadState_New( fInterpreterState);
-      if Assigned(fThreadState) then
-      begin
-        PyEval_AcquireThread(fThreadState);
+      gilstate := PyGILState_Ensure();
+      try
+        fThreadState := GetThreadState;
         ExecuteWithPython;
-        PyEval_ReleaseThread( fThreadState);
-        PyThreadState_Clear(  fThreadState);
-        PyThreadState_Delete( fThreadState);
-      end else
-        raise EPythonError.Create( 'Could not create a new thread state');
-    end else {withinterp}
+      finally
+        PyGILState_Release(gilstate);
+      end;
+    end else {fThreadExecMode}
     begin
-      fThreadExecMode := emNewInterpreter;
       gilstate := PyGILState_Ensure();
       global_state := PyThreadState_Get;
       PyThreadState_Swap(nil);
@@ -9488,7 +9512,7 @@ begin
   if GetCurrentThreadId <> MainThreadId then
     with GetPythonEngine do
       begin
-        if RedirectIO and (IO <> nil) and (IO.ClassName <> 'TPythonInputOutput') then
+        if RedirectIO and (IO <> nil) and (IO.ClassName <> 'TPythonInputOutput') and not IO.DelayWrites then
           begin
             Result := GetPythonEngine.ReturnNone;
             Exit;
@@ -9531,19 +9555,15 @@ begin
           if Assigned(IO) then
             if IO.UnicodeIO then begin
               Widetxt := IO.ReceiveUniData;
-              // KV!!!!!!
               if PyErr_Occurred <> nil then
                 Result := nil
               else
-              // KV!!!!!!
                 Result := PyUnicode_FromWideString(PWideChar(Widetxt));
             end else begin
               txt := IO.ReceiveData;
-              // KV!!!!!!
               if PyErr_Occurred <> nil then
                 Result := nil
               else
-              // KV!!!!!!
                 Result := PyString_FromString(PAnsiChar(txt));
             end
           else

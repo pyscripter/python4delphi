@@ -52,7 +52,7 @@ type
     ThreadsRunning: Integer;
     procedure RandomizeArrays;
     procedure ThreadDone(Sender: TObject);
-    procedure InitThreads(interp: PPyInterpreterState; script: TStrings);
+    procedure InitThreads(ThreadExecMode: TThreadExecMode; script: TStrings);
 
     function SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
     function SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
@@ -69,13 +69,11 @@ var
 
 implementation
 
-
-
 {$R *.dfm}
 
 type
   PSortArray = ^TSortArray;
-  TSortArray =  array[0..176] of Integer;
+  TSortArray =  array[0..200] of Integer;
 
 var
   ArraysRandom: Boolean;
@@ -114,24 +112,23 @@ begin
   RandomizeArrays;
 end;
 
-procedure TThreadSortForm.InitThreads(interp: PPyInterpreterState; script: TStrings);
+procedure TThreadSortForm.InitThreads(ThreadExecMode: TThreadExecMode; script: TStrings);
 begin
   RandomizeArrays;
   ThreadsRunning := 3;
   with GetPythonEngine do
   begin
-    OwnThreadState := PyThreadState_Get;
-    PyEval_ReleaseThread(OwnThreadState);
+    OwnThreadState := PyEval_SaveThread;
 
-    Thread1 := TSortThread.Create( interp, script, SortModule, 'SortFunc1',
+    Thread1 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc1',
                            BubbleSortBox, BubbleSortArray);
     Thread1.OnTerminate := ThreadDone;
 
-    Thread2 := TSortThread.Create( interp, script, SortModule, 'SortFunc2',
+    Thread2 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc2',
                            SelectionSortBox, SelectionSortArray);
     Thread2.OnTerminate := ThreadDone;
 
-    Thread3 := TSortThread.Create( interp, script, SortModule, 'SortFunc3',
+    Thread3 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc3',
                            QuickSortBox, QuickSortArray);
     Thread3.OnTerminate := ThreadDone;
 
@@ -146,13 +143,13 @@ begin
   with GetPythonEngine do
   begin
     ExecStrings(PythonMemo.Lines);
-    self.InitThreads(PyThreadState_Get.interp,nil);
+    self.InitThreads(emNewState,nil);
   end;
 end;
 
 procedure TThreadSortForm.StartBtnClick(Sender: TObject);
 begin
-  InitThreads(nil,PythonMemo.Lines);
+  InitThreads(emNewInterpreter,PythonMemo.Lines);
 //PythonEngine1.ExecStrings(PythonMemo.Lines);
 end;
 
@@ -189,10 +186,13 @@ begin
   Dec(ThreadsRunning);
   if ThreadsRunning = 0 then
   begin
-    GetPythonEngine.PyEval_AcquireThread(OwnThreadState);
+    GetPythonEngine.PyEval_RestoreThread(OwnThreadState);
     StartBtn.Enabled := True;
     Start2Btn.Enabled := True;
     ArraysRandom := False;
+    Thread1 := nil;
+    Thread2 := nil;
+    Thread3 := nil;
   end;
 end;
 
@@ -247,9 +247,9 @@ end;
 
 procedure TThreadSortForm.Button1Click(Sender: TObject);
 begin
-  Thread1.Stop();
-  Thread2.Stop();
-  Thread3.Stop();
+  if Assigned(Thread1) and not Thread1.Finished then Thread1.Stop();
+  if Assigned(Thread2) and not Thread2.Finished then Thread2.Stop();
+  if Assigned(Thread3) and not Thread3.Finished then Thread3.Stop();
 end;
 
 procedure TThreadSortForm.FormCloseQuery(Sender: TObject;
