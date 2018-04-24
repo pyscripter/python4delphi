@@ -968,7 +968,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   begin
     // Grab the identifier
     LArgCount := CallDesc^.ArgCount;
-    LIdent := FixupIdent(AnsiString(PAnsiChar(@CallDesc^.ArgTypes[LArgCount])));
+    LIdent := FixupIdent(string(AnsiString(PAnsiChar(@CallDesc^.ArgTypes[LArgCount]))));
 
     FillChar(Strings, SizeOf(Strings), 0);
     VarParams := GetDispatchInvokeArgs(CallDesc, Params, Strings, true);
@@ -1052,7 +1052,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     SetLength(fNamedParams, CallDesc^.NamedArgCount);
     // Skip function Name
     for I := 0 to CallDesc^.NamedArgCount - 1 do begin
-      LNamePtr := LNamePtr + Succ(StrLen(LNamePtr));
+      LNamePtr := LNamePtr + Succ(Length(LNamePtr));
       fNamedParams[I].Index := I+LNamedArgStart;
       fNamedParams[I].Name  := AnsiString(LNamePtr);
     end;
@@ -1427,7 +1427,6 @@ function TPythonVariantType.EvalPython(const V: TVarData;
     _key, _value : PPyObject;
     _result : Integer;
   begin
-    Result := nil;
     with GetPythonEngine do
     begin
       PyErr_Clear;
@@ -1438,21 +1437,21 @@ function TPythonVariantType.EvalPython(const V: TVarData;
         _value := VarDataToPythonObject(AValue);
         if not Assigned(_value) then
           raise Exception.Create(SCantConvertValueToPythonObject);
-          if PyList_Check(AObject) then
-            _result := PyList_SetItem( AObject, Variant(AKey), _value )
-          else if PyTuple_Check(AObject) then
-            _result := PyTuple_SetItem( AObject, Variant(AKey), _value )
-          else
-            try
-              if PySequence_Check(AObject) <> 0 then
-                _result := PySequence_SetItem(AObject, Variant(AKey), _value)
-              else
-                _result := PyObject_SetItem( AObject, _key, _value );
-            finally
-              Py_XDecRef(_value);
-            end; // of try
-          CheckError;
-          Result := PyInt_FromLong(_result);
+        if PyList_Check(AObject) then
+          _result := PyList_SetItem( AObject, Variant(AKey), _value )
+        else if PyTuple_Check(AObject) then
+          _result := PyTuple_SetItem( AObject, Variant(AKey), _value )
+        else
+          try
+            if PySequence_Check(AObject) <> 0 then
+              _result := PySequence_SetItem(AObject, Variant(AKey), _value)
+            else
+              _result := PyObject_SetItem( AObject, _key, _value );
+          finally
+            Py_XDecRef(_value);
+          end; // of try
+        CheckError;
+        Result := PyInt_FromLong(_result);
       finally
         Py_XDecRef(_key);
       end; // of try

@@ -20,12 +20,14 @@ type
   private
     FDisplayName: string;
     FHelpFile: string;
+    fSysArchitecture : string;
     function GetDLLName: string;
-    function GetSysArchitecture:string;
+    function ExpectedArchitecture:string;
     function GetIsPython3K: Boolean;
     function GetHelpFile: string;
     function GetDisplayName: string;
     function GetApiVersion: integer;
+    function GetSysArchitecture: string;
   public
     IsRegistered: Boolean;
     IsAllUsers: Boolean;
@@ -55,12 +57,12 @@ type
 
   {$IFDEF MSWINDOWS}
   (* Checks whether a Python version is registered and returns the related info *)
-  function GetRegisterPythonVersion(SysVersion: string;
+  function GetRegisteredPythonVersion(SysVersion: string;
     out PythonVersion: TPythonVersion): Boolean;
   (* Returns all registered Python versions *)
   function GetRegisteredPythonVersions : TPythonVersions;
   (* Returns the highest numbered registered Python version *)
-  function GetLatestRegisteredPythonVersion(PythonVersion: TPythonVersion): Boolean;
+  function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
   {$ENDIF}
 
 implementation
@@ -85,7 +87,7 @@ begin
   {$ENDIF}
 end;
 
-function TPythonVersion.GetSysArchitecture: string;
+function TPythonVersion.ExpectedArchitecture: string;
 begin
   Result := '';
   {$IFDEF CPUX64}
@@ -154,6 +156,13 @@ begin
   end;
 end;
 
+function TPythonVersion.GetSysArchitecture: string;
+begin
+  Result := fSysArchitecture;
+  if Result = '' then
+    Result := 'Unknown';
+end;
+
 function  CompareVersions(A, B : String) : Integer;
 
   function GetNextNumber(var Version: string): Integer;
@@ -197,7 +206,7 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
-function GetRegisterPythonVersion(SysVersion: string;
+function GetRegisteredPythonVersion(SysVersion: string;
   out PythonVersion: TPythonVersion): Boolean;
   // Python provides for All user and Current user installations
   // All User installations place the Python DLL in the Windows System directory
@@ -233,6 +242,7 @@ function GetRegisterPythonVersion(SysVersion: string;
           if OpenKey(Key, False) then begin
             PythonVersion.DisplayName := ReadString('DisplayName');
             PythonVersion.Version := ReadString('Version');
+            PythonVersion.fSysArchitecture :=  ReadString('SysArchitecture');
             CloseKey;
           end;
           if OpenKey(Key + '\PythonPath', False) then begin
@@ -260,10 +270,10 @@ begin
   FillChar(PythonVersion, SizeOf(TPythonVersion), 0);
 
   VersionSuffix := '';
-{$IFDEF CPUX86}
+  {$IFDEF CPUX86}
   if CompareVersions(SysVersion, '3.5') <= 0 then
     VersionSuffix := '-32';
-{$ENDIF}
+  {$ENDIF}
   key := Format('\Software\Python\PythonCore\%s%s', [SysVersion, VersionSuffix]);
 
 
@@ -276,6 +286,10 @@ begin
   if not Result then begin
     PythonVersion.IsAllUsers := True;
     Result := ReadFromRegistry(HKEY_LOCAL_MACHINE, key);
+    if PythonVersion.fSysArchitecture = '' then
+      // for all user installations we can be sure.
+      /// But not for local user installations
+      PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
   end;
 
   PythonVersion.IsRegistered := Result;
@@ -290,7 +304,7 @@ begin
   Count := 0;
   SetLength(Result, High(PYTHON_KNOWN_VERSIONS) - COMPILED_FOR_PYTHON_VERSION_INDEX + 1);
   for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
-    if GetRegisterPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion) then
+    if GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion) then
     begin
       Result[Count] := PythonVersion;
       Inc(Count);
@@ -298,14 +312,13 @@ begin
   SetLength(Result, Count);
 end;
 
-function GetLatestRegisteredPythonVersion(PythonVersion: TPythonVersion): Boolean;
+function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
 Var
   I: Integer;
 begin
-  Result := False;
   for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
   begin
-    Result := GetRegisterPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion);
+    Result := GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion);
     if Result then break;
   end;
 end;
