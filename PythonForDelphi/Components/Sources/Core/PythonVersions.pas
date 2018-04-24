@@ -28,6 +28,7 @@ type
     function GetDisplayName: string;
     function GetApiVersion: integer;
     function GetSysArchitecture: string;
+    function GetPythonExecutable: string;
   public
     IsRegistered: Boolean;
     IsAllUsers: Boolean;
@@ -37,6 +38,7 @@ type
     InstallPath: string;
     PythonPath: string;
     procedure AssignTo(PythonEngine: TPersistent);
+    property PythonExecutable: string read GetPythonExecutable;
     property DLLName: string read GetDLLName;
     property SysArchitecture: string read GetSysArchitecture;
     property IsPython3K: Boolean read GetIsPython3K;
@@ -153,6 +155,15 @@ begin
     Result := StrToInt(SysVersion[1]) >= 3;
   except
     Result := False;
+  end;
+end;
+
+function TPythonVersion.GetPythonExecutable: string;
+begin
+  Result := IncludeTrailingPathDelimiter(InstallPath) + 'python.exe';
+  if not FileExists(Result) then begin
+    Result := IncludeTrailingPathDelimiter(InstallPath) +  'Scripts\python.exe';
+    if not FileExists(Result) then Result := '';
   end;
 end;
 

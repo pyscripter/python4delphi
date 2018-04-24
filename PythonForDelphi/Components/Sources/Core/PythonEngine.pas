@@ -2069,7 +2069,6 @@ type
   procedure   Py_XINCREF  ( op: PPyObject);
   procedure   Py_XDECREF  ( op: PPyObject);
 
-  function Py_GetPlatform: PAnsiChar; cdecl;
   function PyCode_Addr2Line( co: PPyCodeObject; addrq : Integer ) : Integer; cdecl;
   function Py_GetBuildInfo: PAnsiChar; cdecl;
   function PyImport_ExecCodeModule( const AName : AnsiString; codeobject : PPyObject) : PPyObject;
@@ -4123,11 +4122,6 @@ end;
 procedure TPythonInterface.Py_XDECREF(op: PPyObject);
 begin
   if op <> nil then Py_DECREF(op);
-end;
-
-function TPythonInterface.Py_GetPlatform: PAnsiChar; cdecl;
-begin
-  Py_GetPlatform := 'win32';
 end;
 
 // This function is copied from compile.c because it was not
