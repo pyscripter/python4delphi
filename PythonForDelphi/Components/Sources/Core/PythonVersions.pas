@@ -58,6 +58,8 @@ type
 
 
   {$IFDEF MSWINDOWS}
+  (* Checks whether a DLL was compiled for X64 *)
+  function Isx64(const FileName: string): Boolean;
   (* Checks whether a Python version is registered and returns the related info *)
   function GetRegisteredPythonVersion(SysVersion: string;
     out PythonVersion: TPythonVersion): Boolean;
@@ -65,6 +67,7 @@ type
   function GetRegisteredPythonVersions : TPythonVersions;
   (* Returns the highest numbered registered Python version *)
   function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
+  function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
   {$ENDIF}
 
 implementation
@@ -217,6 +220,27 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+function Isx64(const FileName: string): Boolean;
+var
+  Strm : TFileStream;
+  Header: TImageDosHeader;
+  ImageNtHeaders: TImageNtHeaders;
+begin
+  Strm := TFileStream.Create(FileName, fmOpenRead);
+  try
+    Strm.ReadBuffer(Header, SizeOf(Header));
+    if (Header.e_magic <> IMAGE_DOS_SIGNATURE) or (Header._lfanew = 0) then
+      Exit(False);
+    Strm.Position := Header._lfanew;
+    Strm.ReadBuffer(ImageNtHeaders, SizeOf(ImageNtHeaders));
+    if ImageNtHeaders.Signature <> IMAGE_NT_SIGNATURE then
+      Exit(False);
+    Result := ImageNtHeaders.FileHeader.Machine <> IMAGE_FILE_MACHINE_I386;
+  finally
+    Strm.Free;
+  end;
+end;
+
 function GetRegisteredPythonVersion(SysVersion: string;
   out PythonVersion: TPythonVersion): Boolean;
   // Python provides for All user and Current user installations
@@ -275,6 +299,7 @@ function GetRegisteredPythonVersion(SysVersion: string;
 var
   key: string;
   VersionSuffix: string;
+  APythonVersion: TPythonVersion;
 begin
   // Initialize PythohVersion
   Finalize(PythonVersion);
@@ -300,6 +325,13 @@ begin
     if PythonVersion.fSysArchitecture = '' then
       // for all user installations we can be sure.
       /// But not for local user installations
+      PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
+  end;
+
+  if Result and (PythonVersion.fSysArchitecture = '') then begin
+    // We need to check it is the proper platform
+    Result := PythonVersionFromPath(PythonVersion.InstallPath, APythonVersion);
+    if Result  then
       PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
   end;
 
@@ -334,7 +366,67 @@ begin
   end;
 end;
 
-{$ENDIF}
+function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
+  function FindPythonDLL(APath : string): string;
+  Var
+    FindFileData: TWIN32FindData;
+    Handle : THandle;
+    DLLFileName: string;
+  begin
+    Result := '';
+    Handle := FindFirstFile(PWideChar(Path+'\python??.dll'), FindFileData);
+    if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
+    DLLFileName:= FindFileData.cFileName;
+    // skip if python3.dll was found
+    if Length(DLLFileName) <> 12 then FindNextFile(Handle, FindFileData);
+    if Handle = INVALID_HANDLE_VALUE then Exit;
+    Windows.FindClose(Handle);
+    DLLFileName:= FindFileData.cFileName;
+    if Length(DLLFileName) = 12 then
+      Result := DLLFileName;
+  end;
 
+Var
+  DLLFileName: string;
+  DLLPath: string;
+  SysVersion: string;
+  I: integer;
+begin
+  Result := False;
+  Finalize(PythonVersion);
+  FillChar(PythonVersion, SizeOf(TPythonVersion), 0);
+  DLLPath := ExcludeTrailingPathDelimiter(Path);
+
+  PythonVersion.InstallPath := DLLPath;
+
+  DLLFileName := FindPythonDLL(DLLPath);
+  if DLLFileName = '' then begin
+    DLLPath := DLLPath + '\Scripts';
+    DLLFileName := FindPythonDLL(DLLPath);
+  end;
+  if DLLFileName = '' then Exit;
+
+  // check if same platform
+  try
+    if {$IFDEF CPUX64}not {$ENDIF}Isx64(DLLPath+'\'+DLLFileName) then Exit;
+  except
+    Exit;
+  end;
+  PythonVersion.DLLPath := DLLPath;
+
+  SysVersion := Copy(DLLFileName, 7, 2);
+  Insert('.', SysVersion, 2);
+
+  PythonVersion.SysVersion := SysVersion;
+  PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
+
+  for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
+    if PYTHON_KNOWN_VERSIONS[I].RegVersion = SysVersion then begin
+      Result := True;
+      break;
+    end;
+end;
+
+{$ENDIF}
 
 end.
