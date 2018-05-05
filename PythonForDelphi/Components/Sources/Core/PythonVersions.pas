@@ -38,6 +38,8 @@ type
     InstallPath: string;
     PythonPath: string;
     function Is_venv: Boolean;
+    function Is_virtualenv: Boolean;
+    function Is_conda: Boolean;
     procedure AssignTo(PythonEngine: TPersistent);
     property PythonExecutable: string read GetPythonExecutable;
     property DLLName: string read GetDLLName;
@@ -132,10 +134,23 @@ begin
 end;
 
 function TPythonVersion.GetDisplayName: string;
+Var
+  FormatStr: string;
 begin
+  if FDisplayName = '' then
+  begin
+    if Is_conda then
+      FormatStr := 'Conda %s (%s)'
+    else
+      FormatStr := 'Python %s (%s)';
+    if Is_venv then
+      FormatStr := FormatStr + ' -venv'
+    else if Is_virtualenv then
+      FormatStr := FormatStr + ' -virtualenv';
+
+    FDisplayName := Format(FormatStr, [SysVersion, SysArchitecture]);
+  end;
   Result := FDisplayName;
-  if Result = '' then
-    Result := Format('Python %s (%s)', [SysVersion, SysArchitecture]);
 end;
 
 function TPythonVersion.GetHelpFile: string;
@@ -178,7 +193,12 @@ function TPythonVersion.GetSysArchitecture: string;
 begin
   Result := fSysArchitecture;
   if Result = '' then
-    Result := 'Unknown';
+    Result := 'Unknown platform';
+end;
+
+function TPythonVersion.Is_conda: Boolean;
+begin
+  Result := FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'scripts\conda.exe');
 end;
 
 function TPythonVersion.Is_venv: Boolean;
@@ -189,6 +209,12 @@ function TPythonVersion.Is_venv: Boolean;
 begin
   Result := not IsRegistered and (InstallPath <> DLLPath) and
     FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
+end;
+
+function TPythonVersion.Is_virtualenv: Boolean;
+begin
+  Result := not IsRegistered and (InstallPath <> DLLPath) and
+    not FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
 end;
 
 function  CompareVersions(A, B : String) : Integer;
