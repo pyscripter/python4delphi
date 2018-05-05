@@ -37,6 +37,7 @@ type
     DLLPath: string;
     InstallPath: string;
     PythonPath: string;
+    function Is_venv: Boolean;
     procedure AssignTo(PythonEngine: TPersistent);
     property PythonExecutable: string read GetPythonExecutable;
     property DLLName: string read GetDLLName;
@@ -58,6 +59,8 @@ type
 
 
   {$IFDEF MSWINDOWS}
+  (* Checks whether an executable was compiled for X64 *)
+  function IsEXEx64(const EXEName: string): Boolean;
   (* Checks whether a DLL was compiled for X64 *)
   function Isx64(const FileName: string): Boolean;
   (* Checks whether a Python version is registered and returns the related info *)
@@ -110,7 +113,8 @@ end;
 
 procedure TPythonVersion.AssignTo(PythonEngine: TPersistent);
 begin
-  if PythonEngine is TPythonEngine then begin
+  if PythonEngine is TPythonEngine then
+  begin
     TPythonEngine(PythonEngine).UseLastKnownVersion := False;
     TPythonEngine(PythonEngine).RegVersion := SysVersion;
     TPythonEngine(PythonEngine).DllName := DLLName;
@@ -177,6 +181,16 @@ begin
     Result := 'Unknown';
 end;
 
+function TPythonVersion.Is_venv: Boolean;
+{
+  Check weather this is python venv folder introduced in python 3.5
+  Note: venv is different from virtualenv
+}
+begin
+  Result := not IsRegistered and (InstallPath <> DLLPath) and
+    FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
+end;
+
 function  CompareVersions(A, B : String) : Integer;
 
   function GetNextNumber(var Version: string): Integer;
@@ -220,6 +234,15 @@ begin
 end;
 
 {$IFDEF MSWINDOWS}
+function IsEXEx64(const EXEName: string): Boolean;
+var
+  BinaryType: DWORD;
+begin
+  Result := FileExists(EXEName) and
+    GetBinaryType(PChar(ExeName), Binarytype) and
+      (BinaryType = SCS_64BIT_BINARY);
+end;
+
 function Isx64(const FileName: string): Boolean;
 var
   Strm : TFileStream;
@@ -374,7 +397,7 @@ function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVer
     DLLFileName: string;
   begin
     Result := '';
-    Handle := FindFirstFile(PWideChar(Path+'\python??.dll'), FindFileData);
+    Handle := FindFirstFile(PWideChar(APath+'\python??.dll'), FindFileData);
     if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
     DLLFileName:= FindFileData.cFileName;
     // skip if python3.dll was found
@@ -408,7 +431,7 @@ begin
 
   // check if same platform
   try
-    if {$IFDEF CPUX64}not {$ENDIF}Isx64(DLLPath+'\'+DLLFileName) then Exit;
+    if {$IFDEF CPUX64}not {$ENDIF}IsEXEx64(DLLPath+'\python.exe') then Exit;
   except
     Exit;
   end;
