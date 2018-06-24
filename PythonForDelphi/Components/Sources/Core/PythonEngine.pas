@@ -1518,7 +1518,6 @@ type
     procedure BeforeUnload; virtual;
     function  GetQuitMessage : String; virtual;
     procedure DoOpenDll(const aDllName : String); virtual;
-    function  GetDllPath : String;
 
   public
     // Constructors & Destructors
@@ -1531,6 +1530,7 @@ type
     procedure LoadDll;
     procedure UnloadDll;
     procedure Quit;
+    function  GetDllPath : String;
 
     // Public properties
   published
@@ -2207,6 +2207,7 @@ type
     FPyDateTime_TZInfoType:      PPyObject;
     FPyDateTime_TimeTZType:      PPyObject;
     FPyDateTime_DateTimeTZType:  PPyObject;
+    FUseLatestDll:               boolean;
     function  GetVersion: String;
     procedure SetVersion(const Value: String);
 
@@ -4600,6 +4601,7 @@ begin
   FUseWindowsConsole       := False;
   FPyFlags                 := [];
   FDatetimeConversionMode  := DEFAULT_DATETIME_CONVERSION_MODE;
+  FUseLatestDll            := True;
   if csDesigning in ComponentState then
     begin
       for i := 0 to AOwner.ComponentCount - 1 do
@@ -4716,10 +4718,18 @@ end;
 
 procedure TPythonEngine.DoOpenDll(const aDllName : String);
 var
-  i : Integer;
+  i, stop : Integer;
 begin
-  if UseLastKnownVersion then
-    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
+  if UseLastKnownVersion then begin
+    if FUseLatestDll then begin
+      i := High(PYTHON_KNOWN_VERSIONS);
+      stop := Integer(COMPILED_FOR_PYTHON_VERSION_INDEX)-1
+    end
+    else begin
+      i := Integer(COMPILED_FOR_PYTHON_VERSION_INDEX);
+      stop := High(PYTHON_KNOWN_VERSIONS)+1
+    end;
+    while i <> stop do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
       FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
@@ -4731,7 +4741,12 @@ begin
       end;
       if not PYTHON_KNOWN_VERSIONS[i].CanUseLatest then
         Break;
+      if FUseLatestDll then
+        i:=i-1
+      else
+        i:=i+1;
     end;
+  end;
   inherited;
 end;
 
@@ -5282,12 +5297,12 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings );
 begin
-  Py_XDecRef( Run_CommandAsObject( CleanString( AnsiString(strings.Text) ), file_input ) );
+  Py_XDecRef( Run_CommandAsObject( CleanString( UTF8Encode(strings.Text) ), file_input ) );
 end;
 
 function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
 begin
-  Result := Run_CommandAsObject( CleanString( AnsiString(strings.Text) ), eval_input );
+  Result := Run_CommandAsObject( CleanString( UTF8Encode(strings.Text) ), eval_input );
 end;
 
 procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
@@ -5297,7 +5312,7 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( AnsiString(strings.Text) ), file_input, locals, globals ) );
+  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( UTF8Encode(strings.Text) ), file_input, locals, globals ) );
 end;
 
 function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
@@ -5307,12 +5322,12 @@ end;
 
 function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict( CleanString( AnsiString(strings.Text) ), eval_input, locals, globals );
+  Result := Run_CommandAsObjectWithDict( CleanString( UTF8Encode(strings.Text) ), eval_input, locals, globals );
 end;
 
 function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
 begin
-  Result := Run_CommandAsString( CleanString( AnsiString(strings.Text) ), eval_input );
+  Result := Run_CommandAsString( CleanString( UTF8Encode(strings.Text) ), eval_input );
 end;
 
 function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
