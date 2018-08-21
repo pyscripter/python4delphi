@@ -3168,7 +3168,7 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 implementation
 
 {$IFDEF MSWINDOWS}
-uses Registry;
+uses Math, Registry;
 {$ENDIF}
 
 
@@ -9732,19 +9732,17 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
- {$IFNDEF CPUARM}
-  if MatchPythonPrecision then begin
-    if ExceptionsMasked then
-      Set8087CW($1232 or $3F)
+  if ExceptionsMasked then
+    SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
+      exOverflow, exUnderflow, exPrecision])
+  else
+    SetExceptionMask([exDenormalized, exUnderflow, exPrecision]);
+{$IFNDEF NEXTGEN}
+  if MatchPythonPrecision then
+      SetPrecisionMode(pmDouble)
     else
-      Set8087CW($1232);
-  end else begin
-    if ExceptionsMasked then
-      Set8087CW($1332 or $3F)
-    else
-      Set8087CW($1332);
-  end;
- {$ENDIF}
+      SetPrecisionMode(pmExtended);
+{$ENDIF !NEXTGEN}
 end;
 
 {$IFDEF MSWINDOWS}
