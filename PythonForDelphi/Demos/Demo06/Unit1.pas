@@ -170,9 +170,7 @@ begin
       else
         begin
           // Else check for a method
-          Result := Py_FindMethod( MethodsByName('PythonType1'), obj, key);
-          // or we could write, because it's quicker:
-          // Result := Py_FindMethod( Form1.PythonType1.MethodsData, obj, key);
+          Result := PyObject_GenericGetAttr(obj, PyString_FromString(key));
           if not Assigned(Result) then
             PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
         end;

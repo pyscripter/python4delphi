@@ -7800,15 +7800,6 @@ begin
       finally
         Py_XDecRef(PyKey);
       end;
-
-//      // check for a method
-//      if IsPython3000 then
-//        // I think Python 3000 from beta 2 gets the methods from the tp_methods field
-//        Result := nil
-//      else
-//        Result := Py_FindMethod( PythonType.MethodsData, GetSelf, key);
-//      if not Assigned(Result) then
-//        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
     end;
 end;
 
