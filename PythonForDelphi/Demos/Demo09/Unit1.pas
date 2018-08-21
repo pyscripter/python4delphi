@@ -6,13 +6,8 @@ interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -26,9 +21,7 @@ type
     Memo2: TMemo;
     procedure Button1Click(Sender: TObject);
   private
-    { Déclarations privées }
   public
-    { Déclarations publiques }
   end;
 
 var

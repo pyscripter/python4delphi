@@ -1,17 +1,9 @@
-// JCL_DEBUG_EXPERT_GENERATEJDBG OFF
-// JCL_DEBUG_EXPERT_INSERTJDBG OFF
-// JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
 program Project1;
 
 {$I Definition.Inc}
 
 uses
-{$IFDEF MSWINDOWS}
   Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
-{$ENDIF}
   Unit1 in 'Unit1.pas' {Form1};
 
 {$R *.res}

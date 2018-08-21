@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -33,9 +28,7 @@ type
     procedure PythonInputOutput1SendData(Sender: TObject;
       const Data: String);
   private
-    { Déclarations privées }
   public
-    { Déclarations publiques }
   end;
 
 

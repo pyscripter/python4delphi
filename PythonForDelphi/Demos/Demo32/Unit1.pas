@@ -8,21 +8,12 @@ unit Unit1;
 
 {$I Definition.Inc}
 
-{$IFNDEF DELPHI7_OR_HIGHER}
-  This project requires Delphi7 or later to compile!!!
-{$ENDIF}
-
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   WrapDelphi, WrapDelphiClasses,
   PythonEngine, PythonGUIInputOutput;
 
@@ -40,9 +31,7 @@ type
     procedure Button1Click(Sender: TObject);
     procedure PyDelphiWrapperInitialization(Sender: TObject);
   private
-    { Déclarations privées }
   public
-    { Déclarations publiques }
   end;
 
   {

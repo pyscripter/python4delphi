@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -38,18 +33,12 @@ type
   end;
 
 
-
 var
   Form1: TForm1;
 
 implementation
 
-{$IFDEF MSWINDOWS}
 {$R *.DFM}
-{$ENDIF}
-{$IFDEF LINUX}
-{$R *.xfm}
-{$ENDIF}
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin

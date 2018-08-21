@@ -6,13 +6,8 @@ interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -43,13 +38,11 @@ type
     procedure PythonDelphiVar1ExtSetData(Sender: TObject; Data: PPyObject);
     procedure PythonDelphiVar1Change(Sender: TObject);
   private
-    { Déclarations privées }
     FProperties : PPyObject;
 
     function CreateProperties : PPyObject;
     procedure UpdateProperties( props : PPyObject );
   public
-    { Déclarations publiques }
   end;
 
 var

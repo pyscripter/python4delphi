@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -39,9 +34,7 @@ type
     procedure PythonType1Events0Execute(Sender: TObject; PSelf,
       Args: PPyObject; var Result: PPyObject);
   private
-    { Déclarations privées }
   public
-    { Déclarations publiques }
   end;
 
   // This is a Delphi class implementing a new Python type

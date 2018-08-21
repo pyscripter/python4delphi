@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils, Variants,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, StdCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QExtCtrls, QStdCtrls, QComCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput, Contnrs;
 
 type
@@ -69,12 +64,7 @@ implementation
 
 uses VarPyth;
 
-{$IFDEF MSWINDOWS}
 {$R *.dfm}
-{$ENDIF}
-{$IFDEF LINUX}
-{$R *.xfm}
-{$ENDIF}
 
 procedure TMain.Log( const AText : String );
 begin

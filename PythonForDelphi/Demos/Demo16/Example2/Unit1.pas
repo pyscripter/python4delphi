@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -40,13 +35,10 @@ type
     procedure Button1Click(Sender: TObject);
     procedure PythonModule1Initialization(Sender: TObject);
   private
-    { Déclarations privées }
-
     function GetProperty(pSelf, Args : PPyObject) : PPyObject; cdecl;
     function SetProperty(pSelf, Args : PPyObject) : PPyObject; cdecl;
     function GetPropertyList(pSelf, Args : PPyObject) : PPyObject; cdecl;
   public
-    { Déclarations publiques }
   end;
 
 var

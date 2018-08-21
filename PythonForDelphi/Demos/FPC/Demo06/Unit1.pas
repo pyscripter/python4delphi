@@ -6,13 +6,8 @@ interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -46,9 +41,9 @@ type
     procedure PythonDelphiVar1GetData(Sender: TObject; var Data: Variant);
     procedure PythonDelphiVar1SetData(Sender: TObject; Data: Variant);
   private
-    { Déclarations privées }
+    { Dï¿½clarations privï¿½es }
   public
-    { Déclarations publiques }
+    { Dï¿½clarations publiques }
   end;
 
   PyPointRec = record

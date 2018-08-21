@@ -6,13 +6,8 @@ interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -43,13 +38,13 @@ type
     procedure PythonDelphiVar1GetData(Sender: TObject; var Data: Variant);
     procedure PythonDelphiVar1SetData(Sender: TObject; Data: Variant);
   private
-    { Déclarations privées }
+    { Dï¿½clarations privï¿½es }
     function  spam_foo( pself, args : PPyObject ) : PPyObject; cdecl;
     function  spam_CreatePoint( pself, args : PPyObject ) : PPyObject; cdecl;
     function  spam_getdouble( pself, args : PPyObject ) : PPyObject; cdecl;
     function  spam_getdouble2( pself, args : PPyObject ) : PPyObject; cdecl;
   public
-    { Déclarations publiques }
+    { Dï¿½clarations publiques }
   end;
 
   PyPointRec = record

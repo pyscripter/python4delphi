@@ -3,12 +3,7 @@ program Project1;
 {$I Definition.Inc}
 
 uses
-{$IFDEF MSWINDOWS}
   Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
-{$ENDIF}
   Unit1 in 'Unit1.pas' {Form1};
 
 {$R *.res}

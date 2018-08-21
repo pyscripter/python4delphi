@@ -6,12 +6,7 @@ interface
 
 uses
   Classes,
-{$IFDEF MSWINDOWS}
   Graphics, ExtCtrls, Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QExtCtrls, QForms,
-{$ENDIF}
   PythonEngine;
 
 type

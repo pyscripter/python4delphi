@@ -6,13 +6,8 @@ interface
 
 uses
   Classes, SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   PythonEngine, PythonGUIInputOutput;
 
 type
@@ -89,9 +84,7 @@ type
     procedure ptStringListCreate(Sender: TObject);
     procedure ptStringListIteratorCreate(Sender: TObject);
   private
-    { Déclarations privées }
   public
-    { Déclarations publiques }
   end;
 
 
@@ -101,12 +94,7 @@ var
 
 implementation
 
-{$IFDEF MSWINDOWS}
 {$R *.DFM}
-{$ENDIF}
-{$IFDEF LINUX}
-{$R *.xfm}
-{$ENDIF}
 
 procedure TForm1.Button1Click(Sender: TObject);
 begin
