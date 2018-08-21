@@ -40,12 +40,7 @@ implementation
 uses
   VarPyth;
 
-{$IFDEF MSWINDOWS}
 {$R *.DFM}
-{$ENDIF}
-{$IFDEF LINUX}
-{$R *.xfm}
-{$ENDIF}
 
 procedure TForm1.Button1Click(Sender: TObject);
 var
