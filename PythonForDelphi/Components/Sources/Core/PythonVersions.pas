@@ -320,7 +320,8 @@ function GetRegisteredPythonVersion(SysVersion: string;
               PythonVersion.DLLPath := PythonVersion.InstallPath;
             CloseKey;
           end;
-          Result := PythonVersion.InstallPath <> '';
+          Result := (PythonVersion.InstallPath <> '') and
+            DirectoryExists(ExcludeTrailingPathDelimiter(PythonVersion.InstallPath));
           if not Result then Exit;
 
           if OpenKey(Key, False) then begin
