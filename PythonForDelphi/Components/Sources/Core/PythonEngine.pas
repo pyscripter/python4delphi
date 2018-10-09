@@ -1968,6 +1968,10 @@ type
     Py_GetCopyright                 : function : PAnsiChar; cdecl;
     Py_GetExecPrefix                : function : PAnsiChar; cdecl;
     Py_GetPath                      : function : PAnsiChar; cdecl;
+    Py_SetPythonHome                : procedure (home : PAnsiChar); cdecl;
+    Py_GetPythonHome                : function : PAnsiChar; cdecl;
+    Py_SetPythonHome3000            : procedure (home : PWideChar); cdecl;
+    Py_GetPythonHome3000            : function : PWideChar; cdecl;
     Py_GetPrefix                    : function : PAnsiChar; cdecl;
     Py_GetProgramName               : function : PAnsiChar; cdecl;
 
@@ -2187,6 +2191,8 @@ type
     FAutoFinalize:               Boolean;
     FProgramName:                AnsiString;
     FProgramNameW:               UnicodeString;
+    FPythonHome:                 AnsiString;
+    FPythonHomeW:                UnicodeString;
     FInitThreads:                Boolean;
     FOnPathInitialization:       TPathInitializationEvent;
     FOnSysPathInit:              TSysPathInitEvent;
@@ -2240,12 +2246,14 @@ type
     procedure  Finalize;
     procedure  Lock;
     procedure  Unlock;
+    procedure  SetPythonHome(PythonHome: String);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
     function   CleanString(const s : AnsiString) : AnsiString;
     function   Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
+    function   ToPythonRawString (str: String): AnsiString;
     procedure  ExecString(const command : AnsiString); overload;
     procedure  ExecStrings( strings : TStrings ); overload;
     function   EvalString(const command : AnsiString) : PPyObject; overload;
@@ -4056,6 +4064,14 @@ begin
   Py_GetCopyright            :=Import('Py_GetCopyright');
   Py_GetExecPrefix           :=Import('Py_GetExecPrefix');
   Py_GetPath                 :=Import('Py_GetPath');
+  if IsPython3000 then
+    Py_SetPythonHome3000     :=Import('Py_SetPythonHome')
+  else
+    Py_SetPythonHome         :=Import('Py_SetPythonHome');
+  if IsPython3000 then
+    Py_GetPythonHome3000     :=Import('Py_GetPythonHome')
+  else
+    Py_GetPythonHome         :=Import('Py_GetPythonHome');
   Py_GetPrefix               :=Import('Py_GetPrefix');
   Py_GetProgramName          :=Import('Py_GetProgramName');
   PyParser_SimpleParseString :=Import('PyParser_SimpleParseString');
@@ -4850,6 +4866,12 @@ begin
     end
   end;
   AssignPyFlags;
+  if FPythonHomeW<>'' then begin
+    if IsPython3000 then
+      Py_SetPythonHome3000(PChar(FPythonHomeW))
+    else
+      Py_SetPythonHome(PAnsiChar(FPythonHome));
+  end;
   Py_Initialize;
   FInitialized := True;
   FIORedirected := False;
@@ -5111,6 +5133,12 @@ begin
   end; // of if
 end;
 
+procedure TPythonEngine.SetPythonHome(PythonHome: String);
+begin
+  FPythonHomeW := PythonHome;
+  FPythonHome := ToPythonRawString(PythonHome);
+end;
+
 function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
 begin
   result := ob^.ob_type = obt;
@@ -5280,12 +5308,12 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings );
 begin
-  Py_XDecRef( Run_CommandAsObject( CleanString( AnsiString(strings.Text) ), file_input ) );
+  Py_XDecRef( Run_CommandAsObject( CleanString( ToPythonRawString(strings.Text) ), file_input ) );
 end;
 
 function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
 begin
-  Result := Run_CommandAsObject( CleanString( AnsiString(strings.Text) ), eval_input );
+  Result := Run_CommandAsObject( CleanString( ToPythonRawString(strings.Text) ), eval_input );
 end;
 
 procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
@@ -5295,7 +5323,7 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( AnsiString(strings.Text) ), file_input, locals, globals ) );
+  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( ToPythonRawString(strings.Text) ), file_input, locals, globals ) );
 end;
 
 function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
@@ -5305,12 +5333,12 @@ end;
 
 function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict( CleanString( AnsiString(strings.Text) ), eval_input, locals, globals );
+  Result := Run_CommandAsObjectWithDict( CleanString( ToPythonRawString(strings.Text) ), eval_input, locals, globals );
 end;
 
 function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
 begin
-  Result := Run_CommandAsString( CleanString( AnsiString(strings.Text) ), eval_input );
+  Result := Run_CommandAsString( CleanString( ToPythonRawString(strings.Text) ), eval_input );
 end;
 
 function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
@@ -5656,6 +5684,14 @@ begin
           Result := Clients[i];
           Break;
         end;
+end;
+
+function TPythonEngine.ToPythonRawString(str: String): AnsiString;
+begin
+  if IsPython3000 then
+    Result := UTF8Encode(str)
+  else
+    Result := AnsiString(str);
 end;
 
 function   TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
@@ -9726,12 +9762,12 @@ begin
       exOverflow, exUnderflow, exPrecision])
   else
     SetExceptionMask([exDenormalized, exUnderflow, exPrecision]);
-{$IFNDEF NEXTGEN}
+{$IFNDEF NEXTGEN}{$WARN SYMBOL_PLATFORM OFF}
   if MatchPythonPrecision then
       SetPrecisionMode(pmDouble)
     else
       SetPrecisionMode(pmExtended);
-{$ENDIF !NEXTGEN}
+{$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
 end;
 
 {$IFDEF MSWINDOWS}
