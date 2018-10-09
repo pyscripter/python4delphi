@@ -2246,14 +2246,14 @@ type
     procedure  Finalize;
     procedure  Lock;
     procedure  Unlock;
-    procedure  SetPythonHome(PythonHome: String);
+    procedure  SetPythonHome(const PythonHome: string);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
     function   CleanString(const s : AnsiString) : AnsiString;
     function   Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
-    function   ToPythonRawString (str: String): AnsiString;
+    function   StringToPythonBytes (const str: string): AnsiString;
     procedure  ExecString(const command : AnsiString); overload;
     procedure  ExecStrings( strings : TStrings ); overload;
     function   EvalString(const command : AnsiString) : PPyObject; overload;
@@ -5133,10 +5133,10 @@ begin
   end; // of if
 end;
 
-procedure TPythonEngine.SetPythonHome(PythonHome: String);
+procedure TPythonEngine.SetPythonHome(const PythonHome: string);
 begin
   FPythonHomeW := PythonHome;
-  FPythonHome := ToPythonRawString(PythonHome);
+  FPythonHome := StringToPythonBytes(PythonHome);
 end;
 
 function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
@@ -5308,12 +5308,12 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings );
 begin
-  Py_XDecRef( Run_CommandAsObject( CleanString( ToPythonRawString(strings.Text) ), file_input ) );
+  Py_XDecRef( Run_CommandAsObject( CleanString( StringToPythonBytes(strings.Text) ), file_input ) );
 end;
 
 function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
 begin
-  Result := Run_CommandAsObject( CleanString( ToPythonRawString(strings.Text) ), eval_input );
+  Result := Run_CommandAsObject( CleanString( StringToPythonBytes(strings.Text) ), eval_input );
 end;
 
 procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
@@ -5323,7 +5323,7 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( ToPythonRawString(strings.Text) ), file_input, locals, globals ) );
+  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( StringToPythonBytes(strings.Text) ), file_input, locals, globals ) );
 end;
 
 function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
@@ -5333,12 +5333,12 @@ end;
 
 function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict( CleanString( ToPythonRawString(strings.Text) ), eval_input, locals, globals );
+  Result := Run_CommandAsObjectWithDict( CleanString( StringToPythonBytes(strings.Text) ), eval_input, locals, globals );
 end;
 
 function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
 begin
-  Result := Run_CommandAsString( CleanString( ToPythonRawString(strings.Text) ), eval_input );
+  Result := Run_CommandAsString( CleanString( StringToPythonBytes(strings.Text) ), eval_input );
 end;
 
 function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
@@ -5686,7 +5686,7 @@ begin
         end;
 end;
 
-function TPythonEngine.ToPythonRawString(str: String): AnsiString;
+function TPythonEngine.StringToPythonBytes(const str: string): AnsiString;
 begin
   if IsPython3000 then
     Result := UTF8Encode(str)
