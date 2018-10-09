@@ -9753,12 +9753,12 @@ begin
       exOverflow, exUnderflow, exPrecision])
   else
     SetExceptionMask([exDenormalized, exUnderflow, exPrecision]);
-{$IFNDEF NEXTGEN}
+{$IFNDEF NEXTGEN}{$WARN SYMBOL_PLATFORM OFF}
   if MatchPythonPrecision then
       SetPrecisionMode(pmDouble)
     else
       SetPrecisionMode(pmExtended);
-{$ENDIF !NEXTGEN}
+{$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
 end;
 
 {$IFDEF MSWINDOWS}
