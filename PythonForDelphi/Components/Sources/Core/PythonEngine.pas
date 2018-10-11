@@ -2254,6 +2254,7 @@ type
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
     function   EncodeString (const str: string): AnsiString;
+    function   EncodeWindowsFilePath (const str: string): AnsiString;
     procedure  ExecString(const command : AnsiString); overload;
     procedure  ExecStrings( strings : TStrings ); overload;
     function   EvalString(const command : AnsiString) : PPyObject; overload;
@@ -4901,11 +4902,7 @@ end;
 function TPythonEngine.GetInterpreterState: PPyInterpreterState;
 var
   res: PPyThreadState;
-  MajorVersion : integer;
-  MinorVersion : integer;
 begin
-  MajorVersion := StrToInt(RegVersion[1]);
-  MinorVersion := StrToInt(RegVersion[3]);
   if Assigned(PyThreadState_Get) then begin
     res:= PyThreadState_Get();
     if (MajorVersion > 3) or ((MajorVersion = 3) and (MinorVersion >= 4)) then
@@ -5689,6 +5686,15 @@ end;
 function TPythonEngine.EncodeString(const str: string): AnsiString;
 begin
   if IsPython3000 then
+    Result := UTF8Encode(str)
+  else
+    Result := AnsiString(str);
+end;
+
+function TPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
+{PEP 529}
+begin
+  if (MajorVersion > 3) or ((MajorVersion = 3) and (MinorVersion >=6) )then
     Result := UTF8Encode(str)
   else
     Result := AnsiString(str);
