@@ -72,7 +72,7 @@ type
   function GetRegisteredPythonVersions : TPythonVersions;
   (* Returns the highest numbered registered Python version *)
   function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
-  function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
+  function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion; FindLatestVersion: Boolean = false): Boolean;
   {$ENDIF}
 
 implementation
@@ -416,24 +416,33 @@ begin
   end;
 end;
 
-function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
+function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion; FindLatestVersion: Boolean): Boolean;
   function FindPythonDLL(APath : string): string;
   Var
     FindFileData: TWIN32FindData;
     Handle : THandle;
     DLLFileName: string;
+    I, LastI, IncI: integer;
   begin
     Result := '';
-    Handle := FindFirstFile(PWideChar(APath+'\python??.dll'), FindFileData);
-    if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
-    DLLFileName:= FindFileData.cFileName;
-    // skip if python3.dll was found
-    if Length(DLLFileName) <> 12 then FindNextFile(Handle, FindFileData);
-    if Handle = INVALID_HANDLE_VALUE then Exit;
-    Windows.FindClose(Handle);
-    DLLFileName:= FindFileData.cFileName;
-    if Length(DLLFileName) = 12 then
-      Result := DLLFileName;
+    if FindLatestVersion then begin
+      I := High(PYTHON_KNOWN_VERSIONS);
+      LastI := COMPILED_FOR_PYTHON_VERSION_INDEX;
+      IncI := -1;
+    end else begin
+      I := COMPILED_FOR_PYTHON_VERSION_INDEX;
+      LastI := High(PYTHON_KNOWN_VERSIONS);
+      IncI := +1;
+    end;
+    APath := IncludeTrailingPathDelimiter(APath);
+    while i<>LastI+IncI do begin
+      DLLFileName := PYTHON_KNOWN_VERSIONS[I].DLLName;
+      if FileExists(APath+DLLFileName) then begin
+        Result := DLLFileName;
+        exit;
+      end;
+      I := I+IncI;
+    end;
   end;
 
 Var
@@ -469,12 +478,6 @@ begin
 
   PythonVersion.SysVersion := SysVersion;
   PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
-
-  for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
-    if PYTHON_KNOWN_VERSIONS[I].RegVersion = SysVersion then begin
-      Result := True;
-      break;
-    end;
 end;
 
 {$ENDIF}
