@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 //{$DEFINE PYTHON24}
-{$DEFINE PYTHON25}
+//{$DEFINE PYTHON25}
 //{$DEFINE PYTHON26}
 //{$DEFINE PYTHON27}
 //{$DEFINE PYTHON30}
