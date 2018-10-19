@@ -356,7 +356,7 @@ Type
 
     TMyClass = class(TInterfacedObject, IFreeNotification)
     private
-      fFreeNotifImpl : TFreeNotificationImpl;
+      fFreeNotifImpl : IFreeNotification;
     protected
       property FreeNotifImpl : IFreeNotification read fFreeNotifImpl implements IFreeNotification;
     public
@@ -738,9 +738,9 @@ Type
 
   {
      The main component of this unit.
-     Method TObjectToPyObject wraps Delphi objects into Python objects
-     Method RegisterDelphiClass can be used to extend its functionality.
-     Method RegisterEventHandler can be used to add event handling functionality
+     Method Wrap wraps Delphi objects into Python objects
+     Method RegisterDelphiWrapper can be used to extend its functionality.
+     Method EventHandlers.RegisterHandler can be used to add event handling functionality
   }
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
@@ -2951,7 +2951,7 @@ begin
       if Index >= 0 then break;
       DelphiClass := DelphiClass.ClassParent;
     end;
-    Assert(Index >= 0, 'Internal Error in PyDelphiWrapper.TObjectToPyObject'); // shouldn't happen
+    Assert(Index >= 0, 'Internal Error in PyDelphiWrapper.Wrap'); // shouldn't happen
 
     Result := TRegisteredClass(fClassRegister[Index]).PythonType.CreateInstance;
     with PythonToDelphi(Result) as TPyDelphiObject do begin
