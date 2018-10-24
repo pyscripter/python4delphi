@@ -464,8 +464,7 @@ begin
   end;
   PythonVersion.DLLPath := DLLPath;
 
-  SysVersion := Copy(DLLFileName, 7, 2);
-  Insert('.', SysVersion, 2);
+  SysVersion := GetPythonVersionFromDLLName(DLLFileName);
 
   PythonVersion.SysVersion := SysVersion;
   PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;

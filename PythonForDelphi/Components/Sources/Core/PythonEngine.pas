@@ -3149,6 +3149,7 @@ procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
+function GetPythonVersionFromDLLName(const DLLFileName : String): String;
 
 { Helper functions}
 (*
@@ -4746,7 +4747,9 @@ begin
       end;
       if not PYTHON_KNOWN_VERSIONS[i].CanUseLatest then
         Break;
-    end;
+    end
+  else
+    RegVersion := GetPythonVersionFromDLLName(aDllName);
   inherited;
 end;
 
@@ -9752,6 +9755,11 @@ procedure Register;
 begin
   RegisterComponents('Python',[ TPythonEngine, TPythonInputOutput,
                                 TPythonType, TPythonModule, TPythonDelphiVar]);
+end;
+
+function GetPythonVersionFromDLLName(const DLLFileName : String): String;
+begin
+  Result := DLLFileName[{$IFDEF MSWINDOWS}7{$ELSE}10{$ENDIF}] + '.' + DLLFileName[{$IFDEF MSWINDOWS}8{$ELSE}11{$ENDIF}];
 end;
 
 function PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
