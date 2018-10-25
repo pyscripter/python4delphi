@@ -74,6 +74,7 @@ type
   function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
   function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
   {$ENDIF}
+  function LatestPythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion; FindLatestVersion: Boolean = True): Boolean;
 
 implementation
 
@@ -477,5 +478,64 @@ begin
 end;
 
 {$ENDIF}
+
+function LatestPythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion; FindLatestVersion: Boolean): Boolean;
+  function FindPythonDLL(APath : string): string;
+  Var
+    DLLFileName: string;
+    I, LastI, IncI: integer;
+  begin
+    Result := '';
+    if FindLatestVersion then begin
+      I := High(PYTHON_KNOWN_VERSIONS);
+      LastI := COMPILED_FOR_PYTHON_VERSION_INDEX;
+      IncI := -1;
+    end else begin
+      I := COMPILED_FOR_PYTHON_VERSION_INDEX;
+      LastI := High(PYTHON_KNOWN_VERSIONS);
+      IncI := +1;
+    end;
+    APath := IncludeTrailingPathDelimiter(APath);
+    while i<>LastI+IncI do begin
+      DLLFileName := PYTHON_KNOWN_VERSIONS[I].DLLName;
+      if FileExists(APath+DLLFileName) then begin
+        Result := DLLFileName;
+        exit;
+      end;
+      I := I+IncI;
+    end;
+  end;
+
+Var
+  DLLFileName: string;
+  DLLPath: string;
+begin
+  Result := False;
+  Finalize(PythonVersion);
+  FillChar(PythonVersion, SizeOf(TPythonVersion), 0);
+  DLLPath := ExcludeTrailingPathDelimiter(Path);
+
+  PythonVersion.InstallPath := DLLPath;
+
+  DLLFileName := FindPythonDLL(DLLPath);
+  if DLLFileName = '' then begin
+    DLLPath := IncludeTrailingPathDelimiter(DLLPath) + 'Scripts';
+    DLLFileName := FindPythonDLL(DLLPath);
+  end;
+  if DLLFileName = '' then Exit;
+
+  {$IFDEF MSWINDOWS}
+  // check if same platform
+  try
+    if {$IFDEF CPUX64}not {$ENDIF}IsEXEx64(DLLPath+'\python.exe') then Exit;
+  except
+    Exit;
+  end;
+  PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
+  {$ENDIF}
+
+  PythonVersion.DLLPath := DLLPath;
+  PythonVersion.SysVersion := GetPythonVersionFromDLLName(DLLFileName);
+end;
 
 end.
