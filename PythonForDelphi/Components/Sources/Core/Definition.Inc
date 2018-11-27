@@ -7,7 +7,7 @@
 (*                                     IBS Schillings GmbH & Co KG        *)
 (*                                     Ein Unternehmen der KROHNE-Gruppe  *)
 (*                                     Heisenbergstr. 18                  *)
-(*                                     50169 Kerpen-Türnich               *)
+(*                                     50169 Kerpen-TÃ¼rnich               *)
 (*                                     Phone: (49)22 37/97 44-0           *)
 (*                                                                        *)
 (**************************************************************************)
@@ -384,6 +384,31 @@
   {$DEFINE DELPHI10_OR_HIGHER}
   {$DEFINE DELPHI10.1_OR_HIGHER}
   {$DEFINE DELPHI10.2_OR_HIGHER}
+{$ENDIF}
+{$IFDEF VER330} // Delphi 10.3
+  {$DEFINE DELPHI10.2}
+  {$DEFINE DELPHI4_OR_HIGHER}
+  {$DEFINE DELPHI5_OR_HIGHER}
+  {$DEFINE DELPHI6_OR_HIGHER}
+  {$DEFINE DELPHI7_OR_HIGHER}
+  {$DEFINE DELPHI8_OR_HIGHER}
+  {$DEFINE DELPHI2005_OR_HIGHER}
+  {$DEFINE DELPHI2006_OR_HIGHER}
+  {$DEFINE DELPHI2007_OR_HIGHER}
+  {$DEFINE DELPHI2009_OR_HIGHER}
+  {$DEFINE DELPHI2010_OR_HIGHER}
+  {$DEFINE DELPHIXE_OR_HIGHER}
+  {$DEFINE DELPHIXE2_OR_HIGHER}
+  {$DEFINE DELPHIXE3_OR_HIGHER}
+  {$DEFINE DELPHIXE4_OR_HIGHER}
+  {$DEFINE DELPHIXE5_OR_HIGHER}
+  {$DEFINE DELPHIXE6_OR_HIGHER}
+  {$DEFINE DELPHIXE7_OR_HIGHER}
+  {$DEFINE DELPHIXE8_OR_HIGHER}
+  {$DEFINE DELPHI10_OR_HIGHER}
+  {$DEFINE DELPHI10.1_OR_HIGHER}
+  {$DEFINE DELPHI10.2_OR_HIGHER}
+  {$DEFINE DELPHI10.3_OR_HIGHER}
 {$ENDIF}
 /////////////////////////////////////////////////////////////////////////////
 // Python versions
