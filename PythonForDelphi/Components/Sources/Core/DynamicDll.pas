@@ -107,11 +107,13 @@ type
 
 type
   TDynamicDll = class(TComponent)
-  private
+  protected
     function IsAPIVersionStored: Boolean;
     function IsDllNameStored: Boolean;
     function IsRegVersionStored: Boolean;
-    procedure SetDllName(const Value: String);
+    procedure SetDllName(const Value: String); virtual;
+    procedure SetDllPath(const Value: String); virtual;
+    function GetDllFullFileName: String;
   protected
     FDllName            : String;
     FDllPath            : String;
@@ -127,14 +129,17 @@ type
     FOnAfterLoad        : TNotifyEvent;
     FOnBeforeUnload     : TNotifyEvent;
 
-    function  Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
+    procedure CallMapDll; virtual;
+    function  Import(const funcname: String; canFail: Boolean = True): Pointer;
+    function  Import2(funcname: String; args: integer=-1; canFail: Boolean = True): Pointer;
     procedure Loaded; override;
     procedure BeforeLoad; virtual;
     procedure AfterLoad; virtual;
     procedure BeforeUnload; virtual;
     function  GetQuitMessage : String; virtual;
     procedure DoOpenDll(const aDllName : String); virtual;
-    function  GetDllPath : String;
+    function  GetDllPath : String; virtual;
+    procedure MapDll; virtual; abstract;
 
   public
     // Constructors & Destructors
@@ -144,16 +149,19 @@ type
     // Public methods
     procedure OpenDll(const aDllName : String);
     function  IsHandleValid : Boolean;
-    procedure LoadDll;
+    function LoadDll: Boolean;
     procedure UnloadDll;
     procedure Quit;
+    class function CreateInstance(DllPath: String = ''; DllName: String = ''): TDynamicDll;
+    class function CreateInstanceAndLoad(DllPath: String = ''; DllName: String = ''): TDynamicDll;
 
     // Public properties
   published
     property AutoLoad : Boolean read FAutoLoad write FAutoLoad default True;
     property AutoUnload : Boolean read FAutoUnload write FAutoUnload default True;
     property DllName : String read FDllName write SetDllName stored IsDllNameStored;
-    property DllPath : String read FDllPath write FDllPath;
+    property DllPath : String read FDllPath write SetDllPath;
+    property DllFullFileName : String read GetDllFullFileName;
     property APIVersion : Integer read FAPIVersion write FAPIVersion stored IsAPIVersionStored;
     property RegVersion : String read FRegVersion write FRegVersion stored IsRegVersionStored;
     property FatalAbort :  Boolean read FFatalAbort write FFatalAbort default True;
@@ -164,10 +172,7 @@ type
     property OnBeforeUnload : TNotifyEvent read FOnBeforeUnload write FOnBeforeUnload;
   end;
 
-
 implementation
-
-uses PythonEngine;
 
 (*******************************************************)
 (**                                                   **)
@@ -179,10 +184,12 @@ procedure TDynamicDll.DoOpenDll(const aDllName : String);
 begin
   if not IsHandleValid then
   begin
-    FDllName := aDllName;
+    if aDllName<>'' then
+      FDllName := aDllName;
+    SetDllDirectory(PChar(GetDllPath));
     FDLLHandle := SafeLoadLibrary(
       {$IFDEF FPC}
-        PAnsiChar(AnsiString(GetDllPath+DllName))
+        PAnsiChar(AnsiString(DllName))
       {$ELSE}
         GetDllPath+DllName
       {$ENDIF}
@@ -190,24 +197,16 @@ begin
   end;
 end;
 
+function TDynamicDll.GetDllFullFileName: String;
+begin
+  Result := DllPath + DllName;
+end;
+
 function  TDynamicDll.GetDllPath : String;
-{$IFDEF MSWINDOWS}
-var
-  AllUserInstall: Boolean;
-{$ENDIF}
 begin
   Result := DllPath;
-
-  {$IFDEF MSWINDOWS}
-  if DLLPath = '' then begin
-    IsPythonVersionRegistered(RegVersion, Result, AllUserInstall);
-  end;
-  {$ENDIF}
-
   if Result <> '' then
-  begin
     Result := IncludeTrailingPathDelimiter(Result);
-  end;
 end;
 
 procedure  TDynamicDll.OpenDll(const aDllName : String);
@@ -250,6 +249,7 @@ begin
   FFatalAbort           := True;
   FAutoLoad             := True;
   FUseLastKnownVersion  := True;
+  FDLLHandle            := 0;
 end;
 
 destructor TDynamicDll.Destroy;
@@ -259,11 +259,11 @@ begin
   inherited;
 end;
 
-function TDynamicDll.Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
+function TDynamicDll.Import(const funcname: String; canFail: Boolean): Pointer;
 var
   E : EDllImportError;
 begin
-  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
+  Result := GetProcAddress( FDLLHandle, PChar(funcname) );
   if (Result = nil) and canFail then begin
     {$IFDEF MSWINDOWS}
     E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
@@ -274,6 +274,17 @@ begin
     E.WrongFunc := funcname;
     raise E;
   end;
+end;
+
+function TDynamicDll.Import2(funcname: String; args: integer; canFail: Boolean): Pointer;
+begin
+  {$IFDEF WIN32}
+  // using STDCall name decoration
+  // copy paste the function names from dependency walker to notepad and search for the function name there.
+  if args>=0 then
+    funcname := '_'+funcname+'@'+IntToStr(args);
+  {$ENDIF}
+  Result := Import(funcname, canFail);
 end;
 
 procedure TDynamicDll.Loaded;
@@ -293,9 +304,10 @@ begin
 {$ENDIF}
 end;
 
-procedure TDynamicDll.LoadDll;
+function TDynamicDll.LoadDll: Boolean;
 begin
   OpenDll( DllName );
+  Result := IsHandleValid;
 end;
 
 procedure TDynamicDll.UnloadDll;
@@ -317,6 +329,7 @@ procedure TDynamicDll.AfterLoad;
 begin
   if Assigned( FOnAfterLoad ) then
     FOnAfterLoad( Self );
+  CallMapDll;
 end;
 
 procedure TDynamicDll.BeforeUnload;
@@ -365,6 +378,45 @@ end;
 procedure TDynamicDll.SetDllName(const Value: String);
 begin
   FDllName := Value;
+end;
+
+procedure TDynamicDll.SetDllPath(const Value: String);
+begin
+  FDllPath := Value;
+end;
+
+procedure TDynamicDll.CallMapDll;
+begin
+  try
+    MapDll;
+  except
+    on E: Exception do begin
+      if FatalMsgDlg then
+{$IFDEF MSWINDOWS}
+        MessageBox( GetActiveWindow, PChar(E.Message), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+{$ELSE}
+        WriteLn( ErrOutput, E.Message );
+{$ENDIF}
+      if FatalAbort then Quit;
+    end;
+  end;
+end;
+
+class function TDynamicDll.CreateInstance(DllPath, DllName: String): TDynamicDll;
+begin
+  Result := Create(nil);
+  if DllPath<>'' then
+    Result.DllPath := DllPath;
+  if DllName<>'' then
+    Result.DllName := DllName;
+end;
+
+class function TDynamicDll.CreateInstanceAndLoad(DllPath, DllName: String): TDynamicDll;
+begin
+  Result := CreateInstance(DllPath, DllName);
+  Result.LoadDll;
+  if not Result.IsHandleValid then
+    FreeAndNil(Result);
 end;
 
 end.
