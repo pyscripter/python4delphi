@@ -5801,7 +5801,7 @@ Var
         for j := VarArrayLowBound( DeRefV, 2 ) to VarArrayHighBound( DeRefV, 2 ) do
           begin
             L2 := PyList_New( VarArrayHighBound( DeRefV, 3 ) - VarArrayLowBound( DeRefV, 3 ) + 1 );
-            PyList_SetItem( Result, cpt2, L );
+            PyList_SetItem( L, cpt2, L2 );
             cpt3 := 0;
             for k := VarArrayLowBound( DeRefV, 3 ) to VarArrayHighBound( DeRefV, 3 ) do
               begin
