@@ -1,4 +1,4 @@
-(**************************************************************************)
+﻿(**************************************************************************)
 (*                                                                        *)
 (* Module:   'Definition.Inc'          Copyright (c) 1998                 *)
 (*                                                                        *)
@@ -38,6 +38,7 @@
 //{$DEFINE PYTHON35}
 //{$DEFINE PYTHON36}
 //{$DEFINE PYTHON37}
+//{$DEFINE PYTHON38}
 
 /////////////////////////////////////////////////////////////////////////////
 // Python for Delphi settings. Comment out the setting you want to enable.
@@ -418,21 +419,23 @@
 // Note that the installer will let the user specify its default Python version, and
 // thus will edit this file.
 
-{$IFNDEF PYTHON37}
-  {$IFNDEF PYTHON36}
-    {$IFNDEF PYTHON35}
-      {$IFNDEF PYTHON34}
-        {$IFNDEF PYTHON33}
-          {$IFNDEF PYTHON32}
-            {$IFNDEF PYTHON31}
-              {$IFNDEF PYTHON30}
-                {$IFNDEF PYTHON27}
-                  {$IFNDEF PYTHON26}
-                    {$IFNDEF PYTHON25}
-                      {$IFNDEF PYTHON24}
-                  {---<START OF DEFAULT PYTHON VERSION>---}
-                      {$DEFINE PYTHON27}
-                  {---<END OF DEFAULT PYTHON VERSION>---}
+{$IFNDEF PYTHON38}
+  {$IFNDEF PYTHON37}
+    {$IFNDEF PYTHON36}
+      {$IFNDEF PYTHON35}
+        {$IFNDEF PYTHON34}
+          {$IFNDEF PYTHON33}
+            {$IFNDEF PYTHON32}
+              {$IFNDEF PYTHON31}
+                {$IFNDEF PYTHON30}
+                  {$IFNDEF PYTHON27}
+                    {$IFNDEF PYTHON26}
+                      {$IFNDEF PYTHON25}
+                        {$IFNDEF PYTHON24}
+                    {---<START OF DEFAULT PYTHON VERSION>---}
+                        {$DEFINE PYTHON27}
+                    {---<END OF DEFAULT PYTHON VERSION>---}
+                        {$ENDIF}
                       {$ENDIF}
                     {$ENDIF}
                   {$ENDIF}
@@ -445,7 +448,6 @@
     {$ENDIF}
   {$ENDIF}
 {$ENDIF}
-
 
 {$IFDEF PYTHON24}
   {$DEFINE PYTHON24_OR_HIGHER}
@@ -548,6 +550,21 @@
   {$DEFINE PYTHON35_OR_HIGHER}
   {$DEFINE PYTHON36_OR_HIGHER}
   {$DEFINE PYTHON37_OR_HIGHER}
+{$ENDIF}
+{$IFDEF PYTHON38}
+  {$DEFINE PYTHON24_OR_HIGHER}
+  {$DEFINE PYTHON25_OR_HIGHER}
+  {$DEFINE PYTHON26_OR_HIGHER}
+  {$DEFINE PYTHON27_OR_HIGHER}
+  {$DEFINE PYTHON30_OR_HIGHER}
+  {$DEFINE PYTHON31_OR_HIGHER}
+  {$DEFINE PYTHON32_OR_HIGHER}
+  {$DEFINE PYTHON33_OR_HIGHER}
+  {$DEFINE PYTHON34_OR_HIGHER}
+  {$DEFINE PYTHON35_OR_HIGHER}
+  {$DEFINE PYTHON36_OR_HIGHER}
+  {$DEFINE PYTHON37_OR_HIGHER}
+  {$DEFINE PYTHON38_OR_HIGHER}
 {$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
