@@ -198,7 +198,7 @@ end;
 
 function TPythonVersion.Is_conda: Boolean;
 begin
-  Result := FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'scripts\conda.exe');
+  Result := DirectoryExists(IncludeTrailingPathDelimiter(InstallPath) + 'conda-meta');
 end;
 
 function TPythonVersion.Is_venv: Boolean;
