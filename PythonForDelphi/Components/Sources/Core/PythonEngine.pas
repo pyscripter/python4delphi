@@ -129,13 +129,10 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
-  ( (DllName: 'python24.dll'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  ( (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python30.dll'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python31.dll'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
@@ -145,13 +142,10 @@ const
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
 {$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..13] of TPythonVersionProp =
-  ( (DllName: 'libpython2.4.so'; RegVersion: '2.4'; APIVersion: 1012; CanUseLatest: True),
-    (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
+  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  ( (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.0.so'; RegVersion: '3.0'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.1.so'; RegVersion: '3.1'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
     (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
@@ -160,44 +154,35 @@ const
     (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True)
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True) );
 {$ENDIF}
-{$IFDEF PYTHON24}
+{$IFDEF PYTHON25}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
 {$ENDIF}
-{$IFDEF PYTHON25}
+{$IFDEF PYTHON26}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 2;
 {$ENDIF}
-{$IFDEF PYTHON26}
+{$IFDEF PYTHON27}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 3;
 {$ENDIF}
-{$IFDEF PYTHON27}
+{$IFDEF PYTHON32}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
 {$ENDIF}
-{$IFDEF PYTHON30}
+{$IFDEF PYTHON33}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
 {$ENDIF}
-{$IFDEF PYTHON31}
+{$IFDEF PYTHON34}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
 {$ENDIF}
-{$IFDEF PYTHON32}
+{$IFDEF PYTHON35}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
 {$ENDIF}
-{$IFDEF PYTHON33}
+{$IFDEF PYTHON36}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
 {$ENDIF}
-{$IFDEF PYTHON34}
+{$IFDEF PYTHON37}
   COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
 {$ENDIF}
-{$IFDEF PYTHON35}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
-{$ENDIF}
-{$IFDEF PYTHON36}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 11;
-{$ENDIF}
-{$IFDEF PYTHON37}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 12;
-{$ENDIF}
 {$IFDEF PYTHON38}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 13;
+  COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
 {$ENDIF}
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
@@ -1069,6 +1054,11 @@ type
     n_col_offset: integer;
     n_nchildren : integer;
     n_child     : PNode;
+  end;
+
+  PPyCompilerFlags = ^PyCompilerFlags;
+  PyCompilerFlags = {$IFNDEF CPUX64}packed{$ENDIF} record
+    flags : integer;
   end;
 
   // From weakrefobject.h
@@ -1959,7 +1949,8 @@ type
     PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;
     Py_AtExit:function (proc: AtExitProc):integer; cdecl;
     //Py_Cleanup:procedure; cdecl;
-    Py_CompileString:function (s1,s2:PAnsiChar;i:integer):PPyObject; cdecl;
+    Py_CompileStringFlags:function (s1,s2:PAnsiChar;i:integer;flags:PPyCompilerFlags):PPyObject; cdecl;
+    Py_CompileStringExFlags:function (s1,s2:PAnsiChar;i:integer;flags:PPyCompilerFlags;optimize:integer):PPyObject; cdecl;
     Py_FatalError:procedure(s:PAnsiChar); cdecl;
     Py_FindMethod:function (md:PPyMethodDef;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
     Py_FindMethodInChain:function (mc:PPyMethodChain;ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
@@ -1980,7 +1971,7 @@ type
     Py_GetPrefix                    : function : PAnsiChar; cdecl;
     Py_GetProgramName               : function : PAnsiChar; cdecl;
 
-    PyParser_SimpleParseString      : function ( str : PAnsiChar; start : Integer) : PNode; cdecl;
+    PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
     PyNode_Free                     : procedure( n : PNode ); cdecl;
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
     Py_Malloc                       : function ( size : NativeInt ) : Pointer;
@@ -2071,6 +2062,10 @@ type
     _Py_c_quot: Pointer;
     _Py_c_sum: Pointer;
 }
+  // Not exported in Python 3.8 and implemented as functions
+  function PyParser_SimpleParseString( str : PAnsiChar; start : Integer) : PNode; cdecl;
+  function Py_CompileString( s1,s2:PAnsiChar;i:integer) : PPyObject; cdecl;
+
   // functions redefined in Delphi
   procedure   Py_INCREF   ( op: PPyObject);
   procedure   Py_DECREF   ( op: PPyObject);
@@ -4047,18 +4042,18 @@ begin
   PyThreadState_SetAsyncExc :=Import('PyThreadState_SetAsyncExc');
   Py_AtExit                 :=Import('Py_AtExit');
   //Py_Cleanup                :=Import('Py_Cleanup');
-  Py_CompileString          :=Import('Py_CompileString');
   Py_FatalError             :=Import('Py_FatalError');
   if not IsPython3000 then begin
-    Py_FindMethod             :=Import('Py_FindMethod');
-    Py_FindMethodInChain      :=Import('Py_FindMethodInChain');
+    Py_FindMethod           :=Import('Py_FindMethod');
+    Py_FindMethodInChain    :=Import('Py_FindMethodInChain');
     DLL_Py_FlushLine        :=Import('Py_FlushLine');
+    _PyString_Resize        :=Import('_PyString_Resize');
+    Py_CompileStringFlags   :=Import('Py_CompileStringFlags');
+  end else begin
+    _PyString_Resize        :=Import('_PyBytes_Resize');
+    Py_CompileStringExFlags :=Import('Py_CompileStringExFlags');
   end;
-  _PyObject_New             :=Import('_PyObject_New');
-  if not IsPython3000 then
-    _PyString_Resize          :=Import('_PyString_Resize')
-  else
-    _PyString_Resize          :=Import('_PyBytes_Resize');
+  _PyObject_New               :=Import('_PyObject_New');
   Py_Finalize                :=Import('Py_Finalize');
   if getProcAddress( FDLLHandle, 'PyCode_Addr2Line' ) <> nil then
     DLL_PyCode_Addr2Line     := Import('PyCode_Addr2Line');
@@ -4082,7 +4077,7 @@ begin
     Py_GetPythonHome         :=Import('Py_GetPythonHome');
   Py_GetPrefix               :=Import('Py_GetPrefix');
   Py_GetProgramName          :=Import('Py_GetProgramName');
-  PyParser_SimpleParseString :=Import('PyParser_SimpleParseString');
+  PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
   PyNode_Free                :=Import('PyNode_Free');
   PyErr_NewException         :=Import('PyErr_NewException');
 /// jah 29-sep-2000 : updated for python 2.0
@@ -4119,6 +4114,19 @@ begin
   PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
   PyGILState_Ensure        := Import('PyGILState_Ensure');
   PyGILState_Release       := Import('PyGILState_Release');
+end;
+
+function TPythonInterface.Py_CompileString( s1,s2:PAnsiChar;i:integer):PPyObject; cdecl;
+begin
+  if IsPython3000 then
+    Result := Py_CompileStringExFlags(s1, s2, i, nil, -1)
+  else
+    Result := Py_CompileStringFlags(s1, s2, i, nil);
+end;
+
+function TPythonInterface.PyParser_SimpleParseString( str : PAnsiChar; start : integer) : PNode; cdecl;
+begin
+  Result := PyParser_SimpleParseStringFlags(str, start, 0);
 end;
 
 procedure TPythonInterface.Py_INCREF(op: PPyObject);
