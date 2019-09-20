@@ -181,6 +181,11 @@ begin
 	{$ELSE}
     //page := GetMem(PageSize);
     page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    if page=Pointer(-1) then //MMAP_FAILED result?
+    begin
+      ptr := nil;
+      exit;
+    end;
     mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
 	{$ENDIF}
     page^.next:=CodeMemPages;
@@ -451,6 +456,7 @@ begin
        Inc(lCount,sizeof(c64jump));
 
     GetCodeMem(Q,lCount);
+    if Q=nil then exit(nil);
     P := Q;
 
     lSize := 0;
