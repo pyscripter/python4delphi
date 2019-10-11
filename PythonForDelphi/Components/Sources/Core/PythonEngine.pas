@@ -6419,7 +6419,7 @@ begin
 {$IFDEF LINUX}
   // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
   _ucs4Str := WideStringToUCS4String(AString);
-  Result := PyUnicode_FromWideChar( {PWideChar}(@_ucs4Str[0]), Length(AString) );
+  Result := PyUnicode_FromWideChar( {PWideChar}(@_ucs4Str[0]), Length(_ucs4Str)-1 {trim trailing zero});
 {$ELSE}
   Result := PyUnicode_FromWideChar( PWideChar(AString), Length(AString) );
 {$ENDIF}
