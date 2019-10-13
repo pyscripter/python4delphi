@@ -27,7 +27,7 @@ Demo25	Using VarPyth.pas (Kylix ready)
 Demo26	Demo8 revisited to allow the new Python type to be subclassed
 Demo27	Container indexing
 Demo28	Iterator (Kylix ready)
-Demo29	Using Python Imaging Library (PAL)
+Demo29	Using Python Imaging Library (PIL)
 Demo30	Using Named Parameters (Kylix ready)
 Demo31	Using WrapDelphi to access Delphi Form attributes (Requires Delphi5 or later)
 Demo32	Demo08 revisited using WrapDelphi (Requires Delphi7 or later)

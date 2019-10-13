@@ -1771,13 +1771,14 @@ type
     PyDict_GetItemString: function( dp: PPyObject; key: PAnsiChar): PPyObject; cdecl;
     PyDict_SetItemString: function( dp: PPyObject; key: PAnsiChar; item: PPyObject):
                           Integer; cdecl;
-    PyDictProxy_New: function (obj : PPyObject) : PPyObject; cdecl;
+    PyDictProxy_New:      function (obj : PPyObject) : PPyObject; cdecl;
     PyModule_GetDict:     function( module:PPyObject): PPyObject; cdecl;
     PyObject_Str:         function( v: PPyObject): PPyObject; cdecl;
     PyRun_String:         function( str: PAnsiChar; start: Integer; globals: PPyObject;
                                     locals: PPyObject): PPyObject; cdecl;
     PyRun_SimpleString:   function( str: PAnsiChar): Integer; cdecl;
     PyString_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
+    PyString_AsStringAndSize: function( ob: PPyObject; var buffer: PAnsiChar; var size: NativeInt): integer; cdecl;
     PySys_SetArgv:        procedure( argc: Integer; argv: PPAnsiChar); cdecl;
     PySys_SetArgv3000:    procedure( argc: Integer; argv: PPWideChar); cdecl;
 
@@ -3836,10 +3837,13 @@ begin
   PyRun_String              := Import('PyRun_String');
   PyRun_SimpleString        := Import('PyRun_SimpleString');
   PyDict_GetItemString      := Import('PyDict_GetItemString');
-  if not IsPython3000 then
-    PyString_AsString         := Import('PyString_AsString')
-  else
+  if not IsPython3000 then begin
+    PyString_AsString         := Import('PyString_AsString');
+    PyString_AsStringAndSize  := Import('PyString_AsStringAndSize')
+  end else begin
     PyString_AsString         := Import('PyBytes_AsString');
+    PyString_AsStringAndSize  := Import('PyBytes_AsStringAndSize');
+  end;
   if not IsPython3000 then
     DLL_PyString_FromString   := Import('PyString_FromString');
   if not IsPython3000 then

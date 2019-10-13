@@ -1,5 +1,11 @@
 unit Unit1;
-
+{
+    Demonstrates the manipulation of images on the Delphi side using python.
+    Requires the Pillow python module.
+    Istall using pip (pip install Pillow).
+    Currently the code is setup for Python 3.x, but Python 2 can be supported
+    with minor changes. (io.Bytes should be replaced with StringIO.StringIO)
+}
 interface
 
 uses
@@ -31,7 +37,9 @@ var
 implementation
 
 uses
-  VarPyth, jpeg;
+  VarPyth,
+  Math,
+  jpeg;
 
 {$R *.dfm}
 
@@ -85,9 +93,11 @@ procedure TForm1.Button2Click(Sender: TObject);
 var
   _im : Variant;
   _stream : TMemoryStream;
-  _hdc : Variant;
   _dib : Variant;
-  S : AnsiString;
+  pargs: PPyObject;
+  presult :PPyObject;
+  P : PAnsiChar;
+  Len : NativeInt;
 begin
   if (Image1.Picture.Graphic = nil) or Image1.Picture.Graphic.Empty then
     raise Exception.Create('You must first select an image');
@@ -95,16 +105,28 @@ begin
   _im := MainModule.ProcessImage(ImageToPyStr(Image1.Picture.Graphic));
   if not chkUseDC.Checked then
   begin
-   {
-     TODO :
-        Needs fixing.  Probably has to do with images containing null bytes which
-        cannot be converted to ansistrings.
-   }
-    ShowMessage('This does not work and needs fixing');
+    // We have to call PyString_AsStringAndSize because the image may contain zeros
+    with GetPythonEngine do begin
+      pargs := MakePyTuple([ExtractPythonObjectFrom(_im)]);
+      try
+        try
+          presult := PyEval_CallObjectWithKeywords(
+            ExtractPythonObjectFrom(MainModule.ImageToString), pargs, nil);
+          if (PyString_AsStringAndSize(presult, P, Len) < 0) or (P = nil) then begin
+            ShowMessage('This does not work and needs fixing');
+            Abort;
+          end;
+        finally
+          Py_XDECREF(pResult);
+        end;
+      finally
+        Py_DECREF(pargs);
+      end;
+    end;
+
     _stream := TMemoryStream.Create();
     try
-      S := MainModule.ImageToString(_im);
-      _stream.Write(PAnsiChar(S)^, Length(S));
+      _stream.Write(P^, Len);
       _stream.Position := 0;
       Image1.Picture.Graphic.LoadFromStream(_stream);
     finally
@@ -113,11 +135,10 @@ begin
   end
   else
   begin
-    Image1.Picture.Bitmap.Width := Image1.Width;
-    Image1.Picture.Bitmap.Height := Image1.Height;
-    _hdc := Import('ImageWin').HDC(Image1.Picture.Bitmap.Canvas.Handle); 
-    _dib := Import('ImageWin').Dib(_im);
-    _dib.expose(_hdc);
+    Image1.Picture.Bitmap.SetSize(Image1.Width, Image1.Height);
+    _dib := Import('PIL.ImageWin').Dib(_im);
+    Image1.Picture.Bitmap.SetSize(Image1.Height, Image1.Width);
+    _dib.expose(NativeInt(Image1.Picture.Bitmap.Canvas.Handle));
   end;
 end;
 
