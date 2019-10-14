@@ -3634,7 +3634,10 @@ begin
     Result := ''
   else if APIVersion >= 1011 then
     Result :=
-      {$IFDEF WINDOWS} 'UCS2' {$ELSEIF DARWIN} 'UCS2' {$ELSE} 'UCS4' {$ENDIF}
+      {$IF DEFINED(WINDOWS) or DEFINED(DARWIN) or DEFINED(SOLARIS)}
+        'UCS2'
+      {$ELSE}
+        'UCS4'
   else
     Result := '';
 end;
