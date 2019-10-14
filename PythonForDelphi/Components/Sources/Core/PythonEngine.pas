@@ -3633,7 +3633,8 @@ begin
   if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
     Result := ''
   else if APIVersion >= 1011 then
-    Result := {$IFDEF WINDOWS} 'UCS2' {$ELSE} 'UCS4' {$ENDIF}
+    Result :=
+      {$IFDEF WINDOWS} 'UCS2' {$ELSEIF DARWIN} 'UCS2' {$ELSE} 'UCS4' {$ENDIF}
   else
     Result := '';
 end;
