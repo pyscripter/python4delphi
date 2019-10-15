@@ -4916,7 +4916,7 @@ begin
   AssignPyFlags;
   if FPythonHomeW <> '' then begin
     if IsPython3000 then
-      Py_SetPythonHome3000(PChar(FPythonHomeW))
+      Py_SetPythonHome3000(PWideChar(FPythonHomeW))
     else
       Py_SetPythonHome(PAnsiChar(FPythonHome));
   end;
