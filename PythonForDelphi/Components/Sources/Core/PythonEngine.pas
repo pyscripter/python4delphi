@@ -3634,7 +3634,7 @@ begin
     Result := ''
   else if APIVersion >= 1011 then
     Result :=
-      {$IF DEFINED(WINDOWS) or DEFINED(DARWIN) or DEFINED(SOLARIS)}
+      {$IF DEFINED(MSWINDOWS) or DEFINED(DARWIN) or DEFINED(SOLARIS)}
         'UCS2'
       {$ELSE}
         'UCS4'
