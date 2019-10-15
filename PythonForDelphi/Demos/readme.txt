@@ -32,4 +32,4 @@ Demo30	Using Named Parameters (Kylix ready)
 Demo31	Using WrapDelphi to access Delphi Form attributes (Requires Delphi5 or later)
 Demo32	Demo08 revisited using WrapDelphi (Requires Delphi7 or later)
 Demo33  Using Threads inside Python
-Demo34  Dynamically creating, destroying and recreating PythonEngine.  Uses PytonVersions
+Demo34  Dynamically creating, destroying and recreating PythonEngine.  Uses PythonVersions

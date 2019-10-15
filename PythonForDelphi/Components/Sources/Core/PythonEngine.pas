@@ -3638,6 +3638,7 @@ begin
         'UCS2'
       {$ELSE}
         'UCS4'
+      {$ENDIF}
   else
     Result := '';
 end;
