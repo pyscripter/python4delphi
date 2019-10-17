@@ -72,7 +72,8 @@ type
   function GetRegisteredPythonVersions : TPythonVersions;
   (* Returns the highest numbered registered Python version *)
   function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
-  function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
+  function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion;
+     AcceptVirtualEnvs: Boolean = True): Boolean;
   {$ENDIF}
 
 implementation
@@ -122,6 +123,11 @@ begin
     TPythonEngine(PythonEngine).DllName := DLLName;
     TPythonEngine(PythonEngine).DllPath := DLLPath;
     TPythonEngine(PythonEngine).APIVersion := ApiVersion;
+    if Is_venv then begin
+      TPythonEngine(PythonEngine).VenvPythonExe := PythonExecutable;
+      TPythonEngine(PythonEngine).SetPythonHome(DLLPath);
+    end else if not IsRegistered then
+      TPythonEngine(PythonEngine).SetPythonHome(InstallPath);
   end;
 end;
 
@@ -416,7 +422,9 @@ begin
   end;
 end;
 
-function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion): Boolean;
+function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion;
+  AcceptVirtualEnvs: Boolean = True): Boolean;
+
   function FindPythonDLL(APath : string): string;
   Var
     FindFileData: TWIN32FindData;
@@ -436,10 +444,29 @@ function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVer
       Result := DLLFileName;
   end;
 
+  function GetVenvBasePrefix(InstallPath: string): string;
+  var
+    SL : TStringList;
+  begin
+    SL := TStringList.Create;
+    try
+       try
+         SL.LoadFromFile(IncludeTrailingPathDelimiter(InstallPath)+'pyvenv.cfg');
+         Result := Trim(SL.Values['home']);
+         if Result = '' then
+           Result := Trim(SL.Values['home ']);
+       except
+       end;
+    finally
+      SL.Free;
+    end;
+  end;
+
 Var
   DLLFileName: string;
   DLLPath: string;
   SysVersion: string;
+  BasePrefix: string;
   I: integer;
 begin
   Result := False;
@@ -450,11 +477,24 @@ begin
   PythonVersion.InstallPath := DLLPath;
 
   DLLFileName := FindPythonDLL(DLLPath);
-  if DLLFileName = '' then begin
+
+  if (DLLFileName = '') and AcceptVirtualEnvs then begin
     DLLPath := DLLPath + '\Scripts';
     DLLFileName := FindPythonDLL(DLLPath);
   end;
-  if DLLFileName = '' then Exit;
+  if DLLFileName = '' then begin
+    if AcceptVirtualEnvs and PythonVersion.Is_venv then
+    begin
+      BasePrefix := GetVenvBasePrefix(PythonVersion.InstallPath);
+      if (BasePrefix <> '') and PythonVersionFromPath(BasePrefix, PythonVersion, False) then
+      begin
+        //  Install path points to venv but the rest of the info is from base_prefix
+        PythonVersion.InstallPath := ExcludeTrailingPathDelimiter(Path);
+        Result := True;
+      end;
+    end;
+    Exit;
+  end;
 
   // check if same platform
   try
