@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-  PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList;
+  PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList, System.Actions;
 
 type
   TForm1 = class(TForm)
