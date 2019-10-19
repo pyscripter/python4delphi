@@ -3643,7 +3643,12 @@ begin
 end;
 
 procedure TPythonInterface.MapDll;
+Var
+  UnicodeSuffix : string;
+
 begin
+  UnicodeSuffix := GetUnicodeTypeSuffix;
+
   Py_DebugFlag               := Import('Py_DebugFlag');
   Py_VerboseFlag             := Import('Py_VerboseFlag');
   Py_InteractiveFlag         := Import('Py_InteractiveFlag');
@@ -4055,12 +4060,12 @@ begin
   PyType_GenericAlloc       :=Import('PyType_GenericAlloc');
   PyType_GenericNew         :=Import('PyType_GenericNew');
   PyType_Ready              :=Import('PyType_Ready');
-  PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[GetUnicodeTypeSuffix])));
-  PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[GetUnicodeTypeSuffix])));
-  PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[GetUnicodeTypeSuffix])));
-  PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[GetUnicodeTypeSuffix])));
-  PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[GetUnicodeTypeSuffix])));
-  PyUnicode_GetSize         :=Import(AnsiString(Format('PyUnicode%s_GetSize',[GetUnicodeTypeSuffix])));
+  PyUnicode_FromWideChar    :=Import(AnsiString(Format('PyUnicode%s_FromWideChar',[UnicodeSuffix])));
+  PyUnicode_AsWideChar      :=Import(AnsiString(Format('PyUnicode%s_AsWideChar',[UnicodeSuffix])));
+  PyUnicode_Decode          :=Import(AnsiString(Format('PyUnicode%s_Decode',[UnicodeSuffix])));
+  PyUnicode_AsEncodedString :=Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[UnicodeSuffix])));
+  PyUnicode_FromOrdinal     :=Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[UnicodeSuffix])));
+  PyUnicode_GetSize         :=Import(AnsiString(Format('PyUnicode%s_GetSize',[UnicodeSuffix])));
   PyWeakref_GetObject       :=Import('PyWeakref_GetObject');
   PyWeakref_NewProxy        :=Import('PyWeakref_NewProxy');
   PyWeakref_NewRef          :=Import('PyWeakref_NewRef');
