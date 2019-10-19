@@ -2233,8 +2233,6 @@ type
     FPyDateTime_TZInfoType:      PPyObject;
     FPyDateTime_TimeTZType:      PPyObject;
     FPyDateTime_DateTimeTZType:  PPyObject;
-    function  GetVersion: String;
-    procedure SetVersion(const Value: String);
 
   protected
     procedure AfterLoad; override;
@@ -2361,7 +2359,6 @@ type
     property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default [];
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
     property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
-    property Version : String read GetVersion write SetVersion stored False;
     property OnAfterInit: TNotifyEvent read FOnAfterInit write FOnAfterInit;
     property OnPathInitialization: TPathInitializationEvent read FOnPathInitialization write FOnPathInitialization;
     property OnSysPathInit: TSysPathInitEvent read FOnSysPathInit write FOnSysPathInit;
@@ -6638,16 +6635,6 @@ end;
 function TPythonEngine.PyTZInfo_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_TZInfoType);
-end;
-
-function TPythonEngine.GetVersion: String;
-begin
-  Result := '3.32';
-end;
-
-procedure TPythonEngine.SetVersion(const Value: String);
-begin
-  // do nothing
 end;
 
 function TPythonEngine.PyString_AsDelphiString(ob: PPyObject): string;
