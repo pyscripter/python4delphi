@@ -4842,7 +4842,7 @@ procedure TPythonEngine.Initialize;
     'del sys, path, i, site';
   begin
      if VenvPythonExe <> '' then
-       ExecString(Format(Script, [VenvPythonExe]));
+       ExecString(AnsiString(Format(Script, [VenvPythonExe])));
     _path := PySys_GetObject('path');
     if Assigned(FOnSysPathInit) then
       FOnSysPathInit(Self, _path);
