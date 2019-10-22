@@ -3196,8 +3196,15 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 
 implementation
 
+uses
+{$IFDEF FPC}
+  StrUtils,
+{$ELSE}
+  AnsiStrings,
+{$ENDIF}
 {$IFDEF MSWINDOWS}
-uses Math, Registry;
+  Math,
+  Registry;
 {$ENDIF}
 
 
@@ -5235,7 +5242,7 @@ begin
   while i > 0 do
     begin
       Delete( result, i, 1 );
-      i := Pos(AnsiString(CR),result, i);
+      i := PosEx(AnsiString(CR),result, i);
     end;
   if AppendLF and (result[length(result)] <> LF) then
     Insert( LF, result, length(result)+1 );
