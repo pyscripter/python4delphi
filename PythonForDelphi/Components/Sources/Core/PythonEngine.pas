@@ -5381,12 +5381,12 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings );
 begin
-  Py_XDecRef( Run_CommandAsObject( CleanString( EncodeString(strings.Text) ), file_input ) );
+  Py_XDecRef( Run_CommandAsObject( EncodeString(strings.Text) , file_input ) );
 end;
 
 function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
 begin
-  Result := Run_CommandAsObject( CleanString( EncodeString(strings.Text) ), eval_input );
+  Result := Run_CommandAsObject( EncodeString(strings.Text) , eval_input );
 end;
 
 procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
@@ -5396,7 +5396,7 @@ end;
 
 procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( CleanString( EncodeString(strings.Text) ), file_input, locals, globals ) );
+  Py_XDecRef( Run_CommandAsObjectWithDict( EncodeString(strings.Text), file_input, locals, globals ) );
 end;
 
 function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
@@ -5406,12 +5406,12 @@ end;
 
 function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict( CleanString( EncodeString(strings.Text) ), eval_input, locals, globals );
+  Result := Run_CommandAsObjectWithDict( EncodeString(strings.Text), eval_input, locals, globals );
 end;
 
 function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
 begin
-  Result := Run_CommandAsString( CleanString( EncodeString(strings.Text) ), eval_input );
+  Result := Run_CommandAsString( EncodeString(strings.Text), eval_input );
 end;
 
 function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
