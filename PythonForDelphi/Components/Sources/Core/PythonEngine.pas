@@ -2269,7 +2269,7 @@ type
     procedure  SetProgramName(const ProgramName: string);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
-    function   CleanString(const s : AnsiString) : AnsiString;
+    function   CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString;
     function   Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
@@ -5224,7 +5224,7 @@ begin
   PyErr_Clear;
 end;
 
-function TPythonEngine.CleanString(const s : AnsiString) : AnsiString;
+function TPythonEngine.CleanString(const s : AnsiString; AppendLF : Boolean) : AnsiString;
 var
   i : Integer;
 begin
@@ -5235,9 +5235,9 @@ begin
   while i > 0 do
     begin
       Delete( result, i, 1 );
-      i := Pos(AnsiString(CR),result);
+      i := Pos(AnsiString(CR),result, i);
     end;
-  if result[length(result)] <> LF then
+  if AppendLF and (result[length(result)] <> LF) then
     Insert( LF, result, length(result)+1 );
 end;
 
@@ -6801,7 +6801,8 @@ end;
 function TEventDef.GetDocString : AnsiString;
 begin
   Owner.Container.CheckEngine;
-  FTmpDocString := Owner.Container.Engine.CleanString(AnsiString(FDocString.Text));
+  FTmpDocString :=
+    Owner.Container.Engine.CleanString(AnsiString(FDocString.Text), False);
   Result := fTmpDocString;
 end;
 
@@ -7576,7 +7577,9 @@ begin
     begin
       if DocString.Text <> '' then
         begin
-          doc := PyString_FromString( PAnsiChar(CleanString(AnsiString(FDocString.Text))) );
+          doc :=
+            PyString_FromString(PAnsiChar(CleanString(EncodeString(FDocString.Text),
+            False)) );
           PyObject_SetAttrString( FModule, '__doc__', doc );
           Py_XDecRef(doc);
           CheckError(False);
@@ -8823,8 +8826,9 @@ begin
     begin
       // Basic services
       if FDocString.Count > 0 then
+        With Engine do
         begin
-          FCurrentDocString := GetPythonEngine.CleanString(AnsiString(FDocString.Text));
+          FCurrentDocString := CleanString(EncodeString(FDocString.Text), False);
           tp_doc := PAnsiChar(FCurrentDocString);
         end;
       tp_dealloc   := @PyObjectDestructor;
