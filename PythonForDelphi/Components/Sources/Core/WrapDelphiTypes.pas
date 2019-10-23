@@ -290,7 +290,7 @@ begin
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TPoint type';
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
 end;
 
 function TPyDelphiPoint.Set_X(AValue: PPyObject;
@@ -523,7 +523,7 @@ begin
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TRect type';
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
 end;
 
 
@@ -599,7 +599,7 @@ begin
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TSize type';
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
 end;
 
 function TPyDelphiSize.Set_CX(AValue: PPyObject;

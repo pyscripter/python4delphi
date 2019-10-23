@@ -545,7 +545,6 @@ Type
     function  SetAttrO( key, value: PPyObject) : Integer; override;
     // Objects are equal when they refer to the same DelphiObject
     function  Compare( obj: PPyObject) : Integer; override;
-    function  RichCompare( obj : PPyObject; Op : TRichComparisonOpcode) : PPyObject; override;
     function  Repr : PPyObject; override;
     // automatic iterator support when the wrapper implements IContainerAccessProvider
     function  Iter : PPyObject; override;
@@ -590,7 +589,6 @@ Type
   public
     destructor Destroy; override;
 
-    function  Compare( obj: PPyObject) : Integer; override;
     function  RichCompare( obj : PPyObject; Op : TRichComparisonOpcode) : PPyObject; override;
     function  Repr : PPyObject; override;
 
@@ -1803,27 +1801,6 @@ begin
            [DelphiObjectClass.ClassName, NativeInt(Self)]))) );
 end;
 
-function TPyDelphiObject.RichCompare(obj: PPyObject;
-  Op: TRichComparisonOpcode): PPyObject;
-Var
-  Res : Boolean;
-begin
-  Res := False;
-  case Op of
-    pyLT: Res := Compare(obj) < 0;
-    pyLE: Res := Compare(obj) <= 0;
-    pyEQ: Res := Compare(obj) = 0;
-    pyNE: Res := Compare(obj) <> 0;
-    pyGT: Res := Compare(obj) > 0;
-    pyGE: Res := Compare(obj) >= 0;
-  end;
-  if Res then
-    Result := PPyObject(GetPythonEngine.Py_True)
-  else
-    Result := PPyObject(GetPythonEngine.Py_False);
-  GetPythonEngine.Py_INCREF( Result );
-end;
-
 function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
 
   function HandleEvent(PropInfo: PPropInfo) : Integer;
@@ -1991,7 +1968,7 @@ begin
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType, tpfHaveRichCompare];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare, bsRichCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
   _ContainerAccessClass := GetContainerAccessClass;
   if Assigned(_ContainerAccessClass) then
   begin
@@ -2195,29 +2172,6 @@ end;
 
 { TPyDelphiVarParameter }
 
-function TPyDelphiVarParameter.Compare(obj: PPyObject): Integer;
-var
-  _value : PPyObject;
-begin
-  with GetPythonEngine do
-  begin
-    if Self.Value = nil then
-      _value := Py_None
-    else
-      _value := Self.Value;
-    if IsPython3000 then begin
-      if PyObject_RichCompareBool(_value, obj, PY_LT) = 1 then
-        Result := -1
-      else if PyObject_RichCompareBool(_value, obj, PY_EQ) = 1 then
-        Result := 0
-      else
-        Result := 1;
-      PyErr_Clear;
-    end else
-      Result := PyObject_Compare(_value, obj);
-  end;
-end;
-
 destructor TPyDelphiVarParameter.Destroy;
 begin
   Value := nil;
@@ -2284,7 +2238,7 @@ begin
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Container object allowing modification of Delphi var parameters from Python';
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsCompare];
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
 end;
 
 procedure TPyDelphiVarParameter.SetValue(const Value: PPyObject);
