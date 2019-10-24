@@ -498,8 +498,6 @@ type
   getattrofunc      = function( ob1,ob2: PPyObject): PPyObject; cdecl;
   setattrofunc      = function( ob1,ob2,ob3: PPyObject): integer; cdecl;
 
-/// jah 29-sep-2000 : updated for python 2.0
-///                   added from object.h
   getreadbufferproc = function ( ob1: PPyObject; i: NativeInt; ptr: Pointer): NativeInt; cdecl;
   getwritebufferproc= function ( ob1: PPyObject; i: NativeInt; ptr: Pointer): NativeInt; cdecl;
   getsegcountproc   = function ( ob1: PPyObject; i: NativeInt): NativeInt; cdecl;
@@ -542,8 +540,7 @@ type
      nb_oct           : unaryfunc;
      nb_hex           : unaryfunc;
 
-/// jah 29-sep-2000 : updated for python 2.0
-///                   added from .h
+    // Updated for python 2.0
      nb_inplace_add       : binaryfunc;
      nb_inplace_subtract  : binaryfunc;
      nb_inplace_multiply  : binaryfunc;
@@ -573,9 +570,6 @@ type
      sq_slice     : ssizessizeargfunc;
      sq_ass_item  : ssizeobjargproc;
      sq_ass_slice : ssizessizeobjargproc;
-
-/// jah 29-sep-2000 : updated for python 2.0
-///                   added from .h
      sq_contains        : objobjproc;
      sq_inplace_concat  : binaryfunc;
      sq_inplace_repeat  : ssizeargfunc;
@@ -589,8 +583,6 @@ type
   end;
   PPyMappingMethods = ^PyMappingMethods;
 
-/// jah 29-sep-2000 : updated for python 2.0
-///                   added from .h
   PyBufferProcs = {$IFNDEF CPUX64}packed{$ENDIF} record
      bf_getreadbuffer   : getreadbufferproc;
      bf_getwritebuffer  : getwritebufferproc;
@@ -777,10 +769,10 @@ type
     // Methods to implement standard operations
 
     tp_dealloc:     pydestructor;
-    tp_print:       printfunc;
+    tp_print:       printfunc; // not available and replaced in Python 3.x
     tp_getattr:     getattrfunc;
     tp_setattr:     setattrfunc;
-    tp_compare:     cmpfunc;
+    tp_compare:     cmpfunc;  // not available and replaced in Python 3.x
     tp_repr:        reprfunc;
 
     // Method suites for standard classes
@@ -796,8 +788,6 @@ type
     tp_str:         reprfunc;
     tp_getattro:    getattrofunc;
     tp_setattro:    setattrofunc;
-
-/// jah 29-sep-2000 : updated for python 2.0
 
     // Functions to access object as input/output buffer
     tp_as_buffer:   PPyBufferProcs;
@@ -1296,9 +1286,6 @@ type
 
 
   // Standard exception classes of Python
-
-/// jah 29-sep-2000 : updated for python 2.0
-///                   base classes updated according python documentation
 
 { Hierarchy of Python exceptions, Python 2.3, copied from <INSTALL>\Python\exceptions.c
 
@@ -1994,7 +1981,6 @@ type
     PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
     PyNode_Free                     : procedure( n : PNode ); cdecl;
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
-    Py_Malloc                       : function ( size : NativeInt ) : Pointer;
     PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
 
 {New exported Objects in Python 1.5}
@@ -2268,7 +2254,6 @@ type
     procedure  SetProgramName(const ProgramName: string);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
-    function   CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString;
     function   Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
@@ -3186,6 +3171,11 @@ function IsPythonVersionRegistered(PythonVersion : string;
 *)
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean = True);
+(*
+  Converts line breaks to LF and optionally adds a line break at the end
+*)
+function CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString; overload;
+function CleanString(const s : string; AppendLF : Boolean = True) : string; overload;
 
 //#######################################################
 //##                                                   ##
@@ -4119,12 +4109,7 @@ begin
   PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
   PyNode_Free                :=Import('PyNode_Free');
   PyErr_NewException         :=Import('PyErr_NewException');
-/// jah 29-sep-2000 : updated for python 2.0
-///                   replaced Py_Malloc with PyMem_Malloc
-///---   @Py_Malloc := Import ('Py_Malloc');
-///+++   @Py_Malloc := Import ('PyMem_Malloc');
   try
-    Py_Malloc := Import ('PyMem_Malloc');
     PyMem_Malloc := Import ('PyMem_Malloc');
   except
   end;
@@ -5229,23 +5214,6 @@ begin
     Py_XDECREF(attr);
   end;
   PyErr_Clear;
-end;
-
-function TPythonEngine.CleanString(const s : AnsiString; AppendLF : Boolean) : AnsiString;
-var
-  i : Integer;
-begin
-  result := s;
-  if s = '' then
-    Exit;
-  i := Pos(AnsiString(CR),s);
-  while i > 0 do
-    begin
-      Delete( result, i, 1 );
-      i := PosEx(AnsiString(CR),result, i);
-    end;
-  if AppendLF and (result[length(result)] <> LF) then
-    Insert( LF, result, length(result)+1 );
 end;
 
 function   TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
@@ -6819,7 +6787,7 @@ function TEventDef.GetDocString : AnsiString;
 begin
   Owner.Container.CheckEngine;
   FTmpDocString :=
-    Owner.Container.Engine.CleanString(AnsiString(FDocString.Text), False);
+    Owner.Container.Engine.EncodeString(CleanString(FDocString.Text, False));
   Result := fTmpDocString;
 end;
 
@@ -7595,7 +7563,7 @@ begin
       if DocString.Text <> '' then
         begin
           doc :=
-            PyString_FromDelphiString(AdjustLineBreaks(FDocString.Text,tlbsLF));
+            PyString_FromDelphiString(CleanString(FDocString.Text, False));
           PyObject_SetAttrString( FModule, '__doc__', doc );
           Py_XDecRef(doc);
           CheckError(False);
@@ -8857,9 +8825,9 @@ begin
     begin
       // Basic services
       if FDocString.Count > 0 then
-        With Engine do
+        with Engine do
         begin
-          FCurrentDocString := CleanString(EncodeString(FDocString.Text), False);
+          FCurrentDocString := EncodeString(CleanString(FDocString.Text, False));
           tp_doc := PAnsiChar(FCurrentDocString);
         end;
       tp_dealloc   := @PyObjectDestructor;
@@ -9873,6 +9841,30 @@ begin
     else
       SetPrecisionMode(pmExtended);
 {$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
+end;
+
+function CleanString(const s : AnsiString; AppendLF : Boolean) : AnsiString;
+var
+  i : Integer;
+begin
+  result := s;
+  if s = '' then
+    Exit;
+  i := Pos(AnsiString(CR),s);
+  while i > 0 do
+    begin
+      Delete( result, i, 1 );
+      i := PosEx(AnsiString(CR),result, i);
+    end;
+  if AppendLF and (result[length(result)] <> LF) then
+    Result := Result + LF;
+end;
+
+function CleanString(const s : string; AppendLF : Boolean) : string;
+begin
+  Result := AdjustLineBreaks(s, tlbsLF);
+  if AppendLF and (result[length(result)] <> LF) then
+    Result := Result + LF;
 end;
 
 {$IFDEF MSWINDOWS}

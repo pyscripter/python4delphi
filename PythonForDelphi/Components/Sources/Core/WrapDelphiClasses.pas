@@ -1304,7 +1304,7 @@ function TPyDelphiStrings.Get_Text(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
   Result := GetPythonEngine.PyString_FromDelphiString(
-    AdjustLineBreaks(DelphiObject.Text, tlbsLF));
+    CleanString(DelphiObject.Text, False));
 end;
 
 function TPyDelphiStrings.IndexOf_Wrapper(args: PPyObject): PPyObject;
