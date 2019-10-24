@@ -292,7 +292,7 @@ function ShiftToPython(AShift : TShiftState) : PPyObject;
   begin
     with GetPythonEngine do
     begin
-      _item := PyString_FromString(PAnsiChar(AnsiString(AString)));
+      _item := PyString_FromDelphiString(AString);
       PyList_Append(AList, _item);
       Py_XDecRef(_item);
     end;
@@ -338,15 +338,12 @@ function TPyDelphiPersistent.Assign_Wrapper(args: PPyObject): PPyObject;
 var
   _obj : PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
-    if PyArg_ParseTuple( args, 'O:Assign',@_obj ) <> 0 then
-      Result := Self.Assign(_obj)
-    else
-      Result := nil;
-  end;
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  if GetPythonEngine.PyArg_ParseTuple( args, 'O:Assign',@_obj ) <> 0 then
+    Result := Self.Assign(_obj)
+  else
+    Result := nil;
 end;
 
 class function TPyDelphiPersistent.DelphiObjectClass: TClass;
@@ -362,11 +359,11 @@ end;
 function TPyDelphiPersistent.GetNamePath_Wrapper(
   args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':GetNamePath' ) <> 0 then begin
-      Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.GetNamePath)))
+      Result := PyString_FromDelphiString(DelphiObject.GetNamePath)
     end else
       Result := nil;
   end;
@@ -536,28 +533,22 @@ end;
 
 function TPyDelphiCollection.Get_Count(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Count);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Count);
 end;
 
 function TPyDelphiCollection.Get_Items(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
-    with PythonToDelphi(Result) as TPyDelphiContainer do
-      Setup(Self.PyDelphiWrapper, Self.ContainerAccess.Clone);
-  end;
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, Self.ContainerAccess.Clone);
 end;
 
 function TPyDelphiCollection.Get_Owner(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Owner);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Owner);
 end;
 
 function TPyDelphiCollection.Insert_Wrapper(args: PPyObject): PPyObject;
@@ -730,10 +721,10 @@ var
   _bindings : PPyObject;
   _type : PPyTypeObject;
 begin
+  Adjust(@Self);
   _prefix := 'handle_';
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
-    Adjust(@Self);
     Result := nil;
     s := nil;
     if PyArg_ParseTuple( args, '|O:BindMethodsToEvents',@s ) <> 0 then
@@ -808,8 +799,8 @@ begin
                             else
                             begin
                               _pair := PyTuple_New(3);
-                              PyTuple_SetItem(_pair, 0, PyString_FromString(PAnsiChar(AnsiString(_compName))));
-                              PyTuple_SetItem(_pair, 1, PyString_FromString(PAnsiChar(AnsiString(_eventName))));
+                              PyTuple_SetItem(_pair, 0, PyString_FromDelphiString(_compName));
+                              PyTuple_SetItem(_pair, 1, PyString_FromDelphiString(_eventName));
                               PyTuple_SetItem(_pair, 2, objMethod);
                               PyList_Append(_bindings, _pair);
                             end;
@@ -839,36 +830,30 @@ end;
 
 function TPyDelphiComponent.Get_ComponentCount(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.ComponentCount);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ComponentCount);
 end;
 
 function TPyDelphiComponent.Get_Components(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
-    with PythonToDelphi(Result) as TPyDelphiContainer do
-      Setup(Self.PyDelphiWrapper, Self.ContainerAccess.Clone);
-  end;
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, Self.ContainerAccess.Clone);
 end;
 
 function TPyDelphiComponent.Get_Owner(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Owner);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Owner);
 end;
 
 function TPyDelphiComponent.GetParentComponent_Wrapper(
   args: PPyObject): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':GetParentComponent') <> 0 then begin
       Result := Wrap(DelphiObject.GetParentComponent)
     end else
@@ -878,9 +863,9 @@ end;
 
 function TPyDelphiComponent.HasParent_Wrapper(args: PPyObject): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
     // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':HasParent') <> 0 then begin
       Result := VariantAsPyObject(DelphiObject.HasParent)
     end else
@@ -1071,7 +1056,7 @@ end;
 
 function TStringsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromString( PAnsiChar(AnsiString(Container[AIndex])) );
+  Result := GetPythonEngine.PyString_FromDelphiString( Container[AIndex] );
 end;
 
 function TStringsAccess.GetSize: Integer;
@@ -1302,28 +1287,24 @@ end;
 
 function TPyDelphiStrings.Get_Capacity(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Capacity);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Capacity);
 end;
 
 function TPyDelphiStrings.Get_Objects(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
-    with PythonToDelphi(Result) as TPyDelphiContainer do
-      Setup(Self.PyDelphiWrapper, TStringsObjectsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
-  end;
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TStringsObjectsAccess.Create(Self.PyDelphiWrapper,
+       Self.DelphiObject));
 end;
 
 function TPyDelphiStrings.Get_Text(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(GetPythonEngine.CleanString(AnsiString(DelphiObject.Text))));
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyString_FromDelphiString(
+    AdjustLineBreaks(DelphiObject.Text, tlbsLF));
 end;
 
 function TPyDelphiStrings.IndexOf_Wrapper(args: PPyObject): PPyObject;
@@ -1438,9 +1419,8 @@ end;
 
 function TPyDelphiStrings.Repr: PPyObject;
 begin
-  with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi TStrings at %x>',
-         [NativeInt(self)]))) );
+  Result := GetPythonEngine.PyString_FromDelphiString( Format('<Delphi TStrings at %x>',
+         [NativeInt(self)]) );
 end;
 
 function TPyDelphiStrings.SaveToFile_Wrapper(args: PPyObject): PPyObject;

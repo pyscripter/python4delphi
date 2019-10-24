@@ -374,59 +374,45 @@ end;
 
 function TPyDelphiGraphic.Get_Empty(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.Empty);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.Empty);
 end;
 
 function TPyDelphiGraphic.Get_Height(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Height);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiGraphic.Get_Modified(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.Modified);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.Modified);
 end;
 
 function TPyDelphiGraphic.Get_Palette(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Palette);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Palette);
 end;
 
 function TPyDelphiGraphic.Get_PaletteModified(
   AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.PaletteModified);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.PaletteModified);
 end;
 
 function TPyDelphiGraphic.Get_Transparent(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.Transparent);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.Transparent);
 end;
 
 function TPyDelphiGraphic.Get_Width(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Width);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
 end;
 
 function TPyDelphiGraphic.LoadFromClipboardFormat_Wrapper(
@@ -438,9 +424,9 @@ var
   _palette : Integer;
   {$ENDIF FPC}
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     {$IFDEF FPC}
     if PyArg_ParseTuple( args, 'i:LoadFromClipboardFormat',@_format ) <> 0 then
     begin
@@ -461,9 +447,9 @@ function TPyDelphiGraphic.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
   _pFileName : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
@@ -481,9 +467,9 @@ var
   _oStream : PPyObject;
   _stream : TStream;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oStream := nil;
     if (PyArg_ParseTuple( args, 'O:LoadFromStrea',@_oStream ) <> 0) and
        CheckObjAttribute(_oStream, 'Stream', TStream, _obj) then
@@ -551,9 +537,9 @@ var
   _palette : HPALETTE;
   {$ENDIF FPC}
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     {$IFDEF FPC}
     if PyArg_ParseTuple( args, ':SaveToClipboardFormat') <> 0 then
     begin
@@ -579,9 +565,9 @@ function TPyDelphiGraphic.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
   _pFileName : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
@@ -598,9 +584,9 @@ var
   _oStream : PPyObject;
   _stream : TStream;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oStream := nil;
     if (PyArg_ParseTuple( args, 'O:SaveToStream',@_oStream ) <> 0) and
        CheckObjAttribute(_oStream, 'Stream', TStream, _obj) then
@@ -624,16 +610,14 @@ function TPyDelphiGraphic.Set_Height(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Height', _value) then
-    begin
-      DelphiObject.Height := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Height', _value) then
+  begin
+    DelphiObject.Height := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiGraphic.Set_Modified(AValue: PPyObject;
@@ -641,16 +625,14 @@ function TPyDelphiGraphic.Set_Modified(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'Modified', _value) then
-    begin
-      DelphiObject.Modified := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'Modified', _value) then
+  begin
+    DelphiObject.Modified := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiGraphic.Set_Palette(AValue: PPyObject;
@@ -658,16 +640,14 @@ function TPyDelphiGraphic.Set_Palette(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Palette', _value) then
-    begin
-      DelphiObject.Palette := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Palette', _value) then
+  begin
+    DelphiObject.Palette := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiGraphic.Set_PaletteModified(AValue: PPyObject;
@@ -675,16 +655,14 @@ function TPyDelphiGraphic.Set_PaletteModified(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'PaletteModified', _value) then
-    begin
-      DelphiObject.PaletteModified := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'PaletteModified', _value) then
+  begin
+    DelphiObject.PaletteModified := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiGraphic.Set_Transparent(AValue: PPyObject;
@@ -692,16 +670,14 @@ function TPyDelphiGraphic.Set_Transparent(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'Transparent', _value) then
-    begin
-      DelphiObject.Transparent := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'Transparent', _value) then
+  begin
+    DelphiObject.Transparent := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiGraphic.Set_Width(AValue: PPyObject;
@@ -709,16 +685,14 @@ function TPyDelphiGraphic.Set_Width(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Width', _value) then
-    begin
-      DelphiObject.Width := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Width', _value) then
+  begin
+    DelphiObject.Width := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 { TPyDelphiBitmap }
@@ -731,9 +705,9 @@ end;
 {$IFNDEF FPC}
 function TPyDelphiBitmap.Dormant_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Dormant') <> 0 then
     begin
       DelphiObject.Dormant;
@@ -747,9 +721,9 @@ end;
 
 function TPyDelphiBitmap.FreeImage_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':FreeImage') <> 0 then
     begin
       DelphiObject.FreeImage;
@@ -767,35 +741,29 @@ end;
 
 function TPyDelphiBitmap.Get_Canvas(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Canvas);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Canvas);
 end;
 
 function TPyDelphiBitmap.Get_Handle(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Handle);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiBitmap.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.HandleAllocated);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.HandleAllocated);
 end;
 
 function TPyDelphiBitmap.Get_HandleType(AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
-    Adjust(@Self);
     case DelphiObject.HandleType of
-    bmDIB:  Result := PyString_FromString('bmDIB');
-    bmDDB:  Result := PyString_FromString('bmDDB');
+    bmDIB:  Result := PyString_FromDelphiString('bmDIB');
+    bmDDB:  Result := PyString_FromDelphiString('bmDDB');
     else
       Result := ReturnNone;
     end;
@@ -805,43 +773,37 @@ end;
 {$IFNDEF FPC}
 function TPyDelphiBitmap.Get_IgnorePalette(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.IgnorePalette);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.IgnorePalette);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiBitmap.Get_MaskHandle(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.MaskHandle);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MaskHandle);
 end;
 
 function TPyDelphiBitmap.Get_Monochrome(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.Monochrome);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.Monochrome);
 end;
 
 function TPyDelphiBitmap.Get_PixelFormat(AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
-    Adjust(@Self);
     case DelphiObject.PixelFormat of
-    pfDevice:  Result := PyString_FromString('pfDevice');
-    pf1bit:    Result := PyString_FromString('pf1bit');
-    pf4bit:    Result := PyString_FromString('pf4bit');
-    pf8bit:    Result := PyString_FromString('pf8bit');
-    pf15bit:   Result := PyString_FromString('pf15bit');
-    pf16bit:   Result := PyString_FromString('pf16bit');
-    pf24bit:   Result := PyString_FromString('pf24bit');
-    pf32bit:   Result := PyString_FromString('pf32bit');
-    pfCustom:  Result := PyString_FromString('pfCustom');
+    pfDevice:  Result := PyString_FromDelphiString('pfDevice');
+    pf1bit:    Result := PyString_FromDelphiString('pf1bit');
+    pf4bit:    Result := PyString_FromDelphiString('pf4bit');
+    pf8bit:    Result := PyString_FromDelphiString('pf8bit');
+    pf15bit:   Result := PyString_FromDelphiString('pf15bit');
+    pf16bit:   Result := PyString_FromDelphiString('pf16bit');
+    pf24bit:   Result := PyString_FromDelphiString('pf24bit');
+    pf32bit:   Result := PyString_FromDelphiString('pf32bit');
+    pfCustom:  Result := PyString_FromDelphiString('pfCustom');
     else
       Result := ReturnNone;
     end;
@@ -851,19 +813,17 @@ end;
 function TPyDelphiBitmap.Get_TransparentColor(
   AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.TransparentColor);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TransparentColor);
 end;
 
 function TPyDelphiBitmap.Get_TransparentMode(AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
-    Adjust(@Self);
     case DelphiObject.TransparentMode of
-    tmAuto:  Result := PyString_FromString('tmAuto');
-    tmFixed: Result := PyString_FromString('tmFixed');
+    tmAuto:  Result := PyString_FromDelphiString('tmAuto');
+    tmFixed: Result := PyString_FromDelphiString('tmFixed');
     else
       Result := ReturnNone;
     end;
@@ -876,9 +836,9 @@ var
   _instance : Integer;
   _resID : Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'ii:LoadFromResourceID',@_instance, @_resID ) <> 0 then
     begin
       DelphiObject.LoadFromResourceID(_instance, _resID);
@@ -895,9 +855,9 @@ var
   _instance : Integer;
   _resName : PAnsiChar;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _resName := nil;
     if PyArg_ParseTuple( args, 'is:LoadFromResourceName',@_instance, @_resName ) <> 0 then
     begin
@@ -914,9 +874,9 @@ function TPyDelphiBitmap.Mask_Wrapper(args: PPyObject): PPyObject;
 var
   _transpColor : Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'i:Mask',@_transpColor ) <> 0 then
     begin
       DelphiObject.Mask(_transpColor);
@@ -990,9 +950,9 @@ end;
 
 function TPyDelphiBitmap.ReleaseHandle_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
@@ -1005,9 +965,9 @@ end;
 function TPyDelphiBitmap.ReleaseMaskHandle_Wrapper(
   args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':ReleaseMaskHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseMaskHandle);
@@ -1020,9 +980,9 @@ end;
 function TPyDelphiBitmap.ReleasePalette_Wrapper(
   args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':ReleasePalette') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleasePalette);
@@ -1042,16 +1002,14 @@ function TPyDelphiBitmap.Set_Handle(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Handle', _value) then
-    begin
-      DelphiObject.Handle := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Handle', _value) then
+  begin
+    DelphiObject.Handle := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiBitmap.Set_HandleType(AValue: PPyObject;
@@ -1059,25 +1017,24 @@ function TPyDelphiBitmap.Set_HandleType(AValue: PPyObject;
 var
   _value : String;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckStrAttribute(AValue, 'HandleType', _value) then
-    begin
-      if SameText(_value, 'bmDIB') then
-        DelphiObject.HandleType := bmDIB
-      else if SameText(_value, 'bmDDB') then
-        DelphiObject.HandleType := bmDDB
-      else
-      begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown THandleType value "%s"', [_value]))));
-        Result := -1;
-        Exit;
-      end;
-      Result := 0;
-    end
+  Adjust(@Self);
+  if CheckStrAttribute(AValue, 'HandleType', _value) then
+  begin
+    if SameText(_value, 'bmDIB') then
+      DelphiObject.HandleType := bmDIB
+    else if SameText(_value, 'bmDDB') then
+      DelphiObject.HandleType := bmDDB
     else
+    begin
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown THandleType value "%s"', [_value]))));
       Result := -1;
-  end;
+      Exit;
+    end;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 {$IFNDEF FPC}
@@ -1086,16 +1043,14 @@ function TPyDelphiBitmap.Set_IgnorePalette(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'IgnorePalette', _value) then
-    begin
-      DelphiObject.IgnorePalette := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'IgnorePalette', _value) then
+  begin
+    DelphiObject.IgnorePalette := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 {$ENDIF FPC}
 
@@ -1104,16 +1059,14 @@ function TPyDelphiBitmap.Set_MaskHandle(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'MaskHandle', _value) then
-    begin
-      DelphiObject.MaskHandle := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'MaskHandle', _value) then
+  begin
+    DelphiObject.MaskHandle := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiBitmap.Set_Monochrome(AValue: PPyObject;
@@ -1121,16 +1074,14 @@ function TPyDelphiBitmap.Set_Monochrome(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'Monochrome', _value) then
-    begin
-      DelphiObject.Monochrome := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'Monochrome', _value) then
+  begin
+    DelphiObject.Monochrome := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiBitmap.Set_PixelFormat(AValue: PPyObject;
@@ -1178,16 +1129,14 @@ function TPyDelphiBitmap.Set_TransparentColor(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'TransparentColor', _value) then
-    begin
-      DelphiObject.TransparentColor := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'TransparentColor', _value) then
+  begin
+    DelphiObject.TransparentColor := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiBitmap.Set_TransparentMode(AValue: PPyObject;
@@ -1195,25 +1144,24 @@ function TPyDelphiBitmap.Set_TransparentMode(AValue: PPyObject;
 var
   _value : String;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckStrAttribute(AValue, 'TransparentMode', _value) then
-    begin
-      if SameText(_value, 'tmAuto') then
-        DelphiObject.TransparentMode := tmAuto
-      else if SameText(_value, 'tmFixed') then
-        DelphiObject.TransparentMode := tmFixed
-      else
-      begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TTransparentMode value "%s"', [_value]))));
-        Result := -1;
-        Exit;
-      end;
-      Result := 0;
-    end
+  Adjust(@Self);
+  if CheckStrAttribute(AValue, 'TransparentMode', _value) then
+  begin
+    if SameText(_value, 'tmAuto') then
+      DelphiObject.TransparentMode := tmAuto
+    else if SameText(_value, 'tmFixed') then
+      DelphiObject.TransparentMode := tmFixed
     else
+    begin
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TTransparentMode value "%s"', [_value]))));
       Result := -1;
-  end;
+      Exit;
+    end;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 { TPyDelphiCanvas }
@@ -1222,9 +1170,9 @@ function TPyDelphiCanvas.Arc_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2, x3, y3, x4, y4: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiiiiiii:Arc',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Arc(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -1247,9 +1195,9 @@ var
   _oDest : PPyObject;
   _oSource : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oBitmap := nil;
     _oSource := nil;
     _oDest := nil;
@@ -1272,9 +1220,9 @@ function TPyDelphiCanvas.Chord_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2, x3, y3, x4, y4: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiiiiiii:Chord',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Chord(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -1295,9 +1243,9 @@ var
   _oSource : PPyObject;
   _source : TRect;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oCanvas := nil;
     _oSource := nil;
     _oDest := nil;
@@ -1327,9 +1275,9 @@ var
   _oGraphic : PPyObject;
   _graphic : TGraphic;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     _oGraphic := nil;
@@ -1350,9 +1298,9 @@ var
   _rectO : PPyObject;
   _rect : TRect;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if (PyArg_ParseTuple( args, 'O:DrawFocusRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
@@ -1368,9 +1316,9 @@ function TPyDelphiCanvas.Ellipse_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiii:Ellipse',@x1, @y1, @x2, @y2 ) <> 0 then
     begin
       DelphiObject.Ellipse(x1, y1, x2, y2);
@@ -1386,9 +1334,9 @@ var
   _rectO : PPyObject;
   _rect : TRect;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if (PyArg_ParseTuple( args, 'O:FillRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
@@ -1406,9 +1354,9 @@ var
   _pFillStyle : PPyObject;
   _FillStyle : TFillStyle;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiiO:FloodFill',@x, @y, @_color, @_pFillStyle ) <> 0 then
     begin
       if SameText(PyString_AsDelphiString(_pFillStyle), 'fsBorder') then
@@ -1428,9 +1376,9 @@ var
   _rectO : PPyObject;
   _rect : TRect;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if (PyArg_ParseTuple( args, 'O:FrameRect',@_rectO ) <> 0) and
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
@@ -1446,47 +1394,38 @@ end;
 function TPyDelphiCanvas.Get_CanvasOrientation(
   AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do begin
-    Adjust(@Self);
     if DelphiObject.CanvasOrientation = coRightToLeft then
-      Result := PyString_FromString('coRightToLeft')
+      Result := PyString_FromDelphiString('coRightToLeft')
     else
-      Result := PyString_FromString('coLeftToRight');
+      Result := PyString_FromDelphiString('coLeftToRight');
   end;
 end;
 {$ENDIF FPC}
 
 function TPyDelphiCanvas.Get_ClipRect(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    Result := WrapRect(PyDelphiWrapper, DelphiObject.ClipRect);
-  end;
+  Adjust(@Self);
+  Result := WrapRect(PyDelphiWrapper, DelphiObject.ClipRect);
 end;
 
 function TPyDelphiCanvas.Get_Handle(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Handle);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiCanvas.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.HandleAllocated);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.HandleAllocated);
 end;
 
 function TPyDelphiCanvas.Get_LockCount(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.LockCount);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.LockCount);
 end;
 
 function TPyDelphiCanvas.Get_OnChange(AContext: Pointer): PPyObject;
@@ -1503,20 +1442,15 @@ end;
 
 function TPyDelphiCanvas.Get_PenPos(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    Result := WrapPoint(PyDelphiWrapper, DelphiObject.PenPos);
-  end;
+  Adjust(@Self);
+  Result := WrapPoint(PyDelphiWrapper, DelphiObject.PenPos);
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiCanvas.Get_TextFlags(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.TextFlags);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TextFlags);
 end;
 {$ENDIF FPC}
 
@@ -1529,9 +1463,9 @@ function TPyDelphiCanvas.GetPixel(args: PPyObject): PPyObject;
 var
   x, y : Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     if PyArg_ParseTuple( args, 'ii:GetPixel',@x, @y ) <> 0 then
@@ -1547,9 +1481,9 @@ function TPyDelphiCanvas.LineTo_Wrapper(args: PPyObject): PPyObject;
 var
   x, y : Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     if PyArg_ParseTuple( args, 'ii:LineTo',@x, @y ) <> 0 then
@@ -1564,9 +1498,9 @@ end;
 
 function TPyDelphiCanvas.Lock_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Lock') <> 0 then
     begin
       DelphiObject.Lock;
@@ -1581,9 +1515,9 @@ function TPyDelphiCanvas.MoveTo_Wrapper(args: PPyObject): PPyObject;
 var
   x, y : Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     if PyArg_ParseTuple( args, 'ii:MoveTo',@x, @y ) <> 0 then
@@ -1600,9 +1534,9 @@ function TPyDelphiCanvas.Pie_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2, x3, y3, x4, y4: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiiiiiii:Pie',@x1, @y1, @x2, @y2, @x3, @y3, @x4, @y4 ) <> 0 then
     begin
       DelphiObject.Pie(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -1621,9 +1555,9 @@ var
   _oPoints : PPyObject;
   _oPoint : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oPoints := nil;
     if PyArg_ParseTuple( args, 'O:PolyBezier',@_oPoints ) <> 0 then
     begin
@@ -1668,9 +1602,9 @@ var
   _oPoints : PPyObject;
   _oPoint : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oPoints := nil;
     if PyArg_ParseTuple( args, 'O:PolyBezierTo',@_oPoints ) <> 0 then
     begin
@@ -1715,9 +1649,9 @@ var
   _oPoints : PPyObject;
   _oPoint : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oPoints := nil;
     if PyArg_ParseTuple( args, 'O:Polygon',@_oPoints ) <> 0 then
     begin
@@ -1761,9 +1695,9 @@ var
   _oPoints : PPyObject;
   _oPoint : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oPoints := nil;
     if PyArg_ParseTuple( args, 'O:Polyline',@_oPoints ) <> 0 then
     begin
@@ -1803,9 +1737,9 @@ function TPyDelphiCanvas.Rectangle_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiii:Rectangle',@x1, @y1, @x2, @y2 ) <> 0 then
     begin
       DelphiObject.Rectangle(x1, y1, x2, y2);
@@ -1818,9 +1752,9 @@ end;
 
 function TPyDelphiCanvas.Refresh_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Refresh') <> 0 then
     begin
       DelphiObject.Refresh;
@@ -1969,9 +1903,9 @@ function TPyDelphiCanvas.RoundRect_Wrapper(args: PPyObject): PPyObject;
 var
   x1, y1, x2, y2, x3, y3: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiiiii:RoundRect',@x1, @y1, @x2, @y2, @x3, @y3 ) <> 0 then
     begin
       DelphiObject.RoundRect(x1, y1, x2, y2, x3, y3);
@@ -1987,16 +1921,14 @@ function TPyDelphiCanvas.Set_Handle(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Handle', _value) then
-    begin
-      DelphiObject.Handle := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Handle', _value) then
+  begin
+    DelphiObject.Handle := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiCanvas.Set_OnChange(AValue: PPyObject;
@@ -2019,16 +1951,14 @@ function TPyDelphiCanvas.Set_TextFlags(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'TextFlags', _value) then
-    begin
-      DelphiObject.TextFlags := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'TextFlags', _value) then
+  begin
+    DelphiObject.TextFlags := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 {$ENDIF FPC}
 
@@ -2042,9 +1972,9 @@ var
   x, y : Integer;
   _color : TColor;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     if PyArg_ParseTuple( args, 'iii:SetPixel',@x, @y, @_color ) <> 0 then
@@ -2065,9 +1995,9 @@ var
   _oRect : PPyObject;
   _rect : TRect;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     _oGraphic := nil;
     _oRect := nil;
     if (PyArg_ParseTuple( args, 'iiO:StretchDraw',@_oRect, @_oGraphic ) <> 0) and
@@ -2087,9 +2017,9 @@ function TPyDelphiCanvas.TextExtent_Wrapper(args: PPyObject): PPyObject;
 var
   _pText : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:TextExtent',@_pText ) <> 0 then
     begin
       Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(PyString_AsDelphiString(_pText)));
@@ -2103,9 +2033,9 @@ function TPyDelphiCanvas.TextHeight_Wrapper(args: PPyObject): PPyObject;
 var
   _pText : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:TextHeight',@_pText ) <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.TextHeight(PyString_AsDelphiString(_pText)));
@@ -2120,9 +2050,9 @@ var
   x, y : Integer;
   _text : PAnsiChar;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     if PyArg_ParseTuple( args, 'iis:TextRect',@x, @y, @_text ) <> 0 then
@@ -2143,9 +2073,9 @@ var
   _rect : TRect;
   _text : PAnsiChar;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     x := 0;
     y := 0;
     _rectO := nil;
@@ -2166,9 +2096,9 @@ function TPyDelphiCanvas.TextWidth_Wrapper(args: PPyObject): PPyObject;
 var
   _pText : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:TextWidth',@_pText ) <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.TextWidth(PyString_AsDelphiString(_pText)));
@@ -2180,9 +2110,9 @@ end;
 
 function TPyDelphiCanvas.TryLock_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Unlock') <> 0 then
     begin
       Result := VariantAsPyObject( DelphiObject.TryLock );
@@ -2194,9 +2124,9 @@ end;
 
 function TPyDelphiCanvas.Unlock_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Unlock') <> 0 then
     begin
       DelphiObject.Unlock;
@@ -2212,9 +2142,9 @@ end;
 
 function TPyDelphiMetaFile.Clear_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Clear') <> 0 then
     begin
       DelphiObject.Clear;
@@ -2237,18 +2167,14 @@ end;
 
 function TPyDelphiMetaFile.Get_CreatedBy(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.CreatedBy)));
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.CreatedBy);
 end;
 
 function TPyDelphiMetaFile.Get_Description(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyString_FromString(PAnsiChar(AnsiString(DelphiObject.Description)));
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.Description);
 end;
 
 function TPyDelphiMetaFile.Get_Enhanced(AContext: Pointer): PPyObject;
@@ -2261,43 +2187,33 @@ end;
 
 function TPyDelphiMetaFile.Get_Handle(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Handle);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiMetaFile.Get_HandleAllocated(
   AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.HandleAllocated);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.HandleAllocated);
 end;
 
 function TPyDelphiMetaFile.Get_Inch(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Inch);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Inch);
 end;
 
 function TPyDelphiMetaFile.Get_MMHeight(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.MMHeight);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MMHeight);
 end;
 
 function TPyDelphiMetaFile.Get_MMWidth(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.MMWidth);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MMWidth);
 end;
 
 class procedure TPyDelphiMetaFile.RegisterGetSets(PythonType: TPythonType);
@@ -2338,9 +2254,9 @@ end;
 function TPyDelphiMetaFile.ReleaseHandle_Wrapper(
   args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
@@ -2360,16 +2276,14 @@ function TPyDelphiMetaFile.Set_Enhanced(AValue: PPyObject;
 var
   _value : Boolean;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckBoolAttribute(AValue, 'Enhanced', _value) then
-    begin
-      DelphiObject.Enhanced := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'Enhanced', _value) then
+  begin
+    DelphiObject.Enhanced := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiMetaFile.Set_Handle(AValue: PPyObject;
@@ -2377,16 +2291,14 @@ function TPyDelphiMetaFile.Set_Handle(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Handle', _value) then
-    begin
-      DelphiObject.Handle := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Handle', _value) then
+  begin
+    DelphiObject.Handle := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiMetaFile.Set_Inch(AValue: PPyObject;
@@ -2394,16 +2306,14 @@ function TPyDelphiMetaFile.Set_Inch(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Inch', _value) then
-    begin
-      DelphiObject.Inch := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Inch', _value) then
+  begin
+    DelphiObject.Inch := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiMetaFile.Set_MMHeight(AValue: PPyObject;
@@ -2411,16 +2321,14 @@ function TPyDelphiMetaFile.Set_MMHeight(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'MMHeight', _value) then
-    begin
-      DelphiObject.MMHeight := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'MMHeight', _value) then
+  begin
+    DelphiObject.MMHeight := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiMetaFile.Set_MMWidth(AValue: PPyObject;
@@ -2428,16 +2336,14 @@ function TPyDelphiMetaFile.Set_MMWidth(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'MMWidth', _value) then
-    begin
-      DelphiObject.MMWidth := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'MMWidth', _value) then
+  begin
+    DelphiObject.MMWidth := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 {$ENDIF FPC}
 
@@ -2455,18 +2361,14 @@ end;
 
 function TPyDelphiIcon.Get_Handle(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Handle);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiIcon.Get_HandleAllocated(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(DelphiObject.HandleAllocated);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.HandleAllocated);
 end;
 
 class procedure TPyDelphiIcon.RegisterGetSets(PythonType: TPythonType);
@@ -2491,9 +2393,9 @@ end;
 
 function TPyDelphiIcon.ReleaseHandle_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
       Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
@@ -2513,16 +2415,14 @@ function TPyDelphiIcon.Set_Handle(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'Handle', _value) then
-    begin
-      DelphiObject.Handle := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'Handle', _value) then
+  begin
+    DelphiObject.Handle := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 { TPyDelphiPicture }
@@ -2534,52 +2434,40 @@ end;
 
 function TPyDelphiPicture.Get_Bitmap(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Bitmap);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Bitmap);
 end;
 
 function TPyDelphiPicture.Get_Graphic(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Graphic);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Graphic);
 end;
 
 function TPyDelphiPicture.Get_Height(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
     Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Height);
-  end;
+    Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiPicture.Get_Icon(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.Icon);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Icon);
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiPicture.Get_MetaFile(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.MetaFile);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.MetaFile);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiPicture.Get_Width(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.Width);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
 end;
 
 function TPyDelphiPicture.GetDelphiObject: TPicture;
@@ -2591,9 +2479,9 @@ function TPyDelphiPicture.LoadFromFile_Wrapper(args: PPyObject): PPyObject;
 var
   _pFileName : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
@@ -2641,9 +2529,9 @@ function TPyDelphiPicture.SaveToFile_Wrapper(args: PPyObject): PPyObject;
 var
   _pFileName : PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
       DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
@@ -2659,16 +2547,14 @@ function TPyDelphiPicture.Set_Bitmap(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'Bitmap', TBitmap, _object) then
-    begin
-      Self.DelphiObject.Bitmap := TBitmap(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Bitmap', TBitmap, _object) then
+  begin
+    Self.DelphiObject.Bitmap := TBitmap(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiPicture.Set_Graphic(AValue: PPyObject;
@@ -2676,16 +2562,14 @@ function TPyDelphiPicture.Set_Graphic(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'Graphic', TGraphic, _object) then
-    begin
-      Self.DelphiObject.Graphic := TGraphic(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Graphic', TGraphic, _object) then
+  begin
+    Self.DelphiObject.Graphic := TGraphic(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiPicture.Set_Icon(AValue: PPyObject;
@@ -2693,16 +2577,14 @@ function TPyDelphiPicture.Set_Icon(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'Icon', TIcon, _object) then
-    begin
-      Self.DelphiObject.Icon := TIcon(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Icon', TIcon, _object) then
+  begin
+    Self.DelphiObject.Icon := TIcon(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 {$IFNDEF FPC}
@@ -2711,16 +2593,14 @@ function TPyDelphiPicture.Set_MetaFile(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'MetaFile', TMetaFile, _object) then
-    begin
-      Self.DelphiObject.MetaFile := TMetaFile(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'MetaFile', TMetaFile, _object) then
+  begin
+    Self.DelphiObject.MetaFile := TMetaFile(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 {$ENDIF FPC}
 

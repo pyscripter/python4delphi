@@ -169,15 +169,15 @@ end;
 
 function TPyDelphiPageControl.FindNextPage_Wrapper(
   args: PPyObject): PPyObject;
+//  function FindNextPage(CurPage: TTabSheet; GoForward, CheckTabVisible: Boolean): TTabSheet;
 var
   _CurPage: TObject;
   _pCurPage: PPyObject;
   _pGoForward, _pCheckTabVisible: PPyObject;
 begin
-  //  function FindNextPage(CurPage: TTabSheet; GoForward, CheckTabVisible: Boolean): TTabSheet;
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'OOO:FindNextPage',@_pCurPage, @_pGoForward, @_pCheckTabVisible ) <> 0 then begin
       if CheckObjAttribute(_pCurPage, 'CurPage', TTabSheet, _CurPage) then
         Result := Wrap( DelphiObject.FindNextPage(TTabSheet(_CurPage), PyObject_IsTrue(_pGoForward)<>0, PyObject_IsTrue(_pCheckTabVisible)<>0) )
@@ -203,7 +203,7 @@ function TPyDelphiPageControl.GetHitTestInfoAt_Wrapper(
   begin
     with GetPythonEngine do
     begin
-      _text := PyString_FromString(PAnsiChar(AnsiString(AText)));
+      _text := PyString_FromDelphiString(AText);
       PyList_Append(Result, _text);
       Py_DecRef(_text);
     end;
@@ -213,9 +213,9 @@ var
   x, y: Integer;
   _result : THitTests;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'ii:GetHitTestInfoAt',@x, @y ) <> 0 then begin
       _result := DelphiObject.GetHitTestInfoAt(x, y);
       Result := PyList_New(0);
@@ -257,10 +257,8 @@ end;
 function TPyDelphiPageControl.Get_ActivePageIndex(
   AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.ActivePageIndex);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ActivePageIndex);
 end;
 
 {$IFNDEF FPC}
@@ -272,29 +270,23 @@ end;
 
 function TPyDelphiPageControl.Get_PageCount(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.PageCount);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.PageCount);
 end;
 
 function TPyDelphiPageControl.Get_Pages(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
-    with PythonToDelphi(Result) as TPyDelphiContainer do
-      Setup(Self.PyDelphiWrapper, TPagesAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
-  end;
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TPagesAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiPageControl.Get_RowCount(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.RowCount);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.RowCount);
 end;
 
 function TPyDelphiPageControl.IndexOfTabAt_Wrapper(
@@ -302,9 +294,9 @@ function TPyDelphiPageControl.IndexOfTabAt_Wrapper(
 var
   x, y: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'ii:IndexOfTabAt',@x, @y ) <> 0 then begin
       Result := VariantAsPyObject( DelphiObject.IndexOfTabAt(x, y) );
     end else
@@ -369,9 +361,9 @@ function TPyDelphiPageControl.ScrollTabs_Wrapper(
 var
   delta: Integer;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'i:ScrollTabs',@delta ) <> 0 then begin
       DelphiObject.ScrollTabs(delta);
       Result := ReturnNone;
@@ -383,13 +375,13 @@ end;
 
 function TPyDelphiPageControl.SelectNextPage_Wrapper(
   args: PPyObject): PPyObject;
+// procedure SelectNextPage(GoForward: Boolean; CheckTabVisible: Boolean = True);
 var
   _pGoForward, _pCheckTabVisible: PPyObject;
 begin
-  // procedure SelectNextPage(GoForward: Boolean; CheckTabVisible: Boolean = True);
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'OO:SelectNextPage',@_pGoForward, @_pCheckTabVisible ) <> 0 then begin
       DelphiObject.SelectNextPage(PyObject_IsTrue(_pGoForward)<>0, PyObject_IsTrue(_pCheckTabVisible)<>0);
       Result := ReturnNone;
@@ -409,16 +401,14 @@ function TPyDelphiPageControl.Set_ActivePage(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'ActivePage', TTabSheet, _object) then
-    begin
-      Self.DelphiObject.ActivePage := TTabSheet(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'ActivePage', TTabSheet, _object) then
+  begin
+    Self.DelphiObject.ActivePage := TTabSheet(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiPageControl.Set_ActivePageIndex(AValue: PPyObject;
@@ -426,30 +416,26 @@ function TPyDelphiPageControl.Set_ActivePageIndex(AValue: PPyObject;
 var
   _value : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'ActivePageIndex', _value) then
-    begin
-      DelphiObject.ActivePageIndex := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'ActivePageIndex', _value) then
+  begin
+    DelphiObject.ActivePageIndex := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiPageControl.TabRect_Wrapper(args: PPyObject): PPyObject;
 var
   idx: Integer;
 begin
-  with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
-    if PyArg_ParseTuple( args, 'i:TabRect',@idx ) <> 0 then begin
-      Result := WrapRect(PyDelphiWrapper, DelphiObject.TabRect(idx));
-    end else
-      Result := nil;
-  end;
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  if GetPythonEngine.PyArg_ParseTuple( args, 'i:TabRect',@idx ) <> 0 then begin
+    Result := WrapRect(PyDelphiWrapper, DelphiObject.TabRect(idx));
+  end else
+    Result := nil;
 end;
 
 { TPyDelphiTabSheet }
@@ -466,18 +452,14 @@ end;
 
 function TPyDelphiTabSheet.Get_PageControl(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Wrap(DelphiObject.PageControl);
-  end;
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.PageControl);
 end;
 
 function TPyDelphiTabSheet.Get_TabIndex(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.TabIndex);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TabIndex);
 end;
 
 class procedure TPyDelphiTabSheet.RegisterGetSets(PythonType: TPythonType);
@@ -499,16 +481,14 @@ function TPyDelphiTabSheet.Set_PageControl(AValue: PPyObject;
 var
   _object : TObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckObjAttribute(AValue, 'PageControl', TPageControl, _object) then
-    begin
-      Self.DelphiObject.PageControl := TPageControl(_object);
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'PageControl', TPageControl, _object) then
+  begin
+    Self.DelphiObject.PageControl := TPageControl(_object);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 { TPagesAccess }

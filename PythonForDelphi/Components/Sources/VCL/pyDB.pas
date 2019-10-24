@@ -469,7 +469,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      obj := PyString_FromString(PAnsiChar(AnsiString(prop)));
+      obj := PyString_FromDelphiString(prop);
       PyList_Append( List, obj );
       Py_XDecRef(obj);
     end;
@@ -2774,7 +2774,7 @@ end;
 function  TVarArg.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(AnsiString(PyObjectAsString(FValue))) );
+    Result := PyString_FromDelphiString( PyObjectAsString(FValue) );
 end;
 
 constructor TPythonVarArg.Create( AOwner : TComponent );

@@ -250,18 +250,14 @@ end;
 
 function TPyDelphiPoint.Get_X(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.X);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.X);
 end;
 
 function TPyDelphiPoint.Get_Y(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.Y);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.Y);
 end;
 
 class procedure TPyDelphiPoint.RegisterGetSets(PythonType: TPythonType);
@@ -278,8 +274,8 @@ end;
 
 function TPyDelphiPoint.Repr: PPyObject;
 begin
-  with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Point (%d, %d)>', [Value.X, Value.Y]))));
+  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Point (%d, %d)>',
+    [Value.X, Value.Y]));
 end;
 
 class procedure TPyDelphiPoint.SetupType(PythonType: TPythonType);
@@ -353,50 +349,38 @@ end;
 
 function TPyDelphiRect.Get_Bottom(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.Bottom);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.Bottom);
 end;
 
 function TPyDelphiRect.Get_BottomRight(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := WrapPoint(PyDelphiWrapper, Value.BottomRight);
-  end;
+  Adjust(@Self);
+  Result := WrapPoint(PyDelphiWrapper, Value.BottomRight);
 end;
 
 function TPyDelphiRect.Get_Left(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.Left);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.Left);
 end;
 
 function TPyDelphiRect.Get_Right(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.Right);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.Right);
 end;
 
 function TPyDelphiRect.Get_Top(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.Top);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.Top);
 end;
 
 function TPyDelphiRect.Get_TopLeft(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := WrapPoint(PyDelphiWrapper, Value.TopLeft);
-  end;
+  Adjust(@Self);
+  Result := WrapPoint(PyDelphiWrapper, Value.TopLeft);
 end;
 
 class procedure TPyDelphiRect.RegisterGetSets(PythonType: TPythonType);
@@ -421,8 +405,8 @@ end;
 
 function TPyDelphiRect.Repr: PPyObject;
 begin
-  with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Rect (%d, %d, %d, %d)>', [Value.Left, Value.Top, Value.Right, Value.Bottom]))));
+  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Rect (%d, %d, %d, %d)>',
+    [Value.Left, Value.Top, Value.Right, Value.Bottom]));
 end;
 
 function TPyDelphiRect.Set_Bottom(AValue: PPyObject;
@@ -431,13 +415,13 @@ var
   _value : Integer;
 begin
   if CheckIntAttribute(AValue, 'Bottom', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.Bottom := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.Bottom := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiRect.Set_BottomRight(AValue: PPyObject;
@@ -446,13 +430,13 @@ var
   _value : TPoint;
 begin
   if CheckPointAttribute(AValue, 'BottomRight', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.BottomRight := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.BottomRight := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiRect.Set_Left(AValue: PPyObject;
@@ -461,13 +445,13 @@ var
   _value : Integer;
 begin
   if CheckIntAttribute(AValue, 'Left', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.Left := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.Left := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiRect.Set_Right(AValue: PPyObject;
@@ -476,13 +460,13 @@ var
   _value : Integer;
 begin
   if CheckIntAttribute(AValue, 'Right', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.Right := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.Right := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiRect.Set_Top(AValue: PPyObject;
@@ -491,13 +475,13 @@ var
   _value : Integer;
 begin
   if CheckIntAttribute(AValue, 'Top', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.Top := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.Top := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiRect.Set_TopLeft(AValue: PPyObject;
@@ -506,13 +490,13 @@ var
   _value : TPoint;
 begin
   if CheckPointAttribute(AValue, 'TopLeft', _value) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.TopLeft := _value;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.TopLeft := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 class procedure TPyDelphiRect.SetupType(PythonType: TPythonType);
@@ -559,18 +543,14 @@ end;
 
 function TPyDelphiSize.Get_CX(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.cx);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.cx);
 end;
 
 function TPyDelphiSize.Get_CY(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(Value.cy);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(Value.cy);
 end;
 
 class procedure TPyDelphiSize.RegisterGetSets(PythonType: TPythonType);
@@ -587,8 +567,8 @@ end;
 
 function TPyDelphiSize.Repr: PPyObject;
 begin
-  with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(AnsiString(Format('<Size (%d, %d)>', [Value.cx, Value.cy]))));
+  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Size (%d, %d)>',
+    [Value.cx, Value.cy]));
 end;
 
 class procedure TPyDelphiSize.SetupType(PythonType: TPythonType);
@@ -608,13 +588,13 @@ var
   cx : Integer;
 begin
   if CheckIntAttribute(AValue, 'cx', cx) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.cx := cx;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.cx := cx;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiSize.Set_CY(AValue: PPyObject;
@@ -623,13 +603,13 @@ var
   cy : Integer;
 begin
   if CheckIntAttribute(AValue, 'cy', cy) then
-    with GetPythonEngine do begin
-      Adjust(@Self);
-      fValue.cy := cy;
-      Result := 0;
-    end
-    else
-      Result := -1;
+  begin
+    Adjust(@Self);
+    fValue.cy := cy;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 initialization

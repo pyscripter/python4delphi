@@ -262,26 +262,22 @@ end;
 
 function TPyDelphiCustomEdit.Get_SelStart(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.SelStart);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.SelStart);
 end;
 
 function TPyDelphiCustomEdit.Set_SelStart(AValue: PPyObject; AContext: Pointer): integer;
 var
   _SelStart : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'SelStart', _SelStart) then
-    begin
-      DelphiObject.SelStart := _SelStart;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'SelStart', _SelStart) then
+  begin
+    DelphiObject.SelStart := _SelStart;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 class procedure TPyDelphiCustomEdit.RegisterGetSets(PythonType: TPythonType);
@@ -403,24 +399,20 @@ function TPyDelphiListBox.Set_ItemIndex(AValue: PPyObject; AContext: Pointer): i
 var
   _index : Integer;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    if CheckIntAttribute(AValue, 'ItemIndex', _index) then
-    begin
-      DelphiObject.ItemIndex := _index;
-      Result := 0;
-    end
-    else
-      Result := -1;
-  end;
+  Adjust(@Self);
+  if CheckIntAttribute(AValue, 'ItemIndex', _index) then
+  begin
+    DelphiObject.ItemIndex := _index;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiListBox.Get_ItemIndex(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := PyInt_FromLong(DelphiObject.ItemIndex);
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ItemIndex);
 end;
 
 class procedure TPyDelphiListBox.RegisterGetSets(PythonType: TPythonType);

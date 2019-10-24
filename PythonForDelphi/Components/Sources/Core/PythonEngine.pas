@@ -2132,7 +2132,6 @@ type
   function Py_InitModule( const AName : PAnsiChar; md : PPyMethodDef) : PPyObject;
   function Py_InitModule3000( const md : PyModuleDef) : PPyObject;
   function PyString_FromString( str: PAnsiChar): PPyObject; virtual; abstract;
-  function PyString_AsDelphiString( ob: PPyObject): string;  virtual; abstract;
   procedure Py_FlushLine; cdecl;
 
   // Constructors & Destructors
@@ -2335,7 +2334,8 @@ type
     function   PyTZInfo_CheckExact( obj : PPyObject ) : Boolean;
     { end date/time functions }
     function PyString_FromString( str: PAnsiChar): PPyObject; override;
-    function PyString_AsDelphiString( ob: PPyObject): string; override;
+    function PyString_FromDelphiString(str : string): PPyObject;
+    function PyString_AsDelphiString( ob: PPyObject): string;
     function PyString_AsAnsiString( ob: PPyObject): AnsiString;
     function PyString_AsWideString( ob: PPyObject): UnicodeString;
 
@@ -6390,7 +6390,7 @@ begin
     raise EPythonError.Create('Could not create a new list object');
   for i := 0 to strings.Count - 1 do
     PyList_SetItem( Result, i,
-      PyString_FromString( PAnsiChar(AnsiString(strings.Strings[i])) ) );
+      PyString_FromDelphiString( strings.Strings[i]) );
 end;
 
 function TPythonEngine.StringsToPyTuple( strings : TStrings ) : PPyObject;
@@ -6402,7 +6402,7 @@ begin
     raise EPythonError.Create('Could not create a new tuple object');
   for i := 0 to strings.Count - 1 do
     PyTuple_SetItem( Result, i,
-      PyString_FromString( PAnsiChar(AnsiString(strings.Strings[i])) ) );
+      PyString_FromDelphiString( strings.Strings[i]) );
 end;
 
 procedure TPythonEngine.PyListToStrings( list : PPyObject; strings : TStrings );
@@ -6671,6 +6671,16 @@ begin
     Result := PyUnicode_AsWideString(ob)
   else
     Result := UnicodeString(PyString_AsString(ob));
+end;
+
+function TPythonEngine.PyString_FromDelphiString(str: string): PPyObject;
+begin
+  if IsPython3000 then
+  begin
+    Result := PyUnicode_FromWideString(str);
+  end
+  else
+    Result := DLL_PyString_FromString(PAnsiChar(AnsiString(str)));
 end;
 
 function TPythonEngine.PyString_FromString( str: PAnsiChar): PPyObject;
@@ -7585,8 +7595,7 @@ begin
       if DocString.Text <> '' then
         begin
           doc :=
-            PyString_FromString(PAnsiChar(CleanString(EncodeString(FDocString.Text),
-            False)) );
+            PyString_FromDelphiString(AdjustLineBreaks(FDocString.Text,tlbsLF));
           PyObject_SetAttrString( FModule, '__doc__', doc );
           Py_XDecRef(doc);
           CheckError(False);
@@ -7924,9 +7933,9 @@ end;
 
 function  TPyObject.Repr : PPyObject;
 begin
-  with GetPythonEngine do
-    Result :=
-      PyString_FromString( PAnsiChar(AnsiString(Format('<%s at %x>', [PythonType.TypeName, NativeInt(self)]))) );
+  Result :=
+    GetPythonEngine.PyString_FromDelphiString( Format('<%s at %x>',
+        [PythonType.TypeName, NativeInt(self)]) );
 end;
 
 function  TPyObject.Compare( obj: PPyObject) : Integer;
@@ -9429,8 +9438,8 @@ begin
       obj := GetValue;
       try
         Result :=
-          PyString_FromString( PAnsiChar(AnsiString(Format('<%s: %s>',
-            [PythonType.TypeName, PyObjectAsString(obj)]))) );
+          PyString_FromDelphiString( Format('<%s: %s>',
+            [PythonType.TypeName, PyObjectAsString(obj)]) );
       finally
         Py_XDecRef(obj);
       end;

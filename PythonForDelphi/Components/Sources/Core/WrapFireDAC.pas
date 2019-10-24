@@ -628,42 +628,42 @@ end;
 
 function TPyDBField.Do_Clear( args : PPyObject ) : PPyObject;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);  // <- adjust the transmitted self argument
-   try
-     if CheckField then begin
-       DelphiObject.Clear;
-       Result := ReturnNone;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);  // <- adjust the transmitted self argument
+  with GetPythonEngine do begin
+    try
+      if CheckField then begin
+        DelphiObject.Clear;
+        Result := ReturnNone;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBField.Do_FocusControl( args : PPyObject ) : PPyObject;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);  // <- adjust the transmitted self argument
-   try
-     if CheckField then begin
-       DelphiObject.FocusControl;
-       Result := ReturnNone;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);  // <- adjust the transmitted self argument
+  with GetPythonEngine do begin
+    try
+      if CheckField then begin
+        DelphiObject.FocusControl;
+        Result := ReturnNone;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBField.Do_IsValidChar( args : PPyObject ) : PPyObject;
@@ -672,50 +672,50 @@ var
  s : PAnsiChar;
  str : AnsiString;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);   // <- adjust the transmitted self argument
-   try
-     if CheckField then begin
-       if PyArg_ParseTuple( args, 's:TField.IsValidChar',@s ) <> 0 then begin
-         str := s;
-         if Length(str) > 0 then
-           c := Char(str[1])
-         else
-           c := #0;
-         Result := VariantAsPyObject( DelphiObject.IsValidChar( c ) )
-       end
-       else
-         Result := nil;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);   // <- adjust the transmitted self argument
+  with GetPythonEngine do begin
+    try
+      if CheckField then begin
+        if PyArg_ParseTuple( args, 's:TField.IsValidChar',@s ) <> 0 then begin
+          str := s;
+          if Length(str) > 0 then
+            c := Char(str[1])
+          else
+            c := #0;
+          Result := VariantAsPyObject( DelphiObject.IsValidChar( c ) )
+        end
+        else
+          Result := nil;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBField.Do_RefreshLookupList( args : PPyObject ) : PPyObject;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);  // <- adjust the transmitted self argument
-   try
-     if CheckField then begin
-       DelphiObject.RefreshLookupList;
-       Result := ReturnNone;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);  // <- adjust the transmitted self argument
+  with GetPythonEngine do begin
+    try
+      if CheckField then begin
+        DelphiObject.RefreshLookupList;
+        Result := ReturnNone;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 // ----------------------- TDSRowsAccess ---------------------------------------
@@ -727,41 +727,41 @@ end;
 
 function TDSRowsAccess.GetContainer: TFDDataset;
 begin
- Result := TFDDataset(inherited Container);
+  Result := TFDDataset(inherited Container);
 end;
 
 function TDSRowsAccess.GetItem(aIndex: Integer): PPyObject;
 var
- i : Integer;
- l_oDataset: TFDDataset;
+  i : Integer;
+  l_oDataset: TFDDataset;
 begin
- Result := nil;
- l_oDataset := GetContainer;
- if (aIndex >= 0) and (aIndex < l_oDataset.RecordCount) then begin
-   with GetPythonEngine do begin
-     try
-       l_oDataset.RecNo := AIndex + 1;
-       Result   := PyTuple_New(l_oDataset.FieldCount);
-       for i := 0 to l_oDataset.FieldCount - 1 do begin
-         with l_oDataset.Fields[i] do begin
-           PyTuple_SetItem( Result, i,  VariantAsPyObject( SqlTimeToVarDate(Value) ) );
-         end;
-       end;
-     except
-       on E : Exception do begin
-         raise Exception.CreateFmt('Exception in TDSRowsAccess.GetItem - Index=%d', [AIndex]);
-       end;
-     end;
-   end;
- end;
+  Result := nil;
+  l_oDataset := GetContainer;
+  if (aIndex >= 0) and (aIndex < l_oDataset.RecordCount) then begin
+    with GetPythonEngine do begin
+      try
+        l_oDataset.RecNo := AIndex + 1;
+        Result   := PyTuple_New(l_oDataset.FieldCount);
+        for i := 0 to l_oDataset.FieldCount - 1 do begin
+          with l_oDataset.Fields[i] do begin
+            PyTuple_SetItem( Result, i,  VariantAsPyObject( SqlTimeToVarDate(Value) ) );
+          end;
+        end;
+      except
+        on E : Exception do begin
+          raise Exception.CreateFmt('Exception in TDSRowsAccess.GetItem - Index=%d', [AIndex]);
+        end;
+      end;
+    end;
+  end;
 end;
 
 function TDSRowsAccess.GetSize: Integer;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- l_oDataset := GetContainer;
- Result     := l_oDataset.RecordCount;
+  l_oDataset := GetContainer;
+  Result     := l_oDataset.RecordCount;
 end;
 
 
@@ -775,12 +775,12 @@ end;
 
 function  TPyDBDataset.GetDelphiObject: TFDDataset;
 begin
- Result := TFDDataset(inherited DelphiObject);
+  Result := TFDDataset(inherited DelphiObject);
 end;
 
 procedure TPyDBDataset.SetDelphiObject(const Value: TFDDataset);
 begin
- inherited DelphiObject := Value;
+  inherited DelphiObject := Value;
 end;
 
 
@@ -793,30 +793,26 @@ end;
 
 class function  TPyDBDataset.DelphiObjectClass : TClass;
 begin
- Result := TFDDataset;
+  Result := TFDDataset;
 end;
 
 class function  TPyDBDataset.GetContainerAccessClass : TContainerAccessClass;
 begin
- Result := TDSRowsAccess;
+  Result := TDSRowsAccess;
 end;
 
 function TPyDBDataset.Get_RowsCount(AContext: Pointer): PPyObject;
 begin
- with GetPythonEngine do begin
    Adjust(@Self);
-   Result := PyInt_FromLong(DelphiObject.RecordCount);
- end;
+   Result := GetPythonEngine.PyInt_FromLong(DelphiObject.RecordCount);
 end;
 
 function TPyDBDataset.Get_Rows(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do begin
-    Adjust(@Self);
-    Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
-    with PythonToDelphi(Result) as TPyDelphiContainer do
-      Setup(Self.PyDelphiWrapper, TDSRowsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
-  end;
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TDSRowsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
 end;
 
 class procedure TPyDBDataset.RegisterGetSets( PythonType : TPythonType );
@@ -867,187 +863,187 @@ var
  l_sUpperKey: String;
  l_oDataset:  TFDDataset;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   try
-     l_oDataset  := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'BOF' then
-       Result := VariantAsPyObject( l_oDataset.BOF )
-     else if l_sUpperKey = 'CANMODIFY' then
-       Result := VariantAsPyObject( l_oDataset.CanModify )
-     else if l_sUpperKey = 'EOF' then
-       Result := VariantAsPyObject( l_oDataset.EOF )
-     else if l_sUpperKey = 'FIELDCOUNT'  then
-       Result := VariantAsPyObject( l_oDataset.FieldCount )
-     else if l_sUpperKey = 'RECNO'  then
-       Result := VariantAsPyObject( l_oDataset.RecNo )
-     else
-       Result := inherited GetAttrO(key);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := Nil;
-     end;
-   end;
- end;
+  Result := nil;
+  with GetPythonEngine do begin
+    try
+      l_oDataset  := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'BOF' then
+        Result := VariantAsPyObject( l_oDataset.BOF )
+      else if l_sUpperKey = 'CANMODIFY' then
+        Result := VariantAsPyObject( l_oDataset.CanModify )
+      else if l_sUpperKey = 'EOF' then
+        Result := VariantAsPyObject( l_oDataset.EOF )
+      else if l_sUpperKey = 'FIELDCOUNT'  then
+        Result := VariantAsPyObject( l_oDataset.FieldCount )
+      else if l_sUpperKey = 'RECNO'  then
+        Result := VariantAsPyObject( l_oDataset.RecNo )
+      else
+        Result := inherited GetAttrO(key);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := Nil;
+      end;
+    end;
+  end;
 end;
 
 function  TPyDBDataset.SetAttrO(key, value: PPyObject) : Integer;
 var
- l_sUpperKey: String;
- l_oDataset:  TFDDataset;
+  l_sUpperKey: String;
+  l_oDataset:  TFDDataset;
 begin
- Result := -1;
- with GetPythonEngine do begin
-   try
-     l_oDataset  := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'FILTER' then begin
-       l_oDataset.Filter := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'FILTERED' then begin
-       l_oDataset.Filtered := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'BOF' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'CanModify' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'EOF' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'RECNO' then begin
-       l_oDataset.RecNo := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else
-       Result := inherited SetAttrO(key, value);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := -1;
-     end;
-   end;
- end;
+  Result := -1;
+  with GetPythonEngine do begin
+    try
+      l_oDataset  := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'FILTER' then begin
+        l_oDataset.Filter := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'FILTERED' then begin
+        l_oDataset.Filtered := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'BOF' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'CanModify' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'EOF' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'RECNO' then begin
+        l_oDataset.RecNo := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else
+        Result := inherited SetAttrO(key, value);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := -1;
+      end;
+    end;
+  end;
 end;
 
 // Methods
 
 procedure TPyDBDataset.RaiseDBError( E : Exception );
 begin
- if self.GetModule <> nil then
-   GetModule.RaiseError( AnsiString('DBError'), AnsiString(E.Message) );
+  if self.GetModule <> nil then
+    GetModule.RaiseError( AnsiString('DBError'), AnsiString(E.Message) );
 end;
 
 function TPyDBDataset.Do_Fields( args : PPyObject ): PPyObject;
 var
- idx : Integer;
- l_oDataset: TFDDataset;
+  idx : Integer;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   // We adjust the transmitted self argument
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if PyArg_ParseTuple( args, 'i:DBDataset.Fields',@idx ) <> 0 then begin
-       if (idx >= 0) and (idx < l_oDataset.FieldCount) then
-         Result := PyDelphiWrapper.Wrap(l_oDataset.Fields[idx])
-       else begin
-         Result := nil;
-         PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Value out of range : %d', [idx]))));
-       end;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if PyArg_ParseTuple( args, 'i:DBDataset.Fields',@idx ) <> 0 then begin
+        if (idx >= 0) and (idx < l_oDataset.FieldCount) then
+          Result := PyDelphiWrapper.Wrap(l_oDataset.Fields[idx])
+        else begin
+          Result := nil;
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Value out of range : %d', [idx]))));
+        end;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FieldByName( args : PPyObject ) : PPyObject;
 var
- l_sAStr: AnsiString;
- s : PAnsiChar;
- fld : TField;
- l_oDataset: TFDDataset;
+  l_sAStr: AnsiString;
+  s : PAnsiChar;
+  fld : TField;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   // We adjust the transmitted self argument
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if (PyArg_ParseTuple( args, PAnsiChar('s:DBDataset.FieldByName'),@s ) <> 0) then begin
-       l_sAStr := AnsiString(s);
-       fld := l_oDataset.FieldByName(String(l_sAStr));
-       if Assigned(fld) then
-         Result := PyDelphiWrapper.Wrap(fld)
-       else begin
-         Result := nil;
-         PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))) );
-       end;
-     end
-     else
-       Result := nil;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if (PyArg_ParseTuple( args, PAnsiChar('s:DBDataset.FieldByName'),@s ) <> 0) then begin
+        l_sAStr := AnsiString(s);
+        fld := l_oDataset.FieldByName(String(l_sAStr));
+        if Assigned(fld) then
+          Result := PyDelphiWrapper.Wrap(fld)
+        else begin
+          Result := nil;
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))) );
+        end;
+      end
+      else
+        Result := nil;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FieldNamesAsTuple( args: PPyObject): PPyObject;
 var
- i : Integer;
- l_oDataset: TFDDataset;
+  i : Integer;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     Result   := PyTuple_New(l_oDataset.FieldCount);
-     for i := 0 to l_oDataset.FieldCount - 1 do
-       with l_oDataset.Fields[i] do
-         PyTuple_SetItem(Result, i, PyUnicode_FromWideString(FieldName));
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      Result   := PyTuple_New(l_oDataset.FieldCount);
+      for i := 0 to l_oDataset.FieldCount - 1 do
+        with l_oDataset.Fields[i] do
+          PyTuple_SetItem(Result, i, PyUnicode_FromWideString(FieldName));
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FieldsAsTuple( args: PPyObject): PPyObject;
 var
- i : Integer;
- l_oDataset: TFDDataset;
+  i : Integer;
+  l_oDataset: TFDDataset;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);     // <- adjust the transmitted self argument
-   l_oDataset := DelphiObject;
-   try
-     Result := PyTuple_New(l_oDataset.FieldCount);
-     for i := 0 to l_oDataset.FieldCount - 1 do begin
-       PyTuple_SetItem( Result, i,
-         VariantAsPyObject( SqlTimeToVarDate(l_oDataset.Fields[i].AsVariant )) );
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);     // <- adjust the transmitted self argument
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      Result := PyTuple_New(l_oDataset.FieldCount);
+      for i := 0 to l_oDataset.FieldCount - 1 do begin
+        PyTuple_SetItem( Result, i,
+          VariantAsPyObject( SqlTimeToVarDate(l_oDataset.Fields[i].AsVariant )) );
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FieldsAsDict( args: PPyObject): PPyObject;
@@ -1057,266 +1053,266 @@ var
   obj : PPyObject;
   _fieldName : PPyObject;
 begin
- with GetPythonEngine do begin
    Adjust(@Self);     // <- adjust the transmitted self argument
-   l_oDataset := DelphiObject;
-   try
-     Result := PyDict_New;
-     for i := 0 to l_oDataset.FieldCount - 1 do
-       with l_oDataset.Fields[i] do begin
-         obj := VariantAsPyObject( SqlTimeToVarDate(AsVariant) );
-         _fieldName := VariantAsPyObject(Variant(FieldName));
-         PyDict_SetItem( Result, _fieldName, obj );
-         Py_XDecRef(obj);
-         Py_XDecRef(_fieldName);
-       end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      Result := PyDict_New;
+      for i := 0 to l_oDataset.FieldCount - 1 do
+        with l_oDataset.Fields[i] do begin
+          obj := VariantAsPyObject( SqlTimeToVarDate(AsVariant) );
+          _fieldName := VariantAsPyObject(Variant(FieldName));
+          PyDict_SetItem( Result, _fieldName, obj );
+          Py_XDecRef(obj);
+          Py_XDecRef(_fieldName);
+        end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_First( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     l_oDataset.First;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      l_oDataset.First;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Last( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     l_oDataset.Last;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      l_oDataset.Last;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Next( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     l_oDataset.Next;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      l_oDataset.Next;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Prior( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     l_oDataset.Prior;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      l_oDataset.Prior;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Locate( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
- keyFields : PAnsiChar;
- keyValues, options : PPyObject;
- rslt : Boolean;
- vvalues : Variant;
- opt : TLocateOptions;
+  l_oDataset: TFDDataset;
+  keyFields : PAnsiChar;
+  keyValues, options : PPyObject;
+  rslt : Boolean;
+  vvalues : Variant;
+  opt : TLocateOptions;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if PyArg_ParseTuple( args, 'sOO:DBDataset.Locate',@keyFields, @keyValues, @options ) <> 0 then begin
-       if PySequence_Check(options) = 0 then
-         PyErr_SetString (PyExc_AttributeError^, 'Third argument of Locate must be a sequence.')
-       else begin
-         // Prepare the locate options
-         ListToSet( options, @opt, sizeof(opt) );
-         // Create a variant containing the key values
-         vvalues := PyObjectAsVariant( keyValues );
-         // Execute the locate
-         rslt := l_oDataset.Locate( String(keyFields), vvalues, opt );
-         // Return its result
-         Result := VariantAsPyObject( rslt );
-       end;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if PyArg_ParseTuple( args, 'sOO:DBDataset.Locate',@keyFields, @keyValues, @options ) <> 0 then begin
+        if PySequence_Check(options) = 0 then
+          PyErr_SetString (PyExc_AttributeError^, 'Third argument of Locate must be a sequence.')
+        else begin
+          // Prepare the locate options
+          ListToSet( options, @opt, sizeof(opt) );
+          // Create a variant containing the key values
+          vvalues := PyObjectAsVariant( keyValues );
+          // Execute the locate
+          rslt := l_oDataset.Locate( String(keyFields), vvalues, opt );
+          // Return its result
+          Result := VariantAsPyObject( rslt );
+        end;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Lookup( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
- keyFields, resultFields : PAnsiChar;
- keyValues : PPyObject;
- rslt : Variant;
- vvalues : Variant;
+  l_oDataset: TFDDataset;
+  keyFields, resultFields : PAnsiChar;
+  keyValues : PPyObject;
+  rslt : Variant;
+  vvalues : Variant;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if PyArg_ParseTuple( args, 'sOs:DBDataset.Lookup',@keyFields, @keyValues, @resultFields ) <> 0 then begin
-       // Create a variant containing the key values
-       vvalues := PyObjectAsVariant( keyValues );
-       // Execute the lookup
-       rslt := l_oDataset.Lookup( String(keyFields), vvalues, String(resultFields) );
-       // Return its result
-       Result := VariantAsPyObject( rslt );
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if PyArg_ParseTuple( args, 'sOs:DBDataset.Lookup',@keyFields, @keyValues, @resultFields ) <> 0 then begin
+        // Create a variant containing the key values
+        vvalues := PyObjectAsVariant( keyValues );
+        // Execute the lookup
+        rslt := l_oDataset.Lookup( String(keyFields), vvalues, String(resultFields) );
+        // Return its result
+        Result := VariantAsPyObject( rslt );
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_Refresh( args : PPyObject ) : PPyObject;
 var
- l_oDataset: TFDDataset;
+  l_oDataset: TFDDataset;
 begin
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     l_oDataset.Refresh();
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      l_oDataset.Refresh();
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FindKey( args : PPyObject ) : PPyObject;
 var
- i : Integer;
- V : Variant;
- l_oDataset: TFDDataSet;
- KeyValues : PPyObject;
+  i : Integer;
+  V : Variant;
+  l_oDataset: TFDDataSet;
+  KeyValues : PPyObject;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if PyArg_ParseTuple( args, 'O:DBDataset.FindKey',@KeyValues ) <> 0 then begin
-       if PySequence_Check( KeyValues ) <> 0 then begin
-         V := PyObjectAsVariant( KeyValues );
-         l_oDataset.CheckBrowseMode;
-         l_oDataset.SetKey;
-         for i := 0 to VarArrayHighBound(V, 1) do
-           l_oDataset.IndexFields[i].AsVariant := V[i];
-         Result := VariantAsPyObject( l_oDataset.GotoKey );
-       end
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if PyArg_ParseTuple( args, 'O:DBDataset.FindKey',@KeyValues ) <> 0 then begin
+        if PySequence_Check( KeyValues ) <> 0 then begin
+          V := PyObjectAsVariant( KeyValues );
+          l_oDataset.CheckBrowseMode;
+          l_oDataset.SetKey;
+          for i := 0 to VarArrayHighBound(V, 1) do
+            l_oDataset.IndexFields[i].AsVariant := V[i];
+          Result := VariantAsPyObject( l_oDataset.GotoKey );
+        end
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBDataset.Do_FindNearest( args : PPyObject ) : PPyObject;
 var
- i : Integer;
- V : Variant;
- l_oDataset: TFDDataset;
- KeyValues : PPyObject;
+  i : Integer;
+  V : Variant;
+  l_oDataset: TFDDataset;
+  KeyValues : PPyObject;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oDataset := DelphiObject;
-   try
-     if PyArg_ParseTuple( args, 'O:DBDataset.FindNearest',@KeyValues ) <> 0 then begin
-       if PySequence_Check( KeyValues ) <> 0  then begin
-         V := PyObjectAsVariant( KeyValues );
-         l_oDataset.CheckBrowseMode;
-         l_oDataset.SetKey;
-         for i := 0 to VarArrayHighBound(V, 1) do
-           l_oDataset.IndexFields[i].AsVariant := V[i];
-         l_oDataset.GotoNearest;
-       end;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oDataset := DelphiObject;
+    try
+      if PyArg_ParseTuple( args, 'O:DBDataset.FindNearest',@KeyValues ) <> 0 then begin
+        if PySequence_Check( KeyValues ) <> 0  then begin
+          V := PyObjectAsVariant( KeyValues );
+          l_oDataset.CheckBrowseMode;
+          l_oDataset.SetKey;
+          for i := 0 to VarArrayHighBound(V, 1) do
+            l_oDataset.IndexFields[i].AsVariant := V[i];
+          l_oDataset.GotoNearest;
+        end;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 // ----------------------- TPyDBTable ------------------------------------
 
 function TPyDBTable.GetDelphiObject: TFDTable;
 begin
- Result := TFDTable(inherited DelphiObject);
+  Result := TFDTable(inherited DelphiObject);
 end;
 
 procedure TPyDBTable.SetDelphiObject(const Value: TFDTable);
 begin
- inherited DelphiObject := Value;
+  inherited DelphiObject := Value;
 end;
 
 class function TPyDBTable.DelphiObjectClass: TClass;
 begin
- Result := TFDTable;
+  Result := TFDTable;
 end;
 
 destructor TPyDBTable.Destroy;
@@ -1328,586 +1324,586 @@ end;
 
 class procedure TPyDBTable.RegisterMethods( PythonType : TPythonType );
 begin
- inherited;
- with PythonType do begin
-   AddMethod(AnsiString('Open'), @TPyDBTable.Do_Open,
-             AnsiString('FDTable.Open() -> None') );
-   AddMethod(AnsiString('Close'), @TPyDBTable.Do_Close,
-             AnsiString('FDTable.Close() -> None') );
-   AddMethod(AnsiString('Edit'), @TPyDBTable.Do_Edit,
-             AnsiString('FDTable.Edit() -> None') );
-   AddMethod(AnsiString('Insert'), @TPyDBTable.Do_Insert,
-             AnsiString('FDTable.Insert() -> None') );
-   AddMethod(AnsiString('Append'), @TPyDBTable.Do_Append,
-             AnsiString('FDTable.Append() -> None') );
-   AddMethod(AnsiString('Post'), @TPyDBTable.Do_Post,
-             AnsiString('FDTable.Post() -> None') );
-   AddMethod(AnsiString('Cancel'), @TPyDBTable.Do_Cancel,
-             AnsiString('FDTable.Cancel() -> None') );
-   AddMethod(AnsiString('Delete'), @TPyDBTable.Do_Delete,
-             AnsiString('FDTable.Delete() -> None') );
-   AddMethod(AnsiString('SetRangeStart'), @TPyDBTable.Do_SetRangeStart,
-             AnsiString('FDTable.SetRangeStart() -> None') );
-   AddMethod(AnsiString('EditRangeStart'), @TPyDBTable.Do_EditRangeStart,
-             AnsiString('FDTable.EditRangeStart() -> None') );
-   AddMethod(AnsiString('SetRangeEnd'), @TPyDBTable.Do_SetRangeEnd,
-             AnsiString('FDTable.SetRangeEnd() -> None') );
-   AddMethod(AnsiString('EditRangeEnd'), @TPyDBTable.Do_EditRangeEnd,
-             AnsiString('FDTable.EditRangeEnd() -> None') );
-   AddMethod(AnsiString('ApplyRange'), @TPyDBTable.Do_ApplyRange,
-             AnsiString('FDTable.ApplyRange() -> None') );
-   AddMethod(AnsiString('SetRange'), @TPyDBTable.Do_SetRange,
+  inherited;
+  with PythonType do begin
+    AddMethod(AnsiString('Open'), @TPyDBTable.Do_Open,
+              AnsiString('FDTable.Open() -> None') );
+    AddMethod(AnsiString('Close'), @TPyDBTable.Do_Close,
+              AnsiString('FDTable.Close() -> None') );
+    AddMethod(AnsiString('Edit'), @TPyDBTable.Do_Edit,
+              AnsiString('FDTable.Edit() -> None') );
+    AddMethod(AnsiString('Insert'), @TPyDBTable.Do_Insert,
+              AnsiString('FDTable.Insert() -> None') );
+    AddMethod(AnsiString('Append'), @TPyDBTable.Do_Append,
+              AnsiString('FDTable.Append() -> None') );
+    AddMethod(AnsiString('Post'), @TPyDBTable.Do_Post,
+              AnsiString('FDTable.Post() -> None') );
+    AddMethod(AnsiString('Cancel'), @TPyDBTable.Do_Cancel,
+              AnsiString('FDTable.Cancel() -> None') );
+    AddMethod(AnsiString('Delete'), @TPyDBTable.Do_Delete,
+              AnsiString('FDTable.Delete() -> None') );
+    AddMethod(AnsiString('SetRangeStart'), @TPyDBTable.Do_SetRangeStart,
+              AnsiStrin g('FDTable.SetRangeStart() -> None') );
+    AddMethod(AnsiString('EditRangeStart'), @TPyDBTable.Do_EditRangeStart,
+              AnsiString('FDTable.EditRangeStart() -> None') );
+    AddMethod(AnsiString('SetRangeEnd'), @TPyDBTable.Do_SetRangeEnd,
+              AnsiString('FDTable.SetRangeEnd() -> None') );
+    AddMethod(AnsiString('EditRangeEnd'), @TPyDBTable.Do_EditRangeEnd,
+              AnsiString('FDTable.EditRangeEnd() -> None') );
+    AddMethod(AnsiString('ApplyRange'), @TPyDBTable.Do_ApplyRange,
+              AnsiString('FDTable.ApplyRange() -> None') );
+    AddMethod(AnsiString('SetRange'), @TPyDBTable.Do_SetRange,
              AnsiString('FDTable.SetRange( sequence of RangeStart values, sequence of RangeEnd values ) -> None') );
-   AddMethod(AnsiString('CancelRange'), @TPyDBTable.Do_CancelRange,
-             AnsiString('FDTable.CancelRange() -> None') );
-   AddMethod(AnsiString('GetIndexNames'), @TPyDBTable.Do_GetIndexNames,
-             AnsiString('FDTable.GetIndexNames() -> list of Index Names') );
- end;
+    AddMethod(AnsiString('CancelRange'), @TPyDBTable.Do_CancelRange,
+              AnsiString('FDTable.CancelRange() -> None') );
+    AddMethod(AnsiString('GetIndexNames'), @TPyDBTable.Do_GetIndexNames,
+              AnsiString('FDTable.GetIndexNames() -> list of Index Names') );
+  end;
 end;
 
 function TPyDBTable.CheckActiveDBTable(aMustOpen: Boolean): Boolean;
 begin
- Result := True;
- if GetDelphiObject.Active then begin
-   if not aMustOpen then begin
-     Result := False;
-     with GetPythonEngine do
-       PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is open!') );
-   end;
- end
- else begin
-   if aMustOpen then begin
-     Result := False;
-     with GetPythonEngine do
-       PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is not open!') );
-   end;
- end;
+  Result := True;
+  if GetDelphiObject.Active then begin
+    if not aMustOpen then begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is open!') );
+    end;
+  end
+  else begin
+    if aMustOpen then begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is not open!') );
+    end;
+  end;
 end;
 
 function  TPyDBTable.GetAttrO(key: PPyObject) : PPyObject;
 var
- l_sUpperKey: String;
- l_sConnectionDefName, l_sDatabaseName: String;
- l_oConn: TFDCustomConnection;
- l_oTable: TFDTable;
+  l_sUpperKey: String;
+  l_sConnectionDefName, l_sDatabaseName: String;
+  l_oConn: TFDCustomConnection;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   l_oConn := Nil;
-   try
-     l_oTable    := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
-       l_oConn := DelphiObject.Connection;
-       l_sConnectionDefName := DelphiObject.ConnectionName;
-       if Assigned(l_oConn) then
-         l_sConnectionDefName := l_oConn.ConnectionName;
-       Result := VariantAsPyObject( l_sConnectionDefName )
-     end
-     else if l_sUpperKey = 'DATABASENAME' then begin
-       l_oConn := DelphiObject.Connection;
-       if Assigned(l_oConn) then
-         l_sDatabaseName := l_oConn.Params.Database
-       else
-         l_sDatabaseName := '';
-       Result := VariantAsPyObject( l_sDatabaseName )
-    end
-    else if l_sUpperKey = 'TABLENAME'then
-       Result := VariantAsPyObject( l_oTable.TableName )
-    else if l_sUpperKey = 'ACTIVE' then
-      Result := VariantAsPyObject( l_oTable.Active )
-    else if l_sUpperKey = 'FILTER' then
-       Result := VariantAsPyObject( l_oTable.Filter )
-    else if l_sUpperKey = 'FILTERED' then
-       Result := VariantAsPyObject( l_oTable.Filtered )
-    else if l_sUpperKey = 'STATE' then
-       Result := VariantAsPyObject( Integer(l_oTable.State) )
-    else if l_sUpperKey = 'MODIFIED' then
-       Result := VariantAsPyObject( l_oTable.Modified )
-     else if l_sUpperKey = 'ISRANGED' then
-       // Ermöglicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
-       Result := VariantAsPyObject( l_oTable.IsRanged )
-     else if l_sUpperKey = 'KEYEXCLUSIVE' then
-       // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
-       Result := VariantAsPyObject( l_oTable.KeyExclusive )
-     else if l_sUpperKey = 'KEYFIELDCOUNT' then
-       // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
-       Result := VariantAsPyObject( l_oTable.KeyFieldCount )
-     else if l_sUpperKey = 'INDEXNAME' then
-       Result := VariantAsPyObject( l_oTable.IndexName )
-    else
-      Result := inherited GetAttrO(key);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Result := nil;
+  with GetPythonEngine do begin
+    l_oConn := Nil;
+    try
+      l_oTable    := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
+        l_oConn := DelphiObject.Connection;
+        l_sConnectionDefName := DelphiObject.ConnectionName;
+        if Assigned(l_oConn) then
+          l_sConnectionDefName := l_oConn.ConnectionName;
+        Result := VariantAsPyObject( l_sConnectionDefName )
+      end
+      else if l_sUpperKey = 'DATABASENAME' then begin
+        l_oConn := DelphiObject.Connection;
+        if Assigned(l_oConn) then
+          l_sDatabaseName := l_oConn.Params.Database
+        else
+          l_sDatabaseName := '';
+        Result := VariantAsPyObject( l_sDatabaseName )
+      end
+      else if l_sUpperKey = 'TABLENAME'then
+        Result := VariantAsPyObject( l_oTable.TableName )
+      else if l_sUpperKey = 'ACTIVE' then
+        Result := VariantAsPyObject( l_oTable.Active )
+      else if l_sUpperKey = 'FILTER' then
+        Result := VariantAsPyObject( l_oTable.Filter )
+      else if l_sUpperKey = 'FILTERED' then
+        Result := VariantAsPyObject( l_oTable.Filtered )
+      else if l_sUpperKey = 'STATE' then
+        Result := VariantAsPyObject( Integer(l_oTable.State) )
+      else if l_sUpperKey = 'MODIFIED' then
+        Result := VariantAsPyObject( l_oTable.Modified )
+      else if l_sUpperKey = 'ISRANGED' then
+        // Ermöglicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
+        Result := VariantAsPyObject( l_oTable.IsRanged )
+      else if l_sUpperKey = 'KEYEXCLUSIVE' then
+        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
+        Result := VariantAsPyObject( l_oTable.KeyExclusive )
+      else if l_sUpperKey = 'KEYFIELDCOUNT' then
+        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
+        Result := VariantAsPyObject( l_oTable.KeyFieldCount )
+      else if l_sUpperKey = 'INDEXNAME' then
+        Result := VariantAsPyObject( l_oTable.IndexName )
+     else
+       Result := inherited GetAttrO(key);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function  TPyDBTable.SetAttrO(key, value: PPyObject) : Integer;
 var
- i: Integer;
- l_sUpperKey: String;
- l_sName, l_sConnectionDefName, l_sDatabaseName: String;
- l_oConn: TFDCustomConnection;
- l_oTable: TFDTable;
+  i: Integer;
+  l_sUpperKey: String;
+  l_sName, l_sConnectionDefName, l_sDatabaseName: String;
+  l_oConn: TFDCustomConnection;
+  l_oTable: TFDTable;
 begin
- Result := -1;
- with GetPythonEngine do begin
-   l_oConn := Nil;
-   try
-     l_oTable    := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
-       if CheckActiveDBTable(False) then begin
-         l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
-         for i := 0 to FDManager.ConnectionCount-1 do begin
-           l_sName := UpperCase(FDManager.Connections[i].ConnectionDefName);
-           if l_sName = l_sConnectionDefName then begin
-             l_oConn := FDManager.Connections[i];
-             break;
-           end;
-         end;
-         if Assigned(l_oConn) then begin
-           if l_oTable.Active then
-             l_oTable.Active := False;
-           l_oTable.Connection := l_oConn;
-         end;
-         Result := 0;
-       end;
-     end
-     else if l_sUpperKey = 'DATABASENAME' then begin
-       if CheckActiveDBTable(False) then begin
-         l_sDatabaseName := PyObjectAsVariant( value );
-         l_oConn := DelphiObject.Connection;
-         if Assigned(l_oConn) then begin
-           l_oConn.Params.Database := l_sDatabaseName;
-         end;
-         Result := 0;
-       end;
-     end
-     else if l_sUpperKey = 'TABLENAME' then begin
-       if CheckActiveDBTable(False) then begin
-         l_oTable.TableName := PyObjectAsVariant( value );
-         Result := 0;
-       end;
-     end
-     else if l_sUpperKey = 'ACTIVE' then begin
-       l_oTable.Active := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'FILTER' then begin
-       l_oTable.Filter := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'FILTERED' then begin
-       l_oTable.Filtered := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'STATE' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'MODIFIED' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'ISRANGED' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'KEYEXCLUSIVE' then begin
-       // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
-       l_oTable.KeyExclusive := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'KEYFIELDCOUNT' then begin
-       // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
-       l_oTable.KeyFieldCount := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else if l_sUpperKey = 'INDEXNAME' then begin
-       // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
-       l_oTable.IndexName := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else
-       Result := inherited SetAttrO(key, value);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := -1;
-     end;
-   end;
- end;
+  Result := -1;
+  with GetPythonEngine do begin
+    l_oConn := Nil;
+    try
+      l_oTable    := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
+        if CheckActiveDBTable(False) then begin
+          l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
+          for i := 0 to FDManager.ConnectionCount-1 do begin
+            l_sName := UpperCase(FDManager.Connections[i].ConnectionDefName);
+            if l_sName = l_sConnectionDefName then begin
+              l_oConn := FDManager.Connections[i];
+              break;
+            end;
+          end;
+          if Assigned(l_oConn) then begin
+            if l_oTable.Active then
+              l_oTable.Active := False;
+            l_oTable.Connection := l_oConn;
+          end;
+          Result := 0;
+        end;
+      end
+      else if l_sUpperKey = 'DATABASENAME' then begin
+        if CheckActiveDBTable(False) then begin
+          l_sDatabaseName := PyObjectAsVariant( value );
+          l_oConn := DelphiObject.Connection;
+          if Assigned(l_oConn) then begin
+            l_oConn.Params.Database := l_sDatabaseName;
+          end;
+          Result := 0;
+        end;
+      end
+      else if l_sUpperKey = 'TABLENAME' then begin
+        if CheckActiveDBTable(False) then begin
+          l_oTable.TableName := PyObjectAsVariant( value );
+          Result := 0;
+        end;
+      end
+      else if l_sUpperKey = 'ACTIVE' then begin
+        l_oTable.Active := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'FILTER' then begin
+        l_oTable.Filter := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'FILTERED' then begin
+        l_oTable.Filtered := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'STATE' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'MODIFIED' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'ISRANGED' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'KEYEXCLUSIVE' then begin
+        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
+        l_oTable.KeyExclusive := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'KEYFIELDCOUNT' then begin
+        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
+        l_oTable.KeyFieldCount := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else if l_sUpperKey = 'INDEXNAME' then begin
+        // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
+        l_oTable.IndexName := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else
+        Result := inherited SetAttrO(key, value);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := -1;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Open( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);   // <- Adjust the transmitted self argument
-   l_oTable := DelphiObject;
-   try
-     l_oTable.Open;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);   // <- Adjust the transmitted self argument
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      l_oTable.Open;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Close( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     l_oTable.Close;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      l_oTable.Close;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Edit( args : PPyObject ): PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.Edit;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.Edit;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Insert( args : PPyObject ): PPyObject;
 var
  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.Insert;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.Insert;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Append( args : PPyObject ): PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.Append;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.Append;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Post( args : PPyObject ): PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.Post;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.Post;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Cancel( args : PPyObject ): PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.Cancel;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.Cancel;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_Delete( args : PPyObject ): PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
      if l_oTable.Active then begin
-       l_oTable.Delete;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+        l_oTable.Delete;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_SetRangeStart( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.SetRangeStart;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.SetRangeStart;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_EditRangeStart( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.EditRangeStart;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.EditRangeStart;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_SetRangeEnd( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.EditRangeEnd;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.EditRangeEnd;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_EditRangeEnd( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.EditRangeEnd;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.EditRangeEnd;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_ApplyRange( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.ApplyRange;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.ApplyRange;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_SetRange( args : PPyObject ) : PPyObject;
 var
- i: Integer;
- l_oTable: TFDTable;
- l_oPyStartValues, l_oPyEndValues : PPyObject;
+  i: Integer;
+  l_oTable: TFDTable;
+  l_oPyStartValues, l_oPyEndValues : PPyObject;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active and
-       (PyArg_ParseTuple( args, 'OO:FDTable.SetRange',@l_oPyStartValues, @l_oPyEndValues ) <> 0) then begin
-       if PySequence_Check(l_oPyStartValues) = 0 then begin
-         PyErr_SetString (PyExc_AttributeError^, 'First argument of SetRange must be a sequence.');
-       end
-       else if PySequence_Check(l_oPyEndValues) = 0 then begin
-         PyErr_SetString (PyExc_AttributeError^, 'Second argument of SetRange must be a sequence.');
-       end
-       else begin
-         l_oTable.SetRangeStart;
-         for i := 0 to PySequence_Length(l_oPyStartValues)-1 do
-           l_oTable.IndexFields[i].Value := PyObjectAsVariant(PySequence_GetItem(l_oPyStartValues, i));
-         l_oTable.SetRangeEnd;
-         for i := 0 to PySequence_Length(l_oPyEndValues)-1 do
-           l_oTable.IndexFields[i].Value := PyObjectAsVariant(PySequence_GetItem(l_oPyEndValues, i));
-         l_oTable.ApplyRange;
-       end;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active and
+        (PyArg_ParseTuple( args, 'OO:FDTable.SetRange',@l_oPyStartValues, @l_oPyEndValues ) <> 0) then begin
+        if PySequence_Check(l_oPyStartValues) = 0 then begin
+          PyErr_SetString (PyExc_AttributeError^, 'First argument of SetRange must be a sequence.');
+        end
+        else if PySequence_Check(l_oPyEndValues) = 0 then begin
+          PyErr_SetString (PyExc_AttributeError^, 'Second argument of SetRange must be a sequence.');
+        end
+        else begin
+          l_oTable.SetRangeStart;
+          for i := 0 to PySequence_Length(l_oPyStartValues)-1 do
+            l_oTable.IndexFields[i].Value := PyObjectAsVariant(PySequence_GetItem(l_oPyStartValues, i));
+          l_oTable.SetRangeEnd;
+          for i := 0 to PySequence_Length(l_oPyEndValues)-1 do
+            l_oTable.IndexFields[i].Value := PyObjectAsVariant(PySequence_GetItem(l_oPyEndValues, i));
+          l_oTable.ApplyRange;
+        end;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_CancelRange( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
+  l_oTable: TFDTable;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   try
-     if l_oTable.Active then begin
-       l_oTable.CancelRange;
-       Result := ReturnNone;
-     end;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    try
+      if l_oTable.Active then begin
+        l_oTable.CancelRange;
+        Result := ReturnNone;
+      end;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBTable.Do_GetIndexNames( args : PPyObject ) : PPyObject;
 var
- l_oTable: TFDTable;
- L : TStringList;
+  l_oTable: TFDTable;
+  L : TStringList;
 begin
- Result := nil;
- L := Nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oTable := DelphiObject;
-   L := TStringList.Create;
-   try
-     l_oTable.GetIndexNames( L );
-     Result := GetPythonEngine.StringsToPyList( L );
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
- if Assigned(L) then
-   L.Free;
+  Result := nil;
+  L := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oTable := DelphiObject;
+    L := TStringList.Create;
+    try
+      l_oTable.GetIndexNames( L );
+      Result := GetPythonEngine.StringsToPyList( L );
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
+  if Assigned(L) then
+    L.Free;
 end;
 
 // --------------------- TPyDBQuery --------------------------------------------
 
 function TPyDBQuery.GetDelphiObject: TFDQuery;
 begin
- Result := TFDQuery(inherited DelphiObject);
+  Result := TFDQuery(inherited DelphiObject);
 end;
 
 procedure TPyDBQuery.SetDelphiObject(const Value: TFDQuery);
 begin
- inherited DelphiObject := Value;
+  inherited DelphiObject := Value;
 end;
 
 class function  TPyDBQuery.DelphiObjectClass : TClass;
 begin
- Result := TFDQuery;
+  Result := TFDQuery;
 end;
 
 destructor TPyDBQuery.Destroy;
@@ -1936,219 +1932,219 @@ end;
 
 function TPyDBQuery.CheckActiveDBQuery(aMustOpen: Boolean): Boolean;
 begin
- Result := True;
- if GetDelphiObject.Active then begin
-   if not aMustOpen then begin
-     Result := False;
-     with GetPythonEngine do
-       PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is open!') );
-   end;
- end
- else begin
-   if aMustOpen then begin
-     Result := False;
-     with GetPythonEngine do
-       PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is not open!') );
-   end;
- end;
+  Result := True;
+  if GetDelphiObject.Active then begin
+    if not aMustOpen then begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is open!') );
+    end;
+  end
+  else begin
+    if aMustOpen then begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is not open!') );
+    end;
+  end;
 end;
 
 function  TPyDBQuery.GetAttrO(key: PPyObject) : PPyObject;
 var
- l_sUpperKey: String;
- l_sConnectionDefName, l_sDatabaseName: String;
- l_oConn: TFDCustomConnection;
- l_oQuery: TFDQuery;
+  l_sUpperKey: String;
+  l_sConnectionDefName, l_sDatabaseName: String;
+  l_oConn: TFDCustomConnection;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   l_oConn := Nil;
-   try
-     l_oQuery    := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
-       l_oConn := DelphiObject.Connection;
-       l_sConnectionDefName := DelphiObject.ConnectionName;
-       if Assigned(l_oConn) then
-         l_sConnectionDefName := l_oConn.ConnectionName;
-       Result := VariantAsPyObject( l_sConnectionDefName )
-     end
-     else if l_sUpperKey = 'DATABASENAME' then begin
-       l_oConn := DelphiObject.Connection;
-       if Assigned(l_oConn) then
-         l_sDatabaseName := l_oConn.Params.Database
-       else
-         l_sDatabaseName := '';
-       Result := VariantAsPyObject( l_sDatabaseName )
-    end
-    else if l_sUpperKey = 'PARAMCOUNT' then
-       Result := VariantAsPyObject( l_oQuery.ParamCount )
-    else if l_sUpperKey = 'PREPARED' then
-       Result := VariantAsPyObject( l_oQuery.Prepared )
-    else
-      Result := inherited GetAttrO(key);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := nil;
-     end;
-   end;
- end;
+  Result := nil;
+  with GetPythonEngine do begin
+    l_oConn := Nil;
+    try
+      l_oQuery    := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
+        l_oConn := DelphiObject.Connection;
+        l_sConnectionDefName := DelphiObject.ConnectionName;
+        if Assigned(l_oConn) then
+          l_sConnectionDefName := l_oConn.ConnectionName;
+        Result := VariantAsPyObject( l_sConnectionDefName )
+      end
+      else if l_sUpperKey = 'DATABASENAME' then begin
+        l_oConn := DelphiObject.Connection;
+        if Assigned(l_oConn) then
+          l_sDatabaseName := l_oConn.Params.Database
+        else
+          l_sDatabaseName := '';
+        Result := VariantAsPyObject( l_sDatabaseName )
+      end
+      else if l_sUpperKey = 'PARAMCOUNT' then
+        Result := VariantAsPyObject( l_oQuery.ParamCount )
+      else if l_sUpperKey = 'PREPARED' then
+        Result := VariantAsPyObject( l_oQuery.Prepared )
+      else
+        Result := inherited GetAttrO(key);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := nil;
+      end;
+    end;
+  end;
 end;
 
 function  TPyDBQuery.SetAttrO(key, value: PPyObject) : Integer;
 var
- i: Integer;
- l_sUpperKey: String;
- l_sName, l_sConnectionDefName, l_sDatabaseName: String;
- l_oConn: TFDCustomConnection;
- l_oQuery: TFDQuery;
+  i: Integer;
+  l_sUpperKey: String;
+  l_sName, l_sConnectionDefName, l_sDatabaseName: String;
+  l_oConn: TFDCustomConnection;
+  l_oQuery: TFDQuery;
 begin
- Result := -1;
- with GetPythonEngine do begin
-   l_oConn := Nil;
-   try
-     l_oQuery    := DelphiObject;
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
-     if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
-       if CheckActiveDBQuery(False) then begin
-         l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
-         for i := 0 to FDManager.ConnectionCount-1 do begin
-           l_sName := UpperCase(FDManager.Connections[i].ConnectionDefName);
-           if l_sName = l_sConnectionDefName then begin
-             l_oConn := FDManager.Connections[i];
-             break;
-           end;
-         end;
-         if Assigned(l_oConn) then begin
-           if l_oQuery.Active then
-             l_oQuery.Active := False;
-           l_oQuery.Connection := l_oConn;
-         end;
-         Result := 0;
-       end;
-     end
-     else if l_sUpperKey = 'DATABASENAME' then begin
-       if CheckActiveDBQuery(False) then begin
-         l_sDatabaseName := PyObjectAsVariant( value );
-         l_oConn := DelphiObject.Connection;
-         if Assigned(l_oConn) then begin
-           l_oConn.Params.Database := l_sDatabaseName;
-         end;
-         Result := 0;
-       end;
-     end
-     else if l_sUpperKey = 'PARAMCOUNT' then begin
-       Result := 0;
-     end
-     else if l_sUpperKey = 'PREPARED' then begin
-       l_oQuery.Prepared := PyObjectAsVariant( value );
-       Result := 0;
-     end
-     else
-       Result := inherited SetAttrO(key, value);
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-       Result := -1;
-     end;
-   end;
- end;
+  Result := -1;
+  with GetPythonEngine do begin
+    l_oConn := Nil;
+    try
+      l_oQuery    := DelphiObject;
+      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
+        if CheckActiveDBQuery(False) then begin
+          l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
+          for i := 0 to FDManager.ConnectionCount-1 do begin
+            l_sName := UpperCase(FDManager.Connections[i].ConnectionDefName);
+            if l_sName = l_sConnectionDefName then begin
+              l_oConn := FDManager.Connections[i];
+              break;
+            end;
+          end;
+          if Assigned(l_oConn) then begin
+            if l_oQuery.Active then
+              l_oQuery.Active := False;
+            l_oQuery.Connection := l_oConn;
+          end;
+          Result := 0;
+        end;
+      end
+      else if l_sUpperKey = 'DATABASENAME' then begin
+        if CheckActiveDBQuery(False) then begin
+          l_sDatabaseName := PyObjectAsVariant( value );
+          l_oConn := DelphiObject.Connection;
+          if Assigned(l_oConn) then begin
+            l_oConn.Params.Database := l_sDatabaseName;
+          end;
+          Result := 0;
+        end;
+      end
+      else if l_sUpperKey = 'PARAMCOUNT' then begin
+        Result := 0;
+      end
+      else if l_sUpperKey = 'PREPARED' then begin
+        l_oQuery.Prepared := PyObjectAsVariant( value );
+        Result := 0;
+      end
+      else
+        Result := inherited SetAttrO(key, value);
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+        Result := -1;
+      end;
+    end;
+  end;
 end;
 
 function TPyDBQuery.Do_Open( args : PPyObject ) : PPyObject;
 var
- l_oQuery: TFDQuery;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);   // <- Adjust the transmitted self argument
-   l_oQuery := DelphiObject;
-   try
-     l_oQuery.Open;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);   // <- Adjust the transmitted self argument
+  with GetPythonEngine do begin
+    l_oQuery := DelphiObject;
+    try
+      l_oQuery.Open;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBQuery.Do_Close( args : PPyObject ) : PPyObject;
 var
- l_oQuery: TFDQuery;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oQuery := DelphiObject;
-   try
-     l_oQuery.Close;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oQuery := DelphiObject;
+    try
+      l_oQuery.Close;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBQuery.Do_Prepare( args : PPyObject ) : PPyObject;
 var
- l_oQuery: TFDQuery;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oQuery := DelphiObject;
-   try
-     l_oQuery.Prepare;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oQuery := DelphiObject;
+    try
+      l_oQuery.Prepare;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBQuery.Do_Unprepare( args : PPyObject ) : PPyObject;
 var
- l_oQuery: TFDQuery;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oQuery := DelphiObject;
-   try
-     l_oQuery.Unprepare;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oQuery := DelphiObject;
+    try
+      l_oQuery.Unprepare;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 function TPyDBQuery.Do_ExecSQL( args : PPyObject ) : PPyObject;
 var
- l_oQuery: TFDQuery;
+  l_oQuery: TFDQuery;
 begin
- Result := nil;
- with GetPythonEngine do begin
-   Adjust(@Self);
-   l_oQuery := DelphiObject;
-   try
-     l_oQuery.ExecSQL;
-     Result := ReturnNone;
-   except
-     on E : Exception do begin
-       RaiseDBError( E );
-     end;
-   end;
- end;
+  Result := nil;
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    l_oQuery := DelphiObject;
+    try
+      l_oQuery.ExecSQL;
+      Result := ReturnNone;
+    except
+      on E : Exception do begin
+        RaiseDBError( E );
+      end;
+    end;
+  end;
 end;
 
 // -----------------------------------------------------------------------------

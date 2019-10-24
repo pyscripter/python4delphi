@@ -71,9 +71,9 @@ end;
 
 function TPyDelphiOpenDialog.Execute_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Execute') <> 0 then
       Result := VariantAsPyObject(DelphiObject.Execute())
     else
@@ -83,11 +83,8 @@ end;
 
 function TPyDelphiOpenDialog.Get_filename(AContext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@self);
-    Result := VariantAsPyObject(DelphiObject.FileName);
-  end;
+  Adjust(@self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.FileName);
 end;
 
 class procedure TPyDelphiOpenDialog.RegisterGetSets(PythonType: TPythonType);
