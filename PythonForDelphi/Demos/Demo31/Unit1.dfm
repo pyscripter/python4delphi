@@ -104,7 +104,7 @@ object Form1: TForm1
       
         '    self.Caption = self.Caption + '#39' - changed by Python subclass' +
         #39
-      '    #self.BindMethodsToEvents()'
+      '    self.BindMethodsToEvents()'
       ''
       '  def handle_btnAdd_OnClick(self, Sender):'
       '    self.ListBox1.Items.Add(self.Edit1.Text)'

@@ -791,18 +791,22 @@ begin
                           if Assigned(_comp) and Assigned(objComp) and IsPublishedProp(_comp, _eventName) then
                           begin
                             objMethod := PyObject_GenericGetAttr(GetSelf, key);
-                            if PyErr_Occurred <> nil then
-                              Exit;
-                            PyObject_SetAttrString(objComp, PAnsiChar(AnsiString(_eventName)), objMethod);
-                            if PyErr_Occurred <> nil then
-                              Exit
-                            else
-                            begin
-                              _pair := PyTuple_New(3);
-                              PyTuple_SetItem(_pair, 0, PyString_FromDelphiString(_compName));
-                              PyTuple_SetItem(_pair, 1, PyString_FromDelphiString(_eventName));
-                              PyTuple_SetItem(_pair, 2, objMethod);
-                              PyList_Append(_bindings, _pair);
+                            try
+                              if PyErr_Occurred <> nil then
+                                Exit;
+                              PyObject_SetAttrString(objComp, PAnsiChar(AnsiString(_eventName)), objMethod);
+                              if PyErr_Occurred <> nil then
+                                Exit
+                              else
+                              begin
+                                _pair := PyTuple_New(3);
+                                PyTuple_SetItem(_pair, 0, PyString_FromDelphiString(_compName));
+                                PyTuple_SetItem(_pair, 1, PyString_FromDelphiString(_eventName));
+                                PyTuple_SetItem(_pair, 2, objMethod);
+                                PyList_Append(_bindings, _pair);
+                              end;
+                            finally
+                              Py_XDecRef(objMethod);
                             end;
                           end;
                         end;
