@@ -152,6 +152,29 @@ begin
     Result := E_NOINTERFACE;
 end;
 
+{$IFDEF EXTENDED_RTTI}
+{TTestRTTIAccess}
+type
+  TFruit = (Apple, Banana, Orange);
+  TFruits = set of TFruit;
+
+TTestRTTIAccess = class
+private
+  FFruit: TFruit;
+  FFruits: TFruits;
+public
+  FruitField :TFruit;
+  FruitsField: TFruits;
+  StringField: string;
+  DoubleField: double;
+  ObjectField : TObject;
+  procedure BuyFruits(AFruits: TFruits);
+  procedure SetFormCaption(Form: TForm; ACaption: string);
+  property Fruit: TFruit read FFruit write FFruit;
+  property Fruits: TFruits read FFruits write FFruits;
+end;
+{$ENDIF}
+
 { TForm1 }
 
 procedure TForm1.Button1Click(Sender: TObject);
@@ -172,14 +195,25 @@ begin
   PythonModule.SetVar( 'DVar', p );
   PyEngine.Py_DecRef(p);
 
+{$IFDEF EXTENDED_RTTI}
+  //  Then wrap the an instance our TTestRTTIAccess
+  //  It will allow us to to test access to public fields and methods as well
+  //  public (as well as published) properties.
+  //  This time we would like the object to be destroyed when the PyObject
+  //  is destroyed, so we need to set its Owned property to True;
+  p := PyDelphiWrapper.Wrap(TTestRTTIAccess.Create, soOwned);
+  PythonModule.SetVar( 'rtti_var', p );
+  PyEngine.Py_DecRef(p);
+{$ENDIF}
+
   p := PyEngine.PyInt_FromLong(Trunc(System.CompilerVersion));
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 
   // Excecute the script
+  PyEngine.CheckError;
   PyEngine.ExecStrings( memo1.Lines );
 end;
-
 
 procedure TForm1.FormCreate(Sender: TObject);
 begin
@@ -202,4 +236,20 @@ begin
   Import('spam').DVar.IValue := 1;
 end;
 
+{$IFDEF EXTENDED_RTTI}
+{ TTestRTTIAccess }
+
+procedure TTestRTTIAccess.BuyFruits(AFruits: TFruits);
+begin
+  Fruits := AFruits;
+end;
+
+procedure TTestRTTIAccess.SetFormCaption(Form: TForm; ACaption: string);
+begin
+  Form.Caption := 'From TTestRTTIAccess';
+end;
+{$ENDIF}
+
+initialization
+  ReportMemoryLeaksOnShutdown := DebugHook <> 0;
 end.

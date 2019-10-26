@@ -1,4 +1,4 @@
-(*-----------------------------------------------------------------------------
+﻿(*-----------------------------------------------------------------------------
  Unit Name: WrapDelphi
  Author:    Kiriakos Vlahos
  Date:      24-Feb-2005
@@ -8,7 +8,7 @@
  Contributors:
    Morgan Martinet (mmm@free.fr)
 
- Features:
+ Features:                                     P
    Check our Wiki at: http://py4d.pbwiki.com/.                          
 
    Published properties and methods compiled with {$METHODINFO ON} are
@@ -66,7 +66,7 @@ class TTestForm(Form):
   def handle_btnAdd_OnClick(self, Sender):
     self.ListBox1.Items.Add(self.Edit1.Text)
    
-  There is also a helper method named SetProps at the TPyDelphiObject level, 
+  There is also a helper method named SetProps at the TPyDelphiObject level,
   allowing any wrapped object to do:
      button.SetProps(Left=10, Top=20, Caption='Clickme!)
 
@@ -284,17 +284,26 @@ class TTestForm(Form):
 
     1.11  14-Mar-2006 Morgan Martinet
 
-  - Added methods Repaint and Invalidate to the TControl wrapper 
+  - Added methods Repaint and Invalidate to the TControl wrapper
   - Fixed bug when running WrapDelphi without Assertions in the compiler options
     thanks to a report from Dominique Whali
-  - made fields fDefaultIterType and fDefaultContainerType of TPyDelphiWrapper protected 
-    
+  - made fields fDefaultIterType and fDefaultContainerType of TPyDelphiWrapper protected
+
+    Oct-2019 PyScripter
+  - Major refactoring and clean-up
+  - In Delhi version newer than XE, enhanced RTTI is used to provide access to
+    methods, fields and properties.  So in most cases you no longer need to
+    create wrapping classes.
+  - __published__ property was replaced with the implementation of the __dir__()
+    method, so that you can do for example dir(MainForm) to inspect the
+    methods, fields and properties of MainForm.
+  - Demo 31 has been updated to test/showcase some of the new features.
+
  TODO:
+  - Implement RTTI Fields
 
   - Extend SetProps: if property receiving the value is a TStrings and the value a sequence,
     then assign the sequence content to the TStrings.
-  - what do we do if the Delphi code raises an exception when invoked by Python?
-    Shouldn't we resurface it as a Python exception?
   - can we debug the Python code executed from a triggered event? Presently not, as we directly ask Python
     to execute a specific callable...
   - Create a simple app that just initializes Python and executes a script? To avoid having a console...
@@ -323,7 +332,11 @@ uses
   SysUtils, Classes, PythonEngine,  TypInfo,
   Variants,
 {$IFNDEF FPC}
+{$IFDEF EXTENDED_RTTI}
+  Rtti,
+{$ELSE}
   ObjAuto,
+{$ENDIF}
 {$ENDIF}
   Contnrs;
 
@@ -524,14 +537,11 @@ Type
     function ToTuple_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function ToList_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function SetProps(args, keywords : PPyObject) : PPyObject; cdecl;
+    function Dir_Wrapper(args: PPyObject): PPyObject; cdecl;
     // Exposed Getters
     function Get_ClassName(Acontext : Pointer) : PPyObject; cdecl;
     function Get_Owned(Acontext : Pointer) : PPyObject; cdecl;
     function Get_Bound(Acontext : Pointer) : PPyObject; cdecl;
-    function Get_Published(AContext : Pointer) : PPyObject; cdecl;
-    function Dummy_Getter(AContext : Pointer) : PPyObject; cdecl;
-    // Exposed Setters
-    function Dummy_Setter(AValue : PPyObject; AContext : Pointer): Integer; cdecl;
     // implementation of interface IFreeNotificationSubscriber
     procedure Notify(ADeletedObject : TObject);
   public
@@ -642,7 +652,8 @@ Type
     procedure Delete(AIndex : Integer);
     function  GetCallable(AComponent : TObject; APropInfo : PPropInfo) : PPyObject; overload;
     function  GetCallable(AComponent : TObject; const APropName : String) : PPyObject; overload;
-    function  Link(AComponent : TObject; APropInfo : PPropInfo; ACallable : PPyObject) : Boolean;
+    function  Link(AComponent : TObject; APropInfo : PPropInfo;
+      ACallable : PPyObject; out ErrMsg: string) : Boolean;
     function  IndexOf(AComponent : TObject; APropInfo : PPropInfo) : Integer;
     procedure RegisterHandler(AEventHandlerClass : TEventHandlerClass);
     function  Unlink(AComponent : TObject; APropInfo : PPropInfo) : Boolean;
@@ -823,7 +834,8 @@ Type
   function  SetToPython(ATypeInfo: PTypeInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
-  function  PythonToSet(ASet : PPyObject; APropInfo: PPropInfo) : Integer;
+  function  PythonToSet(APropInfo: PPropInfo; ASet : PPyObject) : Integer; overload;
+  function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload
   function  SupportsFreeNotification(AObject : TObject) : Boolean;
   procedure RaiseNotifyEvent(PyDelphiWrapper : TPyDelphiWrapper; ACallable : PPyObject; Sender: TObject);
 
@@ -833,22 +845,50 @@ Uses
   Math,
   RTLConsts;
 
+resourcestring
+  rs_ErrCheckIndex = '%s "%d" out of range';
+  rs_ErrCheckInt = '%s receives only integer values';
+  rs_ErrCheckStr = '%s receives only string values';
+  rs_ErrCheckCallable = '%s accepts only None or Callable values';
+  rs_ErrCheckEnum = 'Enum %s accepts values between %d and %d. Received %d.';
+  rs_ErrCheckObjOfType = '%s receives only Delphi objects of type %s';
+  rs_ErrCheckObj = '%s receives only Delphi objects';
+  rs_ErrSqAss = 'Container %s does not support indexed write (f[i] = x)';
+  rs_ErrSqContains = 'Container %s does not support the Contains protocol';
+  rs_ErrCheckBound = 'Delphi wrapper %s is not bound';
+  rs_ErrFree = 'The Delphi object cannot be freed, since it is not Owned';
+  rs_ErrSequence = 'Wrapper %s does not support sequences';
+  rs_ErrInvalidArgs = '"%s" called with invalid arguments.'#$A'Error: %s';
+  rs_ErrInvalidRet = 'Call "%s" returned a value that could not be coverted to Python'#$A'Error: %s';
+  rs_IncompatibleArguments = 'Could not find a method with compatible arguments';
+  rs_ErrAttrGet = 'Error in getting property "%s".'#$A'Error: %s';
+  rs_UnknownAttribute = 'Unknown attribute';
+  rs_ErrIterSupport = 'Wrapper %s does not support iterators';
+  rs_ErrAttrSetr = 'Error in setting property %s'#$A'Error: %s';
+  rs_IncompatibleClasses = 'Incompatible classes';
+  rs_NotPublished = 'Event handling is available only for published properties';
+  rs_ExpectedObject = 'Expected a Delphi object';
+  rs_InvalidClass = 'Invalid class';
+  rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
+  rs_ErrEventNoSuport = 'Class %s does not support events because it must '+
+    'either inherit from TComponent or implement interface IFreeNotification';
+  rs_ErrEventExpectCallable = 'You can only assign a callable to method property "%s"';
+  rs_NotWritable = 'The class members  is not writable';
+  rs_NotReadable = 'The class member is not readable';
+  rs_NoAccess = 'Private and protected class members cannot be accessed';
+  rs_ErrValueToPython = 'Unsupported conversion from TValue to Python value';
+  rs_ErrPythonToValue = 'Unsupported conversion from Python value to TValue';
+  rs_ErrNoTypeInfo = 'TypeInfo is not available';
+  rs_ErrUnexpected = 'Unexpected error';
+
 var
   gRegisteredUnits : TRegisteredUnits;
+
 function RegisteredUnits : TRegisteredUnits;
 begin
   if not Assigned(gRegisteredUnits) then
     gRegisteredUnits := TRegisteredUnits.Create;
   Result := gRegisteredUnits;
-end;
-
-var
-  gNames : TStringList;
-
-function AddName(const AName : String) : PAnsiChar;
-begin
-  gNames.Add(AName);
-  Result := PAnsiChar(AnsiString(gNames[gNames.Count-1]));
 end;
 
 procedure Register;
@@ -858,14 +898,153 @@ end;
 
 { Helper functions }
 
+{$IFDEF EXTENDED_RTTI}
+function SimpleValueToPython(const Value: TValue; out ErrMsg: string): PPyObject;
+begin
+  Result := nil;
+  if Value.IsEmpty then begin
+    Result := GetPythonEngine.ReturnNone;
+    Exit;
+  end;
+  try
+    case Value.TypeInfo^.Kind  of
+      tkUnknown:  Result := GetPythonEngine.ReturnNone;
+      tkInteger, tkChar, tkFloat,
+      tkString, tkWChar, tkLString,
+      tkWString, tkUString, tkInt64,
+      tkVariant:
+        Result := GetPythonEngine.VariantAsPyObject(Value.AsVariant);
+      tkEnumeration:
+        begin
+          if Value.TypeInfo = TypeInfo(Boolean) then
+          with GetPythonEngine do begin
+            if Value.AsBoolean then
+              Result := PPyObject(Py_True)
+            else
+              Result := PPyObject(Py_False);
+            Py_XIncRef(Result);
+          end
+          else
+            Result := GetPythonEngine.PyString_FromDelphiString(GetEnumName(Value.TypeInfo,
+              PInteger(Value.GetReferenceToRawData)^));
+        end;
+      tkSet:
+        begin
+          Result := SetToPython(Value.TypeData.CompType^,
+            PInteger(Value.GetReferenceToRawData)^);
+        end;
+      tkClass, tkMethod, tkArray,
+      tkRecord, tkInterface, tkDynArray,
+      tkClassRef, tkPointer, tkProcedure:
+        ErrMsg := rs_ErrValueToPython;
+    else
+      ErrMsg := rs_ErrUnexpected;
+    end;
+  except
+    on E: Exception do begin
+      Result := nil;
+      ErrMsg := E.Message;
+    end;
+  end;
+end;
+
+function SimplePythonToValue(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out Value: TValue; out ErrMsg: string): Boolean;
+Var
+  S: string;
+  I : integer;
+  V : TValue;
+begin
+  Result := False;
+  if TypeInfo = nil then begin
+    ErrMsg := rs_ErrNoTypeInfo;
+    Exit;
+  end;
+  try
+    case TypeInfo^.Kind  of
+      tkUnknown:
+        if PyValue = GetPythonEngine.Py_None then
+        begin
+          Value := TValue.Empty;
+          Result := True;
+        end
+        else
+          ErrMsg := rs_ErrPythonToValue;
+      tkString, tkWString, tkUString,
+      tkLString, tkChar, tkWChar:
+        begin
+          V := GetPythonEngine.PyObjectAsString(PyValue);
+          Value := V.Cast(TypeInfo);
+          Result := True;
+        end;
+      tkInteger, tkFloat, tkInt64,
+      tkVariant:
+        begin
+          V :=  TValue.FromVariant(GetPythonEngine.PyObjectAsVariant(PyValue));
+          Value := V.Cast(TypeInfo);
+          Result := True;
+        end;
+      tkEnumeration:
+        begin
+          S := GetPythonEngine.PyString_AsDelphiString(PyValue);
+          I := GetEnumValue(TypeInfo, S);
+          Value := TValue.FromOrdinal(TypeInfo, I);
+          Result := True;
+        end;
+      tkSet:
+        begin
+          I := PythonToSet(TypeInfo, PyValue);
+          TValue.Make(@I, TypeInfo, Value);
+          Result := True;
+        end;
+      tkClass, tkMethod, tkArray,
+      tkRecord, tkInterface, tkDynArray,
+      tkClassRef, tkPointer, tkProcedure:
+        ErrMsg := rs_ErrPythonToValue;
+    else
+      ErrMsg := rs_ErrUnexpected;
+    end;
+  except
+    on E: Exception do begin
+      Result := False;
+      ErrMsg := E.Message;
+    end;
+  end
+end;
+{$ENDIF}
+
+function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out Obj: TObject; out ErrMsg: string): Boolean;
+var
+  PyObject : TPyObject;
+begin
+  Result := False;
+  if IsDelphiObject(PyValue) then
+  begin
+    PyObject := PythonToDelphi(PyValue);
+    if PyObject is TPyDelphiObject then
+    begin
+      Obj := TPyDelphiObject(PyObject).DelphiObject;
+      if Obj.ClassType.InheritsFrom(GetTypeData(TypeInfo).ClassType) then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleClasses;
+    end
+    else
+      ErrMsg := rs_ExpectedObject;
+  end
+  else
+    ErrMsg := rs_ExpectedObject;
+end;
+
 function CheckIndex(AIndex, ACount : Integer; const AIndexName : String = 'Index') : Boolean;
 begin
   if (AIndex < 0) or (AIndex >= ACount) then
     with GetPythonEngine do
     begin
       Result := False;
-      PyErr_SetString (PyExc_IndexError^,
-          PAnsiChar(AnsiString(Format('%s "%d" out of range',[AIndexName, AIndex]))));
+      PyErr_SetObject (PyExc_IndexError^, PyString_FromDelphiString(
+          Format(rs_ErrCheckIndex,[AIndexName, AIndex])));
     end
   else
     Result := True;
@@ -882,8 +1061,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('%s receives only integer values', [AAttributeName]))));
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckInt, [AAttributeName])));
   end;
 end;
 
@@ -904,8 +1083,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('%s receives only string values', [AAttributeName]))));
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckStr, [AAttributeName])));
   end;
 end;
 
@@ -917,8 +1096,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('%s accepts only None or Callable values', [AAttributeName]))));
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckCallable, [AAttributeName])));
   end;
 end;
 
@@ -930,8 +1109,9 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('Enum %s accepts values between %d and %d. Received %d.', [AEnumName, AMinValue, AMaxValue, AValue]))));
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckEnum,
+        [AEnumName, AMinValue, AMaxValue, AValue])));
   end;
 end;
 
@@ -954,8 +1134,8 @@ begin
     begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only Delphi objects of type %s', [AAttributeName, AExpectedClass.ClassName]))));
+        PyErr_SetObject (PyExc_AttributeError^,
+          PyString_FromDelphiString(Format(rs_ErrCheckObjOfType, [AAttributeName, AExpectedClass.ClassName])));
     end
     else
     begin
@@ -967,8 +1147,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('%s receives only Delphi objects', [AAttributeName]))));
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckObj, [AAttributeName])));
   end;
 end;
 
@@ -1046,7 +1226,7 @@ begin
   for I := 0 to SizeOf(Integer) * 8 - 1 do
     if I in S then
     begin
-      _name := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(ATypeInfo, I))));
+      _name := GetPythonEngine.PyString_FromDelphiString(GetEnumName(ATypeInfo, I));
       GetPythonEngine.PyList_Append(Result, _name);
       GetPythonEngine.Py_XDecRef(_name);
     end;
@@ -1066,14 +1246,13 @@ begin
   Result := SetToPython(APropInfo, GetOrdProp(AInstance, APropInfo));
 end;
 
-function PythonToSet(ASet : PPyObject; APropInfo: PPropInfo) : Integer;
+function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload
 var
   i : Integer;
   EnumObj: PPyObject;
   EnumName: string;
   EnumValue: Longint;
   EnumInfo: PTypeInfo;
-
 begin
   Result := 0;
   with GetPythonEngine do
@@ -1081,9 +1260,9 @@ begin
     Assert(PySequence_Check(ASet) <> 0, 'PythonToSet expects a Python sequence as first parameter');
 
    {$IFDEF FPC}
-    EnumInfo := GetTypeData(APropInfo^.PropType)^.CompType;
+    EnumInfo := GetTypeData(ATypeInfo)^.CompType;
    {$ELSE FPC}
-    EnumInfo := GetTypeData(APropInfo^.PropType^)^.CompType^;
+    EnumInfo := GetTypeData(ATypeInfo)^.CompType^;
    {$ENDIF FPC}
     for i := 0 to PySequence_Length(ASet)-1 do
     begin
@@ -1099,6 +1278,15 @@ begin
       Include(TIntegerSet(Result), EnumValue);
     end;
   end;
+end;
+
+function PythonToSet(APropInfo: PPropInfo; ASet : PPyObject) : Integer; overload;
+begin
+  {$IFDEF FPC}
+  Result := PythonToSet(APropInfo^.PropType, ASet);
+  {$ELSE FPC}
+  Result := PythonToSet(APropInfo^.PropType^, ASet);
+  {$ENDIF FPC}
 end;
 
 {$IFDEF FPC}
@@ -1134,7 +1322,12 @@ Type
   TPyDelphiMethodObject = class (TPyObject)
   public
     DelphiObject: TObject;
+    {$IFDEF EXTENDED_RTTI}
+    fDelphiWrapper : TPyDelphiWrapper;
+    MethName: string;
+    {$ELSE}
     MethodInfo : TMethodInfoHeader;
+    {$ENDIF}
     function  Call( ob1, ob2 : PPyObject) : PPyObject; override;
     function  Repr : PPyObject; override;
     class procedure SetupType( PythonType : TPythonType ); override;
@@ -1256,8 +1449,8 @@ end;
 function TPyDelphiContainer.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %s at %x>',
-         [ContainerAccess.Name, NativeInt(Self)]))) );
+    Result := PyString_FromDelphiString( Format('<Delphi %s at %x>',
+         [ContainerAccess.Name, NativeInt(Self)]) );
 end;
 
 procedure TPyDelphiContainer.Setup(APyDelphiWrapper : TPyDelphiWrapper;
@@ -1297,7 +1490,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Container %s does not support indexed write (f[i] = x)', [fContainerAccess.Name]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSqAss, [fContainerAccess.Name])) );
   end;
 end;
 
@@ -1314,7 +1508,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Container %s does not support the Contains protocol', [fContainerAccess.Name]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSqContains, [fContainerAccess.Name])) );
   end;
 end;
 
@@ -1364,8 +1559,8 @@ end;
 function TPyDelphiIterator.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi %sIterator at %x>',
-         [ContainerAccess.Name, NativeInt(Self)]))) );
+    Result := PyString_FromDelphiString( Format('<Delphi %sIterator at %x>',
+         [ContainerAccess.Name, NativeInt(Self)]) );
 end;
 
 procedure TPyDelphiIterator.Setup(AContainerAccess : TContainerAccess);
@@ -1413,7 +1608,8 @@ begin
   Result := Assigned(DelphiObject);
   if not Result then
     with GetPythonEngine do
-      PyErr_SetString(PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Delphi wrapper %s is not bound', [ClassName]))));
+      PyErr_SetObject(PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrCheckBound, [ClassName])));
 end;
 
 function TPyDelphiObject.Compare(obj: PPyObject): Integer;
@@ -1460,37 +1656,12 @@ begin
   inherited;
 end;
 
-function TPyDelphiObject.Dummy_Getter(AContext: Pointer): PPyObject;
-begin
-  // Note that this code should never execute as TPyDelphiObject overrides GetAttrO
-  // to intercept an access to a published property.
-  // This getter was only registered to help document the wrapped object and
-  // benefit from the code insight of the Python IDE.
-  Result := nil;
-  with GetPythonEngine do
-    PyErr_SetString (PyExc_AttributeError^,
-      PAnsiChar('Fatal error. The Delphi wrapper did not find the published property you were trying to access'));
-end;
-
-function TPyDelphiObject.Dummy_Setter(AValue: PPyObject;
-  AContext: Pointer): Integer;
-begin
-  // Note that this code should never execute as TPyDelphiObject overrides GetAttrO
-  // to intercept an access to a published property.
-  // This getter was only registered to help document the wrapped object and
-  // benefit from the code insight of the Python IDE.
-  Result := -1;
-  with GetPythonEngine do
-    PyErr_SetString (PyExc_AttributeError^,
-      PAnsiChar('Fatal error. The Delphi wrapper did not find the published property you were trying to access'));
-end;
-
 function TPyDelphiObject.Free_Wrapper(args: PPyObject): PPyObject;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do
   begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, ':Free' ) <> 0 then
     begin
       if Owned or fCanFreeOwnedObject then begin
@@ -1498,8 +1669,8 @@ begin
         Owned := False;
         Result := ReturnNone;
       end else begin
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar('The Delphi object cannot be freed, since it is not Owned'));
+        PyErr_SetObject (PyExc_AttributeError^,
+          PyString_FromDelphiString(rs_ErrFree));
         Result := nil;
       end;
     end
@@ -1510,27 +1681,117 @@ end;
 
 function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
 (*
-    First Look for "published" methods compiled with {$METHODINFO ON}
-    Then look for published properties
-    Finally call inherited which calls PyObject_GenericGetAttr
+    First look whether the attribute has ben wrapped (RegisterGetSet, RegisterMethod).
+    This is done by calling the inherited GetAttrO.  If this fails then
+      -  Use Rtti to locate the property in DELPHIXE_OR_HIGHER (EXTENDED_RTTI)
+      or for other versions
+      -  First Look for "published" methods compiled with {$METHODINFO ON}
+      -  Then look for published properties
 *)
+
+  {$IFDEF EXTENDED_RTTI}
+  function GetRttiAttr(Instance: TObject; const AttrName: string;
+    out ErrMsg: string): PPyObject;
+  var
+    Context: TRttiContext;
+    Prop: TRttiProperty;
+    Meth: TRttiMethod;
+    Field: TRttiField;
+  begin
+    Result := nil;
+    Context := TRttiContext.Create();
+    try
+      Meth := Context.GetType(Instance.ClassType).GetMethod(AttrName);
+      if Meth <> nil then
+      begin
+        Result := PyDelphiWrapper.DelphiMethodType.CreateInstance;
+        with PythonToDelphi(Result) as TPyDelphiMethodObject do
+        begin
+          fDelphiWrapper := PyDelphiWrapper;
+          MethName := Meth.Name;
+          DelphiObject := Self.DelphiObject;
+        end;
+      end
+      else
+      begin
+        Prop := Context.GetType(Instance.ClassType).GetProperty(AttrName);
+        if Prop <> nil then
+        begin
+          if Ord(Prop.Visibility) < Ord(mvPublic) then
+            ErrMsg := rs_NoAccess
+          else if not Prop.IsReadable then
+            ErrMsg := rs_NotReadable
+          else if Prop.PropertyType = nil then
+            ErrMsg := rs_ErrNoTypeInfo
+          else
+          case prop.PropertyType.TypeKind of
+            tkClass:
+              Result := Wrap(prop.GetValue(Instance).AsObject);
+            tkMethod:
+              if prop is TRttiInstanceProperty then
+              Result := PyDelphiWrapper.fEventHandlerList.GetCallable(Instance,
+                TRttiInstanceProperty(prop).PropInfo);
+          else
+            Result := SimpleValueToPython(prop.GetValue(Instance), ErrMsg)
+          end;
+        end
+        else
+        begin
+          Field := Context.GetType(Instance.ClassType).GetField(AttrName);
+          if Field <> nil then
+          begin
+            if Ord(Field.Visibility) < Ord(mvPublic) then
+              ErrMsg := rs_NoAccess
+            else if Field.FieldType = nil then
+              ErrMsg := rs_ErrNoTypeInfo
+            else
+            case Field.FieldType.TypeKind of
+              tkClass:
+                Result := Wrap(Field.GetValue(Instance).AsObject);
+            else
+              Result := SimpleValueToPython(Field.GetValue(Instance), ErrMsg)
+            end;
+          end
+          else
+            ErrMsg := rs_UnknownAttribute;
+        end;
+      end;
+    except
+      on E: Exception do begin
+        Result := nil;
+        ErrMsg := E.Message;
+      end;
+    end;
+    Context.Free;
+  end;
+  {$ENDIF}
+
 var
-  Name: string;
-{$IFNDEF FPC}
+  KeyName: string;
+  ErrMsg : string;
+{$IFNDEF EXTENDED_RTTI}
   Info: PMethodInfoHeader;
-{$ENDIF}
   PropInfo: PPropInfo;
   Obj : TObject;
+{$ENDIF}
 begin
-  Result := nil;
-  if GetPythonEngine.PyString_Check(Key) then
-    Name := GetPythonEngine.PyString_AsDelphiString(Key)
-  else
-    Name := '';
+  Result := inherited GetAttrO(key);
+  if GetPythonEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
 
+  if Assigned(DelphiObject) and GetPythonEngine.PyString_Check(Key) then
+    KeyName := GetPythonEngine.PyString_AsDelphiString(Key)
+  else
+    Exit;
+
+  GetPythonEngine.PyErr_Clear;
+{$IFDEF EXTENDED_RTTI}
+  // Use RTTI
+  if Assigned(DelphiObject) then
+    Result := GetRttiAttr(DelphiObject, KeyName, ErrMsg);
+{$ELSE}
 {$IFNDEF FPC}
-  if Assigned(DelphiObject) and (Name <> '') then
-    Info := GetMethodInfo(DelphiObject, Name)
+  if Assigned(DelphiObject) then
+    Info := GetMethodInfo(DelphiObject, KeyName)
   else
     Info := nil;
 
@@ -1538,8 +1799,9 @@ begin
   begin
     // Ensure the method information has enough type information
     if Info.Len <= SizeOf(Info^) - SizeOf(ShortString) + 1 + Length(Info.Name) then
-      with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown attribute "%s"',[Name]))))
+    begin
+      ErrMsg := rs_UnknownAttribute;
+    end
     else
     begin
       Result := PyDelphiWrapper.DelphiMethodType.CreateInstance;
@@ -1549,10 +1811,10 @@ begin
       end;
     end;
   end
-  else{$ENDIF} if Assigned(DelphiObject) and (Name <> '') then
-  begin
+  else{$ENDIF} if Assigned(DelphiObject) then
+  try
     // Not a  method, try a property.
-    PropInfo := GetPropInfo(DelphiObject, Name);
+    PropInfo := GetPropInfo(DelphiObject, KeyName);
     if PropInfo <> nil then
     begin
       // we have a property
@@ -1573,19 +1835,26 @@ begin
           Result := GetPythonEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
         else
         {$IFDEF FPC}
-          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType,
+          Result := GetPythonEngine.PyString_FromDelphiString(GetEnumName(PropInfo^.PropType,
         {$ELSE FPC}
-          Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(GetEnumName(PropInfo^.PropType^,
+          Result := GetPythonEngine.PyString_FromDelphiString(GetEnumName(PropInfo^.PropType^,
         {$ENDIF FPC}
-            GetOrdProp(Self.DelphiObject, PropInfo)))));
+            GetOrdProp(Self.DelphiObject, PropInfo)));
       end
       end else
          Result := GetPythonEngine.VariantAsPyObject(GetPropValue(DelphiObject, PropInfo));
     end;
+  except
+    on E: Exception do begin
+      Result := nil;
+      ErrMsg := E.Message;
+    end;
   end;
-
+{$ENDIF}
   if not Assigned(Result) then
-    Result := inherited GetAttrO(key);
+    with GetPythonEngine do
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
 end;
 
 function TPyDelphiObject.GetContainerAccess: TContainerAccess;
@@ -1602,63 +1871,82 @@ end;
 
 function TPyDelphiObject.Get_Bound(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    Result := VariantAsPyObject(Assigned(DelphiObject));
-  end;
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(Assigned(DelphiObject));
 end;
 
 function TPyDelphiObject.Get_ClassName(Acontext: Pointer): PPyObject;
-Var
-  S : String;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    if CheckBound then
-    begin
-      S := DelphiObject.ClassName;
-      Result := PyString_FromString(PAnsiChar(AnsiString(S)));
-    end
-    else
-      Result := nil;
-  end;
+  Adjust(@Self);
+  if CheckBound then
+    Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.ClassName)
+  else
+    Result := nil;
 end;
 
 function TPyDelphiObject.Get_Owned(Acontext: Pointer): PPyObject;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    if CheckBound then
-      Result := VariantAsPyObject(Owned)
-    else
-      Result := nil;
-  end;
+  Adjust(@Self);
+  if CheckBound then
+    Result := GetPythonEngine.VariantAsPyObject(Owned)
+  else
+    Result := nil;
 end;
 
-function TPyDelphiObject.Get_Published(AContext: Pointer): PPyObject;
+function TPyDelphiObject.Dir_Wrapper(args: PPyObject): PPyObject;
 var
   i : Integer;
+  SL : TStringList;
+{$IFDEF EXTENDED_RTTI}
+  Context: TRttiContext;
+  RttiType: TRTTIType;
+  RttiMethod: TRttiMethod;
+  RttiProperty: TRttiProperty;
+  RttiField: TRttiField;
+{$ELSE}
   _PropList: PPropList;
   _propCount : Integer;
+{$ENDIF}
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
+  Adjust(@Self);
+  SL := TStringList.Create;
+  SL.Sorted := True;
+  SL.Duplicates := dupIgnore;
+  try
+    // Add methods
+    for i := 0 to PythonType.MethodCount - 1 do
+      SL.Add(string(AnsiString(PythonType.Methods[i].ml_name)));
+    for i := 0 to PythonType.GetSetCount - 1 do
+      SL.Add(string(AnsiString(PythonType.GetSet[i].name)));
+{$IFDEF EXTENDED_RTTI}
+    Context := TRttiContext.Create();
+    try
+      RttiType := Context.GetType(DelphiObject.ClassType);
+      for RttiMethod in RttiType.GetMethods do
+        if Ord(RttiMethod.Visibility) > Ord(mvProtected) then
+           SL.Add(RttiMethod.Name);
+      for RttiProperty in RttiType.GetProperties do
+        if Ord(RttiProperty.Visibility) > Ord(mvProtected) then
+          SL.Add(RttiProperty.Name);
+      for RttiField in RttiType.GetFields do
+        if Ord(RttiField.Visibility) > Ord(mvProtected) then
+          SL.Add(RttiField.Name);
+    finally
+      Context.Free();
+    end;
+{$ELSE}
     _propCount := GetPropList(DelphiObject, _PropList);
-    Result := PyList_New(_propCount);
-    if _propCount > 0 then
-    begin
+    if _propCount > 0  then
       try
-        for i := 0 to _propCount-1 do
-          PyList_SetItem(Result, i, PyString_FromString(PAnsiChar(AnsiString(_PropList^[i].Name))));
+        for i := 0 to _propCount - 1 do
+          SL.Add(_PropList^[i].Name);
       finally
         FreeMem(_PropList);
       end;
-      PyList_Sort(Result);
-    end;
+{$ENDIF}
+    Result := GetPythonEngine.StringsToPyList(SL);
+  finally
+    SL.Free;
   end;
 end;
 
@@ -1679,10 +1967,10 @@ var
   KlassName: string;
   IsSubClass: Boolean;
 begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
   with GetPythonEngine do
   begin
-    // We adjust the transmitted self argument
-    Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:InheritsFrom',@_obj ) <> 0 then begin
       if CheckBound then begin
         KlassName := PyObjectAsString(_obj);
@@ -1716,7 +2004,9 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support iterators', [Self.ClassName]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrIterSupport,
+        [Self.ClassName])) );
   end;
 end;
 
@@ -1727,35 +2017,9 @@ begin
 end;
 
 class procedure TPyDelphiObject.RegisterGetSets(PythonType: TPythonType);
-var
-  i : Integer;
-  _doc : String;
-  _propCount : Integer;
-  _PropList: PPropList;
-  _typeInfo : PTypeInfo;
 begin
   inherited;
-  // first register get/set for each published property, to allow easier documenting
-  // and use of code insight within a Python IDE.
-  // Note that the Delphi type info contains short strings which are not directly compatible with PAnsiChar.
-  // So, we have to convert them to regular strings, store them in a list, to maintain them alive, then
-  // we can cast them into PChars.
-  _typeInfo := DelphiObjectClass.ClassInfo;
-  if _typeInfo <> nil then
-  begin
-    _propCount := GetPropList(_typeInfo, _PropList);
-    if _propCount > 0 then
-      try
-        for i := 0 to _propCount-1 do
-        begin
-          _doc := Format('Published property %s : %s', [_PropList^[i].Name, _PropList^[i].PropType^.Name]);
-          PythonType.AddGetSet(AddName(string(_PropList^[i].Name)), @TPyDelphiObject.Dummy_Getter, @TPyDelphiObject.Dummy_Setter,
-          AddName(_doc), nil);
-        end;
-      finally
-        FreeMem(_PropList);
-      end;
-  end;
+
   // then register TObject + custom getters/setters.
   with PythonType do
     begin
@@ -1765,8 +2029,6 @@ begin
         'Returns True if the wrapper is still bound to the Delphi instance.', nil);
       AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, nil,
         'Returns True if the wrapper owns the Delphi instance.', nil);
-      AddGetSet('__published__', @TPyDelphiObject.Get_published, nil,
-        'Returns the list of all published properties of this instance.', nil);
     end;
 end;
 
@@ -1788,78 +2050,65 @@ begin
   PythonType.AddMethod('ToList', @TPyDelphiObject.ToList_Wrapper,
     'TStrings.ToList()'#10 +
     'If the object is a container (TStrings, TComponent...), it returns the content of the sequence as a Python list object.');
+  PythonType.AddMethod('__dir__', @TPyDelphiObject.Dir_Wrapper,
+    'Returns the list of all methods, fields and properties of this instance.');
 end;
 
 function TPyDelphiObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
     if Assigned(DelphiObject) then
-      Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi object of type %s at %x>',
-           [DelphiObject.ClassName, NativeInt(Self)]))) )
+      Result := PyString_FromDelphiString( Format('<Delphi object of type %s at %x>',
+           [DelphiObject.ClassName, NativeInt(Self)]) )
     else
-      Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Unbound Delphi wrapper of type %s at %x>',
-           [DelphiObjectClass.ClassName, NativeInt(Self)]))) );
+      Result := PyString_FromDelphiString( Format('<Unbound Delphi wrapper of type %s at %x>',
+           [DelphiObjectClass.ClassName, NativeInt(Self)]) );
 end;
 
 function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
+(*
+    First look whether the attribute has ben wrapped (RegisterGetSet, RegisterMethod).
+    This is done by calling the inherited SetAttrO.  If this fails then
+      -  Use Rtti to locate the property in DELPHIXE_OR_HIGHER (EXTENDED_RTTI)
+      or for other versions
+      -  Look for published properties
+*)
 
-  function HandleEvent(PropInfo: PPropInfo) : Integer;
+  function HandleEvent(PropInfo: PPropInfo; out ErrMsg: string) : Integer;
   begin
-    if PyDelphiWrapper.EventHandlers.Link(DelphiObject, PropInfo, value) then
+    if PyDelphiWrapper.EventHandlers.Link(DelphiObject, PropInfo, value, ErrMsg) then
       Result := 0
     else
       Result := -1;
   end;
 
-  function HandleClass(PropInfo: PPropInfo) : Integer;
-  var
-    PyObject : TPyObject;
+  function HandleClass(PropInfo: PPropInfo; out ErrMsg: string) : Integer;
+  Var
     Obj : TObject;
   begin
     Result := -1;
-    if IsDelphiObject(value) then
+    if ValidateClassProperty(value, PropInfo^.PropType{$IFNDEF FPC}^{$ENDIF}, Obj, ErrMsg) then
     begin
-      PyObject := PythonToDelphi(value);
-      if PyObject is TPyDelphiObject then
-      begin
-        Obj := TPyDelphiObject(PyObject).DelphiObject;
-        {$IFDEF FPC}
-        if Obj.ClassType.InheritsFrom(GetTypeData(PropInfo^.PropType).ClassType) then
-        {$ELSE FPC}
-        if Obj.ClassType.InheritsFrom(GetTypeData(PropInfo^.PropType^).ClassType) then
-        {$ENDIF FPC}
-        begin
-          SetOrdProp(DelphiObject, PropInfo, NativeInt(Obj));
-          Result := 0;
-        end
-        else
-          with GetPythonEngine do
-            PyErr_SetString (PyExc_AttributeError^, 'Incompatible classes');
-      end
-      else
-        with GetPythonEngine do
-          PyErr_SetString (PyExc_AttributeError^, 'Class property - expected a Delphi object');
+      SetOrdProp(DelphiObject, PropInfo, NativeInt(Obj));
+      Result := 0;
     end
-    else
-      with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^, 'Class property - expected a Delphi object');
   end;
 
-  function HandleSet(PropInfo: PPropInfo) : Integer;
+  function HandleSet(PropInfo: PPropInfo; out ErrMsg: string) : Integer;
   begin
     try
-      SetPropValue(DelphiObject, PropInfo, PythonToSet(Value, PropInfo));
+      SetPropValue(DelphiObject, PropInfo, PythonToSet(PropInfo, Value));
       Result := 0;
     except
       on E: Exception do with GetPythonEngine do
       begin
         Result := -1;
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(E.Message)));
+        ErrMsg := E.Message;
       end;
     end;
   end;
 
-  function HandleOtherTypes(PropInfo: PPropInfo) : Integer;
+  function HandleOtherTypes(PropInfo: PPropInfo; out ErrMsg: string) : Integer;
   Var
     V : Variant;
   begin
@@ -1874,37 +2123,128 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
       on E: Exception do with GetPythonEngine do
       begin
         Result := -1;
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(E.Message)));
+        ErrMsg := E.Message;
       end;
     end;
   end;
 
-var
-  PropInfo: PPropInfo;
-  Name : string;
-begin
-
-  if Assigned(DelphiObject) then
+{$IFDEF EXTENDED_RTTI}
+  function SetRttiAttr(const AttrName: string; Value: PPyObject;
+    out ErrMsg: string): Boolean;
+  var
+    Context: TRttiContext;
+    Prop: TRttiProperty;
+    Field: TRttiField;
+    V: TValue;
+    Obj: TObject;
   begin
-    Name := GetPythonEngine.PyString_AsDelphiString(Key);
-    PropInfo := GetPropInfo(DelphiObject, Name);
-  end
-  else
-    PropInfo := nil;
+    Result := False;
+    Context := TRttiContext.Create();
+    Prop := Context.GetType(DelphiObject.ClassType).GetProperty(AttrName);
+    if Prop <> nil then
+      try
+        if Ord(Prop.Visibility) < Ord(mvPublic) then
+          ErrMsg := rs_NoAccess
+        else if not Prop.IsWritable then
+          ErrMsg := rs_NotWritable
+        else if Prop.PropertyType = nil then
+          ErrMsg := rs_ErrNoTypeInfo
+        else
+        case Prop.PropertyType.TypeKind of
+          tkClass:
+            if ValidateClassProperty(value, Prop.PropertyType.Handle, Obj, ErrMsg) then begin
+              Prop.SetValue(DelphiObject, TPyDelphiObject(PythonToDelphi(Value)).DelphiObject);
+              Result := True;
+            end;
+          tkMethod:
+            if Prop.Visibility = mvPublished then
+              Result := HandleEvent((Prop as TRttiInstanceProperty).PropInfo, ErrMsg) = 0
+            else
+              ErrMsg := rs_NotPublished;
+        else
+          begin
+            Result := SimplePythonToValue(Value, Prop.PropertyType.Handle, V, ErrMsg);
+            if Result then
+              Prop.SetValue(DelphiObject, V);
+          end;
+        end;
+      except
+        on E: Exception do begin
+          Result := False;
+          ErrMsg := E.Message;
+        end;
+      end
+    else
+    begin
+      Field := Context.GetType(DelphiObject.ClassType).GetField(AttrName);
+      if Field <> nil then
+        try
+          if Ord(Field.Visibility) < Ord(mvPublic) then
+            ErrMsg := rs_NoAccess
+          else if Field.FieldType = nil then
+            ErrMsg := rs_ErrNoTypeInfo
+          else
+          case Field.FieldType.TypeKind of
+            tkClass:
+              if ValidateClassProperty(value, Field.FieldType.Handle, Obj, ErrMsg) then begin
+                Field.SetValue(DelphiObject, TPyDelphiObject(PythonToDelphi(Value)).DelphiObject);
+                Result := True;
+              end;
+          else
+            begin
+              Result := SimplePythonToValue(Value, Field.FieldType.Handle, V, ErrMsg);
+              if Result then
+                Field.SetValue(DelphiObject, V);
+            end;
+          end;
+        except
+          on E: Exception do begin
+            Result := False;
+            ErrMsg := E.Message;
+          end;
+        end
+    end;
+    Context.Free;
+  end;
+{$ENDIF}
 
+var
+{$IFNDEF EXTENDED_RTTI}
+  PropInfo: PPropInfo;
+{$ENDIF}
+  KeyName: string;
+  ErrMsg: string;
+begin
+  Result := inherited SetAttrO(key, value);
+  if Result = 0 then Exit;
+
+  if Assigned(DelphiObject) and GetPythonEngine.PyString_Check(Key) then
+    KeyName := GetPythonEngine.PyString_AsDelphiString(Key)
+  else
+    Exit;
+
+  GetPythonEngine.PyErr_Clear;
+  {$IFDEF EXTENDED_RTTI}
+  if SetRttiAttr(KeyName, Value, ErrMsg) then
+    Result := 0;
+  {$ELSE}
+  PropInfo := GetPropInfo(DelphiObject, KeyName);
   if PropInfo <> nil then
   begin
     if PropInfo^.PropType^.Kind = tkMethod then
-      Result := HandleEvent(PropInfo)
+      Result := HandleEvent(PropInfo, ErrMsg)
     else if PropInfo^.PropType^.Kind = tkClass then
-      Result := HandleClass(PropInfo)
+      Result := HandleClass(PropInfo, ErrMsg)
     else if PropInfo^.PropType^.Kind = tkSet then
-      Result := HandleSet(PropInfo)
+      Result := HandleSet(PropInfo, ErrMsg)
     else
-      Result := HandleOtherTypes(PropInfo);
-  end
-  else
-    Result := inherited SetAttrO(key, value);
+      Result := HandleOtherTypes(PropInfo, ErrMsg);
+  end;
+  {$ENDIF}
+  if Result <> 0 then
+    with GetPythonEngine do
+      PyErr_SetObject(PyExc_AttributeError^, PyString_FromDelphiString(
+        Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
 end;
 
 procedure TPyDelphiObject.SetDelphiObject(const Value: TObject);
@@ -1933,9 +2273,9 @@ var
   _value : PPyObject;
 begin
   Result := nil;
+  Adjust(@Self);
   with GetPythonEngine do
   begin
-    Adjust(@Self);
     _keys := PyDict_Keys(keywords);
     try
       for i := 0 to PySequence_Length(_keys)-1 do
@@ -1997,7 +2337,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support indexed write (f[i] = x)', [Self.ClassName]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSqAss, [Self.ClassName])) );
   end;
 end;
 
@@ -2027,7 +2368,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSequence, [Self.ClassName])) );
   end;
 end;
 
@@ -2063,7 +2405,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSequence, [Self.ClassName])) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToList' ) <> 0 then
     with GetPythonEngine do
@@ -2086,7 +2429,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetString( PyExc_SystemError^, PAnsiChar(AnsiString(Format('Wrapper %s does not support sequences', [Self.ClassName]))) );
+      PyErr_SetObject( PyExc_SystemError^,
+        PyString_FromDelphiString(Format(rs_ErrSequence, [Self.ClassName])) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToTuple' ) <> 0 then
     with GetPythonEngine do
@@ -2117,6 +2461,131 @@ end;
 {$IFNDEF FPC}
 { TPyDelphiMethodObject }
 
+{$IFDEF EXTENDED_RTTI}
+function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
+
+  function FindMethod(const MethName:string; RttiType : TRttiType;
+    PyArgs: PPyObject; var Args: array of TValue):TRttiMethod;
+  // Deals with overloaded methods
+  // Constructs the Arg Array
+  // PyArgs is a Python tuple
+  Var
+    Method: TRttiMethod;
+    Index: Integer;
+    ErrMsg: string;
+    Obj: TObject;
+    PyValue : PPyObject;
+    Param: TRttiParameter;
+    Params : TArray<TRttiParameter>;
+  begin
+    Result :=nil;
+    for Method in RttiType.GetMethods do
+      if SameText(Method.Name, MethName) then
+      begin
+        Params:=Method.GetParameters;
+        if Length(Args)=Length(Params) then
+        begin
+          Result := Method;
+          for Index:= 0 to Length(Params)-1 do
+          begin
+            Param := Params[Index];
+            if (Param.ParamType = nil) or
+              (Param.Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> []) then
+            begin
+              Result :=nil;
+              Break;
+            end;
+
+            PyValue := PythonType.Engine.PyTuple_GetItem(PyArgs, Index);
+            if Param.ParamType = nil then
+            begin
+              Result := nil;
+              Break
+            end
+            else if Param.ParamType.TypeKind = tkClass then
+            begin
+              if ValidateClassProperty(PyValue, Param.ParamType.Handle, Obj, ErrMsg)
+              then
+                Args[Index] := Obj
+              else begin
+                Result := nil;
+                Break
+              end
+            end
+            else
+            begin
+              if not SimplePythonToValue(PyValue, Param.ParamType.Handle,
+                Args[Index], ErrMsg) then
+              begin
+                Result := nil;
+                Break
+              end;
+            end;
+            if (Param.ParamType <> nil) and not Args[Index].IsType(Param.ParamType.Handle) then
+            begin
+              Result :=nil;
+              Break;
+            end;
+          end;
+          Break;
+        end;
+     end;
+  end;
+
+  procedure InvalidArguments(const MethName, ErrMsg : string);
+  begin
+    with GetPythonEngine do
+      PyErr_SetObject(PyExc_TypeError^, PyString_FromDelphiString(
+        Format(rs_ErrInvalidArgs,
+        [MethName, ErrMsg])));
+  end;
+
+Var
+  Args: array of TValue;
+  ArgCount: Integer;
+  Context: TRttiContext;
+  meth: TRttiMethod;
+  ret: TValue;
+  ErrMsg : string;
+
+begin
+  Result := nil;
+  // Ignore keyword arguments ob2
+  // ob1 is a tuple with zero or more elements
+
+  ArgCount := PythonType.Engine.PyTuple_Size(ob1);
+  SetLength(Args, ArgCount);
+
+  Context := TRttiContext.Create;
+  meth := FindMethod(MethName, Context.GetType(DelphiObject.ClassInfo), ob1, Args);
+
+  if not Assigned(meth) then begin
+    InvalidArguments(MethName, rs_IncompatibleArguments);
+    Exit;
+  end;
+
+  try
+    ret := meth.Invoke(DelphiObject, Args);
+    if ret.IsEmpty then
+      Result := GetPythonEngine.ReturnNone
+    else if ret.Kind = tkClass then
+      Result := fDelphiWrapper.Wrap(ret.AsObject)
+    else begin
+      Result := SimpleValueToPython(ret, ErrMsg);
+      if Result = nil then
+        with PythonType.Engine do
+          PyErr_SetObject(PyExc_TypeError^, PyString_FromDelphiString(
+            Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
+    end;
+  except
+    on E: Exception do begin
+      Result := nil;
+      InvalidArguments(MethName, E.Message);
+    end;
+  end;
+end;
+
+{$ELSE)}
 function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
 Var
   V : Variant;
@@ -2140,22 +2609,32 @@ begin
   with GetPythonEngine do
     try
       Result := VariantAsPyObject(ObjectInvoke(DelphiObject,
-                                          @MethodInfo, ParamIndexes, Params));
+        @MethodInfo, ParamIndexes, Params));
     except
       on E: Exception do
       begin
         Result := nil;
-        PyErr_SetString (PyExc_TypeError^,
-          PAnsiChar(AnsiString(Format('"%s" called with invalid arguments: %s',[MethodInfo.Name, E.Message]))));
+        PyErr_SetObject (PyExc_TypeError^,
+          PyString_FromDelphiString(Format(rs_ErrInvalidArgs,
+          [MethodInfo.Name, E.Message])));
       end;
     end;
 end;
+{$ENDIF}
 
 function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString( PAnsiChar(AnsiString(Format('<Delphi method %s of class %s at %x>',
-         [MethodInfo.Name, DelphiObject.ClassName, NativeInt(Self)]))) );
+    Result := PyString_FromDelphiString(
+      Format('<Delphi method %s of class %s at %x>',
+         [
+           {$IFDEF EXTENDED_RTTI}
+           MethName,
+           {$ELSE}
+           MethodInfo.Name,
+           {$ENDIF}
+           DelphiObject.ClassName, NativeInt(Self)
+         ]) );
 end;
 
 class procedure TPyDelphiMethodObject.SetupType( PythonType : TPythonType );
@@ -2180,9 +2659,9 @@ end;
 
 function TPyDelphiVarParameter.Get_Value(Acontext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   with GetPythonEngine do
   begin
-    Adjust(@Self);
     Result := Self.Value;
     if not Assigned(Result) then
       Result := Py_None;
@@ -2209,7 +2688,9 @@ begin
   else
     _value := GetPythonEngine.PyObject_Repr(Value);
   try
-    Result := GetPythonEngine.PyString_FromString(PAnsiChar(AnsiString(Format('<VarParameter containing: %s>', [GetPythonEngine.PyObjectAsString(_value)]))));
+    Result :=
+      GetPythonEngine.PyString_FromDelphiString(Format('<VarParameter containing: %s>',
+      [GetPythonEngine.PyObjectAsString(_value)]));
   finally
     GetPythonEngine.Py_DECREF(_value);
   end;
@@ -2235,7 +2716,7 @@ begin
   inherited;
   PythonType.TypeName := 'VarParameter';
   PythonType.Name := string(PythonType.TypeName) + 'Type';
-  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
+  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType, tpfHaveRichCompare];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Container object allowing modification of Delphi var parameters from Python';
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
@@ -2258,12 +2739,9 @@ end;
 function TPyDelphiVarParameter.Set_Value(AValue: PPyObject;
   Acontext: Pointer): Integer;
 begin
-  with GetPythonEngine do
-  begin
-    Adjust(@Self);
-    Self.Value := AValue;
-    Result := 0;
-  end;
+  Adjust(@Self);
+  Self.Value := AValue;
+  Result := 0;
 end;
 
 { TEventHandler }
@@ -2445,7 +2923,7 @@ begin
 end;
 
 function TEventHandlers.Link(AComponent: TObject; APropInfo: PPropInfo;
-  ACallable: PPyObject) : Boolean;
+  ACallable: PPyObject; out ErrMsg: string) : Boolean;
 var
   _handlerClass : TEventHandlerClass;
 begin
@@ -2476,16 +2954,13 @@ begin
           Result := True;
         end
         else
-          PyErr_SetString (PyExc_AttributeError^,
-            PAnsiChar('No Registered EventHandler for events of type ' + APropInfo^.PropType^.Name));
+          ErrMsg := Format(rs_ErrEventNotReg, [APropInfo^.PropType^.Name]);
       end
       else
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('Class %s does not support events because it must either inherit from TComponent or implement interface IFreeNotification', [AComponent.ClassName]))));
+        ErrMsg := Format(rs_ErrEventNoSuport, [AComponent.ClassName]);
     end
     else
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString('You can only assign a callable to a method property')));
+      ErrMsg := Format(rs_ErrEventExpectCallable, [APropInfo^.Name])
   end;
 end;
 
@@ -2587,8 +3062,9 @@ begin
         Klass := nil;
       end;
       if (Klass = nil) or not Klass.InheritsFrom(TComponent) then begin
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar('Invalid class'));
+        PyErr_SetObject(PyExc_TypeError^, PyString_FromDelphiString(
+          Format(rs_ErrInvalidArgs,
+          ['CreateComponent', rs_InvalidClass])));
         Exit;
       end;
 
@@ -2603,8 +3079,9 @@ begin
         Ownership := soOwned;
       Result := Self.Wrap(Component, Ownership);
     end else
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar('Invalid Arguments'));
+      PyErr_SetObject(PyExc_TypeError^, PyString_FromDelphiString(
+        Format(rs_ErrInvalidArgs,
+        ['CreateComponent', ''])));
   end;
 end;
 
@@ -2880,7 +3357,6 @@ begin
       fEventHandlerList[i].Unsubscribe;
 end;
 
-
 function TPyDelphiWrapper.Wrap(AObj: TObject;
   AOwnership: TObjectOwnership): PPyObject;
 Var
@@ -2916,10 +3392,26 @@ begin
   end;
 end;
 
+{$IFDEF EXTENDED_RTTI}
+// To keep the RTTI Pool alive and avoid continuously creating/destroying it
+// See also https://stackoverflow.com/questions/27368556/trtticontext-multi-thread-issue
+Var
+_RttiContext: TRttiContext;
+
+procedure _InitRttiPool;
+begin
+ _RttiContext := TRttiContext.Create;
+ _RttiContext.FindType('');
+end;
+
 initialization
-  gNames := TStringList.Create;
+  _InitRttiPool;
 finalization
-  FreeAndNil(gNames);
+  _RttiContext.Free();
+{$ELSE}
+initialization
+finalization
+{$ENDIF}
   FreeAndNil(gRegisteredUnits);
 end.
 
