@@ -1247,3 +1247,6 @@ BaseException       # New in Python 2.5
         request made by Samuel Iseli.
       * Added new property "Version" to TPythonEngine returning the current version of P4D as a string as a
         request made by Roar Larsen.
+
+NOTE: This document has not been updated for a long time.  Please use the Github tools (history, issue tracher) to
+follow the changes to this project.

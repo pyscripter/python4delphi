@@ -101,17 +101,8 @@ INSTALLATION:
   For Delphi 7, install the "PythonVCL_d7" package located in the Components folder
   and add the folder "...\Components\Sources\VCL".
 
-  3) Build PythonIDE (This is optional)
-     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  
-  You can download the latest build of this application from 
-  http://mmm-experts.com/Downloads.aspx?ProductId=4
 
-  If you want to rebuild PythonIDE by yourself, you must look at PythonIDE\Readme.txt
-  for the required component packages to install first.
-
-
-  3) Build Modules\Delphi\Delphi.dpr (This is optional)
+  3) Build Modules\Delphi\Delphi.dpr (This is optional and unsupported)
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   Once the project is build you can either extend the Python path with ..\Modules or
