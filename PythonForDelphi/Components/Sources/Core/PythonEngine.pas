@@ -3175,7 +3175,7 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   Converts line breaks to LF and optionally adds a line break at the end
 *)
 function CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString; overload;
-function CleanString(const s : string; AppendLF : Boolean = True) : string; overload;
+function CleanString(const s : UnicodeString; AppendLF : Boolean = True) : UnicodeString; overload;
 
 //#######################################################
 //##                                                   ##
@@ -9862,7 +9862,7 @@ begin
     Result := Result + LF;
 end;
 
-function CleanString(const s : string; AppendLF : Boolean) : string;
+function CleanString(const s : UnicodeString; AppendLF : Boolean) : UnicodeString;
 begin
   Result := AdjustLineBreaks(s, tlbsLF);
   if AppendLF and (result[length(result)] <> LF) then
