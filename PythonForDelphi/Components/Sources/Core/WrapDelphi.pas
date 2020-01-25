@@ -835,7 +835,7 @@ Type
   function  SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
   function  PythonToSet(APropInfo: PPropInfo; ASet : PPyObject) : Integer; overload;
-  function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload
+  function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload;
   function  SupportsFreeNotification(AObject : TObject) : Boolean;
   procedure RaiseNotifyEvent(PyDelphiWrapper : TPyDelphiWrapper; ACallable : PPyObject; Sender: TObject);
 
@@ -1246,7 +1246,7 @@ begin
   Result := SetToPython(APropInfo, GetOrdProp(AInstance, APropInfo));
 end;
 
-function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload
+function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload;
 var
   i : Integer;
   EnumObj: PPyObject;
@@ -1770,7 +1770,7 @@ var
   KeyName: string;
   ErrMsg : string;
 {$IFNDEF EXTENDED_RTTI}
-  Info: PMethodInfoHeader;
+  // Info: PMethodInfoHeader;  -> to be fixed later 01/2020
   PropInfo: PPropInfo;
   Obj : TObject;
 {$ENDIF}

@@ -176,13 +176,13 @@ type
     function CompareOp(const Left: TVarData; const Right: TVarData;
       const AOperator: TVarOp): Boolean; override;
     function DoFunction(var Dest: TVarData; const V: TVarData;
-      const AName: string; const Arguments: TVarDataArray): Boolean; override;
+      const AName: string; const Arguments: TVarDataArray): Boolean;
     function DoProcedure(const V: TVarData; const AName: string;
-      const Arguments: TVarDataArray): Boolean; override;
+      const Arguments: TVarDataArray): Boolean;
     function GetProperty(var Dest: TVarData; const V: TVarData;
-      const AName: string): Boolean; override;
+      const AName: string): Boolean;
     function SetProperty({$IFDEF FPC}var{$ELSE}const{$ENDIF} V: TVarData; const AName: string;
-      const Value: TVarData): Boolean; override;
+      const Value: TVarData): Boolean;
     {$IFDEF DELPHIXE7_OR_HIGHER}
     procedure DispInvoke(Dest: PVarData;
       [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);override;
@@ -838,7 +838,7 @@ begin
       varString:
         {$IFDEF UNICODE}
         // Preserve AnsiStrings
-        VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);
+        // VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);  -> to be fixed later 01/2020
         {$ELSE}
         VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsString);
         {$ENDIF}
@@ -1213,7 +1213,7 @@ var
           if (PVarData(LParamPtr)^.VType = varString) then
             BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
           else
-            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VUString), 1, MaxInt);
+            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VString), 1, MaxInt);
           {$ELSE}
           BStr := System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt);
           {$ENDIF}

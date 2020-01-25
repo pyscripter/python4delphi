@@ -232,7 +232,7 @@ begin
           page^.CodeBlocks:=block^.Next;
 
         // return the page if it is empty
-        if PtrCalcType(page^.CodeBlocks) = PtrCalcType(page) + pagesize then
+        if {%H-}PtrCalcType(page^.CodeBlocks) = PtrCalcType(page) + pagesize then
         begin
           if lastpage <> nil then
             lastpage^.Next:=page^.Next

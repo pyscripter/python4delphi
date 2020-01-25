@@ -2415,8 +2415,8 @@ type
     FDocString: TStringList;
  	 procedure SetDocString(const Value: TStringList);
   protected
-    function  GetDisplayName: string; override;
-    procedure SetDisplayName(const Value: string); override;
+    function  GetDisplayName: Unicodestring;
+    procedure SetDisplayName(const Value: Unicodestring);
   public
     constructor Create(ACollection: TCollection); override;
     destructor  Destroy; override;
@@ -2426,7 +2426,7 @@ type
     function  PythonEvent(pself, args: PPyObject): PPyObject; cdecl;
     function  Owner : TEventDefs;
   published
-    property Name: string read GetDisplayName write SetDisplayName;
+    property Name: Unicodestring read GetDisplayName write SetDisplayName;
     property OnExecute: TPythonEvent read FOnExecute write FOnExecute;
     property DocString: TStringList read FDocString write SetDocString;
   end;
@@ -2618,7 +2618,7 @@ type
     FErrorType   : TErrorType;
     FParentClass : TParentClassError;
 
-    function GetDisplayName: string; override;
+    function GetDisplayName: Unicodestring;
     procedure SetName( const Value : AnsiString );
     procedure SetText( const Value : AnsiString );
     procedure SetErrorType( Value : TErrorType );
@@ -3189,13 +3189,15 @@ implementation
 uses
 {$IFDEF FPC}
   StrUtils,
+  Math
 {$ELSE}
-  AnsiStrings,
+  AnsiStrings
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Math,
-  Registry;
+ ,Math,
+  Registry
 {$ENDIF}
+;
 
 
 (*******************************************************)
@@ -6806,10 +6808,10 @@ begin
   Result := Collection as TEventDefs;
 end;
 
-procedure TEventDef.SetDisplayName(const Value: string);
+procedure TEventDef.SetDisplayName(const Value: Unicodestring);
 begin
   FName := AnsiString(Value);
-  inherited;
+ // inherited; -> to be fixed later 01/2020
 end;
 
 procedure TEventDef.Assign(Source: TPersistent);

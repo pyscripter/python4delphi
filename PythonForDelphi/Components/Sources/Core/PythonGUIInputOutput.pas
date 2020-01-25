@@ -50,7 +50,7 @@ uses
   Windows, Messages,
 {$ENDIF}
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, PythonEngine;
+  StdCtrls, PythonEngine, LCLType;
 
 {$IFDEF MSWINDOWS}
 const
@@ -149,8 +149,8 @@ begin
     Result := inherited ReceiveData
   else
   begin
-    InputQuery( 'Query from Python', 'Enter text', S);
-    Result := AnsiString(S);
+    //InputQuery( 'Query from Python', 'Enter text', S);  -> to be fixed later 01/2020
+    Result := AnsiString('S');
   end;
 end;
 
@@ -162,8 +162,8 @@ begin
     Result := inherited ReceiveUniData
   else
   begin
-    InputQuery( 'Query from Python', 'Enter text', S);
-    Result := S;
+    //InputQuery( 'Query from Python', 'Enter text', S);  -> to be fixed later 01/2020
+    Result := AnsiString('S');
   end;
 end;
 
