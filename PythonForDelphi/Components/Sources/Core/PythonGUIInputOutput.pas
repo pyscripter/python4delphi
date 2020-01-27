@@ -50,7 +50,7 @@ uses
   Windows, Messages,
 {$ENDIF}
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, PythonEngine, LCLType;
+  StdCtrls, PythonEngine;
 
 {$IFDEF MSWINDOWS}
 const
