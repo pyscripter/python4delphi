@@ -37,7 +37,7 @@ object Main: TMain
   end
   object Panel1: TPanel
     Left = 0
-    Top = 421
+    Top = 420
     Width = 753
     Height = 102
     Align = alBottom
@@ -232,7 +232,7 @@ object Main: TMain
     Left = 0
     Top = 254
     Width = 753
-    Height = 167
+    Height = 166
     Align = alClient
     Lines.Strings = (
       'class XYZ(object):'

@@ -771,7 +771,7 @@ procedure TPythonVariantType.BinaryOp(var Left: TVarData;
 begin
   if Right.VType = VarType then
     case Left.VType of
-      varString {$IFDEF UNICODE}, varUString {$ENDIF}:
+      varString, varUString:
         case AOperator of
           opAdd:
             Variant(Left) := Variant(Left) + TPythonVarData(Right).VPython.AsString;
@@ -833,12 +833,11 @@ var
 begin
   if Source.VType = VarType then
     case AVarType of
-      varOleStr {$IFDEF UNICODE}, varUString {$ENDIF} :
+      varOleStr, varUString:
         VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
       varString:
-        {$IFDEF UNICODE}
         // Preserve AnsiStrings
-        // VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);  -> to be fixed later 01/2020
+        VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);
         {$ELSE}
         VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsString);
         {$ENDIF}
@@ -1188,9 +1187,7 @@ var
     begin
       if (LArgType = varVariant) and
          (PVarData(LParamPtr^)^.VType = varString)
-         {$IFDEF UNICODE}
            or (PVarData(LParamPtr)^.VType = varUString)
-         {$ENDIF}
       then
         //VarCast(PVariant(ParamPtr^)^, PVariant(ParamPtr^)^, varOleStr);
         VarDataCastTo(PVarData(LParamPtr^)^, PVarData(LParamPtr^)^, varOleStr);
@@ -1201,21 +1198,18 @@ var
     // value is a variant
     else if LArgType = varVariant then
       if (PVarData(LParamPtr)^.VType = varString)
-      {$IFDEF UNICODE}
         or (PVarData(LParamPtr)^.VType = varUString)
-      {$ENDIF}
       then
       begin
         with LStrings[LStrCount] do
         begin
           //BStr := StringToOleStr(AnsiString(PVarData(LParamPtr)^.VString));
-          {$IFDEF UNICODE}
           if (PVarData(LParamPtr)^.VType = varString) then
             BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
           else
             BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VString), 1, MaxInt);
           {$ELSE}
-          BStr := System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt);
+            BStr := System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt);
           {$ENDIF}
           PStr := nil;
           LArguments[I].VType := varOleStr;
@@ -1821,11 +1815,7 @@ function TPythonVariantType.LeftPromotion(const V: TVarData;
 begin
   { TypeX Op Python }
   if (AOperator = opAdd) and VarDataIsStr(V) then
-    {$IFDEF UNICODE}
     RequiredVarType := varUString
-    {$ELSE}
-    RequiredVarType := varString
-    {$ENDIF}
   else
     RequiredVarType := VarType;
 
