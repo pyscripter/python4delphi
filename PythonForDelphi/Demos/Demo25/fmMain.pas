@@ -515,11 +515,7 @@ begin
   Assert( c = b );
   Assert( c = w );
   Assert( c = 'Hello world!');
-  {$IFDEF UNICODE}
   Assert( VarType(c) and VarTypeMask = varUString );
-  {$ELSE}
-  Assert( VarType(c) and VarTypeMask = varOleStr );
-  {$ENDIF}
   c := VarPythonCreate(w);
   Assert( c = 'Hello world!');
   Assert( c = w );
@@ -591,23 +587,11 @@ begin
   Assert(String(b) = '[4, 5, 6]');
   // now with a litteral: note that with D6 SP1, we can't concatenate a custom variant with an var array of variants
   c := a + b + VarPythonCreate(['Hello', 'World!', 3.14]);
-  {$IFDEF UNICODE}
   Assert( String(c) = '[1, 2, 3, 4, 5, 6, u''Hello'', u''World!'', 3.1400000000000001]' );
-  {$ELSE}
-  Assert( String(c) = '[1, 2, 3, 4, 5, 6, ''Hello'', ''World!'', 3.1400000000000001]' );
-  {$ENDIF}
   c := a + VarPythonCreate(['Hello', 'World!', 3.14]) + b;
-  {$IFDEF UNICODE}
   Assert( String(c) = '[1, 2, 3, u''Hello'', u''World!'', 3.1400000000000001, 4, 5, 6]' );
-  {$ELSE}
-  Assert( String(c) = '[1, 2, 3, ''Hello'', ''World!'', 3.1400000000000001, 4, 5, 6]' );
-  {$ENDIF}
   c := VarPythonCreate(['Hello', 'World!', 3.14]) + a + b;
-  {$IFDEF UNICODE}
   Assert( String(c) = '[u''Hello'', u''World!'', 3.1400000000000001, 1, 2, 3, 4, 5, 6]' );
-  {$ELSE}
-  Assert( String(c) = '[''Hello'', ''World!'', 3.1400000000000001, 1, 2, 3, 4, 5, 6]' );
-  {$ENDIF}
 
   // multiplication
   c := a * 3; // in Python the multiplication of sequence concatenates n times the sequence

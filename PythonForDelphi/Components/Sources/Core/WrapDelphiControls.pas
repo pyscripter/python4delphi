@@ -572,7 +572,7 @@ begin
   PythonType.AddGetSet('HandleAllocated', @TPyDelphiWinControl.Get_HandleAllocated, nil,
         'Reports whether a screen object handle exists for the control.', nil);
   PythonType.AddGetSet('ParentWindow', @TPyDelphiWinControl.Get_ParentWindow, nil,
-        'Reference to parent’s underlying control.', nil);
+        'Reference to parent''s underlying control.', nil);
   PythonType.AddGetSet('Showing', @TPyDelphiWinControl.Get_Showing, nil,
         'Indicates whether the control is showing on the screen. ', nil);
 end;

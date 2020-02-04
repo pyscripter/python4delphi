@@ -203,9 +203,7 @@ begin
     fWinHandle := Classes.AllocateHWnd(pyGUIOutputWndProc);
   {$ENDIF}
 {$ENDIF}
-{$IFDEF UNICODE}
    UnicodeIO := True;
-{$ENDIF}
 end;
 
 {------------------------------------------------------------------------------}

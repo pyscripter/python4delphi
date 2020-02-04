@@ -83,13 +83,6 @@ uses
   SysUtils,
   SyncObjs,
   Variants,
-{$IFDEF DELPHI2005_OR_HIGHER}
-{$IFNDEF UNICODE}
-  WideStrings,
-{$ENDIF}
-{$ELSE}
-  TinyWideStrings,
-{$ENDIF}
   MethodCallBack;
 
 //#######################################################
@@ -99,13 +92,6 @@ uses
 //#######################################################
 
 type
-{$IFNDEF UNICODE}
-  UnicodeString = WideString;
-  TUnicodeStringList = TWideStringList;
-{$ELSE}
-  TUnicodeStringList = TStringList;
-{$ENDIF}
-
 {$IFNDEF FPC}
   {$IF CompilerVersion < 21}
     NativeInt = integer;
@@ -1431,7 +1417,7 @@ type
   TReceiveUniDataEvent = procedure (Sender: TObject; var Data : UnicodeString ) of object;
   IOChar = WideChar;
   IOString = UnicodeString;
-  TIOStringList = TUnicodeStringList;
+  TIOStringList = TStringList;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
@@ -5937,7 +5923,6 @@ begin
         s := AnsiString(DeRefV);
         Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
       end;
-   {$IFDEF UNICODE}
     varUString:
       begin
        wStr := DeRefV;
@@ -5948,7 +5933,6 @@ begin
         Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
       {$ENDIF}
       end;
-    {$ENDIF}
   else
     if VarType(DeRefV) and varArray <> 0 then
       begin
@@ -6194,7 +6178,6 @@ begin
         else
           Result := PyUnicode_FromWideString( '' );
       end;
-    {$IFDEF UNICODE}
     vtUnicodeString:
       begin
         if Assigned(v.VUnicodeString) then
@@ -6202,7 +6185,6 @@ begin
         else
           Result := PyUnicode_FromWideString( '' );
       end;
-    {$ENDIF}
   else
     Raise Exception.Create('Argument type not allowed');
   end;
@@ -6307,7 +6289,6 @@ function TPythonEngine.ArrayToPyDict( items : array of const) : PPyObject;
         else
           Result := '';
       end;
-      {$IFDEF UNICODE}
       vtUnicodeString:
       begin
         if Assigned(v.VUnicodeString) then
@@ -6315,7 +6296,6 @@ function TPythonEngine.ArrayToPyDict( items : array of const) : PPyObject;
         else
           Result := '';
       end;
-      {$ENDIF}
     else
       Raise Exception.Create('Argument type not allowed');
     end;
@@ -9228,9 +9208,7 @@ begin
             (t = varOleStr) or
             (t = varBoolean) or
             (t = varByte) or
-            {$IFDEF UNICODE}
             (t = varUString) or
-            {$ENDIF}
             (t = varString);
 end;
 
