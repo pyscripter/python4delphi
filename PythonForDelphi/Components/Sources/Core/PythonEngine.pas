@@ -95,88 +95,60 @@ uses
 //#######################################################
 
 type
-  TPythonVersionProp = packed record
+  TPythonVersionProp = record
     DllName      : string;
     RegVersion   : string;
     APIVersion   : Integer;
-    CanUseLatest : Boolean;
   end;
 const
 {$IFDEF MSWINDOWS}
   PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
-    (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013),
+    (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013),
+    (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
   PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013),
+    (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013),
+    (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
   PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013),
+    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013),
+    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$endif}
-{$IFDEF PYTHON25}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
-{$ENDIF}
-{$IFDEF PYTHON26}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 2;
-{$ENDIF}
-{$IFDEF PYTHON27}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 3;
-{$ENDIF}
-{$IFDEF PYTHON32}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
-{$ENDIF}
-{$IFDEF PYTHON33}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
-{$ENDIF}
-{$IFDEF PYTHON34}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
-{$ENDIF}
-{$IFDEF PYTHON35}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
-{$ENDIF}
-{$IFDEF PYTHON36}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
-{$ENDIF}
-{$IFDEF PYTHON37}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
-{$ENDIF}
-{$IFDEF PYTHON38}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
-{$ENDIF}
+
+  COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
+
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
   PYT_GETSET_BUFFER_INCREASE = 10;
@@ -4747,7 +4719,7 @@ var
   i : Integer;
 begin
   if UseLastKnownVersion then
-    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
+    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 0 do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
       FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
@@ -4757,8 +4729,6 @@ begin
         APIVersion := PYTHON_KNOWN_VERSIONS[i].APIVersion;
         Exit;
       end;
-      if not PYTHON_KNOWN_VERSIONS[i].CanUseLatest then
-        Break;
     end
   else
     RegVersion := GetPythonVersionFromDLLName(aDllName);

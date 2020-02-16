@@ -22,32 +22,6 @@
 (**************************************************************************)
 
 /////////////////////////////////////////////////////////////////////////////
-// Select a Python version by commenting out the corresponding line, or
-// modify the default Python version below, in the Python versions section.
-/////////////////////////////////////////////////////////////////////////////
-
-//{$DEFINE PYTHON25}
-//{$DEFINE PYTHON26}
-//{$DEFINE PYTHON27}
-//{$DEFINE PYTHON32}
-//{$DEFINE PYTHON33}
-//{$DEFINE PYTHON34}
-//{$DEFINE PYTHON35}
-//{$DEFINE PYTHON36}
-//{$DEFINE PYTHON37}
-//{$DEFINE PYTHON38}
-
-/////////////////////////////////////////////////////////////////////////////
-// OS symbols. Note that MSWINDOWS is defined from Delphi6/Kylix.
-/////////////////////////////////////////////////////////////////////////////
-
-{$IFNDEF MSWINDOWS}
-  {$IFDEF WIN32}
-    {$DEFINE MSWINDOWS}
-  {$ENDIF}
-{$ENDIF}
-
-/////////////////////////////////////////////////////////////////////////////
 // Delphi, C++ Builder versions
 /////////////////////////////////////////////////////////////////////////////
 
@@ -181,113 +155,7 @@
   {$DEFINE DELPHI10.2_OR_HIGHER}
   {$DEFINE DELPHI10.3_OR_HIGHER}
 {$ENDIF}
-/////////////////////////////////////////////////////////////////////////////
-// Python versions
-/////////////////////////////////////////////////////////////////////////////
 
-// Here we select a default Python version, if no version was explicitely specified.
-// Note that the installer will let the user specify its default Python version, and
-// thus will edit this file.
-
-{$IFNDEF PYTHON38}
-  {$IFNDEF PYTHON37}
-    {$IFNDEF PYTHON36}
-      {$IFNDEF PYTHON35}
-        {$IFNDEF PYTHON34}
-          {$IFNDEF PYTHON33}
-            {$IFNDEF PYTHON32}
-              {$IFNDEF PYTHON27}
-                {$IFNDEF PYTHON26}
-                  {$IFNDEF PYTHON25}
-                {---<START OF DEFAULT PYTHON VERSION>---}
-                    {$DEFINE PYTHON27}
-                {---<END OF DEFAULT PYTHON VERSION>---}
-                  {$ENDIF}
-                {$ENDIF}
-              {$ENDIF}
-            {$ENDIF}
-          {$ENDIF}
-        {$ENDIF}
-      {$ENDIF}
-    {$ENDIF}
-  {$ENDIF}
-{$ENDIF}
-
-{$IFDEF PYTHON25}
-  {$DEFINE PYTHON25_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON26}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON27}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON32}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON33}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON34}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-  {$DEFINE PYTHON34_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON35}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-  {$DEFINE PYTHON34_OR_HIGHER}
-  {$DEFINE PYTHON35_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON36}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-  {$DEFINE PYTHON34_OR_HIGHER}
-  {$DEFINE PYTHON35_OR_HIGHER}
-  {$DEFINE PYTHON36_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON37}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-  {$DEFINE PYTHON34_OR_HIGHER}
-  {$DEFINE PYTHON35_OR_HIGHER}
-  {$DEFINE PYTHON36_OR_HIGHER}
-  {$DEFINE PYTHON37_OR_HIGHER}
-{$ENDIF}
-{$IFDEF PYTHON38}
-  {$DEFINE PYTHON25_OR_HIGHER}
-  {$DEFINE PYTHON26_OR_HIGHER}
-  {$DEFINE PYTHON27_OR_HIGHER}
-  {$DEFINE PYTHON32_OR_HIGHER}
-  {$DEFINE PYTHON33_OR_HIGHER}
-  {$DEFINE PYTHON34_OR_HIGHER}
-  {$DEFINE PYTHON35_OR_HIGHER}
-  {$DEFINE PYTHON36_OR_HIGHER}
-  {$DEFINE PYTHON37_OR_HIGHER}
-  {$DEFINE PYTHON38_OR_HIGHER}
-{$ENDIF}
 
 /////////////////////////////////////////////////////////////////////////////
 // Misc
