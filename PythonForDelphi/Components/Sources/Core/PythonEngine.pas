@@ -102,10 +102,8 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013),
-    (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013),
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013),
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
@@ -117,10 +115,8 @@ const
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013),
-    (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013),
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013),
     (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013),
@@ -132,10 +128,8 @@ const
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013),
-    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013),
     (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013),
     (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
@@ -4719,7 +4713,7 @@ var
   i : Integer;
 begin
   if UseLastKnownVersion then
-    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 0 do
+    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 1 do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
       FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
