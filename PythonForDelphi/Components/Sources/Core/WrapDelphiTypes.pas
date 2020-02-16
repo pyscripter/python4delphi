@@ -91,9 +91,9 @@ type
   function WrapPoint(APyDelphiWrapper : TPyDelphiWrapper; const APoint : TPoint) : PPyObject;
   function WrapRect(APyDelphiWrapper : TPyDelphiWrapper; const ARect : TRect) : PPyObject;
   function WrapSize(APyDelphiWrapper : TPyDelphiWrapper; const ASize : TSize) : PPyObject;
-  function CheckPointAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TPoint) : Boolean;
-  function CheckRectAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TRect) : Boolean;
-  function CheckSizeAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TSize) : Boolean;
+  function CheckPointAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TPoint) : Boolean;
+  function CheckRectAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TRect) : Boolean;
+  function CheckSizeAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TSize) : Boolean;
 
 implementation
 
@@ -161,7 +161,7 @@ begin
   (PythonToDelphi(Result) as TPyDelphiSize).Value := ASize;
 end;
 
-function CheckPointAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TPoint) : Boolean;
+function CheckPointAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TPoint) : Boolean;
 begin
   with GetPythonEngine do
   begin
@@ -180,7 +180,7 @@ begin
   end;
 end;
 
-function CheckRectAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TRect) : Boolean;
+function CheckRectAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TRect) : Boolean;
 begin
   with GetPythonEngine do
   begin
@@ -199,7 +199,7 @@ begin
   end;
 end;
 
-function CheckSizeAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : TSize) : Boolean;
+function CheckSizeAttribute(AAttribute : PPyObject; const AAttributeName : String; out AValue : TSize) : Boolean;
 begin
   with GetPythonEngine do
   begin

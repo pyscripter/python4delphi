@@ -202,7 +202,7 @@ type
   private
     fPyObject: PPyObject;
     fPythonAtomCompatible: Boolean;
-    function GetAsString: String;
+    function GetAsString: string;
     procedure SetPyObject(const Value: PPyObject);
     function GetAsVariant: Variant;
     function GetAsWideString: UnicodeString;
@@ -239,7 +239,7 @@ type
     procedure DoNot;
 
     // conversion
-    property AsString: String read GetAsString;
+    property AsString: string read GetAsString;
     property AsAnsiString: AnsiString read GetAsAnsiString;
     property AsVariant: Variant read GetAsVariant;
     property AsWideString: UnicodeString read GetAsWideString;
@@ -833,11 +833,21 @@ var
 begin
   if Source.VType = VarType then
     case AVarType of
-      varOleStr, varUString:
+      varOleStr:
         VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+      varUString:
+        {$IFDEF FPC}
+        VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+        {$ELSE}
+        VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+        {$ENDIF}
       varString:
         // Preserve AnsiStrings
+        {$IFDEF FPC}
+        Variant(Dest) := TPythonVarData(Source).VPython.AsWideString;
+        {$ELSE}
         VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);
+        {$ENDIF}
     else
       if AVarType and varTypeMask = varBoolean then
       begin
@@ -1204,7 +1214,11 @@ var
           if (PVarData(LParamPtr)^.VType = varString) then
             BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
           else
+            {$IFDEF FPC}
+            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VString), 1, MaxInt);
+            {$ELSE}
             BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VUString), 1, MaxInt);
+            {$ENDIF}
           PStr := nil;
           LArguments[I].VType := varOleStr;
           LArguments[I].VOleStr := PWideChar(BStr);
@@ -1497,7 +1511,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
     end; // of with
   end; // of function
 
-  procedure ExtractSliceIndexes(AObject : PPyObject; const AStart, AEnd: TVarData; var ASliceStart, ASliceEnd : Integer );
+  procedure ExtractSliceIndexes(AObject : PPyObject; const AStart, AEnd: TVarData; out ASliceStart, ASliceEnd : Integer );
   begin
     with GetPythonEngine do
     begin
@@ -2211,10 +2225,10 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
     Result := GetPythonEngine.PyString_AsString(PyObject)
   else
-   Result := AnsiString(GetAsString);
+    Result := AnsiString(GetAsString);
 end;
 
-function TPythonData.GetAsString: String;
+function TPythonData.GetAsString: string;
 begin
   if Assigned(PyObject) then
     Result := GetPythonEngine.PyObjectAsString(PyObject)

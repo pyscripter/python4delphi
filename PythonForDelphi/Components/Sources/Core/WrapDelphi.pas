@@ -425,7 +425,7 @@ Type
     function SetItem(AIndex : Integer; AValue : PPyObject) : Boolean; virtual;
 
     class function ExpectedContainerClass : TClass; virtual; abstract;
-    class function Name : String; virtual;
+    class function Name : string; virtual;
     class function SupportsWrite : Boolean; virtual;
     class function SupportsIndexOf : Boolean; virtual;
 
@@ -530,7 +530,7 @@ Type
     function HasContainerAccessClass : Boolean;
     procedure SubscribeToFreeNotification; virtual;
     procedure UnSubscribeToFreeNotification; virtual;
-    class function GetTypeName : String; virtual;
+    class function GetTypeName : string; virtual;
     // Exposed Methods
     function Free_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function InheritsFrom_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -651,7 +651,7 @@ Type
     procedure Clear;
     procedure Delete(AIndex : Integer);
     function  GetCallable(AComponent : TObject; APropInfo : PPropInfo) : PPyObject; overload;
-    function  GetCallable(AComponent : TObject; const APropName : String) : PPyObject; overload;
+    function  GetCallable(AComponent : TObject; const APropName : string) : PPyObject; overload;
     function  Link(AComponent : TObject; APropInfo : PPropInfo;
       ACallable : PPyObject; out ErrMsg: string) : Boolean;
     function  IndexOf(AComponent : TObject; APropInfo : PPropInfo) : Integer;
@@ -678,7 +678,7 @@ Type
       type
         TFormsRegistration = class(TRegisteredUnit)
         public
-          function Name : String; override;
+          function Name : string; override;
           procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
           procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
         end;
@@ -695,7 +695,7 @@ Type
         APyDelphiWrapper.DefineVar('MB_OK',               MB_OK);
       end;
 
-      function TFormsRegistration.Name: String;
+      function TFormsRegistration.Name: string;
       begin
         Result := 'Forms';
       end;
@@ -717,7 +717,7 @@ Type
   }
   TRegisteredUnit = class
   public
-    function Name : String; virtual; abstract;
+    function Name : string; virtual; abstract;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); virtual;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); virtual;
     procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); virtual;
@@ -790,8 +790,8 @@ Type
 
     procedure Initialize; override;
     procedure Finalize; override;
-    procedure DefineVar(const AName : String; const AValue : Variant); overload;
-    procedure DefineVar(const AName : String; AValue : TObject); overload;
+    procedure DefineVar(const AName : string; const AValue : Variant); overload;
+    procedure DefineVar(const AName : string; AValue : TObject); overload;
     procedure RegisterDelphiWrapper(AWrapperClass : TPyDelphiObjectClass);
     function  RegisterHelperType(APyObjectClass : TPyObjectClass) : TPythonType;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : PyCFunction; ADocString : PAnsiChar ) : PPyMethodDef; overload;
@@ -820,15 +820,15 @@ Type
 
   { Helper Functions }
 
-  function  CheckIndex(AIndex, ACount : Integer; const AIndexName : String = 'Index') : Boolean;
-  function  CheckIntAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : Integer) : Boolean;
-  function  CheckBoolAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : Boolean) : Boolean;
-  function  CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : String) : Boolean;
-  function  CheckObjAttribute(AAttribute : PPyObject; const AAttributeName : String;
+  function  CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
+  function  CheckIntAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Integer) : Boolean;
+  function  CheckBoolAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Boolean) : Boolean;
+  function  CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : string) : Boolean;
+  function  CheckObjAttribute(AAttribute : PPyObject; const AAttributeName : string;
                               AExpectedClass : TClass;
-                              var AValue : TObject) : Boolean;
-  function  CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : String) : Boolean;
-  function  CheckEnum(const AEnumName : String; AValue, AMinValue, AMaxValue : Integer) : Boolean;
+                              out AValue : TObject) : Boolean;
+  function  CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : string) : Boolean;
+  function  CheckEnum(const AEnumName : string; AValue, AMinValue, AMaxValue : Integer) : Boolean;
   function  CreateSlice(ASequence : TPyObject; AIndex1, AIndex2 : Integer) : PPyObject;
   function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject;
   function  SetToPython(ATypeInfo: PTypeInfo; AValue : Integer) : PPyObject; overload;
@@ -1037,7 +1037,7 @@ begin
     ErrMsg := rs_ExpectedObject;
 end;
 
-function CheckIndex(AIndex, ACount : Integer; const AIndexName : String = 'Index') : Boolean;
+function CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
 begin
   if (AIndex < 0) or (AIndex >= ACount) then
     with GetPythonEngine do
@@ -1050,7 +1050,7 @@ begin
     Result := True;
 end;
 
-function CheckIntAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : Integer) : Boolean;
+function CheckIntAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Integer) : Boolean;
 begin
   if GetPythonEngine.PyInt_Check(AAttribute) then
   begin
@@ -1066,13 +1066,13 @@ begin
   end;
 end;
 
-function CheckBoolAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : Boolean) : Boolean;
+function CheckBoolAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Boolean) : Boolean;
 begin
   AValue := GetPythonEngine.PyObject_IsTrue(AAttribute) <> 0;
   Result := True;
 end;
 
-function CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : String; var AValue : String) : Boolean;
+function CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : string) : Boolean;
 begin
   if GetPythonEngine.PyString_Check(AAttribute) then
   begin
@@ -1088,7 +1088,7 @@ begin
   end;
 end;
 
-function CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : String) : Boolean;
+function CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : string) : Boolean;
 begin
   if (AAttribute = GetPythonEngine.Py_None) or (GetPythonEngine.PyCallable_Check(AAttribute) <> 0) then
     Result := True
@@ -1101,7 +1101,7 @@ begin
   end;
 end;
 
-function  CheckEnum(const AEnumName : String; AValue, AMinValue, AMaxValue : Integer) : Boolean;
+function  CheckEnum(const AEnumName : string; AValue, AMinValue, AMaxValue : Integer) : Boolean;
 begin
   if (AValue >= AMinValue) and (AValue <= AMaxValue) then
     Result := True
@@ -1115,9 +1115,9 @@ begin
   end;
 end;
 
-function CheckObjAttribute(AAttribute : PPyObject; const AAttributeName : String;
+function CheckObjAttribute(AAttribute : PPyObject; const AAttributeName : string;
                            AExpectedClass : TClass;
-                           var AValue : TObject) : Boolean;
+                           out AValue : TObject) : Boolean;
 var
   PyObject : TPyObject;
 begin
@@ -1405,7 +1405,7 @@ begin
   Result := -1;
 end;
 
-class function TContainerAccess.Name: String;
+class function TContainerAccess.Name: string;
 begin
   Result := ExpectedContainerClass.ClassName;
 end;
@@ -1770,7 +1770,9 @@ var
   KeyName: string;
   ErrMsg : string;
 {$IFNDEF EXTENDED_RTTI}
+  {$IFNDEF FPC}
   Info: PMethodInfoHeader;
+  {$ENDIF}
   PropInfo: PPropInfo;
   Obj : TObject;
 {$ENDIF}
@@ -1950,7 +1952,7 @@ begin
   end;
 end;
 
-class function TPyDelphiObject.GetTypeName : String;
+class function TPyDelphiObject.GetTypeName : string;
 begin
   Result := Copy(DelphiObjectClass.ClassName, 2, MaxInt);
 end;
@@ -2876,7 +2878,7 @@ begin
 end;
 
 function TEventHandlers.GetCallable(AComponent: TObject;
-  const APropName: String): PPyObject;
+  const APropName: string): PPyObject;
 var
   _propInfo : PPropInfo;
 begin
@@ -3150,7 +3152,7 @@ begin
     RegisteredUnits[i].RegisterWrappers(Self);
 end;
 
-procedure TPyDelphiWrapper.DefineVar(const AName: String; const AValue: Variant);
+procedure TPyDelphiWrapper.DefineVar(const AName: string; const AValue: Variant);
 var
   _obj : PPyObject;
 begin
@@ -3161,7 +3163,7 @@ begin
   Engine.Py_DECREF(_obj);
 end;
 
-procedure TPyDelphiWrapper.DefineVar(const AName: String; AValue: TObject);
+procedure TPyDelphiWrapper.DefineVar(const AName: string; AValue: TObject);
 var
   _obj : PPyObject;
 begin
