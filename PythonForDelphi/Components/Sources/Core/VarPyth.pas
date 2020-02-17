@@ -100,6 +100,10 @@ function NewPythonDict: Variant;
 // Not really needed since you can assign a PythonVariant to a string anyway
 // but it is slightly faster and in some places avoids the declaration of a variable
 function VarPythonAsString(AValue : Variant) : string;
+{$IFDEF FPC}
+// to work around http://mantis.freepascal.org/view.php?id=20849)
+function VarPythonToVariant(AValue : Variant): Variant;
+{$ENDIF}
 
 function None : Variant;
 function Ellipsis : Variant;
@@ -128,9 +132,9 @@ type
   {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
   {$DEFINE PATCHEDSYSTEMDISPINVOKE}  //To correct memory leaks
 {$ENDIF}
-{.$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {.$DEFINE USESYSTEMDISPINVOKE}
-{.$IFEND}
+{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
+  {$DEFINE USESYSTEMDISPINVOKE}
+{$IFEND}
 
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
@@ -656,6 +660,16 @@ begin
     Result := AValue;
 end;
 
+{$IFDEF FPC}
+function VarPythonToVariant(AValue : Variant): Variant;
+begin
+  if VarIsPython(AValue) then
+    Result :=
+      GetPythonEngine.PyObjectAsVariant(TPythonVarData(AValue).VPython.PyObject)
+  else
+    Result := AValue;
+end;
+{$ENDIF}
 
 function None : Variant;
 begin
@@ -2249,7 +2263,7 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyUnicode_Check(PyObject) then
     Result := GetPythonEngine.PyUnicode_AsWideString(PyObject)
   else
-    Result := GetAsString;
+    Result := UnicodeString(GetAsString);
 end;
 
 function TPythonData.GreaterOrEqualThan(const Right: TPythonData): Boolean;

@@ -2190,14 +2190,18 @@ type
     procedure  Finalize;
     procedure  Lock;
     procedure  Unlock;
-    procedure  SetPythonHome(const PythonHome: string);
-    procedure  SetProgramName(const ProgramName: string);
+    procedure  SetPythonHome(const PythonHome: UnicodeString);
+    procedure  SetProgramName(const ProgramName: UnicodeString);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
     function   Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
-    function   EncodeString (const str: string): AnsiString;
+    function   EncodeString (const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
+    {$IFDEF FPC}
+    overload;
+    function   EncodeString (const str: AnsiString): AnsiString; overload;
+    {$ENDIF}
     function   EncodeWindowsFilePath (const str: string): AnsiString;
     procedure  ExecString(const command : AnsiString); overload;
     procedure  ExecStrings( strings : TStrings ); overload;
@@ -2353,7 +2357,7 @@ type
     FTmpDocString: AnsiString;
     FOnExecute: TPythonEvent;
     FDocString: TStringList;
- 	 procedure SetDocString(const Value: TStringList);
+    procedure SetDocString(const Value: TStringList);
   protected
     function  GetDisplayName: string; override;
     procedure SetDisplayName(const Value: string); override;
@@ -3238,7 +3242,7 @@ end;
 
 procedure TPythonInputOutput.AddWrite( const str : IOString );
 begin
-  FQueue.Add( str );
+  FQueue.Add( string(str) );
   if FQueue.Count > FMaxLines then
     FQueue.Delete(0)
   else
@@ -3292,12 +3296,12 @@ end;
 
 function  TPythonInputOutput.GetCurrentThreadLine : IOString;
 begin
-  Result := FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ];
+  Result := IOString(FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ]);
 end;
 
 procedure TPythonInputOutput.UpdateCurrentThreadLine;
 begin
-  FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ] := FLine_Buffer;
+  FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ] := string(FLine_Buffer);
 end;
 
 (*******************************************************)
@@ -3311,12 +3315,18 @@ begin
   if not IsHandleValid then
   begin
     FDllName := aDllName;
+    {$IFDEF MSWINDOWS}
     FDLLHandle := SafeLoadLibrary(
       {$IFDEF FPC}
-        PAnsiChar(AnsiString(GetDllPath+DllName))
+      PAnsiChar(AnsiString(GetDllPath+DllName))
       {$ELSE}
-        GetDllPath+DllName
+      GetDllPath+DllName
       {$ENDIF}
+    {$ELSE}
+    //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
+    FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
+      RTLD_LAZY+RTLD_GLOBAL));
+    {$ENDIF}
     );
   end;
 end;
@@ -3469,11 +3479,7 @@ begin
     ExitProcess( 1 );
 {$ELSE}
     WriteLn(ErrOutput, GetQuitMessage);
-{$IFDEF FPC}
     Halt( 1 );
-{$ELSE}
-    __exit(1);
-{$ENDIF}
 {$ENDIF}
   end;
 end;
@@ -4716,7 +4722,7 @@ begin
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 1 do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
-      FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      inherited DoOpenDll(PYTHON_KNOWN_VERSIONS[i].DllName);
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
@@ -4848,7 +4854,7 @@ begin
     if Assigned(Py_SetProgramName3000) then
     begin
       if FProgramNameW = '' then
-        FProgramNameW := ParamStr(0);
+        FProgramNameW := UnicodeString(ParamStr(0));
       Py_SetProgramName3000(PWideChar(FProgramNameW));
     end
   end else begin
@@ -5050,7 +5056,7 @@ begin
       // get the strings
       // build the PAnsiChar array
       for i := 0 to argc do begin
-        WL[i] := ParamStr(i);
+        WL[i] := UnicodeString(ParamStr(i));
         wargv^[i] := PWideChar(WL[i]);
       end;
       // set the argv list of the sys module with the application arguments
@@ -5123,13 +5129,13 @@ begin
   end; // of if
 end;
 
-procedure TPythonEngine.SetPythonHome(const PythonHome: string);
+procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
   FPythonHomeW := PythonHome;
   FPythonHome := EncodeString(PythonHome);
 end;
 
-procedure TPythonEngine.SetProgramName(const ProgramName: string);
+procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
 begin
   FProgramNameW := ProgramName;
   FProgramName := EncodeString(ProgramName);
@@ -5570,7 +5576,7 @@ begin
   if PyUnicode_Check(obj) then
   begin
     w := PyUnicode_AsWideString(obj);
-    Result := w;
+    Result := string(w);
     Exit;
   end;
   s := PyObject_Str( obj );
@@ -5656,13 +5662,20 @@ begin
         end;
 end;
 
-function TPythonEngine.EncodeString(const str: string): AnsiString;
+function TPythonEngine.EncodeString(const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
 begin
   if IsPython3000 then
     Result := UTF8Encode(str)
   else
     Result := AnsiString(str);
 end;
+
+{$IFDEF FPC}
+function TPythonEngine.EncodeString (const str: AnsiString): AnsiString; overload;
+begin
+  Result := str;
+end;
+{$ENDIF}
 
 function TPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
 {PEP 529}
@@ -6558,7 +6571,7 @@ function TPythonEngine.PyString_FromDelphiString(str: string): PPyObject;
 begin
   if IsPython3000 then
   begin
-    Result := PyUnicode_FromWideString(str);
+    Result := PyUnicode_FromWideString(UnicodeString(str));
   end
   else
     Result := DLL_PyString_FromString(PAnsiChar(AnsiString(str)));
@@ -9526,7 +9539,7 @@ begin
               IO.Write(PyUnicode_AsWideString(a1))
             else
               if PyString_Check(a1) then
-                IO.Write(PyObjectAsString(a1));
+                IO.Write(IOString(PyObjectAsString(a1)));
           end;
           Result := ReturnNone;
         end
@@ -9773,7 +9786,11 @@ end;
 
 function CleanString(const s : UnicodeString; AppendLF : Boolean) : UnicodeString;
 begin
+  {$IFDEF FPC}
+  Result := UnicodeString(AdjustLineBreaks(AnsiString(s), tlbsLF));
+  {$ELSE}
   Result := AdjustLineBreaks(s, tlbsLF);
+  {$ENDIF}
   if AppendLF and (result[length(result)] <> LF) then
     Result := Result + LF;
 end;
