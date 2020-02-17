@@ -12,8 +12,6 @@ unit VarPyth;
 (*                                  CANADA                                *)
 (*                                  e-mail: p4d@mmm-experts.com           *)
 (*                                                                        *)
-(*  look our page at: http://mmm-experts.com/                             *)
-(*      and our Wiki at: http://py4d.pbwiki.com/                          *)
 (**************************************************************************)
 (*  Functionality:  This allows you to use Python objects like COM        *)
 (*                  automation objects, inside your Delphi source code.   *)
@@ -52,7 +50,6 @@ function VarPythonCreate( AObject : PPyObject ) : Variant; overload;
 function VarPythonCreate( const AValue : Variant ) : Variant; overload;
 function VarPythonCreate( const AValues : array of const; ASequenceType : TSequenceType = stList ) : Variant; overload;
 function VarPythonEval( const APythonExpression : AnsiString) : Variant;
-function GetAtom( AObject : PPyObject ) : Variant; // compatibility function with PythonAtom.pas
 
 { Python variant helper functions }
 function VarPython: TVarType;
@@ -148,7 +145,6 @@ type
     function EvalPython(const V: TVarData; const AName: AnsiString;
       const Arguments: TVarDataArray): PPyObject;
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
-    procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
     {$IFNDEF USESYSTEMDISPINVOKE}
     procedure DoDispInvoke(Dest: PVarData; var Source: TVarData;
@@ -205,15 +201,13 @@ type
   TPythonData = class(TObject)
   private
     fPyObject: PPyObject;
-    fPythonAtomCompatible: Boolean;
     function GetAsString: string;
     procedure SetPyObject(const Value: PPyObject);
     function GetAsVariant: Variant;
     function GetAsWideString: UnicodeString;
     function GetAsAnsiString: AnsiString;
   public
-    constructor Create(AObject : PPyObject); overload;
-    constructor Create(AObject : PPyObject; APythonAtomCompatible : Boolean); overload;
+    constructor Create(AObject : PPyObject);
     destructor Destroy; override;
 
     // query state
@@ -250,7 +244,6 @@ type
 
     // data
     property PyObject : PPyObject read fPyObject write SetPyObject;
-    property PythonAtomCompatible : Boolean read fPythonAtomCompatible;
   end;
 
 type
@@ -353,17 +346,6 @@ begin
       Py_XDecRef(_obj);
     end;
   end;
-end;
-
-// compatibility function with PythonAtom.pas
-function GetAtom( AObject : PPyObject ) : Variant;
-begin
-  VarClear(Result);
-  if Assigned(AObject) then
-  begin
-    TPythonVarData(Result).VType := VarPython;
-    TPythonVarData(Result).VPython := TPythonData.Create(AObject, True);
-  end; // of if
 end;
 
 function VarPython: TVarType;
@@ -934,11 +916,7 @@ begin
   if Indirect and VarDataIsByRef(Source) then
     VarDataCopyNoInd(Dest, Source)
   else
-  begin
     PyhonVarDataCreate( Dest, TPythonVarData(Source).VPython.PyObject );
-    // propagate compatibility mode
-    TPythonVarData(Dest).VPython.fPythonAtomCompatible := TPythonVarData(Source).VPython.PythonAtomCompatible;
-  end; // of if
 end;
 
 procedure SetClearVarToEmptyParam(var V: TVarData);
@@ -1402,7 +1380,7 @@ begin
     Result := Assigned(_result);
     if Result then
       try
-        PythonObjectToVarData(Dest, _result, TPythonVarData(V).VPython.PythonAtomCompatible);
+        PyhonVarDataCreate(Dest, _result);
       finally
         Py_XDecRef(_prop);
       end; // of try
@@ -1423,7 +1401,7 @@ begin
     // if the evaluation returned a result
     if Result then
       // convert it into a variant
-      PythonObjectToVarData( Dest, _PyResult, TPythonVarData(V).VPython.PythonAtomCompatible );
+      PyhonVarDataCreate( Dest, _PyResult );
   finally
     GetPythonEngine.Py_XDecRef( _PyResult );
   end; // of try
@@ -1756,8 +1734,6 @@ function TPythonVariantType.GetProperty(var Dest: TVarData;
 var
   _prop : PPyObject;
   _len : Integer;
-  _args : PPyObject;
-  _result : PPyObject;
 begin
   with GetPythonEngine do
   begin
@@ -1780,46 +1756,13 @@ begin
           // convert the length into a Python integer
           _prop := PyInt_FromLong( _len );
         end; // of if
-      end
-      else if SameText(AName, '__asPPyObject__') then // compatibility with PythonAtom.
-      begin                                           // you should use ExtractPythonObjectFrom instead.
-        // clear the error state of Python
-        PyErr_Clear;
-        // return the Python object pointer as an Integer;
-        {$IFDEF CPUX64}
-        _prop := PyInt_FromLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
-        {$ELSE}
-        _prop := PyLong_FromLongLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
-        {$ENDIF}
       end;
-    end // of if
-    // if we found a property that's a callable object and if we're in
-    // compatibility mode with PythonAtom, then return the result of the
-    // execution of the callable object.
-    else if TPythonVarData(V).VPython.PythonAtomCompatible and
-            Assigned(_prop) and (PyErr_Occurred = nil) then
-    begin
-      if PyFunction_Check(_prop) or PyMethod_Check(_prop) then
-      begin
-        _args := PyTuple_New(0);
-        try
-          // call the func or method
-          _result := PyObject_CallObject(_prop, _args);
-          if Assigned(_result) and (PyErr_Occurred = nil) then
-          begin
-            Py_XDecRef(_prop);
-            _prop := _result;
-          end; // of if
-        finally
-          Py_XDecRef(_args);
-        end; // of try
-      end; // of if
     end; // of if
     CheckError;
     Result := Assigned(_prop);
     if Result then
       try
-        PythonObjectToVarData(Dest, _prop, TPythonVarData(V).VPython.PythonAtomCompatible);
+        PyhonVarDataCreate(Dest, _prop);
       finally
         Py_XDecRef(_prop);
       end; // of try
@@ -1853,40 +1796,7 @@ begin
   begin
     TPythonVarData(Dest).VType := VarPython;
     TPythonVarData(Dest).VPython := TPythonData.Create(AObject);
-  end; // of if
-end;
-
-// this method increases the refcount of AObject
-procedure TPythonVariantType.PythonObjectToVarData(var Dest: TVarData;
-  AObject: PPyObject; APythonAtomCompatible : Boolean);
-
-  function IsBasicType( AObject : PPyObject ) : Boolean;
-  begin
-    with GetPythonEngine do
-      Result := PyInt_Check(AObject) or
-                PyFloat_Check(AObject) or
-                PyString_Check(AObject) or
-                PyList_Check(AObject) or
-                PyTuple_Check(AObject);
   end;
-
-begin
-  if APythonAtomCompatible and (AObject = GetPythonEngine.Py_None) then
-    VarDataClear(Dest)
-  // if the result is a basic type (integer, float, string or list)
-  else if APythonAtomCompatible and IsBasicType( AObject ) then
-  begin
-    VarDataClear(Dest);
-    // convert it into its associated variant type
-    Variant(Dest) := GetPythonEngine.PyObjectAsVariant(AObject);
-  end
-  else
-  begin
-    // otherwise wrap the result into a new Python variant
-    PyhonVarDataCreate(Dest, AObject);
-    // propagate compatibility mode
-    TPythonVarData(Dest).VPython.fPythonAtomCompatible := APythonAtomCompatible;
-  end; // of else
 end;
 
 function TPythonVariantType.RightPromotion(const V: TVarData;
@@ -1995,13 +1905,6 @@ end;
 constructor TPythonData.Create(AObject: PPyObject);
 begin
   PyObject := AObject;
-  fPythonAtomCompatible := False;
-end;
-
-constructor TPythonData.Create(AObject : PPyObject; APythonAtomCompatible : Boolean);
-begin
-  Create(AObject);
-  fPythonAtomCompatible := APythonAtomCompatible;
 end;
 
 destructor TPythonData.Destroy;

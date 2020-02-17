@@ -5804,13 +5804,9 @@ var
   y, m, d, h, mi, sec, ms, jd, wd : WORD;
   dt : TDateTime;
   dl : Integer;
-  myInt : NativeInt;
   wStr : UnicodeString;
-  Disp : IDispatch;
-  DispID : Integer;
   args : PPyObject;
 begin
-  Disp := nil;
   //Dereference Variant
   DerefV := V;
   while VarType(DeRefV) = varByRef or varVariant do
@@ -5895,22 +5891,8 @@ begin
         Result := ReturnNone;
       end
     else
-      try
-        Disp := DeRefV;
-        wStr := '__asPPyObject__';
-        // detect if the variant supports this special property
-        if Assigned(Disp) and (Disp.GetIDsOfNames(GUID_NULL, @wStr, 1, 0, @DispID) = S_OK) then
-        begin
-          myInt := DeRefV.__asPPyObject__;  //Returns the address to PPyObject as integer. (See impl. in PythonAtom.pas)
-          Result := PPyObject(myInt);
-          Py_XIncRef(Result);
-        end
-        else //If variant don't implement __asPPyObject__, then we have to return nothing.
-          Result := ReturnNone;
-      except
-        // if something went wrong, just return none!
-        Result := ReturnNone;
-      end; // of try
+      // if we cannot get something useful then
+      Result := ReturnNone;
   end; // of case
 end;
 
