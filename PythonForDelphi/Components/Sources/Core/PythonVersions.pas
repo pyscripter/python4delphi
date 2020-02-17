@@ -57,7 +57,7 @@ type
     The function result has the semantics of Delphi compare functions
     -1: A is bigger (newer), 0: equal versions, 1: B is bigger (newer)
   *)
-  function  CompareVersions(A, B : String) : Integer;
+  function  CompareVersions(A, B : string) : Integer;
 
 
   {$IFDEF MSWINDOWS}
@@ -228,7 +228,7 @@ begin
     not FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
 end;
 
-function  CompareVersions(A, B : String) : Integer;
+function  CompareVersions(A, B : string) : Integer;
 
   function GetNextNumber(var Version: string): Integer;
   var

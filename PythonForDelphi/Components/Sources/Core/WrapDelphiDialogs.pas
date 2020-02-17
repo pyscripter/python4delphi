@@ -35,7 +35,7 @@ uses
 type
   TDialogRegistration = class(TRegisteredUnit)
   public
-    function Name: String; override;
+    function Name: string; override;
     procedure RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper: TPyDelphiWrapper); override;
   end;
@@ -46,7 +46,7 @@ begin
   inherited;
 end;
 
-function TDialogRegistration.Name: String;
+function TDialogRegistration.Name: string;
 begin
   Result := 'Dialog';
 end;

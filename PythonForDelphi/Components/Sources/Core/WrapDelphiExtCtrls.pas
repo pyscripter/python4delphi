@@ -175,7 +175,7 @@ implementation
 type
   TExtCtrlsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -187,7 +187,7 @@ begin
   inherited;
 end;
 
-function TExtCtrlsRegistration.Name: String;
+function TExtCtrlsRegistration.Name: string;
 begin
   Result := 'ExtCtrls';
 end;

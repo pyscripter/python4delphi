@@ -21,7 +21,7 @@ type
 
     class function ExpectedContainerClass : TClass; override;
     class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
 
     property Container : TCustomActionList read GetContainer;
   end;
@@ -54,7 +54,7 @@ implementation
 type
   TActnListRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -66,7 +66,7 @@ begin
   inherited;
 end;
 
-function TActnListRegistration.Name: String;
+function TActnListRegistration.Name: string;
 begin
   Result := 'ActnList';
 end;
@@ -175,7 +175,7 @@ begin
   end;
 end;
 
-class function TActionListAccess.Name: String;
+class function TActionListAccess.Name: string;
 begin
   Result := 'TCustomActionList.Actions';
 end;

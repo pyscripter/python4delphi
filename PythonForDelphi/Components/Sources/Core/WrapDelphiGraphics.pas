@@ -270,7 +270,7 @@ uses
 type
   TGraphicsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -342,7 +342,7 @@ begin
   APyDelphiWrapper.DefineVar('fsBorder', 'fsBorder');
 end;
 
-function TGraphicsRegistration.Name: String;
+function TGraphicsRegistration.Name: string;
 begin
   Result := 'Graphics';
 end;
@@ -862,7 +862,7 @@ begin
     if PyArg_ParseTuple( args, 'is:LoadFromResourceName',@_instance, @_resName ) <> 0 then
     begin
       if _resName <> nil then
-        DelphiObject.LoadFromResourceName(_instance, String(_resName));
+        DelphiObject.LoadFromResourceName(_instance, string(_resName));
       Result := ReturnNone;
     end
     else
@@ -1015,7 +1015,7 @@ end;
 function TPyDelphiBitmap.Set_HandleType(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'HandleType', _value) then
@@ -1087,7 +1087,7 @@ end;
 function TPyDelphiBitmap.Set_PixelFormat(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);
@@ -1142,7 +1142,7 @@ end;
 function TPyDelphiBitmap.Set_TransparentMode(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'TransparentMode', _value) then
@@ -2058,7 +2058,7 @@ begin
     if PyArg_ParseTuple( args, 'iis:TextRect',@x, @y, @_text ) <> 0 then
     begin
       if _text <> nil then
-        DelphiObject.TextOut(x, y, String(_text));
+        DelphiObject.TextOut(x, y, string(_text));
       Result := GetPythonEngine.ReturnNone;
     end
     else
@@ -2084,7 +2084,7 @@ begin
        CheckRectAttribute(_rectO, 'Rect', _rect) then
     begin
       if _text <> nil then
-        DelphiObject.TextRect(_rect, x, y, String(_text));
+        DelphiObject.TextRect(_rect, x, y, string(_text));
       Result := GetPythonEngine.ReturnNone;
     end
     else

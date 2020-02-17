@@ -55,7 +55,7 @@ type
 
     class function ExpectedContainerClass : TClass; override;
     class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
 
     property Container : TWinControl read GetContainer;
   end;
@@ -148,7 +148,7 @@ uses
 type
   TControlsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -172,7 +172,7 @@ begin
   APyDelphiWrapper.DefineVar('mrYesToAll',  mrYesToAll);
 end;
 
-function TControlsRegistration.Name: String;
+function TControlsRegistration.Name: string;
 begin
   Result := 'Controls';
 end;
@@ -477,7 +477,7 @@ begin
   end;
 end;
 
-class function TControlsAccess.Name: String;
+class function TControlsAccess.Name: string;
 begin
   Result := 'Controls';
 end;
@@ -662,7 +662,7 @@ procedure TKeyPressEventHandler.DoEvent(Sender: TObject;
 Var
   PyObject, PyTuple, PyResult, PyKey : PPyObject;
   _varParam : TPyDelphiVarParameter;
-  _key : String;
+  _key : string;
 begin
   Assert(Assigned(PyDelphiWrapper));
   if Assigned(Callable) and PythonOK then

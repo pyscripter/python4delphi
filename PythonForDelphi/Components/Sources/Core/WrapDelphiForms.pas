@@ -110,7 +110,7 @@ type
     //function IndexOf(AValue : PPyObject) : Integer; override;
 
     //class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -123,7 +123,7 @@ type
     //function IndexOf(AValue : PPyObject) : Integer; override;
 
     //class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -136,7 +136,7 @@ type
     //function IndexOf(AValue : PPyObject) : Integer; override;
 
     //class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -149,7 +149,7 @@ type
     //function IndexOf(AValue : PPyObject) : Integer; override;
 
     //class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -162,7 +162,7 @@ type
     //function IndexOf(AValue : PPyObject) : Integer; override;
 
     //class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -378,7 +378,7 @@ end;
 type
   TFormsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
@@ -431,7 +431,7 @@ begin
   APyDelphiWrapper.DefineVar('mdPrimary',   mdPrimary);
 end;
 
-function TFormsRegistration.Name: String;
+function TFormsRegistration.Name: string;
 begin
   Result := 'Forms';
 end;
@@ -582,7 +582,7 @@ function TPyDelphiCustomForm.CreateComponent(AOwner: TComponent): TComponent;
 var
   _class : TClass;
   _compClass : TComponentClass;
-  _className : String;
+  _className : string;
 begin
   // get the default form class
   _compClass := TComponentClass(DelphiObjectClass);
@@ -1230,7 +1230,7 @@ begin
   Result := Container.CustomFormCount;
 end;
 
-class function TScreenCustomFormsAccess.Name: String;
+class function TScreenCustomFormsAccess.Name: string;
 begin
   Result := 'TScreen.CustomForms';
 end;
@@ -1247,7 +1247,7 @@ begin
   Result := Container.FormCount;
 end;
 
-class function TScreenFormsAccess.Name: String;
+class function TScreenFormsAccess.Name: string;
 begin
   Result := 'TScreen.Forms';
 end;
@@ -1264,7 +1264,7 @@ begin
   Result := Container.DataModuleCount;
 end;
 
-class function TScreenDataModulesAccess.Name: String;
+class function TScreenDataModulesAccess.Name: string;
 begin
   Result := 'TScreen.DataModules';
 end;
@@ -1281,7 +1281,7 @@ begin
   Result := 32767;
 end;
 
-class function TScreenCursorsAccess.Name: String;
+class function TScreenCursorsAccess.Name: string;
 begin
   Result := 'TScreen.Cursors';
 end;
@@ -1298,7 +1298,7 @@ begin
   Result := Container.MonitorCount;
 end;
 
-class function TScreenMonitorsAccess.Name: String;
+class function TScreenMonitorsAccess.Name: string;
 begin
   Result := 'TScreen.Monitors';
 end;
@@ -1551,7 +1551,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 's:HelpJump',@_jumpID ) <> 0 then begin
-      Result := VariantAsPyObject( DelphiObject.HelpJump(String(_jumpID)) );
+      Result := VariantAsPyObject( DelphiObject.HelpJump(string(_jumpID)) );
     end else
       Result := nil;
   end;
@@ -1567,7 +1567,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 's:HelpKeyword',@_keyword ) <> 0 then begin
-      Result := VariantAsPyObject( DelphiObject.HelpKeyword(String(_keyword)) );
+      Result := VariantAsPyObject( DelphiObject.HelpKeyword(string(_keyword)) );
     end else
       Result := nil;
   end;
@@ -2234,7 +2234,7 @@ end;
 function TPyDelphiApplication.Set_BiDiKeyboard(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'BiDiKeyboard', _value) then
@@ -2297,7 +2297,7 @@ end;
 function TPyDelphiApplication.Set_HelpFile(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'HelpFile', _value) then
@@ -2312,7 +2312,7 @@ end;
 function TPyDelphiApplication.Set_Hint(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'Hint', _value) then
@@ -2418,7 +2418,7 @@ end;
 function TPyDelphiApplication.Set_NonBiDiKeyboard(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'NonBiDiKeyboard', _value) then
@@ -2464,7 +2464,7 @@ end;
 function TPyDelphiApplication.Set_Title(AValue: PPyObject;
   AContext: Pointer): Integer;
 var
-  _value : String;
+  _value : string;
 begin
   Adjust(@Self);
   if CheckStrAttribute(AValue, 'Title', _value) then
