@@ -60,7 +60,7 @@ type
 
     class function ExpectedContainerClass : TClass; override;
     class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
 
     property Container : TPageControl read GetContainer;
   end;
@@ -112,7 +112,7 @@ uses
 type
   TComCtrlsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -124,7 +124,7 @@ begin
   inherited;
 end;
 
-function TComCtrlsRegistration.Name: String;
+function TComCtrlsRegistration.Name: string;
 begin
   Result := 'ComCtrls';
 end;
@@ -197,7 +197,7 @@ end;
 function TPyDelphiPageControl.GetHitTestInfoAt_Wrapper(
   args: PPyObject): PPyObject;
 
-  procedure AppendString(const AText : String);
+  procedure AppendString(const AText : string);
   var
     _text : PPyObject;
   begin
@@ -555,7 +555,7 @@ begin
   end;
 end;
 
-class function TPagesAccess.Name: String;
+class function TPagesAccess.Name: string;
 begin
   Result := 'Pages';
 end;

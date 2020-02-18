@@ -28,7 +28,7 @@ type
 TPyDBCommon = class(TPyDelphiComponent)
   function  GetProperties : PPyObject;
   procedure AppendProperties( List : PPyObject ); virtual;
-  procedure AppendProp( List : PPyObject; const prop : String );
+  procedure AppendProp( List : PPyObject; const prop : string );
   function  GetAttrO(key: PPyObject) : PPyObject; override;
   procedure RaiseDBError( E : Exception );
 end;
@@ -64,7 +64,7 @@ public
   function GetSize : Integer; override;
 
   class function ExpectedContainerClass : TClass; override;
-  class function Name : String; override;
+  class function Name : string; override;
 end;
 
 TPyDBDataset = class (TPyDelphiComponent)
@@ -170,7 +170,7 @@ end;
 
 TPyFireDACRegistration = class(TRegisteredUnit)
 public
-  function Name(): String; override;
+  function Name(): string; override;
   procedure RegisterWrappers(aPyDelphiWrapper: TPyDelphiWrapper); override;
   procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
 end;
@@ -198,7 +198,7 @@ begin
  // properties to the list
 end;
 
-procedure TPyDBCommon.AppendProp( List : PPyObject; const prop : String );
+procedure TPyDBCommon.AppendProp( List : PPyObject; const prop : string );
 var
  obj : PPyObject;
 begin
@@ -247,7 +247,7 @@ end;
 function  TPyDBField.GetAttrO(key: PPyObject) : PPyObject;
 { TODO : Remove published properties }
 var
- l_sUpperKey: String;
+ l_sUpperKey: string;
 begin
  with GetPythonEngine do begin
    if not CheckField then begin
@@ -364,7 +364,7 @@ end;
 function  TPyDBField.SetAttrO(key, value: PPyObject) : Integer;
 { TODO : Remove published properties }
 var
- l_sUpperKey: String;
+ l_sUpperKey: string;
 begin
  Result := -1;
  with GetPythonEngine do begin
@@ -765,7 +765,7 @@ begin
 end;
 
 
-class function TDSRowsAccess.Name: String;
+class function TDSRowsAccess.Name: string;
 begin
   Result := 'DSRows';
 end;
@@ -860,7 +860,7 @@ end;
 
 function  TPyDBDataset.GetAttrO(key: PPyObject) : PPyObject;
 var
- l_sUpperKey: String;
+ l_sUpperKey: string;
  l_oDataset:  TFDDataset;
 begin
   Result := nil;
@@ -891,7 +891,7 @@ end;
 
 function  TPyDBDataset.SetAttrO(key, value: PPyObject) : Integer;
 var
-  l_sUpperKey: String;
+  l_sUpperKey: string;
   l_oDataset:  TFDDataset;
 begin
   Result := -1;
@@ -982,7 +982,7 @@ begin
     try
       if (PyArg_ParseTuple( args, PAnsiChar('s:DBDataset.FieldByName'),@s ) <> 0) then begin
         l_sAStr := AnsiString(s);
-        fld := l_oDataset.FieldByName(String(l_sAStr));
+        fld := l_oDataset.FieldByName(string(l_sAStr));
         if Assigned(fld) then
           Result := PyDelphiWrapper.Wrap(fld)
         else begin
@@ -1174,7 +1174,7 @@ begin
           // Create a variant containing the key values
           vvalues := PyObjectAsVariant( keyValues );
           // Execute the locate
-          rslt := l_oDataset.Locate( String(keyFields), vvalues, opt );
+          rslt := l_oDataset.Locate( string(keyFields), vvalues, opt );
           // Return its result
           Result := VariantAsPyObject( rslt );
         end;
@@ -1205,7 +1205,7 @@ begin
         // Create a variant containing the key values
         vvalues := PyObjectAsVariant( keyValues );
         // Execute the lookup
-        rslt := l_oDataset.Lookup( String(keyFields), vvalues, String(resultFields) );
+        rslt := l_oDataset.Lookup( string(keyFields), vvalues, string(resultFields) );
         // Return its result
         Result := VariantAsPyObject( rslt );
       end;
@@ -1382,8 +1382,8 @@ end;
 
 function  TPyDBTable.GetAttrO(key: PPyObject) : PPyObject;
 var
-  l_sUpperKey: String;
-  l_sConnectionDefName, l_sDatabaseName: String;
+  l_sUpperKey: string;
+  l_sConnectionDefName, l_sDatabaseName: string;
   l_oConn: TFDCustomConnection;
   l_oTable: TFDTable;
 begin
@@ -1445,8 +1445,8 @@ end;
 function  TPyDBTable.SetAttrO(key, value: PPyObject) : Integer;
 var
   i: Integer;
-  l_sUpperKey: String;
-  l_sName, l_sConnectionDefName, l_sDatabaseName: String;
+  l_sUpperKey: string;
+  l_sName, l_sConnectionDefName, l_sDatabaseName: string;
   l_oConn: TFDCustomConnection;
   l_oTable: TFDTable;
 begin
@@ -1951,8 +1951,8 @@ end;
 
 function  TPyDBQuery.GetAttrO(key: PPyObject) : PPyObject;
 var
-  l_sUpperKey: String;
-  l_sConnectionDefName, l_sDatabaseName: String;
+  l_sUpperKey: string;
+  l_sConnectionDefName, l_sDatabaseName: string;
   l_oConn: TFDCustomConnection;
   l_oQuery: TFDQuery;
 begin
@@ -1995,8 +1995,8 @@ end;
 function  TPyDBQuery.SetAttrO(key, value: PPyObject) : Integer;
 var
   i: Integer;
-  l_sUpperKey: String;
-  l_sName, l_sConnectionDefName, l_sDatabaseName: String;
+  l_sUpperKey: string;
+  l_sName, l_sConnectionDefName, l_sDatabaseName: string;
   l_oConn: TFDCustomConnection;
   l_oQuery: TFDQuery;
 begin
@@ -2222,7 +2222,7 @@ begin
   APyDelphiWrapper.DefineVar('uaApplied', 4);
 end;
 
-function TPyFireDACRegistration.Name: String;
+function TPyFireDACRegistration.Name: string;
 begin
   Result := 'FireDac';
 end;

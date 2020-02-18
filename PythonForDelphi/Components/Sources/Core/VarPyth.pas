@@ -12,8 +12,6 @@ unit VarPyth;
 (*                                  CANADA                                *)
 (*                                  e-mail: p4d@mmm-experts.com           *)
 (*                                                                        *)
-(*  look our page at: http://mmm-experts.com/                             *)
-(*      and our Wiki at: http://py4d.pbwiki.com/                          *)
 (**************************************************************************)
 (*  Functionality:  This allows you to use Python objects like COM        *)
 (*                  automation objects, inside your Delphi source code.   *)
@@ -52,7 +50,6 @@ function VarPythonCreate( AObject : PPyObject ) : Variant; overload;
 function VarPythonCreate( const AValue : Variant ) : Variant; overload;
 function VarPythonCreate( const AValues : array of const; ASequenceType : TSequenceType = stList ) : Variant; overload;
 function VarPythonEval( const APythonExpression : AnsiString) : Variant;
-function GetAtom( AObject : PPyObject ) : Variant; // compatibility function with PythonAtom.pas
 
 { Python variant helper functions }
 function VarPython: TVarType;
@@ -100,6 +97,10 @@ function NewPythonDict: Variant;
 // Not really needed since you can assign a PythonVariant to a string anyway
 // but it is slightly faster and in some places avoids the declaration of a variable
 function VarPythonAsString(AValue : Variant) : string;
+{$IFDEF FPC}
+// to work around http://mantis.freepascal.org/view.php?id=20849)
+function VarPythonToVariant(AValue : Variant): Variant;
+{$ENDIF}
 
 function None : Variant;
 function Ellipsis : Variant;
@@ -115,7 +116,7 @@ function iter(const AValue : Variant ) : Variant; // return an iterator for the 
 implementation
 
 uses
-  VarUtils, SysUtils, SysConst, TypInfo, Classes;
+  VarUtils, SysUtils, TypInfo, Classes;
 
 type
   TNamedParamDesc = record
@@ -128,9 +129,9 @@ type
   {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
   {$DEFINE PATCHEDSYSTEMDISPINVOKE}  //To correct memory leaks
 {$ENDIF}
-{.$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {.$DEFINE USESYSTEMDISPINVOKE}
-{.$IFEND}
+{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
+  {$DEFINE USESYSTEMDISPINVOKE}
+{$IFEND}
 
   { Python variant type handler }
   TPythonVariantType = class(TInvokeableVariantType, IVarInstanceReference)
@@ -144,7 +145,6 @@ type
     function EvalPython(const V: TVarData; const AName: AnsiString;
       const Arguments: TVarDataArray): PPyObject;
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
-    procedure PythonObjectToVarData( var Dest : TVarData; AObject : PPyObject; APythonAtomCompatible : Boolean );
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
     {$IFNDEF USESYSTEMDISPINVOKE}
     procedure DoDispInvoke(Dest: PVarData; var Source: TVarData;
@@ -201,15 +201,13 @@ type
   TPythonData = class(TObject)
   private
     fPyObject: PPyObject;
-    fPythonAtomCompatible: Boolean;
-    function GetAsString: String;
+    function GetAsString: string;
     procedure SetPyObject(const Value: PPyObject);
     function GetAsVariant: Variant;
     function GetAsWideString: UnicodeString;
     function GetAsAnsiString: AnsiString;
   public
-    constructor Create(AObject : PPyObject); overload;
-    constructor Create(AObject : PPyObject; APythonAtomCompatible : Boolean); overload;
+    constructor Create(AObject : PPyObject);
     destructor Destroy; override;
 
     // query state
@@ -239,14 +237,13 @@ type
     procedure DoNot;
 
     // conversion
-    property AsString: String read GetAsString;
+    property AsString: string read GetAsString;
     property AsAnsiString: AnsiString read GetAsAnsiString;
     property AsVariant: Variant read GetAsVariant;
     property AsWideString: UnicodeString read GetAsWideString;
 
     // data
     property PyObject : PPyObject read fPyObject write SetPyObject;
-    property PythonAtomCompatible : Boolean read fPythonAtomCompatible;
   end;
 
 type
@@ -265,7 +262,6 @@ type
 resourcestring
   SMultiDimensionalPropsNotSupported = 'Multi-dimensional sequences or mappings are not supported in Python';
   SCantConvertArg = 'Can''t convert argument #%d of %s into a Python object';
-  SBothOperandsOfIntDivideMustBeIntegers = 'Both operands of an integer division must be of type integer';
   SCantConvertKeyToPythonObject = 'Can''t convert Key into a Python object';
   SCantConvertValueToPythonObject = 'Can''t convert Value into a Python object';
   SCantCreateNewSequenceObject = 'Can''t create a new sequence object';
@@ -349,17 +345,6 @@ begin
       Py_XDecRef(_obj);
     end;
   end;
-end;
-
-// compatibility function with PythonAtom.pas
-function GetAtom( AObject : PPyObject ) : Variant;
-begin
-  VarClear(Result);
-  if Assigned(AObject) then
-  begin
-    TPythonVarData(Result).VType := VarPython;
-    TPythonVarData(Result).VPython := TPythonData.Create(AObject, True);
-  end; // of if
 end;
 
 function VarPython: TVarType;
@@ -656,6 +641,16 @@ begin
     Result := AValue;
 end;
 
+{$IFDEF FPC}
+function VarPythonToVariant(AValue : Variant): Variant;
+begin
+  if VarIsPython(AValue) then
+    Result :=
+      GetPythonEngine.PyObjectAsVariant(TPythonVarData(AValue).VPython.PyObject)
+  else
+    Result := AValue;
+end;
+{$ENDIF}
 
 function None : Variant;
 begin
@@ -833,11 +828,21 @@ var
 begin
   if Source.VType = VarType then
     case AVarType of
-      varOleStr, varUString:
+      varOleStr:
         VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+      varUString:
+        {$IFDEF FPC}
+        VarDataFromOleStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+        {$ELSE}
+        VarDataFromStr(Dest, TPythonVarData(Source).VPython.AsWideString);
+        {$ENDIF}
       varString:
         // Preserve AnsiStrings
+        {$IFDEF FPC}
+        Variant(Dest) := TPythonVarData(Source).VPython.AsWideString;
+        {$ELSE}
         VarDataFromLStr(Dest, TPythonVarData(Source).VPython.AsAnsiString);
+        {$ENDIF}
     else
       if AVarType and varTypeMask = varBoolean then
       begin
@@ -870,7 +875,6 @@ procedure TPythonVariantType.VarDataCastTo(var Dest: TVarData; const Source: TVa
 begin
   VarCast(Variant(Dest), Variant(Source), AVarType);
 end;
-
 {$ENDIF}
 
 procedure TPythonVariantType.Clear(var V: TVarData);
@@ -910,11 +914,7 @@ begin
   if Indirect and VarDataIsByRef(Source) then
     VarDataCopyNoInd(Dest, Source)
   else
-  begin
     PyhonVarDataCreate( Dest, TPythonVarData(Source).VPython.PyObject );
-    // propagate compatibility mode
-    TPythonVarData(Dest).VPython.fPythonAtomCompatible := TPythonVarData(Source).VPython.PythonAtomCompatible;
-  end; // of if
 end;
 
 procedure SetClearVarToEmptyParam(var V: TVarData);
@@ -1204,7 +1204,11 @@ var
           if (PVarData(LParamPtr)^.VType = varString) then
             BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
           else
+            {$IFDEF FPC}
+            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VString), 1, MaxInt);
+            {$ELSE}
             BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VUString), 1, MaxInt);
+            {$ENDIF}
           PStr := nil;
           LArguments[I].VType := varOleStr;
           LArguments[I].VOleStr := PWideChar(BStr);
@@ -1374,7 +1378,7 @@ begin
     Result := Assigned(_result);
     if Result then
       try
-        PythonObjectToVarData(Dest, _result, TPythonVarData(V).VPython.PythonAtomCompatible);
+        PyhonVarDataCreate(Dest, _result);
       finally
         Py_XDecRef(_prop);
       end; // of try
@@ -1395,7 +1399,7 @@ begin
     // if the evaluation returned a result
     if Result then
       // convert it into a variant
-      PythonObjectToVarData( Dest, _PyResult, TPythonVarData(V).VPython.PythonAtomCompatible );
+      PyhonVarDataCreate( Dest, _PyResult );
   finally
     GetPythonEngine.Py_XDecRef( _PyResult );
   end; // of try
@@ -1497,7 +1501,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
     end; // of with
   end; // of function
 
-  procedure ExtractSliceIndexes(AObject : PPyObject; const AStart, AEnd: TVarData; var ASliceStart, ASliceEnd : Integer );
+  procedure ExtractSliceIndexes(AObject : PPyObject; const AStart, AEnd: TVarData; out ASliceStart, ASliceEnd : Integer );
   begin
     with GetPythonEngine do
     begin
@@ -1728,8 +1732,6 @@ function TPythonVariantType.GetProperty(var Dest: TVarData;
 var
   _prop : PPyObject;
   _len : Integer;
-  _args : PPyObject;
-  _result : PPyObject;
 begin
   with GetPythonEngine do
   begin
@@ -1752,46 +1754,13 @@ begin
           // convert the length into a Python integer
           _prop := PyInt_FromLong( _len );
         end; // of if
-      end
-      else if SameText(AName, '__asPPyObject__') then // compatibility with PythonAtom.
-      begin                                           // you should use ExtractPythonObjectFrom instead.
-        // clear the error state of Python
-        PyErr_Clear;
-        // return the Python object pointer as an Integer;
-        {$IFDEF CPUX64}
-        _prop := PyInt_FromLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
-        {$ELSE}
-        _prop := PyLong_FromLongLong( NativeInt(TPythonVarData(V).VPython.PyObject) );
-        {$ENDIF}
       end;
-    end // of if
-    // if we found a property that's a callable object and if we're in
-    // compatibility mode with PythonAtom, then return the result of the
-    // execution of the callable object.
-    else if TPythonVarData(V).VPython.PythonAtomCompatible and
-            Assigned(_prop) and (PyErr_Occurred = nil) then
-    begin
-      if PyFunction_Check(_prop) or PyMethod_Check(_prop) then
-      begin
-        _args := PyTuple_New(0);
-        try
-          // call the func or method
-          _result := PyObject_CallObject(_prop, _args);
-          if Assigned(_result) and (PyErr_Occurred = nil) then
-          begin
-            Py_XDecRef(_prop);
-            _prop := _result;
-          end; // of if
-        finally
-          Py_XDecRef(_args);
-        end; // of try
-      end; // of if
     end; // of if
     CheckError;
     Result := Assigned(_prop);
     if Result then
       try
-        PythonObjectToVarData(Dest, _prop, TPythonVarData(V).VPython.PythonAtomCompatible);
+        PyhonVarDataCreate(Dest, _prop);
       finally
         Py_XDecRef(_prop);
       end; // of try
@@ -1825,40 +1794,7 @@ begin
   begin
     TPythonVarData(Dest).VType := VarPython;
     TPythonVarData(Dest).VPython := TPythonData.Create(AObject);
-  end; // of if
-end;
-
-// this method increases the refcount of AObject
-procedure TPythonVariantType.PythonObjectToVarData(var Dest: TVarData;
-  AObject: PPyObject; APythonAtomCompatible : Boolean);
-
-  function IsBasicType( AObject : PPyObject ) : Boolean;
-  begin
-    with GetPythonEngine do
-      Result := PyInt_Check(AObject) or
-                PyFloat_Check(AObject) or
-                PyString_Check(AObject) or
-                PyList_Check(AObject) or
-                PyTuple_Check(AObject);
   end;
-
-begin
-  if APythonAtomCompatible and (AObject = GetPythonEngine.Py_None) then
-    VarDataClear(Dest)
-  // if the result is a basic type (integer, float, string or list)
-  else if APythonAtomCompatible and IsBasicType( AObject ) then
-  begin
-    VarDataClear(Dest);
-    // convert it into its associated variant type
-    Variant(Dest) := GetPythonEngine.PyObjectAsVariant(AObject);
-  end
-  else
-  begin
-    // otherwise wrap the result into a new Python variant
-    PyhonVarDataCreate(Dest, AObject);
-    // propagate compatibility mode
-    TPythonVarData(Dest).VPython.fPythonAtomCompatible := APythonAtomCompatible;
-  end; // of else
 end;
 
 function TPythonVariantType.RightPromotion(const V: TVarData;
@@ -1967,13 +1903,6 @@ end;
 constructor TPythonData.Create(AObject: PPyObject);
 begin
   PyObject := AObject;
-  fPythonAtomCompatible := False;
-end;
-
-constructor TPythonData.Create(AObject : PPyObject; APythonAtomCompatible : Boolean);
-begin
-  Create(AObject);
-  fPythonAtomCompatible := APythonAtomCompatible;
 end;
 
 destructor TPythonData.Destroy;
@@ -2211,10 +2140,10 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
     Result := GetPythonEngine.PyString_AsString(PyObject)
   else
-   Result := AnsiString(GetAsString);
+    Result := AnsiString(GetAsString);
 end;
 
-function TPythonData.GetAsString: String;
+function TPythonData.GetAsString: string;
 begin
   if Assigned(PyObject) then
     Result := GetPythonEngine.PyObjectAsString(PyObject)
@@ -2235,7 +2164,7 @@ begin
   if Assigned(PyObject) and GetPythonEngine.PyUnicode_Check(PyObject) then
     Result := GetPythonEngine.PyUnicode_AsWideString(PyObject)
   else
-    Result := GetAsString;
+    Result := UnicodeString(GetAsString);
 end;
 
 function TPythonData.GreaterOrEqualThan(const Right: TPythonData): Boolean;

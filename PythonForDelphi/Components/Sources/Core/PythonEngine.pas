@@ -12,7 +12,7 @@
 (*                                  CANADA                                *)
 (*                                  e-mail: p4d@mmm-experts.com           *)
 (*                                                                        *)
-(*  look at the project page at: http://python4Delphi.googlecode.com/     *)
+(*  Project page: https://github.com/pyscripter/python4delphi             *)
 (**************************************************************************)
 (*  Functionality:  Delphi Components that provide an interface to the    *)
 (*                  Python language (see python.txt for more infos on     *)
@@ -32,7 +32,7 @@
 (*      Michiel du Toit (micdutoit@hsbfn.com) - Lazarus Port              *)
 (*      Chris Nicolai (nicolaitanes@gmail.com)                            *)
 (*      Kiriakos Vlahos (pyscripter@gmail.com)                            *)
-(*      Andrey Gruzdev      (andrey.gruzdev@gmail.com)                    *)
+(*      Andrey Gruzdev (andrey.gruzdev@gmail.com)                    *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
 (* Everyone is allowed to use and change this code free for his own tasks *)
@@ -59,9 +59,13 @@ unit PythonEngine;
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
 
 {$IFNDEF FPC}
-  {$IFNDEF DELPHI7_OR_HIGHER}
-      Error! Delphi 7 or higher is required!
+  {$IFNDEF DELPHI2010_OR_HIGHER}
+      Error! Delphi 2010 or higher is required!
   {$ENDIF}
+{$ENDIF}
+
+{$IF defined(LINUX) or (defined(BSD) and not defined(DARWIN)) or defined(SOLARIS) or defined(HAIKU)}
+  {$define _so_files}
 {$ENDIF}
 
 interface
@@ -72,11 +76,10 @@ uses
   Windows,
 {$ELSE}
 {$IFDEF FPC}
-  dynlibs,
+  Dl,
+  DynLibs,
 {$ELSE}
-{$IFDEF LINUX}
-  Libc,
-{$ENDIF}
+  Posix.DLfcn,
 {$ENDIF}
 {$ENDIF}
   Classes,
@@ -92,103 +95,54 @@ uses
 //#######################################################
 
 type
-{$IFNDEF FPC}
-  {$IF CompilerVersion < 21}
-    NativeInt = integer;
-    NativeUInt = Cardinal;
-  {$IFEND}
-  PNativeInt = ^NativeInt;
-{$ELSE}
-  {$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {$ELSE}
-    NativeInt = integer;
-    NativeUInt = Cardinal;
-  {$IFEND}
-  PNativeInt = ^NativeInt;
-{$ENDIF}
-
-  TPythonVersionProp = packed record
-    DllName      : String;
-    RegVersion   : String;
+  TPythonVersionProp = record
+    DllName      : string;
+    RegVersion   : string;
     APIVersion   : Integer;
-    CanUseLatest : Boolean;
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'python25.dll'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python26.dll'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$ENDIF}
-{$IFDEF LINUX}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+{$IFDEF _so_files}
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.so'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.6.so'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'libpython3.2.so'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'libpython3.3.so'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'libpython3.4.so'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'libpython3.5.so'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'libpython3.6.so'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'libpython3.7.so'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
-    (DllName: 'libpython2.5.dylib'; RegVersion: '2.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.6.dylib'; RegVersion: '2.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013; CanUseLatest: True),
-    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013; CanUseLatest: True)
+    (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013),
+    (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013),
+    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
+    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
+    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013),
+    (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013),
+    (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
+    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$endif}
-{$IFDEF PYTHON25}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 1;
-{$ENDIF}
-{$IFDEF PYTHON26}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 2;
-{$ENDIF}
-{$IFDEF PYTHON27}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 3;
-{$ENDIF}
-{$IFDEF PYTHON32}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 4;
-{$ENDIF}
-{$IFDEF PYTHON33}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 5;
-{$ENDIF}
-{$IFDEF PYTHON34}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 6;
-{$ENDIF}
-{$IFDEF PYTHON35}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 7;
-{$ENDIF}
-{$IFDEF PYTHON36}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 8;
-{$ENDIF}
-{$IFDEF PYTHON37}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 9;
-{$ENDIF}
-{$IFDEF PYTHON38}
-  COMPILED_FOR_PYTHON_VERSION_INDEX = 10;
-{$ENDIF}
+
+  COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
+
   PYT_METHOD_BUFFER_INCREASE = 10;
   PYT_MEMBER_BUFFER_INCREASE = 10;
   PYT_GETSET_BUFFER_INCREASE = 10;
@@ -1103,7 +1057,7 @@ type
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
-    hashcode    : Integer;  // -1 when unknown
+    hashcode    : NativeInt;  // -1 when unknown
     days        : Integer;  // -MAX_DELTA_DAYS <= days <= MAX_DELTA_DAYS
     seconds     : Integer;  // 0 <= seconds < 24*3600 is invariant
     microseconds: Integer;  // 0 <= microseconds < 1000000 is invariant
@@ -1265,8 +1219,8 @@ type
   // Python's exceptions
   EPythonError   = class(Exception)
     public
-      EName : String;
-      EValue : String;
+      EName : string;
+      EValue : string;
   end;
   EPyExecError   = class(EPythonError);
 
@@ -1482,12 +1436,12 @@ type
     function IsAPIVersionStored: Boolean;
     function IsDllNameStored: Boolean;
     function IsRegVersionStored: Boolean;
-    procedure SetDllName(const Value: String);
+    procedure SetDllName(const Value: string);
   protected
-    FDllName            : String;
-    FDllPath            : String;
+    FDllName            : string;
+    FDllPath            : string;
     FAPIVersion         : Integer;
-    FRegVersion         : String;
+    FRegVersion         : string;
     FAutoLoad           : Boolean;
     FAutoUnload         : Boolean;
     FFatalMsgDlg        : Boolean;
@@ -1503,9 +1457,9 @@ type
     procedure BeforeLoad; virtual;
     procedure AfterLoad; virtual;
     procedure BeforeUnload; virtual;
-    function  GetQuitMessage : String; virtual;
-    procedure DoOpenDll(const aDllName : String); virtual;
-    function  GetDllPath : String;
+    function  GetQuitMessage : string; virtual;
+    procedure DoOpenDll(const aDllName : string); virtual;
+    function  GetDllPath : string;
 
   public
     // Constructors & Destructors
@@ -1513,7 +1467,7 @@ type
     destructor  Destroy;                    override;
 
     // Public methods
-    procedure OpenDll(const aDllName : String);
+    procedure OpenDll(const aDllName : string);
     function  IsHandleValid : Boolean;
     procedure LoadDll;
     procedure UnloadDll;
@@ -1523,10 +1477,10 @@ type
   published
     property AutoLoad : Boolean read FAutoLoad write FAutoLoad default True;
     property AutoUnload : Boolean read FAutoUnload write FAutoUnload default True;
-    property DllName : String read FDllName write SetDllName stored IsDllNameStored;
-    property DllPath : String read FDllPath write FDllPath;
+    property DllName : string read FDllName write SetDllName stored IsDllNameStored;
+    property DllPath : string read FDllPath write FDllPath;
     property APIVersion : Integer read FAPIVersion write FAPIVersion stored IsAPIVersionStored;
-    property RegVersion : String read FRegVersion write FRegVersion stored IsRegVersionStored;
+    property RegVersion : string read FRegVersion write FRegVersion stored IsRegVersionStored;
     property FatalAbort :  Boolean read FFatalAbort write FFatalAbort default True;
     property FatalMsgDlg : Boolean read FFatalMsgDlg write FFatalMsgDlg default True;
     property UseLastKnownVersion: Boolean read FUseLastKnownVersion write FUseLastKnownVersion default True;
@@ -1562,13 +1516,12 @@ type
     FIsPython3000:   Boolean;
     FMajorVersion:   integer;
     FMinorVersion:   integer;
-    FBuiltInModuleName: String;
-    function GetInitialized: Boolean;
+    FBuiltInModuleName: string;
 
     procedure AfterLoad; override;
-    function  GetQuitMessage : String; override;
+    function  GetQuitMessage : string; override;
     procedure CheckPython;
-    function  GetUnicodeTypeSuffix : String;
+    function  GetUnicodeTypeSuffix : string;
 
   public
     // define Python flags. See file pyDebug.h
@@ -2113,13 +2066,12 @@ type
   procedure MapDll;
 
   // Public properties
-  property Initialized : Boolean read GetInitialized;
+  property Initialized : Boolean read FInitialized;
   property Finalizing : Boolean read FFinalizing;
   property IsPython3000 : Boolean read FIsPython3000;
   property MajorVersion : integer read FMajorVersion;
   property MinorVersion : integer read FMinorVersion;
-  property BuiltInModuleName: String read FBuiltInModuleName write FBuiltInModuleName;
-
+  property BuiltInModuleName: string read FBuiltInModuleName write FBuiltInModuleName;
 end;
 
 //--------------------------------------------------------
@@ -2134,7 +2086,7 @@ const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
 type
   TEngineClient = class;
-  TPathInitializationEvent = procedure ( Sender : TObject; var Path : String ) of Object;
+  TPathInitializationEvent = procedure ( Sender : TObject; var Path : string ) of Object;
   TSysPathInitEvent = procedure ( Sender : TObject; PathList : PPyObject ) of Object;
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfTabcheck, pfUnicode, pfVerbose,
                  pfUseClassExceptionsFlag, pfFrozenFlag, pfIgnoreEnvironmentFlag, pfDivisionWarningFlag);
@@ -2143,9 +2095,9 @@ type
 
   TTracebackItem = class
   public
-    FileName : String;
+    FileName : string;
     LineNo : Integer;
-    Context : String;
+    Context : string;
   end;
 
   TPythonTraceback = class
@@ -2208,7 +2160,7 @@ type
   protected
     procedure AfterLoad; override;
     procedure BeforeLoad; override;
-    procedure DoOpenDll(const aDllName : String); override;
+    procedure DoOpenDll(const aDllName : string); override;
     procedure SetInitScript(Value: TStrings);
     function  GetThreadState: PPyThreadState;
     function  GetInterpreterState: PPyInterpreterState;
@@ -2236,25 +2188,29 @@ type
     procedure  Finalize;
     procedure  Lock;
     procedure  Unlock;
-    procedure  SetPythonHome(const PythonHome: string);
-    procedure  SetProgramName(const ProgramName: string);
+    procedure  SetPythonHome(const PythonHome: UnicodeString);
+    procedure  SetProgramName(const ProgramName: UnicodeString);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   GetAttrString(obj: PPyObject; AName: PAnsiChar):PAnsiChar;
-    function   Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
+    function   Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
     function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
     function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
-    function   EncodeString (const str: string): AnsiString;
+    function   EncodeString (const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
+    {$IFDEF FPC}
+    overload;
+    function   EncodeString (const str: AnsiString): AnsiString; overload;
+    {$ENDIF}
     function   EncodeWindowsFilePath (const str: string): AnsiString;
     procedure  ExecString(const command : AnsiString); overload;
     procedure  ExecStrings( strings : TStrings ); overload;
     function   EvalString(const command : AnsiString) : PPyObject; overload;
-    function   EvalStringAsStr(const command : AnsiString) : String;
+    function   EvalStringAsStr(const command : AnsiString) : string;
     function   EvalStrings( strings : TStrings ) : PPyObject; overload;
     procedure  ExecString(const command : AnsiString; locals, globals : PPyObject ); overload;
     procedure  ExecStrings( strings : TStrings; locals, globals : PPyObject ); overload;
     function   EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject; overload;
     function   EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject; overload;
-    function   EvalStringsAsStr( strings : TStrings ) : String;
+    function   EvalStringsAsStr( strings : TStrings ) : string;
     function   EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
     function   EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
     function   EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
@@ -2262,7 +2218,7 @@ type
     function   CheckExecSyntax( const str : AnsiString ) : Boolean;
     function   CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
     procedure  RaiseError;
-    function   PyObjectAsString( obj : PPyObject ) : String;
+    function   PyObjectAsString( obj : PPyObject ) : string;
     procedure  DoRedirectIO;
     procedure  AddClient( client : TEngineClient );
     procedure  RemoveClient( client : TEngineClient );
@@ -2399,7 +2355,7 @@ type
     FTmpDocString: AnsiString;
     FOnExecute: TPythonEvent;
     FDocString: TStringList;
- 	 procedure SetDocString(const Value: TStringList);
+    procedure SetDocString(const Value: TStringList);
   protected
     function  GetDisplayName: string; override;
     procedure SetDisplayName(const Value: string); override;
@@ -3140,7 +3096,7 @@ procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
-function GetPythonVersionFromDLLName(const DLLFileName : String): String;
+function GetPythonVersionFromDLLName(const DLLFileName : string): string;
 
 { Helper functions}
 (*
@@ -3284,7 +3240,7 @@ end;
 
 procedure TPythonInputOutput.AddWrite( const str : IOString );
 begin
-  FQueue.Add( str );
+  FQueue.Add( string(str) );
   if FQueue.Count > FMaxLines then
     FQueue.Delete(0)
   else
@@ -3338,12 +3294,12 @@ end;
 
 function  TPythonInputOutput.GetCurrentThreadLine : IOString;
 begin
-  Result := FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ];
+  Result := IOString(FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ]);
 end;
 
 procedure TPythonInputOutput.UpdateCurrentThreadLine;
 begin
-  FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ] := FLine_Buffer;
+  FLinesPerThread.Strings[ GetCurrentThreadSlotIdx ] := string(FLine_Buffer);
 end;
 
 (*******************************************************)
@@ -3352,22 +3308,28 @@ end;
 (**                                                   **)
 (*******************************************************)
 
-procedure TDynamicDll.DoOpenDll(const aDllName : String);
+procedure TDynamicDll.DoOpenDll(const aDllName : string);
 begin
   if not IsHandleValid then
   begin
     FDllName := aDllName;
+    {$IFDEF MSWINDOWS}
     FDLLHandle := SafeLoadLibrary(
       {$IFDEF FPC}
-        PAnsiChar(AnsiString(GetDllPath+DllName))
+      PAnsiChar(AnsiString(GetDllPath+DllName))
       {$ELSE}
-        GetDllPath+DllName
+      GetDllPath+DllName
       {$ENDIF}
+    {$ELSE}
+    //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
+    FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
+      RTLD_LAZY+RTLD_GLOBAL));
+    {$ENDIF}
     );
   end;
 end;
 
-function  TDynamicDll.GetDllPath : String;
+function  TDynamicDll.GetDllPath : string;
 {$IFDEF MSWINDOWS}
 var
   AllUserInstall: Boolean;
@@ -3387,9 +3349,9 @@ begin
   end;
 end;
 
-procedure  TDynamicDll.OpenDll(const aDllName : String);
+procedure  TDynamicDll.OpenDll(const aDllName : string);
 var
-  s : String;
+  s : string;
 begin
   UnloadDll;
 
@@ -3502,7 +3464,7 @@ begin
     FOnBeforeUnload( Self );
 end;
 
-function  TDynamicDll.GetQuitMessage : String;
+function  TDynamicDll.GetQuitMessage : string;
 begin
   Result := Format( 'Dll %s could not be loaded. We must quit.', [DllName]);
 end;
@@ -3515,11 +3477,7 @@ begin
     ExitProcess( 1 );
 {$ELSE}
     WriteLn(ErrOutput, GetQuitMessage);
-{$IFDEF FPC}
     Halt( 1 );
-{$ELSE}
-    __exit(1);
-{$ENDIF}
 {$ENDIF}
   end;
 end;
@@ -3539,7 +3497,7 @@ begin
   Result := not UseLastKnownVersion;
 end;
 
-procedure TDynamicDll.SetDllName(const Value: String);
+procedure TDynamicDll.SetDllName(const Value: string);
 begin
   FDllName := Value;
 end;
@@ -3556,6 +3514,7 @@ var
   i : Integer;
 begin
   inherited;
+  FInitialized := False;
   i := COMPILED_FOR_PYTHON_VERSION_INDEX;
   DllName     := PYTHON_KNOWN_VERSIONS[i].DllName;
   FAPIVersion := PYTHON_KNOWN_VERSIONS[i].APIVersion;
@@ -3591,17 +3550,9 @@ begin
   end;
 end;
 
-function  TPythonInterface.GetQuitMessage : String;
+function  TPythonInterface.GetQuitMessage : string;
 begin
   Result := Format( 'Python could not be properly initialized. We must quit.', [DllName]);
-end;
-
-function TPythonInterface.GetInitialized: Boolean;
-begin
-  if Assigned(Py_IsInitialized) then
-    Result := Py_IsInitialized() <> 0
-  else
-    Result := FInitialized;
 end;
 
 procedure TPythonInterface.CheckPython;
@@ -3610,7 +3561,7 @@ begin
     raise Exception.Create('Python is not properly initialized' );
 end;
 
-function  TPythonInterface.GetUnicodeTypeSuffix : String;
+function  TPythonInterface.GetUnicodeTypeSuffix : string;
 begin
   if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
     Result := ''
@@ -4629,7 +4580,6 @@ var
 begin
   inherited;
   FLock                    := TCriticalSection.Create;
-  FInitialized             := False;
   FInitScript              := TstringList.Create;
   FClients                 := TList.Create;
   FRedirectIO              := True;
@@ -4700,6 +4650,7 @@ begin
         Py_Finalize;
       finally
         FFinalizing := False;
+        FInitialized := False;
       end;
     except 
     end;
@@ -4754,23 +4705,21 @@ begin
   inherited;
 end;
 
-procedure TPythonEngine.DoOpenDll(const aDllName : String);
+procedure TPythonEngine.DoOpenDll(const aDllName : string);
 var
   i : Integer;
 begin
   if UseLastKnownVersion then
-    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) to High(PYTHON_KNOWN_VERSIONS) do
+    for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 1 do
     begin
       RegVersion := PYTHON_KNOWN_VERSIONS[i].RegVersion;
-      FDLLHandle := SafeLoadLibrary(GetDllPath+PYTHON_KNOWN_VERSIONS[i].DllName);
+      inherited DoOpenDll(PYTHON_KNOWN_VERSIONS[i].DllName);
       if IsHandleValid then
       begin
         DllName := PYTHON_KNOWN_VERSIONS[i].DllName;
         APIVersion := PYTHON_KNOWN_VERSIONS[i].APIVersion;
         Exit;
       end;
-      if not PYTHON_KNOWN_VERSIONS[i].CanUseLatest then
-        Break;
     end
   else
     RegVersion := GetPythonVersionFromDLLName(aDllName);
@@ -4896,7 +4845,7 @@ begin
     if Assigned(Py_SetProgramName3000) then
     begin
       if FProgramNameW = '' then
-        FProgramNameW := ParamStr(0);
+        FProgramNameW := UnicodeString(ParamStr(0));
       Py_SetProgramName3000(PWideChar(FProgramNameW));
     end
   end else begin
@@ -4915,7 +4864,10 @@ begin
       Py_SetPythonHome(PAnsiChar(FPythonHome));
   end;
   Py_Initialize;
-  FInitialized := True;
+  if Assigned(Py_IsInitialized) then
+    FInitialized := Py_IsInitialized() <> 0
+  else
+    FInitialized := True;
   FIORedirected := False;
   InitSysPath;
   SetProgramArgs;
@@ -5098,7 +5050,7 @@ begin
       // get the strings
       // build the PAnsiChar array
       for i := 0 to argc do begin
-        WL[i] := ParamStr(i);
+        WL[i] := UnicodeString(ParamStr(i));
         wargv^[i] := PWideChar(WL[i]);
       end;
       // set the argv list of the sys module with the application arguments
@@ -5171,13 +5123,13 @@ begin
   end; // of if
 end;
 
-procedure TPythonEngine.SetPythonHome(const PythonHome: string);
+procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
   FPythonHomeW := PythonHome;
   FPythonHome := EncodeString(PythonHome);
 end;
 
-procedure TPythonEngine.SetProgramName(const ProgramName: string);
+procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
 begin
   FProgramNameW := ProgramName;
   FProgramName := EncodeString(ProgramName);
@@ -5261,7 +5213,7 @@ begin
   end;
 end;
 
-function   TPythonEngine.EvalStringAsStr(const command : AnsiString) : String;
+function   TPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
 begin
   Result := Run_CommandAsString( command, eval_input );
 end;
@@ -5276,7 +5228,7 @@ begin
   Py_XDecRef( Run_CommandAsObject( command, file_input ) );
 end;
 
-function   TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : String;
+function   TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
 var
   v : PPyObject;
 begin
@@ -5317,7 +5269,7 @@ begin
   else if Assigned(FGlobalVars) then
     _globals := GlobalVars
   else
-    _globals := PyModule_GetDict(m);
+    _globals := _locals;
 
   try
     Result := PyRun_String(PAnsiChar(CleanString(command)), mode, _globals, _locals);
@@ -5363,7 +5315,7 @@ begin
   Result := Run_CommandAsObjectWithDict( EncodeString(strings.Text), eval_input, locals, globals );
 end;
 
-function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : String;
+function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : string;
 begin
   Result := Run_CommandAsString( EncodeString(strings.Text), eval_input );
 end;
@@ -5390,7 +5342,7 @@ end;
 
 procedure TPythonEngine.RaiseError;
 
-  function Define( E : EPythonError; const sType, sValue : String ) : EPythonError;
+  function Define( E : EPythonError; const sType, sValue : string ) : EPythonError;
   begin
     E.EName  := sType;
     E.EValue := sValue;
@@ -5401,11 +5353,11 @@ procedure TPythonEngine.RaiseError;
     Result := E;
   end;
 
-  function DefineSyntaxError( E : EPySyntaxError; const sType, sValue : String; err_type, err_value : PPyObject ) : EPySyntaxError;
+  function DefineSyntaxError( E : EPySyntaxError; const sType, sValue : string; err_type, err_value : PPyObject ) : EPySyntaxError;
   var
-    s_value       : String;
-    s_line        : String;
-    s_filename    : String;
+    s_value       : string;
+    s_line        : string;
+    s_filename    : string;
     i_line_number : Integer;
     i_offset      : Integer;
     tmp           : PPyObject;
@@ -5482,21 +5434,21 @@ procedure TPythonEngine.RaiseError;
       Result.Message := sType;
   end;
 
-  function GetTypeAsString( obj : PPyObject ) : String;
+  function GetTypeAsString( obj : PPyObject ) : string;
   begin
     if PyClass_Check( obj ) then
       with PPyClassObject(obj)^ do
         Result := PyString_AsDelphiString(cl_name)
     else if PyType_CheckExact( obj ) then
-        Result := String(PPyTypeObject(obj).tp_name)
+        Result := string(PPyTypeObject(obj).tp_name)
     else
       Result := PyObjectAsString(obj);
   end;
 
 var
   err_type, err_value : PPyObject;
-  s_type        : String;
-  s_value       : String;
+  s_type        : string;
+  s_value       : string;
 begin
   s_value       := '';
 
@@ -5602,14 +5554,12 @@ begin
         raise Define( EPyExecError.Create(''), s_type, s_value );
     end
   else
-    raise EPythonError.Create('RaiseError: could''nt fetch last exception');
+    raise EPythonError.Create('RaiseError: couldn''t fetch last exception');
 end;
 
-function TPythonEngine.PyObjectAsString( obj : PPyObject ) : String;
+function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
 var
   s : PPyObject;
-//  i : Integer;
-//  tmp : PAnsiChar;
   w : UnicodeString;
 begin
   CheckPython;
@@ -5620,19 +5570,12 @@ begin
   if PyUnicode_Check(obj) then
   begin
     w := PyUnicode_AsWideString(obj);
-    Result := w;
+    Result := string(w);
     Exit;
   end;
   s := PyObject_Str( obj );
   if Assigned(s) and PyString_Check(s) then
-    begin
-      Result := PyString_AsDelphiString(s);
-//      tmp := PyString_AsString(s);
-//      SetLength( Result, PyString_Size(s)+1 );
-//      Result := '';
-//      for i := 0 to PyString_Size(s) - 1 do
-//        Insert( tmp[i], Result, i+1 );
-    end;
+    Result := PyString_AsDelphiString(s);
   Py_XDECREF(s);
 end;
 
@@ -5665,8 +5608,8 @@ begin
       begin
         Engine := Self;
         ModuleName := 'pyio';
-        AddMethod( 'write', pyio_write, 'write(String) -> None' );
-        AddMethod( 'read',  pyio_read,  'read() -> String' );
+        AddMethod( 'write', pyio_write, 'write(string) -> None' );
+        AddMethod( 'read',  pyio_read,  'read() -> string' );
         AddMethod( 'SetDelayWrites',  pyio_SetDelayWrites,  'SetDelayWrites(Boolean) -> None' );
         AddMethod( 'SetMaxLines',  pyio_SetMaxLines,  'SetMaxLines(Integer) -> None' );
         AddMethod( 'GetTypesStats',  pyio_GetTypesStats,  'GetTypesStats( [type name] ) -> a list of tuple (TypeName, InstanceCount, CreateHits, DeleteHits)' );
@@ -5713,13 +5656,20 @@ begin
         end;
 end;
 
-function TPythonEngine.EncodeString(const str: string): AnsiString;
+function TPythonEngine.EncodeString(const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
 begin
   if IsPython3000 then
     Result := UTF8Encode(str)
   else
     Result := AnsiString(str);
 end;
+
+{$IFDEF FPC}
+function TPythonEngine.EncodeString (const str: AnsiString): AnsiString; overload;
+begin
+  Result := str;
+end;
+{$ENDIF}
 
 function TPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
 {PEP 529}
@@ -5841,20 +5791,14 @@ Var
       end;
   end;
 
-const
-  GUID_NULL: TGUID = '{00000000-0000-0000-0000-000000000000}'; // copied from ActiveX.pas
 var
   s : AnsiString;
   y, m, d, h, mi, sec, ms, jd, wd : WORD;
   dt : TDateTime;
   dl : Integer;
-  myInt : NativeInt;
   wStr : UnicodeString;
-  Disp : IDispatch;
-  DispID : Integer;
   args : PPyObject;
 begin
-  Disp := nil;
   //Dereference Variant
   DerefV := V;
   while VarType(DeRefV) = varByRef or varVariant do
@@ -5911,12 +5855,7 @@ begin
           wStr := ''
         else
           wStr := DeRefV;
-      {$IFDEF PREFER_UNICODE}
         Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
-      {$ELSE}
-        s := wStr;
-        Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
-      {$ENDIF}
       end;
     varString:
       begin
@@ -5926,12 +5865,7 @@ begin
     varUString:
       begin
        wStr := DeRefV;
-      {$IFDEF PREFER_UNICODE}
         Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
-      {$ELSE}
-        s := wStr;
-        Result := PyString_FromStringAndSize(PAnsiChar(s), Length(s));
-      {$ENDIF}
       end;
   else
     if VarType(DeRefV) and varArray <> 0 then
@@ -5949,22 +5883,8 @@ begin
         Result := ReturnNone;
       end
     else
-      try
-        Disp := DeRefV;
-        wStr := '__asPPyObject__';
-        // detect if the variant supports this special property
-        if Assigned(Disp) and (Disp.GetIDsOfNames(GUID_NULL, @wStr, 1, 0, @DispID) = S_OK) then
-        begin
-          myInt := DeRefV.__asPPyObject__;  //Returns the address to PPyObject as integer. (See impl. in PythonAtom.pas)
-          Result := PPyObject(myInt);
-          Py_XIncRef(Result);
-        end
-        else //If variant don't implement __asPPyObject__, then we have to return nothing.
-          Result := ReturnNone;
-      except
-        // if something went wrong, just return none!
-        Result := ReturnNone;
-      end; // of try
+      // if we cannot get something useful then
+      Result := ReturnNone;
   end; // of case
 end;
 
@@ -6625,7 +6545,7 @@ function TPythonEngine.PyString_FromDelphiString(str: string): PPyObject;
 begin
   if IsPython3000 then
   begin
-    Result := PyUnicode_FromWideString(str);
+    Result := PyUnicode_FromWideString(UnicodeString(str));
   end
   else
     Result := DLL_PyString_FromString(PAnsiChar(AnsiString(str)));
@@ -7180,7 +7100,7 @@ end;
 ////////////////////////////////////////
 // class TError
 
-function TError.GetDisplayName: String;
+function TError.GetDisplayName: string;
 begin
   Result := string(Name);
   if Result = '' then Result := inherited GetDisplayName;
@@ -9593,7 +9513,7 @@ begin
               IO.Write(PyUnicode_AsWideString(a1))
             else
               if PyString_Check(a1) then
-                IO.Write(PyObjectAsString(a1));
+                IO.Write(IOString(PyObjectAsString(a1)));
           end;
           Result := ReturnNone;
         end
@@ -9794,7 +9714,7 @@ begin
                                 TPythonType, TPythonModule, TPythonDelphiVar]);
 end;
 
-function GetPythonVersionFromDLLName(const DLLFileName : String): String;
+function GetPythonVersionFromDLLName(const DLLFileName : string): string;
 begin
   Result := DLLFileName[{$IFDEF MSWINDOWS}7{$ELSE}10{$ENDIF}] + '.' + DLLFileName[{$IFDEF MSWINDOWS}8{$ELSE}11{$ENDIF}];
 end;
@@ -9840,7 +9760,11 @@ end;
 
 function CleanString(const s : UnicodeString; AppendLF : Boolean) : UnicodeString;
 begin
+  {$IFDEF FPC}
+  Result := UnicodeString(AdjustLineBreaks(AnsiString(s), tlbsLF));
+  {$ELSE}
   Result := AdjustLineBreaks(s, tlbsLF);
+  {$ENDIF}
   if AppendLF and (result[length(result)] <> LF) then
     Result := Result + LF;
 end;

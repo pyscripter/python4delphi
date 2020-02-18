@@ -42,7 +42,7 @@ type
 
     class function ExpectedContainerClass : TClass; override;
     class function SupportsIndexOf : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
 
     property Container : TCollection read GetContainer;
   end;
@@ -159,7 +159,7 @@ type
     function GetItem(AIndex : Integer) : PPyObject; override;
     function IndexOf(AValue : PPyObject) : Integer; override;
     function SetItem(AIndex : Integer; AValue : PPyObject) : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
   end;
 
   {
@@ -248,7 +248,7 @@ uses
 type
   TClassesRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -267,7 +267,7 @@ begin
   APyDelphiWrapper.DefineVar('ssDouble', 'ssDouble');
 end;
 
-function TClassesRegistration.Name: String;
+function TClassesRegistration.Name: string;
 begin
   Result := 'Classes';
 end;
@@ -286,7 +286,7 @@ end;
 
 function ShiftToPython(AShift : TShiftState) : PPyObject;
 
-  procedure Append(AList : PPyObject; const AString : String);
+  procedure Append(AList : PPyObject; const AString : string);
   var
     _item : PPyObject;
   begin
@@ -440,7 +440,7 @@ begin
   end;
 end;
 
-class function TCollectionAccess.Name: String;
+class function TCollectionAccess.Name: string;
 begin
   Result := 'TCollection.Items';
 end;
@@ -712,10 +712,10 @@ var
   key : PPyObject;
   keys : PPyObject;
   _idx : Integer;
-  _name : String;
-  _prefix : String;
-  _compName : String;
-  _eventName : String;
+  _name : string;
+  _prefix : string;
+  _compName : string;
+  _eventName : string;
   _comp : TComponent;
   _pair : PPyObject;
   _bindings : PPyObject;
@@ -960,7 +960,7 @@ end;
 
 function TPyDelphiComponent.MpSubscript(obj: PPyObject): PPyObject;
 var
-  _name : String;
+  _name : string;
   _comp : TComponent;
 begin
   with GetPythonEngine do
@@ -969,7 +969,7 @@ begin
       Result := SqItem(PyInt_AsLong(obj))
     else if PyString_Check(obj) then
     begin
-      _name := String(PyString_AsDelphiString(obj));
+      _name := string(PyString_AsDelphiString(obj));
       _comp := DelphiObject.FindComponent(_name);
       if Assigned(_comp) then
         Result := Wrap(_comp)
@@ -1132,7 +1132,7 @@ begin
   end;
 end;
 
-class function TStringsObjectsAccess.Name: String;
+class function TStringsObjectsAccess.Name: string;
 begin
   Result := 'Objects';
 end;
@@ -1332,7 +1332,7 @@ begin
   Adjust(@Self);
   if GetPythonEngine.PyArg_ParseTuple( args, 's:LoadFromFile',@PStr ) <> 0 then
   begin
-    DelphiObject.LoadFromFile(String(PStr));
+    DelphiObject.LoadFromFile(string(PStr));
     Result := GetPythonEngine.ReturnNone;
   end
   else
@@ -1435,7 +1435,7 @@ begin
   Adjust(@Self);
   if GetPythonEngine.PyArg_ParseTuple( args, 's:SaveToFile',@PStr ) <> 0 then
   begin
-    DelphiObject.SaveToFile(String(PStr));
+    DelphiObject.SaveToFile(string(PStr));
     Result := GetPythonEngine.ReturnNone;
   end
   else
@@ -1562,7 +1562,7 @@ end;
 function TPyDelphiStrings.Set_Text(AValue: PPyObject;
   AContext: Pointer): integer;
 var
-  _text : String;
+  _text : string;
 begin
   with GetPythonEngine do begin
     Adjust(@Self);

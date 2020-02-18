@@ -35,7 +35,7 @@ implementation
 type
   TButtonsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -58,7 +58,7 @@ begin
   APyDelphiWrapper.DefineVar('bkAll',         bkAll);
 end;
 
-function TButtonsRegistration.Name: String;
+function TButtonsRegistration.Name: string;
 begin
   Result := 'Buttons';
 end;

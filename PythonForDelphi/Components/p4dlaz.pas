@@ -10,7 +10,7 @@ interface
 uses
   PythonEngine, PythonGUIInputOutput, MethodCallBack, VarPyth, WrapDelphi, 
   WrapDelphiButtons, WrapDelphiClasses, WrapDelphiControls, WrapDelphiTypes, 
-  LazarusPackageIntf;
+  P4DLaz_register, LazarusPackageIntf;
 
 implementation
 

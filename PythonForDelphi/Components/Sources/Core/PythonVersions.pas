@@ -57,7 +57,7 @@ type
     The function result has the semantics of Delphi compare functions
     -1: A is bigger (newer), 0: equal versions, 1: B is bigger (newer)
   *)
-  function  CompareVersions(A, B : String) : Integer;
+  function  CompareVersions(A, B : string) : Integer;
 
 
   {$IFDEF MSWINDOWS}
@@ -228,7 +228,7 @@ begin
     not FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
 end;
 
-function  CompareVersions(A, B : String) : Integer;
+function  CompareVersions(A, B : string) : Integer;
 
   function GetNextNumber(var Version: string): Integer;
   var
@@ -406,8 +406,8 @@ Var
   PythonVersion : TPythonVersion;
 begin
   Count := 0;
-  SetLength(Result, High(PYTHON_KNOWN_VERSIONS) - COMPILED_FOR_PYTHON_VERSION_INDEX + 1);
-  for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
+  SetLength(Result, High(PYTHON_KNOWN_VERSIONS));
+  for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
     if GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion) then
     begin
       Result[Count] := PythonVersion;
@@ -420,7 +420,7 @@ function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Bo
 Var
   I: Integer;
 begin
-  for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
+  for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
   begin
     Result := GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion);
     if Result then break;
@@ -514,7 +514,7 @@ begin
   PythonVersion.SysVersion := SysVersion;
   PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
 
-  for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do
+  for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
     if PYTHON_KNOWN_VERSIONS[I].RegVersion = SysVersion then begin
       Result := True;
       break;

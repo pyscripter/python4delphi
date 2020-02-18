@@ -38,7 +38,7 @@ type
 
     class function ExpectedContainerClass : TClass; override;
     class function SupportsWrite : Boolean; override;
-    class function Name : String; override;
+    class function Name : string; override;
 
     property Container : TCustomDrawGrid read GetContainer;
   end;
@@ -61,7 +61,7 @@ type
     // methods
     //function CellRect(ACol, ARow: Longint): TRect;
     //procedure MouseToCell(X, Y: Integer; var ACol, ARow: Longint);
-    class function GetTypeName : String; override;
+    class function GetTypeName : string; override;
 
     // property getters
     function Get_Canvas(AContext : Pointer): PPyObject; cdecl;
@@ -99,7 +99,7 @@ type
     function  GetDelphiObject: TDrawGrid;
     procedure SetDelphiObject(const Value: TDrawGrid);
   protected
-    class function GetTypeName : String; override;
+    class function GetTypeName : string; override;
   public
     class function  DelphiObjectClass : TClass; override;
     // Properties
@@ -115,7 +115,7 @@ type
     function  GetDelphiObject: TStringGrid;
     procedure SetDelphiObject(const Value: TStringGrid);
   protected
-    class function GetTypeName : String; override;
+    class function GetTypeName : string; override;
     function GetCell(args : PPyObject): PPyObject; cdecl;
     function SetCell(args : PPyObject): PPyObject; cdecl;
   public
@@ -134,7 +134,7 @@ uses
 type
   TGridsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -149,7 +149,7 @@ begin
   APyDelphiWrapper.DefineVar('gdFixed', 'gdFixed');
 end;
 
-function TGridsRegistration.Name: String;
+function TGridsRegistration.Name: string;
 begin
   Result := 'Grids';
 end;
@@ -331,7 +331,7 @@ begin
   result:=TCustomDrawGridAccess(Container).ColCount;
 end;
 
-class function TGridColWidthsAccess.Name: String;
+class function TGridColWidthsAccess.Name: string;
 begin
   result:='TCustomGrid.ColWidths';
 end;
@@ -445,7 +445,7 @@ begin
   Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TopRow);
 end;
 
-class function TPyDelphiCustomDrawGrid.GetTypeName : String;
+class function TPyDelphiCustomDrawGrid.GetTypeName : string;
 begin
   Result := 'CustomDrawGrid';
 end;
@@ -587,7 +587,7 @@ begin
   Result := TDrawGrid(inherited DelphiObject);
 end;
 
-class function TPyDelphiDrawGrid.GetTypeName : String;
+class function TPyDelphiDrawGrid.GetTypeName : string;
 begin
   Result := 'DrawGrid';
 end;
@@ -620,7 +620,7 @@ begin
     'Sets the content of a cell');
 end;
 
-class function TPyDelphiStringGrid.GetTypeName : String;
+class function TPyDelphiStringGrid.GetTypeName : string;
 begin
   Result := 'StringGrid';
 end;

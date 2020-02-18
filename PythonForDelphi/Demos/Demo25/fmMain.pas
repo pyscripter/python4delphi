@@ -523,13 +523,11 @@ begin
   Assert( VarIsPythonUnicode(c.GetItem(0)) );
   Assert( c.GetItem(0) = 'Hello world!');
   Assert( c.GetItem(0) = w );
-  {$IFDEF PREFER_UNICODE}
   c := w;
   b := VarPythonCreate(c);
   Assert( VarIsPythonUnicode(b) );
   Assert( b = c );
   Assert( b = w );
-  {$ENDIF}
   // empty strings
   a := VarPythonEval( 'u""' );
   Assert(a.length = 0);

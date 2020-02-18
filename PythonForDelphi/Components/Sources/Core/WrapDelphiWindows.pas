@@ -13,7 +13,7 @@ implementation
 type
   TWindowsRegistration = class(TRegisteredUnit)
   public
-    function Name : String; override;
+    function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
@@ -64,7 +64,7 @@ begin
   {$ENDIF FPC}
 end;
 
-function TWindowsRegistration.Name: String;
+function TWindowsRegistration.Name: string;
 begin
   Result := 'Windows';
 end;
