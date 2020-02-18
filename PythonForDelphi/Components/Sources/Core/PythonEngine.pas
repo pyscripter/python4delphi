@@ -5269,7 +5269,7 @@ begin
   else if Assigned(FGlobalVars) then
     _globals := GlobalVars
   else
-    _globals := PyModule_GetDict(m);
+    _globals := _locals;
 
   try
     Result := PyRun_String(PAnsiChar(CleanString(command)), mode, _globals, _locals);
@@ -5554,7 +5554,7 @@ begin
         raise Define( EPyExecError.Create(''), s_type, s_value );
     end
   else
-    raise EPythonError.Create('RaiseError: could''nt fetch last exception');
+    raise EPythonError.Create('RaiseError: couldn''t fetch last exception');
 end;
 
 function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
@@ -5791,8 +5791,6 @@ Var
       end;
   end;
 
-const
-  GUID_NULL: TGUID = '{00000000-0000-0000-0000-000000000000}'; // copied from ActiveX.pas
 var
   s : AnsiString;
   y, m, d, h, mi, sec, ms, jd, wd : WORD;
