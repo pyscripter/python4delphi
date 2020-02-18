@@ -3137,9 +3137,9 @@ uses
   AnsiStrings,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Math,
-  Registry;
+  Registry,
 {$ENDIF}
+  Math;
 
 
 (*******************************************************)
@@ -3321,13 +3321,12 @@ begin
       PAnsiChar(AnsiString(GetDllPath+DllName))
       {$ELSE}
       GetDllPath+DllName
-      {$ENDIF}
+      {$ENDIF});
     {$ELSE}
     //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
     FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
       RTLD_LAZY+RTLD_GLOBAL));
     {$ENDIF}
-    );
   end;
 end;
 
