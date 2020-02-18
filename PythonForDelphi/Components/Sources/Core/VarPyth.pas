@@ -116,7 +116,7 @@ function iter(const AValue : Variant ) : Variant; // return an iterator for the 
 implementation
 
 uses
-  VarUtils, SysUtils, SysConst, TypInfo, Classes;
+  VarUtils, SysUtils, TypInfo, Classes;
 
 type
   TNamedParamDesc = record
@@ -262,7 +262,6 @@ type
 resourcestring
   SMultiDimensionalPropsNotSupported = 'Multi-dimensional sequences or mappings are not supported in Python';
   SCantConvertArg = 'Can''t convert argument #%d of %s into a Python object';
-  SBothOperandsOfIntDivideMustBeIntegers = 'Both operands of an integer division must be of type integer';
   SCantConvertKeyToPythonObject = 'Can''t convert Key into a Python object';
   SCantConvertValueToPythonObject = 'Can''t convert Value into a Python object';
   SCantCreateNewSequenceObject = 'Can''t create a new sequence object';
@@ -876,7 +875,6 @@ procedure TPythonVariantType.VarDataCastTo(var Dest: TVarData; const Source: TVa
 begin
   VarCast(Variant(Dest), Variant(Source), AVarType);
 end;
-
 {$ENDIF}
 
 procedure TPythonVariantType.Clear(var V: TVarData);
