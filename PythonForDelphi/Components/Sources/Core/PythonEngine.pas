@@ -3135,9 +3135,9 @@ uses
   AnsiStrings,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
-  Math,
-  Registry;
+  Registry,
 {$ENDIF}
+  Math;
 
 
 (*******************************************************)
@@ -3308,7 +3308,7 @@ end;
 (**                                                   **)
 (*******************************************************)
 
-procedure TDynamicDll.DoOpenDll(const aDllName : string);
+procedure TDynamicDll.DoOpenDll(const aDllName : String);
 begin
   if not IsHandleValid then
   begin
@@ -3323,7 +3323,7 @@ begin
     {$ELSE}
     //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
     FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
-      RTLD_LAZY+RTLD_GLOBAL));
+      RTLD_LAZY+RTLD_GLOBAL)
     {$ENDIF}
     );
   end;
