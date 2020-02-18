@@ -1057,7 +1057,7 @@ type
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
-    hashcode    : Integer;  // -1 when unknown
+    hashcode    : NativeInt;  // -1 when unknown
     days        : Integer;  // -MAX_DELTA_DAYS <= days <= MAX_DELTA_DAYS
     seconds     : Integer;  // 0 <= seconds < 24*3600 is invariant
     microseconds: Integer;  // 0 <= microseconds < 1000000 is invariant
