@@ -20,49 +20,64 @@ unit MethodCallBackTest;
 interface
 
 uses
-  TestFramework, MethodCallback;
+  DUnitX.TestFramework,
+  MethodCallback;
 
 implementation
 
 
 type
+  TTwoArgStdFunction = function (arg1, arg2: string): integer; stdcall;
+  TThreeArgCDeclProcedure = procedure (arg1, arg2, arg3: string); cdecl;
+
   TFourArgStdFunction = function(arg1, arg2, arg3, arg4: integer): integer; stdcall;
   TFiveArgCdeclFunction = function(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
 
-  TTestObj = class(TObject)
+  TMyFuncCallback = function(arg1, arg2: string): integer of object; stdcall;
+  TMyProcCallback = procedure (arg1, arg2, arg3: string) of object; cdecl;
+
+
+  TTestObj = class
   public
     Argument1: string;
     Argument2: string;
     Argument3: string;
-    function TwoArgStdFunction(arg1: string; arg2: string): integer; stdcall;
-    procedure ThreeArgCdeclProcedure(arg1: string; arg2: string; arg3: string); cdecl;
+    function TwoArgStdFunction(arg1, arg2: string): integer; stdcall;
+    procedure ThreeArgCdeclProcedure(arg1, arg2, arg3: string); cdecl;
     function FourArgStdFunction(arg1, arg2, arg3, arg4: integer): integer; stdcall;
     function FiveArgCdeclFunction(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
   end;
 
-  TMethodCallbackTest = class(TTestCase)
-  protected
+  [TestFixture]
+  TMethodCallbackTest = class
+  private
     fTestObj: TTestObj;
-    procedure Setup; override;
-    procedure Teardown; override;
-  published
+  public
+    [SetupFixture]
+    procedure SetupFixture;
+    [TearDownFixture]
+    procedure Teardown;
+    [Test]
     procedure TestDeleteOnEmptyAllocator;
+    [Test]
     procedure TestCallBackStdCall;
+    [Test]
     procedure TestCallBackCDecl;
+    [Test]
     procedure TestOfObjectCallBackStdCall;
+    [Test]
     procedure TestOfObjectCallBackCDecl;
+    [Test]
     procedure TestDeleteCallBack;
+    [Test]
     procedure TestFourArgStdFunction;
+    [Test]
     procedure TestFiveArgCdeclFunction;
+    [Test]
     procedure TestMemoryMgmt;
+    [Test]
     procedure TestBug01;
   end;
-
-  TTwoArgStdFunction = function (arg1, arg2: string): integer; stdcall;
-  TThreeArgCDeclProcedure = procedure (arg1, arg2, arg3: string); cdecl;
-
-  TMyFuncCallback = function(arg1, arg2: string): integer of object; stdcall;
-  TMyProcCallback = procedure (arg1, arg2, arg3: string) of object; cdecl;
 
 { TTestObj }
 
@@ -95,9 +110,8 @@ end;
 
 { TMethodCallbackTest }
 
-procedure TMethodCallbackTest.Setup;
+procedure TMethodCallbackTest.SetupFixture;
 begin
-  inherited;
   fTestObj:=TTestObj.Create;
 end;
 
@@ -105,8 +119,6 @@ procedure TMethodCallbackTest.Teardown;
 begin
   fTestObj.Free;
   FreeCallBacks;
-  inherited;
-
 end;
 
 procedure TMethodCallbackTest.TestBug01;
@@ -114,7 +126,7 @@ const
    AllocCount = {$IFDEF CPUX64}51{$ELSE}90{$ENDIF};
 var
   i: integer;
-  ptr, ptr1, ptr2: Pointer;
+  ptr: Pointer;
 begin
   {
 I discovered a severe Bug in my memory manager code in MethodCallbacks.
@@ -142,19 +154,20 @@ I'm sorry about that. Hope it didn't cause too many problems up to now.
   // one ThreeArgDecl callback uses 33 bytes code + 4 bytes Next pointer = 37 bytes
   // we should be able to allocate 110 Callbacks per page
 
-  CheckEquals(0, CodeMemPageCount);
+  FreeCallBacks;
+  Assert.AreEqual(0, CodeMemPageCount);
 
   for i:=1 to AllocCount do
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
 
   // there should still be 1 page allocated
-  CheckEquals(1, CodeMemPageCount);
+  Assert.AreEqual(1, CodeMemPageCount);
 
   // get one callback more and we should have 2 pages
   ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
   // getting CodeMemPageCount would crash as the next page pointer was overwritten by the
   // last allocation
-  CheckEquals(2, CodeMemPageCount);
+  Assert.AreEqual(2, CodeMemPageCount);
 
 end;
 
@@ -170,9 +183,9 @@ begin
 
   proc('first arg', 'second arg', 'third arg');
 
-  CheckEquals('first arg', fTestObj.Argument1);
-  CheckEquals('second arg', fTestObj.Argument2);
-  CheckEquals('third arg', fTestObj.Argument3);
+  Assert.AreEqual('first arg', fTestObj.Argument1);
+  Assert.AreEqual('second arg', fTestObj.Argument2);
+  Assert.AreEqual('third arg', fTestObj.Argument3);
 
 end;
 
@@ -186,9 +199,9 @@ begin
   //---call method through pointer
   func:=TTwoArgStdFunction(ptr);
 
-  CheckEquals(1, func('first arg', 'second arg'));
-  CheckEquals('first arg', fTestObj.Argument1);
-  CheckEquals('second arg', fTestObj.Argument2);
+  Assert.AreEqual(1, func('first arg', 'second arg'));
+  Assert.AreEqual(string('first arg'), fTestObj.Argument1);
+  Assert.AreEqual(string('second arg'), fTestObj.Argument2);
 end;
 
 procedure TMethodCallbackTest.TestDeleteCallBack;
@@ -215,6 +228,7 @@ begin
   DeleteCallBack(ptr1);
   DeleteCallBack(ptr2);
   DeleteCallback(ptr3);
+  Assert.Pass;
 end;
 
 procedure TMethodCallbackTest.TestDeleteOnEmptyAllocator;
@@ -223,6 +237,7 @@ var
 begin
   ptr1 := nil;
   DeleteCallBack(ptr1);
+  Assert.Pass();
 end;
 
 procedure TMethodCallbackTest.TestFiveArgCdeclFunction;
@@ -230,7 +245,7 @@ Var
   CallBack : TFiveArgCdeclFunction;
 begin
    CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgCdeclFunction, 5, ctCDECL);
-   CheckEquals(CallBack(1,2,3,4,5), 1*4+2*5+3);
+   Assert.AreEqual(CallBack(1,2,3,4,5), 1*4+2*5+3);
    DeleteCallBack(@CallBack);
 end;
 
@@ -239,7 +254,7 @@ Var
   CallBack : TFourArgStdFunction;
 begin
    CallBack := GetCallBack(fTestObj, @TTestObj.FourArgStdFunction, 4, ctSTDCALL);
-   CheckEquals(CallBack(1,2,3,4), 1*3+2*4);
+   Assert.AreEqual(CallBack(1,2,3,4), 1*3+2*4);
    DeleteCallBack(@CallBack);
 end;
 
@@ -255,39 +270,37 @@ begin
   // one ThreeArgDecl callback uses 33 bytes code + 4 bytes Next pointer = 37 bytes
   // we should be able to allocate 110 Callbacks per page
 
-  CheckEquals(0, CodeMemPageCount);
+  FreeCallBacks;
+  Assert.AreEqual(0, CodeMemPageCount);
 
   for i:=1 to AllocCount do
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
 
   // there should still be 1 page allocated
-  CheckEquals(1, CodeMemPageCount);
+  Assert.AreEqual(1, CodeMemPageCount);
 
   // get one callback more and we should have 2 pages
   ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  CheckEquals(2, CodeMemPageCount);
+  Assert.AreEqual(2, CodeMemPageCount);
 
   // get some more memory
   ptr1:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
   ptr2:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  CheckEquals(2, CodeMemPageCount);
+  Assert.AreEqual(2, CodeMemPageCount);
 
 
   // now Free the callbacks on page 2
   DeleteCallBack(ptr1);
-  CheckEquals(2, CodeMemPageCount);
+  Assert.AreEqual(2, CodeMemPageCount);
   DeleteCallBack(ptr);
-  CheckEquals(2, CodeMemPageCount);
+  Assert.AreEqual(2, CodeMemPageCount);
   DeleteCallBack(ptr2);
   // page count should be back to 1
-  CheckEquals(1, CodeMemPageCount);
+  Assert.AreEqual(1, CodeMemPageCount);
 
   // allocate one more and page count should go up to 2 again
   ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  CheckEquals(2, CodeMemPageCount);
-
-
-
+  Assert.AreEqual(2, CodeMemPageCount);
 end;
 
 procedure TMethodCallbackTest.TestOfObjectCallBackCDecl;
@@ -304,9 +317,9 @@ begin
 
   proc('first arg', 'second arg', 'third arg');
 
-  CheckEquals('first arg', fTestObj.Argument1);
-  CheckEquals('second arg', fTestObj.Argument2);
-  CheckEquals('third arg', fTestObj.Argument3);
+  Assert.AreEqual('first arg', fTestObj.Argument1);
+  Assert.AreEqual('second arg', fTestObj.Argument2);
+  Assert.AreEqual('third arg', fTestObj.Argument3);
 
 end;
 
@@ -322,13 +335,13 @@ begin
   //---call method through pointer
   func:=TTwoArgStdFunction(ptr);
 
-  CheckEquals(1, func('first arg', 'second arg'));
-  CheckEquals('first arg', fTestObj.Argument1);
-  CheckEquals('second arg', fTestObj.Argument2);
+  Assert.AreEqual(1, func('first arg', 'second arg'));
+  Assert.AreEqual('first arg', fTestObj.Argument1);
+  Assert.AreEqual('second arg', fTestObj.Argument2);
 end;
 
 
 initialization
-  TestFrameWork.RegisterTest(TMethodCallBackTest.Suite());
+  TDUnitX.RegisterTestFixture(TMethodCallBackTest);
 
 end.
