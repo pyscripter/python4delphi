@@ -6313,7 +6313,7 @@ end;
 function TPythonEngine.PyUnicode_AsWideString( obj : PPyObject ) : UnicodeString;
 var
   _size : Integer;
-{$IFDEF LINUX}
+{$IFDEF POSIX}
   _ucs4Str : UCS4String;
 {$ENDIF}
 begin
@@ -6322,7 +6322,7 @@ begin
     _size := PyUnicode_GetSize(obj);
     if _size > 0 then
     begin
-{$IFDEF LINUX}
+{$IFDEF POSIX}
       // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
       SetLength(_ucs4Str, _size+1);
       if PyUnicode_AsWideChar(obj, @_ucs4Str[0], _size) <> _size then
@@ -6345,12 +6345,12 @@ begin
 end;
 
 function TPythonEngine.PyUnicode_FromWideString( const AString : UnicodeString) : PPyObject;
-{$IFDEF LINUX}
+{$IFDEF POSIX}
 var
   _ucs4Str : UCS4String;
 {$ENDIF}
 begin
-{$IFDEF LINUX}
+{$IFDEF POSIX}
   // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
   _ucs4Str := WideStringToUCS4String(AString);
   Result := PyUnicode_FromWideChar( {PWideChar}(@_ucs4Str[0]), Length(_ucs4Str)-1 {trim trailing zero});
