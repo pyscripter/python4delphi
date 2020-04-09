@@ -1088,7 +1088,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
 Var
   NewCallDesc : TCallDesc;
 begin
-  if CallDesc^.NamedArgCount > 0 then GetNamedParams;
+  GetNamedParams;
   try
     if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
       NewCallDesc := CallDesc^;
@@ -1105,7 +1105,7 @@ begin
       inherited;
       {$ENDIF PATCHEDSYSTEMDISPINVOKE}
   finally
-    if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
+    SetLength(fNamedParams, 0);
   end;
 end;
 
