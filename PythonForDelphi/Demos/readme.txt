@@ -1,3 +1,8 @@
+Before you try the demos please see the Wiki topic "How Python for Delphi finds your Python distribution" at
+https://github.com/pyscripter/python4delphi/wiki/FindingPython.  You will need to adjust the demos
+accordingly, to successfully load the python distribution that you have installed in your computer.
+
+
 Demo01	A simple Python evaluator
 Demo02	Evaluate a Python expression
 Demo03	Defining Python/Delphi vars

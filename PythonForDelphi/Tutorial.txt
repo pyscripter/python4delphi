@@ -2,6 +2,11 @@ Using Python components.
 Here's a simple tutorial, each step is linked to a demo project (demoXXX)
 located in the Demos folder.
 
+Before you try the demos please see the Wiki topic "How Python for Delphi finds your Python distribution" at
+https://github.com/pyscripter/python4delphi/wiki/FindingPython.  You will need to adjust the demos
+accordingly, to successfully load the python distribution that you have installed in your computer.
+
+
 -------------------------------------------------------------- 
 1) A simple Python evaluator: (Kylix ready)
 --------------------------------------------------------------
