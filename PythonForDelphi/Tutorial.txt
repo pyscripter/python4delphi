@@ -1,6 +1,8 @@
 Using Python components.
 Here's a simple tutorial, each step is linked to a demo project (demoXXX)
 located in the Demos folder.
+Before you start: Check the NOTES in Readme.txt in case you have a Python
+distribution that does not have PYTHONHOME set (Anaconda for example).
 
 -------------------------------------------------------------- 
 1) A simple Python evaluator: (Kylix ready)

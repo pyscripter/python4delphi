@@ -58,7 +58,9 @@ FILES:
 
 INSTALLATION:
 ~~~~~~~~~~~~~
-  install the Python for Windows distribution (http://www.python.org/).
+  Install the Python for Windows distribution (http://www.python.org/).
+  In case your Python distribution does not register an environment variable
+  PYTHONHOME, (for example Anaconda) see under NOTES.
 
   1) Install the core components
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -111,10 +113,17 @@ INSTALLATION:
 
   Note that you can try this module by invoking the ..\Modules\TestApp.py script.
 
-NOTE:
+NOTES:
 ~~~~~
-  Don't forget to look at the tutorial file (tutorial.txt) which introduces the
-  demos.
+  1) Don't forget to look at the tutorial file (tutorial.txt) which introduces the
+     demos.
+  
+  2) In case your Python distribution does not register (set) the environment variable
+     PYTHONHOME, you need to either
+     - add that variable yourself and let it point to the folder with your python dll
+     or
+     - add some code to obtain a valid TPythonVersion and assign that to your
+       (T)PythonEngine before it loads the python dll.
 
 DISTRIBUTION:
 ~~~~~~~~~~~~~
