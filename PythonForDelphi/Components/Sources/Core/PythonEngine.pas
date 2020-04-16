@@ -1374,7 +1374,7 @@ type
   TIOStringList = TStringList;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPythonInputOutput = class(TComponent)
   protected
@@ -2122,7 +2122,7 @@ type
   end;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPythonEngine = class(TPythonInterface)
   private
@@ -2599,7 +2599,7 @@ type
   end;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPythonModule = class(TMethodsContainer)
     protected
@@ -2865,7 +2865,7 @@ type
   // The component that initializes the Python type and
   // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPythonType = class(TGetSetContainer)
     protected
@@ -2953,7 +2953,7 @@ type
   TExtSetDataEvent = procedure ( Sender : TObject; Data : PPyObject) of Object;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPythonDelphiVar = class( TEngineClient )
     protected

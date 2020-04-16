@@ -752,7 +752,7 @@ Type
      Method EventHandlers.RegisterHandler can be used to add event handling functionality
   }
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(pidAllPlatforms)]
   {$IFEND}
   TPyDelphiWrapper = class(TEngineClient, IFreeNotificationSubscriber)
   private
