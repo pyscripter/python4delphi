@@ -80,6 +80,7 @@ uses
   DynLibs,
 {$ELSE}
   Posix.DLfcn,
+  Posix.Pthread,
 {$ENDIF}
 {$ENDIF}
   Classes,
@@ -3363,19 +3364,17 @@ begin
   DoOpenDll(aDllName);
 
   if not IsHandleValid then begin
-{$IFDEF MSWINDOWS}
+    {$IFDEF MSWINDOWS}
     s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-{$ENDIF}
-{$IFDEF LINUX}
+{   $ELSE}
     s := Format('Error: Could not open Dll "%s"',[DllName]);
-{$ENDIF}
+    {$ENDIF}
     if FatalMsgDlg then
-{$IFDEF MSWINDOWS}
+      {$IFDEF MSWINDOWS}
       MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-{$ENDIF}
-{$IFDEF LINUX}
+      {$ELSE}
       WriteLn(ErrOutput, s);
-{$ENDIF}
+      {$ENDIF}
 
     if FatalAbort then
       Quit;
@@ -3402,8 +3401,16 @@ end;
 function TDynamicDll.Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
 var
   E : EDllImportError;
+  {$IF not Defined(FPC) and not Defined(MSWINDOWS)}
+  S : string;
+  {$IFEND}
 begin
+  {$IF Defined(FPC) or Defined(MSWINDOWS)}
   Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
+  {$ELSE}
+  S := string(funcname);
+  Result := GetProcAddress( FDLLHandle, PWideChar(S) );
+  {$IFEND}
   if (Result = nil) and canFail then begin
     {$IFDEF MSWINDOWS}
     E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
@@ -3427,8 +3434,7 @@ function  TDynamicDll.IsHandleValid : Boolean;
 begin
 {$IFDEF MSWINDOWS}
   Result := (FDLLHandle >= 32);
-{$ENDIF}
-{$IFDEF LINUX}
+{$ELSE}
   Result := FDLLHandle <> 0;
 {$ENDIF}
 end;
@@ -3527,8 +3533,8 @@ procedure TPythonInterface.AfterLoad;
 begin
   inherited;
   FIsPython3000 := Pos('PYTHON3', UpperCase(DLLName)) >  0;
-  FMajorVersion := StrToInt(DLLName[7 {$IFDEF LINUX}+3{$ENDIF}]);
-  FMinorVersion := StrToInt(DLLName[8{$IFDEF LINUX}+4{$ENDIF}]);
+  FMajorVersion := StrToInt(DLLName[7 {$IFNDEF MSWINDOWS}+3{$ENDIF}]);
+  FMinorVersion := StrToInt(DLLName[8{$IFNDEF MSWINDOWS}+4{$ENDIF}]);
 
 
   if FIsPython3000 then
@@ -9743,17 +9749,21 @@ end;
 procedure MaskFPUExceptions(ExceptionsMasked : boolean;
   MatchPythonPrecision : Boolean);
 begin
+  {$IF Defined(CPUX86) or Defined(CPUX64)}
   if ExceptionsMasked then
     SetExceptionMask([exInvalidOp, exDenormalized, exZeroDivide,
       exOverflow, exUnderflow, exPrecision])
   else
     SetExceptionMask([exDenormalized, exUnderflow, exPrecision]);
-{$IFNDEF NEXTGEN}{$WARN SYMBOL_PLATFORM OFF}
+  {$IFNDEF NEXTGEN}{$WARN SYMBOL_PLATFORM OFF}
+  {$IF Defined(FPC) or Defined(MSWINDOWS)}
   if MatchPythonPrecision then
       SetPrecisionMode(pmDouble)
     else
       SetPrecisionMode(pmExtended);
-{$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
+  {$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
+  {$IFEND}
+  {$IFEND}
 end;
 
 function CleanString(const s : AnsiString; AppendLF : Boolean) : AnsiString;

@@ -81,10 +81,10 @@ implementation
 Uses
   {$IFDEF MSWINDOWS}
   Windows,
+  Registry,
   {$ENDIF}
   SysUtils,
   Math,
-  Registry,
   PythonEngine;
 
 { TPythonVersion }
