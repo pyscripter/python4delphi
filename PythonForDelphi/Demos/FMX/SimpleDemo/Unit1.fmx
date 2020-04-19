@@ -1,0 +1,79 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'P4D Test'
+  ClientHeight = 486
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 0
+  object memoIn: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      'import sys'
+      'print(sys.version)')
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 193.000000000000000000
+    Size.PlatformDefault = False
+    StyleLookup = 'memostyle'
+    TabOrder = 0
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 189.000000000000000000
+  end
+  object Splitter1: TSplitter
+    Align = Top
+    Cursor = crVSplit
+    MinSize = 20.000000000000000000
+    Position.Y = 193.000000000000000000
+    ShowGrip = False
+    Size.Width = 640.000000000000000000
+    Size.Height = 5.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object memoOut: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 242.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 3
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 238.000000000000000000
+  end
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 440.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 46.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 4
+    object Button1: TButton
+      Position.X = 32.000000000000000000
+      Position.Y = 8.000000000000000000
+      Size.Width = 89.000000000000000000
+      Size.Height = 28.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 4
+      Text = 'Run code'
+      OnClick = Button1Click
+    end
+  end
+  object PythonEngine: TPythonEngine
+    IO = PythonInputOutput
+    Left = 432
+    Top = 16
+  end
+  object PythonInputOutput: TPythonInputOutput
+    OnSendUniData = PythonInputOutputSendUniData
+    UnicodeIO = True
+    RawOutput = True
+    Left = 536
+    Top = 16
+  end
+end
