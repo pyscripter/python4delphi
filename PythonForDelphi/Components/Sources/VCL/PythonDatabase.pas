@@ -22,7 +22,7 @@ interface
 uses Classes, PythonEngine;
 type
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonDatabase = class(TEngineClient)
     protected

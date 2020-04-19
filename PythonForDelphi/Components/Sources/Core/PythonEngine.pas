@@ -89,6 +89,16 @@ uses
   Variants,
   MethodCallBack;
 
+{$IF not Defined(FPC) and (CompilerVersion >= 23)}
+const
+  {$IF CompilerVersion >= 33}
+    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32 or pidOSX64 or pidLinux64;
+  {$ELSE}
+    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32;
+  {$IFEND}
+{$IFEND}
+
+
 //#######################################################
 //##                                                   ##
 //##           PYTHON specific constants               ##
@@ -1375,7 +1385,7 @@ type
   TIOStringList = TStringList;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonInputOutput = class(TComponent)
   protected
@@ -2123,7 +2133,7 @@ type
   end;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonEngine = class(TPythonInterface)
   private
@@ -2600,7 +2610,7 @@ type
   end;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonModule = class(TMethodsContainer)
     protected
@@ -2866,7 +2876,7 @@ type
   // The component that initializes the Python type and
   // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonType = class(TGetSetContainer)
     protected
@@ -2954,7 +2964,7 @@ type
   TExtSetDataEvent = procedure ( Sender : TObject; Data : PPyObject) of Object;
 
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidAllPlatforms)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonDelphiVar = class( TEngineClient )
     protected
