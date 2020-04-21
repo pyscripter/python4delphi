@@ -15,7 +15,8 @@ uses
   DUnitX.StackTrace.Jcl,
   DUnitX.TestFramework,
   VarPythTest in 'VarPythTest.pas',
-  MethodCallBackTest in 'MethodCallBackTest.pas';
+  MethodCallBackTest in 'MethodCallBackTest.pas',
+  WrapDelphiTest in 'WrapDelphiTest.pas';
 
 var
   runner : ITestRunner;
@@ -36,7 +37,7 @@ begin
     runner.UseRTTI := True;
     //tell the runner how we will log things
     //Log to the console window
-    logger := TDUnitXConsoleLogger.Create(true);
+    logger := TDUnitXConsoleLogger.Create(False);
     runner.AddLogger(logger);
     //Generate an NUnit compatible XML File
     nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
@@ -48,8 +49,9 @@ begin
     if not results.AllPassed then
       System.ExitCode := EXIT_ERRORS;
 
+    //TDUnitX.Options.ExitBehavior := TDUnitXExitBehavior.Continue;
     {$IFNDEF CI}
-    //We don't want this happening when running under CI.
+    // We don't want this happening when running under CI.
     if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
     begin
       System.Write('Done.. press <Enter> key to quit.');

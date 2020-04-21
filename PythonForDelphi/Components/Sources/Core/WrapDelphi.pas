@@ -1251,7 +1251,7 @@ var
   i : Integer;
   EnumObj: PPyObject;
   EnumName: string;
-  EnumValue: Longint;
+  EnumValue: Integer;
   EnumInfo: PTypeInfo;
 begin
   Result := 0;

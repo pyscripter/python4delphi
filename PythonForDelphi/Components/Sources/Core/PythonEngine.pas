@@ -397,11 +397,6 @@ type
    TPWideChar = array[0..16000] of PWideChar;
    PPAnsiChar     = ^TPAnsiChar;
    PPWideChar = ^TPWideChar;
-   PInt	      = ^Integer;
-   PDouble    = ^Double;
-   PFloat     = ^Real;
-   PLong      = ^LongInt;
-   PShort     = ^ShortInt;
 
 
 //#######################################################
@@ -1536,17 +1531,17 @@ type
 
   public
     // define Python flags. See file pyDebug.h
-    Py_DebugFlag: PInt;
-    Py_VerboseFlag: PInt;
-    Py_InteractiveFlag: PInt;
-    Py_OptimizeFlag: PInt;
-    Py_NoSiteFlag: PInt;
-    Py_UseClassExceptionsFlag: PInt;
-    Py_FrozenFlag: PInt;
-    Py_TabcheckFlag: PInt;
-    Py_UnicodeFlag: PInt;
-    Py_IgnoreEnvironmentFlag: PInt;
-    Py_DivisionWarningFlag: PInt;
+    Py_DebugFlag: PInteger;
+    Py_VerboseFlag: PInteger;
+    Py_InteractiveFlag: PInteger;
+    Py_OptimizeFlag: PInteger;
+    Py_NoSiteFlag: PInteger;
+    Py_UseClassExceptionsFlag: PInteger;
+    Py_FrozenFlag: PInteger;
+    Py_TabcheckFlag: PInteger;
+    Py_UnicodeFlag: PInteger;
+    Py_IgnoreEnvironmentFlag: PInteger;
+    Py_DivisionWarningFlag: PInteger;
     //_PySys_TraceFunc:    PPPyObject;
     //_PySys_ProfileFunc: PPPPyObject;
 
@@ -1646,16 +1641,6 @@ type
     PyBool_Type: PPyTypeObject;
     PyEnum_Type: PPyTypeObject;
 
-    //PyArg_GetObject: function(args : PPyObject; nargs, i: integer; p_a: PPPyObject): integer; cdecl;
-    //PyArg_GetLong:   function(args : PPyObject; nargs, i: integer; p_a: PLong): integer; cdecl;
-    //PyArg_GetShort:  function(args : PPyObject; nargs, i: integer; p_a: PShort): integer; cdecl;
-    //PyArg_GetFloat:  function(args : PPyObject; nargs, i: integer; p_a: PFloat): integer; cdecl;
-    //PyArg_GetString: function(args : PPyObject; nargs, i: integer; p_a: PAnsiString): integer; cdecl;
-    //PyArgs_VaParse:  function (args : PPyObject; format: PAnsiChar; va_list: array of const): integer; cdecl;
-    // Does not work!
-    // Py_VaBuildValue: function (format: PAnsiChar; va_list: array of const): PPyObject; cdecl;
-    //PyBuiltin_Init:     procedure; cdecl;
-
     PyComplex_FromCComplex: function(c: Py_complex):PPyObject; cdecl;
     PyComplex_FromDoubles: function(realv,imag : double):PPyObject; cdecl;
     PyComplex_RealAsDouble: function(op : PPyObject ): double; cdecl;
@@ -1748,14 +1733,14 @@ type
     PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
     PyImport_Cleanup:procedure; cdecl;
-    PyImport_GetMagicNumber:function :LONGINT; cdecl;
+    PyImport_GetMagicNumber:function :LongInt; cdecl;
     PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
     PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
     PyImport_Import:function (name:PPyObject):PPyObject; cdecl;
     //PyImport_Init:procedure; cdecl;
     PyImport_ReloadModule:function (ob:PPyObject):PPyObject; cdecl;
     PyInstance_New:function (obClass, obArg, obKW:PPyObject):PPyObject; cdecl;
-    PyInt_AsLong:function (ob:PPyObject):LONGINT; cdecl;
+    PyInt_AsLong:function (ob:PPyObject):LongInt; cdecl;
     PyList_Append:function (ob1,ob2:PPyObject):integer; cdecl;
     PyList_AsTuple:function (ob:PPyObject):PPyObject; cdecl;
     PyList_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
@@ -1768,9 +1753,9 @@ type
     PyList_Size:function (ob:PPyObject):NativeInt; cdecl;
     PyList_Sort:function (ob:PPyObject):integer; cdecl;
     PyLong_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
-    PyLong_AsLong:function (ob:PPyObject):LONGINT; cdecl;
+    PyLong_AsLong:function (ob:PPyObject):LongInt; cdecl;
     PyLong_FromDouble:function (db:double):PPyObject; cdecl;
-    PyLong_FromLong:function (l:longint):PPyObject; cdecl;
+    PyLong_FromLong:function (l:LongInt):PPyObject; cdecl;
     PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
     PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
     PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
@@ -3292,12 +3277,12 @@ end;
 
 function  TPythonInputOutput.GetCurrentThreadSlotIdx : Integer;
 var
-  thread_id : Longint;
+  thread_id : NativeInt;
   i : Integer;
 begin
   thread_id := GetCurrentThreadId;
   for i := 0 to FLinesPerThread.Count-1 do
-    if Longint(FLinesPerThread.Objects[i]) = thread_id then
+    if NativeInt(FLinesPerThread.Objects[i]) = thread_id then
       begin
         Result := i;
         Exit;
@@ -3729,14 +3714,6 @@ begin
   PyBool_Type                := Import('PyBool_Type');
   PyEnum_Type                := Import('PyEnum_Type');
 
-  //@PyArg_GetObject           := Import('PyArg_GetObject');
-  //@PyArg_GetLong             := Import('PyArg_GetLong');
-  //@PyArg_GetShort            := Import('PyArg_GetShort');
-  //@PyArg_GetFloat            := Import('PyArg_GetFloat');
-  //@PyArg_GetString           := Import('PyArg_GetString');
-  //@PyArgs_VaParse            := Import('PyArgs_VaParse');
-  //@Py_VaBuildValue           := Import('Py_VaBuildValue');
-  //@PyBuiltin_Init            := Import('PyBuiltin_Init');
   PyComplex_FromCComplex    := Import('PyComplex_FromCComplex');
   PyComplex_FromDoubles     := Import('PyComplex_FromDoubles');
   PyComplex_RealAsDouble    := Import('PyComplex_RealAsDouble');
@@ -4747,7 +4724,7 @@ end;
 
 procedure TPythonEngine.AssignPyFlags;
 
-  procedure SetFlag( AFlag: PInt; AValue : Boolean );
+  procedure SetFlag( AFlag: PInteger; AValue : Boolean );
   begin
     if AValue then
       AFlag^ := 1
@@ -5886,7 +5863,7 @@ begin
           wStr := ''
         else
           wStr := DeRefV;
-        Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
+        Result := PyUnicode_FromWideString(wStr);
       end;
     varString:
       begin
@@ -5895,8 +5872,8 @@ begin
       end;
     varUString:
       begin
-       wStr := DeRefV;
-        Result := PyUnicode_FromWideChar( PWideChar(wStr), Length(wStr) );
+        wStr := DeRefV;
+        Result := PyUnicode_FromWideString(wStr);
       end;
   else
     if VarType(DeRefV) and varArray <> 0 then
@@ -9765,13 +9742,13 @@ begin
       exOverflow, exUnderflow, exPrecision])
   else
     SetExceptionMask([exDenormalized, exUnderflow, exPrecision]);
-  {$IFNDEF NEXTGEN}{$WARN SYMBOL_PLATFORM OFF}
+  {$WARN SYMBOL_PLATFORM OFF}
   {$IF Defined(FPC) or Defined(MSWINDOWS)}
   if MatchPythonPrecision then
       SetPrecisionMode(pmDouble)
     else
       SetPrecisionMode(pmExtended);
-  {$ENDIF !NEXTGEN}{$WARN SYMBOL_PLATFORM ON}
+  {$WARN SYMBOL_PLATFORM ON}
   {$IFEND}
   {$IFEND}
 end;

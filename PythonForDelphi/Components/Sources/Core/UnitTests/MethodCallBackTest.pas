@@ -123,7 +123,7 @@ end;
 
 procedure TMethodCallbackTest.TestBug01;
 const
-   AllocCount = {$IFDEF CPUX64}51{$ELSE}90{$ENDIF};
+   AllocCount = {$IFDEF CPUX64}{$IFDEF MSWINDOWS}51{$ELSE}88{$ENDIF}{$ELSE}90{$ENDIF};
 var
   i: integer;
   ptr: Pointer;
@@ -150,9 +150,6 @@ I'm sorry about that. Hope it didn't cause too many problems up to now.
   }
   
   //---Test the code-memory manager
-
-  // one ThreeArgDecl callback uses 33 bytes code + 4 bytes Next pointer = 37 bytes
-  // we should be able to allocate 110 Callbacks per page
 
   FreeCallBacks;
   Assert.AreEqual(0, CodeMemPageCount);
@@ -260,7 +257,7 @@ end;
 
 procedure TMethodCallbackTest.TestMemoryMgmt;
 const
-   AllocCount = {$IFDEF CPUX64}101{$ELSE}110{$ENDIF};
+   AllocCount = {$IFDEF CPUX64}{$IFDEF MSWINDOWS}101{$ELSE}88{$ENDIF}{$ELSE}110{$ENDIF};
 var
   i: integer;
   ptr, ptr1, ptr2: Pointer;

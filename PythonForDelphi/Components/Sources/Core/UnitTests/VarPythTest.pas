@@ -45,14 +45,22 @@ Uses
   VarPyth;
 
 procedure TTestVarPyth.SetupFixture;
-
 begin
   PythonEngine := TPythonEngine.Create(nil);
   PythonEngine.Name := 'PythonEngine';
   PythonEngine.AutoLoad := False;
   PythonEngine.FatalAbort := True;
   PythonEngine.FatalMsgDlg := True;
+
+//  PythonEngine.DllName := 'libpython3.7.dylib';
+//  PythonEngine.DllPath :=
+//    '/usr/local/Cellar/python/3.7.7/Frameworks/Python.framework/Versions/3.7/lib/';
+//  PythonEngine.RegVersion := '3.7';
+//  PythonEngine.UseLastKnownVersion := False;
+
+
   PythonEngine.UseLastKnownVersion := True;
+
   PythonEngine.AutoFinalize := True;
   PythonEngine.InitThreads := True;
   PythonEngine.PyFlags := [pfInteractive];
@@ -526,7 +534,6 @@ begin
   Assert.IsTrue(b.GetItem(1) = 5);
   Assert.IsTrue(b.GetItem(2) = 6);
   Assert.IsTrue(string(b) = '[4, 5, 6]');
-
   // concatenation
   c := a + b;
   // check result of operation
@@ -758,7 +765,6 @@ begin
   c := a;
   Assert.IsTrue( c = a);
   Assert.IsTrue( VarIsSame(c, a) ); // checks if 2 variants share the same Python object.
-
   // empty strings
   a := VarPythonCreate('');
   Assert.IsTrue(a.length = 0);

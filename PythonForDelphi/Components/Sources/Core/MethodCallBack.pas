@@ -34,18 +34,8 @@ uses SysUtils;
 type
   TCallType = (ctSTDCALL, ctCDECL);
   TCallBack = procedure of object;
-  TDDEAPIfunc = function( CallType, Fmt: Integer; Conv: longint;
-                          hsz1, hsz2: longint;
-                          Data: longint; Data1, Data2: integer):
-                          longint of object; stdcall;
-// Method declaration for DDE(ML) interface. Callbackmethods for DDE(ML) have
-// to be declared according to this.
 
-function GetDDECallBack(method: TDDEAPIfunc): Pointer;
-// Call for example with
-// GetDDECallBack(DDECallBackMethod);
-
-function  GetCallBack( self: TObject; method: Pointer;
+  function  GetCallBack( self: TObject; method: Pointer;
                        argnum: Integer; calltype: tcalltype): Pointer;
 // Call for example with
 // CallBackProc := GetCallBack( self, @TSelfObject.Method, 2, ctSTDCALL);
@@ -129,16 +119,12 @@ const
 
 var
   CodeMemPages: PCodeMemPage;
-  
+
 type
 {$IFDEF FPC}
   PtrCalcType = PtrUInt;
 {$ELSE}
-  {$IFDEF CPUX64}
   PtrCalcType = NativeInt;
-  {$ELSE}
-  PtrCalcType = Longint;
-  {$ENDIF}
 {$ENDIF}
 
 {$IFNDEF MSWINDOWS}
@@ -180,7 +166,9 @@ begin
     page:=VirtualAlloc(nil, PageSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 	{$ELSE}
     //page := GetMem(PageSize);
+    {$WARN SYMBOL_PLATFORM OFF}
     page := mmap(Pointer($10000000), PageSize, PROT_NONE, MAP_PRIVATE or MAP_ANON, -1, 0);
+    {$WARN SYMBOL_PLATFORM ON}
     if page=Pointer(-1) then //MMAP_FAILED result?
     begin
       ptr := nil;
@@ -274,11 +262,6 @@ begin
     inc(result);
     page:=page^.Next;
   end;
-end;
-
-function GetDDECallBack(method: TDDEAPIfunc): Pointer;
-begin
-  result := GetOfObjectCallBack(TCallBack(method),8,ctSTDCALL);
 end;
 
 function  GetOfObjectCallBack( CallBack: TCallBack;

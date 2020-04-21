@@ -252,9 +252,9 @@ type
     VType: TVarType;
     Reserved1, Reserved2, Reserved3: Word;
     VPython: TPythonData;
-    Reserved4: LongInt;
+    Reserved4: Integer;
     {$IFDEF CPUX64}
-    Reserved5: LongInt;  // size is 24 bytes in 64bit
+    Reserved5: Integer;  // size is 24 bytes in 64bit
     {$ENDIF CPUX64}
   end;
 
@@ -933,6 +933,188 @@ const
   CPropertyGet = $02;
   CPropertySet = $04;
 
+{$IF defined(PATCHEDSYSTEMDISPINVOKE) and (defined(OSX64) or defined(LINUX))}
+{
+   Fixes https://quality.embarcadero.com/browse/RSP-28097
+}
+var
+  _EmptyBSTR: PWideChar = nil;
+
+Const
+  SDispatchError = 'Variant method calls not supported';
+
+procedure _DispInvokeError;
+begin
+  raise EVariantDispatchError.Create(SDispatchError);
+end;
+
+function GetDispatchInvokeArgs(CallDesc: PCallDesc; Params: Pointer; var Strings: TStringRefList; OrderLTR : Boolean): TVarDataArray;
+const
+  { Parameter type masks - keep in sync with decl.h/ap* enumerations}
+  atString   = $48;
+  atUString  = $4A;
+  atVarMask  = $3F;
+  atTypeMask = $7F;
+  atByRef    = $80;
+var
+  I: Integer;
+  ArgType: Byte;
+  PVarParm: PVarData;
+  StringCount: Integer;
+  VAList: TVarArgList;
+  Temp: Pointer;
+begin
+  VAList := TVarArgList(Params^);
+  StringCount := 0;
+  SetLength(Result, CallDesc^.ArgCount);
+  for I := 0 to CallDesc^.ArgCount-1 do
+  begin
+    ArgType := CallDesc^.ArgTypes[I];
+
+    if OrderLTR then
+      PVarParm := @Result[I]
+    else
+      PVarParm := @Result[CallDesc^.ArgCount-I-1];
+
+    if (ArgType and atByRef) = atByRef then
+    begin
+      Temp := VarArgGetValue(VAList, Pointer);
+      if (ArgType and atTypeMask) = atString then
+      begin
+        PVarData(PVarParm)^.VType := varByRef or varOleStr;
+        PVarData(PVarParm)^.VPointer := Strings[StringCount].FromAnsi( PAnsiString(Temp));
+        Inc(StringCount);
+      end
+      else
+      if (ArgType and atTypeMask) = atUString then
+      begin
+        PVarData(PVarParm)^.VType := varByRef or varOleStr;
+        PVarData(PVarParm)^.VPointer := Strings[StringCount].FromUnicode(PUnicodeString(Temp));
+        Inc(StringCount);
+      end
+      else
+      begin
+        if ((ArgType and atTypeMask) = varVariant) and
+          ((PVarData(Temp)^.VType = varString) or (PVarData(Temp)^.VType = varUString)) then
+          VarCast(PVariant(Temp)^, PVariant(Temp)^, varOleStr);
+        //PVarData(PVarParm)^.VType := varByRef or (ArgType and atTypeMask);
+
+        ArgType := ArgType and atTypeMask;
+        if DispatchUnsignedAsSigned then
+          case ArgType of
+            varUInt64:   ArgType := varInt64;
+            varUInt32:   ArgType := varInteger;
+            varWord:     ArgType := varSmallint;
+            varByte:     ArgType := varShortInt;
+          end;
+        PVarData(PVarParm)^.VType := varByRef or ArgType;
+
+        PVarData(PVarParm)^.VPointer := Temp;
+      end;
+    end
+    else // ByVal
+    begin
+      PVarParm^.VType := ArgType;
+      case ArgType of
+        varEmpty, varNull: ; // Only need to set VType
+        varInteger:   PVarParm^.VInteger := VarArgGetValue(VAList, Integer);
+        varSingle:    PVarParm^.VSingle := VarArgGetValue(VAList, Single);
+        varDouble:    PVarParm^.VDouble :=  VarArgGetValue(VAList, Double);
+        varCurrency:  PVarParm^.VCurrency := VarArgGetValue(VAList, Currency);
+        varDate:      PVarParm^.VDate := VarArgGetValue(VAList, TDateTime);
+        varOleStr:    PVarParm^.VPointer := VarArgGetValue(VAList, Pointer);
+        varDispatch:  PVarParm^.VDispatch := VarArgGetValue(VAList, Pointer);
+        varError:     PVarParm^.VError := HRESULT($80020004); //DISP_E_PARAMNOTFOUND;
+        varBoolean:   PVarParm^.VBoolean := VarArgGetValue(VAList, Boolean);
+        varVariant:
+          begin
+            PVarParm^.VType := varEmpty;
+{$IFDEF CPUX64}
+
+//          PVariant(PVarParm)^ := PVariant(Params^)^;
+            PVariant(PVarParm)^ := VarArgGetValue(VAList, PVariant)^;
+{$ELSE}
+//          PVariant(PVarParm)^ := PVariant(Params)^;
+            PVariant(PVarParm)^ := VarArgGetValue(VAList, Variant);
+{$ENDIF}
+          end;
+        varUnknown:   PVarParm^.VUnknown := VarArgGetValue(VAList, Pointer);
+        varSmallint:  PVarParm^.VSmallInt := VarArgGetValue(VAList, SmallInt);
+        varShortInt:  PVarParm^.VShortInt := VarArgGetValue(VAList, ShortInt);
+        varByte:      PVarParm^.VByte :=  VarArgGetValue(VAList, Byte);
+        varWord:
+          begin
+            if DispatchUnsignedAsSigned then
+            begin
+              PVarParm^.VType := varInteger;
+              PVarParm^.VInteger := Integer(VarArgGetValue(VAList, Word));
+            end else
+              PVarParm^.VWord := VarArgGetValue(VAList, Word);
+          end;
+        varUInt32:
+          begin
+            if DispatchUnsignedAsSigned then
+            begin
+              PVarParm^.VType := varInteger;
+              PVarParm^.VInteger := Integer(VarArgGetValue(VAList, Cardinal));
+            end else
+              PVarParm^.VUInt32 := VarArgGetValue(VAList, Cardinal);
+          end;
+        varInt64:     PVarParm^.VInt64 := VarArgGetValue(VAList, Int64);
+        varUInt64:
+          begin
+            if DispatchUnsignedAsSigned then
+            begin
+              PVarParm^.VType := varInt64;
+              PVarParm^.VInt64 := VarArgGetValue(VAList, Int64); //Int64(PInt64(Params)^);
+            end else
+              PVarParm^.VUInt64 := VarArgGetValue(VAList, UInt64); //PUInt64(Params)^;
+          end;
+        atString:
+        begin
+          PVarParm^.VType := varOleStr;
+          Temp := VarArgGetValue(VAList, Pointer);
+          if PAnsiString(Temp)^ <> '' then
+          begin
+            {
+            This line causes a crash and is replaced with the one below in line with unicode strings
+            PVarParm^.VPointer := PWideChar(Strings[StringCount].FromAnsi(PAnsiString(Temp))^);
+            }
+            PVarParm^.VPointer := PWideChar(Strings[StringCount].FromAnsi(@AnsiString(Temp))^);
+            Strings[StringCount].Ansi := nil;
+            Inc(StringCount);
+          end
+          else
+            PVarParm^.VPointer := _EmptyBSTR;
+        end;
+        atUString:
+          begin
+            PVarParm^.VType := varOleStr;
+            Temp := VarArgGetValue(VAList, Pointer);
+            if UnicodeString(Temp) <> '' then
+            begin
+              PVarParm^.VPointer := PWideChar(Strings[StringCount].FromUnicode(@UnicodeString(Temp))^);
+              Strings[StringCount].Unicode := nil;
+              Inc(StringCount);
+            end
+            else
+              PVarParm^.VPointer := _EmptyBSTR;
+          end;
+      else
+        // Unsupported Var Types
+        //varDecimal  = $000E; { vt_decimal     14 } {UNSUPPORTED as of v6.x code base}
+        //varUndef0F  = $000F; { undefined      15 } {UNSUPPORTED per Microsoft}
+        //varRecord   = $0024; { VT_RECORD      36 }
+        //varString   = $0100; { Pascal string  256 } {not OLE compatible }
+        //varAny      = $0101; { Corba any      257 } {not OLE compatible }
+        //varUString  = $0102; { Unicode string 258 } {not OLE compatible }
+        _DispInvokeError;
+      end;
+    end;
+  end;
+end;
+{$IFEND}
+
 {$IFDEF DELPHIXE7_OR_HIGHER}
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
   [Ref] const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
@@ -1118,7 +1300,7 @@ procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
   var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 type
   PParamRec = ^TParamRec;
-  TParamRec = array[0..3] of LongInt;
+  TParamRec = array[0..3] of Integer;
   TStringDesc = record
     BStr: WideString;
     PStr: PAnsiString;
