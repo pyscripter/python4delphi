@@ -146,8 +146,8 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="VarPythTest.pas"/>
         <DCCReference Include="MethodCallBackTest.pas"/>
+        <DCCReference Include="VarPythTest.pas"/>
         <DCCReference Include="WrapDelphiTest.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>

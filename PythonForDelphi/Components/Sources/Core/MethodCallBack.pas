@@ -201,13 +201,10 @@ begin
   page:=CodeMemPages;
   lastblock:=nil;
   lastpage:=nil;
-  if page <> nil then
-    block:=page^.CodeBlocks
-  else
-    block:=niL;
 
   while page <> nil do
   begin
+    block:=page^.CodeBlocks;
     while PtrCalcType(block) < (PtrCalcType(page) + pagesize) do
     begin
       if @(block^.Code[0]) = ptr then
@@ -233,7 +230,7 @@ begin
 		  {$ELSE}
           // FreeMem(page);
           munmap(page,PageSize);
-		  {$ENDIF}		  
+		  {$ENDIF}
         end;
 
         exit;
@@ -243,7 +240,6 @@ begin
     end;
     lastpage:=page;
     page:=page^.Next;
-    block:=page^.CodeBlocks;
     lastblock:=nil;
   end;
 

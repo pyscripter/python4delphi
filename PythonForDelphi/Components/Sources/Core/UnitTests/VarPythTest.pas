@@ -21,6 +21,8 @@ type
     [TearDownFixture]
     procedure TearDownFixture;
     [Test]
+    procedure TestIterator;
+    [Test]
     procedure TestIntegers;
     [Test]
     procedure TestFloats;
@@ -261,7 +263,19 @@ begin
   c := VarPythonCreate(False);
   Assert.IsTrue(VarIsBool(c));
   Assert.IsTrue(not VarIsTrue(c));
+end;
 
+procedure TTestVarPyth.TestIterator;
+Var
+  Module: Variant;
+  Count: integer;
+begin
+  Count := 0;
+  for Module in VarPyIterate(SysModule.modules) do begin
+    Count := Count + 1;
+    Log(Module);
+  end;
+  Assert.IsTrue(Count = len(SysModule.modules));
 end;
 
 procedure TTestVarPyth.TestMappings;

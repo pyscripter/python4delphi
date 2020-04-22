@@ -102,16 +102,38 @@ function VarPythonAsString(AValue : Variant) : string;
 function VarPythonToVariant(AValue : Variant): Variant;
 {$ENDIF}
 
-function None : Variant;
-function Ellipsis : Variant;
-function MainModule : Variant; // return the main module that's used for executing a script.
-function BuiltinModule : Variant; // return the builtin module
-function SysModule : Variant; // return the builtin module 'sys'
-function DatetimeModule : Variant; // return the builtin module 'datetime'
-function Import( const AModule : AnsiString ) : Variant; // import a Python module and return the module object.
-function len(const AValue : Variant ) : NativeInt; // return the length of a Python collection.
-function _type(const AValue : Variant ) : Variant; // return the type object of a Python object.
-function iter(const AValue : Variant ) : Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
+function None: Variant;
+function Ellipsis: Variant;
+function MainModule: Variant; // return the main module that's used for executing a script.
+function BuiltinModule: Variant; // return the builtin module
+function SysModule: Variant; // return the builtin module 'sys'
+function DatetimeModule: Variant; // return the builtin module 'datetime'
+function Import( const AModule : AnsiString ): Variant; // import a Python module and return the module object.
+function len(const AValue : Variant ): NativeInt; // return the length of a Python collection.
+function _type(const AValue : Variant ): Variant; // return the type object of a Python object.
+function iter(const AValue : Variant ): Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
+
+type
+  TVarPyEnumerator = record
+  private
+    FIterator: Variant;
+    FCurrent: Variant;
+  public
+    constructor Create(const AValue: Variant);
+    function MoveNext: Boolean; inline;
+    function GetCurrent: Variant; inline;
+    property Current: Variant read GetCurrent;
+  end;
+
+  TVarPyEnumerateHelper = record
+  private
+    FIterable: Variant;
+  public
+    constructor Create(const AValue: Variant);
+    function  GetEnumerator: TVarPyEnumerator;
+  end;
+
+function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
 
 implementation
 
@@ -2406,6 +2428,50 @@ begin
     fPyObject := Value;
     Py_XIncRef(fPyObject);
   end;
+end;
+
+{ TVarPyEnumerator }
+
+constructor TVarPyEnumerator.Create(const AValue: Variant);
+begin
+  FIterator := iter(AValue);
+end;
+
+function TVarPyEnumerator.GetCurrent: Variant;
+begin
+  Result := FCurrent;
+end;
+
+function TVarPyEnumerator.MoveNext: Boolean;
+begin
+  Result := True;
+  try
+    FCurrent := BuiltinModule.next(FIterator);
+  except
+    on E: EPyStopIteration do
+    begin
+      Result := False;
+    end
+    else
+      raise;
+  end;
+end;
+
+function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
+begin
+  Result.Create(AValue);
+end;
+
+{ TVarPyEnumerateHelper }
+
+constructor TVarPyEnumerateHelper.Create(const AValue: Variant);
+begin
+  FIterable := AValue;
+end;
+
+function TVarPyEnumerateHelper.GetEnumerator: TVarPyEnumerator;
+begin
+  Result.Create(FIterable);
 end;
 
 initialization

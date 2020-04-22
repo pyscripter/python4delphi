@@ -14,8 +14,8 @@ uses
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.StackTrace.Jcl,
   DUnitX.TestFramework,
-  VarPythTest in 'VarPythTest.pas',
   MethodCallBackTest in 'MethodCallBackTest.pas',
+  VarPythTest in 'VarPythTest.pas',
   WrapDelphiTest in 'WrapDelphiTest.pas';
 
 var
