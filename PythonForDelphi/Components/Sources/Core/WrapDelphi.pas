@@ -300,8 +300,6 @@ class TTestForm(Form):
   - Demo 31 has been updated to test/showcase some of the new features.
 
  TODO:
-  - Implement RTTI Fields
-
   - Extend SetProps: if property receiving the value is a TStrings and the value a sequence,
     then assign the sequence content to the TStrings.
   - can we debug the Python code executed from a triggered event? Presently not, as we directly ask Python
@@ -515,7 +513,7 @@ Type
     Exposes published properties and methods
     Also exposes the property ClassName and methods InheritesFrom and Free
     Do not create  TPyDelphi or its subclasses directly - Instead use
-    PyDelphiWrapper.TObjectToPyObject
+    PyDelphiWrapper.Wrap
   }
   TPyDelphiObject = class (TPyInterfacedObject, IFreeNotificationSubscriber)
   private
@@ -1018,6 +1016,11 @@ function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
 var
   PyObject : TPyObject;
 begin
+  if PyValue = GetPythonEngine.Py_None then begin
+     Result := True;
+     Obj := nil;
+     Exit;
+  End;
   Result := False;
   if IsDelphiObject(PyValue) then
   begin
@@ -1747,7 +1750,7 @@ function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
             else
             case Field.FieldType.TypeKind of
               tkClass:
-                Result := Wrap(Field.GetValue(Instance).AsObject);
+                Result := Wrap(Field.GetValue(Instance).AsObject);  // Returns None Field is nil
             else
               Result := SimpleValueToPython(Field.GetValue(Instance), ErrMsg)
             end;
@@ -2154,8 +2157,8 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
         else
         case Prop.PropertyType.TypeKind of
           tkClass:
-            if ValidateClassProperty(value, Prop.PropertyType.Handle, Obj, ErrMsg) then begin
-              Prop.SetValue(DelphiObject, TPyDelphiObject(PythonToDelphi(Value)).DelphiObject);
+            if ValidateClassProperty(Value, Prop.PropertyType.Handle, Obj, ErrMsg) then begin
+              Prop.SetValue(DelphiObject, Obj);
               Result := True;
             end;
           tkMethod:
@@ -2189,7 +2192,7 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
           case Field.FieldType.TypeKind of
             tkClass:
               if ValidateClassProperty(value, Field.FieldType.Handle, Obj, ErrMsg) then begin
-                Field.SetValue(DelphiObject, TPyDelphiObject(PythonToDelphi(Value)).DelphiObject);
+                Field.SetValue(DelphiObject, Obj);
                 Result := True;
               end;
           else
@@ -2217,13 +2220,17 @@ var
   KeyName: string;
   ErrMsg: string;
 begin
-  Result := inherited SetAttrO(key, value);
-  if Result = 0 then Exit;
-
+  Result := -1;
   if Assigned(DelphiObject) and GetPythonEngine.PyString_Check(Key) then
     KeyName := GetPythonEngine.PyString_AsDelphiString(Key)
-  else
+  else begin
     Exit;
+  end;
+
+  // Only call the inherited method if the attribute exists
+  if GetPythonEngine.PyObject_HasAttrString(GetSelf, PAnsiChar(key)) = 1 then
+    Result := inherited SetAttrO(key, value);
+  if Result = 0 then Exit;
 
   GetPythonEngine.PyErr_Clear;
   {$IFDEF EXTENDED_RTTI}
@@ -2243,6 +2250,9 @@ begin
       Result := HandleOtherTypes(PropInfo, ErrMsg);
   end;
   {$ENDIF}
+  //  Subclasses have a __dict__ and can set extra fields
+  if Result <> 0 then
+    Result := inherited SetAttrO(key, value);
   if Result <> 0 then
     with GetPythonEngine do
       PyErr_SetObject(PyExc_AttributeError^, PyString_FromDelphiString(
