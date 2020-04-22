@@ -199,11 +199,11 @@ begin
   // we need to search through all the assigned blocks
   // A page is only released when all blocks in it have been freed
   page:=CodeMemPages;
-  lastblock:=nil;
   lastpage:=nil;
 
   while page <> nil do
   begin
+    lastblock:=nil;
     block:=page^.CodeBlocks;
     while PtrCalcType(block) < (PtrCalcType(page) + pagesize) do
     begin
@@ -240,9 +240,7 @@ begin
     end;
     lastpage:=page;
     page:=page^.Next;
-    lastblock:=nil;
   end;
-
 end;
 
 function CodeMemPageCount: integer;
