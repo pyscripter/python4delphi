@@ -20,7 +20,7 @@ uses
 {$I Definition.Inc}
 
 exports
-  initDelphi;
+  PyInit_Delphi;
 {$IFDEF MSWINDOWS}
 {$E pyd}
 {$ENDIF}

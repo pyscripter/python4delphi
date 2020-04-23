@@ -8,9 +8,7 @@
  Contributors:
    Morgan Martinet (mmm@free.fr)
 
- Features:                                     P
-   Check our Wiki at: http://py4d.pbwiki.com/.                          
-
+ Features:
    Published properties and methods compiled with {$METHODINFO ON} are
    handled automatically (Note that METHODINFO can be used only with Delphi7
    or later, but all the other wrapping features will work with previous
