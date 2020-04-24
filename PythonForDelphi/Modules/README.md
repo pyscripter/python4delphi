@@ -1,3 +1,3 @@
-# Using P4D as a Python extension module
+# Create Python extension modules using P4D
 
-The project in the subdirectory Delphi generates a Python library (a dynamic link library with extension "pyd" in Windows) that allows you to create user interfaces using  delphi from within python.  The small demo TestApp.py gives you a flavour of what is possible.   The machinery by which this is achived is the WrapDelphi unit.
+The project in the subdirectory Delphi generates a Python library (a dynamic link library with extension "pyd" in Windows) that allows you to create user interfaces using  delphi from within python.  The whole VCL (almost) is wrapped with a few lines of code! The small demo TestApp.py gives you a flavour of what is possible.   The machinery by which this is achived is the WrapDelphi unit.  You can use the same approach to create Python extension modules that expose your own classes and functions to the Python interpreter. You can package your extension with setuptools and distribute it through [PyPi](https://pypi.org/).
