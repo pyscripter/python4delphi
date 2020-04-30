@@ -1177,8 +1177,10 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
 
   procedure PatchedDispInvoke(Dest: PVarData;
     const Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
+  {$IFNDEF DELPHI10.4_OR_HIGHER}
   type
     PStringRefList = ^TStringRefList;
+  {$IFEND}
   const
     CDoMethod    = $01;
     CPropertyGet = $02;
@@ -1188,7 +1190,11 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     LIdent: string;
     LTemp: TVarData;
     VarParams : TVarDataArray;
+    {$IFNDEF DELPHI10.4_OR_HIGHER}
     Strings: array of TStringRef;
+    {$ELSE}
+    Strings: TStringRefList;
+    {$IFEND}
     PIdent: PByte;
   begin
     // Grab the identifier
@@ -1197,8 +1203,11 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     LIdent := FixupIdent( UTF8ToString(MarshaledAString(PIdent)) );
     if LArgCount > 0 then begin
       SetLength(Strings, LArgCount);
-      FillChar(Strings[0], SizeOf(TStringRef)*LArgCount, 0);
-      VarParams := GetDispatchInvokeArgs(CallDesc, Params, PStringRefList(Strings)^, true);
+     {$IFNDEF DELPHI10.4_OR_HIGHER}
+     VarParams := GetDispatchInvokeArgs(CallDesc, Params, PStringRefList(Strings)^, true);
+     {$ELSE}
+     VarParams := GetDispatchInvokeArgs(CallDesc, Params, Strings, true);
+     {$IFEND}
     end;
     try
       // What type of invoke is this?
