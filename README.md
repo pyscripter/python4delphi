@@ -1,4 +1,4 @@
-Python for Delphi (P4D) is a set of free components that wrap up the Python dll into Delphi and Lazarus (FPC). They let you easily execute Python scripts, create new Python modules and new Python types. You can create Python extensions as dlls and much more.  P4D provides different levels of functionality:
+[Python](www.python.org) for Delphi (P4D) is a set of free components that wrap up the Python dll into Delphi and Lazarus (FPC). They let you easily execute Python scripts, create new Python modules and new Python types. You can create Python extensions as dlls and much more.  P4D provides different levels of functionality:
 
   * **Low-level access to the python API**
   * **High-level bi-directional interaction with Python**
@@ -8,6 +8,13 @@ Python for Delphi (P4D) is a set of free components that wrap up the Python dll 
 
 P4D makes it very easy to use python as a scripting language for Delphi applications.  It comes with an extensive range of demos and tutorials.
 
-Before you try the demos please see the Wiki topic [How Python for Delphi finds your Python distribution](https://github.com/pyscripter/python4delphi/wiki/FindingPython).
+### How to use Python for Delphi ###
+
+The best way to learn about how to use Python for Delphi is to try the extensive range of demos available.  Also studying the unit tests for VarPyth and WrapDelphi can help understand what is possible with these two units.
+
+### Wiki topics ###
+- [Supported Platforms](https://github.com/pyscripter/python4delphi/wiki/SupportedPlatforms)
+- [How Python for Delphi finds your Python distribution](https://github.com/pyscripter/python4delphi/wiki/FindingPython) (read before trying the demos)
+
 
 Delphinus-Support
