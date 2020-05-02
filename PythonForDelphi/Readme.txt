@@ -63,43 +63,16 @@ INSTALLATION:
   1) Install the core components
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~
   For recent versions of Delphi, install the "Python_d" package located in the 
-  Components folder and add the folder "...\Components\Sources\Core".
+  Components folder and add the folder "...\Components\Sources\Core" to the library
+  path.
 
-  For Delphi 3, install the "Python_d3" package located in the Components folder
-  and add the folder "...\Components\Sources\Core".
-
-  For Delphi 4, install the "Python_d4" package located in the Components folder
-  and add the folder "...\Components\Sources\Core".
-
-  For Delphi 5, install the "Python_d5" package located in the Components folder
-  and add the folder "...\Components\Sources\Core".
-
-  For Delphi 6, install the "Python_d6" package located in the Components folder
-  and add the folder "...\Components\Sources\Core".
-
-  For Delphi 7, install the "Python_d7" package located in the Components folder
-  and add the folder "...\Components\Sources\Core".
-
+  
   2) Install the VCL components (this is optional)
      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   For recent versions of Delphi, install the "PythonVCL_d" package located in the 
-  Components folder and add the folder "...\Components\Sources\Core".
-
-  For Delphi 3, install the "PythonVCL_d3" package located in the Components folder
-  and add the folder "...\Components\Sources\VCL".
-
-  For Delphi 4, install the "PythonVCL_d4" package located in the Components folder
-  and add the folder "...\Components\Sources\VCL".
-
-  For Delphi 5, install the "PythonVCL_d5" package located in the Components folder
-  and add the folder "...\Components\Sources\VCL".
-
-  For Delphi 6, install the "PythonVCL_d6" package located in the Components folder
-  and add the folder "...\Components\Sources\VCL".
-
-  For Delphi 7, install the "PythonVCL_d7" package located in the Components folder
-  and add the folder "...\Components\Sources\VCL".
+  Components folder and add the folder "...\Components\Sources\Core" to the library
+  path.
 
 
   3) Build Modules\Delphi\Delphi.dpr (This is optional and unsupported)
@@ -119,7 +92,4 @@ NOTE:
 DISTRIBUTION:
 ~~~~~~~~~~~~~
   You are free to distribute your applications built with Python for Delphi,
-  but don't forget to install the python15.dll in the window\system folder of
-  your client, or install the Python for windows distribution (it needs more
-  space on the harddisk, but it's better because there are all Python modules
-  and the help).
+  but don't forget to install the Python for windows distribution.
