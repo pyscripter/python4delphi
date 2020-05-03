@@ -14,6 +14,14 @@ type
   TFruit = (Apple, Banana, Orange);
   TFruits = set of TFruit;
 
+  {$M+}
+  ITestInterface = interface(IInterface)
+    ['{AD50ADF2-2691-47CA-80AB-07AF1EDA8C89}']
+    procedure SetString(const S: string);
+    function GetString: string;
+  end;
+  {$M-}
+
   TSubRecord = record
     DoubleField: double;
   end;
@@ -35,9 +43,17 @@ type
     DoubleField: double;
     ObjectField: TObject;
     RecordField: TTestRecord;
+    InterfaceField: ITestInterface;
     procedure BuyFruits(AFruits: TFruits);
     property Fruit: TFruit read FFruit write FFruit;
     property Fruits: TFruits read FFruits write FFruits;
+  end;
+
+  TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
+  private
+    FString: string;
+    procedure SetString(const S: string);
+    function GetString: string;
   end;
 
   [TestFixture]
@@ -47,9 +63,11 @@ type
     DelphiModule: TPythonModule;
     PyDelphiWrapper: TPyDelphiWrapper;
     Rtti_Var: Variant;
-    TestRttiAccess : TTestRttiAccess;
+    TestRttiAccess: TTestRttiAccess;
     Rec: TTestRecord;
     Rtti_Rec: Variant;
+    FTestInterface: ITestInterface;
+    Rtti_Interface: Variant;
   public
     [SetupFixture]
     procedure SetupFixture;
@@ -77,6 +95,10 @@ type
     procedure TestRecord;
     [Test]
     procedure TestRecordField;
+    [Test]
+    procedure TestInterface;
+    [Test]
+    procedure TestInterfaceField;
   end;
 
 implementation
@@ -135,15 +157,21 @@ begin
   //  This time we would like the object to be destroyed when the PyObject
   //  is destroyed, so we need to set its Owned property to True;
   TestRttiAccess := TTestRTTIAccess.Create;
+  TestRttiAccess.InterfaceField := TTestInterfaceImpl.Create;
   Py := PyDelphiWrapper.Wrap(TestRttiAccess, TObjectOwnership.soReference);
   DelphiModule.SetVar('rtti_var', Py);
   PythonEngine.Py_DecRef(Py);
   Py := PyDelphiWrapper.WrapRecord(@Rec, TRttiContext.Create.GetType(TypeInfo(TTestRecord)) as TRttiStructuredType);
   DelphiModule.SetVar('rtti_rec', Py);
   PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec');
+  FTestInterface := TTestInterfaceImpl.Create;
+  Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
+  DelphiModule.SetVar('rtti_interface', Py);
+  PythonEngine.Py_DecRef(Py);
+  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
+  Rtti_Interface := MainModule.rtti_interface;
 end;
 
 procedure TTestWrapDelphi.TearDownFixture;
@@ -177,6 +205,25 @@ begin
   Assert.IsTrue(RTTI_var.Fruit = 'Apple');
   Rtti_Var.Fruit := 'Banana';
   Assert.IsTrue(TestRttiAccess.Fruit = Banana);
+end;
+
+procedure TTestWrapDelphi.TestInterface;
+begin
+  Rtti_Interface.SetString('Test');
+  Assert.IsTrue(Rtti_Interface.GetString() = 'Test');
+end;
+
+procedure TTestWrapDelphi.TestInterfaceField;
+begin
+  Rtti_Interface.SetString('New Value');
+  Assert.IsTrue(Rtti_Interface.GetString() = 'New Value');
+  Rtti_Var.InterfaceField.SetString('Old Value');
+  Assert.IsTrue(Rtti_Var.InterfaceField.GetString() = 'Old Value');
+  // Assign interface
+  Rtti_Var.InterfaceField := Rtti_Interface;
+  Assert.IsTrue(Rtti_Var.InterfaceField.GetString() = 'New Value');
+  Rtti_Var.InterfaceField := None;
+  Assert.IsTrue(VarIsNone(Rtti_Var.InterfaceField));
 end;
 
 procedure TTestWrapDelphi.TestMethodCall;
@@ -294,6 +341,18 @@ end;
 procedure TTestRecord.SetStringField(S: string);
 begin
   Self.StringField := S;
+end;
+
+{ TTestInterfaceImpl }
+
+function TTestInterfaceImpl.GetString: string;
+begin
+  Result := FString;
+end;
+
+procedure TTestInterfaceImpl.SetString(const S: string);
+begin
+  FString := S;
 end;
 
 initialization
