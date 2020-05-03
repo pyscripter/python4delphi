@@ -604,6 +604,34 @@ Type
     property Value : PPyObject read fValue write SetValue;
   end;
 
+  {$IFDEF EXTENDED_RTTI}
+  { Expose Records when Extended RTTI is available }
+  TPyDelphiRecord = class (TPyObject)
+  private
+     fAddr: Pointer;
+     fRttiType: TRttiStructuredType;
+     function GetValue: TValue;
+  protected
+    // Exposed Methods
+    function SetProps(args, keywords : PPyObject) : PPyObject; cdecl;
+    function Dir_Wrapper(args: PPyObject): PPyObject; cdecl;
+  public
+    PyDelphiWrapper : TPyDelphiWrapper;
+    constructor Create( APythonType : TPythonType ); override;
+    procedure SetAddrAndType(Address: Pointer; Typ: TRttiStructuredType);
+
+    function  GetAttrO( key: PPyObject) : PPyObject; override;
+    function  SetAttrO( key, value: PPyObject) : Integer; override;
+    function  Repr : PPyObject; override;
+    property Addr: Pointer read fAddr;
+    property RttiType: TRttiStructuredType read fRttiType;
+    property Value: TValue read GetValue;
+    //
+    class procedure RegisterMethods( PythonType : TPythonType ); override;
+    class procedure SetupType( PythonType : TPythonType ); override;
+  end;
+  {$ENDIF}
+
   TEventHandler = class
   private
     fComponent: TObject;
@@ -762,6 +790,9 @@ Type
 {$IFNDEF FPC}
     fDelphiMethodType: TPythonType;
 {$ENDIF}
+{$IFDEF EXTENDED_RTTI}
+    fRecordType : TPythonType;
+{$ENDIF}
     // Exposed Module level function CreateComponent(ComponentClass, Owner)
     function  CreateComponent( pself, args : PPyObject ) : PPyObject; cdecl;
     // Implementation of interface IFreeNotificationSubscriber
@@ -793,8 +824,12 @@ Type
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : PyCFunction; ADocString : PAnsiChar ) : PPyMethodDef; overload;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : TDelphiMethod; ADocString : PAnsiChar ) : PPyMethodDef; overload;
     function  GetHelperType(TypeName : string) : TPythonType;
-    //  Function that provides a Python object wrapping a Delphi object
+    //  Function that provides a Python object wrapping an object
     function Wrap(AObj : TObject; AOwnership: TObjectOwnership = soReference) : PPyObject;
+    {$IFDEF EXTENDED_RTTI}
+    //  Function that provides a Python object wrapping a record
+    function WrapRecord(Address: Pointer; Typ: TRttiStructuredType) : PPyObject;
+    {$ENDIF}
     // properties
     property EventHandlers : TEventHandlers read fEventHandlerList;
     // Helper types
@@ -834,6 +869,8 @@ Type
   function  PythonToSet(ATypeInfo: PTypeInfo; ASet : PPyObject) : Integer; overload;
   function  SupportsFreeNotification(AObject : TObject) : Boolean;
   procedure RaiseNotifyEvent(PyDelphiWrapper : TPyDelphiWrapper; ACallable : PPyObject; Sender: TObject);
+  {Sets mulptiple properties of PyObject from keywords argument}
+  function SetProperties(PyObject: PPyObject; keywords: PPyObject): PPyObject;
 
 implementation
 
@@ -862,8 +899,10 @@ resourcestring
   rs_ErrIterSupport = 'Wrapper %s does not support iterators';
   rs_ErrAttrSetr = 'Error in setting property %s'#$A'Error: %s';
   rs_IncompatibleClasses = 'Incompatible classes';
+  rs_IncompatibleRecords = 'Incompatible record types';
   rs_NotPublished = 'Event handling is available only for published properties';
-  rs_ExpectedObject = 'Expected a Delphi object';
+  rs_ExpectedObject = 'Expected a Pascal object';
+  rs_ExpectedRecord = 'Expected a Pascal record';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
   rs_ErrEventNoSuport = 'Class %s does not support events because it must '+
@@ -1007,6 +1046,31 @@ begin
     end;
   end
 end;
+
+function ValidateRecordProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out RecValue: TValue; out ErrMsg: string): Boolean;
+var
+  PyObject : TPyObject;
+begin
+  Result := False;
+  if IsDelphiObject(PyValue) then
+  begin
+    PyObject := PythonToDelphi(PyValue);
+    if PyObject is TPyDelphiRecord then
+    begin
+      RecValue := TPyDelphiRecord(PyObject).Value;
+      if RecValue.TypeInfo = TypeInfo then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleRecords;
+    end
+    else
+      ErrMsg := rs_ExpectedRecord;
+  end
+  else
+    ErrMsg := rs_ExpectedRecord;
+end;
+
 {$ENDIF}
 
 function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
@@ -1322,11 +1386,13 @@ Type
   //  Helper object used by TPyDelphiObject
   TPyDelphiMethodObject = class (TPyObject)
   public
-    DelphiObject: TObject;
     {$IFDEF EXTENDED_RTTI}
+    ParentAddress: Pointer;
+    ParentRtti: TRttiStructuredType;
     fDelphiWrapper : TPyDelphiWrapper;
     MethName: string;
     {$ELSE}
+    DelphiObject: TObject;
     MethodInfo : TMethodInfoHeader;
     {$ENDIF}
     function  Call( ob1, ob2 : PPyObject) : PPyObject; override;
@@ -1680,6 +1746,311 @@ begin
   end;
 end;
 
+{$IFDEF EXTENDED_RTTI}
+procedure Rtti_Dir(SL: TStringList; RttiType: TRttiType);
+var
+  RttiMethod: TRttiMethod;
+  RttiProperty: TRttiProperty;
+  RttiField: TRttiField;
+begin
+  for RttiMethod in RttiType.GetMethods do
+    if Ord(RttiMethod.Visibility) > Ord(mvProtected) then
+      SL.Add(RttiMethod.Name);
+  for RttiProperty in RttiType.GetProperties do
+    if Ord(RttiProperty.Visibility) > Ord(mvProtected) then
+      SL.Add(RttiProperty.Name);
+  for RttiField in RttiType.GetFields do
+    if Ord(RttiField.Visibility) > Ord(mvProtected) then
+      SL.Add(RttiField.Name);
+end;
+
+function GetRttiAttr(ParentAddr: Pointer; ParentType: TRttiStructuredType;
+  const AttrName: string; PyDelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): PPyObject;
+var
+  Prop: TRttiProperty;
+  Meth: TRttiMethod;
+  Field: TRttiField;
+begin
+  Result := nil;
+
+  try
+    Meth := ParentType.GetMethod(AttrName);
+    if Meth <> nil then
+    begin
+      Result := PyDelphiWrapper.DelphiMethodType.CreateInstance;
+      with PythonToDelphi(Result) as TPyDelphiMethodObject do
+      begin
+        fDelphiWrapper := PyDelphiWrapper;
+        MethName := Meth.Name;
+        ParentRtti := ParentType;
+        ParentAddress := ParentAddr;
+      end;
+    end
+    else
+    begin
+      Prop := ParentType.GetProperty(AttrName);
+      if Prop <> nil then
+      begin
+        if Ord(Prop.Visibility) < Ord(mvPublic) then
+          ErrMsg := rs_NoAccess
+        else if not Prop.IsReadable then
+          ErrMsg := rs_NotReadable
+        else if Prop.PropertyType = nil then
+          ErrMsg := rs_ErrNoTypeInfo
+        else
+        case Prop.PropertyType.TypeKind of
+          tkClass:
+            Result := PyDelphiWrapper.Wrap(Prop.GetValue(ParentAddr).AsObject);
+          tkMethod:
+            if (ParentType is TRttiInstanceType) and (Prop is TRttiInstanceProperty) then
+              Result := PyDelphiWrapper.fEventHandlerList.GetCallable(TObject(ParentAddr),
+                TRttiInstanceProperty(Prop).PropInfo);
+        else
+          Result := SimpleValueToPython(Prop.GetValue(ParentAddr), ErrMsg)
+        end;
+      end
+      else
+      begin
+        Field := ParentType.GetField(AttrName);
+        if Field <> nil then
+        begin
+          if Ord(Field.Visibility) < Ord(mvPublic) then
+            ErrMsg := rs_NoAccess
+          else if Field.FieldType = nil then
+            ErrMsg := rs_ErrNoTypeInfo
+          else
+          case Field.FieldType.TypeKind of
+            tkClass:
+              Result := PyDelphiWrapper.Wrap(Field.GetValue(ParentAddr).AsObject);  // Returns None if Field is nil
+            tkRecord:
+              if Field.FieldType is TRttiStructuredType then
+                //Result := PyDelphiWrapper.WrapRecord(Pointer(PPByte(ParentAddr)^ + Field.Offset),  TRttiStructuredType(Field.FieldType));
+                Result := PyDelphiWrapper.WrapRecord(PByte(ParentAddr) + Field.Offset,  TRttiStructuredType(Field.FieldType));
+          else
+            Result := SimpleValueToPython(Field.GetValue(ParentAddr), ErrMsg)
+          end;
+        end
+        else
+          ErrMsg := rs_UnknownAttribute;
+      end;
+    end;
+  except
+    on E: Exception do begin
+      Result := nil;
+      ErrMsg := E.Message;
+    end;
+  end;
+end;
+
+function SetRttiAttr(const ParentAddr: Pointer;  ParentType: TRttiStructuredType;
+  AttrName: string; Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): Boolean;
+var
+  Prop: TRttiProperty;
+  Field: TRttiField;
+  V: TValue;
+  Obj: TObject;
+  RecValue: TValue;
+begin
+  Result := False;
+
+  Prop := ParentType.GetProperty(AttrName);
+  if Prop <> nil then
+    try
+      if Ord(Prop.Visibility) < Ord(mvPublic) then
+        ErrMsg := rs_NoAccess
+      else if not Prop.IsWritable then
+        ErrMsg := rs_NotWritable
+      else if Prop.PropertyType = nil then
+        ErrMsg := rs_ErrNoTypeInfo
+      else
+      case Prop.PropertyType.TypeKind of
+        tkClass:
+          if ValidateClassProperty(Value, Prop.PropertyType.Handle, Obj, ErrMsg) then begin
+            Prop.SetValue(ParentAddr, Obj);
+            Result := True;
+          end;
+        tkRecord:
+          if ValidateRecordProperty(Value, Prop.PropertyType.Handle, RecValue, ErrMsg) then begin
+            Prop.SetValue(ParentAddr, RecValue);
+            Result := True;
+          end;
+        tkMethod:
+          if Prop.Visibility = mvPublished then
+            Result := PyDelphiWrapper.EventHandlers.Link(TObject(ParentAddr),
+              (Prop as TRttiInstanceProperty).PropInfo, Value, ErrMsg)
+          else
+            ErrMsg := rs_NotPublished;
+      else
+        begin
+          Result := SimplePythonToValue(Value, Prop.PropertyType.Handle, V, ErrMsg);
+          if Result then
+            Prop.SetValue(ParentAddr, V);
+        end;
+      end;
+    except
+      on E: Exception do begin
+        Result := False;
+        ErrMsg := E.Message;
+      end;
+    end
+  else
+  begin
+    Field := ParentType.GetField(AttrName);
+    if Field <> nil then
+      try
+        if Ord(Field.Visibility) < Ord(mvPublic) then
+          ErrMsg := rs_NoAccess
+        else if Field.FieldType = nil then
+          ErrMsg := rs_ErrNoTypeInfo
+        else
+        case Field.FieldType.TypeKind of
+          tkClass:
+            if ValidateClassProperty(value, Field.FieldType.Handle, Obj, ErrMsg) then begin
+              Field.SetValue(ParentAddr, Obj);
+              Result := True;
+            end;
+          tkRecord:
+            if ValidateRecordProperty(Value, Field.FieldType.Handle, RecValue, ErrMsg) then begin
+              Field.SetValue(ParentAddr, RecValue);
+              Result := True;
+            end;
+        else
+          begin
+            Result := SimplePythonToValue(Value, Field.FieldType.Handle, V, ErrMsg);
+            if Result then
+              Field.SetValue(ParentAddr, V);
+          end;
+        end;
+      except
+        on E: Exception do begin
+          Result := False;
+          ErrMsg := E.Message;
+        end;
+      end
+  end;
+end;
+
+{ TPyDelphiRecord }
+
+constructor TPyDelphiRecord.Create(APythonType: TPythonType);
+begin
+  inherited;
+  if Assigned(APythonType) and (APythonType.Owner is TPyDelphiWrapper) then
+    PyDelphiWrapper := TPyDelphiWrapper(APythonType.Owner);
+end;
+
+function TPyDelphiRecord.Dir_Wrapper(args: PPyObject): PPyObject;
+var
+  i : Integer;
+  SL : TStringList;
+begin
+  Adjust(@Self);
+  SL := TStringList.Create;
+  SL.Sorted := True;
+  SL.Duplicates := dupIgnore;
+  try
+    // Add methods
+    for i := 0 to PythonType.MethodCount - 1 do
+      SL.Add(string(AnsiString(PythonType.Methods[i].ml_name)));
+    for i := 0 to PythonType.GetSetCount - 1 do
+      SL.Add(string(AnsiString(PythonType.GetSet[i].name)));
+    Rtti_Dir(SL, RttiType);
+    Result := GetPythonEngine.StringsToPyList(SL);
+  finally
+    SL.Free;
+  end;
+end;
+
+function TPyDelphiRecord.GetAttrO(key: PPyObject): PPyObject;
+var
+  KeyName: string;
+  ErrMsg : string;
+begin
+  Result := nil;
+  if (fAddr <> nil) and GetPythonEngine.PyString_Check(Key) then
+    KeyName := GetPythonEngine.PyString_AsDelphiString(Key)
+  else
+    Exit;
+
+  if Assigned(RttiType) then
+    Result := GetRttiAttr(fAddr, RttiType, KeyName, PyDelphiWrapper, ErrMsg);
+  if not Assigned(Result) then
+    with GetPythonEngine do
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyString_FromDelphiString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+end;
+
+function TPyDelphiRecord.GetValue: TValue;
+begin
+   TValue.Make(fAddr, RttiType.Handle, Result);
+end;
+
+class procedure TPyDelphiRecord.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddMethodWithKeywords('SetProps', @TPyDelphiRecord.SetProps,
+    'TObject.SetProps(prop1=val1, prop2=val2...)'#10 +
+    'Sets several properties in one call');
+  PythonType.AddMethod('__dir__', @TPyDelphiRecord.Dir_Wrapper,
+    'Returns the list of all methods, fields and properties of this instance.');
+end;
+
+function TPyDelphiRecord.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyString_FromDelphiString(
+   Format('<Delphi record of type %s at %x>',
+   [RttiType.Name, NativeInt(Self)]) )
+end;
+
+function TPyDelphiRecord.SetAttrO(key, value: PPyObject): Integer;
+var
+   KeyName: string;
+   ErrMsg: string;
+begin
+  Result := -1;
+  if (fAddr <> nil) and GetPythonEngine.PyString_Check(Key) then
+    KeyName := GetPythonEngine.PyString_AsDelphiString(Key)
+  else begin
+    Exit;
+  end;
+
+  if SetRttiAttr(fAddr, RttiType, KeyName, Value, PyDelphiWrapper, ErrMsg) then
+      Result := 0;
+
+  if Result <> 0 then
+    with GetPythonEngine do
+      PyErr_SetObject(PyExc_AttributeError^, PyString_FromDelphiString(
+        Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
+end;
+
+function TPyDelphiRecord.SetProps(args, keywords: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  Result := SetProperties(GetSelf, keywords);
+end;
+
+class procedure TPyDelphiRecord.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.TypeName := 'PascalRecord';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.TypeFlags := [tpfHaveClass{, tpfBaseType}];
+  PythonType.GenerateCreateFunction := False;
+  PythonType.DocString.Text := 'Wrapper of a Pascal record';
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr];
+end;
+
+procedure TPyDelphiRecord.SetAddrAndType(Address: Pointer; Typ: TRttiStructuredType);
+begin
+  fAddr := Address;
+  Assert(Assigned(Typ));
+  Assert(Typ is TRttiRecordType);
+  fRttiType := Typ;
+end;
+{$ENDIF}
+
 function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
 (*
     First look whether the attribute has ben wrapped (RegisterGetSet, RegisterMethod).
@@ -1690,93 +2061,19 @@ function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
       -  Then look for published properties
 *)
 
-  {$IFDEF EXTENDED_RTTI}
-  function GetRttiAttr(Instance: TObject; const AttrName: string;
-    out ErrMsg: string): PPyObject;
-  var
-    Context: TRttiContext;
-    Prop: TRttiProperty;
-    Meth: TRttiMethod;
-    Field: TRttiField;
-  begin
-    Result := nil;
-    Context := TRttiContext.Create();
-    try
-      Meth := Context.GetType(Instance.ClassType).GetMethod(AttrName);
-      if Meth <> nil then
-      begin
-        Result := PyDelphiWrapper.DelphiMethodType.CreateInstance;
-        with PythonToDelphi(Result) as TPyDelphiMethodObject do
-        begin
-          fDelphiWrapper := PyDelphiWrapper;
-          MethName := Meth.Name;
-          DelphiObject := Self.DelphiObject;
-        end;
-      end
-      else
-      begin
-        Prop := Context.GetType(Instance.ClassType).GetProperty(AttrName);
-        if Prop <> nil then
-        begin
-          if Ord(Prop.Visibility) < Ord(mvPublic) then
-            ErrMsg := rs_NoAccess
-          else if not Prop.IsReadable then
-            ErrMsg := rs_NotReadable
-          else if Prop.PropertyType = nil then
-            ErrMsg := rs_ErrNoTypeInfo
-          else
-          case prop.PropertyType.TypeKind of
-            tkClass:
-              Result := Wrap(prop.GetValue(Instance).AsObject);
-            tkMethod:
-              if prop is TRttiInstanceProperty then
-              Result := PyDelphiWrapper.fEventHandlerList.GetCallable(Instance,
-                TRttiInstanceProperty(prop).PropInfo);
-          else
-            Result := SimpleValueToPython(prop.GetValue(Instance), ErrMsg)
-          end;
-        end
-        else
-        begin
-          Field := Context.GetType(Instance.ClassType).GetField(AttrName);
-          if Field <> nil then
-          begin
-            if Ord(Field.Visibility) < Ord(mvPublic) then
-              ErrMsg := rs_NoAccess
-            else if Field.FieldType = nil then
-              ErrMsg := rs_ErrNoTypeInfo
-            else
-            case Field.FieldType.TypeKind of
-              tkClass:
-                Result := Wrap(Field.GetValue(Instance).AsObject);  // Returns None Field is nil
-            else
-              Result := SimpleValueToPython(Field.GetValue(Instance), ErrMsg)
-            end;
-          end
-          else
-            ErrMsg := rs_UnknownAttribute;
-        end;
-      end;
-    except
-      on E: Exception do begin
-        Result := nil;
-        ErrMsg := E.Message;
-      end;
-    end;
-    Context.Free;
-  end;
-  {$ENDIF}
-
 var
   KeyName: string;
   ErrMsg : string;
-{$IFNDEF EXTENDED_RTTI}
+  {$IFNDEF EXTENDED_RTTI}
   {$IFNDEF FPC}
   Info: PMethodInfoHeader;
   {$ENDIF}
   PropInfo: PPropInfo;
   Obj : TObject;
-{$ENDIF}
+  {$ELSE}
+  Context: TRttiContext;
+  RttiType: TRttiStructuredType;
+  {$ENDIF}
 begin
   Result := inherited GetAttrO(key);
   if GetPythonEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
@@ -1789,8 +2086,16 @@ begin
   GetPythonEngine.PyErr_Clear;
 {$IFDEF EXTENDED_RTTI}
   // Use RTTI
-  if Assigned(DelphiObject) then
-    Result := GetRttiAttr(DelphiObject, KeyName, ErrMsg);
+  if Assigned(DelphiObject) then begin
+    Context := TRttiContext.Create();
+    try
+      RttiType := Context.GetType(DelphiObject.ClassType) as TRttiStructuredType;
+      if Assigned(RttiType) then
+        Result := GetRttiAttr(DelphiObject, RttiType, KeyName, PyDelphiWrapper, ErrMsg);
+    finally
+      Context.Free;
+    end;
+  end;
 {$ELSE}
 {$IFNDEF FPC}
   if Assigned(DelphiObject) then
@@ -1903,9 +2208,6 @@ var
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;
-  RttiMethod: TRttiMethod;
-  RttiProperty: TRttiProperty;
-  RttiField: TRttiField;
 {$ELSE}
   _PropList: PPropList;
   _propCount : Integer;
@@ -1925,15 +2227,7 @@ begin
     Context := TRttiContext.Create();
     try
       RttiType := Context.GetType(DelphiObject.ClassType);
-      for RttiMethod in RttiType.GetMethods do
-        if Ord(RttiMethod.Visibility) > Ord(mvProtected) then
-           SL.Add(RttiMethod.Name);
-      for RttiProperty in RttiType.GetProperties do
-        if Ord(RttiProperty.Visibility) > Ord(mvProtected) then
-          SL.Add(RttiProperty.Name);
-      for RttiField in RttiType.GetFields do
-        if Ord(RttiField.Visibility) > Ord(mvProtected) then
-          SL.Add(RttiField.Name);
+      Rtti_Dir(SL, RttiType);
     finally
       Context.Free();
     end;
@@ -2131,90 +2425,13 @@ function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
     end;
   end;
 
-{$IFDEF EXTENDED_RTTI}
-  function SetRttiAttr(const AttrName: string; Value: PPyObject;
-    out ErrMsg: string): Boolean;
-  var
-    Context: TRttiContext;
-    Prop: TRttiProperty;
-    Field: TRttiField;
-    V: TValue;
-    Obj: TObject;
-  begin
-    Result := False;
-    Context := TRttiContext.Create();
-    Prop := Context.GetType(DelphiObject.ClassType).GetProperty(AttrName);
-    if Prop <> nil then
-      try
-        if Ord(Prop.Visibility) < Ord(mvPublic) then
-          ErrMsg := rs_NoAccess
-        else if not Prop.IsWritable then
-          ErrMsg := rs_NotWritable
-        else if Prop.PropertyType = nil then
-          ErrMsg := rs_ErrNoTypeInfo
-        else
-        case Prop.PropertyType.TypeKind of
-          tkClass:
-            if ValidateClassProperty(Value, Prop.PropertyType.Handle, Obj, ErrMsg) then begin
-              Prop.SetValue(DelphiObject, Obj);
-              Result := True;
-            end;
-          tkMethod:
-            if Prop.Visibility = mvPublished then
-              Result := HandleEvent((Prop as TRttiInstanceProperty).PropInfo, ErrMsg) = 0
-            else
-              ErrMsg := rs_NotPublished;
-        else
-          begin
-            Result := SimplePythonToValue(Value, Prop.PropertyType.Handle, V, ErrMsg);
-            if Result then
-              Prop.SetValue(DelphiObject, V);
-          end;
-        end;
-      except
-        on E: Exception do begin
-          Result := False;
-          ErrMsg := E.Message;
-        end;
-      end
-    else
-    begin
-      Field := Context.GetType(DelphiObject.ClassType).GetField(AttrName);
-      if Field <> nil then
-        try
-          if Ord(Field.Visibility) < Ord(mvPublic) then
-            ErrMsg := rs_NoAccess
-          else if Field.FieldType = nil then
-            ErrMsg := rs_ErrNoTypeInfo
-          else
-          case Field.FieldType.TypeKind of
-            tkClass:
-              if ValidateClassProperty(value, Field.FieldType.Handle, Obj, ErrMsg) then begin
-                Field.SetValue(DelphiObject, Obj);
-                Result := True;
-              end;
-          else
-            begin
-              Result := SimplePythonToValue(Value, Field.FieldType.Handle, V, ErrMsg);
-              if Result then
-                Field.SetValue(DelphiObject, V);
-            end;
-          end;
-        except
-          on E: Exception do begin
-            Result := False;
-            ErrMsg := E.Message;
-          end;
-        end
-    end;
-    Context.Free;
-  end;
-{$ENDIF}
-
 var
-{$IFNDEF EXTENDED_RTTI}
+  {$IFNDEF EXTENDED_RTTI}
   PropInfo: PPropInfo;
-{$ENDIF}
+  {$ELSE}
+  Context: TRttiContext;
+  RttiType: TRttiStructuredType;
+  {$ENDIF}
   KeyName: string;
   ErrMsg: string;
 begin
@@ -2232,8 +2449,14 @@ begin
 
   GetPythonEngine.PyErr_Clear;
   {$IFDEF EXTENDED_RTTI}
-  if SetRttiAttr(KeyName, Value, ErrMsg) then
+  Context := TRttiContext.Create();
+  try
+    RttiType := Context.GetType(DelphiObject.ClassType) as TRttiStructuredType;
+    if SetRttiAttr(DelphiObject, RttiType, KeyName, Value, PyDelphiWrapper, ErrMsg) then
     Result := 0;
+  finally
+    Context.Free;
+  end;
   {$ELSE}
   PropInfo := GetPropInfo(DelphiObject, KeyName);
   if PropInfo <> nil then
@@ -2275,7 +2498,7 @@ begin
   end;
 end;
 
-function TPyDelphiObject.SetProps(args, keywords: PPyObject): PPyObject;
+function SetProperties(PyObject: PPyObject; keywords: PPyObject): PPyObject;
 var
   i : Integer;
   _key : PPyObject;
@@ -2283,7 +2506,6 @@ var
   _value : PPyObject;
 begin
   Result := nil;
-  Adjust(@Self);
   with GetPythonEngine do
   begin
     _keys := PyDict_Keys(keywords);
@@ -2295,7 +2517,7 @@ begin
           Exit;
         try
           _value := PyDict_GetItem(keywords, _key); // returns a borrowed reference
-          if PyObject_SetAttr(GetSelf, _key, _value) = -1 then
+          if PyObject_SetAttr(PyObject, _key, _value) = -1 then
             Exit;
         finally
           Py_DECREF(_key);
@@ -2306,6 +2528,12 @@ begin
     end;
     Result := ReturnNone;
   end;
+end;
+
+function TPyDelphiObject.SetProps(args, keywords: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  Result := SetProperties(GetSelf, keywords);
 end;
 
 class procedure TPyDelphiObject.SetupType(PythonType: TPythonType);
@@ -2553,10 +2781,10 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
 Var
   Args: array of TValue;
   ArgCount: Integer;
-  Context: TRttiContext;
   meth: TRttiMethod;
   ret: TValue;
   ErrMsg : string;
+  Addr: TValue;
 
 begin
   Result := nil;
@@ -2566,8 +2794,7 @@ begin
   ArgCount := PythonType.Engine.PyTuple_Size(ob1);
   SetLength(Args, ArgCount);
 
-  Context := TRttiContext.Create;
-  meth := FindMethod(MethName, Context.GetType(DelphiObject.ClassInfo), ob1, Args);
+  meth := FindMethod(MethName, ParentRtti, ob1, Args);
 
   if not Assigned(meth) then begin
     InvalidArguments(MethName, rs_IncompatibleArguments);
@@ -2575,7 +2802,11 @@ begin
   end;
 
   try
-    ret := meth.Invoke(DelphiObject, Args);
+    if ParentRtti is TRttiInstanceType then
+      Addr := TValue.From(TObject(ParentAddress))
+    else
+      Addr := TValue.From(ParentAddress);
+    ret := meth.Invoke(Addr, Args);
     if ret.IsEmpty then
       Result := GetPythonEngine.ReturnNone
     else if ret.Kind = tkClass then
@@ -2636,14 +2867,13 @@ function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
     Result := PyString_FromDelphiString(
-      Format('<Delphi method %s of class %s at %x>',
+      Format('<Delphi method %s of type %s at %x>',
          [
            {$IFDEF EXTENDED_RTTI}
-           MethName,
+           MethName, ParentRtti.Name, NativeInt(Self)
            {$ELSE}
-           MethodInfo.Name,
+           MethodInfo.Name, DelphiObject.ClassName, NativeInt(Self)
            {$ENDIF}
-           DelphiObject.ClassName, NativeInt(Self)
          ]) );
 end;
 
@@ -3148,6 +3378,9 @@ begin
   fDefaultIterType      := RegisterHelperType(TPyDelphiIterator);
   fDefaultContainerType := RegisterHelperType(TPyDelphiContainer);
   fVarParamType         := RegisterHelperType(TPyDelphiVarParameter);
+{$IFDEF EXTENDED_RTTI}
+  fRecordType           := RegisterHelperType(TPyDelphiRecord);
+{$ENDIF}
 
   // Create and Register Wrapper for TObject
   RegisterDelphiWrapper(TPyDelphiObject);
@@ -3403,6 +3636,24 @@ begin
 end;
 
 {$IFDEF EXTENDED_RTTI}
+function TPyDelphiWrapper.WrapRecord(Address: Pointer; Typ: TRttiStructuredType) : PPyObject;
+var
+  PythonType: TPythonType;
+begin
+  CheckEngine;
+  PythonType := GetHelperType('PascalRecordType');
+  if not Assigned(PythonType) or not Assigned(Address) then
+  begin
+    Result := Engine.ReturnNone;
+    Exit;
+  end;
+  Result := PythonType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiRecord do begin
+    SetAddrAndType(Address, Typ);
+    PyDelphiWrapper := Self;
+  end;
+end;
+
 // To keep the RTTI Pool alive and avoid continuously creating/destroying it
 // See also https://stackoverflow.com/questions/27368556/trtticontext-multi-thread-issue
 Var
@@ -3419,6 +3670,7 @@ initialization
 finalization
   _RttiContext.Free();
 {$ELSE}
+
 initialization
 finalization
 {$ENDIF}

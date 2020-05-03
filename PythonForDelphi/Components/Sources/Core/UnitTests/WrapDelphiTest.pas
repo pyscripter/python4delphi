@@ -14,6 +14,16 @@ type
   TFruit = (Apple, Banana, Orange);
   TFruits = set of TFruit;
 
+  TSubRecord = record
+    DoubleField: double;
+  end;
+
+  TTestRecord = record
+    StringField: string;
+    SubRecord: TSubRecord;
+    procedure SetStringField(S: string);
+  end;
+
   TTestRttiAccess = class
   private
     FFruit: TFruit;
@@ -23,7 +33,8 @@ type
     FruitsField: TFruits;
     StringField: string;
     DoubleField: double;
-    ObjectField : TObject;
+    ObjectField: TObject;
+    RecordField: TTestRecord;
     procedure BuyFruits(AFruits: TFruits);
     property Fruit: TFruit read FFruit write FFruit;
     property Fruits: TFruits read FFruits write FFruits;
@@ -37,6 +48,8 @@ type
     PyDelphiWrapper: TPyDelphiWrapper;
     Rtti_Var: Variant;
     TestRttiAccess : TTestRttiAccess;
+    Rec: TTestRecord;
+    Rtti_Rec: Variant;
   public
     [SetupFixture]
     procedure SetupFixture;
@@ -55,17 +68,24 @@ type
     [Test]
     procedure TestStringField;
     [Test]
+    procedure TestSetProps;
+    [Test]
     procedure TestObjectField;
     [Test]
     procedure TestMethodCall;
+    [Test]
+    procedure TestRecord;
+    [Test]
+    procedure TestRecordField;
   end;
 
 implementation
 
 Uses
-  SysUtils,
-  Variants,
-  Classes,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.Rtti,
   VarPyth,
   WrapDelphiClasses;
 
@@ -118,8 +138,12 @@ begin
   Py := PyDelphiWrapper.Wrap(TestRttiAccess, TObjectOwnership.soReference);
   DelphiModule.SetVar('rtti_var', Py);
   PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var');
+  Py := PyDelphiWrapper.WrapRecord(@Rec, TRttiContext.Create.GetType(TypeInfo(TTestRecord)) as TRttiStructuredType);
+  DelphiModule.SetVar('rtti_rec', Py);
+  PythonEngine.Py_DecRef(Py);
+  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec');
   Rtti_Var := MainModule.rtti_var;
+  Rtti_Rec := MainModule.rtti_rec;
 end;
 
 procedure TTestWrapDelphi.TearDownFixture;
@@ -209,6 +233,30 @@ begin
   Assert.IsTrue(rtti_var.ObjectField = None);
 end;
 
+procedure TTestWrapDelphi.TestRecord;
+Var
+  VRec: TValue;
+begin
+  Rtti_rec.StringField := 'abcd';
+  Assert.IsTrue(rtti_rec.StringField = 'abcd');
+  Rtti_rec.SetStringField('1234');
+  Assert.IsTrue(rtti_rec.StringField = '1234');
+  Assert.AreEqual(Rec.StringField, '1234');
+  Rtti_rec.SubRecord.DoubleField := 3.14;
+  Assert.IsTrue(rtti_rec.SubRecord.DoubleField = 3.14);
+  Assert.AreEqual(Rec.SubRecord.DoubleField, 3.14);
+end;
+
+procedure TTestWrapDelphi.TestRecordField;
+Var
+  RecValue: Variant;
+begin
+  RecValue := rtti_var.RecordField;
+  RecValue.StringField := 'abc';
+  rtti_var.RecordField := RecValue;
+  Assert.IsTrue(rtti_var.RecordField.StringField = 'abc');
+end;
+
 procedure TTestWrapDelphi.TestSetField;
 // Sets are converted to/from list of strings
 begin
@@ -228,12 +276,26 @@ begin
   Assert.IsTrue(TestRttiAccess.Fruits = [Apple, Banana]);
 end;
 
+procedure TTestWrapDelphi.TestSetProps;
+begin
+  rtti_var.SetProps(StringField := 'abc', DoubleField := 1.234);
+  Assert.AreEqual(TestRttiAccess.StringField, 'abc');
+  Assert.AreEqual(TestRttiAccess.DoubleField, 1.234);
+end;
+
 procedure TTestWrapDelphi.TestStringField;
 begin
   TestRttiAccess.StringField := 'Hi';
   Assert.AreEqual(string(Rtti_Var.StringField), 'Hi');
   Rtti_Var.StringField := 'P4D';
   Assert.AreEqual(TestRttiAccess.StringField, 'P4D');
+end;
+
+{ TTestRecord }
+
+procedure TTestRecord.SetStringField(S: string);
+begin
+  Self.StringField := S;
 end;
 
 initialization
