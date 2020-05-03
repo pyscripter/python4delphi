@@ -66,7 +66,7 @@ unit PythonEngine;
 
 {$IF defined(LINUX) or (defined(BSD) and not defined(DARWIN)) or defined(SOLARIS) or defined(HAIKU)}
   {$define _so_files}
-{$ENDIF}
+{$IFEND}
 
 interface
 
@@ -3573,7 +3573,7 @@ begin
         'UCS2'
       {$ELSE}
         'UCS4'
-      {$ENDIF}
+      {$IFEND}
   else
     Result := '';
 end;

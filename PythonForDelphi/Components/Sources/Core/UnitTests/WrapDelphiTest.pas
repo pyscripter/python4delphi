@@ -234,8 +234,6 @@ begin
 end;
 
 procedure TTestWrapDelphi.TestRecord;
-Var
-  VRec: TValue;
 begin
   Rtti_rec.StringField := 'abcd';
   Assert.IsTrue(rtti_rec.StringField = 'abcd');
