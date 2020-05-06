@@ -392,6 +392,7 @@ begin
   Assert.IsTrue( VarIsPythonModule(_main) );
   Assert.IsTrue( VarIsPythonModule(SysModule) );
   Assert.IsTrue( Import('sys').version = SysModule.version );
+  Log(SysModule.version);
   Assert.IsTrue( Boolean(SysModule.modules.Contains(GetPythonEngine.ExecModule)) ); // if __main__ in sys.modules
   Assert.IsTrue( VarIsSameType(_main, SysModule) );
   Assert.IsTrue( _type(_main).__name__ = 'module');

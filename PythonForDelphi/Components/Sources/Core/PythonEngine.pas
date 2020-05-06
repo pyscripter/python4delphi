@@ -113,7 +113,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'python27.dll'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'python32.dll'; RegVersion: '3.2'; APIVersion: 1013),
@@ -122,11 +122,12 @@ const
     (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013),
     (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
-    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013)
+    (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'libpython2.7.so'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'libpython3.2m.so'; RegVersion: '3.2'; APIVersion: 1013),
@@ -135,11 +136,12 @@ const
     (DllName: 'libpython3.5m.so'; RegVersion: '3.5'; APIVersion: 1013),
     (DllName: 'libpython3.6m.so'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
-    (DllName: 'libpython3.8m.so'; RegVersion: '3.8'; APIVersion: 1013)
+    (DllName: 'libpython3.8m.so'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'libpython3.9m.so'; RegVersion: '3.9'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'libpython2.7.dylib'; RegVersion: '2.7'; APIVersion: 1013),
     (DllName: 'libpython3.2.dylib'; RegVersion: '3.2'; APIVersion: 1013),
@@ -148,7 +150,8 @@ const
     (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013),
     (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
-    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013)
+    (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013)
     );
 {$endif}
 
@@ -1732,7 +1735,6 @@ type
     PyFunction_GetGlobals:function (ob:PPyObject):PPyObject; cdecl;
     PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
-    PyImport_Cleanup:procedure; cdecl;
     PyImport_GetMagicNumber:function :LongInt; cdecl;
     PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
     PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
@@ -3822,7 +3824,6 @@ begin
   PyFunction_GetGlobals     :=Import('PyFunction_GetGlobals');
   PyFunction_New            :=Import('PyFunction_New');
   PyImport_AddModule        :=Import('PyImport_AddModule');
-  PyImport_Cleanup          :=Import('PyImport_Cleanup');
   PyImport_GetMagicNumber   :=Import('PyImport_GetMagicNumber');
   PyImport_ImportFrozenModule:=Import('PyImport_ImportFrozenModule');
   PyImport_ImportModule     :=Import('PyImport_ImportModule');
