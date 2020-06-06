@@ -33,6 +33,10 @@ begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
+    gEngine.UseLastKnownVersion := False;
+    // Adapt to the desired python version
+    gEngine.RegVersion := '3.8';
+    gEngine.DllName := 'python38.dll';
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
