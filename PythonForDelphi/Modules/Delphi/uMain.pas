@@ -37,6 +37,7 @@ initialization
 finalization
   gEngine.Free;
   gModule.Free;
+  gDelphiWrapper.Free;
 end.
 
 
