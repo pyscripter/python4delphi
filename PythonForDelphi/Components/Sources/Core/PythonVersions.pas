@@ -156,10 +156,10 @@ begin
       FormatStr := 'Conda %s (%s)'
     else
       FormatStr := 'Python %s (%s)';
-    if Is_venv then
-      FormatStr := FormatStr + ' -venv'
-    else if Is_virtualenv then
-      FormatStr := FormatStr + ' -virtualenv';
+    if Is_virtualenv then
+      FormatStr := FormatStr + ' -virtualenv'
+    else if Is_venv then
+      FormatStr := FormatStr + ' -venv';
 
     FDisplayName := Format(FormatStr, [SysVersion, SysArchitecture]);
   end;
@@ -197,7 +197,7 @@ function TPythonVersion.GetPythonExecutable: string;
 begin
   Result := IncludeTrailingPathDelimiter(InstallPath) + 'python.exe';
   if not FileExists(Result) then begin
-    Result := IncludeTrailingPathDelimiter(InstallPath) +  'Scripts\python.exe';
+    Result := IncludeTrailingPathDelimiter(InstallPath) +  'Scripts' + PathDelim + 'python.exe';
     if not FileExists(Result) then Result := '';
   end;
 end;
@@ -226,8 +226,7 @@ end;
 
 function TPythonVersion.Is_virtualenv: Boolean;
 begin
-  Result := not IsRegistered and (InstallPath <> DLLPath) and
-    not FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'pyvenv.cfg');
+  Result := Is_venv and FileExists(IncludeTrailingPathDelimiter(InstallPath) + 'Scripts' + PathDelim + DLLName);
 end;
 
 function  CompareVersions(A, B : string) : Integer;
@@ -485,10 +484,6 @@ begin
 
   DLLFileName := FindPythonDLL(DLLPath);
 
-  if (DLLFileName = '') and AcceptVirtualEnvs then begin
-    DLLPath := DLLPath + '\Scripts';
-    DLLFileName := FindPythonDLL(DLLPath);
-  end;
   if DLLFileName = '' then begin
     if AcceptVirtualEnvs and PythonVersion.Is_venv then
     begin
