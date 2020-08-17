@@ -464,9 +464,9 @@ type
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
   allocfunc         = function ( self: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 
-  PyNumberMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyNumberMethods200 = {$IFNDEF CPUX64}packed{$ENDIF} record
      nb_add           : binaryfunc;
-     nb_substract     : binaryfunc;
+     nb_subtract      : binaryfunc;
      nb_multiply      : binaryfunc;
      nb_divide        : binaryfunc;
      nb_remainder     : binaryfunc;
@@ -488,8 +488,6 @@ type
      nb_float         : unaryfunc;
      nb_oct           : unaryfunc;
      nb_hex           : unaryfunc;
-
-    // Updated for python 2.0
      nb_inplace_add       : binaryfunc;
      nb_inplace_subtract  : binaryfunc;
      nb_inplace_multiply  : binaryfunc;
@@ -501,15 +499,53 @@ type
      nb_inplace_and       : binaryfunc;
      nb_inplace_xor       : binaryfunc;
      nb_inplace_or        : binaryfunc;
+     nb_floor_divide      : binaryfunc;
+     nb_true_divide          : binaryfunc;
+     nb_inplace_floor_divide : binaryfunc;
+     nb_inplace_true_divide  : binaryfunc;
+     nb_index                : unaryfunc;
+  end;
+  PPyNumberMethods200 = ^PyNumberMethods200;
 
-     // Added in release 2.2
-     // The following require the Py_TPFLAGS_HAVE_CLASS flag
+  PyNumberMethods300 = {$IFNDEF CPUX64}packed{$ENDIF} record
+     nb_add           : binaryfunc;
+     nb_subtract      : binaryfunc;
+     nb_multiply      : binaryfunc;
+     nb_remainder     : binaryfunc;
+     nb_divmod        : binaryfunc;
+     nb_power         : ternaryfunc;
+     nb_negative      : unaryfunc;
+     nb_positive      : unaryfunc;
+     nb_absolute      : unaryfunc;
+     nb_bool          : inquiry;
+     nb_invert        : unaryfunc;
+     nb_lshift        : binaryfunc;
+     nb_rshift        : binaryfunc;
+     nb_and           : binaryfunc;
+     nb_xor           : binaryfunc;
+     nb_or            : binaryfunc;
+     nb_int           : unaryfunc;
+     nb_reserved      : Pointer;    // not used
+     nb_float         : unaryfunc;
+     nb_inplace_add       : binaryfunc;
+     nb_inplace_subtract  : binaryfunc;
+     nb_inplace_multiply  : binaryfunc;
+     nb_inplace_remainder : binaryfunc;
+     nb_inplace_power     : ternaryfunc;
+     nb_inplace_lshift    : binaryfunc;
+     nb_inplace_rshift    : binaryfunc;
+     nb_inplace_and       : binaryfunc;
+     nb_inplace_xor       : binaryfunc;
+     nb_inplace_or        : binaryfunc;
      nb_floor_divide         : binaryfunc;
      nb_true_divide          : binaryfunc;
      nb_inplace_floor_divide : binaryfunc;
      nb_inplace_true_divide  : binaryfunc;
+     nb_index                   : unaryfunc;
+     nb_matrix_multiply         : binaryfunc; // new in python 3.5
+     nb_inplace_matrix_multiply : binaryfunc; // new in python 3.5
   end;
-  PPyNumberMethods = ^PyNumberMethods;
+  PPyNumberMethods300 = ^PyNumberMethods300;
 
   PySequenceMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
      sq_length    : lenfunc;
@@ -726,7 +762,7 @@ type
 
     // Method suites for standard classes
 
-    tp_as_number:   PPyNumberMethods;
+    tp_as_number:   Pointer; //PPyNumberMethods
     tp_as_sequence: PPySequenceMethods;
     tp_as_mapping:  PPyMappingMethods;
 
@@ -1673,10 +1709,12 @@ type
     PyErr_SetNone:      procedure(value: PPyObject); cdecl;
     PyErr_SetObject:    procedure  (ob1, ob2	: PPyObject); cdecl;
     PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
+    PyErr_WarnEx:       function (ob: PPyObject; text: PAnsiChar; stack_level: NativeInt): integer; cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
     PyInt_FromLong:     function( x: LongInt):PPyObject; cdecl;
     PyArg_Parse:        function( args: PPyObject; format: PAnsiChar {;....}) :  Integer; cdecl varargs;
     PyArg_ParseTuple:   function( args: PPyObject; format: PAnsiChar {;...}): Integer; cdecl varargs;
+    PyArg_ParseTupleAndKeywords:   function( args: PPyObject; kw: PPyObject; format: PAnsiChar; kwargs: PPAnsiChar {;...}): Integer; cdecl varargs;
     Py_BuildValue:      function( format: PAnsiChar {;...}): PPyObject; cdecl varargs;
     Py_Initialize:      procedure; cdecl;
     Py_Exit:            procedure( RetVal: Integer); cdecl;
@@ -1764,6 +1802,7 @@ type
     PyLong_FromUnicode:function(ob:PPyObject; a, b : integer) : PPyObject; cdecl;
     PyLong_FromLongLong:function(val:Int64) : PPyObject; cdecl;
     PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
+    PyLong_FromVoidPtr:function(p: Pointer): PPyObject; cdecl;
     PyMapping_Check:function (ob:PPyObject):integer; cdecl;
     PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
     PyMapping_HasKey:function (ob,key:PPyObject):integer; cdecl;
@@ -2738,11 +2777,12 @@ type
 
     // Number services
     function  NbAdd( obj : PPyObject) : PPyObject; virtual;
-    function  NbSubstract( obj : PPyObject) : PPyObject; virtual;
+    function  NbSubtract( obj : PPyObject) : PPyObject; virtual;
     function  NbMultiply( obj : PPyObject) : PPyObject; virtual;
     function  NbDivide( obj : PPyObject) : PPyObject; virtual;
     function  NbFloorDivide( obj : PPyObject) : PPyObject; virtual;
     function  NbTrueDivide( obj : PPyObject) : PPyObject; virtual;
+    function  NbMatrixMultiply( obj : PPyObject) : PPyObject; virtual;
     function  NbRemainder( obj : PPyObject) : PPyObject; virtual;
     function  NbDivmod( obj : PPyObject) : PPyObject; virtual;
     function  NbPower( ob1, ob2 : PPyObject) : PPyObject; virtual;
@@ -2750,6 +2790,7 @@ type
     function  NbPositive : PPyObject; virtual;
     function  NbAbsolute : PPyObject; virtual;
     function  NbNonZero : Integer; virtual;
+    function  NbBool : Integer; virtual;
     function  NbInvert : PPyObject; virtual;
     function  NbLShift( obj : PPyObject) : PPyObject; virtual;
     function  NbRShift( obj : PPyObject) : PPyObject; virtual;
@@ -2775,6 +2816,7 @@ type
     function  NbInplaceAnd( obj : PPyObject): PPyObject; virtual;
     function  NbInplaceXor( obj : PPyObject): PPyObject; virtual;
     function  NbInplaceOr( obj : PPyObject): PPyObject; virtual;
+    function  NbInplaceMatrixMultiply(obj: PPyObject): PPyObject; virtual;
     // Sequence services
     function  SqLength : NativeInt; virtual;
     function  SqConcat( obj : PPyObject) : PPyObject; virtual;
@@ -2809,7 +2851,7 @@ type
                                bsRichCompare,
                                // since version 2.2
                                bsIter, bsIterNext);
-  TNumberServices    = set of (nsAdd, nsSubstract, nsMultiply,
+  TNumberServices    = set of (nsAdd, nsSubtract, nsMultiply,
                                nsDivide, nsRemainder, nsDivmod,
                                nsPower, nsNegative, nsPositive,
                                nsAbsolute, nsNonZero, nsInvert,
@@ -2818,7 +2860,9 @@ type
                                nsInt, nsLong, nsFloat,
                                nsOct, nsHex,
                                // since version 2.2
-                               nsFloorDivide, nsTrueDivide);
+                               nsFloorDivide, nsTrueDivide,
+                               // since version 3.0
+                               nsMatrixMultiply, nsBool);
 
   // TInplaceNumberServices exists since version 2.0
   TInplaceNumberServices = set of (nsInplaceAdd, nsInplaceSubtract,
@@ -2827,7 +2871,9 @@ type
                                    nsInplaceLShift, nsInplaceRShift,
                                    nsInplaceAnd, nsInplaceXor, nsInplaceOr,
                                    // since version 2.2
-                                   nsInplaceFloorDivide, nsInplaceTrueDivide);
+                                   nsInplaceFloorDivide, nsInplaceTrueDivide,
+                                   // since version 3.0
+                                   nsInplaceMatrixMultiply);
 
   TSequenceServices  = set of (ssLength, ssConcat, ssRepeat,
                                ssItem, ssSlice, ssAssItem,
@@ -2874,7 +2920,7 @@ type
       FPrefix : AnsiString;
       FCreateFuncName : AnsiString;
       FServices : TTypeServices;
-      FNumber:   PyNumberMethods;
+      FNumber:   Pointer; // points either to PyNumberMethods200 or PyNumberMethods300;
       FSequence: PySequenceMethods;
       FMapping:  PyMappingMethods;
       FCurrentDocString: AnsiString;
@@ -3759,6 +3805,7 @@ begin
   PyErr_Clear               := Import('PyErr_Clear');
   PyErr_Fetch               := Import('PyErr_Fetch');
   PyErr_SetString           := Import('PyErr_SetString');
+  PyErr_WarnEx              := Import('PyErr_WarnEx');
   PyEval_GetBuiltins        := Import('PyEval_GetBuiltins');
   PyImport_GetModuleDict    := Import('PyImport_GetModuleDict');
   if IsPython3000 then
@@ -3767,6 +3814,7 @@ begin
     PyInt_FromLong          := Import('PyInt_FromLong');
   PyArg_Parse               := Import('PyArg_Parse');
   PyArg_ParseTuple          := Import('PyArg_ParseTuple');
+  PyArg_ParseTupleAndKeywords := Import('PyArg_ParseTupleAndKeywords');
   Py_BuildValue             := Import('Py_BuildValue');
   Py_Initialize             := Import('Py_Initialize');
   PyDict_New                := Import('PyDict_New');
@@ -3858,6 +3906,7 @@ begin
   PyLong_FromUnicode        :=Import('PyLong_FromUnicode');
   PyLong_FromLongLong       :=Import('PyLong_FromLongLong');
   PyLong_AsLongLong         :=Import('PyLong_AsLongLong');
+  PyLong_FromVoidPtr        :=Import('PyLong_FromVoidPtr');
   PyMapping_Check           :=Import('PyMapping_Check');
   PyMapping_GetItemString   :=Import('PyMapping_GetItemString');
   PyMapping_HasKey          :=Import('PyMapping_HasKey');
@@ -7897,7 +7946,7 @@ begin
   Result := nil;
 end;
 
-function  TPyObject.NbSubstract( obj : PPyObject) : PPyObject;
+function  TPyObject.NbSubtract( obj : PPyObject) : PPyObject;
 begin
   Result := nil;
 end;
@@ -7918,6 +7967,11 @@ begin
 end;
 
 function  TPyObject.NbTrueDivide( obj : PPyObject) : PPyObject;
+begin
+  Result := nil;
+end;
+
+function  TPyObject.NbMatrixMultiply( obj : PPyObject) : PPyObject;
 begin
   Result := nil;
 end;
@@ -7955,6 +8009,11 @@ end;
 function  TPyObject.NbNonZero : Integer;
 begin
   Result := -1;
+end;
+
+function  TPyObject.NbBool : Integer;
+begin
+  Result := 0;
 end;
 
 function  TPyObject.NbInvert : PPyObject;
@@ -8053,6 +8112,11 @@ begin
 end;
 
 function TPyObject.NbInplaceOr(obj: PPyObject): PPyObject;
+begin
+  Result := nil;
+end;
+
+function TPyObject.NbInplaceMatrixMultiply(obj: PPyObject): PPyObject;
 begin
   Result := nil;
 end;
@@ -8473,9 +8537,9 @@ begin
   Result := PythonToDelphi(pSelf).NbAdd( obj );
 end;
 
-function  TPythonType_NbSubstract( pSelf, obj : PPyObject) : PPyObject; cdecl;
+function  TPythonType_NbSubtract( pSelf, obj : PPyObject) : PPyObject; cdecl;
 begin
-  Result := PythonToDelphi(pSelf).NbSubstract( obj );
+  Result := PythonToDelphi(pSelf).NbSubtract( obj );
 end;
 
 function  TPythonType_NbMultiply( pSelf, obj : PPyObject) : PPyObject; cdecl;
@@ -8496,6 +8560,11 @@ end;
 function  TPythonType_NbTrueDivide( pSelf, obj : PPyObject) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbTrueDivide( obj );
+end;
+
+function  TPythonType_NbMatrixMultiply( pSelf, obj : PPyObject) : PPyObject; cdecl;
+begin
+  Result := PythonToDelphi(pSelf).NbMatrixMultiply( obj );
 end;
 
 function  TPythonType_NbRemainder( pSelf, obj : PPyObject) : PPyObject; cdecl;
@@ -8531,6 +8600,11 @@ end;
 function  TPythonType_NbNonZero( pSelf : PPyObject ) : Integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbNonZero;
+end;
+
+function  TPythonType_NbBool( pSelf : PPyObject ) : Integer; cdecl;
+begin
+  Result := PythonToDelphi(pSelf).NbBool;
 end;
 
 function  TPythonType_NbInvert( pSelf : PPyObject ) : PPyObject; cdecl;
@@ -8631,6 +8705,11 @@ end;
 function TPythonType_NbInplaceOr(pSelf, obj: PPyObject): PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbInplaceOr( obj );
+end;
+
+function  TPythonType_NbInplaceMatrixMultiply(pSelf, obj: PPyObject): PPyObject; cdecl;
+begin
+  Result := PythonToDelphi(pSelf).NbInplaceMatrixMultiply( obj );
 end;
 
 function TPythonType_NbInplacePower(pSelf, ob1, ob2: PPyObject): PPyObject; cdecl;
@@ -8779,88 +8858,114 @@ begin
         tp_getset           := GetSetData;
       end;
 
-      // Number services
+        // Number services
       if Services.Number <> [] then
-        tp_as_number := @FNumber;
-      with FNumber do
+      begin
+        if GetPythonEngine.IsPython3000 then
         begin
-          if nsAdd in Services.Number then
-            nb_add := TPythonType_NbAdd;
-          if nsSubstract in Services.Number then
-            nb_substract := TPythonType_NbSubstract;
-          if nsMultiply in Services.Number then
-            nb_multiply := TPythonType_NbMultiply;
-          if nsDivide in Services.Number then
-            nb_divide := TPythonType_NbDivide;
-          if nsFloorDivide in Services.Number then
-            nb_floor_divide := TPythonType_NbFloorDivide;
-          if nsTrueDivide in Services.Number then
-            nb_true_divide := TPythonType_NbTrueDivide;
-          if nsRemainder in Services.Number then
-            nb_remainder := TPythonType_NbRemainder;
-          if nsDivmod in Services.Number then
-            nb_divmod := TPythonType_NbDivmod;
-          if nsPower in Services.Number then
-            nb_power := TPythonType_NbPower;
-          if nsNegative in Services.Number then
-            nb_negative := TPythonType_NbNegative;
-          if nsPositive in Services.Number then
-            nb_positive := TPythonType_NbPositive;
-          if nsAbsolute in Services.Number then
-            nb_absolute := TPythonType_NbAbsolute;
-          if nsNonZero in Services.Number then
-            nb_nonzero := TPythonType_NbNonZero;
-          if nsInvert in Services.Number then
-            nb_invert := TPythonType_NbInvert;
-          if nsLShift in Services.Number then
-            nb_lshift := TPythonType_NbLShift;
-          if nsRShift in Services.Number then
-            nb_rshift := TPythonType_NbRShift;
-          if nsAnd in Services.Number then
-            nb_and := TPythonType_NbAnd;
-          if nsXor in Services.Number then
-            nb_xor := TPythonType_NbXor;
-          if nsOr in Services.Number then
-            nb_or := TPythonType_NbOr;
-          if nsCoerce in Services.Number then
-            nb_coerce := TPythonType_NbCoerce;
-          if nsInt in Services.Number then
-            nb_int := TPythonType_NbInt;
-          if nsLong in Services.Number then
-            nb_long := TPythonType_NbLong;
-          if nsFloat in Services.Number then
-            nb_float := TPythonType_NbFloat;
-          if nsOct in Services.Number then
-            nb_oct := TPythonType_NbOct;
-          if nsHex in Services.Number then
-            nb_hex := TPythonType_NbHex;
-          if nsInplaceAdd in Services.InplaceNumber then
-            nb_inplace_add       := TPythonType_NbInplaceAdd;
-          if nsInplaceSubtract in Services.InplaceNumber then
-            nb_inplace_subtract  := TPythonType_NbInplaceSubtract;
-          if nsInplaceMultiply in Services.InplaceNumber then
-            nb_inplace_multiply  := TPythonType_NbInplaceMultiply;
-          if nsInplaceDivide in Services.InplaceNumber then
-            nb_inplace_divide    := TPythonType_NbInplaceDivide;
-          if nsInplaceFloorDivide in Services.InplaceNumber then
-            nb_inplace_floor_divide := TPythonType_NbInplaceFloorDivide;
-          if nsInplaceTrueDivide in Services.InplaceNumber then
-            nb_inplace_true_divide := TPythonType_NbInplaceTrueDivide;
-          if nsInplaceRemainder in Services.InplaceNumber then
-            nb_inplace_remainder := TPythonType_NbInplaceRemainder;
-          if nsInplacePower in Services.InplaceNumber then
-            nb_inplace_power     := TPythonType_NbInplacePower;
-          if nsInplaceLShift in Services.InplaceNumber then
-            nb_inplace_lshift    := TPythonType_NbInplaceLShift;
-          if nsInplaceRShift in Services.InplaceNumber then
-            nb_inplace_rshift    := TPythonType_NbInplaceRShift;
-          if nsInplaceAnd in Services.InplaceNumber then
-            nb_inplace_and       := TPythonType_NbInplaceAnd;
-          if nsInplaceXor in Services.InplaceNumber then
-            nb_inplace_xor       := TPythonType_NbInplaceXor;
-          if nsInplaceOr in Services.InplaceNumber then
-            nb_inplace_or        := TPythonType_NbInplaceOr;
+          FNumber := AllocMem(SizeOf(PyNumberMethods300)); // zeroes memory
+          with PPyNumberMethods300(FNumber)^ do
+          begin
+            if nsAdd in Services.Number then nb_add := TPythonType_NbAdd; // #3.1
+            if nsSubtract in Services.Number then nb_subtract := TPythonType_NbSubtract; // #3.2
+            if nsMultiply in Services.Number then nb_multiply := TPythonType_NbMultiply; // #3.3
+            if nsDivide in Services.Number then; // gone in Python 3.x
+            if nsFloorDivide in Services.Number then nb_floor_divide := TPythonType_NbFloorDivide; // #3.30
+            if nsTrueDivide in Services.Number then nb_true_divide := TPythonType_NbTrueDivide; // #3.31
+            if (nsMatrixMultiply in Services.Number) and ((GetPythonEngine.MajorVersion > 3)
+              or ((GetPythonEngine.MajorVersion = 3) and (GetPythonEngine.MinorVersion >= 5)))
+            then
+                nb_matrix_multiply := TPythonType_NbMatrixMultiply; // #3.35
+            if nsRemainder in Services.Number then nb_remainder := TPythonType_NbRemainder;  // #3.4
+            if nsDivmod in Services.Number then nb_divmod := TPythonType_NbDivmod; // #3.5
+            if nsPower in Services.Number then nb_power := TPythonType_NbPower; // #3.6
+            if nsNegative in Services.Number then nb_negative := TPythonType_NbNegative;  // #3.7
+            if nsPositive in Services.Number then nb_positive := TPythonType_NbPositive;  // #3.8
+            if nsAbsolute in Services.Number then nb_absolute := TPythonType_NbAbsolute;   // #3.9
+            if nsNonZero in Services.Number then ;  // gone in Python 3.x
+            if nsBool in Services.Number then nb_bool := TPythonType_NbBool; // #3.10
+            if nsInvert in Services.Number then nb_invert := TPythonType_NbInvert;  // #3.11
+            if nsLShift in Services.Number then nb_lshift := TPythonType_NbLShift;  // #3.12
+            if nsRShift in Services.Number then nb_rshift := TPythonType_NbRShift;  // #3.13
+            if nsAnd in Services.Number then nb_and := TPythonType_NbAnd;  // #3.14
+            if nsXor in Services.Number then nb_xor := TPythonType_NbXor;  // #3.15
+            if nsOr in Services.Number then nb_or := TPythonType_NbOr;  // #3.16
+            if nsCoerce in Services.Number then ;// gone in Python 3.x
+            if nsInt in Services.Number then nb_int := TPythonType_NbInt;  // #3.17
+            if nsLong in Services.Number then ;// gone in Python 3.x, now nb_reserved
+            if nsFloat in Services.Number then nb_float := TPythonType_NbFloat;  // #3.19
+            if nsOct in Services.Number then ;// gone in Python 3.x
+            if nsHex in Services.Number then ;// gone in Python 3.x
+            if nsInplaceAdd in Services.InplaceNumber then nb_inplace_add := TPythonType_NbInplaceAdd;  // #3.20
+            if nsInplaceSubtract in Services.InplaceNumber then nb_inplace_subtract := TPythonType_NbInplaceSubtract;  // #3.21
+            if nsInplaceMultiply in Services.InplaceNumber then nb_inplace_multiply := TPythonType_NbInplaceMultiply;  // #3.22
+            if nsInplaceDivide in Services.InplaceNumber then ;// gone in Python 3.x
+            if nsInplaceFloorDivide in Services.InplaceNumber then nb_inplace_floor_divide := TPythonType_NbInplaceFloorDivide;  // #3.32
+            if nsInplaceTrueDivide in Services.InplaceNumber then nb_inplace_true_divide := TPythonType_NbInplaceTrueDivide;  // #3.33
+            if nsInplaceRemainder in Services.InplaceNumber then nb_inplace_remainder := TPythonType_NbInplaceRemainder; // #3.23
+            if nsInplacePower in Services.InplaceNumber then nb_inplace_power := TPythonType_NbInplacePower;  // #3.24
+            if nsInplaceLShift in Services.InplaceNumber then nb_inplace_lshift := TPythonType_NbInplaceLShift;  // #3.25
+            if nsInplaceRShift in Services.InplaceNumber then nb_inplace_rshift := TPythonType_NbInplaceRShift;  // #3.26
+            if nsInplaceAnd in Services.InplaceNumber then nb_inplace_and := TPythonType_NbInplaceAnd;  // #3.27
+            if nsInplaceXor in Services.InplaceNumber then nb_inplace_xor := TPythonType_NbInplaceXor;  // #3.28
+            if nsInplaceOr in Services.InplaceNumber then nb_inplace_or := TPythonType_NbInplaceOr;  // #3.29
+            if (nsInplaceMatrixMultiply in Services.InplaceNumber) and
+              ((GetPythonEngine.MajorVersion > 3) or ((GetPythonEngine.MajorVersion = 3)
+               and (GetPythonEngine.MinorVersion >= 5)))
+            then
+                nb_inplace_matrix_multiply := TPythonType_NbInplaceMatrixMultiply; // #3.36
+          end;
+        end
+        else
+        begin
+          FNumber := AllocMem(SizeOf(PyNumberMethods200));
+          with PPyNumberMethods200(FNumber)^ do
+          begin
+            if nsAdd in Services.Number then nb_add := TPythonType_NbAdd; // #2.1
+            if nsSubtract in Services.Number then nb_subtract := TPythonType_NbSubtract; // #2.2
+            if nsMultiply in Services.Number then nb_multiply := TPythonType_NbMultiply; // #2.3
+            if nsDivide in Services.Number then nb_divide := TPythonType_NbDivide; // #2.4
+            if nsFloorDivide in Services.Number then nb_floor_divide := TPythonType_NbFloorDivide; // #2.35
+            if nsTrueDivide in Services.Number then nb_true_divide := TPythonType_NbTrueDivide; // #2.36
+            if nsMatrixMultiply in Services.Number then ;// new in Python 3.x
+            if nsRemainder in Services.Number then nb_remainder := TPythonType_NbRemainder;  // #2.5
+            if nsDivmod in Services.Number then nb_divmod := TPythonType_NbDivmod; // #2.6
+            if nsPower in Services.Number then nb_power := TPythonType_NbPower; // #2.7
+            if nsNegative in Services.Number then nb_negative := TPythonType_NbNegative; // #2.8
+            if nsPositive in Services.Number then nb_positive := TPythonType_NbPositive; // #2.9
+            if nsAbsolute in Services.Number then nb_absolute := TPythonType_NbAbsolute; // #2.10
+            if nsNonZero in Services.Number then nb_nonzero := TPythonType_NbNonZero; // #2.11
+            if nsBool in Services.Number then // new in Python 3.x
+            if nsInvert in Services.Number then nb_invert := TPythonType_NbInvert; // #2.12
+            if nsLShift in Services.Number then nb_lshift := TPythonType_NbLShift; // #2.13
+            if nsRShift in Services.Number then nb_rshift := TPythonType_NbRShift; // #2.14
+            if nsAnd in Services.Number then nb_and := TPythonType_NbAnd; // #2.15
+            if nsXor in Services.Number then nb_xor := TPythonType_NbXor; // #2.16
+            if nsOr in Services.Number then nb_or := TPythonType_NbOr; // #2.17
+            if nsCoerce in Services.Number then nb_coerce := TPythonType_NbCoerce; // #2.18
+            if nsInt in Services.Number then nb_int := TPythonType_NbInt; // #2.19
+            if nsLong in Services.Number then nb_long := TPythonType_NbLong; // #2.20
+            if nsFloat in Services.Number then nb_float := TPythonType_NbFloat; // #2.21
+            if nsOct in Services.Number then nb_oct := TPythonType_NbOct; // #2.22
+            if nsHex in Services.Number then nb_hex := TPythonType_NbHex; // #2.23
+            if nsInplaceAdd in Services.InplaceNumber then nb_inplace_add := TPythonType_NbInplaceAdd; // #2.24
+            if nsInplaceSubtract in Services.InplaceNumber then nb_inplace_subtract := TPythonType_NbInplaceSubtract; // #2.25
+            if nsInplaceMultiply in Services.InplaceNumber then nb_inplace_multiply := TPythonType_NbInplaceMultiply; // #2.26
+            if nsInplaceDivide in Services.InplaceNumber then nb_inplace_divide := TPythonType_NbInplaceDivide; // #2.27
+            if nsInplaceFloorDivide in Services.InplaceNumber then nb_inplace_floor_divide := TPythonType_NbInplaceFloorDivide; // #2.37
+            if nsInplaceTrueDivide in Services.InplaceNumber then nb_inplace_true_divide := TPythonType_NbInplaceTrueDivide; // #2.38
+            if nsInplaceRemainder in Services.InplaceNumber then nb_inplace_remainder := TPythonType_NbInplaceRemainder; // #2.28
+            if nsInplacePower in Services.InplaceNumber then nb_inplace_power := TPythonType_NbInplacePower; // #2.29
+            if nsInplaceLShift in Services.InplaceNumber then nb_inplace_lshift := TPythonType_NbInplaceLShift; // #2.30
+            if nsInplaceRShift in Services.InplaceNumber then nb_inplace_rshift := TPythonType_NbInplaceRShift; // #2.31
+            if nsInplaceAnd in Services.InplaceNumber then nb_inplace_and := TPythonType_NbInplaceAnd; // #2.32
+            if nsInplaceXor in Services.InplaceNumber then nb_inplace_xor := TPythonType_NbInplaceXor; // #2.33
+            if nsInplaceOr in Services.InplaceNumber then nb_inplace_or := TPythonType_NbInplaceOr; // #2.34
+            if nsInplaceMatrixMultiply in Services.InplaceNumber then ; // new in Python 3.5
+          end;
         end;
+        tp_as_number := FNumber;
+      end;
 
       // Sequence services
       if Services.Sequence <> [] then
@@ -8924,6 +9029,7 @@ begin
     gVarType := nil;
   FDocString.Free;
   FServices.Free;
+  FreeMem(FNumber);
   inherited;
 end;
 
