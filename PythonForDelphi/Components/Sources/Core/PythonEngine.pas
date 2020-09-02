@@ -1710,6 +1710,7 @@ type
     PyErr_SetObject:    procedure  (ob1, ob2	: PPyObject); cdecl;
     PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
     PyErr_WarnEx:       function (ob: PPyObject; text: PAnsiChar; stack_level: NativeInt): integer; cdecl;
+    PyErr_WarnExplicit: function (ob: PPyObject; text: PAnsiChar; filename: PAnsiChar; lineno: integer; module: PAnsiChar; registry: PPyObject): integer; cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
     PyInt_FromLong:     function( x: LongInt):PPyObject; cdecl;
     PyArg_Parse:        function( args: PPyObject; format: PAnsiChar {;....}) :  Integer; cdecl varargs;
@@ -3806,6 +3807,7 @@ begin
   PyErr_Fetch               := Import('PyErr_Fetch');
   PyErr_SetString           := Import('PyErr_SetString');
   PyErr_WarnEx              := Import('PyErr_WarnEx');
+  PyErr_WarnExplicit        := Import('PyErr_WarnExplicit');
   PyEval_GetBuiltins        := Import('PyEval_GetBuiltins');
   PyImport_GetModuleDict    := Import('PyImport_GetModuleDict');
   if IsPython3000 then
