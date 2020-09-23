@@ -7,7 +7,7 @@ uses SysUtils, Classes;
 procedure Register;
 
 implementation
-{$R 'Sources\Core\PythonEngine.dcr'}
+{$R '..\..\Source\PythonEngine.dcr'}
 
 uses 
   PythonEngine, 

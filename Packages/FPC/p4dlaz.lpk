@@ -8,8 +8,8 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="Sources\Core"/>
-        <OtherUnitFiles Value="Sources\Core"/>
+        <IncludeFiles Value="..\..\Source\"/>
+        <OtherUnitFiles Value="..\..\Source\"/>
         <UnitOutputDirectory Value="FPC_Units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
       </SearchPaths>
       <Parsing>
@@ -21,42 +21,42 @@
     </CompilerOptions>
     <Files Count="10">
       <Item1>
-        <Filename Value="Sources\Core\PythonEngine.pas"/>
+        <Filename Value="..\..\Source\PythonEngine.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonEngine"/>
       </Item1>
       <Item2>
-        <Filename Value="Sources\Core\PythonGUIInputOutput.pas"/>
+        <Filename Value="..\..\Source\PythonGUIInputOutput.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="PythonGUIInputOutput"/>
       </Item2>
       <Item3>
-        <Filename Value="Sources\Core\MethodCallBack.pas"/>
+        <Filename Value="..\..\Source\MethodCallBack.pas"/>
         <UnitName Value="MethodCallBack"/>
       </Item3>
       <Item4>
-        <Filename Value="Sources\Core\VarPyth.pas"/>
+        <Filename Value="..\..\Source\VarPyth.pas"/>
         <UnitName Value="VarPyth"/>
       </Item4>
       <Item5>
-        <Filename Value="Sources\Core\WrapDelphi.pas"/>
+        <Filename Value="..\..\Source\WrapDelphi.pas"/>
         <HasRegisterProc Value="True"/>
         <UnitName Value="WrapDelphi"/>
       </Item5>
       <Item6>
-        <Filename Value="Sources\Core\WrapDelphiButtons.pas"/>
+        <Filename Value="..\..\Source\WrapDelphiButtons.pas"/>
         <UnitName Value="WrapDelphiButtons"/>
       </Item6>
       <Item7>
-        <Filename Value="Sources\Core\WrapDelphiClasses.pas"/>
+        <Filename Value="..\..\Source\WrapDelphiClasses.pas"/>
         <UnitName Value="WrapDelphiClasses"/>
       </Item7>
       <Item8>
-        <Filename Value="Sources\Core\WrapDelphiControls.pas"/>
+        <Filename Value="..\..\Source\WrapDelphiControls.pas"/>
         <UnitName Value="WrapDelphiControls"/>
       </Item8>
       <Item9>
-        <Filename Value="Sources\Core\WrapDelphiTypes.pas"/>
+        <Filename Value="..\..\Source\WrapDelphiTypes.pas"/>
         <UnitName Value="WrapDelphiTypes"/>
       </Item9>
       <Item10>
