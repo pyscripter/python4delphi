@@ -40,6 +40,7 @@ package PythonVCL_D;
 {$IFDEF VER310}{$LIBSUFFIX '24'} {$ENDIF}
 {$IFDEF VER320}{$LIBSUFFIX '25'} {$ENDIF}
 {$IFDEF VER330}{$LIBSUFFIX '26'} {$ENDIF}
+{$IFDEF VER330}{$LIBSUFFIX '27'} {$ENDIF}
 
 requires
   rtl,
@@ -48,7 +49,7 @@ requires
   Python_D;
 
 contains
-  PythonDatabase in 'Sources\VCL\PythonDatabase.pas',
-  pyDB in 'Sources\VCL\pyDB.pas',
-  pyDBTables in 'Sources\VCL\pyDBTables.pas';
+  PythonDatabase in '..\PythonDatabase.pas',
+  pyDB in '..\pyDB.pas',
+  pyDBTables in '..\pyDBTables.pas';
 end.
