@@ -1,9 +1,0 @@
-{
-    "id": "{CDB2CEA7-8130-428D-ABBC-C4EA6B567989}",
-    "name": "Python4Delphi",
-    "picture": "PythonForDelphi\\Components\\P4DLogo.jpg",
-    "license_type": "MIT",
-    "license_file": "LICENSE",
-    "platforms": "Win32;Win64",
-    "compiler_min": 10
-}

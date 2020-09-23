@@ -17,6 +17,3 @@ The best way to learn about how to use Python for Delphi is to try the extensive
 ### Wiki topics ###
 - [Supported Platforms](https://github.com/pyscripter/python4delphi/wiki/SupportedPlatforms)
 - [How Python for Delphi finds your Python distribution](https://github.com/pyscripter/python4delphi/wiki/FindingPython) (read before trying the demos)
-
-
-Delphinus-Support
