@@ -52,6 +52,7 @@
 (**************************************************************************)
 
 {$I Definition.Inc}
+{$POINTERMATH ON}
 
 unit PythonEngine;
 
@@ -387,19 +388,6 @@ const
   TAB             = #09;
   CRLF            = CR+LF;
 
-
-
-//#######################################################
-//##                                                   ##
-//##    Global declarations, nothing Python specific   ##
-//##                                                   ##
-//#######################################################
-
-type
-   TPAnsiChar = array[0..16000] of PAnsiChar;
-   TPWideChar = array[0..16000] of PWideChar;
-   PPAnsiChar     = ^TPAnsiChar;
-   PPWideChar = ^TPWideChar;
 
 
 //#######################################################
@@ -2380,8 +2368,6 @@ type
 //--                                                   --
 //-------------------------------------------------------
 
-  TMethodArray = array[ 0 .. 16000 ] of PyMethodDef;
-  PMethodArray = ^TMethodArray;
   TDelphiMethod = function ( self, args : PPyObject ) : PPyObject of object; cdecl;
   TDelphiMethodWithKW = function ( self, args, keywords : PPyObject ) : PPyObject of object; cdecl;
   TPythonEvent = procedure(Sender: TObject; PSelf, Args: PPyObject; var Result: PPyObject) of object;
@@ -2488,9 +2474,6 @@ type
 //--                                                        --
 //------------------------------------------------------------
 
-  TMemberArray = array[ 0 .. 16000 ] of PyMemberDef;
-  PMemberArray = ^TMemberArray;
-
   // class TMembersContainer
   TMembersContainer = class(TMethodsContainer)
     protected
@@ -2532,9 +2515,6 @@ type
 //--class: TGetSetContainer derived from TMembersContainer  --
 //--                                                        --
 //------------------------------------------------------------
-
-  TGetSetArray = array[ 0 .. 16000 ] of PyGetSetDef;
-  PGetSetArray = ^TGetSetArray;
 
   // class TGetSetContainer
   TGetSetContainer = class(TMembersContainer)
@@ -5063,12 +5043,10 @@ end;
 
 procedure TPythonEngine.SetProgramArgs;
 var
-  buff : PAnsiChar;
-  argv : PPAnsiChar;
   i, argc : Integer;
+  argv : array of PAnsiChar;
   L : array of AnsiString;
-  wargv : PPWideChar;
-  wbuff : PWideChar;
+  wargv : array of PWideChar;
   {$IFDEF POSIX}
   UCS4L : array of UCS4String;
   {$ELSE}
@@ -5080,44 +5058,34 @@ begin
   argc := ParamCount;
   if not IsPython3000 then begin
     SetLength(L, argc+1);
-    GetMem( buff, sizeof(PAnsiChar)*(argc+1) );
-    try
-      argv := PPAnsiChar(buff);
-      // get the strings
-      // build the PAnsiChar array
-      for i := 0 to argc do begin
-        L[i] := AnsiString(ParamStr(i));
-        argv^[i] := PAnsiChar(L[i]);
-      end;
-      // set the argv list of the sys module with the application arguments
-      PySys_SetArgv( argc+1, argv );
-    finally
-      FreeMem( buff );
+    SetLength(argv, argc + 1);
+    // get the strings
+    // build the PAnsiChar array
+    for i := 0 to argc do begin
+      L[i] := AnsiString(ParamStr(i));
+      argv[i] := PAnsiChar(L[i]);
     end;
+    // set the argv list of the sys module with the application arguments
+    PySys_SetArgv( argc+1, PPAnsiChar(argv) );
   end else begin
-    GetMem(wbuff, sizeof(PWideChar)*(argc+1));
-    try
-      wargv := PPWideChar(wbuff);
-      // build the PWideChar array
-      {$IFDEF POSIX}
-      // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
-      SetLength(UCS4L, argc+1);
-      for i := 0 to argc do begin
-        UCS4L[i] := WideStringToUCS4String(ParamStr(i));
-        wargv^[i] := @UCS4L[i][0];
-      end;
-      {$ELSE}
-      SetLength(WL, argc+1);
-      for i := 0 to argc do begin
-        WL[i] := UnicodeString(ParamStr(i));
-        wargv^[i] := PWideChar(WL[i]);
-      end;
-      {$ENDIF}
-      // set the argv list of the sys module with the application arguments
-      PySys_SetArgv3000( argc + 1, wargv );
-    finally
-      FreeMem( wbuff );
+    SetLength(wargv, argc + 1);
+    // build the PWideChar array
+    {$IFDEF POSIX}
+    // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
+    SetLength(UCS4L, argc+1);
+    for i := 0 to argc do begin
+      UCS4L[i] := WideStringToUCS4String(ParamStr(i));
+      wargv[i] := @UCS4L[i][0];
     end;
+    {$ELSE}
+    SetLength(WL, argc+1);
+    for i := 0 to argc do begin
+      WL[i] := UnicodeString(ParamStr(i));
+      wargv[i] := PWideChar(WL[i]);
+    end;
+    {$ENDIF}
+    // set the argv list of the sys module with the application arguments
+    PySys_SetArgv3000( argc + 1, PPWideChar(wargv) );
   end;
 end;
 
@@ -6849,20 +6817,17 @@ begin
 end;
 
 procedure TMethodsContainer.ReallocMethods;
-var
-  MethodPtr : PPyMethodDef;
 begin
   Inc( FAllocatedMethodCount, PYT_METHOD_BUFFER_INCREASE );
   ReAllocMem( FMethods, SizeOf(PyMethodDef)*(FAllocatedMethodCount+1));
-  MethodPtr :=@(PMethodArray(FMethods)^[MethodCount+1]);
-  FillChar( MethodPtr^,SizeOf(PyMethodDef)*PYT_METHOD_BUFFER_INCREASE,0);
+  FillChar( FMethods[MethodCount+1] ,SizeOf(PyMethodDef)*PYT_METHOD_BUFFER_INCREASE,0);
 end;
 
 function TMethodsContainer.GetMethods( idx : Integer ) : PPyMethodDef;
 begin
   if (idx < 0) or (idx > MethodCount) then
     raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
-  Result := @( PMethodArray(FMethods)^[idx] );
+  Result := @( FMethods[idx] );
 end;
 
 function TMethodsContainer.StoreEventDefs: Boolean;
@@ -7044,17 +7009,14 @@ function TMembersContainer.GetMembers(idx: Integer): PPyMemberDef;
 begin
   if (idx < 0) or (idx > MemberCount) then
     raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
-  Result := @( PMemberArray(FMembers)^[idx] );
+  Result := @( FMembers[idx] );
 end;
 
 procedure TMembersContainer.ReallocMembers;
-var
-  MemberPtr : PPyMemberDef;
 begin
   Inc( FAllocatedMemberCount, PYT_MEMBER_BUFFER_INCREASE );
   ReAllocMem( FMembers, SizeOf(PyMemberDef)*(FAllocatedMemberCount+1));
-  MemberPtr :=@(PMemberArray(FMembers)^[MemberCount+1]);
-  FillChar( MemberPtr^,SizeOf(PyMemberDef)*PYT_MEMBER_BUFFER_INCREASE,0);
+  FillChar( FMembers[MemberCount+1], SizeOf(PyMemberDef)*PYT_MEMBER_BUFFER_INCREASE,0);
 end;
 
 ////////////////////////////////////////
@@ -7124,17 +7086,14 @@ function TGetSetContainer.GetGetSet(idx: Integer): PPyGetSetDef;
 begin
   if (idx < 0) or (idx > GetSetCount) then
     raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
-  Result := @( PGetSetArray(FGetSets)^[idx] );
+  Result := @( FGetSets[idx] );
 end;
 
 procedure TGetSetContainer.ReallocGetSets;
-var
-  GetSetPtr : PPyGetSetDef;
 begin
   Inc( FAllocatedGetSetCount, PYT_GETSET_BUFFER_INCREASE );
   ReAllocMem( FGetSets, SizeOf(PyGetSetDef)*(FAllocatedGetSetCount+1));
-  GetSetPtr :=@(PGetSetArray(FGetSets)^[GetSetCount+1]);
-  FillChar( GetSetPtr^,SizeOf(PyGetSetDef)*PYT_GETSET_BUFFER_INCREASE,0);
+  FillChar( FGetSets[GetSetCount+1], SizeOf(PyGetSetDef)*PYT_GETSET_BUFFER_INCREASE,0);
 end;
 
 (*******************************************************)
