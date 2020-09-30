@@ -15,8 +15,6 @@ uses
   Classes,
   uMain in 'uMain.pas';
 
-{$R *.res}
-
 {$I Definition.Inc}
 
 exports

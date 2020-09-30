@@ -2,23 +2,29 @@ unit uMain;
 
 interface
 
-uses PythonEngine, WrapDelphi;
-
-type
-  TTestRttiAccess = class
-  public
-    class function sum(const A, B: double): double; static;
-  end;
+uses PythonEngine;
 
 function PyInit_DemoModule: PPyObject; cdecl;
+
+
+implementation
+
+Uses
+  System.Math,
+  WrapDelphi;
+
+type
+  TDelphiFunctions = class
+  public
+    class function is_prime(const N: Integer): Boolean; static;
+  end;
 
 var
   gEngine : TPythonEngine;
   gModule : TPythonModule;
   gDelphiWrapper : TPyDelphiWrapper;
-  TestRttiAccess: TTestRttiAccess;
+  DelphiFunctions: TDelphiFunctions;
 
-implementation
 
 
 function PyInit_DemoModule: PPyObject;
@@ -41,9 +47,8 @@ begin
     gDelphiWrapper.Engine := gEngine;
     gDelphiWrapper.Module := gModule;
 
-
     gEngine.LoadDll;
-    Py := gDelphiWrapper.Wrap(TestRttiAccess, TObjectOwnership.soReference);
+    Py := gDelphiWrapper.Wrap(DelphiFunctions, TObjectOwnership.soReference);
     gModule.SetVar('delphi_funcs', Py);
     gEngine.Py_DecRef(Py);
   except
@@ -53,15 +58,25 @@ end;
 
 { TTestRttiAccess }
 
-class function TTestRttiAccess.Sum(const A, B: double): double;
+
+{ TDelphiFunctions }
+
+class function TDelphiFunctions.is_prime(const N: Integer): Boolean;
+// Naive implementation.  It is just a demo...
 begin
-  Result := A + B;
+  if (N <= 1) then Exit(False);
+
+  var q := Floor(Sqrt(N));
+  for var I := 2 to q do
+    if (N mod I = 0) then
+      Exit(False);
+  Exit(True);
 end;
 
 initialization
-  TestRttiAccess := TTestRTTIAccess.Create;
+  DelphiFunctions := TDelphiFunctions.Create;
 finalization
-  TestRttiAccess.Free;
+  DelphiFunctions.Free;
   gEngine.Free;
   gModule.Free;
   gDelphiWrapper.Free;

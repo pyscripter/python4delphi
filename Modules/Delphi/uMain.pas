@@ -2,16 +2,18 @@ unit uMain;
 
 interface
 
-uses PythonEngine, WrapDelphi, WrapDelphiVCL;
+uses PythonEngine;
 
 function PyInit_Delphi: PPyObject; cdecl;
+
+implementation
+
+uses WrapDelphi, WrapDelphiVCL;
 
 var
   gEngine : TPythonEngine;
   gModule : TPythonModule;
   gDelphiWrapper : TPyDelphiWrapper;
-
-implementation
 
 function PyInit_Delphi: PPyObject;
 begin

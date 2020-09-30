@@ -2,30 +2,46 @@ unit uMain;
 
 interface
 
-uses PythonEngine, WrapDelphi;
+uses PythonEngine;
 
 function PyInit_DemoModule: PPyObject; cdecl;
+
+implementation
+Uses
+  System.Math,
+  WrapDelphi;
 
 var
   gEngine : TPythonEngine;
   gModule : TPythonModule;
 
-implementation
+function IsPrime(x: Integer): Boolean;
+// Naive implementation.  It is just a demo
+begin
+  if (x <= 1) then Exit(False);
 
+  var q := Floor(Sqrt(x));
+  for var i := 2 to q do
+    if (x mod i = 0) then
+      Exit(False);
+  Exit(True);
+end;
 
-function delphi_sum(self, args : PPyObject) : PPyObject; cdecl;
+function delphi_is_prime(self, args : PPyObject) : PPyObject; cdecl;
 var
-  a, b: double;
+  N: Integer;
 begin
   with gEngine do
+    if PyArg_ParseTuple( args, 'i', @N ) <> 0 then
     begin
-      if PyArg_ParseTuple( args, 'dd',@a, @b ) <> 0 then
-        begin
-          Result := VariantAsPyObject(a + b);
-        end
+      if IsPrime(N) then
+        Result := PPyObject(Py_True)
       else
-        Result := nil;
-    end;
+         Result := PPyObject(Py_False);
+      Py_INCREF(Result);
+    end
+    else
+       Result := nil;
 end;
 
 function PyInit_DemoModule: PPyObject;
@@ -41,7 +57,7 @@ begin
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
     gModule.ModuleName := 'DemoModule';
-    gModule.AddMethod('sum', delphi_sum, 'sum(a, b) -> a + b' );
+    gModule.AddMethod('is_prime', delphi_is_prime, 'is_prime(n) -> bool' );
 
     gEngine.LoadDll;
   except
