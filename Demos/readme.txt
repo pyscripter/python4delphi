@@ -14,7 +14,6 @@ Demo08	Using Delphi classes for new Python types
 Demo09	Making a Python module as a Dll
 Demo10_FireDAC Database demo using FireDAC
 Demo11	Using Threads inside Python
-Demo12	Using PythonAtom. -> Deprecated since Delphi 6, See VarPyth instead
 Demo13	Using TPythonDatabase. (BDE - not changed)
 Demo16	Using a TDelphiVar or Module methods ? (Kylix ready)
 Demo17	Using variant arrays of 2 dimensions (Kylix ready)
