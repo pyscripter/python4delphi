@@ -2,51 +2,60 @@ object Form1: TForm1
   Left = 288
   Top = 201
   Caption = 'Demo of Python'
-  ClientHeight = 337
+  ClientHeight = 349
   ClientWidth = 528
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
-    Top = 129
+    Top = 145
     Width = 528
     Height = 3
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 129
     ExplicitWidth = 536
   end
   object Memo2: TMemo
     Left = 0
     Top = 0
     Width = 528
-    Height = 129
+    Height = 145
     Align = alTop
     ScrollBars = ssVertical
     TabOrder = 1
   end
   object Memo1: TMemo
     Left = 0
-    Top = 132
+    Top = 148
     Width = 528
-    Height = 137
+    Height = 162
     Align = alClient
+    Font.Charset = ANSI_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     Lines.Strings = (
       '2+2')
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
+    ExplicitTop = 132
+    ExplicitHeight = 137
   end
   object Panel1: TPanel
     Left = 0
-    Top = 269
+    Top = 310
     Width = 528
-    Height = 68
+    Height = 39
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
@@ -69,8 +78,8 @@ object Form1: TForm1
       OnClick = Button2Click
     end
     object Button3: TButton
-      Left = 264
-      Top = 8
+      Left = 265
+      Top = 6
       Width = 89
       Height = 25
       Caption = 'Save script...'
