@@ -20,8 +20,6 @@ type
     PythonGUIInputOutput1: TPythonGUIInputOutput;
     Memo2: TMemo;
     procedure Button1Click(Sender: TObject);
-  private
-  public
   end;
 
 var
