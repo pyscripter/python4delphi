@@ -1343,7 +1343,7 @@ begin
     AddMethod(AnsiString('Delete'), @TPyDBTable.Do_Delete,
               AnsiString('FDTable.Delete() -> None') );
     AddMethod(AnsiString('SetRangeStart'), @TPyDBTable.Do_SetRangeStart,
-              AnsiStrin g('FDTable.SetRangeStart() -> None') );
+              AnsiString('FDTable.SetRangeStart() -> None') );
     AddMethod(AnsiString('EditRangeStart'), @TPyDBTable.Do_EditRangeStart,
               AnsiString('FDTable.EditRangeStart() -> None') );
     AddMethod(AnsiString('SetRangeEnd'), @TPyDBTable.Do_SetRangeEnd,
