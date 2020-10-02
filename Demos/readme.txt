@@ -12,13 +12,9 @@ Demo06	Defining a new Type
 Demo07	Using Delphi methods as Python functions
 Demo08	Using Delphi classes for new Python types
 Demo09	Making a Python module as a Dll
-Demo10	Mapping Delphi VCL components inside Python using TPythonDatabase (BDE - not changed)
 Demo10_FireDAC Database demo using FireDAC
 Demo11	Using Threads inside Python
-Demo12	Using PythonAtom. -> Deprecated since Delphi 6, See VarPyth instead
 Demo13	Using TPythonDatabase. (BDE - not changed)
-Demo14	Making a Dll with TPythonDatabase (BDE - not changed)
-Demo15	Using a TDataset descendant with Python, except TTable and TQuery. (BDE - not changed)
 Demo16	Using a TDelphiVar or Module methods ? (Kylix ready)
 Demo17	Using variant arrays of 2 dimensions (Kylix ready)
 Demo18	C++ Builder: using the Python Dll in a console application
