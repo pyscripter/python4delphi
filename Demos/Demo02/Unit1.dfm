@@ -29,6 +29,12 @@ object Form1: TForm1
     Width = 528
     Height = 145
     Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 1
   end
@@ -48,8 +54,6 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
-    ExplicitTop = 132
-    ExplicitHeight = 137
   end
   object Panel1: TPanel
     Left = 0
