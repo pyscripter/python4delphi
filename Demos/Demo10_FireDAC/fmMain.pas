@@ -13,7 +13,8 @@ uses
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Comp.UI,
   FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef, FireDAC.Stan.ExprFuncs,
   WrapDelphi, WrapFireDac, SynEditHighlighter, SynHighlighterPython, SynEdit,
-  SynEditCodeFolding, sqlTimSt, FireDAC.VCLUI.Wait;
+  SynEditCodeFolding, sqlTimSt, FireDAC.VCLUI.Wait,
+  FireDAC.Phys.SQLiteWrapper.Stat;
 
 type
   TMain = class(TForm)
