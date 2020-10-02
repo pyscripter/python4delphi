@@ -33,8 +33,15 @@ object Form1: TForm1
     Width = 528
     Height = 136
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
     Lines.Strings = (
       'print(2+2)')
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 1
   end
@@ -80,6 +87,13 @@ object Form1: TForm1
     Width = 528
     Height = 153
     Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
   end
