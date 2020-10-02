@@ -14,7 +14,11 @@ P4D makes it very easy to use python as a scripting language for Delphi applicat
 
 The best way to learn about how to use Python for Delphi is to try the extensive range of demos available.  Also studying the unit tests for VarPyth and WrapDelphi can help understand what is possible with these two units.
 
-### Wiki topics ###
+### Wiki topics
 - [Installation](https://github.com/pyscripter/python4delphi/wiki/Installation)
 - [Supported Platforms](https://github.com/pyscripter/python4delphi/wiki/SupportedPlatforms)
 - [How Python for Delphi finds your Python distribution](https://github.com/pyscripter/python4delphi/wiki/FindingPython) (read before trying the demos)
+
+### Learn about Python for Delphi
+- [Tutorials](https://github.com/pyscripter/python4delphi/tree/master/Tutorials) 
+- [Demos](https://github.com/pyscripter/python4delphi/tree/master/Demos)
