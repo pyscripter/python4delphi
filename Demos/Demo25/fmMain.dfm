@@ -32,6 +32,13 @@ object Main: TMain
     Width = 753
     Height = 249
     Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 0
   end
@@ -234,6 +241,12 @@ object Main: TMain
     Width = 753
     Height = 166
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
     Lines.Strings = (
       'class XYZ(object):'
       '  pass'
@@ -242,7 +255,7 @@ object Main: TMain
       '  def __init__(Self, Value=0):'
       '    Self.Value = Value'
       '  def __del__(Self):'
-      '    print "delete", Self'
+      '    print ("delete", Self)'
       '  def __add__(self, other):'
       '    return Foo(self.Value + other.Value)'
       '  def Inc(Self, AValue = 1):'
@@ -266,12 +279,13 @@ object Main: TMain
       '  return [a, b, c, d]'
       ''
       'f = Foo()'
-      'print "Created", f'
+      'print ("Created", f)'
       'f.Inc()'
       'f.Inc(2)'
       'b = Bar()'
       'b.Inc()'
       'b.Inc(2)')
+    ParentFont = False
     ScrollBars = ssVertical
     TabOrder = 2
   end
