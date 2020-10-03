@@ -105,7 +105,7 @@ begin
   // check that operation did not change the content of operands.
   Assert(Integer(a) = 2);
   Assert(Integer(b) = 3);
-  // now with a litteral
+  // now with a literal
   c := a + b + 1;
   Assert( Integer(c) = 6 );
   c := a + 1 + b;
@@ -116,7 +116,7 @@ begin
   // substraction
   c := b - a;
   Assert( Integer(c) = 1 );
-  // now with a litteral
+  // now with a literal
   c := b - a - 1;
   Assert( Integer(c) = 0 );
   c := b - 1 - a;
@@ -127,7 +127,7 @@ begin
   // multiplication
   c := a * b;
   Assert( Integer(c) = 6 );
-  // now with a litteral
+  // now with a literal
   c := a * b * 2;
   Assert( Integer(c) = 12 );
   c := a * 2 * b;
@@ -302,7 +302,7 @@ begin
   // check that operation did not change the content of operands.
   Assert(Double(a) = dbl_a);
   Assert(Double(b) = dbl_b);
-  // now with a litteral
+  // now with a literal
   c := a + b + 1;
   Assert( Double(c) = (dbl_a+dbl_b+1) );
   c := a + 1 + b;
@@ -313,7 +313,7 @@ begin
   // substraction
   c := b - a;
   Assert( Double(c) = (dbl_b - dbl_a) );
-  // now with a litteral
+  // now with a literal
   c := b - a - 1;
   Assert( Double(c) = (dbl_b-dbl_a-1) );
   c := b - 1 - a;
@@ -325,7 +325,7 @@ begin
   c := a * b;
   dbl_c := dbl_a * dbl_b;
   Assert( Double(c) = dbl_c );
-  // now with a litteral
+  // now with a literal
   c := a * b * 2;
   dbl_c := dbl_a * dbl_b * 2;
   Assert( Double(c) = dbl_c );
@@ -427,7 +427,7 @@ begin
   // check that operation did not change the content of operands.
   Assert(String(a) = 'abc');
   Assert(String(b) = 'def');
-  // now with a litteral
+  // now with a literal
   c := a + b + '!';
   Assert( String(c) = 'abcdef!' );
   c := a + '!' + b;
@@ -583,7 +583,7 @@ begin
   // check that operation did not change the content of operands.
   Assert(String(a) = '[1, 2, 3]');
   Assert(String(b) = '[4, 5, 6]');
-  // now with a litteral: note that with D6 SP1, we can't concatenate a custom variant with an var array of variants
+  // now with a literal: note that with D6 SP1, we can't concatenate a custom variant with a var array of variants
   c := a + b + VarPythonCreate(['Hello', 'World!', 3.14]);
   Assert( String(c) = '[1, 2, 3, 4, 5, 6, u''Hello'', u''World!'', 3.1400000000000001]' );
   c := a + VarPythonCreate(['Hello', 'World!', 3.14]) + b;
@@ -642,7 +642,7 @@ begin
 
   // sequence methods:
   c := b + a;
-  c.sort(); // note that you must you the parenthesis to distinguish the call between a method or a property.
+  c.sort(); // note that you must use the parenthesis to distinguish the call between a method or a property.
   Assert( c = (a+b) );
 
   c := NewPythonList; // facility for building sequences
@@ -770,8 +770,8 @@ begin
   Assert( VarIsSame(c, a) ); // checks if 2 variants share the same Python object.
 
   // dict methods
-  Assert( Boolean(a.has_key(string('a'))) );
-  Assert( not Boolean(a.has_key('abc')) );
+  Assert( Boolean(a.get(string('a'))) );
+  Assert( not Boolean(a.get('abc')) );
   keys := a.keys();
   keys.sort();
   Assert( keys = VarPythonCreate(VarArrayOf(['a', 'b', 'c'])));
@@ -780,7 +780,7 @@ begin
   Assert( values = VarPythonCreate(VarArrayOf([1, 2, 3])));
   c := a;
   c.DeleteItem(string('a'));
-  Assert( not Boolean(c.has_key(string('a'))) );
+  Assert( not Boolean(c.get(string('a'))) );
 
   // test string values
   a := NewPythonDict;
@@ -831,7 +831,7 @@ begin
   Assert( b.GetItem(6) = a.GetItem(6) );
   Assert( b.GetItem(7) = a.GetItem(7) );
   // don't test the 9th item of the tuple, because it's the daylight saving,
-  // and it's not computed by the Python for Delphi.
+  // and it's not computed by Python for Delphi.
   //Assert( b.GetItem(8) = a.GetItem(8) );
 
   _date2 := b;
@@ -986,7 +986,7 @@ begin
   Assert( VarIsPythonModule(_main) );
   Assert( VarIsPythonModule(SysModule) );
   Assert( Import('sys').version = SysModule.version );
-  Assert( Boolean(SysModule.modules.has_key(GetPythonEngine.ExecModule)) ); // if __main__ in sys.modules
+  Assert( Boolean(SysModule.modules.get(GetPythonEngine.ExecModule)) ); // if __main__ in sys.modules
   Assert( VarIsSameType(_main, SysModule) );
   Assert( _type(_main).__name__ = 'module');
   Assert( BuiltinModule.type(_main).__name__ = 'module');
@@ -1013,7 +1013,7 @@ begin
   Assert( not VarIsSubclassOf(_main.Foo, _main.Bar) );
   Assert( VarIsInstanceOf(_main.b, _main.Foo) );
   Assert( not VarIsInstanceOf(_main.f, _main.Bar) );
-  Assert( VarIsTrue( BuiltinModule.vars(_main).has_key(string('f')) ) );
+  Assert( VarIsTrue( BuiltinModule.vars(_main).get(string('f')) ) );
   Assert( VarIsTrue( BuiltinModule.dir(_main).Contains(string('f')) ) );
 
   f := _main.Foo(); // new instance of class Foo
@@ -1037,10 +1037,10 @@ begin
   Log('Test -> a, b, c : ' + a.Value + ', '  + b.Value + ', '  + c.Value);
   // cascading calls
   Assert( f.GetSelf().GetSelf().GetSelf().GetSelf().GetValue() = _main.f.GetValue() );
-  Assert( Boolean(f.__dict__.has_key('Value')) );
+  Assert( Boolean(f.__dict__.get('Value')) );
   Assert( VarIsTrue( BuiltinModule.hasattr(f, 'Value') ) );
   _str := 'Value';
-  Assert( Boolean(f.__dict__.has_key(_str)) ); // check with a string var
+  Assert( Boolean(f.__dict__.get(_str)) ); // check with a string var
   Assert( Boolean( BuiltinModule.hasattr(f, _str) ) );
   val := f.Value;
   f.Add(f); // passing itself as an argument
@@ -1119,7 +1119,7 @@ begin
   Assert( _myModule.Add(2, 2) = 4 );
   // delete module var f
   _main.__dict__.DeleteItem(string('f'));
-  Assert( _main.__dict__.has_key(string('f')) = False );
+  Assert( _main.__dict__.get(string('f')) = False );
   // open a file using Python
   if FileExists('MyModule.py') then
   begin
