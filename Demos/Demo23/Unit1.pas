@@ -26,9 +26,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure PythonInputOutput1SendData(Sender: TObject;
-      const Data: String);
-  private
-  public
+      const Data: AnsiString);
   end;
 
 
@@ -69,10 +67,10 @@ begin
 end;
 
 procedure TForm1.PythonInputOutput1SendData(Sender: TObject;
-  const Data: String);
+  const Data: AnsiString);
 begin
 {$IFDEF MSWINDOWS}
-  OutputDebugString( PAnsiChar(Data) );
+  OutputDebugStringA( PAnsiChar(Data) );
 {$ENDIF}
 {$IFDEF LINUX}
   WriteLn( ErrOutput, Data );
