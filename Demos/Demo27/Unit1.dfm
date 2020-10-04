@@ -1,9 +1,9 @@
 object Form1: TForm1
   Left = 192
   Top = 114
-  Width = 870
-  Height = 640
   Caption = 'Form1'
+  ClientHeight = 601
+  ClientWidth = 854
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,6 +18,12 @@ object Form1: TForm1
     Top = 24
     Width = 745
     Height = 281
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentFont = False
     TabOrder = 0
   end
   object Memo2: TMemo
@@ -25,17 +31,23 @@ object Form1: TForm1
     Top = 320
     Width = 745
     Height = 217
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     Lines.Strings = (
       'import test'
       'S=test.CreateMySeq()'
-      'print S'
-      'print len(S)'
-      'print S[1]'
-      'print S[1,2]'
-      'print S[1:2]'
-      'print S[1:20:2]'
-      'print S[...]'
-      'print S[1,4,5:8, 10:20:2, ...]')
+      'print (S)'
+      'print (len(S))'
+      'print (S[1])'
+      'print (S[1,2])'
+      'print (S[1:2])'
+      'print (S[1:20:2])'
+      'print (S[...])'
+      'print (S[1,4,5:8, 10:20:2, ...])')
+    ParentFont = False
     TabOrder = 1
   end
   object Button1: TButton
@@ -53,6 +65,8 @@ object Form1: TForm1
     Top = 144
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
     Output = Memo1
     Left = 40
     Top = 176
