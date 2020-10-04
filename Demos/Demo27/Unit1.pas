@@ -10,7 +10,7 @@ type
   TMySeq = class(TPyObject)
   public
     // Mapping services
-    function  MpLength : Integer; override;
+    function  MpLength : NativeInt; override;
     function  MpSubscript( obj : PPyObject) : PPyObject; override;
     //function  MpAssSubscript( obj1, obj2 : PPyObject) : Integer; override;
   end;
@@ -40,7 +40,7 @@ implementation
 
 { TMySeq }
 
-function TMySeq.MpLength: Integer;
+function TMySeq.MpLength: NativeInt;
 begin
   Result := 10;
 end;
