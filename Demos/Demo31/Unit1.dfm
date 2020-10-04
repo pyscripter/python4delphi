@@ -33,6 +33,12 @@ object Form1: TForm1
     Width = 721
     Height = 395
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
     Lines.Strings = (
       
         'from spam import DelphiVersion, MainForm, DVar, CreateComponent,' +
@@ -493,7 +499,8 @@ object Form1: TForm1
       '        unittest.main()'
       '    except SystemExit:'
       '        pass')
-    ScrollBars = ssVertical
+    ParentFont = False
+    ScrollBars = ssBoth
     TabOrder = 0
     WordWrap = False
   end
@@ -521,14 +528,17 @@ object Form1: TForm1
     Width = 721
     Height = 169
     Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
   end
   object PyEngine: TPythonEngine
-    DllName = 'python38.dll'
-    APIVersion = 1013
-    RegVersion = '3.8'
-    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 16
     Top = 16
