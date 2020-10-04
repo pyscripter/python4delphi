@@ -25,9 +25,9 @@ type
     function  Iter : PPyObject; override;
 
     // Sequence services
-    function  SqLength : Integer; override;
-    function  SqItem( idx : Integer ) : PPyObject; override;
-    function  SqAssItem( idx : integer; obj : PPyObject) : Integer; override;
+    function  SqLength : NativeInt; override;
+    function  SqItem( idx : NativeInt ) : PPyObject; override;
+    function  SqAssItem( idx : NativeInt; obj : PPyObject) : Integer; override;
 
     // Class methods
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -196,7 +196,7 @@ begin
   fStrings.Assign(Value);
 end;
 
-function TPyStringList.SqAssItem(idx: integer; obj: PPyObject): Integer;
+function TPyStringList.SqAssItem(idx: NativeInt; obj: PPyObject): Integer;
 begin
   with GetPythonEngine do
   begin
@@ -213,7 +213,7 @@ begin
   end;
 end;
 
-function TPyStringList.SqItem(idx: Integer): PPyObject;
+function TPyStringList.SqItem(idx: NativeInt): PPyObject;
 begin
   with GetPythonEngine do
   begin
@@ -227,7 +227,7 @@ begin
   end;
 end;
 
-function TPyStringList.SqLength: Integer;
+function TPyStringList.SqLength: NativeInt;
 begin
   Result := Strings.Count;
 end;
