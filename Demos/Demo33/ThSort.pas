@@ -12,7 +12,7 @@ uses
 
 type
   TThreadSortForm = class(TForm)
-    StartBtn: TButton;
+    Start3Btn: TButton;
     BubbleSortBox: TPaintBox;
     SelectionSortBox: TPaintBox;
     QuickSortBox: TPaintBox;
@@ -25,23 +25,23 @@ type
     PythonMemo: TMemo;
     PythonEngine1: TPythonEngine;
     SortModule: TPythonModule;
-    Start2Btn: TButton;
+    Start1Btn: TButton;
     LoadBtn: TButton;
     PythonDialog: TOpenDialog;
     SaveDialog: TSaveDialog;
     SaveBtn: TButton;
-    Button1: TButton;
+    StopBtn: TButton;
     procedure BubbleSortBoxPaint(Sender: TObject);
     procedure SelectionSortBoxPaint(Sender: TObject);
     procedure QuickSortBoxPaint(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure StartBtnClick(Sender: TObject);
-    procedure Start2BtnClick(Sender: TObject);
+    procedure Start3BtnClick(Sender: TObject);
+    procedure Start1BtnClick(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
     procedure SaveBtnClick(Sender: TObject);
     procedure SortModuleInitialization(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
-    procedure Button1Click(Sender: TObject);
+    procedure StopBtnClick(Sender: TObject);
   private
     OwnThreadState: PPyThreadState;
     ThreadsRunning: Integer;
@@ -129,22 +129,22 @@ begin
 
   end;
 
-  StartBtn.Enabled := False;
-  Start2Btn.Enabled := False;
+  Start1Btn.Enabled := False;
+  Start3Btn.Enabled := False;
 end;
 
-procedure TThreadSortForm.Start2BtnClick(Sender: TObject);
+procedure TThreadSortForm.Start1BtnClick(Sender: TObject);
 begin
   with GetPythonEngine do
   begin
     ExecStrings(PythonMemo.Lines);
-    self.InitThreads(emNewState,nil);
+    self.InitThreads(emNewState, nil);
   end;
 end;
 
-procedure TThreadSortForm.StartBtnClick(Sender: TObject);
+procedure TThreadSortForm.Start3BtnClick(Sender: TObject);
 begin
-  InitThreads(emNewInterpreter,PythonMemo.Lines);
+  InitThreads(emNewInterpreter, PythonMemo.Lines);
 //PythonEngine1.ExecStrings(PythonMemo.Lines);
 end;
 
@@ -182,8 +182,8 @@ begin
   if ThreadsRunning = 0 then
   begin
     GetPythonEngine.PyEval_RestoreThread(OwnThreadState);
-    StartBtn.Enabled := True;
-    Start2Btn.Enabled := True;
+    Start1Btn.Enabled := True;
+    Start3Btn.Enabled := True;
     ArraysRandom := False;
     Thread1 := nil;
     Thread2 := nil;
@@ -196,7 +196,8 @@ if PyErr_Occurred() not nil - you should return nil from your mapped function
 }
 
 function TThreadSortForm.SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
-var psort,index: integer;
+var
+  psort, index: Integer;
 begin
   with GetPythonEngine do
   begin
@@ -208,12 +209,10 @@ begin
   end;
 end;
 
-
-
 function TThreadSortForm.SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
-var psort,i,j: integer;
+var
+  psort, i, j: Integer;
 begin
-
   with GetPythonEngine do
   begin
     if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'iii',@psort, @i, @j) <> 0) then
@@ -224,8 +223,6 @@ begin
       Result := nil;
   end;
 end;
-
-
 
 procedure TThreadSortForm.SortModuleInitialization(Sender: TObject);
 begin
@@ -240,7 +237,7 @@ begin
     end;
 end;
 
-procedure TThreadSortForm.Button1Click(Sender: TObject);
+procedure TThreadSortForm.StopBtnClick(Sender: TObject);
 begin
   if Assigned(Thread1) and not Thread1.Finished then Thread1.Stop();
   if Assigned(Thread2) and not Thread2.Finished then Thread2.Stop();
