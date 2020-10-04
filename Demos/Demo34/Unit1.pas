@@ -25,13 +25,11 @@ type
     procedure FormCreate(Sender: TObject);
     procedure cbPyVersionsSelect(Sender: TObject);
   private
-    { Déclarations privées }
     PythonEngine1: TPythonEngine;
     PythonModule1: TPythonModule;
     PythonType1: TPythonType;
     PyVersions: TPythonVersions;
   public
-    { Déclarations publiques }
     procedure CreatePythonComponents;
   end;
 
@@ -40,8 +38,8 @@ type
   // Then it must override some methods, like the constructors,
   // the RegisterMethods and the type services' virtual methods.
   TPyPoint = class(TPyObject)
-    x, y : Integer;
-    Name : String;
+    x, y: Integer;
+    Name: String;
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
@@ -96,7 +94,6 @@ begin
 
   PythonEngine1.IO := PythonGUIInputOutput1;
 
-
   { TPythonModule }
   PythonModule1 := TPythonModule.Create(Self);
 
@@ -131,8 +128,8 @@ begin
 end;
 
 procedure TForm1.FormCreate(Sender: TObject);
-Var
-  PyVersion : TPythonVersion;
+var
+  PyVersion: TPythonVersion;
 begin
   PyVersions := GetRegisteredPythonVersions;
   for PyVersion in PyVersions do
@@ -142,7 +139,6 @@ begin
     CreatePythonComponents;
   end;
 end;
-
 
 // First, we need to initialize the property PyObjectClass with
 // the class of our Type object
@@ -163,7 +159,7 @@ end;
 // Don't call the Create constructor of TPyPoint, because
 // we call the inherited constructor CreateWith that calls
 // the Create constructor first, and because the constructors
-// are virtual, TPyPoint.Create will be automatically be called.
+// are virtual, TPyPoint.Create will automatically be called.
 
 constructor TPyPoint.CreateWith( PythonType : TPythonType; args : PPyObject );
 begin
@@ -257,16 +253,16 @@ end;
 
 function TPyPoint.DoOffsetBy( args : PPyObject ) : PPyObject;
 var
-  dx, dy : Integer;
+  dx, dy: Integer;
 begin
   with GetPythonEngine do
     begin
       // We adjust the transmitted self argument
       Adjust(@Self);
       // first we extract the arguments
-      if PyArg_ParseTuple( args, 'ii:Point.Offset',@dx, @dy ) <> 0 then
+      if PyArg_ParseTuple( args, 'ii:Point.Offset', @dx, @dy ) <> 0 then
         begin
-          // if it's ok, then we call the method that does the job
+          // if it's ok, we call the method that does the job
           // with the correct arguments
           OffsetBy( dx, dy );
           // Finally, we return nothing
@@ -299,16 +295,15 @@ end;
 
 /////////////////////////////////////////////////
 
-
 procedure TForm1.Button1Click(Sender: TObject);
 var
-  DelphiPoint : TPyPoint;
-  p : PPyObject;
+  DelphiPoint: TPyPoint;
+  p: PPyObject;
 begin
   // Here's how you can create/read Python vars from Delphi with
   // Delphi/Python objects.
 
-  // You should ask to the TPythonType to create an instance of its type
+  // You should ask the TPythonType to create an instance of its type
   // because it will do some initialization. You can use CreateInstanceWith
   // if you want to transmit some Python arguments.
   // We receive a Python object pointer
@@ -317,10 +312,10 @@ begin
   // Then we cast the python object to the right delphi type
   DelphiPoint := TPyPoint( PythonToDelphi(p) );
   // We do some changes on the delphi object
-  DelphiPoint.X:=10;
-  DelphiPoint.Y:=20;
+  DelphiPoint.X := 10;
+  DelphiPoint.Y := 20;
   // Add variable "myPoint" in the module "spam".
-  // So you'll access to the var in the module called spam with:
+  // So you'll have access to the var in the module called spam with:
   //   import spam
   //   print spam.myPoint
   PythonModule1.SetVar( 'myPoint', p );
