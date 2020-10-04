@@ -16,7 +16,7 @@ object Form1: TForm1
   OldCreateOrder = True
   Visible = True
   PixelsPerInch = 96
-  TextHeight = 11
+  TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
     Top = 169
@@ -32,6 +32,12 @@ object Form1: TForm1
     Width = 576
     Height = 170
     Align = alClient
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
     Lines.Strings = (
       'import spam'
       ''
@@ -40,46 +46,46 @@ object Form1: TForm1
       '    Self.OffsetBy(v, v)'
       ''
       'p = spam.Point(2, 5)'
-      'print p, type(p)'
+      'print (p, type(p))'
       'p.OffsetBy( 3, 3 )'
-      'print p.x, p.y'
-      'print "Name =", p.Name'
+      'print (p.x, p.y)'
+      'print ("Name =", p.Name)'
       'p.Name = '#39'Hello world!'#39
-      'print "Name =", p.Name'
+      'print ("Name =", p.Name)'
       ''
-      'p = spam.Point(2, 5) '
-      'print p, type(p)'
+      'p = spam.Point(2, 5)'
+      'print (p, type(p))'
       'p.OffsetBy( 3, 3 )'
-      'print p.x, p.y'
+      'print (p.x, p.y)'
       ''
       '# create a subtype instance'
       'p = MyPoint(2, 5)'
-      'print p, type(p)'
+      'print (p, type(p))'
       'p.OffsetBy( 3, 3 )'
-      'print p.x, p.y'
+      'print (p.x, p.y)'
       'p.Foo( 4 )'
-      'print p.x, p.y'
-      'print dir(spam)'
-      'print spam.Point'
-      'print "p = ", p, "  --> ",'
+      'print (p.x, p.y)'
+      'print (dir(spam))'
+      'print (spam.Point)'
+      'print ("p = ", p, "  --> ",)'
       'if type(p) is spam.Point:'
-      '  print "p is a Point"'
+      '  print ("p is a Point")'
       'else:'
-      '  print "p is not a point"'
+      '  print ("p is not a point")'
       'p = 2'
-      'print "p = ", p, "  --> ",'
+      'print ("p = ", p, "  --> ",)'
       'if type(p) is spam.Point:'
-      '  print "p is a Point"'
+      '  print ("p is a Point")'
       'else:'
-      '  print "p is not a point"'
+      '  print ("p is not a point")'
       ''
-      '# You can raise error from a Python script to !'
+      '# You can raise errors from a Python script too !'
       
-        'print "---------------------------------------------------------' +
-        '---------"'
-      'print "Errors in a Python script"'
+        'print ("--------------------------------------------------------' +
+        '----------")'
+      'print ("Errors in a Python script")'
       'try:'
-      '  raise spam.EBadPoint, "this is a test !"'
+      '  raise spam.EBadPoint("this is a test !")'
       'except:'
       '  pass'
       ''
@@ -90,19 +96,21 @@ object Form1: TForm1
       '  err.c = 3'
       '  raise err'
       
-        'except spam.PointError, what: #it shows you that you can interce' +
-        'pt a parent class'
-      '  print "Catched an error dirived from PointError"'
+        'except spam.PointError as what: # this shows that you can interc' +
+        'ept a parent class'
+      '  print ("Caught an error derived from PointError")'
       
-        '  print "Error class = ", what.__class__, "     a =", what.a, " ' +
-        '  b =", what.b, "   c =", what.c'
+        '  print ("Error class = ", what.__class__, "     a =", what.a, "' +
+        '   b =", what.b, "   c =", what.c)'
       ''
-      'if p == spam.Point(2, 5): '
-      '  print "Equal"'
+      'if p == spam.Point(2, 5):'
+      '  print ("Equal")'
       'else:'
-      '  print "Not equal"')
-    ScrollBars = ssVertical
+      '  print ("Not equal")')
+    ParentFont = False
+    ScrollBars = ssBoth
     TabOrder = 0
+    WordWrap = False
   end
   object Panel1: TPanel
     Left = 0
@@ -128,14 +136,17 @@ object Form1: TForm1
     Width = 576
     Height = 169
     Align = alTop
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Pitch = fpVariable
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
   end
   object PythonEngine1: TPythonEngine
-    DllName = 'python27.dll'
-    APIVersion = 1013
-    RegVersion = '2.7'
-    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 32
     Top = 16
