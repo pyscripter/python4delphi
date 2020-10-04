@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 218
   Top = 18
   Caption = 'Form1'
-  ClientHeight = 743
+  ClientHeight = 809
   ClientWidth = 668
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -43,6 +43,11 @@ object Form1: TForm1
     Top = 471
     Width = 657
     Height = 330
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
     Lines.Strings = (
       '#  This demo requires  the module pillow (PIL)'
       
@@ -68,14 +73,22 @@ object Form1: TForm1
       '  stream = BytesIO()'
       '  image.save(stream, image.format)'
       '  return stream.getvalue()')
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 2
+    WordWrap = False
   end
   object Memo2: TMemo
     Left = 8
     Top = 352
     Width = 657
     Height = 113
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = 'Consolas'
+    Font.Style = []
+    ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 3
   end
@@ -93,10 +106,6 @@ object Form1: TForm1
   end
   object PythonEngine1: TPythonEngine
     AutoUnload = False
-    DllName = 'python36.dll'
-    APIVersion = 1013
-    RegVersion = '3.6'
-    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 168
     Top = 624
