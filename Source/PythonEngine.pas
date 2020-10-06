@@ -3390,7 +3390,7 @@ begin
   if not IsHandleValid then begin
     {$IFDEF MSWINDOWS}
     s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-{   $ELSE}
+    {$ELSE}
     s := Format('Error: Could not open Dll "%s"',[DllName]);
     {$ENDIF}
     if FatalMsgDlg then
