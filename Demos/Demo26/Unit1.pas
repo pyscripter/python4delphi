@@ -1,4 +1,4 @@
-unit Unit1;
+﻿unit Unit1;
 
 {$I Definition.Inc}
 
@@ -23,10 +23,6 @@ type
     Memo2: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure PythonType1Initialization(Sender: TObject);
-  private
-    { D�clarations priv�es }
-  public
-    { D�clarations publiques }
   end;
 
   // This is a Delphi class implementing a new Python type
