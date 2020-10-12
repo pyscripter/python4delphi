@@ -540,9 +540,9 @@ type
      sq_concat    : binaryfunc;
      sq_repeat    : ssizeargfunc;
      sq_item      : ssizeargfunc;
-     sq_slice     : ssizessizeargfunc;
+     sq_slice     : ssizessizeargfunc;  // empty slot in python 3.x
      sq_ass_item  : ssizeobjargproc;
-     sq_ass_slice : ssizessizeobjargproc;
+     sq_ass_slice : ssizessizeobjargproc; // empty slot in python 3.x
      sq_contains        : objobjproc;
      sq_inplace_concat  : binaryfunc;
      sq_inplace_repeat  : ssizeargfunc;
@@ -556,6 +556,8 @@ type
   end;
   PPyMappingMethods = ^PyMappingMethods;
 
+  // PyBufferProcs has changed drastiacally in Python 3.0 but since
+  // it is currently not implemented it does not matter
   PyBufferProcs = {$IFNDEF CPUX64}packed{$ENDIF} record
      bf_getreadbuffer   : getreadbufferproc;
      bf_getwritebuffer  : getwritebufferproc;
@@ -804,7 +806,7 @@ type
     tp_subclasses       : PPyObject;
     tp_weaklist         : PPyObject;
     tp_del              : PyDestructor;
-    tp_version_tag      : NativeUInt;  // Type attribute cache version tag. Added in version 2.6
+    tp_version_tag      : Cardinal;  // Type attribute cache version tag. Added in version 2.6
     tp_finalize         : PyDestructor;
     //More spares
     tp_xxx1             : NativeInt;
@@ -1786,8 +1788,8 @@ type
     PyLong_FromDouble:function (db:double):PPyObject; cdecl;
     PyLong_FromLong:function (l:LongInt):PPyObject; cdecl;
     PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
-    PyLong_FromUnsignedLong:function(val:cardinal) : PPyObject; cdecl;
-    PyLong_AsUnsignedLong:function(ob:PPyObject) : Cardinal; cdecl;
+    PyLong_FromUnsignedLong:function(val:LongWord) : PPyObject; cdecl;
+    PyLong_AsUnsignedLong:function(ob:PPyObject) : LongWord; cdecl;
     PyLong_FromUnicode:function(ob:PPyObject; a, b : integer) : PPyObject; cdecl;
     PyLong_FromLongLong:function(val:Int64) : PPyObject; cdecl;
     PyLong_AsLongLong:function(ob:PPyObject) : Int64; cdecl;
@@ -2822,7 +2824,7 @@ type
   end;
   TPyObjectClass = class of TPyObject;
 
-  TBasicServices     = set of (bsPrint, bsGetAttr, bsSetAttr,
+  TBasicServices     = set of (bsGetAttr, bsSetAttr,
                                bsRepr, bsCompare, bsHash,
                                bsStr, bsGetAttrO, bsSetAttrO,
                                bsCall,
@@ -8769,6 +8771,7 @@ begin
 end;
 
 procedure TPythonType.InitServices;
+{ Called from TPythonType.Initialize which first calls CheckEngine - FEngine is alread assigned }
 begin
   with FType do
     begin
@@ -8788,7 +8791,7 @@ begin
         tp_repr      := TPythonType_Repr;
       if bsStr in Services.Basic then
         tp_str       := TPythonType_Str;
-      if bsCompare in Services.Basic then
+      if (bsCompare in Services.Basic) and not FEngine.IsPython3000 then
         tp_compare   := TPythonType_Compare;
       if bsHash in Services.Basic then
         tp_hash      := TPythonType_Hash;
@@ -8822,7 +8825,7 @@ begin
         // Number services
       if Services.Number <> [] then
       begin
-        if GetPythonEngine.IsPython3000 then
+        if FEngine.IsPython3000 then
         begin
           FNumber := AllocMem(SizeOf(PyNumberMethods300)); // zeroes memory
           with PPyNumberMethods300(FNumber)^ do
@@ -8833,8 +8836,8 @@ begin
             if nsDivide in Services.Number then; // gone in Python 3.x
             if nsFloorDivide in Services.Number then nb_floor_divide := TPythonType_NbFloorDivide; // #3.30
             if nsTrueDivide in Services.Number then nb_true_divide := TPythonType_NbTrueDivide; // #3.31
-            if (nsMatrixMultiply in Services.Number) and ((GetPythonEngine.MajorVersion > 3)
-              or ((GetPythonEngine.MajorVersion = 3) and (GetPythonEngine.MinorVersion >= 5)))
+            if (nsMatrixMultiply in Services.Number) and ((FEngine.MajorVersion > 3)
+              or ((FEngine.MajorVersion = 3) and (FEngine.MinorVersion >= 5)))
             then
                 nb_matrix_multiply := TPythonType_NbMatrixMultiply; // #3.35
             if nsRemainder in Services.Number then nb_remainder := TPythonType_NbRemainder;  // #3.4
@@ -8871,8 +8874,8 @@ begin
             if nsInplaceXor in Services.InplaceNumber then nb_inplace_xor := TPythonType_NbInplaceXor;  // #3.28
             if nsInplaceOr in Services.InplaceNumber then nb_inplace_or := TPythonType_NbInplaceOr;  // #3.29
             if (nsInplaceMatrixMultiply in Services.InplaceNumber) and
-              ((GetPythonEngine.MajorVersion > 3) or ((GetPythonEngine.MajorVersion = 3)
-               and (GetPythonEngine.MinorVersion >= 5)))
+              ((FEngine.MajorVersion > 3) or ((FEngine.MajorVersion = 3)
+               and (FEngine.MinorVersion >= 5)))
             then
                 nb_inplace_matrix_multiply := TPythonType_NbInplaceMatrixMultiply; // #3.36
           end;
@@ -9749,9 +9752,8 @@ function  GetPythonEngine : TPythonEngine;
 begin
   if not Assigned( gPythonEngine ) then
     raise Exception.Create( 'No Python engine was created' );
-  if not gPythonEngine.Finalizing then
-    if not gPythonEngine.Initialized then
-      raise Exception.Create( 'The Python engine is not properly initialized' );
+  if not gPythonEngine.Finalizing and not gPythonEngine.Initialized then
+    raise Exception.Create( 'The Python engine is not properly initialized' );
   Result := gPythonEngine;
 end;
 
