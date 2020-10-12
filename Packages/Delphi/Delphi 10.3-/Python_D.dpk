@@ -45,7 +45,9 @@ package Python_D;
 {$IFDEF VER340}{$LIBSUFFIX '270'} {$ENDIF}
 
 requires
+  {$IFDEF WIN32}
   DesignIDE,
+  {$ENDIF}
   rtl,
   vcl;
 
@@ -54,5 +56,4 @@ contains
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
   PythonGUIInputOutput in '..\..\..\Source\PythonGUIInputOutput.pas',
   WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
-
 end.

@@ -30,7 +30,9 @@ package Python_D;
 {$IMPLICITBUILD OFF}
 
 requires
+  {$IFDEF WIN32}
   DesignIDE,
+  {$ENDIF}
   rtl,
   vcl;
 
@@ -39,5 +41,4 @@ contains
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
   PythonGUIInputOutput in '..\..\..\Source\PythonGUIInputOutput.pas',
   WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
-
 end.
