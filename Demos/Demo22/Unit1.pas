@@ -20,10 +20,13 @@ type
     Button3: TButton;
     OpenDialog1: TOpenDialog;
     SaveDialog1: TSaveDialog;
+    PythonInputOutput1: TPythonInputOutput;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure PythonInputOutput1SendData(Sender: TObject;
+      const Data: AnsiString);
   private
   public
   end;
@@ -63,6 +66,17 @@ end;
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   PythonEngine1.Finalize;
+end;
+
+procedure TForm1.PythonInputOutput1SendData(Sender: TObject;
+  const Data: AnsiString);
+begin
+{$IFDEF MSWINDOWS}
+  Writeln( Data )
+{$ENDIF}
+{$IFDEF LINUX}
+  Writeln( ErrOutput, Data );
+{$ENDIF}
 end;
 
 end.

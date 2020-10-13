@@ -26,7 +26,7 @@ object Form1: TForm1
     Font.Name = 'Consolas'
     Font.Style = []
     Lines.Strings = (
-      'import threading'
+      'import threading_test'
       'import sys'
       'try:'
       '  count = int(sys.argv[1])'
@@ -35,7 +35,7 @@ object Form1: TForm1
       ''
       'for i in range(count):'
       '  print ("**** Pass", i)'
-      '  threading._test()'
+      '  threading_test._test()'
       'print ("**** Done.")')
     ParentFont = False
     ScrollBars = ssBoth
@@ -78,6 +78,7 @@ object Form1: TForm1
     end
   end
   object PythonEngine1: TPythonEngine
+    IO = PythonInputOutput1
     UseWindowsConsole = True
     Left = 32
   end
@@ -90,5 +91,11 @@ object Form1: TForm1
     DefaultExt = '*.py'
     Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
     Left = 208
+  end
+  object PythonInputOutput1: TPythonInputOutput
+    OnSendData = PythonInputOutput1SendData
+    UnicodeIO = False
+    RawOutput = False
+    Left = 80
   end
 end
