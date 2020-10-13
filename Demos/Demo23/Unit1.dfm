@@ -26,7 +26,7 @@ object Form1: TForm1
     Font.Name = 'Consolas'
     Font.Style = []
     Lines.Strings = (
-      'import threading'
+      'import threading_test'
       'import sys'
       'try:'
       '  count = int(sys.argv[1])'
@@ -35,7 +35,7 @@ object Form1: TForm1
       ''
       'for i in range(count):'
       '  print ("**** Pass", i)'
-      '  threading._test()'
+      '  threading_test._test()'
       'print ("**** Done.")')
     ParentFont = False
     ScrollBars = ssBoth
