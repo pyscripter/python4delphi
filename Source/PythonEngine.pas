@@ -4860,15 +4860,6 @@ begin
   if Assigned(gPythonEngine) then
     raise Exception.Create('There is already one instance of TPythonEngine running' );
 
-  {$IFDEF FPC}
-  //this allows you to just call Initialize to create a non-IDE instance with
-  //Lazarus.
-  if(AutoLoad and not IsHandleValid) then begin
-    LoadDLL;//Calls initialize
-    exit;
-  end;
-  {$ENDIF}
-
   gPythonEngine := Self;
   CheckRegistry;
   if IsPython3000 then begin
@@ -8945,11 +8936,11 @@ begin
             sq_repeat := TPythonType_SqRepeat;
           if ssItem in Services.Sequence then
             sq_item := TPythonType_SqItem;
-          if ssSlice in Services.Sequence then
+          if (ssSlice in Services.Sequence) and not FEngine.IsPython3000 then
             sq_slice := TPythonType_SqSlice;
           if ssAssItem in Services.Sequence then
             sq_ass_item := TPythonType_SqAssItem;
-          if ssAssSlice in Services.Sequence then
+          if (ssAssSlice in Services.Sequence) and not FEngine.IsPython3000 then
             sq_ass_slice := TPythonType_SqAssSlice;
           if ssContains in Services.Sequence then
             sq_contains := TPythonType_SqContains;
