@@ -11,6 +11,8 @@
 *.map
 *.o
 *.ppu
+*.rsj
+*.compiled
 
 # Generated source #
 ###################
@@ -19,6 +21,7 @@
 # Backup files    #
 ###################
 *.~*
+*.bak
 
 # IDE Files	  #
 ###################
@@ -41,6 +44,5 @@
 /__history
 *.bak
 *.Patch
-VirtualTreeView.zip
 *.#00
 *.pch
