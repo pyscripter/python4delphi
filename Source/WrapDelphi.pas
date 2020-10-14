@@ -3,7 +3,6 @@
  Author:    Kiriakos Vlahos
  Date:      24-Feb-2005
  Purpose:   Provide automatic wrapping of Delphi variables utilising RTTI
- Version:   1.11
 
  Contributors:
    Morgan Martinet (mmm@free.fr)
