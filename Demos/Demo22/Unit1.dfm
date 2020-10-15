@@ -26,8 +26,12 @@ object Form1: TForm1
     Font.Name = 'Consolas'
     Font.Style = []
     Lines.Strings = (
-      'import threading'
+      'import threading_test'
+      ''
       'import sys'
+      '# the following is needed to use the newly allocated console!'
+      'sys.stdout = sys.stderr= open('#39'CONOUT$'#39', '#39'wt'#39')'
+      ''
       'try:'
       '  count = int(sys.argv[1])'
       'except:'
@@ -35,7 +39,7 @@ object Form1: TForm1
       ''
       'for i in range(count):'
       '  print ("**** Pass", i)'
-      '  threading._test()'
+      '  threading_test._test()'
       'print ("**** Done.")')
     ParentFont = False
     ScrollBars = ssBoth
