@@ -23,5 +23,9 @@ The best way to learn about how to use Python for Delphi is to try the extensive
 - [Tutorials](https://github.com/pyscripter/python4delphi/tree/master/Tutorials) 
 - [Demos](https://github.com/pyscripter/python4delphi/tree/master/Demos)
 
-### [License](https://github.com/pyscripter/python4delphi/blob/master/LICENSE)
-The project is licensed under the MIT license.
+### Support forum
+
+Visit the [support forum](https://en.delphipraxis.net/forum/39-python4delphi/) to ask questions and discuss P4D related issues.
+
+### License
+The project is licensed under the MIT [license](https://github.com/pyscripter/python4delphi/blob/master/LICENSE).
