@@ -585,11 +585,11 @@ begin
   Assert(String(b) = '[4, 5, 6]');
   // now with a literal: note that with D6 SP1, we can't concatenate a custom variant with a var array of variants
   c := a + b + VarPythonCreate(['Hello', 'World!', 3.14]);
-  Assert( String(c) = '[1, 2, 3, 4, 5, 6, u''Hello'', u''World!'', 3.1400000000000001]' );
+  Assert( String(c) = '[1, 2, 3, 4, 5, 6, ''Hello'', ''World!'', 3.14]' );
   c := a + VarPythonCreate(['Hello', 'World!', 3.14]) + b;
-  Assert( String(c) = '[1, 2, 3, u''Hello'', u''World!'', 3.1400000000000001, 4, 5, 6]' );
+  Assert( String(c) = '[1, 2, 3, ''Hello'', ''World!'', 3.14, 4, 5, 6]' );
   c := VarPythonCreate(['Hello', 'World!', 3.14]) + a + b;
-  Assert( String(c) = '[u''Hello'', u''World!'', 3.1400000000000001, 1, 2, 3, 4, 5, 6]' );
+  Assert( String(c) = '[''Hello'', ''World!'', 3.14, 1, 2, 3, 4, 5, 6]' );
 
   // multiplication
   c := a * 3; // in Python the multiplication of sequence concatenates n times the sequence
@@ -687,17 +687,16 @@ begin
   Assert( VarIsPythonSequence(c) );
   Assert( c.GetItem(1) = 2 );
   Assert( c.Length = 3 );
-  Assert(not VarIsPythonIterator(c));
 
   // test iterator
   iter := BuiltinModule.iter(VarPythonCreate([1, 2, 3, 4], stTuple));
   Assert(VarIsPythonIterator(iter));
-  Assert(iter.next() = 1);
-  Assert(iter.next() = 2);
-  Assert(iter.next() = 3);
-  Assert(iter.next() = 4);
+  Assert(iter.__next__() = 1);
+  Assert(iter.__next__() = 2);
+  Assert(iter.__next__() = 3);
+  Assert(iter.__next__() = 4);
   try
-    iter.next();
+    iter.__next__();
   except
     on E: EPyStopIteration do
     begin
@@ -712,7 +711,7 @@ begin
   try
     while True do
     begin
-      a := iter.next();
+      a := iter.__next__();
       Inc(cpt);
       Assert(a = cpt);
     end;
@@ -772,10 +771,10 @@ begin
   // dict methods
   Assert( Boolean(a.get(string('a'))) );
   Assert( not Boolean(a.get('abc')) );
-  keys := a.keys();
+  keys := BuiltinModule.list(a.keys());
   keys.sort();
   Assert( keys = VarPythonCreate(VarArrayOf(['a', 'b', 'c'])));
-  values := a.values();
+  values := BuiltinModule.list(a.values());
   values.sort();
   Assert( values = VarPythonCreate(VarArrayOf([1, 2, 3])));
   c := a;
@@ -999,7 +998,6 @@ begin
   Assert( VarIsPythonCallable(_main.Foo) );
   Assert( VarIsPythonCallable(_main.Foo) );
   Assert( VarIsTrue(BuiltinModule.callable(_main.Foo)) );
-  Assert( VarIsPythonInstance(_main.f) );
   Assert( VarIsSame(_main.f.__class__, _main.Foo) );
   Assert( VarIsPythonMethod(_main.f.Inc) );
   Assert( VarIsPythonCallable(_main.f.Inc) );
@@ -1119,7 +1117,7 @@ begin
   Assert( _myModule.Add(2, 2) = 4 );
   // delete module var f
   _main.__dict__.DeleteItem(string('f'));
-  Assert( _main.__dict__.get(string('f')) = False );
+  Assert(VarIsNone(_main.__dict__.get(string('f'))));
   // open a file using Python
   if FileExists('MyModule.py') then
   begin
