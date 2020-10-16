@@ -53,7 +53,7 @@ object Form1: TForm1
       Width = 545
       Align = alClient
       Lines.Strings = (
-        'print 2+2'
+        'print(2+2)'
       )
       TabOrder = 2
     end
