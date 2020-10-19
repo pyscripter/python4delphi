@@ -127,7 +127,7 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine, DelphiObject as TPoint do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[x, y]));
 end;
 
 /////////////////////////////////////////////////

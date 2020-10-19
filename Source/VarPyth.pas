@@ -68,7 +68,6 @@ function VarIsPythonTuple(const AValue: Variant): Boolean;
 function VarIsPythonList(const AValue: Variant): Boolean;
 function VarIsPythonDict(const AValue: Variant): Boolean;
 function VarIsPythonClass(const AValue: Variant): Boolean;
-function VarIsPythonInstance(const AValue: Variant): Boolean;
 function VarIsPythonMethod(const AValue: Variant): Boolean;
 function VarIsPythonFunction(const AValue: Variant): Boolean;
 function VarIsPythonModule(const AValue: Variant): Boolean;
@@ -239,7 +238,6 @@ type
 
     // non-destructive operations
     function Equal(const Right: TPythonData): Boolean;
-    function Compare(const Right: TPythonData): Integer;
     function LessThan(const Right: TPythonData): Boolean;
     function LessOrEqualThan(const Right: TPythonData): Boolean;
     function GreaterThan(const Right: TPythonData): Boolean;
@@ -435,13 +433,13 @@ end;
 function VarIsPythonString(const AValue: Variant): Boolean;
 begin
   Result := VarIsPython(AValue) and
-            GetPythonEngine.PyString_Check(ExtractPythonObjectFrom(AValue));
+            GetPythonEngine.PyUnicode_Check(ExtractPythonObjectFrom(AValue));
 end;
 
 function VarIsPythonInteger(const AValue: Variant): Boolean;
 begin
   Result := VarIsPython(AValue) and
-            GetPythonEngine.PyInt_Check(ExtractPythonObjectFrom(AValue));
+            GetPythonEngine.PyLong_Check(ExtractPythonObjectFrom(AValue));
 end;
 
 function VarIsPythonFloat(const AValue: Variant): Boolean;
@@ -473,12 +471,6 @@ begin
   Result := VarIsPython(AValue) and
             (GetPythonEngine.PyClass_Check(ExtractPythonObjectFrom(AValue))
              or (GetPythonEngine.PyObject_HasAttrString(ExtractPythonObjectFrom(AValue), '__bases__') <> 0));
-end;
-
-function VarIsPythonInstance(const AValue: Variant): Boolean;
-begin
-  Result := VarIsPython(AValue) and
-            GetPythonEngine.PyInstance_Check(ExtractPythonObjectFrom(AValue));
 end;
 
 function VarIsPythonMethod(const AValue: Variant): Boolean;
@@ -719,7 +711,7 @@ var
 begin
   with GetPythonEngine do
   begin
-    _module_name := PyString_FromString(PAnsiChar(AModule));
+    _module_name := PyUnicode_FromAnsiString(AModule);
     try
       _module := PyImport_Import(_module_name);
       CheckError;
@@ -1692,7 +1684,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
             Py_XDecRef(_value);
           end; // of try
         CheckError;
-        Result := PyInt_FromLong(_result);
+        Result := PyLong_FromLong(_result);
       finally
         Py_XDecRef(_key);
       end; // of try
@@ -1764,7 +1756,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
       try
         _result := PySequence_SetSlice( AObject, _start, _end, _value);
         CheckError;
-        Result := PyInt_FromLong(_result);
+        Result := PyLong_FromLong(_result);
       finally
         Py_XDecRef(_value);
       end; // of try
@@ -1781,7 +1773,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
       ExtractSliceIndexes(AObject, AStart, AEnd, _start, _end);
       _result := PySequence_DelSlice( AObject, _start, _end);
       CheckError;
-      Result := PyInt_FromLong(_result);
+      Result := PyLong_FromLong(_result);
     end; // of with
   end; // of function
 
@@ -1799,7 +1791,7 @@ function TPythonVariantType.EvalPython(const V: TVarData;
       try
         _result := PySequence_Contains( AObject, _value );
         CheckError;
-        Result := PyInt_FromLong(_result);
+        Result := PyLong_FromLong(_result);
       finally
         Py_XDecRef(_value);
       end; // of try
@@ -1856,7 +1848,7 @@ begin
           else if (Length(Arguments) = 1) and SameText(string(AName), 'Contains') then
             Result := SequenceContains(_container, Arguments[0])
           else if SameText(string(AName), 'Length') then
-            Result := PyInt_FromLong( GetObjectLength(_container) );
+            Result := PyLong_FromLong( GetObjectLength(_container) );
         end; // of if
       finally
         // if the key did not exist, Python generated an exception that we must propagate through CheckError
@@ -1970,7 +1962,7 @@ begin
           _len := PyObject_Length(TPythonVarData(V).VPython.PyObject);
           CheckError;
           // convert the length into a Python integer
-          _prop := PyInt_FromLong( _len );
+          _prop := PyLong_FromLong( _len );
         end; // of if
       end;
     end; // of if
@@ -2097,26 +2089,6 @@ end;
 
 //------------------------------------------------------------------------------
 { TPythonData }
-
-function TPythonData.Compare(const Right: TPythonData): Integer;
-begin
-  with GetPythonEngine do
-  begin
-    if IsPython3000 then begin
-      // not used but anyway
-      if Self.LessThan(Right) then
-        Result := -1
-      else if Self.Equal(Right) then
-        Result := 0
-      else
-        Result := 1;
-      PyErr_Clear;
-    end else begin
-      Result := PyObject_Compare(PyObject, Right.PyObject);
-      CheckError;
-    end;
-  end; // of with
-end;
 
 constructor TPythonData.Create(AObject: PPyObject);
 begin
@@ -2345,20 +2317,14 @@ function TPythonData.Equal(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
   begin
-    if IsPython3000 then
-      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_EQ) = 1
-    else
-      Result := PyObject_Compare(PyObject, Right.PyObject) = 0;
+    Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_EQ) = 1;
     CheckError;
   end; // of with
 end;
 
 function TPythonData.GetAsAnsiString: AnsiString;
 begin
-  if Assigned(PyObject) and GetPythonEngine.PyString_CheckExact(PyObject) then
-    Result := GetPythonEngine.PyString_AsString(PyObject)
-  else
-    Result := AnsiString(GetAsString);
+  Result := AnsiString(GetAsString);
 end;
 
 function TPythonData.GetAsString: string;
@@ -2388,23 +2354,13 @@ end;
 function TPythonData.GreaterOrEqualThan(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
-  begin
-    if IsPython3000 then
-      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GE) = 1
-    else
-      Result := Self.Compare(Right) >= 0;
-  end;
+    Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GE) = 1
 end;
 
 function TPythonData.GreaterThan(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
-  begin
-    if IsPython3000 then
-      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GT) = 1
-    else
-      Result := Self.Compare(Right) > 0;
-  end;
+    Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_GT) = 1
 end;
 
 function TPythonData.IsNone: Boolean;
@@ -2415,23 +2371,13 @@ end;
 function TPythonData.LessOrEqualThan(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
-  begin
-    if IsPython3000 then
-      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LE) = 1
-    else
-      Result := Self.Compare(Right) <= 0;
-  end;
+    Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LE) = 1
 end;
 
 function TPythonData.LessThan(const Right: TPythonData): Boolean;
 begin
   with GetPythonEngine do
-  begin
-    if IsPython3000 then
-      Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LT) = 1
-    else
-      Result := Self.Compare(Right) < 0;
-  end;
+    Result := PyObject_RichCompareBool(PyObject, Right.PyObject, Py_LT) = 1
 end;
 
 procedure TPythonData.SetPyObject(const Value: PPyObject);

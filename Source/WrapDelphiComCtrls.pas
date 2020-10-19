@@ -203,7 +203,7 @@ function TPyDelphiPageControl.GetHitTestInfoAt_Wrapper(
   begin
     with GetPythonEngine do
     begin
-      _text := PyString_FromDelphiString(AText);
+      _text := PyUnicode_FromString(AText);
       PyList_Append(Result, _text);
       Py_DecRef(_text);
     end;
@@ -258,7 +258,7 @@ function TPyDelphiPageControl.Get_ActivePageIndex(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ActivePageIndex);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ActivePageIndex);
 end;
 
 {$IFNDEF FPC}
@@ -271,7 +271,7 @@ end;
 function TPyDelphiPageControl.Get_PageCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.PageCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.PageCount);
 end;
 
 function TPyDelphiPageControl.Get_Pages(AContext: Pointer): PPyObject;
@@ -286,7 +286,7 @@ end;
 function TPyDelphiPageControl.Get_RowCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.RowCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.RowCount);
 end;
 
 function TPyDelphiPageControl.IndexOfTabAt_Wrapper(
@@ -459,7 +459,7 @@ end;
 function TPyDelphiTabSheet.Get_TabIndex(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TabIndex);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.TabIndex);
 end;
 
 class procedure TPyDelphiTabSheet.RegisterGetSets(PythonType: TPythonType);
@@ -524,9 +524,9 @@ begin
   Result := -1;
   with GetPythonEngine do
   begin
-    if PyString_Check(AValue) then
+    if PyUnicode_Check(AValue) then
     begin
-      S := PyString_AsDelphiString(AValue);
+      S := PyUnicode_AsWideString(AValue);
       for i := 0 to Container.PageCount-1 do
         if SameText( Container.Pages[i].Name, S) then
         begin

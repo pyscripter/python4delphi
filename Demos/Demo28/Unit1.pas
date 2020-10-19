@@ -131,7 +131,7 @@ begin
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'O:add',@_obj ) <> 0 then
     begin
-      Result := PyInt_FromLong(Strings.Add(PyObjectAsString(_obj)));
+      Result := PyLong_FromLong(Strings.Add(PyObjectAsString(_obj)));
     end
     else
       Result := nil;
@@ -218,7 +218,7 @@ begin
   with GetPythonEngine do
   begin
     if idx < Strings.Count then
-      Result := PyString_FromString(PAnsiChar(AnsiString(Strings[idx])))
+      Result := PyUnicode_FromAnsiString(AnsiString(Strings[idx]))
     else
     begin
       PyErr_SetString(PyExc_IndexError^, 'list index out of range');
@@ -280,7 +280,7 @@ begin
     end
     else
     begin
-      Result := PyString_FromString(PAnsiChar(AnsiString(StringList.Strings[fCurrentIndex])));
+      Result := PyUnicode_FromAnsiString(AnsiString(StringList.Strings[fCurrentIndex]));
     end;
   end;
 end;

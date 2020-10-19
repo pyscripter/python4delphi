@@ -1,4 +1,4 @@
-unit Unit1;
+﻿unit Unit1;
 
 {$I Definition.Inc}
 
@@ -106,10 +106,10 @@ begin
     begin
       if key = 'x' then
         Result := VariantAsPyObject( x )
-        // Or  Result := PyInt_FromLong( x )
+        // Or  Result := PyLong_FromLong( x )
       else if key = 'y' then
-        Result := PyInt_FromLong( y )
-        // or  Result := PyInt_FromLong( y )
+        Result := PyLong_FromLong( y )
+        // or  Result := PyLong_FromLong( y )
       else
         Result := inherited GetAttr(key);
     end;
@@ -139,13 +139,12 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
 end;
 
 function  TPyPoint.RichCompare( obj : PPyObject; Op : TRichComparisonOpcode) : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyInt_FromLong(1); // Return True by default, just for testing the API.
+    Result := PyLong_FromLong(1); // Return True by default, just for testing the API.
 end;
 
 // Class methods

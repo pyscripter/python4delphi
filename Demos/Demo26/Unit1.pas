@@ -31,7 +31,7 @@ type
   // the RegisterMethods and the type services' virtual methods.
   TPyPoint = class(TPyObject)
     x, y : Integer;
-    Name : String;
+    Name : string;
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
@@ -100,23 +100,23 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[x, y]));
 end;
 
 // get/set functions
 function TPyPoint_GetName( obj : PPyObject; context : Pointer) : PPyObject; cdecl;
 begin
   with GetPythonEngine do
-    Result := PyString_FromString(PAnsiChar(AnsiString(TPyPoint(PythonToDelphi(obj)).Name)));
+    Result := PyUnicode_FromAnsiString(AnsiString(TPyPoint(PythonToDelphi(obj)).Name));
 end;
 
 function TPyPoint_SetName( obj, value : PPyObject; context : Pointer) : integer; cdecl;
 begin
   with GetPythonEngine do
   begin
-    if PyString_Check(value) then
+    if PyUnicode_Check(value) then
     begin
-      TPyPoint(PythonToDelphi(obj)).Name := PyObjectAsVariant(value);
+      TPyPoint(PythonToDelphi(obj)).Name := PyUnicode_AsWideString(value);
       Result := 0;
     end
     else

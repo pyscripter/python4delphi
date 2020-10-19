@@ -469,7 +469,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      obj := PyString_FromDelphiString(prop);
+      obj := PyUnicode_FromString(prop);
       PyList_Append( List, obj );
       Py_XDecRef(obj);
     end;
@@ -2274,7 +2274,7 @@ begin
             // Do action
             rslt := Dataset.MoveBy( dist );
             // Finally, we return nothing
-            Result := PyInt_FromLong(rslt);
+            Result := PyLong_FromLong(rslt);
           end
         else
           Result := nil;
@@ -2774,7 +2774,7 @@ end;
 function  TVarArg.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyString_FromDelphiString( PyObjectAsString(FValue) );
+    Result := PyUnicode_FromString( PyObjectAsString(FValue) );
 end;
 
 constructor TPythonVarArg.Create( AOwner : TComponent );

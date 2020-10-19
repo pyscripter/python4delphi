@@ -1,4 +1,4 @@
-unit Unit1;
+﻿unit Unit1;
 
 {$I Definition.Inc}
 
@@ -149,7 +149,7 @@ begin
       y := 42.0;
       i := 42;
       s := 'Hallo';
-      Result := ArrayToPyTuple( [ s,x,y,i,815,2.7172,3.14159,4711,1.2e-12, PyInt_FromLong(333) ] );
+      Result := ArrayToPyTuple( [ s,x,y,i,815,2.7172,3.14159,4711,1.2e-12, PyLong_FromLong(333) ] );
     end;
 end;
 
@@ -196,14 +196,14 @@ begin
     begin
       // Check for attribute x
       if key = 'x' then
-        Result := PyInt_FromLong( po_x )
+        Result := PyLong_FromLong( po_x )
       // Check for attribute y
       else if key = 'y' then
-        Result := PyInt_FromLong( po_y )
+        Result := PyLong_FromLong( po_y )
       else
         begin
           // Else check for a method
-          Result := PyObject_GenericGetAttr(obj, PyString_FromString(key));
+          Result := PyObject_GenericGetAttr(obj, PyUnicode_FromAnsiString(key));
           if not Assigned(Result) then
             PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
         end;
@@ -220,18 +220,18 @@ begin
     begin
       // Check for attribute x
       if key = 'x' then begin
-        if PyInt_Check(value) then
+        if PyLong_Check(value) then
           begin
-            po_x := PyInt_AsLong(value);
+            po_x := PyLong_AsLong(value);
             Result := 0;
           end
         else
           PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Attribute "%s" needs an integer',[key])));
       // Check for attribute y
       end else if key = 'y' then begin
-        if PyInt_Check(value) then
+        if PyLong_Check(value) then
           begin
-            po_y := PyInt_AsLong(value);
+            po_y := PyLong_AsLong(value);
             Result := 0;
           end
         else
@@ -246,7 +246,7 @@ function  PyPoint_repr(obj : PPyObject) : PPyObject; cdecl;
 begin
   with GetPythonEngine, PPyPoint(obj)^ do
     begin
-      Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[po_x, po_y]) ) );
+      Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[po_x, po_y]));
     end;
 end;
 

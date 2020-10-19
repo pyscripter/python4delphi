@@ -188,7 +188,7 @@ begin
   begin
     if PyArg_ParseTuple( args, 'ii',@psort, @index) <> 0 then
     begin
-      Result := PyInt_FromLong(TSortThread(psort)[index]);
+      Result := PyLong_FromLong(TSortThread(psort)[index]);
     end else
       Result := nil;
   end;

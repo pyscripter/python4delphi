@@ -214,7 +214,7 @@ Var
   SKey : string;
 begin
  try
-   SKey := LowerCase(GetPythonEngine.PyString_AsDelphiString(Key));
+   SKey := LowerCase(GetPythonEngine.PyObjectAsString(Key));
    if (SKey = '__properties__' ) or
       (SKey = '__members__' ) then
      Result := GetProperties
@@ -255,7 +255,7 @@ begin
      Exit;
    end;
    try
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     l_sUpperKey := UpperCase(PyObjectAsString(Key));
      if l_sUpperKey = 'ALIGNMENT' then
        Result := VariantAsPyObject( Integer(DelphiObject.Alignment) )
      else if l_sUpperKey = 'ASBOOLEAN' then
@@ -371,7 +371,7 @@ begin
    if not CheckField then
      Exit;
    try
-     l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+     l_sUpperKey := UpperCase(PyObjectAsString(Key));
      if l_sUpperKey = 'ALIGNMENT' then begin
        DelphiObject.Alignment := TAlignment(PyObjectAsVariant( value ));
        Result := 0;
@@ -804,7 +804,7 @@ end;
 function TPyDBDataset.Get_RowsCount(AContext: Pointer): PPyObject;
 begin
    Adjust(@Self);
-   Result := GetPythonEngine.PyInt_FromLong(DelphiObject.RecordCount);
+   Result := GetPythonEngine.PyLong_FromLong(DelphiObject.RecordCount);
 end;
 
 function TPyDBDataset.Get_Rows(AContext: Pointer): PPyObject;
@@ -867,7 +867,7 @@ begin
   with GetPythonEngine do begin
     try
       l_oDataset  := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'BOF' then
         Result := VariantAsPyObject( l_oDataset.BOF )
       else if l_sUpperKey = 'CANMODIFY' then
@@ -898,7 +898,7 @@ begin
   with GetPythonEngine do begin
     try
       l_oDataset  := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'FILTER' then begin
         l_oDataset.Filter := PyObjectAsVariant( value );
         Result := 0;
@@ -1392,7 +1392,7 @@ begin
     l_oConn := Nil;
     try
       l_oTable    := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
         l_oConn := DelphiObject.Connection;
         l_sConnectionDefName := DelphiObject.ConnectionName;
@@ -1455,7 +1455,7 @@ begin
     l_oConn := Nil;
     try
       l_oTable    := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
         if CheckActiveDBTable(False) then begin
           l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));
@@ -1961,7 +1961,7 @@ begin
     l_oConn := Nil;
     try
       l_oQuery    := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
         l_oConn := DelphiObject.Connection;
         l_sConnectionDefName := DelphiObject.ConnectionName;
@@ -2005,7 +2005,7 @@ begin
     l_oConn := Nil;
     try
       l_oQuery    := DelphiObject;
-      l_sUpperKey := UpperCase(PyString_AsDelphiString(Key));
+      l_sUpperKey := UpperCase(PyObjectAsString(Key));
       if l_sUpperKey = 'CONNECTIONDEFNAME' then begin
         if CheckActiveDBQuery(False) then begin
           l_sConnectionDefName := UpperCase(PyObjectAsVariant(value));

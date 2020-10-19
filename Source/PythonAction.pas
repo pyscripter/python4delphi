@@ -124,7 +124,7 @@ begin
   ClearMethods;
   with GetPythonEngine, RegisteredMethods do
     begin
-      Result := PyInt_FromLong(Count);
+      Result := PyLong_FromLong(Count);
     end;
 end;
 
@@ -146,7 +146,7 @@ begin
         begin
           Py_XINCREF(func);
           Add(func);
-          Result := PyInt_FromLong(Count);
+          Result := PyLong_FromLong(Count);
         end;
 end;
 
@@ -168,7 +168,7 @@ begin
         begin
           Py_XDECREF(func);
           Remove(func);
-          Result := PyInt_FromLong(Count);
+          Result := PyLong_FromLong(Count);
         end;
 end;
 
