@@ -43,41 +43,17 @@ uses
 
 {$R *.dfm}
 
-// Old code not compatible with Unicode
-//
-//function ImageToString(AGraphic : TGraphic) : String;
-//var
-//  _stream : TStringStream;
-//begin
-//  _stream := TStringStream.Create('');
-//  try
-//    AGraphic.SaveToStream(_stream);
-//    Result := _stream.DataString;
-//  finally
-//    _stream.Free;
-//  end;
-//end;
-//
-//function BinStrToPyStr(const AString : String) : Variant;
-//var
-//  _str : PPyObject;
-//begin
-//  _str := GetPythonEngine.PyString_FromStringAndSize(PAnsiChar(AString), Length(AString)*SizeOf(Char));
-//  Result := VarPythonCreate(_str);
-//  GetPythonEngine.Py_DECREF(_str);
-//end;
-
-function ImageToPyStr(AGraphic : TGraphic) : Variant;
+function ImageToPyBytes(AGraphic : TGraphic) : Variant;
 var
   _stream : TMemoryStream;
-  _str : PPyObject;
+  _bytes : PPyObject;
 begin
   _stream := TMemoryStream.Create();
   try
      AGraphic.SaveToStream(_stream);
-    _str := GetPythonEngine.PyString_FromStringAndSize(_stream.Memory, _stream.Size);
-    Result := VarPythonCreate(_str);
-    GetPythonEngine.Py_DECREF(_str);
+    _bytes := GetPythonEngine.PyBytes_FromStringAndSize(_stream.Memory, _stream.Size);
+    Result := VarPythonCreate(_bytes);
+    GetPythonEngine.Py_DECREF(_bytes);
   finally
     _stream.Free;
   end;
@@ -102,17 +78,17 @@ begin
   if (Image1.Picture.Graphic = nil) or Image1.Picture.Graphic.Empty then
     raise Exception.Create('You must first select an image');
   PythonEngine1.ExecStrings(Memo1.Lines);
-  _im := MainModule.ProcessImage(ImageToPyStr(Image1.Picture.Graphic));
+  _im := MainModule.ProcessImage(ImageToPyBytes(Image1.Picture.Graphic));
   if not chkUseDC.Checked then
   begin
     // We have to call PyString_AsStringAndSize because the image may contain zeros
     with GetPythonEngine do begin
       pargs := MakePyTuple([ExtractPythonObjectFrom(_im)]);
       try
+        presult := PyEval_CallObjectWithKeywords(
+            ExtractPythonObjectFrom(MainModule.ImageToBytes), pargs, nil);
         try
-          presult := PyEval_CallObjectWithKeywords(
-            ExtractPythonObjectFrom(MainModule.ImageToString), pargs, nil);
-          if (PyString_AsStringAndSize(presult, P, Len) < 0) or (P = nil) then begin
+          if (P = nil) or (PyBytes_AsStringAndSize(presult, P, Len) < 0) then begin
             ShowMessage('This does not work and needs fixing');
             Abort;
           end;
