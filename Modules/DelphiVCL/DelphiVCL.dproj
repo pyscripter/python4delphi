@@ -4,7 +4,7 @@
         <AppType>Library</AppType>
         <Config Condition="'$(Config)'==''">Release</Config>
         <FrameworkType>None</FrameworkType>
-        <MainSource>Delphi.dpr</MainSource>
+        <MainSource>DelphiVCL.dpr</MainSource>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectGuid>{7E56095C-46B8-4F28-87A2-EEA8D9D2448D}</ProjectGuid>
         <ProjectVersion>19.1</ProjectVersion>
@@ -40,7 +40,7 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-        <SanitizedProjectName>Delphi</SanitizedProjectName>
+        <SanitizedProjectName>DelphiVCL</SanitizedProjectName>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;$(DCC_Namespace)</DCC_Namespace>
         <GenDll>true</GenDll>
@@ -92,7 +92,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">Delphi.dpr</Source>
+                    <Source Name="MainSource">DelphiVCL.dpr</Source>
                 </Source>
                 <Excluded_Packages/>
             </Delphi.Personality>
@@ -112,9 +112,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="Delphi.dll" Configuration="Release" Class="ProjectOutput">
+                <DeployFile LocalName="DelphiVCL.dll" Configuration="Release" Class="ProjectOutput">
                     <Platform Name="Win64">
-                        <RemoteName>Delphi.dll</RemoteName>
+                        <RemoteName>DelphiVCL.dll</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
