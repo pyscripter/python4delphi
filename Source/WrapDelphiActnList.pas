@@ -97,7 +97,7 @@ end;
 function TPyDelphiCustomActionList.Get_ActionCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ActionCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ActionCount);
 end;
 
 function TPyDelphiCustomActionList.Get_Actions(AContext: Pointer): PPyObject;

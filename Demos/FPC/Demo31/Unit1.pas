@@ -168,9 +168,9 @@ begin
   PyEngine.Py_DecRef(p);
 
   {$IF DEFINED(FPC_VER) and (FPC_VER >= 5)}
-  p := PyEngine.PyInt_FromLong(FPC_VER);
+  p := PyEngine.PyLong_FromLong(FPC_VER);
   {ELSE}
-  p := PyEngine.PyInt_FromLong(4);
+  p := PyEngine.PyLong_FromLong(4);
   {$IFEND}
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);

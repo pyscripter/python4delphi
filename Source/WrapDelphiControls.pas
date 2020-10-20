@@ -446,9 +446,9 @@ begin
   Result := -1;
   with GetPythonEngine do
   begin
-    if PyString_Check(AValue) then
+    if PyUnicode_Check(AValue) then
     begin
-      S := PyString_AsDelphiString(AValue);
+      S := PyUnicode_AsWideString(AValue);
       for i := 0 to Container.ControlCount-1 do
         if SameText( Container.Controls[i].Name, S) then
         begin
@@ -514,7 +514,7 @@ end;
 function TPyDelphiWinControl.Get_ControlCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ControlCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ControlCount);
 end;
 
 function TPyDelphiWinControl.Get_Controls(AContext: Pointer): PPyObject;
@@ -534,7 +534,7 @@ end;
 function TPyDelphiWinControl.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiWinControl.Get_HandleAllocated(
@@ -548,7 +548,7 @@ function TPyDelphiWinControl.Get_ParentWindow(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ParentWindow);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ParentWindow);
 end;
 
 function TPyDelphiWinControl.Get_Showing(AContext: Pointer): PPyObject;
@@ -680,9 +680,9 @@ begin
           Py_DECREF(PyResult);
           if _varParam.Value = Py_None then
             Key := #0
-          else if PyString_Check(_varParam.Value) then
+          else if PyUnicode_Check(_varParam.Value) then
           begin
-            _key := PyString_AsDelphiString(_varParam.Value);
+            _key := PyUnicode_AsWideString(_varParam.Value);
             if Length(_key) > 0 then
               Key := _key[1];
           end;
@@ -733,8 +733,8 @@ begin
         if Assigned(PyResult) then
         begin
           Py_DECREF(PyResult);
-          if PyInt_Check(_varParam.Value) then
-            Key := PyInt_AsLong(_varParam.Value);
+          if PyLong_Check(_varParam.Value) then
+            Key := PyLong_AsLong(_varParam.Value);
         end;
       finally
         Py_DECREF(PyTuple);

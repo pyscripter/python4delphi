@@ -46,8 +46,6 @@ object Form1: TForm1
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 1
-    ExplicitTop = 156
-    ExplicitHeight = 137
   end
   object Panel1: TPanel
     Left = 0

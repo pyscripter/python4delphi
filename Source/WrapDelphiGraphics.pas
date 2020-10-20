@@ -381,7 +381,7 @@ end;
 function TPyDelphiGraphic.Get_Height(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiGraphic.Get_Modified(AContext: Pointer): PPyObject;
@@ -393,7 +393,7 @@ end;
 function TPyDelphiGraphic.Get_Palette(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Palette);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Palette);
 end;
 
 function TPyDelphiGraphic.Get_PaletteModified(
@@ -412,7 +412,7 @@ end;
 function TPyDelphiGraphic.Get_Width(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Width);
 end;
 
 function TPyDelphiGraphic.LoadFromClipboardFormat_Wrapper(
@@ -452,7 +452,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
-      DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
+      DelphiObject.LoadFromFile(PyObjectAsString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -550,10 +550,10 @@ begin
       DelphiObject.SaveToClipboardFormat(_format, _data, _palette);
     {$ENDIF FPC}
       Result := PyTuple_New(3);
-      PyTuple_SetItem(Result, 0, PyInt_FromLong(_format));
+      PyTuple_SetItem(Result, 0, PyLong_FromLong(_format));
       {$IFNDEF FPC}
-      PyTuple_SetItem(Result, 1, PyInt_FromLong(_data));
-      PyTuple_SetItem(Result, 2, PyInt_FromLong(_palette));
+      PyTuple_SetItem(Result, 1, PyLong_FromLong(_data));
+      PyTuple_SetItem(Result, 2, PyLong_FromLong(_palette));
       {$ENDIF FPC}
     end
     else
@@ -570,7 +570,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
-      DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
+      DelphiObject.SaveToFile(PyObjectAsString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -748,7 +748,7 @@ end;
 function TPyDelphiBitmap.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiBitmap.Get_HandleAllocated(AContext: Pointer): PPyObject;
@@ -762,8 +762,8 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.HandleType of
-    bmDIB:  Result := PyString_FromDelphiString('bmDIB');
-    bmDDB:  Result := PyString_FromDelphiString('bmDDB');
+    bmDIB:  Result := PyUnicode_FromString('bmDIB');
+    bmDDB:  Result := PyUnicode_FromString('bmDDB');
     else
       Result := ReturnNone;
     end;
@@ -781,7 +781,7 @@ end;
 function TPyDelphiBitmap.Get_MaskHandle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MaskHandle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.MaskHandle);
 end;
 
 function TPyDelphiBitmap.Get_Monochrome(AContext: Pointer): PPyObject;
@@ -795,15 +795,15 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.PixelFormat of
-    pfDevice:  Result := PyString_FromDelphiString('pfDevice');
-    pf1bit:    Result := PyString_FromDelphiString('pf1bit');
-    pf4bit:    Result := PyString_FromDelphiString('pf4bit');
-    pf8bit:    Result := PyString_FromDelphiString('pf8bit');
-    pf15bit:   Result := PyString_FromDelphiString('pf15bit');
-    pf16bit:   Result := PyString_FromDelphiString('pf16bit');
-    pf24bit:   Result := PyString_FromDelphiString('pf24bit');
-    pf32bit:   Result := PyString_FromDelphiString('pf32bit');
-    pfCustom:  Result := PyString_FromDelphiString('pfCustom');
+    pfDevice:  Result := PyUnicode_FromString('pfDevice');
+    pf1bit:    Result := PyUnicode_FromString('pf1bit');
+    pf4bit:    Result := PyUnicode_FromString('pf4bit');
+    pf8bit:    Result := PyUnicode_FromString('pf8bit');
+    pf15bit:   Result := PyUnicode_FromString('pf15bit');
+    pf16bit:   Result := PyUnicode_FromString('pf16bit');
+    pf24bit:   Result := PyUnicode_FromString('pf24bit');
+    pf32bit:   Result := PyUnicode_FromString('pf32bit');
+    pfCustom:  Result := PyUnicode_FromString('pfCustom');
     else
       Result := ReturnNone;
     end;
@@ -814,7 +814,7 @@ function TPyDelphiBitmap.Get_TransparentColor(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TransparentColor);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.TransparentColor);
 end;
 
 function TPyDelphiBitmap.Get_TransparentMode(AContext: Pointer): PPyObject;
@@ -822,8 +822,8 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.TransparentMode of
-    tmAuto:  Result := PyString_FromDelphiString('tmAuto');
-    tmFixed: Result := PyString_FromDelphiString('tmFixed');
+    tmAuto:  Result := PyUnicode_FromString('tmAuto');
+    tmFixed: Result := PyUnicode_FromString('tmFixed');
     else
       Result := ReturnNone;
     end;
@@ -955,7 +955,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
+      Result := PyLong_FromLong(DelphiObject.ReleaseHandle);
     end
     else
       Result := nil;
@@ -970,7 +970,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ReleaseMaskHandle') <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.ReleaseMaskHandle);
+      Result := PyLong_FromLong(DelphiObject.ReleaseMaskHandle);
     end
     else
       Result := nil;
@@ -985,7 +985,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ReleasePalette') <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.ReleasePalette);
+      Result := PyLong_FromLong(DelphiObject.ReleasePalette);
     end
     else
       Result := nil;
@@ -1359,7 +1359,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'iiiO:FloodFill',@x, @y, @_color, @_pFillStyle ) <> 0 then
     begin
-      if SameText(PyString_AsDelphiString(_pFillStyle), 'fsBorder') then
+      if SameText(PyObjectAsString(_pFillStyle), 'fsBorder') then
         _FillStyle := fsBorder
       else
         _FillStyle := fsSurface;
@@ -1397,9 +1397,9 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if DelphiObject.CanvasOrientation = coRightToLeft then
-      Result := PyString_FromDelphiString('coRightToLeft')
+      Result := PyUnicode_FromString('coRightToLeft')
     else
-      Result := PyString_FromDelphiString('coLeftToRight');
+      Result := PyUnicode_FromString('coLeftToRight');
   end;
 end;
 {$ENDIF FPC}
@@ -1413,7 +1413,7 @@ end;
 function TPyDelphiCanvas.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiCanvas.Get_HandleAllocated(AContext: Pointer): PPyObject;
@@ -1425,7 +1425,7 @@ end;
 function TPyDelphiCanvas.Get_LockCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.LockCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.LockCount);
 end;
 
 function TPyDelphiCanvas.Get_OnChange(AContext: Pointer): PPyObject;
@@ -1450,7 +1450,7 @@ end;
 function TPyDelphiCanvas.Get_TextFlags(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TextFlags);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.TextFlags);
 end;
 {$ENDIF FPC}
 
@@ -1470,7 +1470,7 @@ begin
     y := 0;
     if PyArg_ParseTuple( args, 'ii:GetPixel',@x, @y ) <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.Pixels[x, y]);
+      Result := PyLong_FromLong(DelphiObject.Pixels[x, y]);
     end
     else
       Result := nil;
@@ -2022,7 +2022,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:TextExtent',@_pText ) <> 0 then
     begin
-      Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(PyString_AsDelphiString(_pText)));
+      Result := WrapSize(PyDelphiWrapper, DelphiObject.TextExtent(PyObjectAsString(_pText)));
     end
     else
       Result := nil;
@@ -2038,7 +2038,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:TextHeight',@_pText ) <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.TextHeight(PyString_AsDelphiString(_pText)));
+      Result := PyLong_FromLong(DelphiObject.TextHeight(PyObjectAsString(_pText)));
     end
     else
       Result := nil;
@@ -2101,7 +2101,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:TextWidth',@_pText ) <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.TextWidth(PyString_AsDelphiString(_pText)));
+      Result := PyLong_FromLong(DelphiObject.TextWidth(PyObjectAsString(_pText)));
     end
     else
       Result := nil;
@@ -2168,13 +2168,13 @@ end;
 function TPyDelphiMetaFile.Get_CreatedBy(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.CreatedBy);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.CreatedBy);
 end;
 
 function TPyDelphiMetaFile.Get_Description(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.Description);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Description);
 end;
 
 function TPyDelphiMetaFile.Get_Enhanced(AContext: Pointer): PPyObject;
@@ -2188,7 +2188,7 @@ end;
 function TPyDelphiMetaFile.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiMetaFile.Get_HandleAllocated(
@@ -2201,19 +2201,19 @@ end;
 function TPyDelphiMetaFile.Get_Inch(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Inch);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Inch);
 end;
 
 function TPyDelphiMetaFile.Get_MMHeight(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MMHeight);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.MMHeight);
 end;
 
 function TPyDelphiMetaFile.Get_MMWidth(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MMWidth);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.MMWidth);
 end;
 
 class procedure TPyDelphiMetaFile.RegisterGetSets(PythonType: TPythonType);
@@ -2259,7 +2259,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
+      Result := PyLong_FromLong(DelphiObject.ReleaseHandle);
     end
     else
       Result := nil;
@@ -2362,7 +2362,7 @@ end;
 function TPyDelphiIcon.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiIcon.Get_HandleAllocated(AContext: Pointer): PPyObject;
@@ -2398,7 +2398,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ReleaseHandle') <> 0 then
     begin
-      Result := PyInt_FromLong(DelphiObject.ReleaseHandle);
+      Result := PyLong_FromLong(DelphiObject.ReleaseHandle);
     end
     else
       Result := nil;
@@ -2447,7 +2447,7 @@ end;
 function TPyDelphiPicture.Get_Height(AContext: Pointer): PPyObject;
 begin
     Adjust(@Self);
-    Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
+    Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiPicture.Get_Icon(AContext: Pointer): PPyObject;
@@ -2467,7 +2467,7 @@ end;
 function TPyDelphiPicture.Get_Width(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Width);
 end;
 
 function TPyDelphiPicture.GetDelphiObject: TPicture;
@@ -2484,7 +2484,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:LoadFromFile',@_pFileName ) <> 0 then
     begin
-      DelphiObject.LoadFromFile(PyString_AsDelphiString(_pFileName));
+      DelphiObject.LoadFromFile(PyObjectAsString(_pFileName));
       Result := ReturnNone;
     end
     else
@@ -2534,7 +2534,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'O:SaveToFile',@_pFileName ) <> 0 then
     begin
-      DelphiObject.SaveToFile(PyString_AsDelphiString(_pFileName));
+      DelphiObject.SaveToFile(PyObjectAsString(_pFileName));
       Result := ReturnNone;
     end
     else

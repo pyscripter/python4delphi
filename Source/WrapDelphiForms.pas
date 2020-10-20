@@ -509,7 +509,7 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':ShowModal') <> 0 then begin
       ModalResult := (DelphiObject as TForm).ShowModal;
-      Result := PyInt_FromLong(ModalResult);
+      Result := PyLong_FromLong(ModalResult);
     end else
       Result := nil;
   end;
@@ -560,7 +560,7 @@ end;
 function TPyDelphiCustomForm.Get_ModalResult(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ModalResult);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ModalResult);
 end;
 
 function TPyDelphiCustomForm.Set_ModalResult(AValue: PPyObject;
@@ -698,7 +698,7 @@ end;
 function TPyDelphiScreen.Get_Cursor(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Cursor);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Cursor);
 end;
 
 function TPyDelphiScreen.Get_Cursors(AContext: Pointer): PPyObject;
@@ -712,7 +712,7 @@ end;
 function TPyDelphiScreen.Get_CustomFormCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.CustomFormCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.CustomFormCount);
 end;
 
 function TPyDelphiScreen.Get_CustomForms(AContext: Pointer): PPyObject;
@@ -726,7 +726,7 @@ end;
 function TPyDelphiScreen.Get_DataModuleCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DataModuleCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DataModuleCount);
 end;
 
 function TPyDelphiScreen.Get_DataModules(AContext: Pointer): PPyObject;
@@ -741,27 +741,27 @@ end;
 function TPyDelphiScreen.Get_DefaultIme(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.DefaultIme);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.DefaultIme);
 end;
 
 function TPyDelphiScreen.Get_DefaultKbLayout(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DefaultKbLayout);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DefaultKbLayout);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiScreen.Get_DesktopHeight(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DesktopHeight);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DesktopHeight);
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiScreen.Get_DesktopLeft(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DesktopLeft);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DesktopLeft);
 end;
 
 function TPyDelphiScreen.Get_DesktopRect(AContext: Pointer): PPyObject;
@@ -773,14 +773,14 @@ end;
 function TPyDelphiScreen.Get_DesktopTop(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DesktopTop);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DesktopTop);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiScreen.Get_DesktopWidth(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DesktopWidth);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DesktopWidth);
 end;
 
 function TPyDelphiScreen.Get_Fonts(AContext: Pointer): PPyObject;
@@ -792,7 +792,7 @@ end;
 function TPyDelphiScreen.Get_FormCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.FormCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.FormCount);
 end;
 
 function TPyDelphiScreen.Get_Forms(AContext: Pointer): PPyObject;
@@ -806,7 +806,7 @@ end;
 function TPyDelphiScreen.Get_Height(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiScreen.Get_HintFont(AContext: Pointer): PPyObject;
@@ -838,7 +838,7 @@ end;
 function TPyDelphiScreen.Get_MonitorCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MonitorCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.MonitorCount);
 end;
 
 function TPyDelphiScreen.Get_Monitors(AContext: Pointer): PPyObject;
@@ -882,26 +882,26 @@ end;
 function TPyDelphiScreen.Get_PixelsPerInch(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.PixelsPerInch);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.PixelsPerInch);
 end;
 
 function TPyDelphiScreen.Get_Width(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Width);
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiScreen.Get_WorkAreaHeight(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.WorkAreaHeight);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.WorkAreaHeight);
 end;
 
 function TPyDelphiScreen.Get_WorkAreaLeft(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.WorkAreaLeft);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.WorkAreaLeft);
 end;
 
 function TPyDelphiScreen.Get_WorkAreaRect(AContext: Pointer): PPyObject;
@@ -913,13 +913,13 @@ end;
 function TPyDelphiScreen.Get_WorkAreaTop(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.WorkAreaTop);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.WorkAreaTop);
 end;
 
 function TPyDelphiScreen.Get_WorkAreaWidth(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.WorkAreaWidth);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.WorkAreaWidth);
 end;
 {$ENDIF FPC}
 
@@ -1273,7 +1273,7 @@ end;
 
 function TScreenCursorsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
-  Result := GetPythonEngine.PyInt_FromLong( Container.Cursors[AIndex] );
+  Result := GetPythonEngine.PyLong_FromLong( Container.Cursors[AIndex] );
 end;
 
 function TScreenCursorsAccess.GetSize: Integer;
@@ -1314,25 +1314,25 @@ end;
 function TPyDelphiMonitor.Get_Handle(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 
 function TPyDelphiMonitor.Get_Height(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Height);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Height);
 end;
 
 function TPyDelphiMonitor.Get_Left(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Left);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Left);
 end;
 
 function TPyDelphiMonitor.Get_MonitorNum(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.MonitorNum);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.MonitorNum);
 end;
 
 function TPyDelphiMonitor.Get_Primary(AContext : Pointer): PPyObject;
@@ -1344,13 +1344,13 @@ end;
 function TPyDelphiMonitor.Get_Top(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Top);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Top);
 end;
 
 function TPyDelphiMonitor.Get_Width(AContext : Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Width);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Width);
 end;
 
 function TPyDelphiMonitor.Get_WorkareaRect(AContext : Pointer): PPyObject;
@@ -1626,7 +1626,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'ssi:MessageBox',@_text, @_caption, @_flags ) <> 0 then begin
-      Result := PyInt_FromLong(
+      Result := PyLong_FromLong(
         DelphiObject.MessageBox(PChar(string(_text)), PChar(string(_caption)), _flags) );
     end else
       Result := nil;
@@ -2055,14 +2055,14 @@ function TPyDelphiApplication.Get_BiDiKeyboard(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.BiDiKeyboard);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.BiDiKeyboard);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiApplication.Get_BiDiMode(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Ord(DelphiObject.BiDiMode));
+  Result := GetPythonEngine.PyLong_FromLong(Ord(DelphiObject.BiDiMode));
 end;
 
 {$IFNDEF FPC}
@@ -2070,60 +2070,60 @@ function TPyDelphiApplication.Get_CurrentHelpFile(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.CurrentHelpFile);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.CurrentHelpFile);
 end;
 
 function TPyDelphiApplication.Get_DialogHandle(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.DialogHandle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.DialogHandle);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiApplication.Get_ExeName(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.ExeName);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.ExeName);
 end;
 
 {$IFNDEF FPC}
 function TPyDelphiApplication.Get_Handle(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Handle);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Handle);
 end;
 {$ENDIF FPC}
 
 function TPyDelphiApplication.Get_HelpFile(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.HelpFile);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.HelpFile);
 end;
 
 function TPyDelphiApplication.Get_Hint(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.Hint);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Hint);
 end;
 
 function TPyDelphiApplication.Get_HintColor(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.HintColor);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.HintColor);
 end;
 
 function TPyDelphiApplication.Get_HintHidePause(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.HintHidePause);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.HintHidePause);
 end;
 
 function TPyDelphiApplication.Get_HintPause(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.HintPause);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.HintPause);
 end;
 
 function TPyDelphiApplication.Get_HintShortCuts(
@@ -2137,7 +2137,7 @@ function TPyDelphiApplication.Get_HintShortPause(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.HintShortPause);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.HintShortPause);
 end;
 
 function TPyDelphiApplication.Get_Icon(AContext: Pointer): PPyObject;
@@ -2157,7 +2157,7 @@ function TPyDelphiApplication.Get_NonBiDiKeyboard(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.NonBiDiKeyboard);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.NonBiDiKeyboard);
 end;
 {$ENDIF FPC}
 
@@ -2183,7 +2183,7 @@ end;
 function TPyDelphiApplication.Get_Title(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(DelphiObject.Title);
+  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Title);
 end;
 
 {$IFNDEF FPC}
@@ -2595,9 +2595,9 @@ begin
         if Assigned(PyResult) then
         begin
           Py_DECREF(PyResult);
-          if PyInt_Check(_varParam.Value) and
-             CheckEnum('TCloseAction', PyInt_AsLong(_varParam.Value), Ord(Low(TCloseAction)), Ord(High(TCloseAction))) then
-            Action := TCloseAction(PyInt_AsLong(_varParam.Value));
+          if PyLong_Check(_varParam.Value) and
+             CheckEnum('TCloseAction', PyLong_AsLong(_varParam.Value), Ord(Low(TCloseAction)), Ord(High(TCloseAction))) then
+            Action := TCloseAction(PyLong_AsLong(_varParam.Value));
         end;
       finally
         Py_DECREF(PyTuple);

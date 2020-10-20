@@ -177,19 +177,19 @@ begin
     Result := PyList_New(0);
     if gdSelected in AState then
     begin
-      _item := PyString_FromDelphiString('gdSelected');
+      _item := PyUnicode_FromString('gdSelected');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
     if gdFocused in AState then
     begin
-      _item := PyString_FromDelphiString('gdFocused');
+      _item := PyUnicode_FromString('gdFocused');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
     if gdFixed in AState then
     begin
-      _item := PyString_FromDelphiString('gdFixed');
+      _item := PyUnicode_FromString('gdFixed');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
@@ -218,8 +218,8 @@ begin
   if Assigned(Callable) and PythonOK then
     with GetPythonEngine do begin
       PyObject := PyDelphiWrapper.Wrap(Sender);
-      PyCol := PyInt_FromLong(ACol);
-      PyRow := PyInt_FromLong(ARow);
+      PyCol := PyLong_FromLong(ACol);
+      PyRow := PyLong_FromLong(ARow);
       PyRect := WrapRect(PyDelphiWrapper, Rect);
       PyState := MakeGridDrawState(State);
 
@@ -272,8 +272,8 @@ begin
   if Assigned(Callable) and PythonOK then
     with GetPythonEngine do begin
       PyObject := PyDelphiWrapper.Wrap(Sender);
-      PyCol := PyInt_FromLong(ACol);
-      PyRow := PyInt_FromLong(ARow);
+      PyCol := PyLong_FromLong(ACol);
+      PyRow := PyLong_FromLong(ARow);
       PyCanSelect := CreateVarParam(PyDelphiWrapper, CanSelect);
       _varParam := PythonToDelphi(PyCanSelect) as TPyDelphiVarParameter;
 
@@ -320,7 +320,7 @@ end;
 function TGridColWidthsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
   with GetPythonEngine do
-    Result:=PyInt_FromLong(Container.ColWidths[AIndex]);
+    Result:=PyLong_FromLong(Container.ColWidths[AIndex]);
 end;
 
 type
@@ -341,7 +341,7 @@ function TGridColWidthsAccess.SetItem(AIndex: Integer;
 begin
   result:=True;
   with GetPythonEngine do
-    Container.ColWidths[AIndex]:=PyInt_AsLong(AValue);
+    Container.ColWidths[AIndex]:=PyLong_AsLong(AValue);
 end;
 
 class function TGridColWidthsAccess.SupportsWrite: Boolean;
@@ -396,7 +396,7 @@ end;
 function TPyDelphiCustomDrawGrid.Get_Col(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Col);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Col);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_EditorMode(
@@ -410,26 +410,26 @@ function TPyDelphiCustomDrawGrid.Get_GridHeight(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.GridHeight);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.GridHeight);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_GridWidth(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.GridWidth);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.GridWidth);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_LeftCol(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.LeftCol);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.LeftCol);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_Row(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Row);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Row);
 end;
 
 function TPyDelphiCustomDrawGrid.Get_Selection(
@@ -442,7 +442,7 @@ end;
 function TPyDelphiCustomDrawGrid.Get_TopRow(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.TopRow);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.TopRow);
 end;
 
 class function TPyDelphiCustomDrawGrid.GetTypeName : string;
@@ -638,7 +638,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'ii:GetCell',@col, @row ) <> 0 then
-      Result := PyString_FromDelphiString(DelphiObject.Cells[col, row])
+      Result := PyUnicode_FromString(DelphiObject.Cells[col, row])
     else
       Result := nil;
   end;
@@ -654,7 +654,7 @@ begin
     Adjust(@Self);
     if PyArg_ParseTuple( args, 'iiO:GetCell',@col, @row, @value ) <> 0 then
     begin
-      DelphiObject.Cells[col, row]:= PyString_AsDelphiString(value);
+      DelphiObject.Cells[col, row]:= PyObjectAsString(value);
       result:=ReturnNone;
     end
     else

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 218
   Top = 18
   Caption = 'Form1'
-  ClientHeight = 809
+  ClientHeight = 701
   ClientWidth = 668
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -11,6 +11,9 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = False
+  DesignSize = (
+    668
+    701)
   PixelsPerInch = 96
   TextHeight = 13
   object Image1: TImage
@@ -39,10 +42,11 @@ object Form1: TForm1
     OnClick = Button2Click
   end
   object Memo1: TMemo
-    Left = 8
-    Top = 471
-    Width = 657
-    Height = 330
+    Left = 0
+    Top = 472
+    Width = 668
+    Height = 229
+    Align = alBottom
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13
@@ -69,7 +73,7 @@ object Form1: TForm1
       '  new_im.format = im.format'
       '  return new_im'
       '  '
-      'def ImageToString(image):'
+      'def ImageToBytes(image):'
       '  stream = BytesIO()'
       '  image.save(stream, image.format)'
       '  return stream.getvalue()')
@@ -77,12 +81,15 @@ object Form1: TForm1
     ScrollBars = ssBoth
     TabOrder = 2
     WordWrap = False
+    ExplicitLeft = 16
+    ExplicitTop = 352
   end
   object Memo2: TMemo
     Left = 8
     Top = 352
     Width = 657
-    Height = 113
+    Height = 114
+    Anchors = [akLeft, akTop, akRight]
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -13

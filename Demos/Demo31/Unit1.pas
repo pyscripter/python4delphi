@@ -206,7 +206,7 @@ begin
   PyEngine.Py_DecRef(p);
 {$ENDIF}
 
-  p := PyEngine.PyInt_FromLong(Trunc(System.CompilerVersion));
+  p := PyEngine.PyLong_FromLong(Trunc(System.CompilerVersion));
   PythonModule.SetVar( 'DelphiVersion', p );
   PyEngine.Py_DecRef(p);
 

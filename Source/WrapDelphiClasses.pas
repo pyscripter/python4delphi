@@ -292,7 +292,7 @@ function ShiftToPython(AShift : TShiftState) : PPyObject;
   begin
     with GetPythonEngine do
     begin
-      _item := PyString_FromDelphiString(AString);
+      _item := PyUnicode_FromString(AString);
       PyList_Append(AList, _item);
       Py_XDecRef(_item);
     end;
@@ -363,7 +363,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':GetNamePath' ) <> 0 then begin
-      Result := PyString_FromDelphiString(DelphiObject.GetNamePath)
+      Result := PyUnicode_FromString(DelphiObject.GetNamePath)
     end else
       Result := nil;
   end;
@@ -417,9 +417,9 @@ begin
   Result := -1;
   with GetPythonEngine do
   begin
-    if PyInt_Check(AValue) then
+    if PyLong_Check(AValue) then
     begin
-      _item := Container.FindItemID(PyInt_AsLong(AValue));
+      _item := Container.FindItemID(PyLong_AsLong(AValue));
       if Assigned(_item) then
         Result := _item.Index;
     end
@@ -534,7 +534,7 @@ end;
 function TPyDelphiCollection.Get_Count(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Count);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Count);
 end;
 
 function TPyDelphiCollection.Get_Items(AContext: Pointer): PPyObject;
@@ -639,9 +639,9 @@ begin
   Result := -1;
   with GetPythonEngine do
   begin
-    if PyString_Check(AValue) then
+    if PyUnicode_Check(AValue) then
     begin
-      S := PyString_AsDelphiString(AValue);
+      S := PyUnicode_AsWideString(AValue);
       for i := 0 to Container.ComponentCount-1 do
         if SameText( Container.Components[i].Name, S) then
         begin
@@ -730,7 +730,7 @@ begin
     if PyArg_ParseTuple( args, '|O:BindMethodsToEvents',@s ) <> 0 then
     begin
       if Assigned(S) then
-        _prefix := PyString_AsDelphiString(s);
+        _prefix := PyObjectAsString(s);
       _bindings := PyList_New(0);
       try
         _type := GetSelf.ob_type;
@@ -800,8 +800,8 @@ begin
                               else
                               begin
                                 _pair := PyTuple_New(3);
-                                PyTuple_SetItem(_pair, 0, PyString_FromDelphiString(_compName));
-                                PyTuple_SetItem(_pair, 1, PyString_FromDelphiString(_eventName));
+                                PyTuple_SetItem(_pair, 0, PyUnicode_FromString(_compName));
+                                PyTuple_SetItem(_pair, 1, PyUnicode_FromString(_eventName));
                                 PyTuple_SetItem(_pair, 2, objMethod);
                                 PyList_Append(_bindings, _pair);
                               end;
@@ -835,7 +835,7 @@ end;
 function TPyDelphiComponent.Get_ComponentCount(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ComponentCount);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ComponentCount);
 end;
 
 function TPyDelphiComponent.Get_Components(AContext: Pointer): PPyObject;
@@ -885,9 +885,9 @@ begin
   Result := nil;
   if Assigned(DelphiObject) then
   begin
-    if GetPythonEngine.PyString_Check(Key) then
+    if GetPythonEngine.PyUnicode_Check(Key) then
     begin
-      Name := GetPythonEngine.PyString_AsDelphiString(Key);
+      Name := GetPythonEngine.PyUnicode_AsWideString(Key);
       // try a sub component
       Component := DelphiObject.FindComponent(Name);
       if Component <> nil then
@@ -960,16 +960,16 @@ end;
 
 function TPyDelphiComponent.MpSubscript(obj: PPyObject): PPyObject;
 var
-  _name : string;
+  _name : UnicodeString;
   _comp : TComponent;
 begin
   with GetPythonEngine do
   begin
-    if PyInt_Check(obj) then
-      Result := SqItem(PyInt_AsLong(obj))
-    else if PyString_Check(obj) then
+    if PyLong_Check(obj) then
+      Result := SqItem(PyLong_AsLong(obj))
+    else if PyUnicode_Check(obj) then
     begin
-      _name := string(PyString_AsDelphiString(obj));
+      _name := PyUnicode_AsWideString(obj);
       _comp := DelphiObject.FindComponent(_name);
       if Assigned(_comp) then
         Result := Wrap(_comp)
@@ -1060,7 +1060,7 @@ end;
 
 function TStringsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromDelphiString( Container[AIndex] );
+  Result := GetPythonEngine.PyUnicode_FromString( Container[AIndex] );
 end;
 
 function TStringsAccess.GetSize: Integer;
@@ -1077,9 +1077,9 @@ function TStringsAccess.SetItem(AIndex: Integer; AValue: PPyObject): Boolean;
 begin
   with GetPythonEngine do
   begin
-    if PyString_Check(AValue) then
+    if PyUnicode_Check(AValue) then
     begin
-      Container[AIndex] := PyString_AsDelphiString(AValue);
+      Container[AIndex] := PyUnicode_AsWideString(AValue);
       Result := True;
     end
     else
@@ -1168,7 +1168,7 @@ begin
     if PyArg_ParseTuple( args, 'OO:AddObject',@PStr, @_obj ) <> 0 then
     begin
       if CheckObjAttribute(_obj, 'The second argument of AddObject', TObject, _value) then
-          Result := PyInt_FromLong(DelphiObject.AddObject(PyString_AsDelphiString(PStr), _value))
+        Result := PyLong_FromLong(DelphiObject.AddObject(PyObjectAsString(PStr), _value))
       else
         Result := nil;
     end
@@ -1184,7 +1184,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do
     if PyArg_ParseTuple( args, 'O:Add',@PStr ) <> 0 then
-      Result := PyInt_FromLong(DelphiObject.Add(PyString_AsDelphiString(PStr)))
+      Result := PyLong_FromLong(DelphiObject.Add(PyObjectAsString(PStr)))
     else
       Result := nil;
 end;
@@ -1292,7 +1292,7 @@ end;
 function TPyDelphiStrings.Get_Capacity(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.Capacity);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Capacity);
 end;
 
 function TPyDelphiStrings.Get_Objects(AContext: Pointer): PPyObject;
@@ -1307,7 +1307,7 @@ end;
 function TPyDelphiStrings.Get_Text(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyString_FromDelphiString(
+  Result := GetPythonEngine.PyUnicode_FromString(
     CleanString(DelphiObject.Text, False));
 end;
 
@@ -1319,7 +1319,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do
     if PyArg_ParseTuple( args, 'O:IndexOf',@PStr ) <> 0 then
-      Result := GetPythonEngine.PyInt_FromLong(DelphiObject.IndexOf(PyString_AsDelphiString(PStr)))
+      Result := GetPythonEngine.PyLong_FromLong(DelphiObject.IndexOf(PyObjectAsString(PStr)))
     else
       Result := nil;
 end;
@@ -1351,8 +1351,8 @@ Var
 begin
   with GetPythonEngine do
   begin
-    if PyInt_Check(obj) then
-      Result := SqItem(PyInt_AsLong(obj))
+    if PyLong_Check(obj) then
+      Result := SqItem(PyLong_AsLong(obj))
     else
     begin
       S := PyObjectAsString(obj);
@@ -1423,7 +1423,7 @@ end;
 
 function TPyDelphiStrings.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromDelphiString( Format('<Delphi TStrings at %x>',
+  Result := GetPythonEngine.PyUnicode_FromString( Format('<Delphi TStrings at %x>',
          [NativeInt(self)]) );
 end;
 

@@ -251,13 +251,13 @@ end;
 function TPyDelphiPoint.Get_X(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.X);
+  Result := GetPythonEngine.PyLong_FromLong(Value.X);
 end;
 
 function TPyDelphiPoint.Get_Y(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.Y);
+  Result := GetPythonEngine.PyLong_FromLong(Value.Y);
 end;
 
 class procedure TPyDelphiPoint.RegisterGetSets(PythonType: TPythonType);
@@ -274,7 +274,7 @@ end;
 
 function TPyDelphiPoint.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Point (%d, %d)>',
+  Result := GetPythonEngine.PyUnicode_FromString(Format('<Point (%d, %d)>',
     [Value.X, Value.Y]));
 end;
 
@@ -350,7 +350,7 @@ end;
 function TPyDelphiRect.Get_Bottom(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.Bottom);
+  Result := GetPythonEngine.PyLong_FromLong(Value.Bottom);
 end;
 
 function TPyDelphiRect.Get_BottomRight(Acontext: Pointer): PPyObject;
@@ -362,19 +362,19 @@ end;
 function TPyDelphiRect.Get_Left(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.Left);
+  Result := GetPythonEngine.PyLong_FromLong(Value.Left);
 end;
 
 function TPyDelphiRect.Get_Right(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.Right);
+  Result := GetPythonEngine.PyLong_FromLong(Value.Right);
 end;
 
 function TPyDelphiRect.Get_Top(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.Top);
+  Result := GetPythonEngine.PyLong_FromLong(Value.Top);
 end;
 
 function TPyDelphiRect.Get_TopLeft(Acontext: Pointer): PPyObject;
@@ -405,7 +405,7 @@ end;
 
 function TPyDelphiRect.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Rect (%d, %d, %d, %d)>',
+  Result := GetPythonEngine.PyUnicode_FromString(Format('<Rect (%d, %d, %d, %d)>',
     [Value.Left, Value.Top, Value.Right, Value.Bottom]));
 end;
 
@@ -544,13 +544,13 @@ end;
 function TPyDelphiSize.Get_CX(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.cx);
+  Result := GetPythonEngine.PyLong_FromLong(Value.cx);
 end;
 
 function TPyDelphiSize.Get_CY(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(Value.cy);
+  Result := GetPythonEngine.PyLong_FromLong(Value.cy);
 end;
 
 class procedure TPyDelphiSize.RegisterGetSets(PythonType: TPythonType);
@@ -567,7 +567,7 @@ end;
 
 function TPyDelphiSize.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyString_FromDelphiString(Format('<Size (%d, %d)>',
+  Result := GetPythonEngine.PyUnicode_FromString(Format('<Size (%d, %d)>',
     [Value.cx, Value.cy]));
 end;
 

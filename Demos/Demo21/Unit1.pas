@@ -99,10 +99,10 @@ begin
     begin
       if key = 'x' then
         Result := VariantAsPyObject( x )
-        // Or  Result := PyInt_FromLong( x )
+        // Or  Result := PyLong_FromLong( x )
       else if key = 'y' then
-        Result := PyInt_FromLong( y )
-        // or  Result := PyInt_FromLong( y )
+        Result := PyLong_FromLong( y )
+        // or  Result := PyLong_FromLong( y )
       else
         Result := inherited GetAttr(key);
     end;
@@ -132,7 +132,7 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyString_FromString( PAnsiChar(Format('(%d, %d)',[x, y])) );
+    // or Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[x, y]));
 end;
 
 // Methods of TPyPoint
@@ -178,7 +178,7 @@ procedure TForm1.PythonModule1Events0Execute(Sender: TObject; PSelf,
 begin
   with GetPythonEngine do
   begin
-    Result := PyString_FromString('Hello world !');
+    Result := PyUnicode_FromAnsiString('Hello world !');
   end;
 end;
 

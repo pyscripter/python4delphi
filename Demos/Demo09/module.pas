@@ -22,7 +22,7 @@ begin
     begin
       if PyArg_ParseTuple( args, 'ii:Add',@a, @b ) <> 0 then
         begin
-          Result := PyInt_FromLong( a + b );
+          Result := PyLong_FromLong( a + b );
         end
       else
         Result := nil;

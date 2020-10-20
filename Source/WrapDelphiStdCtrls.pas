@@ -263,7 +263,7 @@ end;
 function TPyDelphiCustomEdit.Get_SelStart(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.SelStart);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.SelStart);
 end;
 
 function TPyDelphiCustomEdit.Set_SelStart(AValue: PPyObject; AContext: Pointer): integer;
@@ -412,7 +412,7 @@ end;
 function TPyDelphiListBox.Get_ItemIndex(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyInt_FromLong(DelphiObject.ItemIndex);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ItemIndex);
 end;
 
 class procedure TPyDelphiListBox.RegisterGetSets(PythonType: TPythonType);
