@@ -526,7 +526,7 @@ begin
   begin
     if PyUnicode_Check(AValue) then
     begin
-      S := PyUnicode_AsWideString(AValue);
+      S := PyUnicodeAsString(AValue);
       for i := 0 to Container.PageCount-1 do
         if SameText( Container.Pages[i].Name, S) then
         begin

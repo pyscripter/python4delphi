@@ -2346,7 +2346,7 @@ end;
 function TPythonData.GetAsWideString: UnicodeString;
 begin
   if Assigned(PyObject) and GetPythonEngine.PyUnicode_Check(PyObject) then
-    Result := GetPythonEngine.PyUnicode_AsWideString(PyObject)
+    Result := GetPythonEngine.PyUnicodeAsString(PyObject)
   else
     Result := UnicodeString(GetAsString);
 end;

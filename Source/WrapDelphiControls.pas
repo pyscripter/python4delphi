@@ -448,7 +448,7 @@ begin
   begin
     if PyUnicode_Check(AValue) then
     begin
-      S := PyUnicode_AsWideString(AValue);
+      S := PyUnicodeAsString(AValue);
       for i := 0 to Container.ControlCount-1 do
         if SameText( Container.Controls[i].Name, S) then
         begin
@@ -682,7 +682,7 @@ begin
             Key := #0
           else if PyUnicode_Check(_varParam.Value) then
           begin
-            _key := PyUnicode_AsWideString(_varParam.Value);
+            _key := PyUnicodeAsString(_varParam.Value);
             if Length(_key) > 0 then
               Key := _key[1];
           end;

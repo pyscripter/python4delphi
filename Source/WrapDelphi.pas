@@ -1190,7 +1190,7 @@ function CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : string
 begin
   if GetPythonEngine.PyUnicode_Check(AAttribute) then
   begin
-    AValue := GetPythonEngine.PyUnicode_AsWideString(AAttribute);
+    AValue := GetPythonEngine.PyUnicodeAsString(AAttribute);
     Result := True;
   end
   else
@@ -2004,7 +2004,7 @@ var
 begin
   Result := nil;
   if (fAddr <> nil) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicode_AsWideString(Key)
+    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
   else
     Exit;
 
@@ -2040,7 +2040,7 @@ var
 begin
   Result := -1;
   if (fAddr <> nil) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicode_AsWideString(Key)
+    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
   else begin
     Exit;
   end;
@@ -2136,7 +2136,7 @@ begin
   if GetPythonEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
 
   if Assigned(DelphiObject) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicode_AsWideString(Key)
+    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
   else
     Exit;
 
@@ -2494,7 +2494,7 @@ var
 begin
   Result := -1;
   if Assigned(DelphiObject) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicode_AsWideString(Key)
+    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
   else begin
     Exit;
   end;

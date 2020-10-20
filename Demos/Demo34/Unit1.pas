@@ -193,7 +193,7 @@ begin
   begin
     if PyUnicode_Check(value) then
     begin
-      TPyPoint(PythonToDelphi(obj)).Name := PyUnicode_AsWideString(value);
+      TPyPoint(PythonToDelphi(obj)).Name := PyUnicodeAsString(value);
       Result := 0;
     end
     else

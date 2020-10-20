@@ -493,7 +493,7 @@ begin
   // Unicode strings
   b := VarPythonEval( 'u"Hello world!"' );
   Assert( VarIsPythonUnicode(b) );
-  w := PythonEngine1.PyUnicode_AsWideString(ExtractPythonObjectFrom(b));
+  w := PythonEngine1.PyUnicodeAsString(ExtractPythonObjectFrom(b));
   Assert( w = 'Hello world!');
   Assert( b = 'Hello world!');
   Assert( b <> a );

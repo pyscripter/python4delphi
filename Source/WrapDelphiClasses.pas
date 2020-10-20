@@ -641,7 +641,7 @@ begin
   begin
     if PyUnicode_Check(AValue) then
     begin
-      S := PyUnicode_AsWideString(AValue);
+      S := PyUnicodeAsString(AValue);
       for i := 0 to Container.ComponentCount-1 do
         if SameText( Container.Components[i].Name, S) then
         begin
@@ -887,7 +887,7 @@ begin
   begin
     if GetPythonEngine.PyUnicode_Check(Key) then
     begin
-      Name := GetPythonEngine.PyUnicode_AsWideString(Key);
+      Name := GetPythonEngine.PyUnicodeAsString(Key);
       // try a sub component
       Component := DelphiObject.FindComponent(Name);
       if Component <> nil then
@@ -969,7 +969,7 @@ begin
       Result := SqItem(PyLong_AsLong(obj))
     else if PyUnicode_Check(obj) then
     begin
-      _name := PyUnicode_AsWideString(obj);
+      _name := PyUnicodeAsString(obj);
       _comp := DelphiObject.FindComponent(_name);
       if Assigned(_comp) then
         Result := Wrap(_comp)
@@ -1079,7 +1079,7 @@ begin
   begin
     if PyUnicode_Check(AValue) then
     begin
-      Container[AIndex] := PyUnicode_AsWideString(AValue);
+      Container[AIndex] := PyUnicodeAsString(AValue);
       Result := True;
     end
     else

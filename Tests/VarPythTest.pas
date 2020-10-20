@@ -788,7 +788,7 @@ begin
   // Unicode strings
   b := VarPythonEval( 'u"Hello world!"' );
   Assert.IsTrue( VarIsPythonUnicode(b) );
-  w := PythonEngine.PyUnicode_AsWideString(ExtractPythonObjectFrom(b));
+  w := PythonEngine.PyUnicodeAsString(ExtractPythonObjectFrom(b));
   Assert.IsTrue( w = 'Hello world!');
   Assert.IsTrue( b = 'Hello world!');
   Assert.IsTrue( b <> a );
