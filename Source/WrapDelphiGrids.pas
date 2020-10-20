@@ -177,19 +177,19 @@ begin
     Result := PyList_New(0);
     if gdSelected in AState then
     begin
-      _item := PyUnicode_FromString('gdSelected');
+      _item := PyUnicodeFromString('gdSelected');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
     if gdFocused in AState then
     begin
-      _item := PyUnicode_FromString('gdFocused');
+      _item := PyUnicodeFromString('gdFocused');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
     if gdFixed in AState then
     begin
-      _item := PyUnicode_FromString('gdFixed');
+      _item := PyUnicodeFromString('gdFixed');
       PyList_Append(Result, _item);
       Py_DecRef(_item);
     end;
@@ -638,7 +638,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, 'ii:GetCell',@col, @row ) <> 0 then
-      Result := PyUnicode_FromString(DelphiObject.Cells[col, row])
+      Result := PyUnicodeFromString(DelphiObject.Cells[col, row])
     else
       Result := nil;
   end;

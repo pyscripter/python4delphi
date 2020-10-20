@@ -469,7 +469,7 @@ var
 begin
   with GetPythonEngine do
     begin
-      obj := PyUnicode_FromString(prop);
+      obj := PyUnicodeFromString(prop);
       PyList_Append( List, obj );
       Py_XDecRef(obj);
     end;
@@ -2774,7 +2774,7 @@ end;
 function  TVarArg.Repr : PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyUnicode_FromString( PyObjectAsString(FValue) );
+    Result := PyUnicodeFromString( PyObjectAsString(FValue) );
 end;
 
 constructor TPythonVarArg.Create( AOwner : TComponent );

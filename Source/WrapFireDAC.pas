@@ -203,7 +203,7 @@ var
  obj : PPyObject;
 begin
  with GetPythonEngine do begin
-   obj := PyUnicode_FromWideString(prop);
+   obj := PyUnicodeFromString(prop);
    PyList_Append( List, obj );
    Py_XDecRef(obj);
  end;
@@ -1011,7 +1011,7 @@ begin
       Result   := PyTuple_New(l_oDataset.FieldCount);
       for i := 0 to l_oDataset.FieldCount - 1 do
         with l_oDataset.Fields[i] do
-          PyTuple_SetItem(Result, i, PyUnicode_FromWideString(FieldName));
+          PyTuple_SetItem(Result, i, PyUnicodeFromString(FieldName));
     except
       on E : Exception do begin
         RaiseDBError( E );

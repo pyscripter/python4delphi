@@ -497,7 +497,7 @@ begin
   Assert( w = 'Hello world!');
   Assert( b = 'Hello world!');
   Assert( b <> a );
-  _obj := PythonEngine1.PyUnicode_FromWideString(w);
+  _obj := PythonEngine1.PyUnicodeFromString(w);
   try
     c := VarPythonCreate( _obj  );
   finally

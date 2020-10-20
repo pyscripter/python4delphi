@@ -274,7 +274,7 @@ end;
 
 function TPyDelphiPoint.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString(Format('<Point (%d, %d)>',
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<Point (%d, %d)>',
     [Value.X, Value.Y]));
 end;
 
@@ -405,7 +405,7 @@ end;
 
 function TPyDelphiRect.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString(Format('<Rect (%d, %d, %d, %d)>',
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<Rect (%d, %d, %d, %d)>',
     [Value.Left, Value.Top, Value.Right, Value.Bottom]));
 end;
 
@@ -567,7 +567,7 @@ end;
 
 function TPyDelphiSize.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString(Format('<Size (%d, %d)>',
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<Size (%d, %d)>',
     [Value.cx, Value.cy]));
 end;
 

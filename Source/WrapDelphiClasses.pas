@@ -292,7 +292,7 @@ function ShiftToPython(AShift : TShiftState) : PPyObject;
   begin
     with GetPythonEngine do
     begin
-      _item := PyUnicode_FromString(AString);
+      _item := PyUnicodeFromString(AString);
       PyList_Append(AList, _item);
       Py_XDecRef(_item);
     end;
@@ -363,7 +363,7 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':GetNamePath' ) <> 0 then begin
-      Result := PyUnicode_FromString(DelphiObject.GetNamePath)
+      Result := PyUnicodeFromString(DelphiObject.GetNamePath)
     end else
       Result := nil;
   end;
@@ -800,8 +800,8 @@ begin
                               else
                               begin
                                 _pair := PyTuple_New(3);
-                                PyTuple_SetItem(_pair, 0, PyUnicode_FromString(_compName));
-                                PyTuple_SetItem(_pair, 1, PyUnicode_FromString(_eventName));
+                                PyTuple_SetItem(_pair, 0, PyUnicodeFromString(_compName));
+                                PyTuple_SetItem(_pair, 1, PyUnicodeFromString(_eventName));
                                 PyTuple_SetItem(_pair, 2, objMethod);
                                 PyList_Append(_bindings, _pair);
                               end;
@@ -1060,7 +1060,7 @@ end;
 
 function TStringsAccess.GetItem(AIndex: Integer): PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString( Container[AIndex] );
+  Result := GetPythonEngine.PyUnicodeFromString( Container[AIndex] );
 end;
 
 function TStringsAccess.GetSize: Integer;
@@ -1307,7 +1307,7 @@ end;
 function TPyDelphiStrings.Get_Text(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(
+  Result := GetPythonEngine.PyUnicodeFromString(
     CleanString(DelphiObject.Text, False));
 end;
 
@@ -1423,7 +1423,7 @@ end;
 
 function TPyDelphiStrings.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString( Format('<Delphi TStrings at %x>',
+  Result := GetPythonEngine.PyUnicodeFromString( Format('<Delphi TStrings at %x>',
          [NativeInt(self)]) );
 end;
 

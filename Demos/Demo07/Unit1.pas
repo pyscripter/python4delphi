@@ -203,7 +203,7 @@ begin
       else
         begin
           // Else check for a method
-          Result := PyObject_GenericGetAttr(obj, PyUnicode_FromAnsiString(key));
+          Result := PyObject_GenericGetAttr(obj, PyUnicodeFromString(key));
           if not Assigned(Result) then
             PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
         end;
@@ -246,7 +246,7 @@ function  PyPoint_repr(obj : PPyObject) : PPyObject; cdecl;
 begin
   with GetPythonEngine, PPyPoint(obj)^ do
     begin
-      Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[po_x, po_y]));
+      Result := PyUnicodeFromString(Format('(%d, %d)',[po_x, po_y]));
     end;
 end;
 

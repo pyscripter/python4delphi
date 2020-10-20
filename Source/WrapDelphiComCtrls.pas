@@ -203,7 +203,7 @@ function TPyDelphiPageControl.GetHitTestInfoAt_Wrapper(
   begin
     with GetPythonEngine do
     begin
-      _text := PyUnicode_FromString(AText);
+      _text := PyUnicodeFromString(AText);
       PyList_Append(Result, _text);
       Py_DecRef(_text);
     end;

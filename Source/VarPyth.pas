@@ -711,7 +711,7 @@ var
 begin
   with GetPythonEngine do
   begin
-    _module_name := PyUnicode_FromAnsiString(AModule);
+    _module_name := PyUnicodeFromString(AModule);
     try
       _module := PyImport_Import(_module_name);
       CheckError;

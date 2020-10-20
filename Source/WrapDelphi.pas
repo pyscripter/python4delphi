@@ -980,7 +980,7 @@ begin
             Py_XIncRef(Result);
           end
           else
-            Result := GetPythonEngine.PyUnicode_FromString(GetEnumName(Value.TypeInfo,
+            Result := GetPythonEngine.PyUnicodeFromString(GetEnumName(Value.TypeInfo,
               PInteger(Value.GetReferenceToRawData)^));
         end;
       tkSet:
@@ -1157,7 +1157,7 @@ begin
     with GetPythonEngine do
     begin
       Result := False;
-      PyErr_SetObject (PyExc_IndexError^, PyUnicode_FromString(
+      PyErr_SetObject (PyExc_IndexError^, PyUnicodeFromString(
           Format(rs_ErrCheckIndex,[AIndexName, AIndex])));
     end
   else
@@ -1176,7 +1176,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckInt, [AAttributeName])));
+        PyUnicodeFromString(Format(rs_ErrCheckInt, [AAttributeName])));
   end;
 end;
 
@@ -1198,7 +1198,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckStr, [AAttributeName])));
+        PyUnicodeFromString(Format(rs_ErrCheckStr, [AAttributeName])));
   end;
 end;
 
@@ -1211,7 +1211,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckCallable, [AAttributeName])));
+        PyUnicodeFromString(Format(rs_ErrCheckCallable, [AAttributeName])));
   end;
 end;
 
@@ -1224,7 +1224,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckEnum,
+        PyUnicodeFromString(Format(rs_ErrCheckEnum,
         [AEnumName, AMinValue, AMaxValue, AValue])));
   end;
 end;
@@ -1249,7 +1249,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetObject (PyExc_AttributeError^,
-          PyUnicode_FromString(Format(rs_ErrCheckObjOfType, [AAttributeName, AExpectedClass.ClassName])));
+          PyUnicodeFromString(Format(rs_ErrCheckObjOfType, [AAttributeName, AExpectedClass.ClassName])));
     end
     else
     begin
@@ -1262,7 +1262,7 @@ begin
     Result := False;
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckObj, [AAttributeName])));
+        PyUnicodeFromString(Format(rs_ErrCheckObj, [AAttributeName])));
   end;
 end;
 
@@ -1316,7 +1316,7 @@ begin
   for I := 0 to SizeOf(Integer) * 8 - 1 do
     if I in S then
     begin
-      _name := GetPythonEngine.PyUnicode_FromString(GetEnumName(ATypeInfo, I));
+      _name := GetPythonEngine.PyUnicodeFromString(GetEnumName(ATypeInfo, I));
       GetPythonEngine.PyList_Append(Result, _name);
       GetPythonEngine.Py_XDecRef(_name);
     end;
@@ -1541,7 +1541,7 @@ end;
 function TPyDelphiContainer.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyUnicode_FromString( Format('<Delphi %s at %x>',
+    Result := PyUnicodeFromString( Format('<Delphi %s at %x>',
          [ContainerAccess.Name, NativeInt(Self)]) );
 end;
 
@@ -1583,7 +1583,7 @@ begin
     Result := -1;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSqAss, [fContainerAccess.Name])) );
+        PyUnicodeFromString(Format(rs_ErrSqAss, [fContainerAccess.Name])) );
   end;
 end;
 
@@ -1601,7 +1601,7 @@ begin
     Result := -1;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSqContains, [fContainerAccess.Name])) );
+        PyUnicodeFromString(Format(rs_ErrSqContains, [fContainerAccess.Name])) );
   end;
 end;
 
@@ -1646,7 +1646,7 @@ end;
 function TPyDelphiIterator.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyUnicode_FromString( Format('<Delphi %sIterator at %x>',
+    Result := PyUnicodeFromString( Format('<Delphi %sIterator at %x>',
          [ContainerAccess.Name, NativeInt(Self)]) );
 end;
 
@@ -1696,7 +1696,7 @@ begin
   if not Result then
     with GetPythonEngine do
       PyErr_SetObject(PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrCheckBound, [ClassName])));
+        PyUnicodeFromString(Format(rs_ErrCheckBound, [ClassName])));
 end;
 
 function TPyDelphiObject.Compare(obj: PPyObject): Integer;
@@ -1757,7 +1757,7 @@ begin
         Result := ReturnNone;
       end else begin
         PyErr_SetObject (PyExc_AttributeError^,
-          PyUnicode_FromString(rs_ErrFree));
+          PyUnicodeFromString(rs_ErrFree));
         Result := nil;
       end;
     end
@@ -2013,7 +2013,7 @@ begin
   if not Assigned(Result) then
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+        PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
 end;
 
 class procedure TPyRttiObject.RegisterMethods(PythonType: TPythonType);
@@ -2028,7 +2028,7 @@ end;
 
 function TPyRttiObject.Repr: PPyObject;
 begin
-  Result := GetPythonEngine.PyUnicode_FromString(
+  Result := GetPythonEngine.PyUnicodeFromString(
    Format('<Delphi record of type %s at %x>',
    [RttiType.Name, NativeInt(Self)]) )
 end;
@@ -2050,7 +2050,7 @@ begin
 
   if Result <> 0 then
     with GetPythonEngine do
-      PyErr_SetObject(PyExc_AttributeError^, PyUnicode_FromString(
+      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
         Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
 end;
 
@@ -2200,9 +2200,9 @@ begin
           Result := GetPythonEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
         else
         {$IFDEF FPC}
-          Result := GetPythonEngine.PyUnicode_FromString(GetEnumName(PropInfo^.PropType,
+          Result := GetPythonEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType,
         {$ELSE FPC}
-          Result := GetPythonEngine.PyUnicode_FromString(GetEnumName(PropInfo^.PropType^,
+          Result := GetPythonEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType^,
         {$ENDIF FPC}
             GetOrdProp(Self.DelphiObject, PropInfo)));
       end
@@ -2219,7 +2219,7 @@ begin
   if not Assigned(Result) then
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicode_FromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+        PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
 end;
 
 function TPyDelphiObject.GetContainerAccess: TContainerAccess;
@@ -2244,7 +2244,7 @@ function TPyDelphiObject.Get_ClassName(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
   if CheckBound then
-    Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.ClassName)
+    Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.ClassName)
   else
     Result := nil;
 end;
@@ -2359,7 +2359,7 @@ begin
     Result := nil;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrIterSupport,
+        PyUnicodeFromString(Format(rs_ErrIterSupport,
         [Self.ClassName])) );
   end;
 end;
@@ -2412,10 +2412,10 @@ function TPyDelphiObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
     if Assigned(DelphiObject) then
-      Result := PyUnicode_FromString( Format('<Delphi object of type %s at %x>',
+      Result := PyUnicodeFromString( Format('<Delphi object of type %s at %x>',
            [DelphiObject.ClassName, NativeInt(Self)]) )
     else
-      Result := PyUnicode_FromString( Format('<Unbound Delphi wrapper of type %s at %x>',
+      Result := PyUnicodeFromString( Format('<Unbound Delphi wrapper of type %s at %x>',
            [DelphiObjectClass.ClassName, NativeInt(Self)]) );
 end;
 
@@ -2533,7 +2533,7 @@ begin
     Result := inherited SetAttrO(key, value);
   if Result <> 0 then
     with GetPythonEngine do
-      PyErr_SetObject(PyExc_AttributeError^, PyUnicode_FromString(
+      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
         Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
 end;
 
@@ -2632,7 +2632,7 @@ begin
     Result := -1;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSqAss, [Self.ClassName])) );
+        PyUnicodeFromString(Format(rs_ErrSqAss, [Self.ClassName])) );
   end;
 end;
 
@@ -2663,7 +2663,7 @@ begin
     Result := nil;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSequence, [Self.ClassName])) );
+        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
   end;
 end;
 
@@ -2695,7 +2695,7 @@ begin
     Result := nil;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSequence, [Self.ClassName])) );
+        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToList' ) <> 0 then
     with GetPythonEngine do
@@ -2719,7 +2719,7 @@ begin
     Result := nil;
     with GetPythonEngine do
       PyErr_SetObject( PyExc_SystemError^,
-        PyUnicode_FromString(Format(rs_ErrSequence, [Self.ClassName])) );
+        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToTuple' ) <> 0 then
     with GetPythonEngine do
@@ -2824,7 +2824,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
   procedure InvalidArguments(const MethName, ErrMsg : string);
   begin
     with GetPythonEngine do
-      PyErr_SetObject(PyExc_TypeError^, PyUnicode_FromString(
+      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
         Format(rs_ErrInvalidArgs,
         [MethName, ErrMsg])));
   end;
@@ -2868,7 +2868,7 @@ begin
       Result := SimpleValueToPython(ret, ErrMsg);
       if Result = nil then
         with PythonType.Engine do
-          PyErr_SetObject(PyExc_TypeError^, PyUnicode_FromString(
+          PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
             Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
     end;
   except
@@ -2909,7 +2909,7 @@ begin
       begin
         Result := nil;
         PyErr_SetObject (PyExc_TypeError^,
-          PyUnicode_FromString(Format(rs_ErrInvalidArgs,
+          PyUnicodeFromString(Format(rs_ErrInvalidArgs,
           [MethodInfo.Name, E.Message])));
       end;
     end;
@@ -2919,7 +2919,7 @@ end;
 function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
-    Result := PyUnicode_FromString(
+    Result := PyUnicodeFromString(
       Format('<Delphi method %s of type %s at %x>',
          [
            {$IFDEF EXTENDED_RTTI}
@@ -2982,7 +2982,7 @@ begin
     _value := GetPythonEngine.PyObject_Repr(Value);
   try
     Result :=
-      GetPythonEngine.PyUnicode_FromString(Format('<VarParameter containing: %s>',
+      GetPythonEngine.PyUnicodeFromString(Format('<VarParameter containing: %s>',
       [GetPythonEngine.PyObjectAsString(_value)]));
   finally
     GetPythonEngine.Py_DECREF(_value);
@@ -3354,7 +3354,7 @@ begin
         Klass := nil;
       end;
       if (Klass = nil) or not Klass.InheritsFrom(TComponent) then begin
-        PyErr_SetObject(PyExc_TypeError^, PyUnicode_FromString(
+        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
           Format(rs_ErrInvalidArgs,
           ['CreateComponent', rs_InvalidClass])));
         Exit;
@@ -3371,7 +3371,7 @@ begin
         Ownership := soOwned;
       Result := Self.Wrap(Component, Ownership);
     end else
-      PyErr_SetObject(PyExc_TypeError^, PyUnicode_FromString(
+      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
         Format(rs_ErrInvalidArgs,
         ['CreateComponent', ''])));
   end;

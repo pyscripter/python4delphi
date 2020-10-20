@@ -660,7 +660,6 @@ begin
   Assert.IsTrue( VarIsPythonSequence(c) );
   Assert.IsTrue( c.GetItem(1) = 2 );
   Assert.IsTrue( c.Length = 3 );
-  Assert.IsTrue(VarIsPythonIterator(c));
 
   // test iterator
   iter := BuiltinModule.iter(VarPythonCreate([1, 2, 3, 4], stTuple));
@@ -793,7 +792,7 @@ begin
   Assert.IsTrue( w = 'Hello world!');
   Assert.IsTrue( b = 'Hello world!');
   Assert.IsTrue( b <> a );
-  _obj := PythonEngine.PyUnicode_FromWideString(w);
+  _obj := PythonEngine.PyUnicodeFromString(w);
   try
     c := VarPythonCreate( _obj  );
   finally

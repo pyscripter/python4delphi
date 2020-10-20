@@ -762,8 +762,8 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.HandleType of
-    bmDIB:  Result := PyUnicode_FromString('bmDIB');
-    bmDDB:  Result := PyUnicode_FromString('bmDDB');
+    bmDIB:  Result := PyUnicodeFromString('bmDIB');
+    bmDDB:  Result := PyUnicodeFromString('bmDDB');
     else
       Result := ReturnNone;
     end;
@@ -795,15 +795,15 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.PixelFormat of
-    pfDevice:  Result := PyUnicode_FromString('pfDevice');
-    pf1bit:    Result := PyUnicode_FromString('pf1bit');
-    pf4bit:    Result := PyUnicode_FromString('pf4bit');
-    pf8bit:    Result := PyUnicode_FromString('pf8bit');
-    pf15bit:   Result := PyUnicode_FromString('pf15bit');
-    pf16bit:   Result := PyUnicode_FromString('pf16bit');
-    pf24bit:   Result := PyUnicode_FromString('pf24bit');
-    pf32bit:   Result := PyUnicode_FromString('pf32bit');
-    pfCustom:  Result := PyUnicode_FromString('pfCustom');
+    pfDevice:  Result := PyUnicodeFromString('pfDevice');
+    pf1bit:    Result := PyUnicodeFromString('pf1bit');
+    pf4bit:    Result := PyUnicodeFromString('pf4bit');
+    pf8bit:    Result := PyUnicodeFromString('pf8bit');
+    pf15bit:   Result := PyUnicodeFromString('pf15bit');
+    pf16bit:   Result := PyUnicodeFromString('pf16bit');
+    pf24bit:   Result := PyUnicodeFromString('pf24bit');
+    pf32bit:   Result := PyUnicodeFromString('pf32bit');
+    pfCustom:  Result := PyUnicodeFromString('pfCustom');
     else
       Result := ReturnNone;
     end;
@@ -822,8 +822,8 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     case DelphiObject.TransparentMode of
-    tmAuto:  Result := PyUnicode_FromString('tmAuto');
-    tmFixed: Result := PyUnicode_FromString('tmFixed');
+    tmAuto:  Result := PyUnicodeFromString('tmAuto');
+    tmFixed: Result := PyUnicodeFromString('tmFixed');
     else
       Result := ReturnNone;
     end;
@@ -1397,9 +1397,9 @@ begin
   Adjust(@Self);
   with GetPythonEngine do begin
     if DelphiObject.CanvasOrientation = coRightToLeft then
-      Result := PyUnicode_FromString('coRightToLeft')
+      Result := PyUnicodeFromString('coRightToLeft')
     else
-      Result := PyUnicode_FromString('coLeftToRight');
+      Result := PyUnicodeFromString('coLeftToRight');
   end;
 end;
 {$ENDIF FPC}
@@ -2168,13 +2168,13 @@ end;
 function TPyDelphiMetaFile.Get_CreatedBy(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.CreatedBy);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.CreatedBy);
 end;
 
 function TPyDelphiMetaFile.Get_Description(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Description);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.Description);
 end;
 
 function TPyDelphiMetaFile.Get_Enhanced(AContext: Pointer): PPyObject;

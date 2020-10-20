@@ -100,14 +100,14 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[x, y]));
+    // or Result := PyUnicodeFromString(Format('(%d, %d)',[x, y]));
 end;
 
 // get/set functions
 function TPyPoint_GetName( obj : PPyObject; context : Pointer) : PPyObject; cdecl;
 begin
   with GetPythonEngine do
-    Result := PyUnicode_FromAnsiString(AnsiString(TPyPoint(PythonToDelphi(obj)).Name));
+    Result := PyUnicodeFromString(TPyPoint(PythonToDelphi(obj)).Name);
 end;
 
 function TPyPoint_SetName( obj, value : PPyObject; context : Pointer) : integer; cdecl;

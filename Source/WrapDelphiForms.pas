@@ -741,7 +741,7 @@ end;
 function TPyDelphiScreen.Get_DefaultIme(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.DefaultIme);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.DefaultIme);
 end;
 
 function TPyDelphiScreen.Get_DefaultKbLayout(AContext: Pointer): PPyObject;
@@ -2055,7 +2055,7 @@ function TPyDelphiApplication.Get_BiDiKeyboard(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.BiDiKeyboard);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.BiDiKeyboard);
 end;
 {$ENDIF FPC}
 
@@ -2070,7 +2070,7 @@ function TPyDelphiApplication.Get_CurrentHelpFile(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.CurrentHelpFile);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.CurrentHelpFile);
 end;
 
 function TPyDelphiApplication.Get_DialogHandle(
@@ -2084,7 +2084,7 @@ end;
 function TPyDelphiApplication.Get_ExeName(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.ExeName);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.ExeName);
 end;
 
 {$IFNDEF FPC}
@@ -2098,13 +2098,13 @@ end;
 function TPyDelphiApplication.Get_HelpFile(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.HelpFile);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.HelpFile);
 end;
 
 function TPyDelphiApplication.Get_Hint(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Hint);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.Hint);
 end;
 
 function TPyDelphiApplication.Get_HintColor(AContext: Pointer): PPyObject;
@@ -2157,7 +2157,7 @@ function TPyDelphiApplication.Get_NonBiDiKeyboard(
   AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.NonBiDiKeyboard);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.NonBiDiKeyboard);
 end;
 {$ENDIF FPC}
 
@@ -2183,7 +2183,7 @@ end;
 function TPyDelphiApplication.Get_Title(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.PyUnicode_FromString(DelphiObject.Title);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.Title);
 end;
 
 {$IFNDEF FPC}

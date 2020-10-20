@@ -132,7 +132,7 @@ function  TPyPoint.Repr : PPyObject;
 begin
   with GetPythonEngine do
     Result := VariantAsPyObject(Format('(%d, %d)',[x, y]));
-    // or Result := PyUnicode_FromAnsiString(Format('(%d, %d)',[x, y]));
+    // or Result := PyUnicodeFromString(Format('(%d, %d)',[x, y]));
 end;
 
 // Methods of TPyPoint
@@ -178,7 +178,7 @@ procedure TForm1.PythonModule1Events0Execute(Sender: TObject; PSelf,
 begin
   with GetPythonEngine do
   begin
-    Result := PyUnicode_FromAnsiString('Hello world !');
+    Result := PyUnicodeFromString('Hello world !');
   end;
 end;
 

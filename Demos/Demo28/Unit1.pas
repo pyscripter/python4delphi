@@ -218,7 +218,7 @@ begin
   with GetPythonEngine do
   begin
     if idx < Strings.Count then
-      Result := PyUnicode_FromAnsiString(AnsiString(Strings[idx]))
+      Result := PyUnicodeFromString(Strings[idx])
     else
     begin
       PyErr_SetString(PyExc_IndexError^, 'list index out of range');
@@ -280,7 +280,7 @@ begin
     end
     else
     begin
-      Result := PyUnicode_FromAnsiString(AnsiString(StringList.Strings[fCurrentIndex]));
+      Result := PyUnicodeFromString(StringList.Strings[fCurrentIndex]);
     end;
   end;
 end;

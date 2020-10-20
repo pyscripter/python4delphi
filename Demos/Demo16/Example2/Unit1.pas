@@ -149,12 +149,12 @@ begin
   with GetPythonEngine do
     begin
       Result := PyList_New(6);
-      PyList_SetItem(Result, 0, PyUnicode_FromAnsiString('Title'));
-      PyList_SetItem(Result, 1, PyUnicode_FromAnsiString('Name'));
-      PyList_SetItem(Result, 2, PyUnicode_FromAnsiString('Informatician'));
-      PyList_SetItem(Result, 3, PyUnicode_FromAnsiString('PythonUser'));
-      PyList_SetItem(Result, 4, PyUnicode_FromAnsiString('Age'));
-      PyList_SetItem(Result, 5, PyUnicode_FromAnsiString('Sex'));
+      PyList_SetItem(Result, 0, PyUnicodeFromString('Title'));
+      PyList_SetItem(Result, 1, PyUnicodeFromString('Name'));
+      PyList_SetItem(Result, 2, PyUnicodeFromString('Informatician'));
+      PyList_SetItem(Result, 3, PyUnicodeFromString('PythonUser'));
+      PyList_SetItem(Result, 4, PyUnicodeFromString('Age'));
+      PyList_SetItem(Result, 5, PyUnicodeFromString('Sex'));
     end;
 end;
 
