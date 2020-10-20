@@ -863,7 +863,6 @@ var
  l_sUpperKey: string;
  l_oDataset:  TFDDataset;
 begin
-  Result := nil;
   with GetPythonEngine do begin
     try
       l_oDataset  := DelphiObject;
@@ -894,7 +893,6 @@ var
   l_sUpperKey: string;
   l_oDataset:  TFDDataset;
 begin
-  Result := -1;
   with GetPythonEngine do begin
     try
       l_oDataset  := DelphiObject;
@@ -1387,9 +1385,7 @@ var
   l_oConn: TFDCustomConnection;
   l_oTable: TFDTable;
 begin
-  Result := nil;
   with GetPythonEngine do begin
-    l_oConn := Nil;
     try
       l_oTable    := DelphiObject;
       l_sUpperKey := UpperCase(PyObjectAsString(Key));
@@ -1871,7 +1867,6 @@ var
   L : TStringList;
 begin
   Result := nil;
-  L := nil;
   Adjust(@Self);
   with GetPythonEngine do begin
     l_oTable := DelphiObject;
@@ -1956,9 +1951,7 @@ var
   l_oConn: TFDCustomConnection;
   l_oQuery: TFDQuery;
 begin
-  Result := nil;
   with GetPythonEngine do begin
-    l_oConn := Nil;
     try
       l_oQuery    := DelphiObject;
       l_sUpperKey := UpperCase(PyObjectAsString(Key));

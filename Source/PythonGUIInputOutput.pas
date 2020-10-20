@@ -182,9 +182,18 @@ var
 begin
   if FQueue.Count = 0 then
     Exit;
-  S := FQueue.Strings[ 0 ];
-  FQueue.Delete(0);
-  DisplayString( S )
+
+  Lock;
+  try
+    while FQueue.Count > 0 do
+    begin
+      S := FQueue.Strings[ 0 ];
+      FQueue.Delete(0);
+      DisplayString( S );
+    end;
+  finally
+    Unlock;
+  end;
 end;
 
 {PUBLIC METHODS}
