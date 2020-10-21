@@ -1288,6 +1288,11 @@ type
     PyBool_Type: PPyTypeObject;
     PyEnum_Type: PPyTypeObject;
 
+    PyDict_Update: function (a: PPyObject; b: PPyObject):Integer; cdecl;
+    PyLong_FromUnsignedLongLong:function(val:UInt64) : PPyObject; cdecl;
+    PyFloat_FromString:function (str:PPyObject):PPyObject; cdecl;
+    PySequence_List:function (o:PPyObject):PPyObject; cdecl;
+	
     Py_GetBuildInfo: function : PAnsiChar; cdecl;
     PyImport_ExecCodeModule: function ( const name : AnsiString; codeobject : PPyObject) : PPyObject; cdecl;
     PyComplex_FromCComplex: function(c: Py_complex):PPyObject; cdecl;
