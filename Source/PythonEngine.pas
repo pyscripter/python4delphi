@@ -1288,6 +1288,11 @@ type
     PyBool_Type: PPyTypeObject;
     PyEnum_Type: PPyTypeObject;
 
+    PyDict_Update: function (a: PPyObject; b: PPyObject):Integer; cdecl;
+    PyLong_FromUnsignedLongLong:function(val:UInt64) : PPyObject; cdecl;
+    PyFloat_FromString:function (str:PPyObject):PPyObject; cdecl;
+    PySequence_List:function (o:PPyObject):PPyObject; cdecl;
+	
     Py_GetBuildInfo: function : PAnsiChar; cdecl;
     PyImport_ExecCodeModule: function ( const name : AnsiString; codeobject : PPyObject) : PPyObject; cdecl;
     PyComplex_FromCComplex: function(c: Py_complex):PPyObject; cdecl;
@@ -3269,6 +3274,11 @@ begin
   Py_Exit                   := Import('Py_Exit');
 
   PyCFunction_NewEx           :=Import('PyCFunction_NewEx');
+  
+  PyDict_Update               :=Import('PyDict_Update');
+  PyLong_FromUnsignedLongLong :=Import('PyLong_FromUnsignedLongLong');
+  PyFloat_FromString          :=Import('PyFloat_FromString');
+  PySequence_List             :=Import('PySequence_List');
 
   PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
   PyEval_GetFrame           :=Import('PyEval_GetFrame');
