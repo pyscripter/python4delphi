@@ -3274,6 +3274,11 @@ begin
   Py_Exit                   := Import('Py_Exit');
 
   PyCFunction_NewEx           :=Import('PyCFunction_NewEx');
+  
+  PyDict_Update               :=Import('PyDict_Update');
+  PyLong_FromUnsignedLongLong :=Import('PyLong_FromUnsignedLongLong');
+  PyFloat_FromString          :=Import('PyFloat_FromString');
+  PySequence_List             :=Import('PySequence_List');
 
   PyEval_CallObjectWithKeywords:=Import('PyEval_CallObjectWithKeywords');
   PyEval_GetFrame           :=Import('PyEval_GetFrame');
