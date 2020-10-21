@@ -1451,7 +1451,6 @@ type
     PyObject_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
     PyObject_Free:procedure (ob:PPyObject); cdecl;
     PyObject_GetIter: function (obj: PPyObject) : PPyObject; cdecl;
-    PyIter_Check: function ( obj : PPyObject ) : Boolean;
     PyIter_Next: function (obj: PPyObject) : PPyObject; cdecl;
     PyObject_IsInstance:function (inst, cls:PPyObject):integer; cdecl;
     PyObject_IsSubclass:function (derived, cls:PPyObject):integer; cdecl;
@@ -1596,6 +1595,7 @@ type
   function PyModule_CheckExact( obj : PPyObject ) : Boolean;
   function PySlice_Check( obj : PPyObject ) : Boolean;
   function PyFunction_Check( obj : PPyObject ) : Boolean;
+  function PyIter_Check( obj : PPyObject ) : Boolean;
   function PyUnicode_Check( obj : PPyObject ) : Boolean;
   function PyUnicode_CheckExact( obj : PPyObject ) : Boolean;
   function PyType_IS_GC(t : PPyTypeObject ) : Boolean;
@@ -3370,7 +3370,6 @@ begin
   PyObject_NewVar           :=Import('_PyObject_NewVar');
   PyObject_Free             :=Import('PyObject_Free');
   PyObject_GetIter          :=Import('PyObject_GetIter');
-  PyIter_Check              :=Import('PyIter_Check');
   PyIter_Next               :=Import('PyIter_Next');
   PyObject_IsInstance       :=Import('PyObject_IsInstance');
   PyObject_IsSubclass       :=Import('PyObject_IsSubclass');
@@ -3618,6 +3617,11 @@ begin
   Result := Assigned( obj ) and
     ((obj^.ob_type = PPyTypeObject(PyCFunction_Type)) or
      (obj^.ob_type = PPyTypeObject(PyFunction_Type)));
+end;
+
+function TPythonInterface.PyIter_Check(obj: PPyObject): Boolean;
+begin
+ Result := Assigned(obj) and Assigned(obj^.ob_type^.tp_iternext);
 end;
 
 function TPythonInterface.PyUnicode_Check( obj : PPyObject ) : Boolean;
