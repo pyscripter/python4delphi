@@ -16,7 +16,8 @@ uses
   DUnitX.TestFramework,
   MethodCallBackTest in 'MethodCallBackTest.pas',
   VarPythTest in 'VarPythTest.pas',
-  WrapDelphiTest in 'WrapDelphiTest.pas';
+  WrapDelphiTest in 'WrapDelphiTest.pas',
+  NumberServicesTest in 'NumberServicesTest.pas';
 
 var
   runner : ITestRunner;

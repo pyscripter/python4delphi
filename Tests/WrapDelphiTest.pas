@@ -356,5 +356,6 @@ begin
 end;
 
 initialization
+  TDUnitX.RegisterTestFixture(TTestWrapDelphi);
   ReportMemoryLeaksOnShutdown := True;
 end.

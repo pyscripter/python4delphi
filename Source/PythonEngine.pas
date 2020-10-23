@@ -4345,7 +4345,7 @@ begin
   result := ob^.ob_type = obt;
 end;
 
-function   TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
+function TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
 var presult :PPyObject;
 begin
   CheckPython;
@@ -4378,7 +4378,7 @@ begin
   end;
 end;
 
-function   TPythonEngine.EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
+function TPythonEngine.EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
 var pargs: PPyObject;
 begin
   CheckPython;
@@ -4390,7 +4390,7 @@ begin
   end;
 end;
 
-function   TPythonEngine.EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
+function TPythonEngine.EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
 var pargs: PPyObject;
 begin
   CheckPython;
@@ -4402,12 +4402,12 @@ begin
   end;
 end;
 
-function   TPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
+function TPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
 begin
   Result := Run_CommandAsString( command, eval_input );
 end;
 
-function   TPythonEngine.EvalString(const command : AnsiString) : PPyObject;
+function TPythonEngine.EvalString(const command : AnsiString) : PPyObject;
 begin
   Result := Run_CommandAsObject( command, eval_input );
 end;
@@ -4417,7 +4417,7 @@ begin
   Py_XDecRef( Run_CommandAsObject( command, file_input ) );
 end;
 
-function   TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
+function TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
 var
   v : PPyObject;
 begin
@@ -4427,7 +4427,7 @@ begin
   Py_XDECREF(v);
 end;
 
-function   TPythonEngine.Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
+function TPythonEngine.Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
 begin
   Result := Run_CommandAsObjectWithDict(command, mode, nil, nil);
 end;
