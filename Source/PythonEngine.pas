@@ -2274,7 +2274,6 @@ type
     function  NbAdd( obj : PPyObject) : PPyObject; virtual;
     function  NbSubtract( obj : PPyObject) : PPyObject; virtual;
     function  NbMultiply( obj : PPyObject) : PPyObject; virtual;
-    function  NbDivide( obj : PPyObject) : PPyObject; virtual;
     function  NbFloorDivide( obj : PPyObject) : PPyObject; virtual;
     function  NbTrueDivide( obj : PPyObject) : PPyObject; virtual;
     function  NbMatrixMultiply( obj : PPyObject) : PPyObject; virtual;
@@ -2284,7 +2283,6 @@ type
     function  NbNegative : PPyObject; virtual;
     function  NbPositive : PPyObject; virtual;
     function  NbAbsolute : PPyObject; virtual;
-    function  NbNonZero : Integer; virtual;
     function  NbBool : Integer; virtual;
     function  NbInvert : PPyObject; virtual;
     function  NbLShift( obj : PPyObject) : PPyObject; virtual;
@@ -2292,12 +2290,8 @@ type
     function  NbAnd( obj : PPyObject) : PPyObject; virtual;
     function  NbXor( obj : PPyObject) : PPyObject; virtual;
     function  NbOr( obj : PPyObject) : PPyObject; virtual;
-    function  NbCoerce( obj : PPPyObject) : Integer; virtual;
     function  NbInt : PPyObject; virtual;
-    function  NbLong : PPyObject; virtual;
     function  NbFloat : PPyObject; virtual;
-    function  NbOct : PPyObject; virtual;
-    function  NbHex : PPyObject; virtual;
     function  NbInplaceAdd( obj : PPyObject): PPyObject; virtual;
     function  NbInplaceSubtract( obj : PPyObject): PPyObject; virtual;
     function  NbInplaceMultiply( obj : PPyObject): PPyObject; virtual;
@@ -7015,11 +7009,6 @@ begin
   Result := nil;
 end;
 
-function  TPyObject.NbDivide( obj : PPyObject) : PPyObject;
-begin
-  Result := nil;
-end;
-
 function  TPyObject.NbFloorDivide( obj : PPyObject) : PPyObject;
 begin
   Result := nil;
@@ -7065,11 +7054,6 @@ begin
   Result := nil;
 end;
 
-function  TPyObject.NbNonZero : Integer;
-begin
-  Result := -1;
-end;
-
 function  TPyObject.NbBool : Integer;
 begin
   Result := 0;
@@ -7105,32 +7089,12 @@ begin
   Result := nil;
 end;
 
-function  TPyObject.NbCoerce( obj : PPPyObject) : Integer;
-begin
-  Result := 0;
-end;
-
 function  TPyObject.NbInt : PPyObject;
 begin
   Result := nil;
 end;
 
-function  TPyObject.NbLong : PPyObject;
-begin
-  Result := nil;
-end;
-
 function  TPyObject.NbFloat : PPyObject;
-begin
-  Result := nil;
-end;
-
-function  TPyObject.NbOct : PPyObject;
-begin
-  Result := nil;
-end;
-
-function  TPyObject.NbHex : PPyObject;
 begin
   Result := nil;
 end;
@@ -7600,11 +7564,6 @@ begin
   Result := PythonToDelphi(pSelf).NbMultiply( obj );
 end;
 
-function  TPythonType_NbDivide( pSelf, obj : PPyObject) : PPyObject; cdecl;
-begin
-  Result := PythonToDelphi(pSelf).NbDivide( obj );
-end;
-
 function  TPythonType_NbFloorDivide( pSelf, obj : PPyObject) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbFloorDivide( obj );
@@ -7650,11 +7609,6 @@ begin
   Result := PythonToDelphi(pSelf).NbAbsolute;
 end;
 
-function  TPythonType_NbNonZero( pSelf : PPyObject ) : Integer; cdecl;
-begin
-  Result := PythonToDelphi(pSelf).NbNonZero;
-end;
-
 function  TPythonType_NbBool( pSelf : PPyObject ) : Integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbBool;
@@ -7690,34 +7644,14 @@ begin
   Result := PythonToDelphi(pSelf).NbOr( obj );
 end;
 
-function  TPythonType_NbCoerce( pSelf, obj : PPPyObject) : Integer; cdecl;
-begin
-  Result := PythonToDelphi(pSelf^).NbCoerce( obj );
-end;
-
 function  TPythonType_NbInt( pSelf : PPyObject ) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbInt;
 end;
 
-function  TPythonType_NbLong( pSelf : PPyObject ) : PPyObject; cdecl;
-begin
-  Result := PythonToDelphi(pSelf).NbLong;
-end;
-
 function  TPythonType_NbFloat( pSelf : PPyObject ) : PPyObject; cdecl;
 begin
   Result := PythonToDelphi(pSelf).NbFloat;
-end;
-
-function  TPythonType_NbOct( pSelf : PPyObject ) : PPyObject; cdecl;
-begin
-  Result := PythonToDelphi(pSelf).NbOct;
-end;
-
-function  TPythonType_NbHex( pSelf : PPyObject ) : PPyObject; cdecl;
-begin
-  Result := PythonToDelphi(pSelf).NbHex;
 end;
 
 function TPythonType_NbInplaceAdd(pSelf, obj: PPyObject): PPyObject; cdecl;
