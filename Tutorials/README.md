@@ -6,4 +6,4 @@ This folder contains text and video tutorials accompanied with slides and demo s
 - [Overview Video](https://youtu.be/jLuxTfct3CU)
 - [Webinar I](https://github.com/pyscripter/python4delphi/tree/master/Tutorials/Webinar%20I)
 - [Webinar II](https://github.com/pyscripter/python4delphi/tree/master/Tutorials/Webinar%20II)
-- [Introductory tutorial](https://github.com/pyscripter/python4delphi/wiki/Files/Chapter80Sample.pdf) by Dr K. R. Bond.
+- [Introductory tutorial](https://github.com/pyscripter/python4delphi/wiki/Files/Chapter80Tutorial.pdf) by Dr K. R. Bond.
