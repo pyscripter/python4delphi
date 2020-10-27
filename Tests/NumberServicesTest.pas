@@ -51,6 +51,8 @@ type
     function NbBool: Integer; override; // 26
   private
     function PerformArithmeticOp(obj: PPyObject; op: string): PPyObject;
+  public
+    destructor Destroy; override;
   end;
 
   [TestFixture]
@@ -352,6 +354,12 @@ begin
     arg1 := FRandomInteger.Value;
     Result := VariantAsPyObject(+arg1);
   end
+end;
+
+destructor PyTRandomInteger.Destroy;
+begin
+  FRandomInteger.Free;
+  inherited;
 end;
 
 function PyTRandomInteger.NbAbsolute: PPyObject; // 9

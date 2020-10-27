@@ -176,6 +176,9 @@ end;
 
 procedure TTestWrapDelphi.TearDownFixture;
 begin
+  VarClear(Rtti_Var);
+  VarClear(Rtti_Rec);
+  VarClear(Rtti_Interface);
   PythonEngine.Free;
   PyDelphiWrapper.Free;
   DelphiModule.Free;
