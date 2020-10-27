@@ -1571,10 +1571,45 @@ type
   function Py_CompileString( s1,s2:PAnsiChar;i:integer) : PPyObject; cdecl;
 
   // functions redefined in Delphi
-  procedure   Py_INCREF   ( op: PPyObject);
-  procedure   Py_DECREF   ( op: PPyObject);
-  procedure   Py_XINCREF  ( op: PPyObject);
-  procedure   Py_XDECREF  ( op: PPyObject);
+  class procedure Py_INCREF(op: PPyObject); static; inline;
+  class procedure Py_DECREF(op: PPyObject); static; inline;
+  class procedure Py_XINCREF(op: PPyObject); static; inline;
+  class procedure Py_XDECREF(op: PPyObject); static; inline;
+  (* Safely decref `op` and set `op` to NULL, especially useful in tp_clear
+   * and tp_dealloc implementations.
+   *
+   * Note that "the obvious" code can be deadly:
+   *
+   *     Py_XDECREF(op);
+   *     op = NULL;
+   *
+   * Typically, `op` is something like self->containee, and `self` is done
+   * using its `containee` member.  In the code sequence above, suppose
+   * `containee` is non-NULL with a refcount of 1.  Its refcount falls to
+   * 0 on the first line, which can trigger an arbitrary amount of code,
+   * possibly including finalizers (like __del__ methods or weakref callbacks)
+   * coded in Python, which in turn can release the GIL and allow other threads
+   * to run, etc.  Such code may even invoke methods of `self` again, or cause
+   * cyclic gc to trigger, but-- oops! --self->containee still points to the
+   * object being torn down, and it may be in an insane state while being torn
+   * down.  This has in fact been a rich historic source of miserable (rare &
+   * hard-to-diagnose) segfaulting (and other) bugs.
+   *
+   * The safe way is:
+   *
+   *      Py_CLEAR(op);
+   *
+   * That arranges to set `op` to NULL _before_ decref'ing, so that any code
+   * triggered as a side-effect of `op` getting torn down no longer believes
+   * `op` points to a valid object.
+   *
+   * There are cases where it's safe to use the naive code, but they're brittle.
+   * For example, if `op` points to a Python integer, you know that destroying
+   * one of those can't cause problems -- but in part that relies on that
+   * Python integers aren't currently weakly referencable.  Best practice is
+   * to use Py_CLEAR() even if you can't think of a reason for why you need to.
+   *)
+  class procedure Py_CLEAR(var op: PPyObject); static; inline;
 
   function PyBytes_Check( obj : PPyObject ) : Boolean;
   function PyBytes_CheckExact( obj : PPyObject ) : Boolean;
@@ -3490,12 +3525,12 @@ begin
   Result := PyParser_SimpleParseStringFlags(str, start, 0);
 end;
 
-procedure TPythonInterface.Py_INCREF(op: PPyObject);
+class procedure TPythonInterface.Py_INCREF(op: PPyObject);
 begin
   Inc(op^.ob_refcnt);
 end;
 
-procedure TPythonInterface.Py_DECREF(op: PPyObject);
+class procedure TPythonInterface.Py_DECREF(op: PPyObject);
 begin
   with op^ do begin
     Dec(ob_refcnt);
@@ -3505,14 +3540,27 @@ begin
   end;
 end;
 
-procedure TPythonInterface.Py_XINCREF(op: PPyObject);
+class procedure TPythonInterface.Py_XINCREF(op: PPyObject);
 begin
   if op <> nil then Py_INCREF(op);
 end;
 
-procedure TPythonInterface.Py_XDECREF(op: PPyObject);
+class procedure TPythonInterface.Py_XDECREF(op: PPyObject);
 begin
   if op <> nil then Py_DECREF(op);
+end;
+
+
+class procedure TPythonInterface.Py_CLEAR(var op: PPyObject);
+Var
+  _py_tmp : PPyObject;
+begin
+  _py_tmp := op;
+  if _py_tmp <> nil then
+  begin
+    op := nil;
+    Py_DECREF(_py_tmp);
+  end;
 end;
 
 function TPythonInterface.PyBytes_Check( obj : PPyObject ) : Boolean;
@@ -3920,7 +3968,7 @@ begin
     except
     end;
   end;
-  // Detach our clients, when engine is beeing destroyed or one of its clients.
+  // Detach our clients, when engine is being destroyed or one of its clients.
   canDetachClients := csDestroying in ComponentState;
   if not canDetachClients then
     for i := 0 to ClientCount - 1 do

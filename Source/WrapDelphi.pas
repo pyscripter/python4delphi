@@ -3070,7 +3070,13 @@ begin
     // Set the event property to nil, only if it we hooked it
     SetMethodProp(Component, PropertyInfo, Method);
     if PythonOK then
-      GetPythonEngine.Py_DECREF(Self.Callable);
+    begin
+      if (csDestroying in PyDelphiWrapper.Engine.ComponentState) and IsLibrary then
+        // Workarouond for exception during library finalization
+        Dec(Self.Callable.ob_refcnt)
+      else
+        GetPythonEngine.Py_DECREF(Self.Callable);
+    end;
   end;
   inherited;
 end;
