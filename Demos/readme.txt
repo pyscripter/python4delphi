@@ -14,22 +14,21 @@ Demo08	Using Delphi classes for new Python types
 Demo09	Making a Python module as a Dll
 Demo10_FireDAC Database demo using FireDAC
 Demo11	Using Threads inside Python
-Demo16	Using a TDelphiVar or Module methods ? (Kylix ready)
-Demo17	Using variant arrays of 2 dimensions (Kylix ready)
+Demo16	Using a TDelphiVar or Module methods
+Demo17	Using variant arrays of 2 dimensions
 Demo18	C++ Builder: using the Python Dll in a console application
 Demo19	C++ Builder: this is a replicate of the Delphi Demo05
 Demo20	C++ Builder: this is a replicate of the Delphi Demo08
-Demo21	Using Events in TPythonModule or TPythonType (Kylix ready)
-Demo22	Using Threading, Windows Console and Command line arguments (Kylix ready)
-Demo23	Using Threading and Delphi log window. (Kylix ready)
-Demo24	Using TAtomPythonEngine (Deprecated since Delphi 6, See VarPyth instead)
-Demo25	Using VarPyth.pas (Kylix ready)
+Demo21	Using Events in TPythonModule or TPythonType
+Demo22	Using Threading, Windows Console and Command line arguments
+Demo23	Using Threading and Delphi log window
+Demo25	Using VarPyth.pas
 Demo26	Demo8 revisited to allow the new Python type to be subclassed
 Demo27	Container indexing
-Demo28	Iterator (Kylix ready)
+Demo28	Iterator
 Demo29	Using Python Imaging Library (PIL)
-Demo30	Using Named Parameters (Kylix ready)
-Demo31	Using WrapDelphi to access Delphi Form attributes (Requires Delphi5 or later)
-Demo32	Demo08 revisited using WrapDelphi (Requires Delphi7 or later)
+Demo30	Using Named Parameters
+Demo31	Using WrapDelphi to access Delphi Form attributes
+Demo32	Demo08 revisited using WrapDelphi
 Demo33  Using Threads inside Python
 Demo34  Dynamically creating, destroying and recreating PythonEngine.  Uses PythonVersions
