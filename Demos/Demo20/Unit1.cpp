@@ -3,7 +3,7 @@
 #pragma hdrstop
 
 #include "Unit1.h"
-#include <python.h>
+#pragma comment (lib,"Python_D")
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "PythonEngine"
@@ -31,7 +31,8 @@ __fastcall TPyPoint::TPyPoint( TPythonType* APythonType )
 __fastcall TPyPoint::TPyPoint( TPythonType* APythonType, PPyObject args )
   : TPyObject(APythonType, args)
 {
-  if (! Py::PyArg_ParseTuple( (Py::PyObject *)args, "ii:CreatePoint", &x, &y ))
+  TPythonEngine* eng = GetPythonEngine();
+  if (! eng->PyArg_ParseTuple(args, "ii:CreatePoint", &x, &y ))
     return;
 }
 
@@ -54,14 +55,15 @@ PPyObject __fastcall TPyPoint::GetAttr(char * key)
 
 int __fastcall TPyPoint::SetAttr(char * key, PPyObject value)
 {
-  Py::PyObject * val = (Py::PyObject *)value;
+  TPythonEngine* eng = GetPythonEngine();
+  PyObject * val = (PyObject *)value;
   if ( strcmp(key, "x") == 0 ) {
-    if ( Py::PyArg_Parse( val, "i:Point.SetAttr", &x ) )
+    if ( eng->PyArg_Parse( val, "i:Point.SetAttr", &x ) )
       return 0;
     else
       return -1;
   } else if ( strcmp(key, "y") == 0 ) {
-    if ( Py::PyArg_Parse( val, "i:Point.SetAttr", &y ) )
+    if ( eng->PyArg_Parse( val, "i:Point.SetAttr", &y ) )
       return 0;
     else
       return -1;
@@ -83,12 +85,12 @@ PPyObject __fastcall TPyPoint::Repr(void)
 
 PPyObject __cdecl DoOffsetBy( PPyObject self, PPyObject args )
 {
+  TPythonEngine* eng = GetPythonEngine();
   TPyPoint * p = (TPyPoint *)PythonToDelphi(self);
   int dx, dy;
-  if (! Py::PyArg_ParseTuple( (Py::PyObject *)args, "ii:OffsetBy", &dx, &dy ))
+  if (! eng->PyArg_ParseTuple( (PyObject *)args, "ii:OffsetBy", &dx, &dy ))
     return NULL;
   p->OffsetBy(dx, dy);
-  TPythonEngine* eng = GetPythonEngine();
   return eng->ReturnNone();
 }
 
@@ -138,6 +140,10 @@ void TPyPoint::RaiseError(void)
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
 {
+//  Use MaskFPUExceptions(true) if you intend to use mathematical python package like numpy
+  MaskFPUExceptions(true);
+  PythonEngine1->SetPythonHome(PythonEngine1->DllPath);
+  PythonEngine1->LoadDll();
 }
 //---------------------------------------------------------------------------
 void __fastcall TForm1::Button1Click(TObject *Sender)

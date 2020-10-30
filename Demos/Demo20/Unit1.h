@@ -29,6 +29,7 @@ public:
 	virtual PPyObject __fastcall GetAttr(char * key);
 	virtual int __fastcall SetAttr(char * key, PPyObject value);
 	virtual PPyObject __fastcall Repr(void);
+	virtual int __fastcall Print(System::file &f, int i){ return 0;};
 
 	/* virtual class method */ virtual void __fastcall RegisterMethods(TPythonType* PythonType);
 

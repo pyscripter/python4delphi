@@ -16,7 +16,6 @@ Demo10_FireDAC Database demo using FireDAC
 Demo11	Using Threads inside Python
 Demo16	Using a TDelphiVar or Module methods
 Demo17	Using variant arrays of 2 dimensions
-Demo18	C++ Builder: using the Python Dll in a console application
 Demo19	C++ Builder: this is a replicate of the Delphi Demo05
 Demo20	C++ Builder: this is a replicate of the Delphi Demo08
 Demo21	Using Events in TPythonModule or TPythonType

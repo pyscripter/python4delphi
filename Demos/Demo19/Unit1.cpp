@@ -13,6 +13,10 @@ TForm1 *Form1;
 __fastcall TForm1::TForm1(TComponent* Owner)
     : TForm(Owner)
 {
+//  Use MaskFPUExceptions(true) if you intend to use mathematical python package like numpy
+//  MaskFPUExceptions(true);
+//  PythonEngine1->SetPythonHome(PythonEngine1->DllPath);
+//  PythonEngine1->LoadDll();
 }
 //---------------------------------------------------------------------------
 

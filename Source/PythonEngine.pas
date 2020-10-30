@@ -288,8 +288,8 @@ const
   READONLY                      = 1;
   RO                            = READONLY;		//* Shorthand */
   READ_RESTRICTED               = 2;
-  WRITE_RESTRICTED              = 4;
-  RESTRICTED                    = (READ_RESTRICTED or WRITE_RESTRICTED);
+  PY_WRITE_RESTRICTED           = 4;
+  RESTRICTED                    = (READ_RESTRICTED or PY_WRITE_RESTRICTED);
 type
   TPyMemberType = (mtShort, mtInt, mtLong, mtFloat, mtDouble, mtString, mtObject,
                    mtChar, mtByte, mtUByte, mtUShort, mtUInt, mtULong,
@@ -1175,6 +1175,18 @@ type
 //-------------------------------------------------------
 
 type
+  (*$HPPEMIT 'typedef int __cdecl (*TPyArg_Parse)(void * args, char * format, ...);' *)
+  TPyArg_Parse = function( args: PPyObject; format: PAnsiChar {;....}) :  Integer; cdecl varargs;
+  {$EXTERNALSYM TPyArg_Parse}
+
+  (*$HPPEMIT 'typedef int __cdecl (*TPyArg_ParseTupleAndKeywords)(void * args, void * kw, char * format, char** kwargs, ...);' *)
+  TPyArg_ParseTupleAndKeywords = function( args: PPyObject; kw: PPyObject; format: PAnsiChar; kwargs: PPAnsiChar {;...}): Integer; cdecl varargs;
+  {$EXTERNALSYM TPyArg_ParseTupleAndKeywords}
+
+  (*$HPPEMIT 'typedef int __cdecl (*TPy_BuildValue)(char * format, ...);' *)
+  TPy_BuildValue = function( format: PAnsiChar {;...}): Pointer; cdecl varargs;
+  {$EXTERNALSYM TPy_BuildValue}
+
   TPythonInterface=class(TDynamicDll)
   protected
     FInitialized:    Boolean;
@@ -1313,10 +1325,12 @@ type
     PyErr_WarnEx:       function (ob: PPyObject; text: PAnsiChar; stack_level: NativeInt): integer; cdecl;
     PyErr_WarnExplicit: function (ob: PPyObject; text: PAnsiChar; filename: PAnsiChar; lineno: integer; module: PAnsiChar; registry: PPyObject): integer; cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
-    PyArg_Parse:        function( args: PPyObject; format: PAnsiChar {;....}) :  Integer; cdecl varargs;
-    PyArg_ParseTuple:   function( args: PPyObject; format: PAnsiChar {;...}): Integer; cdecl varargs;
-    PyArg_ParseTupleAndKeywords:   function( args: PPyObject; kw: PPyObject; format: PAnsiChar; kwargs: PPAnsiChar {;...}): Integer; cdecl varargs;
-    Py_BuildValue:      function( format: PAnsiChar {;...}): PPyObject; cdecl varargs;
+
+    PyArg_Parse:        TPyArg_Parse;
+    PyArg_ParseTuple:   TPyArg_Parse;
+    PyArg_ParseTupleAndKeywords:   TPyArg_ParseTupleAndKeywords;
+    Py_BuildValue:      TPy_BuildValue;
+
     Py_Initialize:      procedure; cdecl;
     Py_Exit:            procedure( RetVal: Integer); cdecl;
     PyEval_GetBuiltins: function: PPyObject; cdecl;
@@ -6105,7 +6119,7 @@ begin
       mfDefault:                flags := 0;
       mfReadOnly:               flags := READONLY;
       mfReadRestricted:         flags := READ_RESTRICTED;
-      mfWriteRestricted:        flags := WRITE_RESTRICTED;
+      mfWriteRestricted:        flags := PY_WRITE_RESTRICTED;
       mfRestricted:             flags := RESTRICTED;
       else
         raise Exception.Create('Unknown member flag');
