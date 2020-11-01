@@ -153,7 +153,7 @@ type
   end;
 
   {
-    Access to the Cursors of the Screen singleton.
+    Access to the Monitors of the Screen singleton.
   }
   TScreenMonitorsAccess = class(TBaseScreenAccess)
   public
