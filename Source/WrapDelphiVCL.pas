@@ -21,6 +21,7 @@ uses
   WrapDelphiComCtrls,
   WrapDelphiExtCtrls,
   WrapDelphiButtons,
-  WrapDelphiGrids;
+  WrapDelphiGrids,
+  WrapDelphiSamplesSpin;
 
 end.
