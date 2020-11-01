@@ -43,6 +43,21 @@ type
     property Container : TCustomDrawGrid read GetContainer;
   end;
 
+  TGridRowHeightsAccess = class(TContainerAccess)
+  private
+    function GetContainer: TCustomDrawGrid;
+  public
+    function GetItem(AIndex : Integer) : PPyObject; override;
+    function GetSize : Integer; override;
+    function SetItem(AIndex : Integer; AValue : PPyObject) : Boolean; override;
+
+    class function ExpectedContainerClass : TClass; override;
+    class function SupportsWrite : Boolean; override;
+    class function Name : string; override;
+
+    property Container : TCustomDrawGrid read GetContainer;
+  end;
+
   TPyDelphiCustomGrid = class (TPyDelphiWinControl)
   private
     function  GetDelphiObject: TCustomGrid;
@@ -73,7 +88,7 @@ type
     function Get_LeftCol(AContext : Pointer): PPyObject; cdecl;
     function Get_Selection(AContext : Pointer): PPyObject; cdecl;
     function Get_Row(AContext : Pointer): PPyObject; cdecl;
-    //function Get_RowHeights(AContext : Pointer): PPyObject; cdecl;
+    function Get_RowHeights(AContext : Pointer): PPyObject; cdecl;
     //function Get_TabStops(AContext : Pointer): PPyObject; cdecl;
     function Get_TopRow(AContext : Pointer): PPyObject; cdecl;
 
@@ -307,6 +322,9 @@ end;
 
 { TGridColWidthsAccess }
 
+type
+  TCustomDrawGridAccess = class(TCustomDrawGrid);
+
 class function TGridColWidthsAccess.ExpectedContainerClass: TClass;
 begin
   result:=TCustomGrid;
@@ -322,9 +340,6 @@ begin
   with GetPythonEngine do
     Result:=PyLong_FromLong(Container.ColWidths[AIndex]);
 end;
-
-type
-  TCustomDrawGridAccess = class(TCustomDrawGrid);
 
 function TGridColWidthsAccess.GetSize: Integer;
 begin
@@ -345,6 +360,47 @@ begin
 end;
 
 class function TGridColWidthsAccess.SupportsWrite: Boolean;
+begin
+  result:=True;
+end;
+
+{ TGridRowHeightsAccess }
+
+class function TGridRowHeightsAccess.ExpectedContainerClass: TClass;
+begin
+  result:=TCustomGrid;
+end;
+
+function TGridRowHeightsAccess.GetContainer: TCustomDrawGrid;
+begin
+  result:=TCustomDrawGrid(inherited Container);
+end;
+
+function TGridRowHeightsAccess.GetItem(AIndex: Integer): PPyObject;
+begin
+  with GetPythonEngine do
+    Result:=PyLong_FromLong(Container.RowHeights[AIndex]);
+end;
+
+function TGridRowHeightsAccess.GetSize: Integer;
+begin
+  result:=TCustomDrawGridAccess(Container).RowCount;
+end;
+
+class function TGridRowHeightsAccess.Name: string;
+begin
+  result:='TCustomGrid.RowHeights';
+end;
+
+function TGridRowHeightsAccess.SetItem(AIndex: Integer;
+  AValue: PPyObject): Boolean;
+begin
+  result:=True;
+  with GetPythonEngine do
+    Container.RowHeights[AIndex]:=PyLong_AsLong(AValue);
+end;
+
+class function TGridRowHeightsAccess.SupportsWrite: Boolean;
 begin
   result:=True;
 end;
@@ -432,6 +488,15 @@ begin
   Result := GetPythonEngine.PyLong_FromLong(DelphiObject.Row);
 end;
 
+function TPyDelphiCustomDrawGrid.Get_RowHeights(
+  AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TGridRowHeightsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
+end;
+
 function TPyDelphiCustomDrawGrid.Get_Selection(
   AContext: Pointer): PPyObject;
 begin
@@ -474,6 +539,8 @@ begin
         'Indicates the boundaries of the current selection.', nil);
       AddGetSet('Row', @TPyDelphiCustomDrawGrid.Get_Row, @TPyDelphiCustomDrawGrid.Set_Row,
         'Specifies the index of the row that contains the selected cell.', nil);
+      AddGetSet('RowHeights', @TPyDelphiCustomDrawGrid.Get_RowHeights, nil,
+        'Specifies row heights of the grid', nil);
       AddGetSet('TopRow', @TPyDelphiCustomDrawGrid.Get_TopRow, @TPyDelphiCustomDrawGrid.Set_TopRow,
         'Specifies the index of the first visible scrollable row in the grid.', nil);
     end;
