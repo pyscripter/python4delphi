@@ -77,8 +77,6 @@
         <UWP_CppLogo44>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_44.png</UWP_CppLogo44>
         <UWP_CppLogo150>$(BDS)\bin\Artwork\Windows\UWP\cppreg_UwpDefault_150.png</UWP_CppLogo150>
         <SanitizedProjectName>Demo19</SanitizedProjectName>
-        <IncludePath>..\..\Packages\Delphi\Delphi 10.3-\hpp\$(Platform)\$(Config);$(IncludePath)</IncludePath>
-        <ILINK_LibraryPath>..\..\Packages\Delphi\Delphi 10.3-\lib\$(Platform)\$(Config);$(ILINK_LibraryPath)</ILINK_LibraryPath>
         <VerInfo_Locale>1036</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
