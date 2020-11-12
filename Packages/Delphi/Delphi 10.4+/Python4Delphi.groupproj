@@ -1,0 +1,84 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{C0618307-3CAC-4150-A166-0968236586E9}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="P4DEngine.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="VclP4DComp.dproj">
+            <Dependencies>P4DEngine.dproj</Dependencies>
+        </Projects>
+        <Projects Include="FmxP4DComp.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclVclP4DComp.dproj">
+            <Dependencies>VclP4DComp.dproj</Dependencies>
+        </Projects>
+        <Projects Include="dclFmxP4DComp.dproj">
+            <Dependencies>FmxP4DComp.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="P4DEngine">
+        <MSBuild Projects="P4DEngine.dproj"/>
+    </Target>
+    <Target Name="P4DEngine:Clean">
+        <MSBuild Projects="P4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="P4DEngine:Make">
+        <MSBuild Projects="P4DEngine.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="VclP4DComp" DependsOnTargets="P4DEngine">
+        <MSBuild Projects="VclP4DComp.dproj"/>
+    </Target>
+    <Target Name="VclP4DComp:Clean" DependsOnTargets="P4DEngine:Clean">
+        <MSBuild Projects="VclP4DComp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VclP4DComp:Make" DependsOnTargets="P4DEngine:Make">
+        <MSBuild Projects="VclP4DComp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="FmxP4DComp">
+        <MSBuild Projects="FmxP4DComp.dproj"/>
+    </Target>
+    <Target Name="FmxP4DComp:Clean">
+        <MSBuild Projects="FmxP4DComp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FmxP4DComp:Make">
+        <MSBuild Projects="FmxP4DComp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclVclP4DComp" DependsOnTargets="VclP4DComp">
+        <MSBuild Projects="dclVclP4DComp.dproj"/>
+    </Target>
+    <Target Name="dclVclP4DComp:Clean" DependsOnTargets="VclP4DComp:Clean">
+        <MSBuild Projects="dclVclP4DComp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclVclP4DComp:Make" DependsOnTargets="VclP4DComp:Make">
+        <MSBuild Projects="dclVclP4DComp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclFmxP4DComp" DependsOnTargets="FmxP4DComp">
+        <MSBuild Projects="dclFmxP4DComp.dproj"/>
+    </Target>
+    <Target Name="dclFmxP4DComp:Clean" DependsOnTargets="FmxP4DComp:Clean">
+        <MSBuild Projects="dclFmxP4DComp.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclFmxP4DComp:Make" DependsOnTargets="FmxP4DComp:Make">
+        <MSBuild Projects="dclFmxP4DComp.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="P4DEngine;VclP4DComp;FmxP4DComp;dclVclP4DComp;dclFmxP4DComp"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="P4DEngine:Clean;VclP4DComp:Clean;FmxP4DComp:Clean;dclVclP4DComp:Clean;dclFmxP4DComp:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="P4DEngine:Make;VclP4DComp:Make;FmxP4DComp:Make;dclVclP4DComp:Make;dclFmxP4DComp:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

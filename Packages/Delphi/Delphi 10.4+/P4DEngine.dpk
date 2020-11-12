@@ -1,0 +1,47 @@
+package P4DEngine;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Python4Delphi - Run-time Engine Package'}
+{$LIBSUFFIX AUTO}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl;
+
+contains
+  MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
+  PythonInputOutput in '..\..\..\Source\PythonInputOutput.pas',
+  PythonTypes in '..\..\..\Source\PythonTypes.pas',
+  PythonConsts in '..\..\..\Source\PythonConsts.pas',
+  PythonExceptions in '..\..\..\Source\PythonExceptions.pas',
+  PythonKnownVersions in '..\..\..\Source\PythonKnownVersions.pas',
+  PythonEngine in '..\..\..\Source\PythonEngine.pas',
+  PythonLoader in '..\..\..\Source\PythonLoader.pas',
+  PythonInterpreter in '..\..\..\Source\PythonInterpreter.pas';
+
+end.
