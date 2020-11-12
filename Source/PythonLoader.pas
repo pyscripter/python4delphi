@@ -76,8 +76,6 @@ type
     function GetDllPath(): string;
     procedure DoOpenDll(const aDllName : string); override;
     procedure DoCloseDll(); override;
-    procedure InvalidDllFatalMsgDlg(); override;
-    procedure Quit; override;
     function IsHandleValid: Boolean; override;
   end;
 
@@ -277,23 +275,6 @@ begin
   end;
 end;
 
-procedure TDynamicDll.InvalidDllFatalMsgDlg;
-var
-  s: string;
-begin
-  {$IFDEF MSWINDOWS}
-  s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-  {$ELSE}
-  s := Format('Error: Could not open Dll "%s"',[DllName]);
-  {$ENDIF}
-  if FatalMsgDlg then
-    {$IFDEF MSWINDOWS}
-    MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-    {$ELSE}
-    WriteLn(ErrOutput, s);
-    {$ENDIF}
-end;
-
 function  TDynamicDll.IsHandleValid : Boolean;
 begin
 {$IFDEF MSWINDOWS}
@@ -301,19 +282,6 @@ begin
 {$ELSE}
   Result := FDLLHandle <> 0;
 {$ENDIF}
-end;
-
-procedure TDynamicDll.Quit;
-begin
-  if not( csDesigning in ComponentState ) then begin
-{$IFDEF MSWINDOWS}
-    MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-    ExitProcess( 1 );
-{$ELSE}
-    WriteLn(ErrOutput, GetQuitMessage);
-    Halt( 1 );
-{$ENDIF}
-  end;
 end;
 
 {$IFDEF MSWINDOWS}

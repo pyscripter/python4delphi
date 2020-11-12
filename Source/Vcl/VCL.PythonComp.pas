@@ -20,6 +20,9 @@ const
 type
   [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
   TPythonEngine = class(TCustomPythonEngine)
+  protected
+    procedure InvalidDllFatalMsgDlg(); override;
+    procedure Quit; override;
   end;
 
   [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
@@ -227,5 +230,35 @@ begin
   end;
 end;
 {------------------------------------------------------------------------------}
+
+{ TPythonEngine }
+
+procedure TPythonEngine.InvalidDllFatalMsgDlg;
+var
+  s: string;
+begin
+  if not( csDesigning in ComponentState ) then begin
+    {$IFDEF MSWINDOWS}
+    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
+    MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+    {$ELSE}
+    s := Format('Error: Could not open Dll "%s"',[DllName]);
+    WriteLn(ErrOutput, s);
+    {$ENDIF}
+  end;
+end;
+
+procedure TPythonEngine.Quit;
+begin
+  if not( csDesigning in ComponentState ) then begin
+  {$IFDEF MSWINDOWS}
+    MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+    ExitProcess( 1 );
+  {$ELSE}
+    WriteLn(ErrOutput, GetQuitMessage);
+    Halt( 1 );
+  {$ENDIF}
+  end;
+end;
 
 end.

@@ -74,7 +74,7 @@ type
 implementation
 
 uses
-  SysUtils, System.UITypes, FMX.DialogService.Async;
+  SysUtils, System.UITypes, FMX.DialogService;
 
 {$IFDEF MSWINDOWS}
 const
@@ -85,19 +85,21 @@ const
 
 procedure TPythonEngine.InvalidDllFatalMsgDlg;
 begin
-  inherited;
-  TDialogServiceAsync.MessageDialog(
+  TDialogService.MessageDialog(
     Format('Error: Could not open Dll "%s"',[DllName]),
-    TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1);
+    TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1, nil);
 end;
 
 procedure TPythonEngine.Quit;
 begin
-  inherited;
-  TDialogServiceAsync.MessageDialog(
-    GetQuitMessage(),
-    TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1);
-  Halt(1);
+  if not( csDesigning in ComponentState ) then begin
+    TDialogService.MessageDialog(
+      GetQuitMessage(),
+      TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1,
+      procedure(const AResult: TModalResult) begin
+        Halt(1);
+      end);
+  end;
 end;
 
 {PROTECTED METHODS}
@@ -146,7 +148,8 @@ begin
     Result := inherited ReceiveData
   else
   begin
-    TDialogServiceAsync.InputQuery('Query from Python', ['Enter text'], [''],
+    TDialogService.PreferredMode := TDialogService.TPreferredMode.Sync;
+    TDialogService.InputQuery('Query from Python', ['Enter text'], [''],
       procedure(const AResult: TModalResult; const AValues: array of string) begin
         LResult := AnsiString(AValues[0]);
       end
@@ -163,7 +166,8 @@ begin
     Result := inherited ReceiveUniData
   else
   begin
-    TDialogServiceAsync.InputQuery('Query from Python', ['Enter text'], [''],
+    TDialogService.PreferredMode := TDialogService.TPreferredMode.Sync;
+    TDialogService.InputQuery('Query from Python', ['Enter text'], [''],
       procedure(const AResult: TModalResult; const AValues: array of string) begin
         LResult := AnsiString(AValues[0]);
       end
