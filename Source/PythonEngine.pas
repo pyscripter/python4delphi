@@ -95,6 +95,14 @@ uses
 const
   TPFLAGS_DEFAULT = [tpfBaseType, tpHaveVersionTag];
 
+{$IF not Defined(FPC) and (CompilerVersion >= 23)}
+const
+  PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
+                         or pidOSX32 or pidOSX64
+                         or pidiOSDevice32 or pidiOSDevice64
+                         or pidAndroid32Arm or pidAndroid64Arm;
+{$IFEND}
+
 //--------------------------------------------------------
 //--                                                    --
 //-- class:  TPythonEngine derived from TPythonInterface--
@@ -104,6 +112,7 @@ const
 const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
 type
+  TPythonModule = class; // forward declaration
   TEngineClient = class;
 
   TTracebackItem = class
@@ -132,7 +141,10 @@ type
       property Limit : Integer read FLimit write FLimit;
   end;
 
-  TCustomPythonEngine = class(TPythonInterface)
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  {$IFEND}
+  TPythonEngine = class(TPythonInterface)
   private
     FVenvPythonExe:              string;
     FInitScript:                 TStrings;
@@ -182,7 +194,6 @@ type
     procedure SetLocalVars(const Value: PPyObject);
     procedure SetPyFlags(const Value: TPythonFlags);
     procedure AssignPyFlags;
-
   public
     // Constructors & Destructors
     constructor Create(AOwner: TComponent); override;
@@ -315,14 +326,14 @@ type
 
   TEngineClient = class(TComponent)
     protected
-      FEngine : TCustomPythonEngine;
+      FEngine : TPythonEngine;
       FOnInitialization : TNotifyEvent;
       FOnFinalization : TNotifyEvent;
       FOnCreate : TNotifyEvent;
       FOnDestroy : TNotifyEvent;
       FInitialized : Boolean;
 
-      procedure SetEngine( val : TCustomPythonEngine ); virtual;
+      procedure SetEngine( val : TPythonEngine ); virtual;
       procedure Loaded; override;
       procedure Notification( AComponent: TComponent;
                               Operation: TOperation); override;
@@ -342,7 +353,7 @@ type
       property Initialized: Boolean read FInitialized;
 
     published
-      property Engine : TCustomPythonEngine read FEngine write SetEngine;
+      property Engine : TPythonEngine read FEngine write SetEngine;
       property OnCreate : TNotifyEvent read FOnCreate write FOnCreate;
       property OnDestroy : TNotifyEvent read FOnDestroy write FOnDestroy;
       property OnFinalization : TNotifyEvent read FOnFinalization write FOnFinalization;
@@ -539,8 +550,6 @@ type
 //--class: TPythonModule derived from TMethodsContainer--
 //--                                                   --
 //-------------------------------------------------------
-
-  TCustomPythonModule = class; // forward declaration
   TErrors = class; // forward declaration
 
   TParentClassError = class(TPersistent)
@@ -585,20 +594,23 @@ type
 
   TErrors = class(TCollection)
   private
-    FModule: TCustomPythonModule;
+    FModule: TPythonModule;
     function GetError(Index: Integer): TError;
     procedure SetError(Index: Integer; Value: TError);
   protected
     function GetOwner: TPersistent; override;
     procedure Update(Item: TCollectionItem); override;
   public
-    constructor Create(Module: TCustomPythonModule);
+    constructor Create(Module: TPythonModule);
     function  Add: TError;
-    function  Owner : TCustomPythonModule;
+    function  Owner : TPythonModule;
     property Items[Index: Integer]: TError read GetError write SetError; default;
   end;
 
-  TCustomPythonModule = class(TMethodsContainer)
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  {$IFEND}
+  TPythonModule = class(TMethodsContainer)
     protected
       FModuleName : AnsiString;
       FModule : PPyObject;
@@ -656,7 +668,7 @@ type
 //-------------------------------------------------------
 
 type
-  TCustomPythonType = class; //forward declaration
+  TPythonType = class; //forward declaration
 
 {
         A                    B                                                      C
@@ -693,13 +705,13 @@ type
     procedure Set_ob_refcnt(const Value: NativeInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
   public
-    PythonType     : TCustomPythonType;
+    PythonType     : TPythonType;
     IsSubtype      : Boolean;
     PythonAlloc    : Boolean;
 
     // Constructors & Destructors
-    constructor Create( APythonType : TCustomPythonType ); virtual;
-    constructor CreateWith( APythonType : TCustomPythonType; args : PPyObject ); virtual;
+    constructor Create( APythonType : TPythonType ); virtual;
+    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -709,7 +721,7 @@ type
     function  GetSelf : PPyObject;
     procedure IncRef;
     procedure Adjust(PyPointer: Pointer);
-    function  GetModule : TCustomPythonModule;
+    function  GetModule : TPythonModule;
 
     property ob_refcnt : NativeInt read Get_ob_refcnt write Set_ob_refcnt;
     property ob_type   : PPyTypeObject read Get_ob_type write Set_ob_type;
@@ -786,10 +798,10 @@ type
     function  MpAssSubscript( obj1, obj2 : PPyObject) : Integer; virtual;
 
     // Class methods
-    class procedure RegisterMethods( APythonType : TCustomPythonType ); virtual;
-    class procedure RegisterMembers( APythonType : TCustomPythonType ); virtual;
-    class procedure RegisterGetSets( APythonType : TCustomPythonType ); virtual;
-    class procedure SetupType( APythonType : TCustomPythonType ); virtual;
+    class procedure RegisterMethods( APythonType : TPythonType ); virtual;
+    class procedure RegisterMembers( APythonType : TPythonType ); virtual;
+    class procedure RegisterGetSets( APythonType : TPythonType ); virtual;
+    class procedure SetupType( APythonType : TPythonType ); virtual;
   end;
   TPyObjectClass = class of TPyObject;
 
@@ -813,13 +825,16 @@ type
       property Mapping : TMappingServices read FMapping write FMapping;
   end;
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  {$IFEND}
   // The component that initializes the Python type and
   // that creates instances of itself.
-  TCustomPythonType = class(TGetSetContainer)
+  TPythonType = class(TGetSetContainer)
   protected
     FType : PyTypeObject;
     FTypeName : AnsiString;
-    FModule : TCustomPythonModule;
+    FModule : TPythonModule;
     FPyObjectClass : TPyObjectClass;
     FPrefix : AnsiString;
     FCreateFuncName : AnsiString;
@@ -842,7 +857,7 @@ type
                             Operation: TOperation); override;
     function  GetTypePtr : PPyTypeObject;
     procedure SetPyObjectClass( val : TPyObjectClass );
-    procedure SetModule( val : TCustomPythonModule );
+    procedure SetModule( val : TPythonModule );
     procedure SetServices( val : TTypeServices );
     procedure SetTypeName( const val : AnsiString );
     function  CreateMethod( pSelf, args : PPyObject ) : PPyObject; cdecl;
@@ -884,7 +899,7 @@ type
     property TypeName : AnsiString read FTypeName write SetTypeName;
     property TypeFlags : TPFlags read FTypeFlags write FTypeFlags default TPFLAGS_DEFAULT;
     property Prefix : AnsiString read FPrefix write FPrefix;
-    property Module : TCustomPythonModule read FModule write SetModule;
+    property Module : TPythonModule read FModule write SetModule;
     property Services : TTypeServices read FServices write SetServices;
     property GenerateCreateFunction : Boolean read fGenerateCreateFunction write fGenerateCreateFunction default True;
   end;
@@ -895,7 +910,10 @@ type
 //--                                                   --
 //-------------------------------------------------------
 
-  TCustomPythonDelphiVar = class( TEngineClient )
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  {$IFEND}
+  TPythonDelphiVar = class( TEngineClient )
     protected
       FModule    : AnsiString;
       FVarName   : AnsiString;
@@ -918,6 +936,7 @@ type
     public
       // Constructors & Destructors
       constructor Create( AOwner : TComponent ); override;
+      destructor Destroy(); override;
 
       // Public methods
       procedure Initialize; override;
@@ -944,12 +963,12 @@ type
   TPyVar = class(TPyObject)
   public
     dv_var         : Variant;
-    dv_component   : TCustomPythonDelphiVar;
+    dv_component   : TPythonDelphiVar;
     dv_object      : PPyObject;
 
     // Constructors & Destructors
-    constructor Create( APythonType : TCustomPythonType ); override;
-    constructor CreateWith( APythonType : TCustomPythonType; args : PPyObject ); override;
+    constructor Create( APythonType : TPythonType ); override;
+    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
     destructor  Destroy; override;
 
     // Type services
@@ -961,7 +980,7 @@ type
     function  Repr : PPyObject; override;
 
     // Class methods
-    class procedure RegisterMethods( APythonType : TCustomPythonType ); override;
+    class procedure RegisterMethods( APythonType : TPythonType ); override;
 
     // Methods of TPyVar
     function GetValue : PPyObject;
@@ -1028,7 +1047,7 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 //##                                                   ##
 //#######################################################
 
-function  GetPythonEngine : TCustomPythonEngine;
+function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
@@ -1079,8 +1098,8 @@ uses
 (*******************************************************)
 
 var
-  gPythonEngine : TCustomPythonEngine;
-  gVarType : TCustomPythonType;
+  gPythonEngine : TPythonEngine;
+  gVarType : TPythonType;
 
 (*******************************************************)
 (**                                                   **)
@@ -1234,7 +1253,7 @@ end;
 (*******************************************************)
 
 
-constructor TCustomPythonEngine.Create(AOwner: TComponent);
+constructor TPythonEngine.Create(AOwner: TComponent);
 var
   i : Integer;
 begin
@@ -1253,13 +1272,13 @@ begin
   if csDesigning in ComponentState then
     begin
       for i := 0 to AOwner.ComponentCount - 1 do
-        if (AOwner.Components[i] is TCustomPythonEngine) and
+        if (AOwner.Components[i] is TPythonEngine) and
            (AOwner.Components[i] <> Self) then
           raise Exception.Create('You can''t drop more than one TPythonEngine component');
     end;
 end;
 
-destructor TCustomPythonEngine.Destroy;
+destructor TPythonEngine.Destroy;
 begin
   LocalVars := nil;
   GlobalVars := nil;
@@ -1277,7 +1296,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TCustomPythonEngine.Finalize;
+procedure TPythonEngine.Finalize;
 var
   i: integer;
   canDetachClients : Boolean;
@@ -1342,30 +1361,30 @@ begin
   FPyDateTime_DateTimeTZType  := nil;
 end;
 
-procedure TCustomPythonEngine.Lock;
+procedure TPythonEngine.Lock;
 begin
   FLock.Enter;
 end;
 
-procedure TCustomPythonEngine.Unlock;
+procedure TPythonEngine.Unlock;
 begin
   FLock.Leave;
 end;
 
-procedure TCustomPythonEngine.AfterLoad;
+procedure TPythonEngine.AfterLoad;
 begin
   inherited;
   Initialize;
 end;
 
-procedure TCustomPythonEngine.BeforeLoad;
+procedure TPythonEngine.BeforeLoad;
 begin
   if UseWindowsConsole then
     InitWinConsole;
   inherited;
 end;
 
-procedure TCustomPythonEngine.DoOpenDll(const aDllName : string);
+procedure TPythonEngine.DoOpenDll(const aDllName : string);
 var
   i : Integer;
 begin
@@ -1386,7 +1405,7 @@ begin
   inherited;
 end;
 
-procedure TCustomPythonEngine.AssignPyFlags;
+procedure TPythonEngine.AssignPyFlags;
 
   procedure SetFlag( AFlag: PInteger; AValue : Boolean );
   begin
@@ -1407,7 +1426,7 @@ begin
   SetFlag(Py_IgnoreEnvironmentFlag, pfIgnoreEnvironmentFlag in FPyFlags);
 end;
 
-procedure TCustomPythonEngine.Initialize;
+procedure TPythonEngine.Initialize;
 
   procedure InitSysPath;
   var
@@ -1520,12 +1539,12 @@ begin
     FOnAfterInit(Self);
 end;
 
-procedure TCustomPythonEngine.SetInitScript(Value: TStrings);
+procedure TPythonEngine.SetInitScript(Value: TStrings);
 begin
   FInitScript.Assign(Value);
 end;
 
-function TCustomPythonEngine.GetThreadState: PPyThreadState;
+function TPythonEngine.GetThreadState: PPyThreadState;
 begin
   if Assigned(PyThreadState_Get) then
     Result := PyThreadState_Get
@@ -1533,7 +1552,7 @@ begin
     Result := nil;
 end;
 
-procedure TCustomPythonEngine.SetInitThreads(Value: Boolean);
+procedure TPythonEngine.SetInitThreads(Value: Boolean);
 begin
   if Value <> FInitThreads then
   begin
@@ -1543,17 +1562,17 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.GetClientCount : Integer;
+function TPythonEngine.GetClientCount : Integer;
 begin
   Result := FClients.Count;
 end;
 
-function TCustomPythonEngine.GetClients( idx : Integer ) : TEngineClient;
+function TPythonEngine.GetClients( idx : Integer ) : TEngineClient;
 begin
   Result := TEngineClient( FClients.Items[idx] );
 end;
 
-procedure TCustomPythonEngine.Notification( AComponent: TComponent;
+procedure TPythonEngine.Notification( AComponent: TComponent;
                                       Operation: TOperation);
 var
   i : Integer;
@@ -1575,7 +1594,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonEngine.SetProgramArgs;
+procedure TPythonEngine.SetProgramArgs;
 var
   i, argc : Integer;
   wargv : array of PWideChar;
@@ -1608,7 +1627,7 @@ begin
   PySys_SetArgv( argc + 1, PPWideChar(wargv) );
 end;
 
-procedure TCustomPythonEngine.InitWinConsole;
+procedure TPythonEngine.InitWinConsole;
 begin
 {$IFDEF MSWINDOWS}
   FreeConsole;
@@ -1617,7 +1636,7 @@ begin
 {$ENDIF}
 end;
 
-procedure TCustomPythonEngine.SetUseWindowsConsole( const Value : Boolean );
+procedure TPythonEngine.SetUseWindowsConsole( const Value : Boolean );
 begin
   FUseWindowsConsole := Value;
   if (csDesigning in ComponentState) then
@@ -1626,7 +1645,7 @@ end;
 
 // GlobalVars contains a dictionary object used by the Run_CommandAsObject method, if not nil.
 // Warning ! SetGlobalVars increments the reference count of the dictionary object !
-procedure TCustomPythonEngine.SetGlobalVars(const Value: PPyObject);
+procedure TPythonEngine.SetGlobalVars(const Value: PPyObject);
 begin
   Py_XDecRef(FGlobalVars);
   if Assigned(Value) then
@@ -1644,7 +1663,7 @@ end;
 
 // LocalVars contains a dictionary object used by the Run_CommandAsObject method, if not nil.
 // Warning ! SetLocalVars increments the reference count of the dictionary object !
-procedure TCustomPythonEngine.SetLocalVars(const Value: PPyObject);
+procedure TPythonEngine.SetLocalVars(const Value: PPyObject);
 begin
   Py_XDecRef(FLocalVars);
   if Assigned(Value) then
@@ -1660,7 +1679,7 @@ begin
   Py_XIncRef(FLocalVars);
 end;
 
-procedure TCustomPythonEngine.SetPyFlags(const Value: TPythonFlags);
+procedure TPythonEngine.SetPyFlags(const Value: TPythonFlags);
 begin
   if FPyFlags <> Value then
   begin
@@ -1670,22 +1689,22 @@ begin
   end; // of if
 end;
 
-procedure TCustomPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
+procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
   FPythonHome := PythonHome;
 end;
 
-procedure TCustomPythonEngine.SetProgramName(const ProgramName: UnicodeString);
+procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
 begin
   FProgramName := ProgramName;
 end;
 
-function TCustomPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
+function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
 begin
   result := ob^.ob_type = obt;
 end;
 
-function TCustomPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
+function TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
 var presult :PPyObject;
 begin
   CheckPython;
@@ -1718,7 +1737,7 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
+function TPythonEngine.EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
 var pargs: PPyObject;
 begin
   CheckPython;
@@ -1730,7 +1749,7 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
+function TPythonEngine.EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
 var pargs: PPyObject;
 begin
   CheckPython;
@@ -1742,22 +1761,22 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
+function TPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
 begin
   Result := Run_CommandAsString( command, eval_input );
 end;
 
-function TCustomPythonEngine.EvalString(const command : AnsiString) : PPyObject;
+function TPythonEngine.EvalString(const command : AnsiString) : PPyObject;
 begin
   Result := Run_CommandAsObject( command, eval_input );
 end;
 
-procedure TCustomPythonEngine.ExecString(const command : AnsiString);
+procedure TPythonEngine.ExecString(const command : AnsiString);
 begin
   Py_XDecRef( Run_CommandAsObject( command, file_input ) );
 end;
 
-function TCustomPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
+function TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
 var
   v : PPyObject;
 begin
@@ -1767,12 +1786,12 @@ begin
   Py_XDECREF(v);
 end;
 
-function TCustomPythonEngine.Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
+function TPythonEngine.Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
 begin
   Result := Run_CommandAsObjectWithDict(command, mode, nil, nil);
 end;
 
-function TCustomPythonEngine.Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
+function TPythonEngine.Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
 var
   m : PPyObject;
   _locals, _globals : PPyObject;
@@ -1812,52 +1831,52 @@ begin
   end;
 end;
 
-procedure TCustomPythonEngine.ExecStrings( strings : TStrings );
+procedure TPythonEngine.ExecStrings( strings : TStrings );
 begin
   Py_XDecRef( Run_CommandAsObject( EncodeString(strings.Text) , file_input ) );
 end;
 
-function TCustomPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
+function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
 begin
   Result := Run_CommandAsObject( EncodeString(strings.Text) , eval_input );
 end;
 
-procedure TCustomPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
+procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
 begin
   Py_XDecRef( Run_CommandAsObjectWithDict( command, file_input, locals, globals ) );
 end;
 
-procedure TCustomPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
+procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
 begin
   Py_XDecRef( Run_CommandAsObjectWithDict( EncodeString(strings.Text), file_input, locals, globals ) );
 end;
 
-function TCustomPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
+function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
 begin
   Result := Run_CommandAsObjectWithDict( command, eval_input, locals, globals );
 end;
 
-function TCustomPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
+function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
 begin
   Result := Run_CommandAsObjectWithDict( EncodeString(strings.Text), eval_input, locals, globals );
 end;
 
-function TCustomPythonEngine.EvalStringsAsStr( strings : TStrings ) : string;
+function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : string;
 begin
   Result := Run_CommandAsString( EncodeString(strings.Text), eval_input );
 end;
 
-function TCustomPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
+function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
 begin
   result := CheckSyntax( str, eval_input );
 end;
 
-function TCustomPythonEngine.CheckExecSyntax( const str : AnsiString ) : Boolean;
+function TPythonEngine.CheckExecSyntax( const str : AnsiString ) : Boolean;
 begin
   result := CheckSyntax( str, file_input );
 end;
 
-function TCustomPythonEngine.CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
+function TPythonEngine.CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
 var
   n : PNode;
 begin
@@ -1867,7 +1886,7 @@ begin
     PyNode_Free(n);
 end;
 
-procedure TCustomPythonEngine.RaiseError;
+procedure TPythonEngine.RaiseError;
 
   function Define( E : EPythonError; const sType, sValue : string ) : EPythonError;
   begin
@@ -2080,7 +2099,7 @@ begin
     raise EPythonError.Create('RaiseError: couldn''t fetch last exception');
 end;
 
-function TCustomPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
+function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
 var
   S : PPyObject;
   W : UnicodeString;
@@ -2101,7 +2120,7 @@ begin
   Py_XDECREF(S);
 end;
 
-procedure TCustomPythonEngine.DoRedirectIO;
+procedure TPythonEngine.DoRedirectIO;
 const
   code = 'import sys'+LF+
          'class DebugOutput:'+LF+
@@ -2125,8 +2144,8 @@ begin
   if not Assigned(FIOPythonModule) then
   begin
     // create a new module called pyio
-    FIOPythonModule := TCustomPythonModule.Create( Self );
-    with FIOPythonModule as TCustomPythonModule do
+    FIOPythonModule := TPythonModule.Create( Self );
+    with FIOPythonModule as TPythonModule do
       begin
         Engine := Self;
         ModuleName := 'pyio';
@@ -2137,7 +2156,7 @@ begin
         AddMethod( 'GetTypesStats',  pyio_GetTypesStats,  'GetTypesStats( [type name] ) -> a list of tuple (TypeName, InstanceCount, CreateHits, DeleteHits)' );
       end;
   end;
-  with FIOPythonModule as TCustomPythonModule do
+  with FIOPythonModule as TPythonModule do
     if not Initialized then
       Initialize;
   // execute the code
@@ -2145,12 +2164,12 @@ begin
   FIORedirected := True;
 end;
 
-procedure  TCustomPythonEngine.AddClient( client : TEngineClient );
+procedure  TPythonEngine.AddClient( client : TEngineClient );
 begin
   FClients.Add( client );
 end;
 
-procedure  TCustomPythonEngine.RemoveClient( client : TEngineClient );
+procedure  TPythonEngine.RemoveClient( client : TEngineClient );
 begin
   // We finalize the PythonEngine, as soon as a client should
   // be freed, because the destroy order of the components
@@ -2164,13 +2183,13 @@ begin
   end;
 end;
 
-function   TCustomPythonEngine.FindClient( const aName : string ) : TEngineClient;
+function   TPythonEngine.FindClient( const aName : string ) : TEngineClient;
 var
   i : Integer;
 begin
   Result := nil;
   for i := 0 to ClientCount - 1 do
-    with TCustomPythonType( Clients[i] ) do
+    with TPythonType( Clients[i] ) do
       if Name = aName then
         begin
           Result := Clients[i];
@@ -2178,7 +2197,7 @@ begin
         end;
 end;
 
-function TCustomPythonEngine.EncodeString(const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
+function TPythonEngine.EncodeString(const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
 begin
   Result := UTF8Encode(str)
 end;
@@ -2190,7 +2209,7 @@ begin
 end;
 {$ENDIF}
 
-function TCustomPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
+function TPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
 {PEP 529}
 begin
   if (MajorVersion > 3) or ((MajorVersion = 3) and (MinorVersion >=6) )then
@@ -2199,13 +2218,13 @@ begin
     Result := AnsiString(str);
 end;
 
-function   TCustomPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
+function   TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
 var
   i : Integer;
 begin
   for i := 0 to ClientCount - 1 do
-    if Clients[i] is TCustomPythonType then
-      with TCustomPythonType( Clients[i] ) do
+    if Clients[i] is TPythonType then
+      with TPythonType( Clients[i] ) do
         if TypeName = aTypeName then
           begin
             Result := TheTypePtr;
@@ -2214,13 +2233,13 @@ begin
   raise Exception.CreateFmt('Could not find type: %s', [aTypeName]);
 end;
 
-function   TCustomPythonEngine.ModuleByName( const aModuleName : AnsiString ) : PPyObject;
+function   TPythonEngine.ModuleByName( const aModuleName : AnsiString ) : PPyObject;
 var
   i : Integer;
 begin
   for i := 0 to ClientCount - 1 do
-    if Clients[i] is TCustomPythonModule then
-      with TCustomPythonModule( Clients[i] ) do
+    if Clients[i] is TPythonModule then
+      with TPythonModule( Clients[i] ) do
         if ModuleName = aModuleName then
           begin
             Result := Module;
@@ -2229,7 +2248,7 @@ begin
   raise Exception.CreateFmt('Could not find module: %s', [aModuleName]);
 end;
 
-function   TCustomPythonEngine.MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
+function   TPythonEngine.MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
 var
   i : Integer;
 begin
@@ -2244,7 +2263,7 @@ begin
   raise Exception.CreateFmt('Could not find component: %s', [aMethodsContainer]);
 end;
 
-function TCustomPythonEngine.VariantAsPyObject( const V : Variant ) : PPyObject;
+function TPythonEngine.VariantAsPyObject( const V : Variant ) : PPyObject;
 Var
   DeRefV : Variant;
 
@@ -2407,7 +2426,7 @@ begin
   end; // of case
 end;
 
-function TCustomPythonEngine.PyObjectAsVariant( obj : PPyObject ) : Variant;
+function TPythonEngine.PyObjectAsVariant( obj : PPyObject ) : Variant;
 
   function ExtractDate( var date : Variant ) : Boolean;
 
@@ -2573,7 +2592,7 @@ begin
     Result := Null;
 end;
 
-function TCustomPythonEngine.VarRecAsPyObject( v : TVarRec ) : PPyObject;
+function TPythonEngine.VarRecAsPyObject( v : TVarRec ) : PPyObject;
 begin
   case v.VType of
     vtInteger:       Result := PyLong_FromLong( v.VInteger );
@@ -2631,7 +2650,7 @@ end;
 // This function prevents Python from deleting the objects contained
 // when the container will be freed, because we increment each
 // object's refcount.
-function TCustomPythonEngine.MakePyTuple( const objects : array of PPyObject ) : PPyObject;
+function TPythonEngine.MakePyTuple( const objects : array of PPyObject ) : PPyObject;
 var
   i : Integer;
 begin
@@ -2648,7 +2667,7 @@ end;
 // This function prevents Python from deleting the objects contained
 // when the container will be freed, because we increment each
 // object's refcount.
-function TCustomPythonEngine.MakePyList( const objects : array of PPyObject ) : PPyObject;
+function TPythonEngine.MakePyList( const objects : array of PPyObject ) : PPyObject;
 var
   i : Integer;
 begin
@@ -2662,7 +2681,7 @@ begin
     end;
 end;
 
-function TCustomPythonEngine.ArrayToPyTuple( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyTuple( items : array of const) : PPyObject;
 var
   i : Integer;
 begin
@@ -2673,7 +2692,7 @@ begin
     PyTuple_SetItem( Result, i, VarRecAsPyObject( items[i] ) );
 end;
 
-function TCustomPythonEngine.ArrayToPyList( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyList( items : array of const) : PPyObject;
 var
   i : Integer;
 begin
@@ -2685,7 +2704,7 @@ begin
 end;
 
 // You must give each entry as a couple key(string)/value
-function TCustomPythonEngine.ArrayToPyDict( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyDict( items : array of const) : PPyObject;
 
   function VarRecAsString( v : TVarRec ) : AnsiString;
   begin
@@ -2767,7 +2786,7 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.StringsToPyList( strings : TStrings ) : PPyObject;
+function TPythonEngine.StringsToPyList( strings : TStrings ) : PPyObject;
 var
   i : Integer;
 begin
@@ -2779,7 +2798,7 @@ begin
       PyUnicodeFromString(strings.Strings[i]));
 end;
 
-function TCustomPythonEngine.StringsToPyTuple( strings : TStrings ) : PPyObject;
+function TPythonEngine.StringsToPyTuple( strings : TStrings ) : PPyObject;
 var
   i : Integer;
 begin
@@ -2791,7 +2810,7 @@ begin
       PyUnicodeFromString(strings.Strings[i]));
 end;
 
-procedure TCustomPythonEngine.PyListToStrings( list : PPyObject; strings : TStrings );
+procedure TPythonEngine.PyListToStrings( list : PPyObject; strings : TStrings );
 var
   i : Integer;
 begin
@@ -2802,7 +2821,7 @@ begin
     strings.Add( PyObjectAsString( PyList_GetItem( list, i ) ) );
 end;
 
-procedure TCustomPythonEngine.PyTupleToStrings( tuple: PPyObject; strings : TStrings );
+procedure TPythonEngine.PyTupleToStrings( tuple: PPyObject; strings : TStrings );
 var
   i : Integer;
 begin
@@ -2813,7 +2832,7 @@ begin
     strings.Add( PyObjectAsString( PyTuple_GetItem( tuple, i ) ) );
 end;
 
-function TCustomPythonEngine.PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
+function TPythonEngine.PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
 var
   _size : Integer;
 {$IFDEF POSIX}
@@ -2847,7 +2866,7 @@ begin
     raise EPythonError.Create('PyUnicodeAsString expects a Unicode Python object');
 end;
 
-function TCustomPythonEngine.PyUnicodeFromString(const AString : UnicodeString) : PPyObject;
+function TPythonEngine.PyUnicodeFromString(const AString : UnicodeString) : PPyObject;
 {$IFDEF POSIX}
 var
   _ucs4Str : UCS4String;
@@ -2862,13 +2881,13 @@ begin
 {$ENDIF}
 end;
 
-function TCustomPythonEngine.ReturnNone : PPyObject;
+function TPythonEngine.ReturnNone : PPyObject;
 begin
   Result := Py_None;
   Py_INCREF( Result );
 end;
 
-function TCustomPythonEngine.FindModule( const ModuleName : AnsiString ) : PPyObject;
+function TPythonEngine.FindModule( const ModuleName : AnsiString ) : PPyObject;
 var
   modules, m : PPyObject;
 begin
@@ -2880,7 +2899,7 @@ begin
     Result := nil;
 end;
 
-function TCustomPythonEngine.FindFunction(ModuleName,FuncName: AnsiString): PPyObject;
+function TPythonEngine.FindFunction(ModuleName,FuncName: AnsiString): PPyObject;
 var
   module,func: PPyObject;
 begin
@@ -2903,7 +2922,7 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.SetToList( data : Pointer; size : Integer ) : PPyObject;
+function TPythonEngine.SetToList( data : Pointer; size : Integer ) : PPyObject;
 
   function GetBit( idx : Integer ) : Boolean;
   var
@@ -2936,7 +2955,7 @@ begin
       end;
 end;
 
-procedure TCustomPythonEngine.ListToSet( List : PPyObject; data : Pointer; size : Integer );
+procedure TPythonEngine.ListToSet( List : PPyObject; data : Pointer; size : Integer );
 
   procedure SetBit( idx : Integer );
   var
@@ -2957,7 +2976,7 @@ begin
     SetBit( PyObjectAsVariant( PyList_GetItem(list, i) ) );
 end;
 
-procedure TCustomPythonEngine.CheckError(ACatchStopEx : Boolean = False);
+procedure TPythonEngine.CheckError(ACatchStopEx : Boolean = False);
 begin
   if PyErr_Occurred <> nil then
   begin
@@ -2975,67 +2994,67 @@ begin
   end;
 end;
 
-function TCustomPythonEngine.GetMainModule : PPyObject;
+function TPythonEngine.GetMainModule : PPyObject;
 begin
   Result := PyImport_AddModule(PAnsiChar(ExecModule));
 end;
 
-function TCustomPythonEngine.PyTimeStruct_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTimeStruct_Check( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FTimeStruct) and (Pointer(obj^.ob_type) = FTimeStruct);
 end;
 
-function TCustomPythonEngine.PyDate_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDate_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PPyTypeObject(FPyDateTime_DateType));
 end;
 
-function TCustomPythonEngine.PyDate_CheckExact( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDate_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_DateType);
 end;
 
-function TCustomPythonEngine.PyDateTime_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDateTime_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PPyTypeObject(FPyDateTime_DateTimeType));
 end;
 
-function TCustomPythonEngine.PyDateTime_CheckExact( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDateTime_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_DateTimeType);
 end;
 
-function TCustomPythonEngine.PyTime_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTime_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PPyTypeObject(FPyDateTime_TimeType));
 end;
 
-function TCustomPythonEngine.PyTime_CheckExact( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTime_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_TimeType);
 end;
 
-function TCustomPythonEngine.PyDelta_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDelta_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PPyTypeObject(FPyDateTime_DeltaType));
 end;
 
-function TCustomPythonEngine.PyDelta_CheckExact( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyDelta_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_DeltaType);
 end;
 
-function TCustomPythonEngine.PyTZInfo_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTZInfo_Check( obj : PPyObject ) : Boolean;
 begin
   Result := PyObject_TypeCheck(obj, PPyTypeObject(FPyDateTime_TZInfoType));
 end;
 
-function TCustomPythonEngine.PyTZInfo_CheckExact( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTZInfo_CheckExact( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned(FPyDateTime_DateType) and (Pointer(obj^.ob_type) = FPyDateTime_TZInfoType);
 end;
 
-function TCustomPythonEngine.PyUnicodeFromString(const AString: AnsiString): PPyObject;
+function TPythonEngine.PyUnicodeFromString(const AString: AnsiString): PPyObject;
 begin
   Result := PyUnicodeFromString(UnicodeString(AString));
 end;
@@ -3047,7 +3066,7 @@ end;
 (**                                                   **)
 (*******************************************************)
 
-procedure  TEngineClient.SetEngine( val : TCustomPythonEngine );
+procedure  TEngineClient.SetEngine( val : TPythonEngine );
 begin
   if val <> FEngine then
     begin
@@ -3071,9 +3090,9 @@ begin
   if (csDesigning in ComponentState) and Assigned(AOwner) then
     with AOwner do
       for i := 0 to ComponentCount - 1 do
-        if Components[i] is TCustomPythonEngine then
+        if Components[i] is TPythonEngine then
           begin
-            Self.Engine := TCustomPythonEngine(Components[i]);
+            Self.Engine := TPythonEngine(Components[i]);
             Break;
           end;
 end;
@@ -3577,13 +3596,13 @@ procedure TError.SetName( const Value : AnsiString );
   procedure CheckName;
   var
     i : Integer;
-    m : TCustomPythonModule;
+    m : TPythonModule;
   begin
     with Collection as TErrors do
       begin
         if GetOwner = nil then
           Exit;
-        m := GetOwner as TCustomPythonModule;
+        m := GetOwner as TPythonModule;
         for i := 0 to Count - 1 do
           with Items[i] do
             if Name = Value then
@@ -3595,21 +3614,21 @@ procedure TError.SetName( const Value : AnsiString );
   procedure UpdateDependencies;
   var
     i, j : Integer;
-    m : TCustomPythonModule;
+    m : TPythonModule;
   begin
     if FName = '' then
       Exit;
     with Collection as TErrors do
-      with GetOwner as TCustomPythonModule do
+      with GetOwner as TPythonModule do
         begin
           if not Assigned(Engine) then
             Exit;
-          m := TCustomPythonModule( TErrors(Self.Collection).GetOwner );
+          m := TPythonModule( TErrors(Self.Collection).GetOwner );
           with Engine do
             begin
               for i := 0 to ClientCount - 1 do
-                if Clients[i] is TCustomPythonModule then
-                  with TCustomPythonModule(Clients[i]) do
+                if Clients[i] is TPythonModule then
+                  with TPythonModule(Clients[i]) do
                     begin
                       for j := 0 to Errors.Count - 1 do
                         with Errors.Items[j] do
@@ -3713,7 +3732,7 @@ begin
   if Assigned(Error) then
     Exit;
   if Name = '' then
-    with GetOwner as TCustomPythonModule do
+    with GetOwner as TPythonModule do
       raise Exception.CreateFmt( 'Error without name in module "%s"', [ModuleName] );
   if Text = '' then
     Text := Name;
@@ -3826,7 +3845,7 @@ begin
   inherited;
 end;
 
-constructor TErrors.Create(Module: TCustomPythonModule );
+constructor TErrors.Create(Module: TPythonModule );
 begin
   inherited Create( TError );
   FModule := Module;
@@ -3837,30 +3856,30 @@ begin
   Result := TError(inherited Add);
 end;
 
-function  TErrors.Owner : TCustomPythonModule;
+function  TErrors.Owner : TPythonModule;
 begin
-  Result := GetOwner as TCustomPythonModule;
+  Result := GetOwner as TPythonModule;
 end;
 
 ////////////////////////////////////////
 // class TPythonModule
 
-function TCustomPythonModule.GetClientCount : Integer;
+function TPythonModule.GetClientCount : Integer;
 begin
   Result := FClients.Count;
 end;
 
-function TCustomPythonModule.GetClients( idx : Integer ) : TEngineClient;
+function TPythonModule.GetClients( idx : Integer ) : TEngineClient;
 begin
   Result := TEngineClient(FClients.Items[idx]);
 end;
 
-procedure TCustomPythonModule.SetErrors( val : TErrors );
+procedure TPythonModule.SetErrors( val : TErrors );
 begin
   FErrors.Assign( val );
 end;
 
-procedure TCustomPythonModule.SetModuleName( const val : AnsiString );
+procedure TPythonModule.SetModuleName( const val : AnsiString );
 
   procedure UpdateDependencies;
   var
@@ -3872,8 +3891,8 @@ procedure TCustomPythonModule.SetModuleName( const val : AnsiString );
       Exit;
     with Engine do
       for i := 0 to ClientCount - 1 do
-        if Clients[i] is TCustomPythonModule then
-          with TCustomPythonModule(Clients[i]) do
+        if Clients[i] is TPythonModule then
+          with TPythonModule(Clients[i]) do
             for j := 0 to Errors.Count - 1 do
               with Errors.Items[j] do
                 if ParentClass.Module = Self.FModuleName then
@@ -3888,7 +3907,7 @@ begin
     end;
 end;
 
-constructor TCustomPythonModule.Create( AOwner : TComponent );
+constructor TPythonModule.Create( AOwner : TComponent );
 begin
   inherited;
   FClients := TList.Create;
@@ -3896,7 +3915,7 @@ begin
   FDocString := TStringList.Create;
 end;
 
-destructor  TCustomPythonModule.Destroy;
+destructor  TPythonModule.Destroy;
 begin
   FDocString.Free;
   FClients.Free;
@@ -3905,12 +3924,12 @@ begin
 end;
 
 
-procedure TCustomPythonModule.SetDocString( value : TStringList );
+procedure TPythonModule.SetDocString( value : TStringList );
 begin
   FDocString.Assign( value );
 end;
 
-procedure TCustomPythonModule.DefineDocString;
+procedure TPythonModule.DefineDocString;
 var
   doc : PPyObject;
 begin
@@ -3927,7 +3946,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonModule.MakeModule;
+procedure TPythonModule.MakeModule;
 begin
   CheckEngine;
   if Assigned(FModule) then
@@ -3944,7 +3963,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonModule.Initialize;
+procedure TPythonModule.Initialize;
 var
   i : Integer;
 begin
@@ -3958,7 +3977,7 @@ begin
     FOnAfterInitialization( Self );
 end;
 
-procedure TCustomPythonModule.InitializeForNewInterpreter;
+procedure TPythonModule.InitializeForNewInterpreter;
 var
   initialized : Boolean;
   oldModule : PPyObject;
@@ -3975,12 +3994,12 @@ begin
   end;
 end;
 
-procedure TCustomPythonModule.AddClient( client : TEngineClient );
+procedure TPythonModule.AddClient( client : TEngineClient );
 begin
   FClients.Add( client );
 end;
 
-function TCustomPythonModule.ErrorByName( const AName : AnsiString ) : TError;
+function TPythonModule.ErrorByName( const AName : AnsiString ) : TError;
 var
   i : Integer;
 begin
@@ -3993,22 +4012,22 @@ begin
   raise Exception.CreateFmt( 'Could not find error "%s"', [AName] );
 end;
 
-procedure TCustomPythonModule.RaiseError( const error, msg : AnsiString );
+procedure TPythonModule.RaiseError( const error, msg : AnsiString );
 begin
   ErrorByName( error ).RaiseError( msg );
 end;
 
-procedure TCustomPythonModule.RaiseErrorFmt( const error, format : AnsiString; Args : array of const );
+procedure TPythonModule.RaiseErrorFmt( const error, format : AnsiString; Args : array of const );
 begin
   RaiseError( error, AnsiString(SysUtils.Format( string(format), Args )) );
 end;
 
-procedure TCustomPythonModule.RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
+procedure TPythonModule.RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
 begin
   ErrorByName( error ).RaiseErrorObj( msg, obj );
 end;
 
-procedure TCustomPythonModule.BuildErrors;
+procedure TPythonModule.BuildErrors;
 var
   i : Integer;
   d : PPyObject;
@@ -4031,7 +4050,7 @@ end;
 // warning, this function will increase the refcount of value,
 // so, if you don't want to keep a link, don't forget to decrement
 // the refcount after the SetVar method.
-procedure TCustomPythonModule.SetVar( const varName : AnsiString; value : PPyObject );
+procedure TPythonModule.SetVar( const varName : AnsiString; value : PPyObject );
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
     begin
@@ -4045,7 +4064,7 @@ end;
 // warning, this function will increase the refcount of value,
 // so, if you don't want to keep a link, don't forget to decrement
 // the refcount after the GetVar method.
-function  TCustomPythonModule.GetVar( const varName : AnsiString ) : PPyObject;
+function  TPythonModule.GetVar( const varName : AnsiString ) : PPyObject;
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
   begin
@@ -4056,7 +4075,7 @@ begin
     raise EPythonError.CreateFmt( 'Can''t get var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
 end;
 
-procedure TCustomPythonModule.DeleteVar( const varName : AnsiString );
+procedure TPythonModule.DeleteVar( const varName : AnsiString );
 var
   dict : PPyObject;
 begin
@@ -4071,7 +4090,7 @@ begin
     raise EPythonError.CreateFmt( 'Can''t delete var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
 end;
 
-procedure TCustomPythonModule.ClearVars;
+procedure TPythonModule.ClearVars;
 var
  dict : PPyObject;
 begin
@@ -4082,7 +4101,7 @@ begin
    end;
 end;
 
-procedure TCustomPythonModule.SetVarFromVariant( const varName : AnsiString; const value : Variant );
+procedure TPythonModule.SetVarFromVariant( const varName : AnsiString; const value : Variant );
 var
   obj : PPyObject;
 begin
@@ -4098,7 +4117,7 @@ begin
     end;
 end;
 
-function  TCustomPythonModule.GetVarAsVariant( const varName : AnsiString ) : Variant;
+function  TPythonModule.GetVarAsVariant( const varName : AnsiString ) : Variant;
 var
   obj : PPyObject;
 begin
@@ -4124,7 +4143,7 @@ end;
 //  TPyObject
 
 // Constructors & Destructors
-constructor TPyObject.Create( APythonType : TCustomPythonType );
+constructor TPyObject.Create( APythonType : TPythonType );
 begin
   inherited Create;
   if Assigned(APythonType) then
@@ -4139,7 +4158,7 @@ begin
   end;
 end;
 
-constructor TPyObject.CreateWith( APythonType : TCustomPythonType; args : PPyObject );
+constructor TPyObject.CreateWith( APythonType : TPythonType; args : PPyObject );
 begin
   Create( APythonType );
 end;
@@ -4190,7 +4209,7 @@ begin
   ptr^ := NativeInt(PythonToDelphi(PPyObject(ptr^)));
 end;
 
-function  TPyObject.GetModule : TCustomPythonModule;
+function  TPyObject.GetModule : TPythonModule;
 begin
   if Assigned(PythonType) then
     Result := PythonType.Module
@@ -4570,19 +4589,19 @@ end;
 
 
 // Class methods
-class procedure TPyObject.RegisterMethods( APythonType : TCustomPythonType );
+class procedure TPyObject.RegisterMethods( APythonType : TPythonType );
 begin
 end;
 
-class procedure TPyObject.RegisterMembers( APythonType : TCustomPythonType );
+class procedure TPyObject.RegisterMembers( APythonType : TPythonType );
 begin
 end;
 
-class procedure TPyObject.RegisterGetSets( APythonType : TCustomPythonType );
+class procedure TPyObject.RegisterGetSets( APythonType : TPythonType );
 begin
 end;
 
-class procedure TPyObject.SetupType(APythonType: TCustomPythonType);
+class procedure TPyObject.SetupType(APythonType: TPythonType);
 begin
 
 end;
@@ -4635,7 +4654,7 @@ begin
     pSelf.ob_type^.tp_free(pSelf);
 end;
 
-procedure TCustomPythonType.Notification( AComponent: TComponent;
+procedure TPythonType.Notification( AComponent: TComponent;
                                     Operation: TOperation);
 begin
   inherited;
@@ -4644,7 +4663,7 @@ begin
       FModule := nil;
 end;
 
-procedure TCustomPythonType.SetPyObjectClass( val : TPyObjectClass );
+procedure TPythonType.SetPyObjectClass( val : TPyObjectClass );
 begin
   if val <> FPyObjectClass then
     begin
@@ -4666,7 +4685,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonType.SetModule( val : TCustomPythonModule );
+procedure TPythonType.SetModule( val : TPythonModule );
 begin
   if val <> FModule then
     begin
@@ -4680,18 +4699,18 @@ begin
     end;
 end;
 
-procedure TCustomPythonType.ModuleReady(Sender : TObject);
+procedure TPythonType.ModuleReady(Sender : TObject);
 begin
   inherited;
   AddTypeVar;
 end;
 
-procedure TCustomPythonType.SetServices( val : TTypeServices );
+procedure TPythonType.SetServices( val : TTypeServices );
 begin
   FServices.Assign( val );
 end;
 
-procedure TCustomPythonType.SetTypeName( const val : AnsiString );
+procedure TPythonType.SetTypeName( const val : AnsiString );
 begin
   if (FTypeName <> val) and (val <> '') then
     begin
@@ -4699,38 +4718,38 @@ begin
     end;
 end;
 
-function  TCustomPythonType.CreateMethod( pSelf, args : PPyObject ) : PPyObject;
+function  TPythonType.CreateMethod( pSelf, args : PPyObject ) : PPyObject;
 begin
   Result := CreateInstanceWith( args );
 end;
 
-procedure TCustomPythonType.ReallocGetSets;
+procedure TPythonType.ReallocGetSets;
 begin
   inherited;
   if tpfBaseType in TypeFlags then
     FType.tp_getset := GetSetData;
 end;
 
-procedure TCustomPythonType.ReallocMembers;
+procedure TPythonType.ReallocMembers;
 begin
   inherited;
   if tpfBaseType in TypeFlags then
     FType.tp_members := MembersData;
 end;
 
-procedure TCustomPythonType.ReallocMethods;
+procedure TPythonType.ReallocMethods;
 begin
   inherited;
   if tpfBaseType in TypeFlags then
     FType.tp_methods := MethodsData;
 end;
 
-procedure TCustomPythonType.SetDocString( value : TStringList );
+procedure TPythonType.SetDocString( value : TStringList );
 begin
   FDocString.Assign( value );
 end;
 
-function  TCustomPythonType.TypeFlagsAsInt : LongInt;
+function  TPythonType.TypeFlagsAsInt : LongInt;
 begin
   Result := 0;
   if tpfHeapType in TypeFlags then
@@ -4857,7 +4876,7 @@ begin
   Result := PythonToDelphi(pSelf).Init(args, kwds);
 end;
 
-function  TCustomPythonType.NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject;
+function  TPythonType.NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject;
 var
   obj : TPyObject;
 begin
@@ -5125,7 +5144,7 @@ begin
   Result := PythonToDelphi(pSelf).SqInplaceRepeat( i );
 end;
 
-procedure TCustomPythonType.InitServices;
+procedure TPythonType.InitServices;
 { Called from TPythonType.Initialize which first calls CheckEngine - FEngine is alread assigned }
 begin
   with FType do
@@ -5168,7 +5187,7 @@ begin
       begin
         tp_init             := TPythonType_InitSubtype;
         tp_alloc            := TPythonType_AllocSubtypeInst;
-        tp_new              := GetCallBack( Self, @TCustomPythonType.NewSubtypeInst, 3, ctCDECL);
+        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, ctCDECL);
         tp_free             := FreeSubtypeInst;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
@@ -5272,7 +5291,7 @@ end;
 
 // Public methods
 
-constructor TCustomPythonType.Create( AOwner : TComponent );
+constructor TPythonType.Create( AOwner : TComponent );
 begin
   inherited;
   FPrefix := 'Create';
@@ -5282,7 +5301,7 @@ begin
   FGenerateCreateFunction := True;
 end;
 
-destructor  TCustomPythonType.Destroy;
+destructor  TPythonType.Destroy;
 begin
   if gVarType = Self then
     gVarType := nil;
@@ -5291,12 +5310,12 @@ begin
   inherited;
 end;
 
-function  TCustomPythonType.GetTypePtr : PPyTypeObject;
+function  TPythonType.GetTypePtr : PPyTypeObject;
 begin
   Result := PPyTypeObject(@FType);
 end;
 
-procedure TCustomPythonType.Initialize;
+procedure TPythonType.Initialize;
 begin
   CheckEngine;
   with Engine, FType do
@@ -5317,14 +5336,14 @@ begin
   inherited;
 end;
 
-procedure TCustomPythonType.Finalize;
+procedure TPythonType.Finalize;
 begin
   Engine.Py_XDECREF(FCreateFunc);
   FCreateFunc := nil;
   inherited;
 end;
 
-function TCustomPythonType.CreateInstance : PPyObject;
+function TPythonType.CreateInstance : PPyObject;
 var
   obj : TPyObject;
 begin
@@ -5343,7 +5362,7 @@ begin
     end;
 end;
 
-function TCustomPythonType.CreateInstanceWith( args : PPyObject ) : PPyObject;
+function TPythonType.CreateInstanceWith( args : PPyObject ) : PPyObject;
 var
   obj : TPyObject;
 begin
@@ -5362,7 +5381,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonType.AddTypeVar;
+procedure TPythonType.AddTypeVar;
 var
   d : PPyObject;
   meth : TDelphiMethod;
@@ -5395,7 +5414,7 @@ begin
     end;
 end;
 
-function TCustomPythonType.GetMembersStartOffset : Integer;
+function TPythonType.GetMembersStartOffset : Integer;
 begin
   Result := Sizeof(PyObject);
 end;
@@ -5406,11 +5425,11 @@ end;
 (**                                                   **)
 (*******************************************************)
 
-procedure TCustomPythonDelphiVar.CreateVarType;
+procedure TPythonDelphiVar.CreateVarType;
 begin
   if not Assigned(gVarType) then
   begin
-    gVarType := TCustomPythonType.Create( Self.Engine );
+    gVarType := TPythonType.Create( Self.Engine );
     with gVarType do
       begin
         TypeName := 'PythonDelphiVar';
@@ -5421,7 +5440,12 @@ begin
   end;
 end;
 
-procedure TCustomPythonDelphiVar.CreateVar;
+destructor TPythonDelphiVar.Destroy;
+begin
+  inherited;
+end;
+
+procedure TPythonDelphiVar.CreateVar;
 var
   v : TPyVar;
   m, d : PPyObject;
@@ -5447,7 +5471,7 @@ begin
     end;
 end;
 
-function  TCustomPythonDelphiVar.GetValue : Variant;
+function  TPythonDelphiVar.GetValue : Variant;
 begin
   if Assigned( FVarObject ) then
     with TPyVar(PythonToDelphi(FVarObject)) do
@@ -5456,7 +5480,7 @@ begin
     raise Exception.Create('No variable was created' );
 end;
 
-procedure TCustomPythonDelphiVar.SetValue( const val : Variant );
+procedure TPythonDelphiVar.SetValue( const val : Variant );
 begin
   if Assigned( FVarObject ) then
     with TPyVar(PythonToDelphi(FVarObject)) do
@@ -5466,7 +5490,7 @@ begin
 end;
 
 // Warning: GetValueAsPyObject returns a preincremented object !
-function  TCustomPythonDelphiVar.GetValueAsPyObject : PPyObject;
+function  TPythonDelphiVar.GetValueAsPyObject : PPyObject;
 begin
   if Assigned( FVarObject ) then
     with TPyVar(PythonToDelphi(FVarObject)) do
@@ -5475,7 +5499,7 @@ begin
     raise Exception.Create('No variable was created' );
 end;
 
-procedure TCustomPythonDelphiVar.SetValueFromPyObject( val : PPyObject );
+procedure TPythonDelphiVar.SetValueFromPyObject( val : PPyObject );
 begin
   if Assigned( FVarObject ) then
     with TPyVar(PythonToDelphi(FVarObject)) do
@@ -5484,7 +5508,7 @@ begin
     raise Exception.Create('No variable was created' );
 end;
 
-function  TCustomPythonDelphiVar.IsVariantOk( const v : Variant ) : Boolean;
+function  TPythonDelphiVar.IsVariantOk( const v : Variant ) : Boolean;
 var
   t : Integer;
 begin
@@ -5502,7 +5526,7 @@ begin
             (t = varString);
 end;
 
-function  TCustomPythonDelphiVar.GetValueAsString : string;
+function  TPythonDelphiVar.GetValueAsString : string;
 var
   v : Variant;
   obj : PPyObject;
@@ -5522,7 +5546,7 @@ begin
     end;
 end;
 
-procedure TCustomPythonDelphiVar.SetVarName( const val : AnsiString );
+procedure TPythonDelphiVar.SetVarName( const val : AnsiString );
 
   procedure CheckVarName;
   var
@@ -5531,8 +5555,8 @@ procedure TCustomPythonDelphiVar.SetVarName( const val : AnsiString );
     if Owner = nil then Exit;
     if (val = FVarName) or (val = '') then Exit;
     for i := 0 to Owner.ComponentCount - 1 do
-      if Owner.Components[i] is TCustomPythonDelphiVar then
-        with TCustomPythonDelphiVar(Owner.Components[i]) do
+      if Owner.Components[i] is TPythonDelphiVar then
+        with TPythonDelphiVar(Owner.Components[i]) do
           if (VarName = val) and (Module = Self.Module) then
             raise Exception.CreateFmt('A variable "%s" already exists in the module "%s"',[val, Module]);
   end;
@@ -5545,7 +5569,7 @@ begin
     end;
 end;
 
-constructor TCustomPythonDelphiVar.Create( AOwner : TComponent );
+constructor TPythonDelphiVar.Create( AOwner : TComponent );
 
   procedure AdjustName;
   var
@@ -5559,8 +5583,8 @@ constructor TCustomPythonDelphiVar.Create( AOwner : TComponent );
       begin
         done := True;
         for i := 0 to AOwner.ComponentCount - 1 do
-          if AOwner.Components[i] is TCustomPythonDelphiVar then
-            with TCustomPythonDelphiVar(AOwner.Components[i]) do
+          if AOwner.Components[i] is TPythonDelphiVar then
+            with TPythonDelphiVar(AOwner.Components[i]) do
               if (VarName = Self.FVarName+AnsiString(IntToStr(cpt))) and
                  (Module = Self.Module) then
                 begin
@@ -5580,7 +5604,7 @@ begin
     AdjustName;
 end;
 
-procedure TCustomPythonDelphiVar.Initialize;
+procedure TPythonDelphiVar.Initialize;
 begin
   if csDesigning in ComponentState then
     Exit;
@@ -5590,7 +5614,7 @@ begin
   inherited;
 end;
 
-procedure TCustomPythonDelphiVar.Finalize;
+procedure TPythonDelphiVar.Finalize;
 begin
   inherited;
   if not PythonOK then
@@ -5607,7 +5631,7 @@ begin
 end;
 
 
-constructor TPyVar.Create( APythonType : TCustomPythonType );
+constructor TPyVar.Create( APythonType : TPythonType );
 begin
   inherited;
 end;
@@ -5617,7 +5641,7 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyVar.Create will be automatically be called.
 
-constructor TPyVar.CreateWith( APythonType : TCustomPythonType; args : PPyObject );
+constructor TPyVar.CreateWith( APythonType : TPythonType; args : PPyObject );
 begin
   inherited;
   with GetPythonEngine do
@@ -5685,7 +5709,7 @@ end;
 // Class methods
 // We register the methods of our type
 
-class procedure TPyVar.RegisterMethods( APythonType : TCustomPythonType );
+class procedure TPyVar.RegisterMethods( APythonType : TPythonType );
 begin
   inherited;
   with APythonType do
@@ -5864,7 +5888,7 @@ begin
   if GetCurrentThreadId <> MainThreadId then
     with GetPythonEngine do
       begin
-        if RedirectIO and (IO <> nil) and (IO.ClassName <> 'TPythonInputOutput') and not IO.DelayWrites then
+        if RedirectIO and (IO <> nil) and (not IO.InheritsFrom(TPythonInputOutput)) and not IO.DelayWrites then
           begin
             Result := GetPythonEngine.ReturnNone;
             Exit;
@@ -5967,7 +5991,7 @@ end;
 
 function pyio_GetTypesStats(self, args : PPyObject) : PPyObject;
 
-  function HandleType( T : TCustomPythonType ) : PPyObject;
+  function HandleType( T : TPythonType ) : PPyObject;
   begin
     with GetPythonEngine do
       begin
@@ -5979,25 +6003,25 @@ function pyio_GetTypesStats(self, args : PPyObject) : PPyObject;
       end;
   end;
 
-  function FindType( const TName : AnsiString ) : TCustomPythonType;
+  function FindType( const TName : AnsiString ) : TPythonType;
   var
     i : Integer;
   begin
     Result := nil;
     with GetPythonEngine do
       for i := 0 to ClientCount - 1 do
-        if Clients[i] is TCustomPythonType then
-          with TCustomPythonType(Clients[i]) do
+        if Clients[i] is TPythonType then
+          with TPythonType(Clients[i]) do
             if TypeName = TName then
               begin
-                Result := TCustomPythonType(Clients[i]);
+                Result := TPythonType(Clients[i]);
                 Break;
               end;
   end;
 
 var
   i : Integer;
-  T : TCustomPythonType;
+  T : TPythonType;
   obj : PPyObject;
   str : AnsiString;
 begin
@@ -6018,9 +6042,9 @@ begin
           end
       else
         for i := 0 to ClientCount - 1 do
-          if Clients[i] is TCustomPythonType then
+          if Clients[i] is TPythonType then
             begin
-              obj := HandleType( TCustomPythonType(Clients[i]) );
+              obj := HandleType( TPythonType(Clients[i]) );
               PyList_Append( Result, obj );
               Py_XDecRef(obj);
             end;
@@ -6034,7 +6058,7 @@ end;
 (**                                                   **)
 (*******************************************************)
 
-function  GetPythonEngine : TCustomPythonEngine;
+function  GetPythonEngine : TPythonEngine;
 begin
   if not Assigned( gPythonEngine ) then
     raise Exception.Create( 'No Python engine was created' );

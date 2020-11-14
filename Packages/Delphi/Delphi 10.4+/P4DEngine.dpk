@@ -42,6 +42,7 @@ contains
   PythonKnownVersions in '..\..\..\Source\PythonKnownVersions.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
   PythonLoader in '..\..\..\Source\PythonLoader.pas',
-  PythonInterpreter in '..\..\..\Source\PythonInterpreter.pas';
+  PythonInterpreter in '..\..\..\Source\PythonInterpreter.pas',
+  ServicesProvider in '..\..\..\Source\ServicesProvider.pas';
 
 end.

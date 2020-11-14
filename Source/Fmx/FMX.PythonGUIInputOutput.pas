@@ -1,4 +1,4 @@
-unit FMX.PythonComp;
+unit FMX.PythonGUIInputOutput;
 
 interface
 
@@ -15,29 +15,9 @@ uses
 const
   PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
                          or pidOSX32 or pidOSX64
-                         or pidiOSDevice32 or pidiOSDevice64
                          or pidAndroid32Arm or pidAndroid64Arm;
 
 type
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonEngine = class(TCustomPythonEngine)
-  protected
-    procedure InvalidDllFatalMsgDlg(); override;
-    procedure Quit; override;
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonModule = class(TCustomPythonModule)
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonType = class(TCustomPythonType)
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonDelphiVar = class(TCustomPythonDelphiVar)
-  end;
-
   [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
   TPythonGUIInputOutput = class(TPythonInputOutput)
   private
@@ -48,9 +28,9 @@ type
     {$ENDIF}
   protected
     { Protected declarations }
-{$IFDEF MSWINDOWS}
+    {$IFDEF MSWINDOWS}
     procedure pyGUIOutputWndProc (var Message: TMessage);
-{$ENDIF}
+    {$ENDIF}
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SendData( const Data : AnsiString ); override;
     procedure SendUniData( const Data : UnicodeString ); override;
@@ -74,33 +54,32 @@ type
 implementation
 
 uses
-  SysUtils, System.UITypes, FMX.DialogService;
+  System.SysUtils, System.UITypes, FMX.DialogService;
 
 {$IFDEF MSWINDOWS}
 const
   WM_WriteOutput = WM_USER + 1;
 {$ENDIF}
 
-{ TPythonEngine }
-
-procedure TPythonEngine.InvalidDllFatalMsgDlg;
-begin
-  TDialogService.MessageDialog(
-    Format('Error: Could not open Dll "%s"',[DllName]),
-    TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1, nil);
-end;
-
-procedure TPythonEngine.Quit;
-begin
-  if not( csDesigning in ComponentState ) then begin
-    TDialogService.MessageDialog(
-      GetQuitMessage(),
-      TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1,
-      procedure(const AResult: TModalResult) begin
-        Halt(1);
-      end);
-  end;
-end;
+//{ TPythonEngine }
+//
+//procedure TPythonEngine.InvalidDllFatalMsgDlg;
+//begin
+//  TDialogService.MessageDialog(
+//    Format('Error: Could not open Dll "%s"',[DllName]),
+//    TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1, nil);
+//end;
+//
+//procedure TPythonEngine.Quit;
+//begin
+//  if not( csDesigning in ComponentState ) then begin
+//    TDialogService.MessageDialog(GetQuitMessage(),
+//      TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], TMsgDlgBtn.mbOK, -1,
+//      procedure(const AResult: TModalResult) begin
+//        Halt(1);
+//      end);
+//  end;
+//end;
 
 {PROTECTED METHODS}
 
@@ -148,7 +127,6 @@ begin
     Result := inherited ReceiveData
   else
   begin
-    TDialogService.PreferredMode := TDialogService.TPreferredMode.Sync;
     TDialogService.InputQuery('Query from Python', ['Enter text'], [''],
       procedure(const AResult: TModalResult; const AValues: array of string) begin
         LResult := AnsiString(AValues[0]);
@@ -159,14 +137,12 @@ begin
 end;
 
 function TPythonGUIInputOutput.ReceiveUniData: UnicodeString;
-Var
-  LResult : string;
 begin
   if Assigned( FOnReceiveUniData ) then
     Result := inherited ReceiveUniData
   else
   begin
-    TDialogService.PreferredMode := TDialogService.TPreferredMode.Sync;
+    var LResult: string;
     TDialogService.InputQuery('Query from Python', ['Enter text'], [''],
       procedure(const AResult: TModalResult; const AValues: array of string) begin
         LResult := AnsiString(AValues[0]);

@@ -21,21 +21,15 @@ procedure Register;
 implementation
 
 uses
-  PythonEngine,
   FMX.Controls,
-  FMX.PythonComp;
+  FMX.PythonServicesProvider,
+  FMX.PythonGUIInputOutput;
 
 procedure Register;
 begin
-  GroupDescendentsWith(TPythonEngine, TControl);
-  GroupDescendentsWith(TPythonType, TControl);
-  GroupDescendentsWith(TPythonModule, TControl);
-  GroupDescendentsWith(TPythonDelphiVar, TControl);
+  GroupDescendentsWith(TPythonServicesProvider, TControl);
   GroupDescendentsWith(TPythonGUIInputOutput, TControl);
-
-  RegisterComponents('Python',[TPythonEngine, TPythonType, TPythonModule, TPythonDelphiVar, TPythonGUIInputOutput]);
-
-  RegisterSelectionEditor(TPythonEngine, TPythonEngineSelectEditor);
+  RegisterComponents('Python',[TPythonServicesProvider, TPythonGUIInputOutput]);
   RegisterSelectionEditor(TPythonGUIInputOutput, TPythonGUIInputOutputSelectEditor);
 end;
 
@@ -46,7 +40,6 @@ begin
   Proc('PythonLoader');
   Proc('PythonInterpreter');
   Proc('PythonEngine');
-  Proc('FMX.PythonComp');
 end;
 
 { TPythonGUIInputOutputSelectEditor }
@@ -54,7 +47,7 @@ end;
 procedure TPythonGUIInputOutputSelectEditor.RequiresUnits(Proc: TGetStrProc);
 begin
   Proc('PythonInputOutput');
-  Proc('FMX.PythonComp');
+  Proc('FMX.PythonGUIInputOutput');
 end;
 
 end.

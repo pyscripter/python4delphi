@@ -155,6 +155,7 @@
         <DCCReference Include="..\..\..\Source\PythonEngine.pas"/>
         <DCCReference Include="..\..\..\Source\PythonLoader.pas"/>
         <DCCReference Include="..\..\..\Source\PythonInterpreter.pas"/>
+        <DCCReference Include="..\..\..\Source\ServicesProvider.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

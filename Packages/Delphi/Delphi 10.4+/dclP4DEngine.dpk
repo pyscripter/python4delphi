@@ -1,4 +1,4 @@
-package dclVclP4DComp;
+package dclP4DEngine;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -25,18 +25,17 @@ package dclVclP4DComp;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Design-time Components Package (VCL)'}
+{$DESCRIPTION 'Python4Delphi - Design-time Engine Package'}
 {$LIBSUFFIX AUTO}
 {$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
-  VclP4DComp,
-  vcl,
+  P4DEngine,
   DesignIDE;
 
 contains
-  Vcl.PythonReg in '..\..\..\Source\Vcl\Vcl.PythonReg.pas';
+  PythonReg in '..\..\..\Source\PythonReg.pas';
 
 end.

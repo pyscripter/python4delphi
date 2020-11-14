@@ -46,7 +46,7 @@ const
 {$IFDEF ANDROID}
   PYTHON_KNOWN_VERSIONS: array[1..1] of TPythonVersionProp =
     (
-    (DllName: 'python3.8.so'; RegVersion: '3.8'; APIVersion: 1013)
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$ENDIF}
 

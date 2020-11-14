@@ -12,6 +12,9 @@
         <Projects Include="FmxP4DComp.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="dclP4DEngine.dproj">
+            <Dependencies/>
+        </Projects>
         <Projects Include="dclVclP4DComp.dproj">
             <Dependencies>VclP4DComp.dproj</Dependencies>
         </Projects>
@@ -53,6 +56,15 @@
     <Target Name="FmxP4DComp:Make">
         <MSBuild Projects="FmxP4DComp.dproj" Targets="Make"/>
     </Target>
+    <Target Name="dclP4DEngine">
+        <MSBuild Projects="dclP4DEngine.dproj"/>
+    </Target>
+    <Target Name="dclP4DEngine:Clean">
+        <MSBuild Projects="dclP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclP4DEngine:Make">
+        <MSBuild Projects="dclP4DEngine.dproj" Targets="Make"/>
+    </Target>
     <Target Name="dclVclP4DComp" DependsOnTargets="VclP4DComp">
         <MSBuild Projects="dclVclP4DComp.dproj"/>
     </Target>
@@ -72,13 +84,13 @@
         <MSBuild Projects="dclFmxP4DComp.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="P4DEngine;VclP4DComp;FmxP4DComp;dclVclP4DComp;dclFmxP4DComp"/>
+        <CallTarget Targets="P4DEngine;VclP4DComp;FmxP4DComp;dclP4DEngine;dclVclP4DComp;dclFmxP4DComp"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="P4DEngine:Clean;VclP4DComp:Clean;FmxP4DComp:Clean;dclVclP4DComp:Clean;dclFmxP4DComp:Clean"/>
+        <CallTarget Targets="P4DEngine:Clean;VclP4DComp:Clean;FmxP4DComp:Clean;dclP4DEngine:Clean;dclVclP4DComp:Clean;dclFmxP4DComp:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="P4DEngine:Make;VclP4DComp:Make;FmxP4DComp:Make;dclVclP4DComp:Make;dclFmxP4DComp:Make"/>
+        <CallTarget Targets="P4DEngine:Make;VclP4DComp:Make;FmxP4DComp:Make;dclP4DEngine:Make;dclVclP4DComp:Make;dclFmxP4DComp:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

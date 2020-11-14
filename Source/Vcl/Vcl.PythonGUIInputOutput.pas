@@ -1,4 +1,4 @@
-unit Vcl.PythonComp;
+unit Vcl.PythonGUIInputOutput;
 
 interface
 
@@ -8,37 +8,18 @@ uses
   Windows, Messages,
 {$ENDIF}
   SysUtils, Classes,
-  Graphics, Controls, Forms, Dialogs, StdCtrls,
-  PythonEngine;
+  Graphics, Controls, Forms, Dialogs, StdCtrls;
 
+{$IF not Defined(FPC) and (CompilerVersion >= 23)}
 const
   PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
                          or pidOSX32 or pidOSX64
-                         or pidiOSDevice32 or pidiOSDevice64
                          or pidAndroid32Arm or pidAndroid64Arm;
+{$IFEND}
 
 type
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonEngine = class(TCustomPythonEngine)
-  protected
-    procedure InvalidDllFatalMsgDlg(); override;
-    procedure Quit; override;
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonModule = class(TCustomPythonModule)
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonType = class(TCustomPythonType)
-  end;
-
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
-  TPythonDelphiVar = class(TCustomPythonDelphiVar)
-  end;
-
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
   {$IFEND}
   TPythonGUIInputOutput = class(TPythonInputOutput)
   private
@@ -85,7 +66,6 @@ uses
 const
   WM_WriteOutput = WM_USER + 1;
 {$ENDIF}
-
 
 {PROTECTED METHODS}
 
@@ -166,7 +146,6 @@ var
 begin
   if FQueue.Count = 0 then
     Exit;
-
   Lock;
   try
     while FQueue.Count > 0 do
@@ -230,35 +209,5 @@ begin
   end;
 end;
 {------------------------------------------------------------------------------}
-
-{ TPythonEngine }
-
-procedure TPythonEngine.InvalidDllFatalMsgDlg;
-var
-  s: string;
-begin
-  if not( csDesigning in ComponentState ) then begin
-    {$IFDEF MSWINDOWS}
-    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-    MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-    {$ELSE}
-    s := Format('Error: Could not open Dll "%s"',[DllName]);
-    WriteLn(ErrOutput, s);
-    {$ENDIF}
-  end;
-end;
-
-procedure TPythonEngine.Quit;
-begin
-  if not( csDesigning in ComponentState ) then begin
-  {$IFDEF MSWINDOWS}
-    MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-    ExitProcess( 1 );
-  {$ELSE}
-    WriteLn(ErrOutput, GetQuitMessage);
-    Halt( 1 );
-  {$ENDIF}
-  end;
-end;
 
 end.

@@ -25,7 +25,7 @@ package FmxP4DComp;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Run-time GUI Package (FMX)'}
+{$DESCRIPTION 'Python4Delphi - Run-time Components Package (FMX)'}
 {$LIBSUFFIX AUTO}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
@@ -36,6 +36,7 @@ requires
   P4DEngine;
 
 contains
-  FMX.PythonComp in '..\..\..\Source\Fmx\FMX.PythonComp.pas';
+  FMX.PythonGUIInputOutput in '..\..\..\Source\Fmx\FMX.PythonGUIInputOutput.pas',
+  FMX.PythonServicesProvider in '..\..\..\Source\Fmx\FMX.PythonServicesProvider.pas';
 
 end.

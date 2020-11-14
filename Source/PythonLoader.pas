@@ -13,7 +13,7 @@ uses
 //-------------------------------------------------------
 
 type
-  TCustomDll = class(TComponent)
+  TDynamicDll = class(TComponent)
   private
     FDLLHandle: THandle;
     procedure SetDllName(Value: string);
@@ -35,17 +35,20 @@ type
     FOnBeforeUnload: TNotifyEvent;
     FOnPathInitialization: TPathInitializationEvent;
   protected
-    procedure DoOpenDll(const aDllName : string); virtual; abstract;
-    procedure DoCloseDll(); virtual; abstract;
-    function IsHandleValid: Boolean; virtual; abstract;
-    procedure InvalidDllFatalMsgDlg(); virtual; abstract;
-    procedure Quit; virtual; abstract;
+    procedure DoOpenDll(const aDllName : string); virtual;
+    procedure DoCloseDll(); virtual;
+    function IsHandleValid: Boolean; virtual;
+
+    procedure InvalidDllFatalMsgDlg();
+    procedure Quit;
   protected
+    function GetDllPath(): string;
     procedure Loaded; override;
     procedure BeforeLoad; virtual;
     procedure AfterLoad; virtual;
     procedure BeforeUnload; virtual;
     function GetQuitMessage : string; virtual;
+    function Import(const funcname: AnsiString; canFail: Boolean = True): Pointer;
   protected
     procedure CheckRegistry;
   public
@@ -69,16 +72,6 @@ type
     property OnBeforeUnload: TNotifyEvent read FOnBeforeUnload write FOnBeforeUnload;
     property OnPathInitialization: TPathInitializationEvent read FOnPathInitialization write FOnPathInitialization;
   end;
-
-  TDynamicDll = class(TCustomDll)
-  protected
-    function Import(const funcname: AnsiString; canFail: Boolean = True): Pointer;
-    function GetDllPath(): string;
-    procedure DoOpenDll(const aDllName : string); override;
-    procedure DoCloseDll(); override;
-    function IsHandleValid: Boolean; override;
-  end;
-
 (*
     Checks whether the PythonVersion x.x is Registered
 *)
@@ -96,9 +89,15 @@ uses
   System.IOUtils, Posix.Dlfcn,
   {$IFEND}
   SysUtils,
-  PythonExceptions;
+  PythonExceptions, ServicesProvider;
 
-constructor TCustomDll.Create(AOwner: TComponent);
+(*******************************************************)
+(**                                                   **)
+(**            class TDynamicDll                      **)
+(**                                                   **)
+(*******************************************************)
+
+constructor TDynamicDll.Create(AOwner: TComponent);
 begin
   inherited;
   FFatalMsgDlg          := True;
@@ -107,21 +106,31 @@ begin
   FUseLastKnownVersion  := True;
 end;
 
-destructor TCustomDll.Destroy;
+destructor TDynamicDll.Destroy;
 begin
   if AutoUnload then
     UnloadDll;
   inherited;
 end;
 
-procedure TCustomDll.Loaded;
+procedure TDynamicDll.Loaded;
 begin
   inherited;
   if AutoLoad and not (csDesigning in ComponentState) then
     LoadDll;
 end;
 
-procedure TCustomDll.LoadDll;
+procedure TDynamicDll.Quit;
+var
+  LPythonEngineServices: IPythonEngineServices;
+begin
+  if not( csDesigning in ComponentState ) then begin
+    if TServicesProvider.Instance.SupportsService(IPythonEngineServices, LPythonEngineServices) then
+      LPythonEngineServices.QuitApplication(GetQuitMessage());
+  end;
+end;
+
+procedure TDynamicDll.LoadDll;
 begin
   UnloadDll;
   BeforeLoad;
@@ -135,7 +144,7 @@ begin
     AfterLoad;
 end;
 
-procedure TCustomDll.UnloadDll;
+procedure TDynamicDll.UnloadDll;
 begin
   if IsHandleValid then begin
     BeforeUnload;
@@ -143,54 +152,48 @@ begin
   end;
 end;
 
-procedure TCustomDll.BeforeLoad;
+procedure TDynamicDll.BeforeLoad;
 begin
   if Assigned( FOnBeforeLoad ) then
     FOnBeforeLoad( Self );
 end;
 
-procedure TCustomDll.AfterLoad;
+procedure TDynamicDll.AfterLoad;
 begin
   if Assigned( FOnAfterLoad ) then
     FOnAfterLoad( Self );
 end;
 
-procedure TCustomDll.BeforeUnload;
+procedure TDynamicDll.BeforeUnload;
 begin
   if Assigned( FOnBeforeUnload ) then
     FOnBeforeUnload( Self );
 end;
 
-function  TCustomDll.GetQuitMessage : string;
+function  TDynamicDll.GetQuitMessage : string;
 begin
   Result := Format( 'Dll %s could not be loaded. We must quit.', [DllName]);
 end;
 
-procedure TCustomDll.SetDllName(Value: string);
+procedure TDynamicDll.SetDllName(Value: string);
 begin
   FDllName := Value;
 end;
 
-function TCustomDll.IsAPIVersionStored: Boolean;
+function TDynamicDll.IsAPIVersionStored: Boolean;
 begin
   Result := not UseLastKnownVersion;
 end;
 
-function TCustomDll.IsDllNameStored: Boolean;
+function TDynamicDll.IsDllNameStored: Boolean;
 begin
   Result := not UseLastKnownVersion;
 end;
 
-function TCustomDll.IsRegVersionStored: Boolean;
+function TDynamicDll.IsRegVersionStored: Boolean;
 begin
   Result := not UseLastKnownVersion;
 end;
-
-(*******************************************************)
-(**                                                   **)
-(**            class TDynamicDll                      **)
-(**                                                   **)
-(*******************************************************)
 
 procedure TDynamicDll.DoOpenDll(const aDllName : string);
 begin
@@ -208,7 +211,7 @@ begin
       if not IsHandleValid then
       begin
         FDllName := aDllName;
-        FDLLHandle := dlopen(PAnsiChar(TPath.Combine(DllPath, DllName)), RTLD_LAZY + RTLD_GLOBAL);
+        FDLLHandle := LoadLibrary(PWideChar(TPath.Combine(DllPath, DllName)));
       end;
     {$ELSE}
     //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
@@ -272,6 +275,21 @@ begin
     {$ENDIF}
     E.WrongFunc := funcname;
     raise E;
+  end;
+end;
+
+procedure TDynamicDll.InvalidDllFatalMsgDlg;
+var
+  LPythonEngineServices: IPythonEngineServices;
+begin
+  if not( csDesigning in ComponentState ) then begin
+    if TServicesProvider.Instance.SupportsService(IPythonEngineServices, LPythonEngineServices) then begin
+      {$IFDEF MSWINDOWS}
+        LPythonEngineServices.InvalidDllFatalError(DllName);
+      {$ELSE}
+        LPythonEngineServices.InvalidDllFatalError(DllName);
+      {$ENDIF}
+    end;
   end;
 end;
 
@@ -353,7 +371,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TCustomDll.CheckRegistry;
+procedure TDynamicDll.CheckRegistry;
 {$IFDEF MSWINDOWS}
 var
   key : string;

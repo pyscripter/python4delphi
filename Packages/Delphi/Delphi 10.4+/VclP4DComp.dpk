@@ -25,7 +25,7 @@ package VclP4DComp;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Run-time GUI Package (VCL)'}
+{$DESCRIPTION 'Python4Delphi - Run-time Components Package (VCL)'}
 {$LIBSUFFIX AUTO}
 {$RUNONLY}
 {$IMPLICITBUILD ON}
@@ -36,6 +36,7 @@ requires
   P4DEngine;
 
 contains
-  Vcl.PythonComp in '..\..\..\Source\Vcl\Vcl.PythonComp.pas';
+  Vcl.PythonGUIInputOutput in '..\..\..\Source\Vcl\Vcl.PythonGUIInputOutput.pas',
+  Vcl.PythonServicesProvider in '..\..\..\Source\Vcl\Vcl.PythonServicesProvider.pas';
 
 end.
