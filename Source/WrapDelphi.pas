@@ -327,7 +327,7 @@ unit WrapDelphi;
 interface
 
 uses
-  SysUtils, Classes, PythonEngine,  TypInfo,
+  SysUtils, Classes, PythonConsts, PythonTypes, PythonEngine,  TypInfo,
   Variants,
 {$IFNDEF FPC}
 {$IFDEF EXTENDED_RTTI}
@@ -790,7 +790,7 @@ Type
      Method EventHandlers.RegisterHandler can be used to add event handling functionality
   }
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
   {$IFEND}
   TPyDelphiWrapper = class(TEngineClient, IFreeNotificationSubscriber)
   private
@@ -864,9 +864,6 @@ Type
 
   { Singletons }
   function RegisteredUnits : TRegisteredUnits;
-
-  { Misc }
-  procedure Register;
 
   { Helper Functions }
 
@@ -944,11 +941,6 @@ begin
   if not Assigned(gRegisteredUnits) then
     gRegisteredUnits := TRegisteredUnits.Create;
   Result := gRegisteredUnits;
-end;
-
-procedure Register;
-begin
-  RegisterComponents('Python', [TPyDelphiWrapper]);
 end;
 
 { Helper functions }

@@ -13,7 +13,7 @@
             <Dependencies/>
         </Projects>
         <Projects Include="dclP4DEngine.dproj">
-            <Dependencies/>
+            <Dependencies>P4DEngine.dproj</Dependencies>
         </Projects>
         <Projects Include="dclVclP4DComp.dproj">
             <Dependencies>VclP4DComp.dproj</Dependencies>
@@ -56,13 +56,13 @@
     <Target Name="FmxP4DComp:Make">
         <MSBuild Projects="FmxP4DComp.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dclP4DEngine">
+    <Target Name="dclP4DEngine" DependsOnTargets="P4DEngine">
         <MSBuild Projects="dclP4DEngine.dproj"/>
     </Target>
-    <Target Name="dclP4DEngine:Clean">
+    <Target Name="dclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
         <MSBuild Projects="dclP4DEngine.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dclP4DEngine:Make">
+    <Target Name="dclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
         <MSBuild Projects="dclP4DEngine.dproj" Targets="Make"/>
     </Target>
     <Target Name="dclVclP4DComp" DependsOnTargets="VclP4DComp">

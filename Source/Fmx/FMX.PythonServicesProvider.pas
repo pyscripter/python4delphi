@@ -3,22 +3,19 @@ unit FMX.PythonServicesProvider;
 interface
 
 uses
-  System.Classes;
+  Classes;
 
 type
   TPythonServicesProvider = class(TComponent)
-  private
-    procedure RegisterServices();
-    procedure UnRegisterServices();
   public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy(); override;
+    class procedure RegisterServices();
+    class procedure UnRegisterServices();
   end;
 
 implementation
 
 uses
-  System.SysUtils, System.UITypes, FMX.DialogService, ServicesProvider, FMX.Platform;
+  System.SysUtils, System.UITypes, FMX.Platform, FMX.DialogService, ServicesProvider;
 
 type
   TPythonEngineServices = class(TInterfacedObject, IPythonEngineServices)
@@ -29,28 +26,18 @@ type
 
 { TServicesProvider }
 
-constructor TPythonServicesProvider.Create(AOwner: TComponent);
+class procedure TPythonServicesProvider.RegisterServices();
 begin
-  inherited;
+  if TServicesProvider.Instance.Loaded then
+    Exit;
   TServicesProvider.Instance.Loaded := true;
-  RegisterServices();
-end;
-
-destructor TPythonServicesProvider.Destroy;
-begin
-  UnRegisterServices();
-  TServicesProvider.Instance.Loaded := false;
-  inherited;
-end;
-
-procedure TPythonServicesProvider.RegisterServices();
-begin
   TServicesProvider.Instance.AddService(IPythonEngineServices, TPythonEngineServices.Create());
 end;
 
-procedure TPythonServicesProvider.UnRegisterServices();
+class procedure TPythonServicesProvider.UnRegisterServices();
 begin
   TServicesProvider.Instance.RemoveService(IPythonEngineServices);
+  TServicesProvider.Instance.Loaded := false;
 end;
 
 { TPythonEngineServices }
@@ -62,7 +49,9 @@ begin
   TDialogService.ShowMessage(Format('Could not open Dll "%s"'
                                   + #13#10
                                   + #13#10
-                                  + 'Error (%d) - %s',[ADllName, LLastErrorCode, SysErrorMessage(LLastErrorCode)]));
+                                  + 'Error (%d) - %s', [
+                                    ADllName, LLastErrorCode,
+                                    SysErrorMessage(LLastErrorCode)]));
 end;
 
 procedure TPythonEngineServices.QuitApplication(const AErrorMessage: string);
@@ -73,5 +62,11 @@ begin
       Halt(1);
     end);
 end;
+
+initialization
+  TPythonServicesProvider.RegisterServices();
+
+finalization
+  TPythonServicesProvider.UnRegisterServices();
 
 end.

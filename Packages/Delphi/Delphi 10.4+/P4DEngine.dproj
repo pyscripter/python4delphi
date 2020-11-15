@@ -134,6 +134,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <Debugger_HostApplication>C:\Program Files (x86)\Embarcadero\Studio\21.0\bin\bds.exe</Debugger_HostApplication>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -156,6 +157,8 @@
         <DCCReference Include="..\..\..\Source\PythonLoader.pas"/>
         <DCCReference Include="..\..\..\Source\PythonInterpreter.pas"/>
         <DCCReference Include="..\..\..\Source\ServicesProvider.pas"/>
+        <DCCReference Include="..\..\..\Source\WrapDelphi.pas"/>
+        <DCCReference Include="..\..\..\Source\VarPyth.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

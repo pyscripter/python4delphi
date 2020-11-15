@@ -3,6 +3,17 @@ unit PythonConsts;
 
 interface
 
+uses
+  Classes;
+
+{$IF not Defined(FPC) and (CompilerVersion >= 23)}
+const
+  PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
+                         or pidOSX32 or pidOSX64
+                         or pidiOSDevice32 or pidiOSDevice64
+                         or pidAndroid32Arm or pidAndroid64Arm;
+{$IFEND}
+
 const
   kMaxLines = 1000;
   kMaxLineLength = 256;

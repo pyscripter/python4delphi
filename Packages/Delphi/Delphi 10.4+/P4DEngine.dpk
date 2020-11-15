@@ -43,6 +43,8 @@ contains
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
   PythonLoader in '..\..\..\Source\PythonLoader.pas',
   PythonInterpreter in '..\..\..\Source\PythonInterpreter.pas',
-  ServicesProvider in '..\..\..\Source\ServicesProvider.pas';
+  ServicesProvider in '..\..\..\Source\ServicesProvider.pas',
+  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
+  VarPyth in '..\..\..\Source\VarPyth.pas';
 
 end.

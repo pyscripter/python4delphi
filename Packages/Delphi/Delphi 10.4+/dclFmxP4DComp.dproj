@@ -150,6 +150,14 @@
         <DCCReference Include="fmx.dcp"/>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="..\..\..\Source\Fmx\FMX.PythonReg.pas"/>
+        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonGUIInputOutput</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\..\Images\TPYTHONSERVICESPROVIDER.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonServicesProvider</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

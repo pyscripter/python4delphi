@@ -4,7 +4,7 @@ unit PythonTypes;
 interface
 
 uses
-  System.Classes;
+  Classes;
 
 type
   TPythonVersionProp = record

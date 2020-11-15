@@ -40,7 +40,8 @@ unit VarPyth;
 interface
 
 uses
-  Variants, PythonEngine;
+  Variants,
+  PythonTypes, PythonEngine;
 
 type
   TSequenceType = (stTuple, stList);
@@ -137,7 +138,8 @@ function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
 implementation
 
 uses
-  VarUtils, SysUtils, TypInfo, Classes;
+  VarUtils, SysUtils, TypInfo, Classes,
+  PythonConsts, PythonExceptions;
 
 type
   TNamedParamDesc = record

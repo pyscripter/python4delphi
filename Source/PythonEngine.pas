@@ -74,7 +74,6 @@ unit PythonEngine;
 interface
 
 uses
-  Types,
 {$IFDEF MSWINDOWS}
   Windows,
 {$ELSE}
@@ -94,14 +93,6 @@ uses
 
 const
   TPFLAGS_DEFAULT = [tpfBaseType, tpHaveVersionTag];
-
-{$IF not Defined(FPC) and (CompilerVersion >= 23)}
-const
-  PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
-                         or pidOSX32 or pidOSX64
-                         or pidiOSDevice32 or pidiOSDevice64
-                         or pidAndroid32Arm or pidAndroid64Arm;
-{$IFEND}
 
 //--------------------------------------------------------
 //--                                                    --
@@ -317,7 +308,6 @@ type
     property OnSysPathInit: TSysPathInitEvent read FOnSysPathInit write FOnSysPathInit;
   end;
 
-
 //-------------------------------------------------------
 //--                                                   --
 //--      Base class:  TEngineClient                   --
@@ -461,7 +451,6 @@ type
     published
       property Events: TEventDefs read fEventDefs write fEventDefs stored StoreEventDefs;
   end;
-
 
 //------------------------------------------------------------
 //--                                                        --
@@ -659,7 +648,6 @@ type
       property Errors : TErrors read FErrors write SetErrors;
       property OnAfterInitialization : TNotifyEvent read FOnAfterInitialization write FOnAfterInitialization;
   end;
-
 
 //-------------------------------------------------------
 //--                                                   --
@@ -1259,7 +1247,7 @@ var
 begin
   inherited;
   FLock                    := TCriticalSection.Create;
-  FInitScript              := TstringList.Create;
+  FInitScript              := TStringList.Create;
   FClients                 := TList.Create;
   FRedirectIO              := True;
   FExecModule              := '__main__';
@@ -1288,7 +1276,13 @@ begin
   inherited;
 {$ENDIF}  // Free our objects
   FClients.Free;
+  {$IFDEF MSWINDOWS}
+    OutputDebugString('Before FInitScript.Free''');
+  {$ENDIF}
   FInitScript.Free;
+  {$IFDEF MSWINDOWS}
+    OutputDebugString('After FInitScript.Free''');
+  {$ENDIF}
   FTraceback.Free;
   FLock.Free;
 {$IFNDEF FPC}
@@ -1388,6 +1382,10 @@ procedure TPythonEngine.DoOpenDll(const aDllName : string);
 var
   i : Integer;
 begin
+  // inherited DoOpenDll(PYTHON_KNOWN_VERSIONS[i].DllName) will assign FDllName := aDllName;
+  // once aDllName param is FDllName passed as const (by ref) it doesn't inc refcount, so string will vanish
+  // bump up the ref count of the source and avoid AV on last "inherited"
+  var LDllName := ADllName;
   if UseLastKnownVersion then
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 1 do
     begin
@@ -1402,7 +1400,7 @@ begin
     end
   else
     RegVersion := GetPythonVersionFromDLLName(aDllName);
-  inherited;
+  inherited DoOpenDll(LDllName);
 end;
 
 procedure TPythonEngine.AssignPyFlags;
@@ -1584,7 +1582,7 @@ begin
         IO := nil
       else
         begin
-          for i := 0 to ClientCount - 1 do
+          for i := ClientCount - 1 downto 0 do
             if Clients[i] = AComponent then
               begin
                 RemoveClient( Clients[i] );

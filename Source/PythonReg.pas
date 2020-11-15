@@ -16,11 +16,13 @@ procedure Register();
 implementation
 
 uses
-  PythonEngine;
+  PythonEngine, PythonInputOutput, WrapDelphi;
 
 procedure Register;
 begin
-  RegisterComponents('Python', [TPythonEngine, TPythonType, TPythonModule, TPythonDelphiVar]);
+  RegisterComponents('Python', [TPythonEngine, TPythonType, TPythonModule,
+                                TPythonDelphiVar, TPythonInputOutput,
+                                TPyDelphiWrapper]);
 end;
 
 { TPythonGUIInputOutputSelectEditor }
@@ -33,3 +35,4 @@ begin
 end;
 
 end.
+

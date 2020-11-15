@@ -7,12 +7,9 @@ uses
 
 type
   TPythonServicesProvider = class(TComponent)
-  private
-    procedure RegisterServices();
-    procedure UnRegisterServices();
   public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy(); override;
+    class procedure RegisterServices();
+    class procedure UnRegisterServices();
   end;
 
 implementation
@@ -27,45 +24,27 @@ uses
 type
   TPythonEngineServices = class(TInterfacedObject, IPythonEngineServices)
   public
-    destructor Destroy(); override;
-
     procedure InvalidDllFatalError(const ADllName: string);
     procedure QuitApplication(const AErrorMessage: string);
   end;
 
 { TServicesProvider }
 
-constructor TPythonServicesProvider.Create(AOwner: TComponent);
+class procedure TPythonServicesProvider.RegisterServices();
 begin
-  inherited;
+  if TServicesProvider.Instance.Loaded then
+    Exit;
   TServicesProvider.Instance.Loaded := true;
-  RegisterServices();
-end;
-
-destructor TPythonServicesProvider.Destroy;
-begin
-  UnRegisterServices();
-  TServicesProvider.Instance.Loaded := false;
-  inherited;
-end;
-
-procedure TPythonServicesProvider.RegisterServices();
-begin
   TServicesProvider.Instance.AddService(IPythonEngineServices, TPythonEngineServices.Create());
 end;
 
-procedure TPythonServicesProvider.UnRegisterServices();
+class procedure TPythonServicesProvider.UnRegisterServices();
 begin
   TServicesProvider.Instance.RemoveService(IPythonEngineServices);
+  TServicesProvider.Instance.Loaded := false;
 end;
 
 { TPythonEngineServices }
-
-destructor TPythonEngineServices.Destroy;
-begin
-
-  inherited;
-end;
 
 procedure TPythonEngineServices.InvalidDllFatalError(
   const ADllName: string);
@@ -87,5 +66,11 @@ begin
     Halt( 1 );
   {$ENDIF}
 end;
+
+initialization
+  TPythonServicesProvider.RegisterServices();
+
+finalization
+  TPythonServicesProvider.UnRegisterServices();
 
 end.

@@ -4,7 +4,7 @@ unit PythonInputOutput;
 interface
 
 uses
-  System.Classes, System.SyncObjs,
+  Classes, SyncObjs,
   PythonTypes, PythonConsts;
 
 type
@@ -15,6 +15,9 @@ type
   //--      It's a virtual Base class                    --
   //-------------------------------------------------------
 
+  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  {$IFEND}
   TPythonInputOutput = class(TComponent)
   protected
     FMaxLines        : Integer;
