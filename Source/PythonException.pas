@@ -6,15 +6,17 @@ uses
   SysUtils;
 
 type
-  //#######################################################
+//#######################################################
 //##                                                   ##
 //##         New exception classes                     ##
 //##                                                   ##
 //#######################################################
 
   // Components' exceptions
-  EDLLLoadError  = class(Exception);
-  EDLLImportError = class(Exception)
+  EPythonComponent = class(Exception)
+  end;
+  EDLLLoadError  = class(EPythonComponent);
+  EDLLImportError = class(EPythonComponent)
     public
       WrongFunc : AnsiString;
       ErrorCode : Integer;
@@ -27,7 +29,6 @@ type
       EValue : string;
   end;
   EPyExecError   = class(EPythonError);
-
 
 // Standard exception classes of Python
 
