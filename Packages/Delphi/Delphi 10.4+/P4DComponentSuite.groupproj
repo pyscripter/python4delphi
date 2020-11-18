@@ -66,7 +66,7 @@
         <CallTarget Targets="Python:Clean;dclPython:Clean;VclP4DEngine:Clean;dclVclP4DEngine:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Python:Make;dclPython:Make;VclP4DEngine:Make;dclVclP>>>>>>> 4d125c2 (New VCL run-time and design-time packages)
+        <CallTarget Targets="Python:Make;dclPython:Make;VclP4DEngine:Make;dclVclP4DEngine:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

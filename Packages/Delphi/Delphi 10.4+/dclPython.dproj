@@ -166,7 +166,7 @@
         </RcItem>
         <RcItem Include="..\..\Resources\TPYTHONINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
-            <ResourceId>TPythonInputOutput</ResourceId>
+            <ResourceId>TPythonInputOutputModule</ResourceId>
         </RcItem>
         <RcItem Include="..\..\Resources\TPYTHONMODULE.bmp">
             <ResourceType>BITMAP</ResourceType>
