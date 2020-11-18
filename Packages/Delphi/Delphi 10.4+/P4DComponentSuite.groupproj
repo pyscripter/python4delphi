@@ -9,6 +9,12 @@
         <Projects Include="dclPython.dproj">
             <Dependencies>Python.dproj</Dependencies>
         </Projects>
+        <Projects Include="VclP4DEngine.dproj">
+            <Dependencies>P4DEngine.dproj</Dependencies>
+        </Projects>
+        <Projects Include="dclVclP4DEngine.dproj">
+            <Dependencies>VclP4DEngine.dproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +41,32 @@
     <Target Name="dclPython:Make" DependsOnTargets="Python:Make">
         <MSBuild Projects="dclPython.dproj" Targets="Make"/>
     </Target>
+    <Target Name="VclP4DEngine" DependsOnTargets="P4DEngine">
+        <MSBuild Projects="VclP4DEngine.dproj"/>
+    </Target>
+    <Target Name="VclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
+        <MSBuild Projects="VclP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
+        <MSBuild Projects="VclP4DEngine.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclVclP4DEngine" DependsOnTargets="VclP4DEngine">
+        <MSBuild Projects="dclVclP4DEngine.dproj"/>
+    </Target>
+    <Target Name="dclVclP4DEngine:Clean" DependsOnTargets="VclP4DEngine:Clean">
+        <MSBuild Projects="dclVclP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclVclP4DEngine:Make" DependsOnTargets="VclP4DEngine:Make">
+        <MSBuild Projects="dclVclP4DEngine.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Python;dclPython"/>
+        <CallTarget Targets="Python;dclPython;VclP4DEngine;dclVclP4DEngine"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Python:Clean;dclPython:Clean"/>
+        <CallTarget Targets="Python:Clean;dclPython:Clean;VclP4DEngine:Clean;dclVclP4DEngine:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Python:Make;dclPython:Make"/>
+        <CallTarget Targets="Python:Make;dclPython:Make;VclP4DEngine:Make;dclVclP>>>>>>> 4d125c2 (New VCL run-time and design-time packages)
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
