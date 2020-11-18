@@ -149,6 +149,10 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="VclP4DEngine.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonRegistration.pas"/>
+        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonGUIInputOutput</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
