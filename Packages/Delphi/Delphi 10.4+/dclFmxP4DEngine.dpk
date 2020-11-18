@@ -25,9 +25,16 @@ package dclFmxP4DEngine;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'Python4Delphi - Design-time Engine Package for FMX'}
+{$LIBSUFFIX AUTO}
+{$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
-  rtl;
+  rtl,
+  FmxP4DEngine;
+
+contains
+  FMX.PythonRegistration in '..\..\..\Source\fmx\FMX.PythonRegistration.pas';
 
 end.
