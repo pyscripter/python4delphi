@@ -21,6 +21,10 @@ type
       WrongFunc : AnsiString;
       ErrorCode : Integer;
   end;
+  EPythonPlatform = class(EPythonComponent)
+  end;
+  EPythonPlatformServicesNotLoaded = class(EPythonPlatform)
+  end;
 
   // Python's exceptions
   EPythonError   = class(Exception)
