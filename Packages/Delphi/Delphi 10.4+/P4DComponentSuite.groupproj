@@ -15,6 +15,12 @@
         <Projects Include="dclVclP4DEngine.dproj">
             <Dependencies>VclP4DEngine.dproj</Dependencies>
         </Projects>
+        <Projects Include="FmxP4DEngine.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclFmxP4DEngine.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -59,14 +65,32 @@
     <Target Name="dclVclP4DEngine:Make" DependsOnTargets="VclP4DEngine:Make">
         <MSBuild Projects="dclVclP4DEngine.dproj" Targets="Make"/>
     </Target>
+    <Target Name="FmxP4DEngine">
+        <MSBuild Projects="FmxP4DEngine.dproj"/>
+    </Target>
+    <Target Name="FmxP4DEngine:Clean">
+        <MSBuild Projects="FmxP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="FmxP4DEngine:Make">
+        <MSBuild Projects="FmxP4DEngine.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclFmxP4DEngine">
+        <MSBuild Projects="dclFmxP4DEngine.dproj"/>
+    </Target>
+    <Target Name="dclFmxP4DEngine:Clean">
+        <MSBuild Projects="dclFmxP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclFmxP4DEngine:Make">
+        <MSBuild Projects="dclFmxP4DEngine.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="P4DEngine;dclP4DEngine;VclP4DEngine;dclVclP4DEngine"/>
+        <CallTarget Targets="P4DEngine;dclP4DEngine;VclP4DEngine;dclVclP4DEngine;FmxP4DEngine;dclFmxP4DEngine"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="P4DEngine:Clean;dclP4DEngine:Clean;VclP4DEngine:Clean;dclVclP4DEngine:Clean"/>
+        <CallTarget Targets="P4DEngine:Clean;dclP4DEngine:Clean;VclP4DEngine:Clean;dclVclP4DEngine:Clean;FmxP4DEngine:Clean;dclFmxP4DEngine:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="P4DEngine:Make;dclP4DEngine:Make;VclP4DEngine:Make;dclVclP4DEngine:Make"/>
+        <CallTarget Targets="P4DEngine:Make;dclP4DEngine:Make;VclP4DEngine:Make;dclVclP4DEngine:Make;FmxP4DEngine:Make;dclFmxP4DEngine:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
