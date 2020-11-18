@@ -34,4 +34,7 @@ requires
   rtl,
   VclP4DEngine;
 
+contains
+  Vcl.PythonRegistration in '..\..\..\Source\vcl\Vcl.PythonRegistration.pas';
+
 end.

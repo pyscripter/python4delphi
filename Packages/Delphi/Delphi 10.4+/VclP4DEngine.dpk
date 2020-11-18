@@ -34,4 +34,7 @@ requires
   rtl,
   P4DEngine;
 
+contains
+  PythonGUIInputOutput in '..\..\..\Source\vcl\PythonGUIInputOutput.pas';
+
 end.
