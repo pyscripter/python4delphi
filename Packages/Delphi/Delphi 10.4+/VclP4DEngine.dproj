@@ -119,6 +119,7 @@
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="P4DEngine.dcp"/>
+        <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

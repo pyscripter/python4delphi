@@ -148,6 +148,7 @@
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="VclP4DEngine.dcp"/>
+        <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonRegistration.pas"/>
         <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
