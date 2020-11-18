@@ -1,5 +1,5 @@
 {$I Definition.Inc}
-unit PythonGUIInputOutput;
+unit Vcl.PythonGUIInputOutput;
 
 (**************************************************************************)
 (*                                                                        *)

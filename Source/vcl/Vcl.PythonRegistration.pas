@@ -7,7 +7,7 @@ procedure Register();
 implementation
 
 uses
-  Classes, Controls, PythonGUIInputOutput;
+  Classes, Controls, Vcl.PythonGUIInputOutput;
 
 procedure Register();
 begin
