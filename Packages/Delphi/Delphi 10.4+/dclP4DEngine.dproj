@@ -160,10 +160,6 @@
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonEngine</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
-            <ResourceType>BITMAP</ResourceType>
-            <ResourceId>TPythonGUIInputOutput</ResourceId>
-        </RcItem>
         <RcItem Include="..\..\..\Images\TPYTHONINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonInputOutput</ResourceId>
