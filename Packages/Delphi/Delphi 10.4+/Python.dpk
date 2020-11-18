@@ -37,7 +37,6 @@ requires
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  PythonGUIInputOutput in '..\..\..\Source\PythonGUIInputOutput.pas',
   WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
 
 end.

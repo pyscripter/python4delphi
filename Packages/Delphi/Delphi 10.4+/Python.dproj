@@ -64,7 +64,6 @@
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\..\Source\MethodCallBack.pas"/>
         <DCCReference Include="..\..\..\Source\PythonEngine.pas"/>
-        <DCCReference Include="..\..\..\Source\PythonGUIInputOutput.pas"/>
         <DCCReference Include="..\..\..\Source\WrapDelphi.pas"/>
         <BuildConfiguration Include="Debug">
             <Key>Cfg_2</Key>
