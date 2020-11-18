@@ -7,13 +7,13 @@ procedure Register();
 implementation
 
 uses
-  Classes, PythonEngine, WrapDelphi;
+  Classes, PythonEngine, WrapDelphi, PythonGUIInputOutput;
 
 procedure Register();
 begin
   RegisterComponents('Python', [TPythonEngine, TPythonType, TPythonModule,
                                 TPythonDelphiVar, TPythonInputOutput,
-                                TPyDelphiWrapper]);
+                                TPyDelphiWrapper, TPythonGUIInputOutput]);
 end;
 
 end.
