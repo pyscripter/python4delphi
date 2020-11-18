@@ -33,7 +33,8 @@ package dclVclP4DEngine;
 
 requires
   rtl,
-  VclP4DEngine;
+  VclP4DEngine,
+  vcl;
 
 contains
   Vcl.PythonRegistration in '..\..\..\Source\vcl\Vcl.PythonRegistration.pas';

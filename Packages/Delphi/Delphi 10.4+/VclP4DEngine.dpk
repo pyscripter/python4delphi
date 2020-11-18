@@ -32,7 +32,8 @@ package VclP4DEngine;
 
 requires
   rtl,
-  P4DEngine;
+  P4DEngine,
+  vcl;
 
 contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas';
