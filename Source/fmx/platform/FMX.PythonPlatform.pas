@@ -3,9 +3,10 @@ unit FMX.PythonPlatform;
 interface
 
 uses
-  System.Classes;
+  System.Classes, PythonPlatforms;
 
 type
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   TPythonPlatform = class(TComponent)
   public
     class procedure RegisterServices(); static;

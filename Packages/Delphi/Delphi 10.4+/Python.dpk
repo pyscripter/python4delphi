@@ -1,4 +1,9 @@
+<<<<<<< HEAD:Packages/Delphi/Delphi 10.4+/Python.dpk
 package Python;
+=======
+package P4DEngine;
+
+>>>>>>> 6ec20fe (Added support to Android):Packages/Delphi/Delphi 10.4+/P4DEngine.dpk
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -30,14 +35,15 @@ package Python;
 {$IMPLICITBUILD ON}
 
 requires
-  DesignIDE,
   rtl;
 
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
   PythonException in '..\..\..\Source\PythonException.pas',
+  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
+  PythonLoaderService in '..\..\..\Source\platform\PythonLoaderService.pas',
+  PythonPlatforms in '..\..\..\Source\platform\PythonPlatforms.pas',
   PythonPlatformServices in '..\..\..\Source\platform\PythonPlatformServices.pas';
 
 end.

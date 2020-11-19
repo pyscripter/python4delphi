@@ -336,7 +336,7 @@ uses
   ObjAuto,
 {$ENDIF}
 {$ENDIF}
-  Contnrs;
+  Contnrs, PythonPlatforms;
 
 Type
   TObjectOwnership = (soReference, soOwned);
@@ -789,9 +789,8 @@ Type
      Method RegisterDelphiWrapper can be used to extend its functionality.
      Method EventHandlers.RegisterHandler can be used to add event handling functionality
   }
-  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
+
   [ComponentPlatformsAttribute(pidSupportedPlatforms)]
-  {$IFEND}
   TPyDelphiWrapper = class(TEngineClient, IFreeNotificationSubscriber)
   private
     // Stores Delphi class registration information
