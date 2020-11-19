@@ -4,7 +4,7 @@
    Original Code by https://github.com/hartmutdavid
 ==============================================================================}
 {$ENDREGION}
-unit WrapFireDAC;
+unit Vcl.WrapFireDAC;
 
 interface
 

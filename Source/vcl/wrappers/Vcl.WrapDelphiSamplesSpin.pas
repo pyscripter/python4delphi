@@ -1,11 +1,11 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiSamplesSpin;
+unit Vcl.WrapDelphiSamplesSpin;
 
 interface
 
 uses
-  Classes, Vcl.Samples.Spin, WrapDelphi, WrapDelphiControls, WrapDelphiStdCtrls;
+  Classes, Vcl.Samples.Spin, WrapDelphi, Vcl.WrapDelphiControls, Vcl.WrapDelphiStdCtrls;
 
 type
   TPyDelphiSpinButton = class (TPyDelphiWinControl)

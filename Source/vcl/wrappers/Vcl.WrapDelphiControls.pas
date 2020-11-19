@@ -1,6 +1,6 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiControls;
+unit Vcl.WrapDelphiControls;
 
 interface
 
@@ -142,7 +142,7 @@ type
 implementation
 
 uses
-  WrapDelphiTypes;
+  Vcl.WrapDelphiTypes;
 
 { Register the wrappers, the globals and the constants }
 type

@@ -1,12 +1,12 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiButtons;
+unit Vcl.WrapDelphiButtons;
 
 interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapDelphiControls, Buttons;
+  Vcl.WrapDelphiControls, Buttons;
 
 type
   TPyDelphiSpeedButton = class (TPyDelphiControl)

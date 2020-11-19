@@ -1,4 +1,4 @@
-unit WrapDelphiDialogs;
+unit Vcl.WrapDelphiDialogs;
 {$I ..\..\Definition.Inc}
 
 interface
