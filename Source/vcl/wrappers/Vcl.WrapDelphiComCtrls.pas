@@ -1,6 +1,6 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiComCtrls;
+unit Vcl.WrapDelphiComCtrls;
 
 interface
 

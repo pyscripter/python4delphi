@@ -1,6 +1,6 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiGrids;
+unit Vcl.WrapDelphiGrids;
 
 interface
 

@@ -1,6 +1,6 @@
 {$I ..\..\Definition.Inc}
 
-unit WrapDelphiGraphics;
+unit Vcl.WrapDelphiGraphics;
 
 interface
 
