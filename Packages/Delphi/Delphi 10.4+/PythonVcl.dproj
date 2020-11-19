@@ -120,9 +120,30 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="Python.dcp"/>
+        <DCCReference Include="dbrtl.dcp"/>
+        <DCCReference Include="VclSmp.dcp"/>
+        <DCCReference Include="FireDAC.dcp"/>
+        <DCCReference Include="FireDACCommonDriver.dcp"/>
+        <DCCReference Include="FireDACCommon.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiActnList.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiButtons.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiClasses.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiComCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiControls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiDialogs.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiExtCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiForms.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiGraphics.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiGrids.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiSamplesSpin.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiStdCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiTypes.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiVCL.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapDelphiWindows.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\wrappers\WrapFireDAC.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
