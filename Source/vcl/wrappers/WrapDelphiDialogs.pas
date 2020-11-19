@@ -1,5 +1,5 @@
 unit WrapDelphiDialogs;
-{$I Definition.Inc}
+{$I ..\..\Definition.Inc}
 
 interface
 

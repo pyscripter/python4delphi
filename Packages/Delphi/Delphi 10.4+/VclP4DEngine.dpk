@@ -33,11 +33,32 @@ package VclP4DEngine;
 requires
   rtl,
   P4DEngine,
-  vcl;
+  vcl,
+  dbrtl,
+  VclSmp,
+  FireDAC,
+  FireDACCommonDriver,
+  FireDACCommon;
 
 contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
   Vcl.PythonPlatform in '..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas',
-  Vcl.PythonLoaderService in '..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas';
+  Vcl.PythonLoaderService in '..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas',
+  WrapDelphiActnList in '..\..\..\Source\vcl\wrappers\WrapDelphiActnList.pas',
+  WrapDelphiButtons in '..\..\..\Source\vcl\wrappers\WrapDelphiButtons.pas',
+  WrapDelphiClasses in '..\..\..\Source\vcl\wrappers\WrapDelphiClasses.pas',
+  WrapDelphiComCtrls in '..\..\..\Source\vcl\wrappers\WrapDelphiComCtrls.pas',
+  WrapDelphiControls in '..\..\..\Source\vcl\wrappers\WrapDelphiControls.pas',
+  WrapDelphiDialogs in '..\..\..\Source\vcl\wrappers\WrapDelphiDialogs.pas',
+  WrapDelphiExtCtrls in '..\..\..\Source\vcl\wrappers\WrapDelphiExtCtrls.pas',
+  WrapDelphiForms in '..\..\..\Source\vcl\wrappers\WrapDelphiForms.pas',
+  WrapDelphiGraphics in '..\..\..\Source\vcl\wrappers\WrapDelphiGraphics.pas',
+  WrapDelphiGrids in '..\..\..\Source\vcl\wrappers\WrapDelphiGrids.pas',
+  WrapDelphiSamplesSpin in '..\..\..\Source\vcl\wrappers\WrapDelphiSamplesSpin.pas',
+  WrapDelphiStdCtrls in '..\..\..\Source\vcl\wrappers\WrapDelphiStdCtrls.pas',
+  WrapDelphiTypes in '..\..\..\Source\vcl\wrappers\WrapDelphiTypes.pas',
+  WrapDelphiVCL in '..\..\..\Source\vcl\wrappers\WrapDelphiVCL.pas',
+  WrapDelphiWindows in '..\..\..\Source\vcl\wrappers\WrapDelphiWindows.pas',
+  WrapFireDAC in '..\..\..\Source\vcl\wrappers\WrapFireDAC.pas';
 
 end.
