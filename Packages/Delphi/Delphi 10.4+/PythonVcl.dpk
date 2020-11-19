@@ -37,6 +37,7 @@ requires
 
 contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
-  Vcl.PythonPlatform in '..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas';
+  Vcl.PythonPlatform in '..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas',
+  Vcl.PythonLoaderService in '..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas';
 
 end.

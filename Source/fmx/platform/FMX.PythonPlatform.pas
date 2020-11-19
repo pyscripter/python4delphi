@@ -15,18 +15,22 @@ type
 implementation
 
 uses
-  PythonPlatformServices;
+  PythonPlatformServices, FMX.PythonLoaderService;
 
-{ TPythonPlatformServices }
+{ TPythonPlatform }
 
 class procedure TPythonPlatform.RegisterServices;
 begin
-
+  if TPythonPlatformServices.Instance.Loaded then
+    Exit;
+  TPythonPlatformServices.Instance.Loaded := true;
+  TPythonPlatformServices.Instance.AddService(IPythonLoaderService, TPythonLoaderService.Create());
 end;
 
 class procedure TPythonPlatform.UnRegisterServices;
 begin
-
+  TPythonPlatformServices.Instance.RemoveService(IPythonLoaderService);
+  TPythonPlatformServices.Instance.Loaded := false;
 end;
 
 initialization

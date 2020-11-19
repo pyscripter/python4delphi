@@ -25,6 +25,8 @@ type
   end;
   EPythonPlatformServicesNotLoaded = class(EPythonPlatform)
   end;
+  EPythonPlatformServiceNotAvailable = class(EPythonPlatform)
+  end;
 
   // Python's exceptions
   EPythonError   = class(Exception)

@@ -91,7 +91,7 @@ uses
   SyncObjs,
   Variants,
   MethodCallBack,
-  PythonException{, PythonLoaderService};
+  PythonException, PythonPlatformServices;
 
 {$IF not Defined(FPC) and (CompilerVersion >= 23)}
 const
@@ -984,7 +984,6 @@ type
     FOnBeforeLoad       : TNotifyEvent;
     FOnAfterLoad        : TNotifyEvent;
     FOnBeforeUnload     : TNotifyEvent;
-    //FLoaderService      : IPythonLoaderService;
 
     function  Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
     procedure Loaded; override;
@@ -996,6 +995,7 @@ type
     procedure DoOpenDll(const aDllName : string); virtual;
     function  GetDllPath : string;
 
+    function GetLoaderService(): IPythonLoaderService;
   public
     // Constructors & Destructors
     constructor Create(AOwner: TComponent); override;
@@ -2746,29 +2746,13 @@ procedure TDynamicDll.DoOpenDll(const aDllName : string);
 begin
   if not IsHandleValid() then begin
     FDllName := aDllName;
-    //FLoaderService.LoadDll(GetDllPath() + DllName, FDllHandle)
+    GetLoaderService().LoadDll(GetDllPath() + DllName, FDllHandle)
   end;
-
-//  if not IsHandleValid then
-//  begin
-//    {$IFDEF MSWINDOWS}
-//    FDLLHandle := SafeLoadLibrary(
-//      {$IFDEF FPC}
-//      PAnsiChar(AnsiString(GetDllPath+DllName))
-//      {$ELSE}
-//      GetDllPath+DllName
-//      {$ENDIF});
-//    {$ELSE}
-//    //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
-//    FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
-//      RTLD_LAZY+RTLD_GLOBAL));
-//    {$ENDIF}
-//  end;
 end;
 
 procedure TDynamicDll.FatalError;
 begin
-  //FLoaderService.FatalMsgDlg(GetFatalMsg());
+  GetLoaderService().FatalMsgDlg(GetFatalMsg());
 end;
 
 function  TDynamicDll.GetDllPath : string;
@@ -2800,6 +2784,13 @@ begin
   {$ENDIF}
 end;
 
+function TDynamicDll.GetLoaderService: IPythonLoaderService;
+begin
+  if not TPythonPlatformServices.Instance.SupportsService(IPythonLoaderService, Result) then
+    raise EPythonPlatformServiceNotAvailable.CreateFmt(
+      'Platform service "%s" not available.', ['IPythonLoaderService']);
+end;
+
 procedure  TDynamicDll.OpenDll(const aDllName : string);
 begin
   UnloadDll;
@@ -2815,24 +2806,6 @@ begin
       Quit();
   end else
     AfterLoad;
-
-//  if not IsHandleValid() then begin
-//    {$IFDEF MSWINDOWS}
-//    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-//    {$ELSE}
-//    s := Format('Error: Could not open Dll "%s"',[DllName]);
-//    {$ENDIF}
-//    if FatalMsgDlg then
-//      {$IFDEF MSWINDOWS}
-//      MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-//      {$ELSE}
-//      WriteLn(ErrOutput, s);
-//      {$ENDIF}
-//
-//    if FatalAbort then
-//      Quit;
-//  end else
-//    AfterLoad;
 end;
 
 constructor TDynamicDll.Create(AOwner: TComponent);
@@ -2846,8 +2819,15 @@ end;
 
 destructor TDynamicDll.Destroy;
 begin
-  if AutoUnload then
-    UnloadDll;
+  if AutoUnload then begin
+    try
+      UnloadDll;
+    except
+      on E: EPythonPlatformServicesNotLoaded do begin
+        //
+      end else raise;
+    end;
+  end;
   inherited;
 end;
 
@@ -2858,7 +2838,7 @@ function TDynamicDll.Import(const funcname: AnsiString; canFail : Boolean = True
 //  S : string;
 //  {$IFEND}
 begin
-  //Result := FLoaderService.Import(FDLLHandle, funcname, canFail);
+  Result := GetLoaderService().Import(FDLLHandle, funcname, canFail);
 //  {$IF Defined(FPC) or Defined(MSWINDOWS)}
 //  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
 //  {$ELSE}
@@ -2886,12 +2866,7 @@ end;
 
 function  TDynamicDll.IsHandleValid : Boolean;
 begin
-  //Result := FLoaderService.IsHandleValid(FDllHandle);
-//  {$IFDEF MSWINDOWS}
-//  Result := (FDLLHandle >= 32);
-//  {$ELSE}
-//  Result := FDLLHandle <> 0;
-//  {$ENDIF}
+  Result := GetLoaderService().IsHandleValid(FDllHandle);
 end;
 
 procedure TDynamicDll.LoadDll;
@@ -2903,9 +2878,7 @@ procedure TDynamicDll.UnloadDll;
 begin
   if IsHandleValid then begin
     BeforeUnload;
-    //FLoaderService.UnloadDll(FDLLHandle);
-//    FreeLibrary(FDLLHandle);
-//    FDLLHandle := 0;
+    GetLoaderService().UnloadDll(FDLLHandle);
   end;
 end;
 
@@ -2935,7 +2908,7 @@ end;
 procedure TDynamicDll.Quit;
 begin
   if not( csDesigning in ComponentState ) then begin
-    //FLoaderService.FatalAbort(GetQuitMessage());
+    GetLoaderService().FatalAbort(GetQuitMessage());
   end;
 end;
 
@@ -3912,7 +3885,9 @@ end;
 procedure TPythonEngine.DoOpenDll(const aDllName : string);
 var
   i : Integer;
+  LDllName: string;
 begin
+  LDllName := aDllName;
   if UseLastKnownVersion then
     for i:= Integer(COMPILED_FOR_PYTHON_VERSION_INDEX) downto 1 do
     begin
@@ -3927,6 +3902,7 @@ begin
     end
   else
     RegVersion := GetPythonVersionFromDLLName(aDllName);
+  FDllName := LDllName;
   inherited;
 end;
 

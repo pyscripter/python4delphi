@@ -37,6 +37,7 @@ requires
 
 contains
   FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas',
-  FMX.PythonPlatform in '..\..\..\Source\fmx\platform\FMX.PythonPlatform.pas';
+  FMX.PythonPlatform in '..\..\..\Source\fmx\platform\FMX.PythonPlatform.pas',
+  FMX.PythonLoaderService in '..\..\..\Source\fmx\platform\FMX.PythonLoaderService.pas';
 
 end.
