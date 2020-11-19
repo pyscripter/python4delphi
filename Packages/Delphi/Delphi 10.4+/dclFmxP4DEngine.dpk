@@ -36,6 +36,7 @@ requires
   FmxP4DEngine;
 
 contains
-  FMX.PythonRegistration in '..\..\..\Source\fmx\FMX.PythonRegistration.pas';
+  FMX.PythonRegistration in '..\..\..\Source\fmx\FMX.PythonRegistration.pas',
+  FMX.PythonPlatform in '..\..\..\Source\fmx\platform\FMX.PythonPlatform.pas';
 
 end.

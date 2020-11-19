@@ -36,6 +36,7 @@ requires
   vcl;
 
 contains
-  Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas';
+  Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
+  Vcl.PythonPlatform in '..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas';
 
 end.
