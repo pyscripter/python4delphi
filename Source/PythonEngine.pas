@@ -2832,29 +2832,8 @@ begin
 end;
 
 function TDynamicDll.Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
-//var
-//  E : EDllImportError;
-//  {$IF not Defined(FPC) and not Defined(MSWINDOWS)}
-//  S : string;
-//  {$IFEND}
 begin
   Result := GetLoaderService().Import(FDLLHandle, funcname, canFail);
-//  {$IF Defined(FPC) or Defined(MSWINDOWS)}
-//  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
-//  {$ELSE}
-//  S := string(funcname);
-//  Result := GetProcAddress( FDLLHandle, PWideChar(S) );
-//  {$IFEND}
-//  if (Result = nil) and canFail then begin
-//    {$IFDEF MSWINDOWS}
-//    E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
-//    E.ErrorCode := GetLastError;
-//    {$ELSE}
-//    E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
-//    {$ENDIF}
-//    E.WrongFunc := funcname;
-//    raise E;
-//  end;
 end;
 
 procedure TDynamicDll.Loaded;
