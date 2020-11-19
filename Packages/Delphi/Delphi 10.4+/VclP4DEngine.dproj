@@ -122,6 +122,7 @@
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
