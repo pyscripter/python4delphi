@@ -31,8 +31,7 @@ package Python;
 
 requires
   DesignIDE,
-  rtl,
-  vcl;
+  rtl;
 
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
