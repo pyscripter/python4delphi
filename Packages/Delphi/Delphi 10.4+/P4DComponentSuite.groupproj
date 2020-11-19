@@ -7,10 +7,10 @@
             <Dependencies/>
         </Projects>
         <Projects Include="dclP4DEngine.dproj">
-            <Dependencies>P4DEngine.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="VclP4DEngine.dproj">
-            <Dependencies>P4DEngine.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="dclVclP4DEngine.dproj">
             <Dependencies>VclP4DEngine.dproj</Dependencies>
@@ -38,22 +38,22 @@
     <Target Name="P4DEngine:Make">
         <MSBuild Projects="P4DEngine.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dclP4DEngine" DependsOnTargets="P4DEngine">
+    <Target Name="dclP4DEngine">
         <MSBuild Projects="dclP4DEngine.dproj"/>
     </Target>
-    <Target Name="dclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
+    <Target Name="dclP4DEngine:Clean">
         <MSBuild Projects="dclP4DEngine.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
+    <Target Name="dclP4DEngine:Make">
         <MSBuild Projects="dclP4DEngine.dproj" Targets="Make"/>
     </Target>
-    <Target Name="VclP4DEngine" DependsOnTargets="P4DEngine">
+    <Target Name="VclP4DEngine">
         <MSBuild Projects="VclP4DEngine.dproj"/>
     </Target>
-    <Target Name="VclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
+    <Target Name="VclP4DEngine:Clean">
         <MSBuild Projects="VclP4DEngine.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="VclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
+    <Target Name="VclP4DEngine:Make">
         <MSBuild Projects="VclP4DEngine.dproj" Targets="Make"/>
     </Target>
     <Target Name="dclVclP4DEngine" DependsOnTargets="VclP4DEngine">

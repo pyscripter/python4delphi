@@ -13,6 +13,7 @@
 *.ppu
 *.rsj
 *.compiled
+*.o
 
 # Generated source #
 ###################
@@ -41,8 +42,13 @@
 /Win32
 /Win64
 /OSX32
+Android/
 /__history
 *.bak
 *.Patch
 *.#00
 *.pch
+
+# Project Configured Files #
+###################
+*.template.xml

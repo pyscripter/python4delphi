@@ -50,7 +50,7 @@ uses
   Windows, Messages,
 {$ENDIF}
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, PythonEngine;
+  StdCtrls, PythonEngine, PythonPlatforms;
 
 {$IFDEF MSWINDOWS}
 const
@@ -58,9 +58,7 @@ const
 {$ENDIF}
 
 type
-  {$IF not Defined(FPC) and (CompilerVersion >= 23)}
-  [ComponentPlatformsAttribute(pidWin32 or pidWin64)]
-  {$IFEND}
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   TPythonGUIInputOutput = class(TPythonInputOutput)
   private
     { Private declarations }

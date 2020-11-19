@@ -1,3 +1,4 @@
+{$I ..\..\Definition.Inc}
 unit FMX.PythonLoaderService;
 
 interface
@@ -21,7 +22,7 @@ implementation
 
 uses
 {$IFDEF MSWINDOWS}
-  Windows,
+  Winapi.Windows,
 {$ELSE}
 {$IFDEF FPC}
   Dl,

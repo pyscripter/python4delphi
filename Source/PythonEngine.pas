@@ -74,7 +74,7 @@ unit PythonEngine;
 interface
 
 uses
-  Types,
+  System.Types,
 {$IFDEF MSWINDOWS}
   Windows,
 {$ELSE}
@@ -91,16 +91,7 @@ uses
   SyncObjs,
   Variants,
   MethodCallBack,
-  PythonException, PythonPlatformServices;
-
-{$IF not Defined(FPC) and (CompilerVersion >= 23)}
-const
-  {$IF CompilerVersion >= 33}
-    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32 or pidOSX64 or pidLinux64;
-  {$ELSE}
-    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32;
-  {$IFEND}
-{$IFEND}
+  PythonException, PythonPlatforms, PythonPlatformServices;
 
 
 //#######################################################
@@ -150,6 +141,12 @@ const
     (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013)
+    );
+{$endif}
+{$IFDEF ANDROID}
+  PYTHON_KNOWN_VERSIONS: array[1..1] of TPythonVersionProp =
+    (
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013)
     );
 {$endif}
 

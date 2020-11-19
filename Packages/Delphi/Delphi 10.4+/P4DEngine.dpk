@@ -1,4 +1,5 @@
 package P4DEngine;
+
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -30,14 +31,15 @@ package P4DEngine;
 {$IMPLICITBUILD ON}
 
 requires
-  DesignIDE,
   rtl;
 
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
   PythonException in '..\..\..\Source\PythonException.pas',
+  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
+  PythonLoaderService in '..\..\..\Source\platform\PythonLoaderService.pas',
+  PythonPlatforms in '..\..\..\Source\platform\PythonPlatforms.pas',
   PythonPlatformServices in '..\..\..\Source\platform\PythonPlatformServices.pas';
 
 end.

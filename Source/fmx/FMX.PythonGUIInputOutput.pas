@@ -10,15 +10,10 @@ uses
   Winapi.Windows,
   {$ENDIF}
   Fmx.Memo,
-  PythonEngine;
-
-const
-  PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
-                         or pidOSX32 or pidOSX64
-                         or pidLinux64;
+  PythonEngine, PythonPlatforms;
 
 type
-  [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]
+  [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   TPythonGUIInputOutput = class(TPythonInputOutput)
   private
     { Private declarations }
