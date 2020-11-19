@@ -61,7 +61,6 @@
         </DelphiCompile>
         <DCCReference Include="DesignIDE.dcp"/>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="..\..\..\Source\MethodCallBack.pas"/>
         <DCCReference Include="..\..\..\Source\PythonEngine.pas"/>
         <DCCReference Include="..\..\..\Source\WrapDelphi.pas"/>
