@@ -157,6 +157,10 @@
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonGUIInputOutput</ResourceId>
         </RcItem>
+        <RcItem Include="..\..\..\Images\TPYTHONPLATFORM.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonPlatform</ResourceId>
+        </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
