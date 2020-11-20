@@ -1,4 +1,4 @@
-package FmxP4DEngine;
+package PythonFmx;
 
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
@@ -32,8 +32,8 @@ package FmxP4DEngine;
 
 requires
   rtl,
-  P4DEngine,
-  fmx;
+  fmx,
+  Python;
 
 contains
   FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas';

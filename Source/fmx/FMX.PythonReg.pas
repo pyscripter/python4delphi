@@ -1,4 +1,4 @@
-unit FMX.PythonRegistration;
+unit FMX.PythonReg;
 
 interface
 

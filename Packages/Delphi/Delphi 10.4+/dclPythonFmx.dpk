@@ -1,4 +1,4 @@
-package dclFmxP4DEngine;
+package dclPythonFmx;
 
 {$R *.res}
 {$R *.dres}
@@ -33,9 +33,9 @@ package dclFmxP4DEngine;
 
 requires
   rtl,
-  FmxP4DEngine;
+  PythonFmx;
 
 contains
-  FMX.PythonRegistration in '..\..\..\Source\fmx\FMX.PythonRegistration.pas';
+  FMX.PythonReg in '..\..\..\Source\fmx\FMX.PythonReg.pas';
 
 end.
