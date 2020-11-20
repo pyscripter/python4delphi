@@ -134,7 +134,6 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -160,10 +159,6 @@
         <RcItem Include="..\..\..\Images\TPYTHONENGINE.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonEngine</ResourceId>
-        </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
-            <ResourceType>BITMAP</ResourceType>
-            <ResourceId>TPythonGUIInputOutput</ResourceId>
         </RcItem>
         <RcItem Include="..\..\..\Images\TPYTHONINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>

@@ -9,6 +9,12 @@
         <Projects Include="dclP4DEngine.dproj">
             <Dependencies>P4DEngine.dproj</Dependencies>
         </Projects>
+        <Projects Include="VclP4DEngine.dproj">
+            <Dependencies>P4DEngine.dproj</Dependencies>
+        </Projects>
+        <Projects Include="dclVclP4DEngine.dproj">
+            <Dependencies>VclP4DEngine.dproj</Dependencies>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +41,32 @@
     <Target Name="dclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
         <MSBuild Projects="dclP4DEngine.dproj" Targets="Make"/>
     </Target>
+    <Target Name="VclP4DEngine" DependsOnTargets="P4DEngine">
+        <MSBuild Projects="VclP4DEngine.dproj"/>
+    </Target>
+    <Target Name="VclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
+        <MSBuild Projects="VclP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
+        <MSBuild Projects="VclP4DEngine.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclVclP4DEngine" DependsOnTargets="VclP4DEngine">
+        <MSBuild Projects="dclVclP4DEngine.dproj"/>
+    </Target>
+    <Target Name="dclVclP4DEngine:Clean" DependsOnTargets="VclP4DEngine:Clean">
+        <MSBuild Projects="dclVclP4DEngine.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclVclP4DEngine:Make" DependsOnTargets="VclP4DEngine:Make">
+        <MSBuild Projects="dclVclP4DEngine.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="P4DEngine;dclP4DEngine"/>
+        <CallTarget Targets="P4DEngine;dclP4DEngine;VclP4DEngine;dclVclP4DEngine"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="P4DEngine:Clean;dclP4DEngine:Clean"/>
+        <CallTarget Targets="P4DEngine:Clean;dclP4DEngine:Clean;VclP4DEngine:Clean;dclVclP4DEngine:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="P4DEngine:Make;dclP4DEngine:Make"/>
+        <CallTarget Targets="P4DEngine:Make;dclP4DEngine:Make;VclP4DEngine:Make;dclVclP4DEngine:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

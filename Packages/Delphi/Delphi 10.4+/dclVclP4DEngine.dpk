@@ -1,5 +1,7 @@
-package P4DEngine;
+package dclVclP4DEngine;
+
 {$R *.res}
+{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -24,19 +26,17 @@ package P4DEngine;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Run-time Engine Package'}
+{$DESCRIPTION 'Python4Delphi - Design-Time Engine Package for VCL'}
 {$LIBSUFFIX AUTO}
-{$RUNONLY}
+{$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
-  DesignIDE,
   rtl,
+  VclP4DEngine,
   vcl;
 
 contains
-  MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
-  PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
+  Vcl.PythonRegistration in '..\..\..\Source\vcl\Vcl.PythonRegistration.pas';
 
 end.
