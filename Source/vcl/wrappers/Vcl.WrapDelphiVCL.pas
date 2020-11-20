@@ -10,8 +10,8 @@ interface
 implementation
 
 uses
+  WrapDelphiClasses,
   Vcl.WrapDelphiTypes,
-  Vcl.WrapDelphiClasses,
   Vcl.WrapDelphiWindows,
   Vcl.WrapDelphiControls,
   Vcl.WrapDelphiGraphics,

@@ -5,7 +5,7 @@ unit Vcl.WrapDelphiActnList;
 interface
 
 uses
-  Classes, PythonEngine, WrapDelphi, Vcl.WrapDelphiClasses, ActnList;
+  Classes, PythonEngine, WrapDelphi, WrapDelphiClasses, ActnList;
 
 type
   {

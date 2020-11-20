@@ -130,7 +130,6 @@
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiActnList.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiButtons.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiClasses.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiComCtrls.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiControls.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiDialogs.pas"/>

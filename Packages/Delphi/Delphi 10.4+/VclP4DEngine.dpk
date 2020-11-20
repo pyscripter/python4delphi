@@ -46,7 +46,6 @@ contains
   Vcl.PythonLoaderService in '..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas',
   Vcl.WrapDelphiActnList in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiActnList.pas',
   Vcl.WrapDelphiButtons in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiButtons.pas',
-  Vcl.WrapDelphiClasses in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiClasses.pas',
   Vcl.WrapDelphiComCtrls in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiComCtrls.pas',
   Vcl.WrapDelphiControls in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiControls.pas',
   Vcl.WrapDelphiDialogs in '..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiDialogs.pas',

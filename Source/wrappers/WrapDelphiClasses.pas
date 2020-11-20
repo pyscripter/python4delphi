@@ -1,6 +1,6 @@
 {$I ..\..\Definition.Inc}
 
-unit Vcl.WrapDelphiClasses;
+unit WrapDelphiClasses;
 
 interface
 

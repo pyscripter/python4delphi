@@ -40,6 +40,7 @@ contains
   WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
   PythonLoaderService in '..\..\..\Source\platform\PythonLoaderService.pas',
   PythonPlatforms in '..\..\..\Source\platform\PythonPlatforms.pas',
-  PythonPlatformServices in '..\..\..\Source\platform\PythonPlatformServices.pas';
+  PythonPlatformServices in '..\..\..\Source\platform\PythonPlatformServices.pas',
+  WrapDelphiClasses in '..\..\..\Source\wrappers\WrapDelphiClasses.pas';
 
 end.
