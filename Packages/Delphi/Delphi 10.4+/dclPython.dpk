@@ -1,4 +1,4 @@
-package dclP4DEngine;
+package dclPython;
 
 {$R *.res}
 {$R *.dres}
@@ -36,6 +36,6 @@ requires
   P4DEngine;
 
 contains
-  PythonRegistration in '..\..\..\Source\PythonRegistration.pas';
+  PythonReg in '..\..\..\Source\PythonReg.pas';
 
 end.
