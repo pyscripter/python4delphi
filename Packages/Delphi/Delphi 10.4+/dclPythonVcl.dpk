@@ -1,4 +1,4 @@
-package dclVclP4DEngine;
+package dclPythonVcl;
 
 {$R *.res}
 {$R *.dres}
@@ -33,10 +33,10 @@ package dclVclP4DEngine;
 
 requires
   rtl,
-  VclP4DEngine,
-  vcl;
+  vcl,
+  PythonVcl;
 
 contains
-  Vcl.PythonRegistration in '..\..\..\Source\vcl\Vcl.PythonRegistration.pas';
+  Vcl.PythonReg in '..\..\..\Source\vcl\Vcl.PythonReg.pas';
 
 end.

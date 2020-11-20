@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{48DDC28A-E154-4CA0-864A-30EB8C4CCBB3}</ProjectGuid>
-        <MainSource>dclVclP4DEngine.dpk</MainSource>
+        <MainSource>dclPythonVcl.dpk</MainSource>
         <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
@@ -81,7 +81,7 @@
         <GenPackage>true</GenPackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>dclVclP4DEngine</SanitizedProjectName>
+        <SanitizedProjectName>dclPythonVcl</SanitizedProjectName>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Description>Python4Delphi - Design-Time Engine Package for VCL</DCC_Description>
@@ -147,10 +147,10 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="VclP4DEngine.dcp"/>
         <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonRegistration.pas"/>
-        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
+        <DCCReference Include="PythonVcl.dcp"/>
+        <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonReg.pas"/>
+        <RcItem Include="..\..\Resources\TPYTHONGUIINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonGUIInputOutput</ResourceId>
         </RcItem>
@@ -172,7 +172,7 @@
         <BorlandProject>
             <Delphi.Personality>
                 <Source>
-                    <Source Name="MainSource">dclVclP4DEngine.dpk</Source>
+                    <Source Name="MainSource">dclPythonVcl.dpk</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k270.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
@@ -197,9 +197,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\dclVclP4DEngine270.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\dclPythonVcl270.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>dclVclP4DEngine.bpl</RemoteName>
+                        <RemoteName>dclPythonVcl.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
