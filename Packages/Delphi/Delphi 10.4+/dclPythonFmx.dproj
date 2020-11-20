@@ -149,7 +149,11 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="PythonFmx.dcp"/>
         <DCCReference Include="..\..\..\Source\fmx\FMX.PythonReg.pas"/>
-        <RcItem Include="..\..\Resource\TPYTHONGUIINPUTOUTPUT.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONPLATFORM.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonPlatform</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONGUIINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonGUIInputOutput</ResourceId>
         </RcItem>
