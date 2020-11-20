@@ -29,7 +29,7 @@ type
 
 implementation
 
-{ TPlatformServices }
+{ TPythonPlatformServices }
 
 constructor TPythonPlatformServices.Create;
 begin

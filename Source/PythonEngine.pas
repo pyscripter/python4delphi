@@ -91,7 +91,7 @@ uses
   SyncObjs,
   Variants,
   MethodCallBack,
-  PythonException;
+  PythonException{, PythonLoaderService};
 
 {$IF not Defined(FPC) and (CompilerVersion >= 23)}
 const
@@ -984,12 +984,14 @@ type
     FOnBeforeLoad       : TNotifyEvent;
     FOnAfterLoad        : TNotifyEvent;
     FOnBeforeUnload     : TNotifyEvent;
+    //FLoaderService      : IPythonLoaderService;
 
     function  Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
     procedure Loaded; override;
     procedure BeforeLoad; virtual;
     procedure AfterLoad; virtual;
     procedure BeforeUnload; virtual;
+    function GetFatalMsg(): string;
     function  GetQuitMessage : string; virtual;
     procedure DoOpenDll(const aDllName : string); virtual;
     function  GetDllPath : string;
@@ -1004,6 +1006,7 @@ type
     function  IsHandleValid : Boolean;
     procedure LoadDll;
     procedure UnloadDll;
+    procedure FatalError();
     procedure Quit;
 
     // Public properties
@@ -2741,22 +2744,31 @@ end;
 
 procedure TDynamicDll.DoOpenDll(const aDllName : string);
 begin
-  if not IsHandleValid then
-  begin
+  if not IsHandleValid() then begin
     FDllName := aDllName;
-    {$IFDEF MSWINDOWS}
-    FDLLHandle := SafeLoadLibrary(
-      {$IFDEF FPC}
-      PAnsiChar(AnsiString(GetDllPath+DllName))
-      {$ELSE}
-      GetDllPath+DllName
-      {$ENDIF});
-    {$ELSE}
-    //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
-    FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
-      RTLD_LAZY+RTLD_GLOBAL));
-    {$ENDIF}
+    //FLoaderService.LoadDll(GetDllPath() + DllName, FDllHandle)
   end;
+
+//  if not IsHandleValid then
+//  begin
+//    {$IFDEF MSWINDOWS}
+//    FDLLHandle := SafeLoadLibrary(
+//      {$IFDEF FPC}
+//      PAnsiChar(AnsiString(GetDllPath+DllName))
+//      {$ELSE}
+//      GetDllPath+DllName
+//      {$ENDIF});
+//    {$ELSE}
+//    //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
+//    FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
+//      RTLD_LAZY+RTLD_GLOBAL));
+//    {$ENDIF}
+//  end;
+end;
+
+procedure TDynamicDll.FatalError;
+begin
+  //FLoaderService.FatalMsgDlg(GetFatalMsg());
 end;
 
 function  TDynamicDll.GetDllPath : string;
@@ -2779,35 +2791,48 @@ begin
   end;
 end;
 
+function TDynamicDll.GetFatalMsg: string;
+begin
+  {$IFDEF MSWINDOWS}
+  Result := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
+  {$ELSE}
+  Result := Format('Error: Could not open Dll "%s"',[DllName]);
+  {$ENDIF}
+end;
+
 procedure  TDynamicDll.OpenDll(const aDllName : string);
-var
-  s : string;
 begin
   UnloadDll;
-
   BeforeLoad;
-
   FDLLHandle := 0;
-
   DoOpenDll(aDllName);
 
-  if not IsHandleValid then begin
-    {$IFDEF MSWINDOWS}
-    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
-    {$ELSE}
-    s := Format('Error: Could not open Dll "%s"',[DllName]);
-    {$ENDIF}
+  if not IsHandleValid() then begin
     if FatalMsgDlg then
-      {$IFDEF MSWINDOWS}
-      MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-      {$ELSE}
-      WriteLn(ErrOutput, s);
-      {$ENDIF}
+      FatalError();
 
     if FatalAbort then
-      Quit;
+      Quit();
   end else
     AfterLoad;
+
+//  if not IsHandleValid() then begin
+//    {$IFDEF MSWINDOWS}
+//    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
+//    {$ELSE}
+//    s := Format('Error: Could not open Dll "%s"',[DllName]);
+//    {$ENDIF}
+//    if FatalMsgDlg then
+//      {$IFDEF MSWINDOWS}
+//      MessageBox( GetActiveWindow, PChar(s), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+//      {$ELSE}
+//      WriteLn(ErrOutput, s);
+//      {$ENDIF}
+//
+//    if FatalAbort then
+//      Quit;
+//  end else
+//    AfterLoad;
 end;
 
 constructor TDynamicDll.Create(AOwner: TComponent);
@@ -2827,28 +2852,29 @@ begin
 end;
 
 function TDynamicDll.Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
-var
-  E : EDllImportError;
-  {$IF not Defined(FPC) and not Defined(MSWINDOWS)}
-  S : string;
-  {$IFEND}
+//var
+//  E : EDllImportError;
+//  {$IF not Defined(FPC) and not Defined(MSWINDOWS)}
+//  S : string;
+//  {$IFEND}
 begin
-  {$IF Defined(FPC) or Defined(MSWINDOWS)}
-  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
-  {$ELSE}
-  S := string(funcname);
-  Result := GetProcAddress( FDLLHandle, PWideChar(S) );
-  {$IFEND}
-  if (Result = nil) and canFail then begin
-    {$IFDEF MSWINDOWS}
-    E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
-    E.ErrorCode := GetLastError;
-    {$ELSE}
-    E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
-    {$ENDIF}
-    E.WrongFunc := funcname;
-    raise E;
-  end;
+  //Result := FLoaderService.Import(FDLLHandle, funcname, canFail);
+//  {$IF Defined(FPC) or Defined(MSWINDOWS)}
+//  Result := GetProcAddress( FDLLHandle, PAnsiChar(funcname) );
+//  {$ELSE}
+//  S := string(funcname);
+//  Result := GetProcAddress( FDLLHandle, PWideChar(S) );
+//  {$IFEND}
+//  if (Result = nil) and canFail then begin
+//    {$IFDEF MSWINDOWS}
+//    E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
+//    E.ErrorCode := GetLastError;
+//    {$ELSE}
+//    E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
+//    {$ENDIF}
+//    E.WrongFunc := funcname;
+//    raise E;
+//  end;
 end;
 
 procedure TDynamicDll.Loaded;
@@ -2860,11 +2886,12 @@ end;
 
 function  TDynamicDll.IsHandleValid : Boolean;
 begin
-{$IFDEF MSWINDOWS}
-  Result := (FDLLHandle >= 32);
-{$ELSE}
-  Result := FDLLHandle <> 0;
-{$ENDIF}
+  //Result := FLoaderService.IsHandleValid(FDllHandle);
+//  {$IFDEF MSWINDOWS}
+//  Result := (FDLLHandle >= 32);
+//  {$ELSE}
+//  Result := FDLLHandle <> 0;
+//  {$ENDIF}
 end;
 
 procedure TDynamicDll.LoadDll;
@@ -2876,8 +2903,9 @@ procedure TDynamicDll.UnloadDll;
 begin
   if IsHandleValid then begin
     BeforeUnload;
-    FreeLibrary(FDLLHandle);
-    FDLLHandle := 0;
+    //FLoaderService.UnloadDll(FDLLHandle);
+//    FreeLibrary(FDLLHandle);
+//    FDLLHandle := 0;
   end;
 end;
 
@@ -2907,13 +2935,7 @@ end;
 procedure TDynamicDll.Quit;
 begin
   if not( csDesigning in ComponentState ) then begin
-{$IFDEF MSWINDOWS}
-    MessageBox( GetActiveWindow, PChar(GetQuitMessage), 'Error', MB_TASKMODAL or MB_ICONSTOP );
-    ExitProcess( 1 );
-{$ELSE}
-    WriteLn(ErrOutput, GetQuitMessage);
-    Halt( 1 );
-{$ENDIF}
+    //FLoaderService.FatalAbort(GetQuitMessage());
   end;
 end;
 
