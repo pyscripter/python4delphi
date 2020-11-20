@@ -865,9 +865,6 @@ Type
   { Singletons }
   function RegisteredUnits : TRegisteredUnits;
 
-  { Misc }
-  procedure Register;
-
   { Helper Functions }
 
   function  CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
@@ -944,11 +941,6 @@ begin
   if not Assigned(gRegisteredUnits) then
     gRegisteredUnits := TRegisteredUnits.Create;
   Result := gRegisteredUnits;
-end;
-
-procedure Register;
-begin
-  RegisterComponents('Python', [TPyDelphiWrapper]);
 end;
 
 { Helper functions }
