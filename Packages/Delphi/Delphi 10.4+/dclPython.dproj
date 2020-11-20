@@ -147,7 +147,7 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="P4DEngine.dcp"/>
+        <DCCReference Include="Python.dcp"/>
         <DCCReference Include="..\..\..\Source\PythonReg.pas"/>
         <RcItem Include="..\..\Resources\TPYDELPHIWRAPPER.bmp">
             <ResourceType>BITMAP</ResourceType>

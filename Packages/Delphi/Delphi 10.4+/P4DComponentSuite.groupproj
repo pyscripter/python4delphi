@@ -3,11 +3,11 @@
         <ProjectGuid>{8BE1193B-E609-445D-9BA3-F57DBEA042F5}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="P4DEngine.dproj">
+        <Projects Include="Python.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="dclP4DEngine.dproj">
-            <Dependencies>P4DEngine.dproj</Dependencies>
+        <Projects Include="dclPython.dproj">
+            <Dependencies>Python.dproj</Dependencies>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -17,32 +17,32 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="P4DEngine">
-        <MSBuild Projects="P4DEngine.dproj"/>
+    <Target Name="Python">
+        <MSBuild Projects="Python.dproj"/>
     </Target>
-    <Target Name="P4DEngine:Clean">
-        <MSBuild Projects="P4DEngine.dproj" Targets="Clean"/>
+    <Target Name="Python:Clean">
+        <MSBuild Projects="Python.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="P4DEngine:Make">
-        <MSBuild Projects="P4DEngine.dproj" Targets="Make"/>
+    <Target Name="Python:Make">
+        <MSBuild Projects="Python.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dclP4DEngine" DependsOnTargets="P4DEngine">
-        <MSBuild Projects="dclP4DEngine.dproj"/>
+    <Target Name="dclPython" DependsOnTargets="Python">
+        <MSBuild Projects="dclPython.dproj"/>
     </Target>
-    <Target Name="dclP4DEngine:Clean" DependsOnTargets="P4DEngine:Clean">
-        <MSBuild Projects="dclP4DEngine.dproj" Targets="Clean"/>
+    <Target Name="dclPython:Clean" DependsOnTargets="Python:Clean">
+        <MSBuild Projects="dclPython.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dclP4DEngine:Make" DependsOnTargets="P4DEngine:Make">
-        <MSBuild Projects="dclP4DEngine.dproj" Targets="Make"/>
+    <Target Name="dclPython:Make" DependsOnTargets="Python:Make">
+        <MSBuild Projects="dclPython.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="P4DEngine;dclP4DEngine"/>
+        <CallTarget Targets="Python;dclPython"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="P4DEngine:Clean;dclP4DEngine:Clean"/>
+        <CallTarget Targets="Python:Clean;dclPython:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="P4DEngine:Make;dclP4DEngine:Make"/>
+        <CallTarget Targets="Python:Make;dclPython:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

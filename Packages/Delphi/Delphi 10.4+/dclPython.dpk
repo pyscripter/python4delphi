@@ -33,7 +33,7 @@ package dclPython;
 
 requires
   rtl,
-  P4DEngine;
+  Python;
 
 contains
   PythonReg in '..\..\..\Source\PythonReg.pas';
