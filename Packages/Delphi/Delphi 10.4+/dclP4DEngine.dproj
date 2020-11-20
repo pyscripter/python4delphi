@@ -149,31 +149,31 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="P4DEngine.dcp"/>
         <DCCReference Include="..\..\..\Source\PythonRegistration.pas"/>
-        <RcItem Include="..\..\..\Images\TPYDELPHIWRAPPER.bmp">
+        <RcItem Include="..\..\Resources\TPYDELPHIWRAPPER.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPyDelphiWrapper</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONDELPHIVAR.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONDELPHIVAR.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonDelphiVar</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONENGINE.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONENGINE.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonEngine</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONGUIINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonGUIInputOutput</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONINPUTOUTPUT.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonInputOutput</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONMODULE.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONMODULE.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonModule</ResourceId>
         </RcItem>
-        <RcItem Include="..\..\..\Images\TPYTHONTYPE.bmp">
+        <RcItem Include="..\..\Resources\TPYTHONTYPE.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonType</ResourceId>
         </RcItem>
