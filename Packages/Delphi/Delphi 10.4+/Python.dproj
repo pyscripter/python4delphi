@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{CAA48A94-6802-4402-A98B-E3407805C5C9}</ProjectGuid>
-        <MainSource>P4DEngine.dpk</MainSource>
+        <MainSource>Python.dpk</MainSource>
         <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
@@ -71,26 +71,16 @@
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
-<<<<<<< HEAD:Packages/Delphi/Delphi 10.4+/Python.dproj
         <SanitizedProjectName>Python</SanitizedProjectName>
         <DCC_Description>Python4Delphi - Run-time Engine Package</DCC_Description>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;DUnitX.Loggers.GUI;Winapi;System.Win;$(DCC_Namespace)</DCC_Namespace>
         <DllSuffix>$(Auto)</DllSuffix>
-=======
-        <DCC_DcuOutput>.\$(Platform)\$(Config)</DCC_DcuOutput>
-        <DCC_ExeOutput>.\$(Platform)\$(Config)</DCC_ExeOutput>
-        <DCC_E>false</DCC_E>
-        <DCC_N>false</DCC_N>
-        <DCC_S>false</DCC_S>
-        <DCC_F>false</DCC_F>
-        <DCC_K>false</DCC_K>
->>>>>>> 6ec20fe (Added support to Android):Packages/Delphi/Delphi 10.4+/P4DEngine.dproj
         <GenDll>true</GenDll>
         <GenPackage>true</GenPackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>P4DEngine</SanitizedProjectName>
+        <SanitizedProjectName>Python</SanitizedProjectName>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Description>Python4Delphi - Run-time Engine Package</DCC_Description>
@@ -193,26 +183,7 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
-<<<<<<< HEAD:Packages/Delphi/Delphi 10.4+/Python.dproj
                 <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\Python270.bpl" Configuration="Debug" Class="ProjectOutput">
-=======
-                <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libcgunwind.1.0.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="$(BDS)\Redist\iossimulator\libpcre.dylib" Class="DependencyModule">
-                    <Platform Name="iOSSimulator">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\P4DEngine270.bpl" Configuration="Debug" Class="ProjectOutput">
->>>>>>> 6ec20fe (Added support to Android):Packages/Delphi/Delphi 10.4+/P4DEngine.dproj
                     <Platform Name="Win32">
                         <RemoteName>Python.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

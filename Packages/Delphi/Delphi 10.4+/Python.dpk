@@ -1,12 +1,5 @@
-<<<<<<< HEAD:Packages/Delphi/Delphi 10.4+/Python.dpk
 package Python;
-=======
-package P4DEngine;
 
-<<<<<<< HEAD:Packages/Delphi/Delphi 10.4+/Python.dpk
->>>>>>> 6ec20fe (Added support to Android):Packages/Delphi/Delphi 10.4+/P4DEngine.dpk
-=======
->>>>>>> 6ec20fe26ec9e5695ad9796d7be453d5a5a3ef94:Packages/Delphi/Delphi 10.4+/P4DEngine.dpk
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}

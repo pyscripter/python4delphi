@@ -7,10 +7,10 @@
             <Dependencies/>
         </Projects>
         <Projects Include="dclPython.dproj">
-            <Dependencies>Python.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="PythonVcl.dproj">
-            <Dependencies>Python.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="dclPythonVcl.dproj">
             <Dependencies>PythonVcl.dproj</Dependencies>
@@ -38,22 +38,22 @@
     <Target Name="Python:Make">
         <MSBuild Projects="Python.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dclPython" DependsOnTargets="Python">
+    <Target Name="dclPython">
         <MSBuild Projects="dclPython.dproj"/>
     </Target>
-    <Target Name="dclPython:Clean" DependsOnTargets="Python:Clean">
+    <Target Name="dclPython:Clean">
         <MSBuild Projects="dclPython.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dclPython:Make" DependsOnTargets="Python:Make">
+    <Target Name="dclPython:Make">
         <MSBuild Projects="dclPython.dproj" Targets="Make"/>
     </Target>
-    <Target Name="PythonVcl" DependsOnTargets="Python">
+    <Target Name="PythonVcl">
         <MSBuild Projects="PythonVcl.dproj"/>
     </Target>
-    <Target Name="PythonVcl:Clean" DependsOnTargets="Python:Clean">
+    <Target Name="PythonVcl:Clean">
         <MSBuild Projects="PythonVcl.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="PythonVcl:Make" DependsOnTargets="Python:Make">
+    <Target Name="PythonVcl:Make">
         <MSBuild Projects="PythonVcl.dproj" Targets="Make"/>
     </Target>
     <Target Name="dclPythonVcl" DependsOnTargets="PythonVcl">
