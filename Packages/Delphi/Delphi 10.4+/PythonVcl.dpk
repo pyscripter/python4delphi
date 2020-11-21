@@ -1,7 +1,6 @@
-package dclVclP4DEngine;
+package PythonVcl;
 
 {$R *.res}
-{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -26,17 +25,17 @@ package dclVclP4DEngine;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Design-Time Engine Package for VCL'}
+{$DESCRIPTION 'Python4Delphi - Run-time Engine Package for VCL'}
 {$LIBSUFFIX AUTO}
-{$DESIGNONLY}
+{$RUNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
-  VclP4DEngine,
-  vcl;
+  vcl,
+  Python;
 
 contains
-  Vcl.PythonRegistration in '..\..\..\Source\vcl\Vcl.PythonRegistration.pas';
+  Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas';
 
 end.

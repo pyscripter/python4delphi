@@ -1,7 +1,7 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{48DDC28A-E154-4CA0-864A-30EB8C4CCBB3}</ProjectGuid>
-        <MainSource>dclVclP4DEngine.dpk</MainSource>
+        <ProjectGuid>{D9AB994C-54A3-4E76-81C8-6D0BB035A091}</ProjectGuid>
+        <MainSource>dclPython.dpk</MainSource>
         <ProjectVersion>19.1</ProjectVersion>
         <FrameworkType>None</FrameworkType>
         <Base>True</Base>
@@ -81,10 +81,10 @@
         <GenPackage>true</GenPackage>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;$(DCC_Namespace)</DCC_Namespace>
         <DCC_CBuilderOutput>All</DCC_CBuilderOutput>
-        <SanitizedProjectName>dclVclP4DEngine</SanitizedProjectName>
+        <SanitizedProjectName>dclPython</SanitizedProjectName>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_Description>Python4Delphi - Design-Time Engine Package for VCL</DCC_Description>
+        <DCC_Description>Python4Delphi - Design-time Engine Package</DCC_Description>
         <DesignOnlyPackage>true</DesignOnlyPackage>
         <DllSuffix>$(Auto)</DllSuffix>
     </PropertyGroup>
@@ -118,7 +118,7 @@
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UsePackage>rtl;VclP4DEngine;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>rtl;P4DEngine;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>rtl;$(DCC_UsePackage)</DCC_UsePackage>
@@ -134,7 +134,6 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -147,12 +146,35 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="rtl.dcp"/>
-        <DCCReference Include="VclP4DEngine.dcp"/>
-        <DCCReference Include="vcl.dcp"/>
-        <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonRegistration.pas"/>
-        <RcItem Include="..\..\..\Images\TPYTHONGUIINPUTOUTPUT.bmp">
+        <DCCReference Include="Python.dcp"/>
+        <DCCReference Include="..\..\..\Source\PythonReg.pas"/>
+        <RcItem Include="..\..\Resources\TPYDELPHIWRAPPER.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPyDelphiWrapper</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONDELPHIVAR.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonDelphiVar</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONENGINE.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonEngine</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONGUIINPUTOUTPUT.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>TPythonGUIInputOutput</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONINPUTOUTPUT.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonInputOutputModule</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONMODULE.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonModule</ResourceId>
+        </RcItem>
+        <RcItem Include="..\..\Resources\TPYTHONTYPE.bmp">
+            <ResourceType>BITMAP</ResourceType>
+            <ResourceId>TPythonType</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
@@ -171,15 +193,15 @@
         <Borland.ProjectType>Package</Borland.ProjectType>
         <BorlandProject>
             <Delphi.Personality>
-                <Source>
-                    <Source Name="MainSource">dclVclP4DEngine.dpk</Source>
-                </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcboffice2k270.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp270.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k270.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp270.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
+                <Source>
+                    <Source Name="MainSource">dclPython.dpk</Source>
+                </Source>
             </Delphi.Personality>
             <Deployment Version="3">
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
@@ -197,9 +219,9 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\dclVclP4DEngine270.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\..\..\..\..\..\..\..\Public\Documents\Embarcadero\Studio\21.0\Bpl\dclPython270.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>dclVclP4DEngine.bpl</RemoteName>
+                        <RemoteName>dclPython.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

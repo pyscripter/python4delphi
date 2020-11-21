@@ -1,5 +1,7 @@
-package P4DEngine;
+package dclPythonFmx;
+
 {$R *.res}
+{$R *.dres}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -24,19 +26,16 @@ package P4DEngine;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'Python4Delphi - Run-time Engine Package'}
+{$DESCRIPTION 'Python4Delphi - Design-time Engine Package for FMX'}
 {$LIBSUFFIX AUTO}
-{$RUNONLY}
+{$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
-  DesignIDE,
   rtl,
-  vcl;
+  PythonFmx;
 
 contains
-  MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
-  PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
+  FMX.PythonReg in '..\..\..\Source\fmx\FMX.PythonReg.pas';
 
 end.

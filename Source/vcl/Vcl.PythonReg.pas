@@ -1,4 +1,4 @@
-unit Vcl.PythonRegistration;
+unit Vcl.PythonReg;
 
 interface
 

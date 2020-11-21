@@ -1,4 +1,4 @@
-unit PythonRegistration;
+unit PythonReg;
 
 interface
 
