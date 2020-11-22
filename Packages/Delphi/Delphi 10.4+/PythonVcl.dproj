@@ -120,30 +120,9 @@
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
         <DCCReference Include="Python.dcp"/>
-        <DCCReference Include="dbrtl.dcp"/>
-        <DCCReference Include="VclSmp.dcp"/>
-        <DCCReference Include="FireDAC.dcp"/>
-        <DCCReference Include="FireDACCommonDriver.dcp"/>
-        <DCCReference Include="FireDACCommon.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonPlatform.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\platform\Vcl.PythonLoaderService.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiActnList.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiButtons.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiClasses.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiComCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiControls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiDialogs.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiExtCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiForms.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiGraphics.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiGrids.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiSamplesSpin.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiStdCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiTypes.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiVCL.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapDelphiWindows.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\wrappers\Vcl.WrapFireDAC.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
