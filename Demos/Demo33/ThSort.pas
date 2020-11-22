@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ExtCtrls, StdCtrls,
-  PythonEngine, PythonGUIInputOutput, SortThds;
+  PythonEngine, Vcl.PythonGUIInputOutput, SortThds;
 
 type
   TThreadSortForm = class(TForm)
