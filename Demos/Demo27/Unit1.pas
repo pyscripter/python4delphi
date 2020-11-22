@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, PythonEngine, PythonGUIInputOutput, StdCtrls;
+  Dialogs, PythonEngine, Vcl.PythonGUIInputOutput, StdCtrls;
 
 type
   TMySeq = class(TPyObject)
