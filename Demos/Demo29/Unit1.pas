@@ -10,7 +10,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtDlgs, StdCtrls, ExtCtrls, PythonEngine, PythonGUIInputOutput;
+  Dialogs, ExtDlgs, StdCtrls, ExtCtrls, PythonEngine, Vcl.PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)

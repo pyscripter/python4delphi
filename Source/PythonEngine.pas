@@ -2670,6 +2670,7 @@ function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
+procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function GetPythonVersionFromDLLName(const DLLFileName : string): string;
 
@@ -8789,6 +8790,12 @@ begin
       t := t^.tp_base;
     end;
   end;
+end;
+
+procedure Register;
+begin
+  RegisterComponents('Python',[ TPythonEngine, TPythonInputOutput,
+                                TPythonType, TPythonModule, TPythonDelphiVar]);
 end;
 
 function GetPythonVersionFromDLLName(const DLLFileName : string): string;

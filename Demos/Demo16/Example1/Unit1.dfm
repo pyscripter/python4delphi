@@ -133,7 +133,6 @@ object Form1: TForm1
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitWidth = 372
     object Splitter2: TSplitter
       Left = 0
       Top = 153
@@ -204,7 +203,6 @@ object Form1: TForm1
       ParentFont = False
       ScrollBars = ssBoth
       TabOrder = 0
-      ExplicitWidth = 372
     end
     object Memo2: TMemo
       Left = 0
@@ -219,7 +217,6 @@ object Form1: TForm1
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      ExplicitWidth = 372
     end
   end
   object PythonEngine1: TPythonEngine
