@@ -81,8 +81,6 @@ object Form1: TForm1
     ScrollBars = ssBoth
     TabOrder = 2
     WordWrap = False
-    ExplicitLeft = 16
-    ExplicitTop = 352
   end
   object Memo2: TMemo
     Left = 8
