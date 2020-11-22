@@ -92,6 +92,8 @@ type
     property Output : TCustomMemo read FCustomMemo write FCustomMemo;
   end;
 
+  procedure Register;
+
 implementation
 
 {$IFDEF FPC}
@@ -245,5 +247,10 @@ begin
 end;
 
 {------------------------------------------------------------------------------}
+
+procedure Register;
+begin
+  RegisterComponents('Python', [TPythonGUIInputOutput]);
+end;
 
 end.
