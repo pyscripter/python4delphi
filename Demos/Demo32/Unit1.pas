@@ -15,7 +15,7 @@ uses
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
   WrapDelphi, WrapDelphiClasses,
-  PythonEngine, PythonGUIInputOutput;
+  PythonEngine, Vcl.PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)
