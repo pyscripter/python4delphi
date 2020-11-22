@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   System.Types, System.UITypes,
-  ComCtrls, ExtCtrls, StdCtrls, PythonEngine, PythonGUIInputOutput, Db,
+  ComCtrls, ExtCtrls, StdCtrls, PythonEngine, Vcl.PythonGUIInputOutput, Db,
   Grids, DBGrids, Datasnap.DBClient, FireDAC.Stan.Intf, FireDAC.Stan.Option,
   FireDAC.Stan.Error, FireDAC.UI.Intf, FireDAC.Phys.Intf, FireDAC.Stan.Def,
   FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys, FireDAC.FMXUI.Wait,
