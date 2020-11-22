@@ -49,7 +49,6 @@ object Form1: TForm1
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 306
     object Button1: TButton
       Left = 6
       Top = 8
