@@ -8,8 +8,8 @@
       <Version Value="11"/>
       <PathDelim Value="\"/>
       <SearchPaths>
-        <IncludeFiles Value="..\..\Source\"/>
-        <OtherUnitFiles Value="..\..\Source\"/>
+        <IncludeFiles Value="..\..\Source"/>
+        <OtherUnitFiles Value="..\..\Source;..\..\Source\lcl"/>
         <UnitOutputDirectory Value="FPC_Units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
       </SearchPaths>
       <Parsing>
@@ -22,25 +22,22 @@
     <Files Count="10">
       <Item1>
         <Filename Value="..\..\Source\PythonEngine.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="PythonEngine"/>
       </Item1>
       <Item2>
-        <Filename Value="..\..\Source\PythonGUIInputOutput.pas"/>
-        <HasRegisterProc Value="True"/>
-        <UnitName Value="PythonGUIInputOutput"/>
-      </Item2>
-      <Item3>
         <Filename Value="..\..\Source\MethodCallBack.pas"/>
         <UnitName Value="MethodCallBack"/>
-      </Item3>
-      <Item4>
+      </Item2>
+      <Item3>
         <Filename Value="..\..\Source\VarPyth.pas"/>
         <UnitName Value="VarPyth"/>
+      </Item3>
+      <Item4>
+        <Filename Value="..\..\Source\lcl\Lcl.PythonGUIInputOutput.pas"/>
+        <UnitName Value="Lcl.PythonGUIInputOutput"/>
       </Item4>
       <Item5>
         <Filename Value="..\..\Source\WrapDelphi.pas"/>
-        <HasRegisterProc Value="True"/>
         <UnitName Value="WrapDelphi"/>
       </Item5>
       <Item6>
@@ -61,6 +58,7 @@
       </Item9>
       <Item10>
         <Filename Value="p4dlaz_register.pas"/>
+        <HasRegisterProc Value="True"/>
         <UnitName Value="P4DLaz_register"/>
       </Item10>
     </Files>

@@ -11,7 +11,7 @@ implementation
 
 uses 
   PythonEngine, 
-  PythonGUIInputOutput, 
+  Lcl.PythonGUIInputOutput, 
   WrapDelphi;
 
 procedure Register;
