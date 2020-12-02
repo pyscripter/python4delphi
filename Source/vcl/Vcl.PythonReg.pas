@@ -1,3 +1,4 @@
+{$I ..\Definition.Inc}
 unit Vcl.PythonReg;
 
 interface
@@ -11,7 +12,9 @@ uses
 
 procedure Register();
 begin
+  {$IFDEF DELPHIXE2_OR_HIGHER}
   GroupDescendentsWith(TPythonGUIInputOutput, TControl);
+  {$ENDIF}
   RegisterComponents('Python', [TPythonGUIInputOutput]);
 end;
 end.

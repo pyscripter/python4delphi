@@ -1,4 +1,5 @@
 package Python_D;
+
 {$R '..\..\..\Source\PythonEngine.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -26,6 +27,7 @@ package Python_D;
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'Components for Python'}
 {$IMPLICITBUILD OFF}
+
 {$IFDEF VER200}{$LIBSUFFIX '120'} {$ENDIF}
 {$IFDEF VER210}{$LIBSUFFIX '140'} {$ENDIF}
 {$IFDEF VER220}{$LIBSUFFIX '150'} {$ENDIF}
@@ -52,6 +54,9 @@ requires
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  PythonGUIInputOutput in '..\..\..\Source\PythonGUIInputOutput.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
+  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
+  PythonReg in '..\..\..\Source\PythonReg.pas',
+  Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
+  Vcl.PythonReg in '..\..\..\Source\vcl\Vcl.PythonReg.pas';
+
 end.
