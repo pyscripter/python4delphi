@@ -6,9 +6,9 @@ interface
 
 uses
   SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls,
-  PythonEngine, PythonGUIInputOutput;
+  PythonEngine, lcl.PythonGUIInputOutput;
 
 type
 
