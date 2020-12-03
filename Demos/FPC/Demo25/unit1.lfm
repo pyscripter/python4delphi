@@ -7,7 +7,7 @@ object Form1: TForm1
   ClientHeight = 522
   ClientWidth = 795
   OnCreate = FormCreate
-  LCLVersion = '0.9.28.2'
+  LCLVersion = '2.0.10.0'
   object Panel1: TPanel
     Left = 0
     Height = 522
@@ -133,15 +133,15 @@ object Form1: TForm1
   end
   object PythonEngine1: TPythonEngine
     IO = PythonGUIInputOutput1
-    left = 96
-    top = 48
+    Left = 96
+    Top = 48
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
     DelayWrites = True
     UnicodeIO = False
     RawOutput = False
     Output = Memo1
-    left = 338
-    top = 48
+    Left = 338
+    Top = 48
   end
 end

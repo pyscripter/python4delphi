@@ -11,8 +11,7 @@ object Form1: TForm1
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  LCLVersion = '1.8.0.6'
-  Visible = False
+  LCLVersion = '2.0.10.0'
   object Splitter1: TSplitter
     Cursor = crVSplit
     Left = 0
@@ -93,7 +92,7 @@ object Form1: TForm1
     end
     object Edit1: TEdit
       Left = 500
-      Height = 20
+      Height = 21
       Top = 8
       Width = 150
       TabOrder = 4
@@ -118,7 +117,7 @@ object Form1: TForm1
       'print()'
     )
     IO = PythonGUIInputOutput1
-    left = 8
+    Left = 8
   end
   object PythonType1: TPythonType
     Engine = PythonEngine1
@@ -130,24 +129,24 @@ object Form1: TForm1
     Services.Number = []
     Services.Sequence = []
     Services.Mapping = []
-    left = 72
+    Left = 72
   end
   object PythonModule1: TPythonModule
     Engine = PythonEngine1
     OnInitialization = PythonModule1Initialization
     ModuleName = 'spam'
     Errors = <>
-    left = 104
+    Left = 104
   end
   object OpenDialog1: TOpenDialog
     DefaultExt = '.*.py'
     Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
-    left = 176
+    Left = 176
   end
   object SaveDialog1: TSaveDialog
     DefaultExt = '.*.py'
     Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
-    left = 208
+    Left = 208
   end
   object PythonDelphiVar1: TPythonDelphiVar
     Engine = PythonEngine1
@@ -156,12 +155,12 @@ object Form1: TForm1
     OnGetData = PythonDelphiVar1GetData
     OnSetData = PythonDelphiVar1SetData
     OnChange = PythonDelphiVar1Change
-    left = 136
+    Left = 136
   end
   object PythonGUIInputOutput1: TPythonGUIInputOutput
     UnicodeIO = True
     RawOutput = False
     Output = Memo2
-    left = 40
+    Left = 40
   end
 end

@@ -7,7 +7,7 @@ interface
 uses
   SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls,
-  PythonEngine, PythonGUIInputOutput, WrapDelphi, ActnList;
+  PythonEngine, lcl.PythonGUIInputOutput, WrapDelphi, ActnList;
 
 type
   TForm1 = class(TForm)

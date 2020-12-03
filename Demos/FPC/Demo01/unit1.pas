@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, LResources, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, PairSplitter, PythonEngine, PythonGUIInputOutput;
+  StdCtrls, ExtCtrls, PairSplitter, PythonEngine, lcl.PythonGUIInputOutput;
 
 type
 
