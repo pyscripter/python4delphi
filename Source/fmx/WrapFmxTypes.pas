@@ -85,13 +85,13 @@ end;
 function TPyDelphiPointF.Get_X(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.VariantAsPyObject(Value.X);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.X);
 end;
 
 function TPyDelphiPointF.Get_Y(Acontext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := GetPythonEngine.VariantAsPyObject(Value.Y);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Y);
 end;
 
 class procedure TPyDelphiPointF.RegisterGetSets(PythonType: TPythonType);
