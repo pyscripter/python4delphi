@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils, TypInfo, Types,
   Fmx.Controls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses;
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes;
 
 type
   {
@@ -16,7 +16,7 @@ type
       SetBounds and Repaint
      Exposes properties Parent and Visible
   }
-  TPyDelphiControl = class (TPyDelphiComponent)
+  TPyDelphiControl = class (TPyDelphiFmxObject)
   private
     function  GetDelphiObject: TControl;
     procedure SetDelphiObject(const Value: TControl);
@@ -32,13 +32,12 @@ type
     function SetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     function ResetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     // Property Getters
-    function Get_Parent( AContext : Pointer) : PPyObject; cdecl;
     function Get_Visible(AContext: Pointer): PPyObject; cdecl;
     function Get_ControlsCount( AContext : Pointer) : PPyObject; cdecl;
     function Get_Controls(AContext: Pointer): PPyObject; cdecl;
     function Get_IsFocused( AContext : Pointer) : PPyObject; cdecl;
+    function Get_ParentControl( AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
-    function Set_Parent( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     function Set_Visible(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
     class function  DelphiObjectClass : TClass; override;
@@ -69,7 +68,7 @@ type
 implementation
 
 uses
-  WrapFmxTypes, FMX.Types;
+  FMX.Types;
 
 type
 { Register the wrappers, the globals and the constants }
@@ -156,10 +155,10 @@ begin
     Setup(Self.PyDelphiWrapper, TControlsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
 end;
 
-function TPyDelphiControl.Get_Parent(AContext: Pointer): PPyObject;
+function TPyDelphiControl.Get_ParentControl(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
-  Result := Wrap(DelphiObject.Parent);
+  Result := Wrap(DelphiObject.ParentControl);
 end;
 
 function TPyDelphiControl.Get_Visible(AContext: Pointer): PPyObject;
@@ -171,8 +170,6 @@ end;
 class procedure TPyDelphiControl.RegisterGetSets(PythonType: TPythonType);
 begin
   inherited;
-  PythonType.AddGetSet('Parent', @TPyDelphiControl.Get_Parent, @TPyDelphiControl.Set_Parent,
-        'Returns/Sets the Control Visibility', nil);
   PythonType.AddGetSet('Visible', @TPyDelphiControl.Get_Visible, @TPyDelphiControl.Set_Visible,
         'Returns/Sets the Control Visibility', nil);
   PythonType.AddGetSet('ControlsCount', @TPyDelphiControl.Get_ControlsCount, nil,
@@ -305,21 +302,6 @@ begin
     end else
       Result := nil;
   end;
-end;
-
-function TPyDelphiControl.Set_Parent(AValue: PPyObject;
-  AContext: Pointer): integer;
-var
-  _object : TObject;
-begin
-  Adjust(@Self);
-  if CheckObjAttribute(AValue, 'Parent', TFmxObject, _object) then
-  begin
-    Self.DelphiObject.Parent := TFmxObject(_object);
-    Result := 0;
-  end
-  else
-    Result := -1;
 end;
 
 function TPyDelphiControl.Set_Visible(AValue: PPyObject;
