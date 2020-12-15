@@ -946,6 +946,19 @@ end;
 { Helper functions }
 
 {$IFDEF EXTENDED_RTTI}
+function DynArrayToPython(const Value: TValue): PPyObject;
+var
+  I: Integer;
+  V: Variant;
+begin
+  Result := GetPythonEngine().PyList_New(Value.GetArrayLength);
+  for I := 0 to Value.GetArrayLength() - 1 do
+  begin
+    V := Value.GetArrayElement(i).AsVariant;
+    GetPythonEngine().PyList_SetItem(Result, I, GetPythonEngine().VariantAsPyObject(V));
+  end;
+end;
+
 function SimpleValueToPython(const Value: TValue; out ErrMsg: string): PPyObject;
 begin
   Result := nil;
@@ -980,8 +993,10 @@ begin
           Result := SetToPython(Value.TypeData.CompType^,
             PInteger(Value.GetReferenceToRawData)^);
         end;
-      tkClass, tkMethod, tkArray,
-      tkRecord, tkInterface, tkDynArray,
+      tkArray, tkDynArray:
+        Result := DynArrayToPython(Value);
+      tkClass, tkMethod,
+      tkRecord, tkInterface,
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrValueToPython;
     else
@@ -1045,7 +1060,7 @@ begin
           Result := True;
         end;
       tkClass, tkMethod, tkArray,
-      tkRecord, tkInterface, tkDynArray,
+      tkRecord, tkInterface,
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrPythonToValue;
     else
