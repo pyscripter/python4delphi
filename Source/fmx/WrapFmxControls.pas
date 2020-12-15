@@ -28,11 +28,15 @@ type
     function SendToBack_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function SetBounds_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function Repaint_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    function CanFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
+    function SetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
+    function ResetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     // Property Getters
     function Get_Parent( AContext : Pointer) : PPyObject; cdecl;
     function Get_Visible(AContext: Pointer): PPyObject; cdecl;
     function Get_ControlsCount( AContext : Pointer) : PPyObject; cdecl;
     function Get_Controls(AContext: Pointer): PPyObject; cdecl;
+    function Get_IsFocused( AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
     function Set_Parent( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     function Set_Visible(AValue: PPyObject; AContext: Pointer): integer; cdecl;
@@ -91,6 +95,18 @@ begin
   end;
 end;
 
+function TPyDelphiControl.CanFocus_Wrapper(args: PPyObject): PPyObject;
+begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':CanFocus') <> 0 then begin
+      Result := VariantAsPyObject(DelphiObject.CanFocus)
+    end else
+      Result := nil;
+  end;
+end;
+
 function TPyDelphiControl.LocalToAbsolute_Wrapper(
   args: PPyObject): PPyObject;
 var
@@ -126,6 +142,12 @@ begin
   Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ControlsCount);
 end;
 
+function TPyDelphiControl.Get_IsFocused(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.IsFocused);
+end;
+
 function TPyDelphiControl.Get_Controls(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -157,6 +179,8 @@ begin
         'Returns the count of contained controls', nil);
   PythonType.AddGetSet('Controls', @TPyDelphiControl.Get_Controls, nil,
         'Returns an iterator over contained controls', nil);
+  PythonType.AddGetSet('IsFocused', @TPyDelphiControl.Get_IsFocused, nil,
+        'Determines whether the control has input focus.', nil);
 end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
@@ -180,6 +204,15 @@ begin
   PythonType.AddMethod('AbsoluteToLocal', @TPyDelphiControl.AbsoluteToLocal_Wrapper,
     'TControl.AbsoluteToLocal()'#10 +
     'Converts the screen coordinates of a specified point on the screen to client coordinates.');
+  PythonType.AddMethod('CanFocus', @TPyDelphiControl.CanFocus_Wrapper,
+    'TControl.CanFocus()'#10 +
+    'Indicates whether a control can receive focus. ');
+  PythonType.AddMethod('SetFocus', @TPyDelphiControl.SetFocus_Wrapper,
+    'TControl.SetFocus()'#10 +
+    'Gives the input focus to the control.');
+  PythonType.AddMethod('ResetFocus', @TPyDelphiControl.ResetFocus_Wrapper,
+    'TControl.ResetFocus()'#10 +
+    'Removes the focus from a control of from any children of the control.');
 end;
 
 function TPyDelphiControl.Repaint_Wrapper(args: PPyObject): PPyObject;
@@ -189,6 +222,19 @@ begin
   with GetPythonEngine do begin
     if PyArg_ParseTuple( args, ':Repaint') <> 0 then begin
       DelphiObject.Repaint;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
+function TPyDelphiControl.ResetFocus_Wrapper(args: PPyObject): PPyObject;
+begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':ResetFocus') <> 0 then begin
+      DelphiObject.ResetFocus();
       Result := ReturnNone;
     end else
       Result := nil;
@@ -246,6 +292,19 @@ end;
 procedure TPyDelphiControl.SetDelphiObject(const Value: TControl);
 begin
   inherited DelphiObject := Value;
+end;
+
+function TPyDelphiControl.SetFocus_Wrapper(args: PPyObject): PPyObject;
+begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':SetFocus') <> 0 then begin
+      DelphiObject.SetFocus;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
 end;
 
 function TPyDelphiControl.Set_Parent(AValue: PPyObject;
