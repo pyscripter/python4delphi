@@ -6,6 +6,7 @@ unit WrapDelphiTest;
 interface
 
 uses
+  Types,
   DUnitX.TestFramework,
   PythonEngine,
   WrapDelphi;
@@ -32,6 +33,7 @@ type
     procedure SetStringField(S: string);
   end;
 
+  TFruitDynArray = TArray<TFruit>;
   TTestRttiAccess = class
   private
     FFruit: TFruit;
@@ -45,8 +47,11 @@ type
     RecordField: TTestRecord;
     InterfaceField: ITestInterface;
     procedure BuyFruits(AFruits: TFruits);
+    procedure SellFruits(const AFruits: TFruitDynArray);
+    procedure SellFruitsInt(const AFruits:TIntegerDynArray);
     property Fruit: TFruit read FFruit write FFruit;
     property Fruits: TFruits read FFruits write FFruits;
+
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -99,6 +104,8 @@ type
     procedure TestInterface;
     [Test]
     procedure TestInterfaceField;
+    [Test]
+    procedure TestDynArrayParameters;
   end;
 
 implementation
@@ -337,6 +344,45 @@ begin
   Assert.AreEqual(string(Rtti_Var.StringField), 'Hi');
   Rtti_Var.StringField := 'P4D';
   Assert.AreEqual(TestRttiAccess.StringField, 'P4D');
+end;
+
+procedure TTestWrapDelphi.TestDynArrayParameters;
+{var
+  rc: TRttiContext;
+  rt: TRttiType;
+  rm: TRttiMethod;
+  rp: TArray<TRttiParameter>;
+  ra: TArray<TValue>;}
+begin
+{  rc := TRttiContext.Create;
+  rt := rc.GetType(TypeInfo(TTestRttiAccess));
+  rm := rt.GetMethod('SellFruitsInt');
+  rp := rm.GetParameters;
+  SetLength(ra, 1);
+  ra[0] := TValue.FromArray(TypeInfo(TIntegerDynArray), [TValue.From<Integer>(0)]);
+  rm.Invoke(TestRttiAccess, ra);}
+  TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
+  Rtti_Var.SellFruitsInt(VarPythonCreate([0, 1], stList));
+  Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
+  TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
+  Rtti_Var.SellFruits(VarPythonCreate([Ord(TFruit.Apple), Ord(TFruit.Banana)], stList));
+  Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
+end;
+
+procedure TTestRttiAccess.SellFruits(const AFruits: TFruitDynArray);
+var
+  Fruit: TFruit;
+begin
+  for Fruit in AFruits do
+    Exclude(FFruits, Fruit);
+end;
+
+procedure TTestRttiAccess.SellFruitsInt(const AFruits:TIntegerDynArray);
+var
+  Fruit: Integer;
+begin
+  for Fruit in AFruits do
+    Exclude(FFruits, TFruit(Fruit));
 end;
 
 { TTestRecord }

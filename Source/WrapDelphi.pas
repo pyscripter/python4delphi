@@ -327,7 +327,7 @@ unit WrapDelphi;
 interface
 
 uses
-  SysUtils, Classes, PythonEngine,  TypInfo,
+  SysUtils, Classes, PythonEngine,  TypInfo, Types,
   Variants,
 {$IFNDEF FPC}
 {$IFDEF EXTENDED_RTTI}
@@ -2745,6 +2745,39 @@ end;
 {$IFDEF EXTENDED_RTTI}
 function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
 
+  function ParamAsDynArray(PyValue: PPyObject; const RttiParam: TRttiParameter; out ParamValue: TValue): Boolean;
+  var
+    Arr: array of TValue;
+    I: Integer;
+    elType: PPTypeInfo;
+    V: Variant;
+    Num: Int64;
+  begin
+    Result := False;
+    if (RttiParam.ParamType = nil) or (RttiParam.ParamType.Handle = nil) or (RttiParam.ParamType.Handle.TypeData = nil) then
+      Exit;
+    elType := RttiParam.ParamType.Handle.TypeData.elType;
+    if elType = nil then
+      elType := RttiParam.ParamType.Handle.TypeData.elType2;
+    if elType = nil then
+      Exit;
+
+    SetLength(Arr, PythonType.Engine.PyList_Size(PyValue));
+    for I := 0 to PythonType.Engine.PyList_Size(PyValue) - 1 do
+    begin
+      V := PythonType.Engine.PyObjectAsVariant(PythonType.Engine.PyList_GetItem(PyValue, i));
+      if elType^.Kind = tkEnumeration then
+      begin
+        Num := TValue.FromVariant(V).Cast(TypeInfo(Int64)).AsInt64;
+        Arr[i] := TValue.FromOrdinal(elType^, Num);
+      end
+      else
+        Arr[i] := TValue.FromVariant(V).Cast(elType^);
+    end;
+    ParamValue := TValue.FromArray(RttiParam.ParamType.Handle, Arr);
+    Result := True;
+  end;
+
   function FindMethod(const MethName:string; RttiType : TRttiType;
     PyArgs: PPyObject; var Args: array of TValue):TRttiMethod;
   // Deals with overloaded methods
@@ -2793,8 +2826,12 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
                 Break
               end
             end
-            else
+            else if (Param.ParamType.TypeKind = tkDynArray) and PythonType.Engine.PyList_Check(PyValue) then
             begin
+              if ParamAsDynArray(PyValue, Param, Args[Index]) then
+                Continue; //to avoid last check
+            end
+            else begin
               if not SimplePythonToValue(PyValue, Param.ParamType.Handle,
                 Args[Index], ErrMsg) then
               begin
@@ -2802,6 +2839,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
                 Break
               end;
             end;
+
             if (Param.ParamType <> nil) and not Args[Index].IsType(Param.ParamType.Handle) then
             begin
               Result :=nil;
@@ -2846,7 +2884,10 @@ begin
 
   try
     if ParentRtti is TRttiInstanceType then
-      Addr := TValue.From(TObject(ParentAddress))
+      if meth.IsClassMethod then
+        Addr := TValue.From(TObject(ParentAddress).ClassType)
+      else
+        Addr := TValue.From(TObject(ParentAddress))
     else if ParentRtti is TRttiInterfaceType then
        TValue.Make(@ParentAddress, ParentRtti.Handle, Addr)
     else
