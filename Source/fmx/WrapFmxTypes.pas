@@ -5,7 +5,7 @@ unit WrapFmxTypes;
 interface
 
 uses
-  System.Types, PythonEngine, WrapDelphi;
+  System.Types, FMX.Types, PythonEngine, WrapDelphi, WrapDelphiClasses;
 
 type
   {
@@ -32,6 +32,23 @@ type
     class procedure SetupType(PythonType: TPythonType); override;
 
     property Value : TPointF read FValue write FValue;
+  end;
+
+  TPyDelphiFmxObject = class(TPyDelphiComponent)
+  private
+    function GetDelphiObject: TFmxObject;
+    procedure SetDelphiObject(const Value: TFmxObject);
+  protected
+    // Property Getters
+    function Get_Parent(AContext: Pointer): PPyObject; cdecl;
+    // Property Setters
+    function Set_Parent(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure RegisterMethods(PythonType: TPythonType); override;
+    // Properties
+    property DelphiObject: TFmxObject read GetDelphiObject write SetDelphiObject;
   end;
 
   {Helper functions}
@@ -168,6 +185,7 @@ procedure TTypesRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
 end;
 
 { Helper functions }
@@ -197,6 +215,56 @@ begin
           PAnsiChar(AnsiString(Format('%s receives only PointF objects', [AAttributeName]))));
     end;
   end;
+end;
+
+{ TPyDelphiFmxObject }
+
+class function TPyDelphiFmxObject.DelphiObjectClass: TClass;
+begin
+  Result := TFmxObject;
+end;
+
+function TPyDelphiFmxObject.GetDelphiObject: TFmxObject;
+begin
+  Result := TFmxObject(inherited DelphiObject);
+end;
+
+function TPyDelphiFmxObject.Get_Parent(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Parent);
+end;
+
+class procedure TPyDelphiFmxObject.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddGetSet('Parent', @TPyDelphiFmxObject.Get_Parent, @TPyDelphiFmxObject.Set_Parent,
+        'Returns/Sets the Control Visibility', nil);
+end;
+
+class procedure TPyDelphiFmxObject.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+end;
+
+procedure TPyDelphiFmxObject.SetDelphiObject(const Value: TFmxObject);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiFmxObject.Set_Parent(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LObject : TObject;
+begin
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Parent', TFmxObject, LObject) then
+  begin
+    Self.DelphiObject.Parent := TFmxObject(LObject);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 initialization
