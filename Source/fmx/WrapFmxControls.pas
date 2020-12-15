@@ -31,6 +31,8 @@ type
     // Property Getters
     function Get_Parent( AContext : Pointer) : PPyObject; cdecl;
     function Get_Visible(AContext: Pointer): PPyObject; cdecl;
+    function Get_ControlsCount( AContext : Pointer) : PPyObject; cdecl;
+    function Get_Controls(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_Parent( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     function Set_Visible(AValue: PPyObject; AContext: Pointer): integer; cdecl;
@@ -40,6 +42,24 @@ type
     class procedure RegisterMethods( PythonType : TPythonType ); override;
     // Properties
     property DelphiObject: TControl read GetDelphiObject write SetDelphiObject;
+  end;
+
+  {
+    Access to the child controls of a FMX.Controls.TControl.Controls collection.
+  }
+  TControlsAccess = class(TContainerAccess)
+  private
+    function GetContainer: TControl;
+  public
+    function GetItem(AIndex : Integer) : PPyObject; override;
+    function GetSize : Integer; override;
+    function IndexOf(AValue : PPyObject) : Integer; override;
+
+    class function ExpectedContainerClass : TClass; override;
+    class function SupportsIndexOf : Boolean; override;
+    class function Name : string; override;
+
+    property Container : TControl read GetContainer;
   end;
 
 implementation
@@ -100,6 +120,20 @@ begin
   Result := TControl(inherited DelphiObject);
 end;
 
+function TPyDelphiControl.Get_ControlsCount(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ControlsCount);
+end;
+
+function TPyDelphiControl.Get_Controls(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := Self.PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TControlsAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
+end;
+
 function TPyDelphiControl.Get_Parent(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -119,6 +153,10 @@ begin
         'Returns/Sets the Control Visibility', nil);
   PythonType.AddGetSet('Visible', @TPyDelphiControl.Get_Visible, @TPyDelphiControl.Set_Visible,
         'Returns/Sets the Control Visibility', nil);
+  PythonType.AddGetSet('ControlsCount', @TPyDelphiControl.Get_ControlsCount, nil,
+        'Returns the count of contained controls', nil);
+  PythonType.AddGetSet('Controls', @TPyDelphiControl.Get_Controls, nil,
+        'Returns an iterator over contained controls', nil);
 end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
@@ -257,6 +295,72 @@ procedure TControlsRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
+end;
+
+{ TControlsAccess }
+
+class function TControlsAccess.ExpectedContainerClass: TClass;
+begin
+  Result := TControl;
+end;
+
+function TControlsAccess.GetContainer: TControl;
+begin
+  Result := TControl(inherited Container);
+end;
+
+function TControlsAccess.GetItem(AIndex: Integer): PPyObject;
+begin
+  Result := Wrap(Container.Controls[AIndex]);
+end;
+
+function TControlsAccess.GetSize: Integer;
+begin
+  Result := Container.ControlsCount;
+end;
+
+function TControlsAccess.IndexOf(AValue: PPyObject): Integer;
+var
+  i : Integer;
+  S : string;
+  _obj : TPyObject;
+  _value : TObject;
+  _ctrl : TControl;
+begin
+  Result := -1;
+  with GetPythonEngine do begin
+    if PyUnicode_Check(AValue) then begin
+      S := PyUnicodeAsString(AValue);
+      for i := 0 to Container.ControlsCount - 1 do
+        if SameText(Container.Controls[i].Name, S) then begin
+          Result := i;
+          Break;
+        end;
+    end else if IsDelphiObject(AValue) then begin
+      _obj := PythonToDelphi(AValue);
+      if _obj is TPyDelphiObject then begin
+        _value := TPyDelphiObject(_obj).DelphiObject;
+        if _value is TControl then begin
+          _ctrl := TControl(_value);
+          for i := 0 to Container.ControlsCount-1 do
+            if Container.Controls[i] = _ctrl then begin
+              Result := i;
+              Break;
+            end;
+        end;
+      end;
+    end;
+  end;
+end;
+
+class function TControlsAccess.Name: string;
+begin
+  Result := 'Controls';
+end;
+
+class function TControlsAccess.SupportsIndexOf: Boolean;
+begin
+  Result := True;
 end;
 
 initialization
