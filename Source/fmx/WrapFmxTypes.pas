@@ -175,7 +175,7 @@ function WrapPointF(APyDelphiWrapper : TPyDelphiWrapper; const APoint : TPointF)
 var
   _type : TPythonType;
 begin
-  _type := APyDelphiWrapper.GetHelperType('PointTypeF');
+  _type := APyDelphiWrapper.GetHelperType('PointFType');
   Result := _type.CreateInstance;
   (PythonToDelphi(Result) as TPyDelphiPointF).Value := APoint;
 end;
