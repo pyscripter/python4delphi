@@ -95,6 +95,36 @@ type
     property DelphiObject: TStyledControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiTextControl = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TTextControl;
+    procedure SetDelphiObject(const Value: TTextControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TTextControl read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiStyleBook = class(TPyDelphiFmxObject)
+  private
+    function GetDelphiObject: TStyleBook;
+    procedure SetDelphiObject(const Value: TStyleBook);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TStyleBook read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiPopup = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPopup;
+    procedure SetDelphiObject(const Value: TPopup);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPopup read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 type
@@ -402,6 +432,9 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
 end;
 
 { TControlsAccess }
@@ -625,6 +658,57 @@ begin
     end
     else
       Result := -1;
+end;
+
+{ TPyDelphiTextControl }
+
+class function TPyDelphiTextControl.DelphiObjectClass: TClass;
+begin
+  Result := TTextControl;
+end;
+
+function TPyDelphiTextControl.GetDelphiObject: TTextControl;
+begin
+  Result := TTextControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTextControl.SetDelphiObject(const Value: TTextControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStyleBook }
+
+class function TPyDelphiStyleBook.DelphiObjectClass: TClass;
+begin
+  Result := TStyleBook;
+end;
+
+function TPyDelphiStyleBook.GetDelphiObject: TStyleBook;
+begin
+  Result := TStyleBook(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStyleBook.SetDelphiObject(const Value: TStyleBook);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPopup }
+
+class function TPyDelphiPopup.DelphiObjectClass: TClass;
+begin
+  Result := TPopup;
+end;
+
+function TPyDelphiPopup.GetDelphiObject: TPopup;
+begin
+  Result := TPopup(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPopup.SetDelphiObject(const Value: TPopup);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization
