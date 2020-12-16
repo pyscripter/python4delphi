@@ -239,6 +239,16 @@ type
     property DelphiObject: TCustomSwitch read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiSwitch = class(TPyDelphiCustomSwitch)
+  private
+    function GetDelphiObject: TSwitch;
+    procedure SetDelphiObject(const Value: TSwitch);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TSwitch read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -289,6 +299,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBitmapTrackBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomSwitch);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSwitch);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -680,6 +691,23 @@ begin
 end;
 
 procedure TPyDelphiCustomSwitch.SetDelphiObject(const Value: TCustomSwitch);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSwitch }
+
+class function TPyDelphiSwitch.DelphiObjectClass: TClass;
+begin
+  Result := TSwitch;
+end;
+
+function TPyDelphiSwitch.GetDelphiObject: TSwitch;
+begin
+  Result := TSwitch(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSwitch.SetDelphiObject(const Value: TSwitch);
 begin
   inherited DelphiObject := Value;
 end;
