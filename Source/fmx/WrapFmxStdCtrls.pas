@@ -319,6 +319,16 @@ type
     property DelphiObject: TImageControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiPathLabel = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPathLabel;
+    procedure SetDelphiObject(const Value: TPathLabel);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPathLabel read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -377,6 +387,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpanderButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpander);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPathLabel);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -904,6 +915,23 @@ begin
 end;
 
 procedure TPyDelphiImageControl.SetDelphiObject(const Value: TImageControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPathLabel }
+
+class function TPyDelphiPathLabel.DelphiObjectClass: TClass;
+begin
+  Result := TPathLabel;
+end;
+
+function TPyDelphiPathLabel.GetDelphiObject: TPathLabel;
+begin
+  Result := TPathLabel(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPathLabel.SetDelphiObject(const Value: TPathLabel);
 begin
   inherited DelphiObject := Value;
 end;
