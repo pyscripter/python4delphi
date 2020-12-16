@@ -75,6 +75,7 @@ type
     // Exposed Methods
     function ApplyStyleLookup_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function NeedStyleLookup_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    function Inflate_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_DefaultStyleLookupName(AContext: Pointer): PPyObject; cdecl;
     function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
@@ -494,6 +495,18 @@ begin
   Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.StyleLookup);
 end;
 
+function TPyDelphiStyledControl.Inflate_Wrapper(args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':Inflate') <> 0 then begin
+      DelphiObject.Inflate;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
 function TPyDelphiStyledControl.NeedStyleLookup_Wrapper(
   args: PPyObject): PPyObject;
 begin
@@ -529,6 +542,9 @@ begin
   PythonType.AddMethod('NeedStyleLookup', @TPyDelphiStyledControl.NeedStyleLookup_Wrapper,
     'TStyledControl.NeedStyleLookup()'#10 +
     'Call this procedure to indicate that this control requires to get and apply its style lookup.');
+  PythonType.AddMethod('Inflate', @TPyDelphiStyledControl.Inflate_Wrapper,
+    'TStyledControl.Inflate()'#10 +
+    'Call this procedure to get and apply its style lookup.');
 end;
 
 procedure TPyDelphiStyledControl.SetDelphiObject(const Value: TStyledControl);
