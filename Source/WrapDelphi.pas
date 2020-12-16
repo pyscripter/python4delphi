@@ -2806,22 +2806,25 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     PyValue : PPyObject;
     Param: TRttiParameter;
     Params : TArray<TRttiParameter>;
+    SearchContinue: Boolean;
   begin
-    Result :=nil;
+    Result := nil;
     for Method in RttiType.GetMethods do
       if SameText(Method.Name, MethName) then
       begin
-        Params:=Method.GetParameters;
-        if Length(Args)=Length(Params) then
+        Params := Method.GetParameters;
+        if Length(Args) = Length(Params) then
         begin
           Result := Method;
-          for Index:= 0 to Length(Params)-1 do
+          SearchContinue := False;
+          for Index := 0 to Length(Params) - 1 do
           begin
             Param := Params[Index];
             if (Param.ParamType = nil) or
               (Param.Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> []) then
             begin
-              Result :=nil;
+              Result := nil;
+              SearchContinue := True;
               Break;
             end;
 
@@ -2860,8 +2863,10 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
               Result :=nil;
               Break;
             end;
-          end;
-          Break;
+          end; // for params
+
+          if not SearchContinue then
+            Break;
         end;
      end;
   end;

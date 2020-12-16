@@ -54,7 +54,8 @@ type
     function GetStaticArray: TStaticArray;
     property Fruit: TFruit read FFruit write FFruit;
     property Fruits: TFruits read FFruits write FFruits;
-
+    function SetStringField(var Value: Integer): string; overload;
+    function SetStringField(const Value: string): string; overload;
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -113,6 +114,8 @@ type
     procedure TestGetDynArray;
     [Test]
     procedure TestGetStaticArray;
+    [Test]
+    procedure TestMethodWithVarAndOverload;
   end;
 
 implementation
@@ -394,6 +397,24 @@ begin
   TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
   Rtti_Var.SellFruits(VarPythonCreate([Ord(TFruit.Apple), Ord(TFruit.Banana)], stList));
   Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
+end;
+
+procedure TTestWrapDelphi.TestMethodWithVarAndOverload;
+begin
+  Rtti_Var.SetStringField('test');
+  Assert.AreEqual('test', TestRttiAccess.StringField);
+end;
+
+function TTestRttiAccess.SetStringField(const Value: string): string;
+begin
+  StringField := Value;
+  Result := StringField;
+end;
+
+function TTestRttiAccess.SetStringField(var Value: Integer): string;
+begin
+  StringField := IntToStr(Value);
+  Result := StringField;
 end;
 
 function TTestRttiAccess.GetDynArray: TInt64DynArray;
