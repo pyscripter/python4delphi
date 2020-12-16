@@ -73,6 +73,7 @@ type
     procedure SetDelphiObject(const Value: TStyledControl);
   protected
     // Exposed Methods
+    function ApplyStyleLookup_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_DefaultStyleLookupName(AContext: Pointer): PPyObject; cdecl;
     function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
@@ -450,6 +451,19 @@ end;
 
 { TPyDelphiStyledControl }
 
+function TPyDelphiStyledControl.ApplyStyleLookup_Wrapper(
+  args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':ApplyStyleLookup') <> 0 then begin
+      DelphiObject.ApplyStyleLookup;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
 class function TPyDelphiStyledControl.DelphiObjectClass: TClass;
 begin
   Result := TStyledControl;
@@ -495,6 +509,9 @@ end;
 class procedure TPyDelphiStyledControl.RegisterMethods(PythonType: TPythonType);
 begin
   inherited;
+  PythonType.AddMethod('ApplyStyleLookup', @TPyDelphiStyledControl.ApplyStyleLookup_Wrapper,
+    'TStyledControl.ApplyStyleLookup()'#10 +
+    'Gets and applies the style of a TStyledControl.');
 end;
 
 procedure TPyDelphiStyledControl.SetDelphiObject(const Value: TStyledControl);
