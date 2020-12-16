@@ -465,6 +465,10 @@ end;
 class procedure TPyDelphiStyledControl.RegisterGetSets(PythonType: TPythonType);
 begin
   inherited;
+  with PythonType do begin
+    AddGetSet('StyleLookup', @TPyDelphiStyledControl.Get_StyleLookup, @TPyDelphiStyledControl.Set_StyleLookup,
+      'Provides access to the StyleLookup of a StyledControl', nil);
+  end;
 end;
 
 class procedure TPyDelphiStyledControl.RegisterMethods(PythonType: TPythonType);
