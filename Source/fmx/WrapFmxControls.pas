@@ -7,7 +7,8 @@ interface
 uses
   Classes, SysUtils, TypInfo, Types,
   FMX.Types, FMX.Controls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes;
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes,
+  FMX.Controls.Presentation;
 
 type
   {
@@ -123,6 +124,16 @@ type
     class function DelphiObjectClass: TClass; override;
     // Properties
     property DelphiObject: TPopup read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiPresentedControl = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPresentedControl;
+    procedure SetDelphiObject(const Value: TPresentedControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPresentedControl read GetDelphiObject write SetDelphiObject;
   end;
 
 implementation
@@ -707,6 +718,24 @@ begin
 end;
 
 procedure TPyDelphiPopup.SetDelphiObject(const Value: TPopup);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPresentedControl }
+
+class function TPyDelphiPresentedControl.DelphiObjectClass: TClass;
+begin
+  Result := TPresentedControl;
+end;
+
+function TPyDelphiPresentedControl.GetDelphiObject: TPresentedControl;
+begin
+  Result := TPresentedControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPresentedControl.SetDelphiObject(
+  const Value: TPresentedControl);
 begin
   inherited DelphiObject := Value;
 end;
