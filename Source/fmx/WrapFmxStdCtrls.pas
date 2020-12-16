@@ -199,6 +199,16 @@ type
     property DelphiObject: TCustomTrack read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiTrack = class(TPyDelphiCustomTrack)
+  private
+    function GetDelphiObject: TTrack;
+    procedure SetDelphiObject(const Value: TTrack);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TTrack read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -245,6 +255,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiProgressBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiThumb);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTrack);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrack);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -568,6 +579,23 @@ begin
 end;
 
 procedure TPyDelphiCustomTrack.SetDelphiObject(const Value: TCustomTrack);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiTrack }
+
+class function TPyDelphiTrack.DelphiObjectClass: TClass;
+begin
+  Result := TTrack;
+end;
+
+function TPyDelphiTrack.GetDelphiObject: TTrack;
+begin
+  Result := TTrack(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTrack.SetDelphiObject(const Value: TTrack);
 begin
   inherited DelphiObject := Value;
 end;
