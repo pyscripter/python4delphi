@@ -279,6 +279,16 @@ type
     property DelphiObject: TAniIndicator read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiArcDial = class(TPyDelphiPresentedControl)
+  private
+    function GetDelphiObject: TArcDial;
+    procedure SetDelphiObject(const Value: TArcDial);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TArcDial read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -333,6 +343,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScrollBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSmallScrollBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAniIndicator);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArcDial);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -792,6 +803,23 @@ begin
 end;
 
 procedure TPyDelphiAniIndicator.SetDelphiObject(const Value: TAniIndicator);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiArcDial }
+
+class function TPyDelphiArcDial.DelphiObjectClass: TClass;
+begin
+  Result := TArcDial;
+end;
+
+function TPyDelphiArcDial.GetDelphiObject: TArcDial;
+begin
+  Result := TArcDial(inherited DelphiObject);
+end;
+
+procedure TPyDelphiArcDial.SetDelphiObject(const Value: TArcDial);
 begin
   inherited DelphiObject := Value;
 end;
