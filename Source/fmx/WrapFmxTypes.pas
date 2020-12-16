@@ -34,6 +34,28 @@ type
     property Value : TPointF read FValue write FValue;
   end;
 
+  TPyDelphiSizeF = class(TPyObject)
+  private
+    FValue: TSizeF;
+  protected
+    // Exposed Getters
+    function Get_Width(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Height(Acontext: Pointer): PPyObject; cdecl;
+    // Exposed Setters
+    function Set_Width(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Height(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+
+    function Compare(obj: PPyObject): Integer; override;
+    function Repr: PPyObject; override;
+
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure SetupType(PythonType: TPythonType); override;
+
+    property Value : TSizeF read FValue write FValue;
+  end;
+
   TPyDelphiFmxObject = class(TPyDelphiComponent)
   private
     function GetDelphiObject: TFmxObject;
@@ -74,7 +96,9 @@ type
 
   {Helper functions}
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
+  function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
   function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
+  function CheckSizeFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TSizeF) : Boolean;
 
 implementation
 
@@ -206,6 +230,7 @@ procedure TTypesRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
 end;
@@ -218,6 +243,15 @@ begin
   _type := APyDelphiWrapper.GetHelperType('PointFType');
   Result := _type.CreateInstance;
   (PythonToDelphi(Result) as TPyDelphiPointF).Value := APoint;
+end;
+
+function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
+var
+  LType : TPythonType;
+begin
+  LType := APyDelphiWrapper.GetHelperType('SizeFType');
+  Result := LType.CreateInstance;
+  (PythonToDelphi(Result) as TPyDelphiSizeF).Value := ASize;
 end;
 
 function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
@@ -235,6 +269,25 @@ begin
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
           PAnsiChar(AnsiString(Format('%s receives only PointF objects', [AAttributeName]))));
+    end;
+  end;
+end;
+
+function CheckSizeFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TSizeF) : Boolean;
+begin
+  with GetPythonEngine do
+  begin
+    if IsDelphiObject(AAttribute) and (PythonToDelphi(AAttribute) is TPyDelphiSizeF) then
+    begin
+      AValue := TPyDelphiSizeF(PythonToDelphi(AAttribute)).Value;
+      Result := True;
+    end
+    else
+    begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_AttributeError^,
+          PAnsiChar(AnsiString(Format('%s receives only SizeF objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -379,6 +432,107 @@ begin
     with GetPythonEngine do begin
       Adjust(@Self);
       DelphiObject.Y := y;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+{ TPyDelphiSizeF }
+
+function TPyDelphiSizeF.Compare(obj: PPyObject): Integer;
+var
+  LOther : TPyDelphiSizeF;
+begin
+  if IsDelphiObject(obj) and (PythonToDelphi(obj) is TPyDelphiPointF) then
+  begin
+    LOther := TPyDelphiSizeF(PythonToDelphi(obj));
+    Result := CompareValue(Value.Width, LOther.Value.Width);
+    if Result = 0 then
+      Result := CompareValue(Value.Height, LOther.Value.Height);
+  end
+  else
+    Result := 1;
+end;
+
+constructor TPyDelphiSizeF.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LWidth, LHeight : single;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'ff:Create', @LWidth, @LHeight) <> 0 then
+  begin
+   FValue.Width := LWidth;
+   FValue.Height := LHeight;
+  end
+end;
+
+function TPyDelphiSizeF.Get_Height(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Height);
+end;
+
+function TPyDelphiSizeF.Get_Width(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Width);
+end;
+
+class procedure TPyDelphiSizeF.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do
+    begin
+      AddGetSet('Width', @TPyDelphiSizeF.Get_Width, @TPyDelphiSizeF.Set_Width,
+        'Provides access to the width of a sizef', nil);
+      AddGetSet('Height', @TPyDelphiSizeF.Get_Height, @TPyDelphiSizeF.Set_Height,
+        'Provides access to the height of a sizef', nil);
+    end;
+end;
+
+function TPyDelphiSizeF.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<SizeF (%f, %f)>',
+    [Value.Width, Value.Height]));
+end;
+
+class procedure TPyDelphiSizeF.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.TypeName := 'SizeF';
+  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
+  PythonType.GenerateCreateFunction := False;
+  PythonType.DocString.Text := 'wrapper for Delphi FMX TSizeF type';
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+end;
+
+function TPyDelphiSizeF.Set_Height(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Height', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Height := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+function TPyDelphiSizeF.Set_Width(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Width', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Width := LValue;
       Result := 0;
     end
     else
