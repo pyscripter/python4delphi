@@ -289,6 +289,16 @@ type
     property DelphiObject: TArcDial read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiExpanderButton = class(TPyDelphiCustomButton)
+  private
+    function GetDelphiObject: TExpanderButton;
+    procedure SetDelphiObject(const Value: TExpanderButton);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TExpanderButton read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -344,6 +354,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSmallScrollBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAniIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArcDial);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpanderButton);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -820,6 +831,23 @@ begin
 end;
 
 procedure TPyDelphiArcDial.SetDelphiObject(const Value: TArcDial);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiExpanderButton }
+
+class function TPyDelphiExpanderButton.DelphiObjectClass: TClass;
+begin
+  Result := TExpanderButton;
+end;
+
+function TPyDelphiExpanderButton.GetDelphiObject: TExpanderButton;
+begin
+  Result := TExpanderButton(inherited DelphiObject);
+end;
+
+procedure TPyDelphiExpanderButton.SetDelphiObject(const Value: TExpanderButton);
 begin
   inherited DelphiObject := Value;
 end;
