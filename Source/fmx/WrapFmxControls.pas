@@ -31,6 +31,7 @@ type
     function CanFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     function SetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     function ResetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
+    function PrepareForPaint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_Visible(AContext: Pointer): PPyObject; cdecl;
     function Get_ControlsCount( AContext : Pointer) : PPyObject; cdecl;
@@ -148,6 +149,18 @@ begin
   end;
 end;
 
+function TPyDelphiControl.PrepareForPaint_Wrapper(args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':PrepareForPaint') <> 0 then begin
+      DelphiObject.PrepareForPaint;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
 class function TPyDelphiControl.DelphiObjectClass: TClass;
 begin
   Result := TControl;
@@ -241,6 +254,9 @@ begin
   PythonType.AddMethod('ResetFocus', @TPyDelphiControl.ResetFocus_Wrapper,
     'TControl.ResetFocus()'#10 +
     'Removes the focus from a control of from any children of the control.');
+  PythonType.AddMethod('PrepareForPaint', @TPyDelphiControl.PrepareForPaint_Wrapper,
+    'TControl.PrepareForPaint()'#10 +
+    'Prepares the current control for painting.');
 end;
 
 function TPyDelphiControl.Repaint_Wrapper(args: PPyObject): PPyObject;
