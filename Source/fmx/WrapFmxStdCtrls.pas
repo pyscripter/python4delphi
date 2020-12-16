@@ -109,6 +109,16 @@ type
     property DelphiObject: TCheckBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiRadioButton = class (TPyDelphiPresentedTextControl)
+  private
+    function GetDelphiObject: TRadioButton;
+    procedure SetDelphiObject(const Value: TRadioButton);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TRadioButton read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -146,6 +156,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCornerButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCornerButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCheckBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRadioButton);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -316,6 +327,23 @@ begin
 end;
 
 procedure TPyDelphiCheckBox.SetDelphiObject(const Value: TCheckBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiRadioButton }
+
+class function TPyDelphiRadioButton.DelphiObjectClass: TClass;
+begin
+  Result := TRadioButton;
+end;
+
+function TPyDelphiRadioButton.GetDelphiObject: TRadioButton;
+begin
+  Result := TRadioButton(inherited DelphiObject);
+end;
+
+procedure TPyDelphiRadioButton.SetDelphiObject(const Value: TRadioButton);
 begin
   inherited DelphiObject := Value;
 end;
