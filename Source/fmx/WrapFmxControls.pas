@@ -376,6 +376,7 @@ procedure TControlsRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
 end;
 
 { TControlsAccess }
