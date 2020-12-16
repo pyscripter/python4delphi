@@ -952,12 +952,14 @@ function DynArrayToPython(const Value: TValue): PPyObject;
 var
   I: Integer;
   V: Variant;
+  PyEngine: TPythonEngine;
 begin
-  Result := GetPythonEngine().PyList_New(Value.GetArrayLength);
+  PyEngine := GetPythonEngine();
+  Result := PyEngine.PyList_New(Value.GetArrayLength);
   for I := 0 to Value.GetArrayLength() - 1 do
   begin
     V := Value.GetArrayElement(i).AsVariant;
-    GetPythonEngine().PyList_SetItem(Result, I, GetPythonEngine().VariantAsPyObject(V));
+    PyEngine.PyList_SetItem(Result, I, PyEngine.VariantAsPyObject(V));
   end;
 end;
 
