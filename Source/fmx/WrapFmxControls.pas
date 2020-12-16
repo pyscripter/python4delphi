@@ -82,6 +82,7 @@ type
     function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
     function Get_AutoTranslate(AContext: Pointer): PPyObject; cdecl;
     function Get_AdjustSizeValue(AContext: Pointer): PPyObject; cdecl;
+    function Get_AdjustType(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_StyleLookup(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_AutoTranslate(AValue: PPyObject; AContext: Pointer): integer; cdecl;
@@ -500,6 +501,12 @@ begin
   Result := WrapSizeF(PyDelphiWrapper, DelphiObject.AdjustSizeValue);
 end;
 
+function TPyDelphiStyledControl.Get_AdjustType(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyLong_FromLong(Ord(DelphiObject.AdjustType));
+end;
+
 function TPyDelphiStyledControl.Get_AutoTranslate(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -556,6 +563,9 @@ begin
       'Specifies whether the control''s text should be translated', nil);
     AddGetSet('AdjustSizeValue', @TPyDelphiStyledControl.Get_AdjustSizeValue, nil,
       'Updates the width and height of this control according to its current style', nil);
+    AddGetSet('AdjustType', @TPyDelphiStyledControl.Get_AdjustType, nil,
+      'Determines if and how the width and height of this control should be '
+      + 'modified to take the fixed space dictated by the style of this control', nil);
   end;
 end;
 
