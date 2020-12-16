@@ -34,6 +34,7 @@ type
   end;
 
   TFruitDynArray = TArray<TFruit>;
+  TStaticArray = array[0..999] of Int64;
   TTestRttiAccess = class
   private
     FFruit: TFruit;
@@ -49,9 +50,12 @@ type
     procedure BuyFruits(AFruits: TFruits);
     procedure SellFruits(const AFruits: TFruitDynArray);
     procedure SellFruitsInt(const AFruits:TIntegerDynArray);
+    function GetDynArray: TInt64DynArray;
+    function GetStaticArray: TStaticArray;
     property Fruit: TFruit read FFruit write FFruit;
     property Fruits: TFruits read FFruits write FFruits;
-
+    function SetStringField(var Value: Integer): string; overload;
+    function SetStringField(const Value: string): string; overload;
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -106,6 +110,12 @@ type
     procedure TestInterfaceField;
     [Test]
     procedure TestDynArrayParameters;
+    [Test]
+    procedure TestGetDynArray;
+    [Test]
+    procedure TestGetStaticArray;
+    [Test]
+    procedure TestMethodWithVarAndOverload;
   end;
 
 implementation
@@ -215,6 +225,26 @@ begin
   Assert.IsTrue(RTTI_var.Fruit = 'Apple');
   Rtti_Var.Fruit := 'Banana';
   Assert.IsTrue(TestRttiAccess.Fruit = Banana);
+end;
+
+procedure TTestWrapDelphi.TestGetDynArray;
+var
+  List: Variant;
+begin
+  List := Rtti_Var.GetDynArray();
+  Assert.IsTrue(VarIsPythonList(List));
+  Assert.AreEqual(1000000, Integer(len(List)));
+  Assert.AreEqual(Int64(999999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999999))));
+end;
+
+procedure TTestWrapDelphi.TestGetStaticArray;
+var
+  List: Variant;
+begin
+  List := Rtti_Var.GetStaticArray();
+  Assert.IsTrue(VarIsPythonList(List));
+  Assert.AreEqual(1000, Integer(len(List)));
+  Assert.AreEqual(Int64(999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999))));
 end;
 
 procedure TTestWrapDelphi.TestInterface;
@@ -367,6 +397,41 @@ begin
   TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
   Rtti_Var.SellFruits(VarPythonCreate([Ord(TFruit.Apple), Ord(TFruit.Banana)], stList));
   Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
+end;
+
+procedure TTestWrapDelphi.TestMethodWithVarAndOverload;
+begin
+  Rtti_Var.SetStringField('test');
+  Assert.AreEqual('test', TestRttiAccess.StringField);
+end;
+
+function TTestRttiAccess.SetStringField(const Value: string): string;
+begin
+  StringField := Value;
+  Result := StringField;
+end;
+
+function TTestRttiAccess.SetStringField(var Value: Integer): string;
+begin
+  StringField := IntToStr(Value);
+  Result := StringField;
+end;
+
+function TTestRttiAccess.GetDynArray: TInt64DynArray;
+var
+  I: Integer;
+begin
+  SetLength(Result, 1000000);
+  for I := 0 to Length(Result) - 1 do
+    Result[I] := I;
+end;
+
+function TTestRttiAccess.GetStaticArray: TStaticArray;
+var
+  I: Integer;
+begin
+  for I := 0 to Length(Result) - 1 do
+    Result[I] := I;
 end;
 
 procedure TTestRttiAccess.SellFruits(const AFruits: TFruitDynArray);

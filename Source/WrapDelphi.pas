@@ -948,6 +948,19 @@ end;
 { Helper functions }
 
 {$IFDEF EXTENDED_RTTI}
+function DynArrayToPython(const Value: TValue): PPyObject;
+var
+  I: Integer;
+  V: Variant;
+begin
+  Result := GetPythonEngine().PyList_New(Value.GetArrayLength);
+  for I := 0 to Value.GetArrayLength() - 1 do
+  begin
+    V := Value.GetArrayElement(i).AsVariant;
+    GetPythonEngine().PyList_SetItem(Result, I, GetPythonEngine().VariantAsPyObject(V));
+  end;
+end;
+
 function SimpleValueToPython(const Value: TValue; out ErrMsg: string): PPyObject;
 begin
   Result := nil;
@@ -982,8 +995,10 @@ begin
           Result := SetToPython(Value.TypeData.CompType^,
             PInteger(Value.GetReferenceToRawData)^);
         end;
-      tkClass, tkMethod, tkArray,
-      tkRecord, tkInterface, tkDynArray,
+      tkArray, tkDynArray:
+        Result := DynArrayToPython(Value);
+      tkClass, tkMethod,
+      tkRecord, tkInterface,
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrValueToPython;
     else
@@ -1047,7 +1062,7 @@ begin
           Result := True;
         end;
       tkClass, tkMethod, tkArray,
-      tkRecord, tkInterface, tkDynArray,
+      tkRecord, tkInterface,
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrPythonToValue;
     else
@@ -2809,22 +2824,25 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     PyValue : PPyObject;
     Param: TRttiParameter;
     Params : TArray<TRttiParameter>;
+    SearchContinue: Boolean;
   begin
-    Result :=nil;
+    Result := nil;
     for Method in RttiType.GetMethods do
       if SameText(Method.Name, MethName) then
       begin
-        Params:=Method.GetParameters;
-        if Length(Args)=Length(Params) then
+        Params := Method.GetParameters;
+        if Length(Args) = Length(Params) then
         begin
           Result := Method;
-          for Index:= 0 to Length(Params)-1 do
+          SearchContinue := False;
+          for Index := 0 to Length(Params) - 1 do
           begin
             Param := Params[Index];
             if (Param.ParamType = nil) or
               (Param.Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> []) then
             begin
-              Result :=nil;
+              Result := nil;
+              SearchContinue := True;
               Break;
             end;
 
@@ -2863,8 +2881,10 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
               Result :=nil;
               Break;
             end;
-          end;
-          Break;
+          end; // for params
+
+          if not SearchContinue then
+            Break;
         end;
      end;
   end;
