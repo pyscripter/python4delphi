@@ -149,6 +149,15 @@ type
     property DelphiObject: TToolBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiSizeGrip = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TSizeGrip;
+    procedure SetDelphiObject(const Value: TSizeGrip);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TSizeGrip read GetDelphiObject write SetDelphiObject;
+  end;
 
 implementation
 
@@ -191,6 +200,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGroupBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSizeGrip);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -429,6 +439,23 @@ begin
 end;
 
 procedure TPyDelphiToolBar.SetDelphiObject(const Value: TToolBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSizeGrip }
+
+class function TPyDelphiSizeGrip.DelphiObjectClass: TClass;
+begin
+  Result := TSizeGrip;
+end;
+
+function TPyDelphiSizeGrip.GetDelphiObject: TSizeGrip;
+begin
+  Result := TSizeGrip(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSizeGrip.SetDelphiObject(const Value: TSizeGrip);
 begin
   inherited DelphiObject := Value;
 end;
