@@ -29,6 +29,16 @@ type
     property DelphiObject: TPanel read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCalloutPanel = class (TPyDelphiPanel)
+  private
+    function GetDelphiObject: TCalloutPanel;
+    procedure SetDelphiObject(const Value: TCalloutPanel);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TCalloutPanel read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -58,6 +68,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedTextControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPanel);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCalloutPanel);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -91,6 +102,23 @@ begin
 end;
 
 procedure TPyDelphiPanel.SetDelphiObject(const Value: TPanel);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCalloutPanel }
+
+class function TPyDelphiCalloutPanel.DelphiObjectClass: TClass;
+begin
+  Result := TCalloutPanel;
+end;
+
+function TPyDelphiCalloutPanel.GetDelphiObject: TCalloutPanel;
+begin
+  Result := TCalloutPanel(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCalloutPanel.SetDelphiObject(const Value: TCalloutPanel);
 begin
   inherited DelphiObject := Value;
 end;
