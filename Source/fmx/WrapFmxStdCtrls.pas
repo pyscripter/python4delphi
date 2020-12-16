@@ -69,6 +69,16 @@ type
     property DelphiObject: TButton read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiSpeedButton = class (TPyDelphiCustomButton)
+  private
+    function GetDelphiObject: TSpeedButton;
+    procedure SetDelphiObject(const Value: TSpeedButton);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TSpeedButton read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -102,6 +112,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLabel);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiButton);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSpeedButton);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -203,6 +214,23 @@ begin
 end;
 
 procedure TPyDelphiButton.SetDelphiObject(const Value: TButton);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSpeedButton }
+
+class function TPyDelphiSpeedButton.DelphiObjectClass: TClass;
+begin
+  Result := TSpeedButton;
+end;
+
+function TPyDelphiSpeedButton.GetDelphiObject: TSpeedButton;
+begin
+  Result := TSpeedButton(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSpeedButton.SetDelphiObject(const Value: TSpeedButton);
 begin
   inherited DelphiObject := Value;
 end;
