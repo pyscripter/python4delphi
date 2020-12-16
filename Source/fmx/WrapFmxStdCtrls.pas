@@ -219,6 +219,16 @@ type
     property DelphiObject: TTrackBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiBitmapTrackBar = class(TPyDelphiTrackBar)
+  private
+    function GetDelphiObject: TBitmapTrackBar;
+    procedure SetDelphiObject(const Value: TBitmapTrackBar);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TBitmapTrackBar read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -267,6 +277,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTrack);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrack);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBitmapTrackBar);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -624,6 +635,23 @@ begin
 end;
 
 procedure TPyDelphiTrackBar.SetDelphiObject(const Value: TTrackBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiBitmapTrackBar }
+
+class function TPyDelphiBitmapTrackBar.DelphiObjectClass: TClass;
+begin
+  Result := TBitmapTrackBar;
+end;
+
+function TPyDelphiBitmapTrackBar.GetDelphiObject: TBitmapTrackBar;
+begin
+  Result := TBitmapTrackBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiBitmapTrackBar.SetDelphiObject(const Value: TBitmapTrackBar);
 begin
   inherited DelphiObject := Value;
 end;
