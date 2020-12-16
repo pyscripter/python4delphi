@@ -105,6 +105,16 @@ type
     property DelphiObject: TTextControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiStyleBook = class(TPyDelphiFmxObject)
+  private
+    function GetDelphiObject: TStyleBook;
+    procedure SetDelphiObject(const Value: TStyleBook);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TStyleBook read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 type
@@ -413,6 +423,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
 end;
 
 { TControlsAccess }
@@ -651,6 +662,23 @@ begin
 end;
 
 procedure TPyDelphiTextControl.SetDelphiObject(const Value: TTextControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStyleBook }
+
+class function TPyDelphiStyleBook.DelphiObjectClass: TClass;
+begin
+  Result := TStyleBook;
+end;
+
+function TPyDelphiStyleBook.GetDelphiObject: TStyleBook;
+begin
+  Result := TStyleBook(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStyleBook.SetDelphiObject(const Value: TStyleBook);
 begin
   inherited DelphiObject := Value;
 end;
