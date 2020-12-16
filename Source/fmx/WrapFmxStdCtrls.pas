@@ -99,6 +99,16 @@ type
     property DelphiObject: TCornerButton read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCheckBox = class (TPyDelphiPresentedTextControl)
+  private
+    function GetDelphiObject: TCheckBox;
+    procedure SetDelphiObject(const Value: TCheckBox);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TCheckBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -135,6 +145,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSpeedButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCornerButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCornerButton);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCheckBox);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -288,6 +299,23 @@ begin
 end;
 
 procedure TPyDelphiCornerButton.SetDelphiObject(const Value: TCornerButton);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCheckBox }
+
+class function TPyDelphiCheckBox.DelphiObjectClass: TClass;
+begin
+  Result := TCheckBox;
+end;
+
+function TPyDelphiCheckBox.GetDelphiObject: TCheckBox;
+begin
+  Result := TCheckBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCheckBox.SetDelphiObject(const Value: TCheckBox);
 begin
   inherited DelphiObject := Value;
 end;
