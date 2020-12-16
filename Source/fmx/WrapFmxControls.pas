@@ -434,6 +434,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
 end;
 
 { TControlsAccess }
