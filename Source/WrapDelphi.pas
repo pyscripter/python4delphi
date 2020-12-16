@@ -869,6 +869,7 @@ Type
 
   function  CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
   function  CheckIntAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Integer) : Boolean;
+  function  CheckFloatAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Double) : Boolean;
   function  CheckBoolAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Boolean) : Boolean;
   function  CheckStrAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : string) : Boolean;
   function  CheckObjAttribute(AAttribute : PPyObject; const AAttributeName : string;
@@ -896,6 +897,7 @@ Uses
 resourcestring
   rs_ErrCheckIndex = '%s "%d" out of range';
   rs_ErrCheckInt = '%s receives only integer values';
+  rs_ErrCheckFloat = '%s receives only float values';
   rs_ErrCheckStr = '%s receives only string values';
   rs_ErrCheckCallable = '%s accepts only None or Callable values';
   rs_ErrCheckEnum = 'Enum %s accepts values between %d and %d. Received %d.';
@@ -1169,6 +1171,22 @@ begin
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
         PyUnicodeFromString(Format(rs_ErrCheckInt, [AAttributeName])));
+  end;
+end;
+
+function CheckFloatAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : Double) : Boolean;
+begin
+  if GetPythonEngine.PyFloat_Check(AAttribute) then
+  begin
+    AValue := GetPythonEngine.PyFloat_AsDouble(AAttribute);
+    Result := True;
+  end
+  else
+  begin
+    Result := False;
+    with GetPythonEngine do
+      PyErr_SetObject (PyExc_AttributeError^,
+        PyUnicodeFromString(Format(rs_ErrCheckFloat, [AAttributeName])));
   end;
 end;
 
