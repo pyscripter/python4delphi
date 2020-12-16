@@ -74,6 +74,7 @@ type
   protected
     // Exposed Methods
     // Property Getters
+    function Get_DefaultStyleLookupName(AContext: Pointer): PPyObject; cdecl;
     function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_StyleLookup(AValue: PPyObject; AContext: Pointer): integer; cdecl;
@@ -457,6 +458,13 @@ begin
   Result := TStyledControl(inherited DelphiObject);
 end;
 
+function TPyDelphiStyledControl.Get_DefaultStyleLookupName(
+  AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.DefaultStyleLookupName);
+end;
+
 function TPyDelphiStyledControl.Get_StyleLookup(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -467,8 +475,10 @@ class procedure TPyDelphiStyledControl.RegisterGetSets(PythonType: TPythonType);
 begin
   inherited;
   with PythonType do begin
+    AddGetSet('DefaultStyleLookupName', @TPyDelphiStyledControl.Get_StyleLookup, nil,
+      'Provides access to the default style lookup name of a StyledControl', nil);
     AddGetSet('StyleLookup', @TPyDelphiStyledControl.Get_StyleLookup, @TPyDelphiStyledControl.Set_StyleLookup,
-      'Provides access to the StyleLookup of a StyledControl', nil);
+      'Provides access to the style lookup of a StyledControl', nil);
   end;
 end;
 
