@@ -179,6 +179,16 @@ type
     property DelphiObject: TProgressBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiThumb = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TThumb;
+    procedure SetDelphiObject(const Value: TThumb);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TThumb read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -223,6 +233,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSizeGrip);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSplitter);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiProgressBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiThumb);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -512,6 +523,23 @@ begin
 end;
 
 procedure TPyDelphiProgressBar.SetDelphiObject(const Value: TProgressBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiThumb }
+
+class function TPyDelphiThumb.DelphiObjectClass: TClass;
+begin
+  Result := TThumb;
+end;
+
+function TPyDelphiThumb.GetDelphiObject: TThumb;
+begin
+  Result := TThumb(inherited DelphiObject);
+end;
+
+procedure TPyDelphiThumb.SetDelphiObject(const Value: TThumb);
 begin
   inherited DelphiObject := Value;
 end;
