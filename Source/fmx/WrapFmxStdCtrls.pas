@@ -309,6 +309,16 @@ type
     property DelphiObject: TExpander read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiImageControl = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TImageControl;
+    procedure SetDelphiObject(const Value: TImageControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TImageControl read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -366,6 +376,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArcDial);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpanderButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpander);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageControl);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -876,6 +887,23 @@ begin
 end;
 
 procedure TPyDelphiExpander.SetDelphiObject(const Value: TExpander);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiImageControl }
+
+class function TPyDelphiImageControl.DelphiObjectClass: TClass;
+begin
+  Result := TImageControl;
+end;
+
+function TPyDelphiImageControl.GetDelphiObject: TImageControl;
+begin
+  Result := TImageControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiImageControl.SetDelphiObject(const Value: TImageControl);
 begin
   inherited DelphiObject := Value;
 end;
