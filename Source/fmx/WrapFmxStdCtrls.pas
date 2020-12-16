@@ -159,6 +159,16 @@ type
     property DelphiObject: TSizeGrip read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiSplitter = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TSplitter;
+    procedure SetDelphiObject(const Value: TSplitter);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TSplitter read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -201,6 +211,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSizeGrip);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSplitter);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -456,6 +467,23 @@ begin
 end;
 
 procedure TPyDelphiSizeGrip.SetDelphiObject(const Value: TSizeGrip);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSplitter }
+
+class function TPyDelphiSplitter.DelphiObjectClass: TClass;
+begin
+  Result := TSplitter;
+end;
+
+function TPyDelphiSplitter.GetDelphiObject: TSplitter;
+begin
+  Result := TSplitter(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSplitter.SetDelphiObject(const Value: TSplitter);
 begin
   inherited DelphiObject := Value;
 end;
