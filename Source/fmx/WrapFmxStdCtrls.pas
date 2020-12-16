@@ -269,6 +269,16 @@ type
     property DelphiObject: TSmallScrollBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiAniIndicator = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TAniIndicator;
+    procedure SetDelphiObject(const Value: TAniIndicator);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TAniIndicator read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -322,6 +332,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScrollBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSmallScrollBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAniIndicator);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -764,6 +775,23 @@ begin
 end;
 
 procedure TPyDelphiSmallScrollBar.SetDelphiObject(const Value: TSmallScrollBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiAniIndicator }
+
+class function TPyDelphiAniIndicator.DelphiObjectClass: TClass;
+begin
+  Result := TAniIndicator;
+end;
+
+function TPyDelphiAniIndicator.GetDelphiObject: TAniIndicator;
+begin
+  Result := TAniIndicator(inherited DelphiObject);
+end;
+
+procedure TPyDelphiAniIndicator.SetDelphiObject(const Value: TAniIndicator);
 begin
   inherited DelphiObject := Value;
 end;
