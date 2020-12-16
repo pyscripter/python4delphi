@@ -37,8 +37,10 @@ type
     function Get_Controls(AContext: Pointer): PPyObject; cdecl;
     function Get_IsFocused( AContext : Pointer) : PPyObject; cdecl;
     function Get_ParentControl( AContext : Pointer) : PPyObject; cdecl;
+    function Get_Position(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_Visible(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Position(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
@@ -161,6 +163,12 @@ begin
   Result := Wrap(DelphiObject.ParentControl);
 end;
 
+function TPyDelphiControl.Get_Position(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Position);
+end;
+
 function TPyDelphiControl.Get_Visible(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -178,6 +186,8 @@ begin
         'Returns an iterator over contained controls', nil);
   PythonType.AddGetSet('IsFocused', @TPyDelphiControl.Get_IsFocused, nil,
         'Determines whether the control has input focus.', nil);
+  PythonType.AddGetSet('Position', @TPyDelphiControl.Get_Position, @TPyDelphiControl.Set_Position,
+        'Returns an access to the position of the control inside its parent', nil);
 end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
@@ -302,6 +312,21 @@ begin
     end else
       Result := nil;
   end;
+end;
+
+function TPyDelphiControl.Set_Position(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TObject;
+begin
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Position', TPosition, LValue) then
+  begin
+    DelphiObject.Position := TPosition(LValue);
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiControl.Set_Visible(AValue: PPyObject;

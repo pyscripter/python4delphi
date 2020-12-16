@@ -51,6 +51,27 @@ type
     property DelphiObject: TFmxObject read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiPosition = class(TPyDelphiPersistent)
+  private
+    function GetDelphiObject: TPosition;
+    procedure SetDelphiObject(const Value: TPosition);
+  protected
+    //Exposed Getters
+    function Get_X(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Y(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Point(Acontext: Pointer): PPyObject; cdecl;
+    //Exposed Setters
+    function Set_X(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Y(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Point(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterMethods(PythonType: TPythonType); override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    // Properties
+    property DelphiObject: TPosition read GetDelphiObject write SetDelphiObject;
+  end;
+
   {Helper functions}
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
   function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
@@ -186,6 +207,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
 end;
 
 { Helper functions }
@@ -265,6 +287,102 @@ begin
   end
   else
     Result := -1;
+end;
+
+{ TPyDelphiPosition }
+
+class function TPyDelphiPosition.DelphiObjectClass: TClass;
+begin
+  Result := TPosition;
+end;
+
+function TPyDelphiPosition.GetDelphiObject: TPosition;
+begin
+  Result := TPosition(inherited DelphiObject);
+end;
+
+function TPyDelphiPosition.Get_Point(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := WrapPointF(PyDelphiWrapper, DelphiObject.Point);
+end;
+
+function TPyDelphiPosition.Get_X(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(DelphiObject.X);
+end;
+
+function TPyDelphiPosition.Get_Y(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(DelphiObject.Y);
+end;
+
+class procedure TPyDelphiPosition.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do begin
+    AddGetSet('X', @TPyDelphiPosition.Get_X, @TPyDelphiPosition.Set_X,
+      'Provides access to the X coordinate of a control inside its parent', nil);
+    AddGetSet('Y', @TPyDelphiPosition.Get_Y, @TPyDelphiPosition.Set_Y,
+      'Provides access to the Y coordinate of a control inside its parent', nil);
+    AddGetSet('Point', @TPyDelphiPosition.Get_Point, @TPyDelphiPosition.Set_Point,
+      'Provides access to the position of a control inside its parent', nil);
+  end;
+end;
+
+class procedure TPyDelphiPosition.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+end;
+
+procedure TPyDelphiPosition.SetDelphiObject(const Value: TPosition);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiPosition.Set_Point(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TPointF;
+begin
+  Adjust(@Self);
+  if CheckPointFAttribute(AValue, 'Point', LValue) then
+  begin
+    DelphiObject.Point := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+function TPyDelphiPosition.Set_X(AValue: PPyObject; AContext: Pointer): integer;
+var
+  x: double;
+begin
+  if CheckFloatAttribute(AValue, 'X', x) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      DelphiObject.X := x;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+function TPyDelphiPosition.Set_Y(AValue: PPyObject; AContext: Pointer): integer;
+var
+  y: double;
+begin
+  if CheckFloatAttribute(AValue, 'Y', y) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      DelphiObject.Y := y;
+      Result := 0;
+    end
+    else
+      Result := -1;
 end;
 
 initialization
