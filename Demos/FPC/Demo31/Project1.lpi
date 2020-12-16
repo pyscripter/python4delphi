@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <General>
+      <Flags>
+        <MainUnitHasUsesSectionForAllUnits Value="False"/>
+        <MainUnitHasTitleStatement Value="False"/>
+      </Flags>
+      <MainUnit Value="0"/>
+      <ResourceType Value="res"/>
+      <UseXPManifest Value="True"/>
+    </General>
+    <i18n>
+      <EnableI18N LFM="False"/>
+    </i18n>
+    <BuildModes Count="1" Active="Default">
+      <Item1 Name="Default" Default="True"/>
+    </BuildModes>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <RunParams>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
+    </RunParams>
+    <RequiredPackages Count="2">
+      <Item1>
+        <PackageName Value="P4DLaz"/>
+        <MinVersion Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="LCL"/>
+      </Item2>
+    </RequiredPackages>
+    <Units Count="24">
+      <Unit0>
+        <Filename Value="Project1.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="2"/>
+        <CursorPos Y="15"/>
+        <UsageCount Value="109"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="Unit1.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="Form1"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
+        <CursorPos X="21" Y="10"/>
+        <UsageCount Value="55"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="Unit2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TestForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <EditorIndex Value="1"/>
+        <CursorPos X="3" Y="8"/>
+        <UsageCount Value="55"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphi.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="292"/>
+        <CursorPos X="27" Y="292"/>
+        <UsageCount Value="28"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\objpas\typinfo.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="197"/>
+        <CursorPos X="7" Y="198"/>
+        <UsageCount Value="28"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiWindows.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="51"/>
+        <CursorPos X="10" Y="64"/>
+        <UsageCount Value="16"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiGraphics.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="554"/>
+        <CursorPos Y="572"/>
+        <UsageCount Value="16"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="C:\lazarus\lcl\graphics.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="151"/>
+        <CursorPos X="24" Y="161"/>
+        <UsageCount Value="15"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="C:\lazarus\lcl\lcltype.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2592"/>
+        <CursorPos X="3" Y="2602"/>
+        <UsageCount Value="15"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="C:\lazarus\lcl\graphtype.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="12"/>
+        <CursorPos X="3" Y="40"/>
+        <UsageCount Value="15"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiForms.pas"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="14" Y="9"/>
+        <UsageCount Value="15"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiComCtrls.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="595"/>
+        <CursorPos X="36" Y="605"/>
+        <UsageCount Value="14"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="C:\lazarus\lcl\comctrls.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="452"/>
+        <CursorPos X="25" Y="469"/>
+        <UsageCount Value="14"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiExtCtrls.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="101"/>
+        <CursorPos Y="119"/>
+        <UsageCount Value="14"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="C:\lazarus\lcl\extctrls.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="113"/>
+        <CursorPos X="3" Y="123"/>
+        <UsageCount Value="14"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="C:\lazarus\lcl\controls.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="109"/>
+        <CursorPos X="25" Y="119"/>
+        <UsageCount Value="14"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\..\Components\Sources\Core\WrapDelphiGrids.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="250"/>
+        <CursorPos X="43" Y="260"/>
+        <UsageCount Value="14"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="C:\lazarus\lcl\grids.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1423"/>
+        <CursorPos X="3" Y="1433"/>
+        <UsageCount Value="14"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\objpash.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="255"/>
+        <CursorPos X="8" Y="274"/>
+        <UsageCount Value="14"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\..\..\Components\Sources\Core\Definition.Inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="270"/>
+        <CursorPos Y="290"/>
+        <UsageCount Value="13"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="C:\lazarus\lcl\forms.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="188"/>
+        <CursorPos X="17" Y="205"/>
+        <UsageCount Value="12"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\variants.pp"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="180"/>
+        <CursorPos X="40" Y="184"/>
+        <UsageCount Value="12"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="C:\lazarus\fpc\2.4.4\source\rtl\inc\varianth.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="98"/>
+        <CursorPos X="33" Y="113"/>
+        <UsageCount Value="12"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\..\..\Components\Sources\Core\PythonEngine.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="131"/>
+        <CursorPos X="33" Y="143"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit23>
+    </Units>
+    <JumpHistory Count="14" HistoryIndex="13">
+      <Position1>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="42" Column="34" TopLine="40"/>
+      </Position1>
+      <Position2>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="53" Column="5" TopLine="40"/>
+      </Position2>
+      <Position3>
+        <Filename Value="Project1.lpr"/>
+        <Caret Line="13" Column="2"/>
+      </Position3>
+      <Position4>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="3" Column="3"/>
+      </Position4>
+      <Position5>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="13"/>
+      </Position5>
+      <Position6>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="10"/>
+      </Position6>
+      <Position7>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="45" Column="10" TopLine="34"/>
+      </Position7>
+      <Position8>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="71" TopLine="63"/>
+      </Position8>
+      <Position9>
+        <Filename Value="Project1.lpr"/>
+        <Caret Line="8" Column="25"/>
+      </Position9>
+      <Position10>
+        <Filename Value="Unit2.pas"/>
+        <Caret Line="28" Column="28" TopLine="12"/>
+      </Position10>
+      <Position11>
+        <Filename Value="Project1.lpr"/>
+        <Caret Line="8"/>
+      </Position11>
+      <Position12>
+        <Filename Value="Project1.lpr"/>
+        <Caret Line="9" Column="34"/>
+      </Position12>
+      <Position13>
+        <Filename Value="Project1.lpr"/>
+        <Caret Line="14"/>
+      </Position13>
+      <Position14>
+        <Filename Value="Unit1.pas"/>
+        <Caret Line="72" Column="48"/>
+      </Position14>
+    </JumpHistory>
+  </ProjectOptions>
+  <CompilerOptions>
+    <Version Value="11"/>
+    <PathDelim Value="\"/>
+    <SearchPaths>
+      <IncludeFiles Value="$(ProjOutDir)"/>
+    </SearchPaths>
+    <Parsing>
+      <SyntaxOptions>
+        <SyntaxMode Value="Delphi"/>
+      </SyntaxOptions>
+    </Parsing>
+    <Linking>
+      <Options>
+        <Win32>
+          <GraphicApplication Value="True"/>
+        </Win32>
+      </Options>
+    </Linking>
+  </CompilerOptions>
+  <Debugging>
+    <Exceptions Count="3">
+      <Item1>
+        <Name Value="EAbort"/>
+      </Item1>
+      <Item2>
+        <Name Value="ECodetoolError"/>
+      </Item2>
+      <Item3>
+        <Name Value="EFOpenError"/>
+      </Item3>
+    </Exceptions>
+  </Debugging>
+</CONFIG>

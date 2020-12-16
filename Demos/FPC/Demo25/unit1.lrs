@@ -1,0 +1,42 @@
+{ This is an automatically generated lazarus resource file }
+
+LazarusResources.Add('TForm1','FORMDATA',[
+  'TPF0'#6'TForm1'#5'Form1'#4'Left'#3't'#1#6'Height'#3#10#2#3'Top'#2'd'#5'Width'
+  +#3#27#3#7'Caption'#6#5'Form1'#12'ClientHeight'#3#10#2#11'ClientWidth'#3#27#3
+  +#8'OnCreate'#7#10'FormCreate'#10'LCLVersion'#6#8'2.0.10.0'#0#6'TPanel'#6'Pan'
+  +'el1'#4'Left'#2#0#6'Height'#3#10#2#3'Top'#2#0#5'Width'#3#27#3#5'Align'#7#8'a'
+  +'lClient'#12'ClientHeight'#3#10#2#11'ClientWidth'#3#27#3#8'TabOrder'#2#0#0#5
+  +'TMemo'#5'Memo1'#4'Left'#2#1#6'Height'#3#231#0#3'Top'#2#1#5'Width'#3#25#3#5
+  +'Align'#7#5'alTop'#8'TabOrder'#2#0#0#0#13'TPairSplitter'#13'PairSplitter1'#4
+  +'Left'#2#1#6'Height'#2#8#3'Top'#3#232#0#5'Width'#3#25#3#5'Align'#7#5'alTop'#8
+  +'Position'#2'-'#0#17'TPairSplitterSide'#17'PairSplitterSide1'#6'Cursor'#7#7
+  +'crArrow'#4'Left'#2#0#6'Height'#2#8#3'Top'#2#0#5'Width'#2'-'#0#0#17'TPairSpl'
+  +'itterSide'#17'PairSplitterSide2'#6'Cursor'#7#7'crArrow'#4'Left'#2'2'#6'Heig'
+  +'ht'#2#8#3'Top'#2#0#5'Width'#3#231#2#0#0#0#5'TMemo'#5'Memo2'#4'Left'#2#1#6'H'
+  +'eight'#3#168#0#3'Top'#3#240#0#5'Width'#3#25#3#5'Align'#7#8'alClient'#13'Lin'
+  +'es.Strings'#1#6#18'class XYZ(object):'#6#6'  pass'#6#0#6#10'class Foo:'#6#30
+  +'  def __init__(Self, Value=0):'#6#22'    Self.Value = Value'#6#20'  def __d'
+  +'el__(Self):'#6#25'    print("delete", Self)'#6#27'  def __add__(self, other'
+  +'):'#6'(    return Foo(self.Value + other.Value)'#6#28'  def Inc(Self, AValu'
+  +'e = 1):'#6'$    Self.Value = Self.Value + AValue'#6#20'  def GetSelf(Self):'
+  +#6#15'    return Self'#6#21'  def GetValue(Self):'#6#21'    return Self.Valu'
+  +'e'#6#28'  def SetABC(Self, A, B, C):'#6#14'    Self.A = A'#6#14'    Self.B '
+  +'= B'#6#14'    Self.C = C'#6#26'  def Add(Self, AFooInst):'#6',    Self.Valu'
+  +'e = Self.Value + AFooInst.Value'#6#15'class Bar(Foo):'#6#28'  def Inc(Self,'
+  +' AValue = 1):'#6'$    Self.Value = Self.Value - AValue'#6#14'def Add(a, b):'
+  +#6#14'  return a + b'#6#25'def MakeList(a, b, c, d):'#6#21'  return [a, b, c'
+  +', d]'#6#0#6#9'f = Foo()'#6#19'print("Created", f)'#6#7'f.Inc()'#6#8'f.Inc(2'
+  +')'#6#9'b = Bar()'#6#7'b.Inc()'#6#8'b.Inc(2)'#0#8'TabOrder'#2#2#0#0#6'TPanel'
+  +#6'Panel2'#4'Left'#2#1#6'Height'#2'q'#3'Top'#3#152#1#5'Width'#3#25#3#5'Align'
+  +#7#8'alBottom'#12'ClientHeight'#2'q'#11'ClientWidth'#3#25#3#8'TabOrder'#2#3#0
+  +#7'TButton'#7'Button1'#4'Left'#2#15#6'Height'#2#25#3'Top'#2#8#5'Width'#2'K'#7
+  +'Caption'#6#7'Execute'#7'OnClick'#7#12'Button1Click'#8'TabOrder'#2#0#0#0#7'T'
+  +'Button'#15'btnTestIntegers'#4'Left'#2'w'#6'Height'#2#25#3'Top'#2#8#5'Width'
+  +#2'K'#7'Caption'#6#13'Test Integers'#7'OnClick'#7#20'btnTestIntegersClick'#8
+  +'TabOrder'#2#1#0#0#9'TCheckBox'#14'cbTestIntegers'#4'Left'#2'z'#6'Height'#2
+  +#19#3'Top'#2')'#5'Width'#2'B'#7'Caption'#6#8'Included'#8'TabOrder'#2#2#0#0#0
+  +#0#13'TPythonEngine'#13'PythonEngine1'#2'IO'#7#21'PythonGUIInputOutput1'#4'L'
+  +'eft'#2'`'#3'Top'#2'0'#0#0#21'TPythonGUIInputOutput'#21'PythonGUIInputOutput'
+  +'1'#11'DelayWrites'#9#9'UnicodeIO'#8#9'RawOutput'#8#6'Output'#7#5'Memo1'#4'L'
+  +'eft'#3'R'#1#3'Top'#2'0'#0#0#0
+]);

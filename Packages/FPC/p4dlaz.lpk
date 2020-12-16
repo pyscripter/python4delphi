@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="4">
+    <PathDelim Value="\"/>
+    <Name Value="P4DLaz"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <PathDelim Value="\"/>
+      <SearchPaths>
+        <IncludeFiles Value="..\..\Source"/>
+        <OtherUnitFiles Value="..\..\Source;..\..\Source\lcl"/>
+        <UnitOutputDirectory Value="FPC_Units\$(TargetCPU)-$(TargetOS)-$(LCLWidgetType)"/>
+      </SearchPaths>
+      <Parsing>
+        <SyntaxOptions>
+          <SyntaxMode Value="Delphi"/>
+          <UseAnsiStrings Value="False"/>
+        </SyntaxOptions>
+      </Parsing>
+    </CompilerOptions>
+    <Files Count="10">
+      <Item1>
+        <Filename Value="..\..\Source\PythonEngine.pas"/>
+        <UnitName Value="PythonEngine"/>
+      </Item1>
+      <Item2>
+        <Filename Value="..\..\Source\MethodCallBack.pas"/>
+        <UnitName Value="MethodCallBack"/>
+      </Item2>
+      <Item3>
+        <Filename Value="..\..\Source\VarPyth.pas"/>
+        <UnitName Value="VarPyth"/>
+      </Item3>
+      <Item4>
+        <Filename Value="..\..\Source\lcl\Lcl.PythonGUIInputOutput.pas"/>
+        <UnitName Value="Lcl.PythonGUIInputOutput"/>
+      </Item4>
+      <Item5>
+        <Filename Value="..\..\Source\WrapDelphi.pas"/>
+        <UnitName Value="WrapDelphi"/>
+      </Item5>
+      <Item6>
+        <Filename Value="..\..\Source\WrapDelphiButtons.pas"/>
+        <UnitName Value="WrapDelphiButtons"/>
+      </Item6>
+      <Item7>
+        <Filename Value="..\..\Source\WrapDelphiClasses.pas"/>
+        <UnitName Value="WrapDelphiClasses"/>
+      </Item7>
+      <Item8>
+        <Filename Value="..\..\Source\WrapDelphiControls.pas"/>
+        <UnitName Value="WrapDelphiControls"/>
+      </Item8>
+      <Item9>
+        <Filename Value="..\..\Source\WrapDelphiTypes.pas"/>
+        <UnitName Value="WrapDelphiTypes"/>
+      </Item9>
+      <Item10>
+        <Filename Value="p4dlaz_register.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="P4DLaz_register"/>
+      </Item10>
+    </Files>
+    <RequiredPkgs Count="2">
+      <Item1>
+        <PackageName Value="LCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item1>
+      <Item2>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item2>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+    </PublishOptions>
+    <CustomOptions Items="ExternHelp" Version="2">
+      <_ExternHelp Items="Count"/>
+    </CustomOptions>
+  </Package>
+</CONFIG>

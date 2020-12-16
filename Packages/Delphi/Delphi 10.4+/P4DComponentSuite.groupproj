@@ -1,0 +1,96 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{8BE1193B-E609-445D-9BA3-F57DBEA042F5}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Python.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="dclPython.dproj">
+            <Dependencies>Python.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PythonVcl.dproj">
+            <Dependencies>Python.dproj</Dependencies>
+        </Projects>
+        <Projects Include="dclPythonVcl.dproj">
+            <Dependencies>PythonVcl.dproj</Dependencies>
+        </Projects>
+        <Projects Include="PythonFmx.dproj">
+            <Dependencies>PythonVcl.dproj</Dependencies>
+        </Projects>
+        <Projects Include="dclPythonFmx.dproj">
+            <Dependencies>PythonFmx.dproj</Dependencies>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Python">
+        <MSBuild Projects="Python.dproj"/>
+    </Target>
+    <Target Name="Python:Clean">
+        <MSBuild Projects="Python.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Python:Make">
+        <MSBuild Projects="Python.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclPython" DependsOnTargets="Python">
+        <MSBuild Projects="dclPython.dproj"/>
+    </Target>
+    <Target Name="dclPython:Clean" DependsOnTargets="Python:Clean">
+        <MSBuild Projects="dclPython.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclPython:Make" DependsOnTargets="Python:Make">
+        <MSBuild Projects="dclPython.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PythonVcl" DependsOnTargets="Python">
+        <MSBuild Projects="PythonVcl.dproj"/>
+    </Target>
+    <Target Name="PythonVcl:Clean" DependsOnTargets="Python:Clean">
+        <MSBuild Projects="PythonVcl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PythonVcl:Make" DependsOnTargets="Python:Make">
+        <MSBuild Projects="PythonVcl.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclPythonVcl" DependsOnTargets="PythonVcl">
+        <MSBuild Projects="dclPythonVcl.dproj"/>
+    </Target>
+    <Target Name="dclPythonVcl:Clean" DependsOnTargets="PythonVcl:Clean">
+        <MSBuild Projects="dclPythonVcl.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclPythonVcl:Make" DependsOnTargets="PythonVcl:Make">
+        <MSBuild Projects="dclPythonVcl.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="PythonFmx" DependsOnTargets="PythonVcl">
+        <MSBuild Projects="PythonFmx.dproj"/>
+    </Target>
+    <Target Name="PythonFmx:Clean" DependsOnTargets="PythonVcl:Clean">
+        <MSBuild Projects="PythonFmx.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PythonFmx:Make" DependsOnTargets="PythonVcl:Make">
+        <MSBuild Projects="PythonFmx.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="dclPythonFmx" DependsOnTargets="PythonFmx">
+        <MSBuild Projects="dclPythonFmx.dproj"/>
+    </Target>
+    <Target Name="dclPythonFmx:Clean" DependsOnTargets="PythonFmx:Clean">
+        <MSBuild Projects="dclPythonFmx.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="dclPythonFmx:Make" DependsOnTargets="PythonFmx:Make">
+        <MSBuild Projects="dclPythonFmx.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Python;dclPython;PythonVcl;dclPythonVcl;PythonFmx;dclPythonFmx"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Python:Clean;dclPython:Clean;PythonVcl:Clean;dclPythonVcl:Clean;PythonFmx:Clean;dclPythonFmx:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Python:Make;dclPython:Make;PythonVcl:Make;dclPythonVcl:Make;PythonFmx:Make;dclPythonFmx:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

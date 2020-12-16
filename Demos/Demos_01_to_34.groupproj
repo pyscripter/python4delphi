@@ -1,0 +1,360 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{76780D20-AE3E-46C6-A0D6-B270C4F2AEC5}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Demo01\Demo01.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo02\Demo02.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo03\Demo03.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo04\Demo04.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo05\Demo05.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo06\Demo06.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo07\Demo07.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo08\Demo08.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo09\Demo09.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo09\demodll.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo10_FireDAC\Demo10.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo11\ThrdDemo.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo16\Example1\Demo16a.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo16\Example2\Demo16b.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo17\Demo17.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo21\Demo21.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo22\Demo22.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo23\Demo23.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo25\VarPythUnitTest.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo26\Demo26.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo27\Demo27.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo28\Demo28.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo29\Demo29.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo30\Demo30.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo31\Demo31.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo32\Demo32.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo33\ThrdDemo2.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demo34\Demo34.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Demo01">
+        <MSBuild Projects="Demo01\Demo01.dproj"/>
+    </Target>
+    <Target Name="Demo01:Clean">
+        <MSBuild Projects="Demo01\Demo01.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo01:Make">
+        <MSBuild Projects="Demo01\Demo01.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo02">
+        <MSBuild Projects="Demo02\Demo02.dproj"/>
+    </Target>
+    <Target Name="Demo02:Clean">
+        <MSBuild Projects="Demo02\Demo02.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo02:Make">
+        <MSBuild Projects="Demo02\Demo02.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo03">
+        <MSBuild Projects="Demo03\Demo03.dproj"/>
+    </Target>
+    <Target Name="Demo03:Clean">
+        <MSBuild Projects="Demo03\Demo03.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo03:Make">
+        <MSBuild Projects="Demo03\Demo03.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo04">
+        <MSBuild Projects="Demo04\Demo04.dproj"/>
+    </Target>
+    <Target Name="Demo04:Clean">
+        <MSBuild Projects="Demo04\Demo04.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo04:Make">
+        <MSBuild Projects="Demo04\Demo04.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo05">
+        <MSBuild Projects="Demo05\Demo05.dproj"/>
+    </Target>
+    <Target Name="Demo05:Clean">
+        <MSBuild Projects="Demo05\Demo05.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo05:Make">
+        <MSBuild Projects="Demo05\Demo05.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo06">
+        <MSBuild Projects="Demo06\Demo06.dproj"/>
+    </Target>
+    <Target Name="Demo06:Clean">
+        <MSBuild Projects="Demo06\Demo06.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo06:Make">
+        <MSBuild Projects="Demo06\Demo06.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo07">
+        <MSBuild Projects="Demo07\Demo07.dproj"/>
+    </Target>
+    <Target Name="Demo07:Clean">
+        <MSBuild Projects="Demo07\Demo07.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo07:Make">
+        <MSBuild Projects="Demo07\Demo07.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo08">
+        <MSBuild Projects="Demo08\Demo08.dproj"/>
+    </Target>
+    <Target Name="Demo08:Clean">
+        <MSBuild Projects="Demo08\Demo08.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo08:Make">
+        <MSBuild Projects="Demo08\Demo08.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo09">
+        <MSBuild Projects="Demo09\Demo09.dproj"/>
+    </Target>
+    <Target Name="Demo09:Clean">
+        <MSBuild Projects="Demo09\Demo09.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo09:Make">
+        <MSBuild Projects="Demo09\Demo09.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="demodll">
+        <MSBuild Projects="Demo09\demodll.dproj"/>
+    </Target>
+    <Target Name="demodll:Clean">
+        <MSBuild Projects="Demo09\demodll.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="demodll:Make">
+        <MSBuild Projects="Demo09\demodll.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo10">
+        <MSBuild Projects="Demo10_FireDAC\Demo10.dproj"/>
+    </Target>
+    <Target Name="Demo10:Clean">
+        <MSBuild Projects="Demo10_FireDAC\Demo10.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo10:Make">
+        <MSBuild Projects="Demo10_FireDAC\Demo10.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ThrdDemo">
+        <MSBuild Projects="Demo11\ThrdDemo.dproj"/>
+    </Target>
+    <Target Name="ThrdDemo:Clean">
+        <MSBuild Projects="Demo11\ThrdDemo.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ThrdDemo:Make">
+        <MSBuild Projects="Demo11\ThrdDemo.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo16a">
+        <MSBuild Projects="Demo16\Example1\Demo16a.dproj"/>
+    </Target>
+    <Target Name="Demo16a:Clean">
+        <MSBuild Projects="Demo16\Example1\Demo16a.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo16a:Make">
+        <MSBuild Projects="Demo16\Example1\Demo16a.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo16b">
+        <MSBuild Projects="Demo16\Example2\Demo16b.dproj"/>
+    </Target>
+    <Target Name="Demo16b:Clean">
+        <MSBuild Projects="Demo16\Example2\Demo16b.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo16b:Make">
+        <MSBuild Projects="Demo16\Example2\Demo16b.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo17">
+        <MSBuild Projects="Demo17\Demo17.dproj"/>
+    </Target>
+    <Target Name="Demo17:Clean">
+        <MSBuild Projects="Demo17\Demo17.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo17:Make">
+        <MSBuild Projects="Demo17\Demo17.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo21">
+        <MSBuild Projects="Demo21\Demo21.dproj"/>
+    </Target>
+    <Target Name="Demo21:Clean">
+        <MSBuild Projects="Demo21\Demo21.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo21:Make">
+        <MSBuild Projects="Demo21\Demo21.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo22">
+        <MSBuild Projects="Demo22\Demo22.dproj"/>
+    </Target>
+    <Target Name="Demo22:Clean">
+        <MSBuild Projects="Demo22\Demo22.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo22:Make">
+        <MSBuild Projects="Demo22\Demo22.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo23">
+        <MSBuild Projects="Demo23\Demo23.dproj"/>
+    </Target>
+    <Target Name="Demo23:Clean">
+        <MSBuild Projects="Demo23\Demo23.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo23:Make">
+        <MSBuild Projects="Demo23\Demo23.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="VarPythUnitTest">
+        <MSBuild Projects="Demo25\VarPythUnitTest.dproj"/>
+    </Target>
+    <Target Name="VarPythUnitTest:Clean">
+        <MSBuild Projects="Demo25\VarPythUnitTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="VarPythUnitTest:Make">
+        <MSBuild Projects="Demo25\VarPythUnitTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo26">
+        <MSBuild Projects="Demo26\Demo26.dproj"/>
+    </Target>
+    <Target Name="Demo26:Clean">
+        <MSBuild Projects="Demo26\Demo26.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo26:Make">
+        <MSBuild Projects="Demo26\Demo26.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo27">
+        <MSBuild Projects="Demo27\Demo27.dproj"/>
+    </Target>
+    <Target Name="Demo27:Clean">
+        <MSBuild Projects="Demo27\Demo27.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo27:Make">
+        <MSBuild Projects="Demo27\Demo27.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo28">
+        <MSBuild Projects="Demo28\Demo28.dproj"/>
+    </Target>
+    <Target Name="Demo28:Clean">
+        <MSBuild Projects="Demo28\Demo28.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo28:Make">
+        <MSBuild Projects="Demo28\Demo28.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo29">
+        <MSBuild Projects="Demo29\Demo29.dproj"/>
+    </Target>
+    <Target Name="Demo29:Clean">
+        <MSBuild Projects="Demo29\Demo29.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo29:Make">
+        <MSBuild Projects="Demo29\Demo29.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo30">
+        <MSBuild Projects="Demo30\Demo30.dproj"/>
+    </Target>
+    <Target Name="Demo30:Clean">
+        <MSBuild Projects="Demo30\Demo30.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo30:Make">
+        <MSBuild Projects="Demo30\Demo30.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo31">
+        <MSBuild Projects="Demo31\Demo31.dproj"/>
+    </Target>
+    <Target Name="Demo31:Clean">
+        <MSBuild Projects="Demo31\Demo31.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo31:Make">
+        <MSBuild Projects="Demo31\Demo31.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo32">
+        <MSBuild Projects="Demo32\Demo32.dproj"/>
+    </Target>
+    <Target Name="Demo32:Clean">
+        <MSBuild Projects="Demo32\Demo32.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo32:Make">
+        <MSBuild Projects="Demo32\Demo32.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ThrdDemo2">
+        <MSBuild Projects="Demo33\ThrdDemo2.dproj"/>
+    </Target>
+    <Target Name="ThrdDemo2:Clean">
+        <MSBuild Projects="Demo33\ThrdDemo2.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ThrdDemo2:Make">
+        <MSBuild Projects="Demo33\ThrdDemo2.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Demo34">
+        <MSBuild Projects="Demo34\Demo34.dproj"/>
+    </Target>
+    <Target Name="Demo34:Clean">
+        <MSBuild Projects="Demo34\Demo34.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Demo34:Make">
+        <MSBuild Projects="Demo34\Demo34.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Demo01;Demo02;Demo03;Demo04;Demo05;Demo06;Demo07;Demo08;Demo09;demodll;Demo10;ThrdDemo;Demo16a;Demo16b;Demo17;Demo21;Demo22;Demo23;VarPythUnitTest;Demo26;Demo27;Demo28;Demo29;Demo30;Demo31;Demo32;ThrdDemo2;Demo34"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Demo01:Clean;Demo02:Clean;Demo03:Clean;Demo04:Clean;Demo05:Clean;Demo06:Clean;Demo07:Clean;Demo08:Clean;Demo09:Clean;demodll:Clean;Demo10:Clean;ThrdDemo:Clean;Demo16a:Clean;Demo16b:Clean;Demo17:Clean;Demo21:Clean;Demo22:Clean;Demo23:Clean;VarPythUnitTest:Clean;Demo26:Clean;Demo27:Clean;Demo28:Clean;Demo29:Clean;Demo30:Clean;Demo31:Clean;Demo32:Clean;ThrdDemo2:Clean;Demo34:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Demo01:Make;Demo02:Make;Demo03:Make;Demo04:Make;Demo05:Make;Demo06:Make;Demo07:Make;Demo08:Make;Demo09:Make;demodll:Make;Demo10:Make;ThrdDemo:Make;Demo16a:Make;Demo16b:Make;Demo17:Make;Demo21:Make;Demo22:Make;Demo23:Make;VarPythUnitTest:Make;Demo26:Make;Demo27:Make;Demo28:Make;Demo29:Make;Demo30:Make;Demo31:Make;Demo32:Make;ThrdDemo2:Make;Demo34:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

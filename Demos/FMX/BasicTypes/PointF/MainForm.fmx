@@ -1,0 +1,138 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Demo of PointF'
+  ClientHeight = 517
+  ClientWidth = 640
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object OpenDialog1: TOpenDialog
+    DefaultExt = '*.py'
+    Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
+    Left = 360
+    Top = 8
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = '*.py'
+    Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
+    Left = 392
+    Top = 8
+  end
+  object Memo1: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Align = Top
+    Size.Width = 640.000000000000000000
+    Size.Height = 200.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 9
+    Viewport.Width = 636.000000000000000000
+    Viewport.Height = 196.000000000000000000
+  end
+  object Splitter1: TSplitter
+    Align = Top
+    Cursor = crVSplit
+    MinSize = 20.000000000000000000
+    Position.Y = 200.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 3.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object Memo2: TMemo
+    Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+    DataDetectorTypes = []
+    Lines.Strings = (
+      'from spam import PointF'
+      ''
+      'print('#39'-------- Shows wrapped PointF info --------'#39')'
+      'print(PointF)'
+      'print(PointF.__doc__)'
+      'help(PointF)'
+      ''
+      'print('#39'-------- Creates a new PointF --------'#39')'
+      ''
+      'p = PointF(2.3, 5.1)'
+      'print(p)'
+      'print(p.X)'
+      'print(p.Y)'
+      'print(format(p.X, '#39'.2f'#39'))'
+      'print(format(p.Y, '#39'.2f'#39'))'
+      ''
+      'print('#39'-------- Updates X and Y values --------'#39')'
+      ''
+      'p.X = 3.1'
+      'p.Y = 10.4'
+      ''
+      'print(p)'
+      'print(p.X)'
+      'print(p.Y)'
+      'print(format(p.X, '#39'.2f'#39'))'
+      'print(format(p.Y, '#39'.2f'#39'))')
+    Align = Client
+    Size.Width = 640.000000000000000000
+    Size.Height = 269.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 11
+    Viewport.Width = 620.000000000000000000
+    Viewport.Height = 265.000000000000000000
+  end
+  object Panel1: TPanel
+    Align = Bottom
+    Position.Y = 472.000000000000000000
+    Size.Width = 640.000000000000000000
+    Size.Height = 45.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 12
+    object Button1: TButton
+      Position.X = 8.000000000000000000
+      Position.Y = 10.000000000000000000
+      Size.Width = 97.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 2
+      Text = 'Execute script'
+      OnClick = Button1Click
+    end
+    object Button2: TButton
+      Position.X = 192.000000000000000000
+      Position.Y = 10.000000000000000000
+      TabOrder = 1
+      Text = 'Load script...'
+      OnClick = Button2Click
+    end
+    object Button3: TButton
+      Position.X = 280.000000000000000000
+      Position.Y = 10.000000000000000000
+      TabOrder = 0
+      Text = 'Save script...'
+      OnClick = Button3Click
+    end
+  end
+  object PythonEngine1: TPythonEngine
+    IO = PythonGUIInputOutput1
+    Left = 288
+    Top = 64
+  end
+  object PythonModule1: TPythonModule
+    Engine = PythonEngine1
+    ModuleName = 'spam'
+    Errors = <>
+    Left = 376
+    Top = 64
+  end
+  object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
+    Output = Memo1
+    Left = 352
+    Top = 112
+  end
+  object PyDelphiWrapper1: TPyDelphiWrapper
+    Engine = PythonEngine1
+    Module = PythonModule1
+    Left = 480
+    Top = 64
+  end
+end

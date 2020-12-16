@@ -1,0 +1,166 @@
+object Form1: TForm1
+  Left = 233
+  Height = 500
+  Top = 175
+  Width = 800
+  ActiveControl = Button1
+  Caption = 'Demo of Python'
+  ClientHeight = 500
+  ClientWidth = 800
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  LCLVersion = '2.0.10.0'
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 0
+    Height = 3
+    Top = 145
+    Width = 800
+    Align = alTop
+    ResizeAnchor = akTop
+  end
+  object Memo1: TMemo
+    Left = 0
+    Height = 284
+    Top = 148
+    Width = 800
+    Align = alClient
+    Lines.Strings = (
+      'import sys'
+      'import spam'
+      'print(spam.foo(''hello world'', 1))'
+      'p = spam.CreatePoint( 10, 25 )'
+      'print("Point:", p)'
+      'p.x = 58'
+      'print(p.x, p)'
+      'p.OffsetBy( 5, 5 )'
+      'print(p)'
+      'print("Current value of var test is: ", test)'
+      'test.Value = "New value set by Python"'
+      'print("getdouble: ", spam.getdouble())'
+    )
+    ScrollBars = ssVertical
+    TabOrder = 1
+  end
+  object Panel1: TPanel
+    Left = 0
+    Height = 68
+    Top = 432
+    Width = 800
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 68
+    ClientWidth = 800
+    TabOrder = 0
+    object Button1: TButton
+      Left = 40
+      Height = 25
+      Top = 8
+      Width = 115
+      Caption = 'Execute script'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
+    object Button2: TButton
+      Left = 168
+      Height = 25
+      Top = 8
+      Width = 91
+      Caption = 'Load script...'
+      OnClick = Button2Click
+      TabOrder = 1
+    end
+    object Button3: TButton
+      Left = 264
+      Height = 25
+      Top = 8
+      Width = 89
+      Caption = 'Save script...'
+      OnClick = Button3Click
+      TabOrder = 2
+    end
+    object Button4: TButton
+      Left = 368
+      Height = 25
+      Top = 8
+      Width = 89
+      Caption = 'Show var test'
+      OnClick = Button4Click
+      TabOrder = 3
+    end
+    object Edit1: TEdit
+      Left = 500
+      Height = 21
+      Top = 8
+      Width = 150
+      TabOrder = 4
+    end
+  end
+  object Memo2: TMemo
+    Left = 0
+    Height = 145
+    Top = 0
+    Width = 800
+    Align = alTop
+    Lines.Strings = (
+      'Memo2'
+    )
+    TabOrder = 2
+  end
+  object PythonEngine1: TPythonEngine
+    InitScript.Strings = (
+      'import sys'
+      'print("Python Dll: ", sys.version)'
+      'print(sys.copyright)'
+      'print()'
+    )
+    IO = PythonGUIInputOutput1
+    Left = 8
+  end
+  object PythonType1: TPythonType
+    Engine = PythonEngine1
+    OnInitialization = PythonType1Initialization
+    TypeName = 'Point'
+    Prefix = 'Create'
+    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr]
+    Services.InplaceNumber = []
+    Services.Number = []
+    Services.Sequence = []
+    Services.Mapping = []
+    Left = 72
+  end
+  object PythonModule1: TPythonModule
+    Engine = PythonEngine1
+    OnInitialization = PythonModule1Initialization
+    ModuleName = 'spam'
+    Errors = <>
+    Left = 104
+  end
+  object OpenDialog1: TOpenDialog
+    DefaultExt = '.*.py'
+    Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
+    Left = 176
+  end
+  object SaveDialog1: TSaveDialog
+    DefaultExt = '.*.py'
+    Filter = 'Python files|*.py|Text files|*.txt|All files|*.*'
+    Left = 208
+  end
+  object PythonDelphiVar1: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = '__main__'
+    VarName = 'test'
+    OnGetData = PythonDelphiVar1GetData
+    OnSetData = PythonDelphiVar1SetData
+    OnChange = PythonDelphiVar1Change
+    Left = 136
+  end
+  object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
+    Output = Memo2
+    Left = 40
+  end
+end
