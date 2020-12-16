@@ -29,7 +29,7 @@ type
     property DelphiObject: TPanel read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCalloutPanel = class (TPyDelphiPanel)
+  TPyDelphiCalloutPanel = class(TPyDelphiPanel)
   private
     function GetDelphiObject: TCalloutPanel;
     procedure SetDelphiObject(const Value: TCalloutPanel);
@@ -39,7 +39,7 @@ type
     property DelphiObject: TCalloutPanel read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiLabel = class (TPyDelphiPresentedTextControl)
+  TPyDelphiLabel = class(TPyDelphiPresentedTextControl)
   private
     function GetDelphiObject: TLabel;
     procedure SetDelphiObject(const Value: TLabel);
@@ -49,7 +49,7 @@ type
     property DelphiObject: TLabel read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCustomButton = class (TPyDelphiPresentedTextControl)
+  TPyDelphiCustomButton = class(TPyDelphiPresentedTextControl)
   private
     function GetDelphiObject: TCustomButton;
     procedure SetDelphiObject(const Value: TCustomButton);
@@ -59,7 +59,7 @@ type
     property DelphiObject: TCustomButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiButton = class (TPyDelphiCustomButton)
+  TPyDelphiButton = class(TPyDelphiCustomButton)
   private
     function GetDelphiObject: TButton;
     procedure SetDelphiObject(const Value: TButton);
@@ -69,7 +69,7 @@ type
     property DelphiObject: TButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiSpeedButton = class (TPyDelphiCustomButton)
+  TPyDelphiSpeedButton = class(TPyDelphiCustomButton)
   private
     function GetDelphiObject: TSpeedButton;
     procedure SetDelphiObject(const Value: TSpeedButton);
@@ -79,7 +79,7 @@ type
     property DelphiObject: TSpeedButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCustomCornerButton = class (TPyDelphiCustomButton)
+  TPyDelphiCustomCornerButton = class(TPyDelphiCustomButton)
   private
     function GetDelphiObject: TCustomCornerButton;
     procedure SetDelphiObject(const Value: TCustomCornerButton);
@@ -89,7 +89,7 @@ type
     property DelphiObject: TCustomCornerButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCornerButton = class (TPyDelphiCustomCornerButton)
+  TPyDelphiCornerButton = class(TPyDelphiCustomCornerButton)
   private
     function GetDelphiObject: TCornerButton;
     procedure SetDelphiObject(const Value: TCornerButton);
@@ -99,7 +99,7 @@ type
     property DelphiObject: TCornerButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCheckBox = class (TPyDelphiPresentedTextControl)
+  TPyDelphiCheckBox = class(TPyDelphiPresentedTextControl)
   private
     function GetDelphiObject: TCheckBox;
     procedure SetDelphiObject(const Value: TCheckBox);
@@ -109,7 +109,7 @@ type
     property DelphiObject: TCheckBox read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiRadioButton = class (TPyDelphiPresentedTextControl)
+  TPyDelphiRadioButton = class(TPyDelphiPresentedTextControl)
   private
     function GetDelphiObject: TRadioButton;
     procedure SetDelphiObject(const Value: TRadioButton);
@@ -119,7 +119,7 @@ type
     property DelphiObject: TRadioButton read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiGroupBox = class (TPyDelphiPresentedTextControl)
+  TPyDelphiGroupBox = class(TPyDelphiPresentedTextControl)
   private
     function GetDelphiObject: TGroupBox;
     procedure SetDelphiObject(const Value: TGroupBox);
@@ -127,6 +127,16 @@ type
     class function DelphiObjectClass: TClass; override;
     // Properties
     property DelphiObject: TGroupBox read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiStatusBar = class(TPyDelphiPresentedControl)
+  private
+    function GetDelphiObject: TStatusBar;
+    procedure SetDelphiObject(const Value: TStatusBar);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TStatusBar read GetDelphiObject write SetDelphiObject;
   end;
 
 implementation
@@ -168,6 +178,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCheckBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRadioButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGroupBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -372,6 +383,23 @@ begin
 end;
 
 procedure TPyDelphiGroupBox.SetDelphiObject(const Value: TGroupBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStatusBar }
+
+class function TPyDelphiStatusBar.DelphiObjectClass: TClass;
+begin
+  Result := TStatusBar;
+end;
+
+function TPyDelphiStatusBar.GetDelphiObject: TStatusBar;
+begin
+  Result := TStatusBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStatusBar.SetDelphiObject(const Value: TStatusBar);
 begin
   inherited DelphiObject := Value;
 end;
