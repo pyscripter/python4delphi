@@ -169,6 +169,16 @@ type
     property DelphiObject: TSplitter read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiProgressBar = class(TPyDelphiPresentedControl)
+  private
+    function GetDelphiObject: TProgressBar;
+    procedure SetDelphiObject(const Value: TProgressBar);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TProgressBar read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -212,6 +222,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSizeGrip);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSplitter);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiProgressBar);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -484,6 +495,23 @@ begin
 end;
 
 procedure TPyDelphiSplitter.SetDelphiObject(const Value: TSplitter);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiProgressBar }
+
+class function TPyDelphiProgressBar.DelphiObjectClass: TClass;
+begin
+  Result := TProgressBar;
+end;
+
+function TPyDelphiProgressBar.GetDelphiObject: TProgressBar;
+begin
+  Result := TProgressBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiProgressBar.SetDelphiObject(const Value: TProgressBar);
 begin
   inherited DelphiObject := Value;
 end;
