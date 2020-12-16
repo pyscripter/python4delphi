@@ -115,6 +115,16 @@ type
     property DelphiObject: TStyleBook read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiPopup = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPopup;
+    procedure SetDelphiObject(const Value: TPopup);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPopup read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 type
@@ -679,6 +689,23 @@ begin
 end;
 
 procedure TPyDelphiStyleBook.SetDelphiObject(const Value: TStyleBook);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPopup }
+
+class function TPyDelphiPopup.DelphiObjectClass: TClass;
+begin
+  Result := TPopup;
+end;
+
+function TPyDelphiPopup.GetDelphiObject: TPopup;
+begin
+  Result := TPopup(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPopup.SetDelphiObject(const Value: TPopup);
 begin
   inherited DelphiObject := Value;
 end;
