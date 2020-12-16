@@ -139,6 +139,17 @@ type
     property DelphiObject: TStatusBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiToolBar = class(TPyDelphiPresentedControl)
+  private
+    function GetDelphiObject: TToolBar;
+    procedure SetDelphiObject(const Value: TToolBar);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TToolBar read GetDelphiObject write SetDelphiObject;
+  end;
+
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -179,6 +190,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRadioButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGroupBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolBar);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -400,6 +412,23 @@ begin
 end;
 
 procedure TPyDelphiStatusBar.SetDelphiObject(const Value: TStatusBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiToolBar }
+
+class function TPyDelphiToolBar.DelphiObjectClass: TClass;
+begin
+  Result := TToolBar;
+end;
+
+function TPyDelphiToolBar.GetDelphiObject: TToolBar;
+begin
+  Result := TToolBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiToolBar.SetDelphiObject(const Value: TToolBar);
 begin
   inherited DelphiObject := Value;
 end;
