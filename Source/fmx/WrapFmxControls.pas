@@ -76,8 +76,10 @@ type
     // Property Getters
     function Get_DefaultStyleLookupName(AContext: Pointer): PPyObject; cdecl;
     function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
+    function Get_AutoTranslate(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_StyleLookup(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_AutoTranslate(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
     class function DelphiObjectClass: TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -458,6 +460,12 @@ begin
   Result := TStyledControl(inherited DelphiObject);
 end;
 
+function TPyDelphiStyledControl.Get_AutoTranslate(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(Self.DelphiObject.AutoTranslate);
+end;
+
 function TPyDelphiStyledControl.Get_DefaultStyleLookupName(
   AContext: Pointer): PPyObject;
 begin
@@ -476,9 +484,11 @@ begin
   inherited;
   with PythonType do begin
     AddGetSet('DefaultStyleLookupName', @TPyDelphiStyledControl.Get_StyleLookup, nil,
-      'Provides access to the default style lookup name of a StyledControl', nil);
+      'Returns a string with the name of the default style of this control', nil);
     AddGetSet('StyleLookup', @TPyDelphiStyledControl.Get_StyleLookup, @TPyDelphiStyledControl.Set_StyleLookup,
-      'Provides access to the style lookup of a StyledControl', nil);
+      'Specifies the name of the resource object to which the current TStyledControl is linked', nil);
+    AddGetSet('AutoTranslate', @TPyDelphiStyledControl.Get_AutoTranslate, @TPyDelphiStyledControl.Set_AutoTranslate,
+      'Specifies whether the control''s text should be translated', nil);
   end;
 end;
 
@@ -490,6 +500,21 @@ end;
 procedure TPyDelphiStyledControl.SetDelphiObject(const Value: TStyledControl);
 begin
   inherited DelphiObject := Value;
+end;
+
+function TPyDelphiStyledControl.Set_AutoTranslate(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: Boolean;
+begin
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'AutoTranslate', LValue) then
+  begin
+    DelphiObject.AutoTranslate := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiStyledControl.Set_StyleLookup(AValue: PPyObject;
