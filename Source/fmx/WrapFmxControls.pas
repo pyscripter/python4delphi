@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, TypInfo, Types,
-  Fmx.Controls,
+  FMX.Types, FMX.Controls,
   PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes;
 
 type
@@ -67,10 +67,25 @@ type
     property Container : TControl read GetContainer;
   end;
 
-implementation
+  TPyDelphiStyledControl = class(TPyDelphiControl)
+  private
+    function GetDelphiObject: TStyledControl;
+    procedure SetDelphiObject(const Value: TStyledControl);
+  protected
+    // Exposed Methods
+    // Property Getters
+    function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
+    // Property Setters
+    function Set_StyleLookup(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure RegisterMethods(PythonType: TPythonType); override;
+    // Properties
+    property DelphiObject: TStyledControl read GetDelphiObject write SetDelphiObject;
+  end;
 
-uses
-  FMX.Types;
+implementation
 
 type
 { Register the wrappers, the globals and the constants }
@@ -427,6 +442,54 @@ end;
 class function TControlsAccess.SupportsIndexOf: Boolean;
 begin
   Result := True;
+end;
+
+{ TPyDelphiStyledControl }
+
+class function TPyDelphiStyledControl.DelphiObjectClass: TClass;
+begin
+  Result := TStyledControl;
+end;
+
+function TPyDelphiStyledControl.GetDelphiObject: TStyledControl;
+begin
+  Result := TStyledControl(inherited DelphiObject);
+end;
+
+function TPyDelphiStyledControl.Get_StyleLookup(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.StyleLookup);
+end;
+
+class procedure TPyDelphiStyledControl.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+end;
+
+class procedure TPyDelphiStyledControl.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+end;
+
+procedure TPyDelphiStyledControl.SetDelphiObject(const Value: TStyledControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiStyledControl.Set_StyleLookup(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: string;
+begin
+  if CheckStrAttribute(AValue, 'StyleLookup', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      DelphiObject.StyleLookup := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
 end;
 
 initialization
