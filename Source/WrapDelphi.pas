@@ -521,8 +521,7 @@ Type
     function  GetContainerAccess: TContainerAccess;
     procedure SetDelphiObject(const Value: TObject);
   protected
-    fCanFreeOwnedObject : Boolean;
-
+    fCanFreeOwnedObject: Boolean;
     function CheckBound : Boolean;
     function HasContainerAccessClass : Boolean;
     procedure SubscribeToFreeNotification; virtual;
@@ -840,7 +839,8 @@ Type
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : TDelphiMethod; ADocString : PAnsiChar ): PPyMethodDef; overload;
     function  GetHelperType(TypeName : string) : TPythonType;
     //  Function that provides a Python object wrapping an object
-    function Wrap(AObj : TObject; AOwnership: TObjectOwnership = soReference) : PPyObject;
+    function Wrap(AObj: TObject; AOwnership: TObjectOwnership = soReference;
+        ACanFreeOwnedObject: Boolean = False): PPyObject;
     {$IFDEF EXTENDED_RTTI}
     //  Function that provides a Python object wrapping a record
     function WrapRecord(Address: Pointer; Typ: TRttiStructuredType): PPyObject;
@@ -2936,7 +2936,7 @@ begin
     if ret.IsEmpty then
       Result := GetPythonEngine.ReturnNone
     else if ret.Kind = tkClass then
-      Result := fDelphiWrapper.Wrap(ret.AsObject)
+      Result := fDelphiWrapper.Wrap(ret.AsObject, soOwned, True)
     else begin
       Result := SimpleValueToPython(ret, ErrMsg);
       if Result = nil then
@@ -3729,8 +3729,8 @@ begin
       fEventHandlerList[i].Unsubscribe;
 end;
 
-function TPyDelphiWrapper.Wrap(AObj: TObject;
-  AOwnership: TObjectOwnership): PPyObject;
+function TPyDelphiWrapper.Wrap(AObj: TObject; AOwnership: TObjectOwnership = soReference;
+  ACanFreeOwnedObject: Boolean = False): PPyObject;
 Var
   i : integer;
   DelphiClass : TClass;
@@ -3760,6 +3760,7 @@ begin
       DelphiObject := AObj;
       PyDelphiWrapper := Self;
       Owned := AOwnership = soOwned;
+      fCanFreeOwnedObject := ACanFreeOwnedObject;
     end;
   end;
 end;
