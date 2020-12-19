@@ -47,6 +47,7 @@ type
     ObjectField: TObject;
     RecordField: TTestRecord;
     InterfaceField: ITestInterface;
+    function GetData: TObject;
     procedure BuyFruits(AFruits: TFruits);
     procedure SellFruits(const AFruits: TFruitDynArray);
     procedure SellFruitsInt(const AFruits:TIntegerDynArray);
@@ -116,6 +117,8 @@ type
     procedure TestGetStaticArray;
     [Test]
     procedure TestMethodWithVarAndOverload;
+    [Test]
+    procedure FreeReturnedObject;
   end;
 
 implementation
@@ -138,6 +141,16 @@ end;
 
 
 { TTestVarPyth }
+
+procedure TTestWrapDelphi.FreeReturnedObject;
+begin
+  PythonEngine.ExecString(
+    'from delphi import rtti_var' + sLineBreak +
+    'obj = rtti_var.GetData()' + sLineBreak +
+    'obj.Free()'
+    );
+  Assert.Pass;
+end;
 
 procedure TTestWrapDelphi.SetupFixture;
 var
@@ -415,6 +428,11 @@ function TTestRttiAccess.SetStringField(var Value: Integer): string;
 begin
   StringField := IntToStr(Value);
   Result := StringField;
+end;
+
+function TTestRttiAccess.GetData: TObject;
+begin
+  Result := TStringList.Create;
 end;
 
 function TTestRttiAccess.GetDynArray: TInt64DynArray;

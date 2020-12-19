@@ -1024,7 +1024,6 @@ begin
     begin
       DelphiObject := CreateComponent(TComponent(_owner));
       Owned := not Assigned(_owner);
-      fCanFreeOwnedObject := True;
     end;
   end;
 end;
