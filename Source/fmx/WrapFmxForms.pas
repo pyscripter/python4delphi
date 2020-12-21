@@ -3,7 +3,7 @@ unit WrapFmxForms;
 interface
 
 uses
-  FMX.Forms, PythonEngine, WrapDelphiClasses;
+  FMX.Forms, PythonEngine, WrapDelphiClasses, WrapFmxTypes;
 
 type
   TPyDelphiApplication = class(TPyDelphiComponent)
@@ -15,6 +15,17 @@ type
     class function DelphiObjectClass: TClass; override;
     // Properties
     property DelphiObject: TApplication read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiCommonCustomForm = class(TPyDelphiFmxObject)
+  private
+    function GetDelphiObject: TCommonCustomForm;
+    procedure SetDelphiObject(const Value: TCommonCustomForm);
+  public
+    // Class methods
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TCommonCustomForm read GetDelphiObject write SetDelphiObject;
   end;
 
 implementation
@@ -57,7 +68,7 @@ procedure TFormsRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
-
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCommonCustomForm);
 end;
 
 { TPyDelphiApplication }
@@ -77,7 +88,25 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{ TPyDelphiCommonCustomForm }
+
+class function TPyDelphiCommonCustomForm.DelphiObjectClass: TClass;
+begin
+  Result := TCommonCustomForm;
+end;
+
+function TPyDelphiCommonCustomForm.GetDelphiObject: TCommonCustomForm;
+begin
+  Result := TCommonCustomForm(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCommonCustomForm.SetDelphiObject(
+  const Value: TCommonCustomForm);
+begin
+  inherited DelphiObject := Value;
+end;
+
 initialization
-  RegisteredUnits.Add( TFormsRegistration.Create );
+  RegisteredUnits.Add(TFormsRegistration.Create);
 
 end.
