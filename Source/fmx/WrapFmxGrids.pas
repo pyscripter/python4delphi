@@ -56,7 +56,7 @@ type
     property DelphiObject: TDateTimeColumnBase read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiDateTimeColumn = class(TPyDelphiColumn)
+  TPyDelphiDateTimeColumn = class(TPyDelphiDateTimeColumnBase)
   private
     function  GetDelphiObject: TDateTimeColumn;
     procedure SetDelphiObject(const Value: TDateTimeColumn);
@@ -66,7 +66,7 @@ type
     property DelphiObject: TDateTimeColumn read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiTimeColumn = class(TPyDelphiColumn)
+  TPyDelphiTimeColumn = class(TPyDelphiDateTimeColumnBase)
   private
     function  GetDelphiObject: TTimeColumn;
     procedure SetDelphiObject(const Value: TTimeColumn);
@@ -76,7 +76,7 @@ type
     property DelphiObject: TTimeColumn read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiDateColumn = class(TPyDelphiColumn)
+  TPyDelphiDateColumn = class(TPyDelphiDateTimeColumnBase)
   private
     function  GetDelphiObject: TDateColumn;
     procedure SetDelphiObject(const Value: TDateColumn);
