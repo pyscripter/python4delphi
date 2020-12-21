@@ -101,6 +101,15 @@ type
     property DelphiObject: TArc read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomPath = class(TPyDelphiShape)
+    function  GetDelphiObject: TCustomPath;
+    procedure SetDelphiObject(const Value: TCustomPath);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomPath read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -141,6 +150,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCircle);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPie);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArc);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPath);
 end;
 
 { TPyDelphiShape }
@@ -310,6 +320,23 @@ begin
 end;
 
 procedure TPyDelphiArc.SetDelphiObject(const Value: TArc);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomPath }
+
+class function TPyDelphiCustomPath.DelphiObjectClass: TClass;
+begin
+  Result := TCustomPath
+end;
+
+function TPyDelphiCustomPath.GetDelphiObject: TCustomPath;
+begin
+  Result := TCustomPath(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomPath.SetDelphiObject(const Value: TCustomPath);
 begin
   inherited DelphiObject := Value;
 end;
