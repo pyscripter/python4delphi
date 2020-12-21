@@ -106,6 +106,16 @@ type
     property DelphiObject: TImageColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomNumberColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TCustomNumberColumn;
+    procedure SetDelphiObject(const Value: TCustomNumberColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomNumberColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -146,6 +156,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopupColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberColumn);
 end;
 
 { TPyDelphiColumn }
@@ -315,6 +326,24 @@ begin
 end;
 
 procedure TPyDelphiImageColumn.SetDelphiObject(const Value: TImageColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomNumberColumn }
+
+class function TPyDelphiCustomNumberColumn.DelphiObjectClass: TClass;
+begin
+  Result := TCustomNumberColumn;
+end;
+
+function TPyDelphiCustomNumberColumn.GetDelphiObject: TCustomNumberColumn;
+begin
+  Result := TCustomNumberColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomNumberColumn.SetDelphiObject(
+  const Value: TCustomNumberColumn);
 begin
   inherited DelphiObject := Value;
 end;
