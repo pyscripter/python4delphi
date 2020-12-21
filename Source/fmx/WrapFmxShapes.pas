@@ -56,6 +56,7 @@ procedure TShapesRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiShape);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLine);
 end;
 
