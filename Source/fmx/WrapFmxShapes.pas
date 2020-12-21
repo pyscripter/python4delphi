@@ -92,6 +92,15 @@ type
     property DelphiObject: TPie read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiArc = class(TPyDelphiEllipse)
+    function  GetDelphiObject: TArc;
+    procedure SetDelphiObject(const Value: TArc);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TArc read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -131,6 +140,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiEllipse);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCircle);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPie);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArc);
 end;
 
 { TPyDelphiShape }
@@ -283,6 +293,23 @@ begin
 end;
 
 procedure TPyDelphiPie.SetDelphiObject(const Value: TPie);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiArc }
+
+class function TPyDelphiArc.DelphiObjectClass: TClass;
+begin
+  Result := TArc
+end;
+
+function TPyDelphiArc.GetDelphiObject: TArc;
+begin
+  Result := TArc(inherited DelphiObject);
+end;
+
+procedure TPyDelphiArc.SetDelphiObject(const Value: TArc);
 begin
   inherited DelphiObject := Value;
 end;
