@@ -46,6 +46,16 @@ type
     property DelphiObject: TCheckColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiDateTimeColumnBase = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TDateTimeColumnBase;
+    procedure SetDelphiObject(const Value: TDateTimeColumnBase);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TDateTimeColumnBase read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -80,6 +90,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStringColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiProgressColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCheckColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateTimeColumnBase);
 end;
 
 { TPyDelphiColumn }
@@ -146,6 +157,24 @@ begin
 end;
 
 procedure TPyDelphiCheckColumn.SetDelphiObject(const Value: TCheckColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiDateTimeColumnBase }
+
+class function TPyDelphiDateTimeColumnBase.DelphiObjectClass: TClass;
+begin
+  Result := TDateTimeColumnBase;
+end;
+
+function TPyDelphiDateTimeColumnBase.GetDelphiObject: TDateTimeColumnBase;
+begin
+  Result := TDateTimeColumnBase(inherited DelphiObject);
+end;
+
+procedure TPyDelphiDateTimeColumnBase.SetDelphiObject(
+  const Value: TDateTimeColumnBase);
 begin
   inherited DelphiObject := Value;
 end;
