@@ -26,6 +26,16 @@ type
     property DelphiObject: TCustomMultiView read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiMultiView = class(TPyDelphiCustomMultiView)
+  private
+    function GetDelphiObject: TMultiView;
+    procedure SetDelphiObject(const Value: TMultiView);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TMultiView read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -58,6 +68,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomMultiView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMultiView);
 end;
 
 { TPyDelphiTabControl }
@@ -91,6 +102,23 @@ end;
 
 procedure TPyDelphiCustomMultiView.SetDelphiObject(
   const Value: TCustomMultiView);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiMultiView }
+
+class function TPyDelphiMultiView.DelphiObjectClass: TClass;
+begin
+  Result := TMultiView;
+end;
+
+function TPyDelphiMultiView.GetDelphiObject: TMultiView;
+begin
+  Result := TMultiView(inherited DelphiObject);
+end;
+
+procedure TPyDelphiMultiView.SetDelphiObject(const Value: TMultiView);
 begin
   inherited DelphiObject := Value;
 end;
