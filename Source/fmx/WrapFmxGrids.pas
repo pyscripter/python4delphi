@@ -16,6 +16,16 @@ type
     property DelphiObject: TColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiStringColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TStringColumn;
+    procedure SetDelphiObject(const Value: TStringColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TStringColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -47,6 +57,7 @@ procedure TGridsRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStringColumn);
 end;
 
 { TPyDelphiColumn }
@@ -62,6 +73,23 @@ begin
 end;
 
 procedure TPyDelphiColumn.SetDelphiObject(const Value: TColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStringColumn }
+
+class function TPyDelphiStringColumn.DelphiObjectClass: TClass;
+begin
+  Result := TStringColumn;
+end;
+
+function TPyDelphiStringColumn.GetDelphiObject: TStringColumn;
+begin
+  Result := TStringColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStringColumn.SetDelphiObject(const Value: TStringColumn);
 begin
   inherited DelphiObject := Value;
 end;
