@@ -176,6 +176,16 @@ type
     property DelphiObject: TGrid read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiStringGrid = class(TPyDelphiCustomGrid)
+  private
+    function GetDelphiObject: TStringGrid;
+    procedure SetDelphiObject(const Value: TStringGrid);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TStringGrid read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -223,6 +233,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomGrid);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGrid);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStringGrid);
 end;
 
 { TPyDelphiColumn }
@@ -512,6 +523,23 @@ begin
 end;
 
 procedure TPyDelphiGrid.SetDelphiObject(const Value: TGrid);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStringGrid }
+
+class function TPyDelphiStringGrid.DelphiObjectClass: TClass;
+begin
+  Result := TStringGrid;
+end;
+
+function TPyDelphiStringGrid.GetDelphiObject: TStringGrid;
+begin
+  Result := TStringGrid(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStringGrid.SetDelphiObject(const Value: TStringGrid);
 begin
   inherited DelphiObject := Value;
 end;
