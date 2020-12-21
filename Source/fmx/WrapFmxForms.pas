@@ -72,6 +72,17 @@ type
     property DelphiObject: TFrame read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiScreen = class(TPyDelphiComponent)
+  private
+    function GetDelphiObject: TScreen;
+    procedure SetDelphiObject(const Value: TScreen);
+  public
+    // Class methods
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TScreen read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -118,6 +129,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFrame);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScreen);
 end;
 
 { TPyDelphiApplication }
@@ -220,6 +232,23 @@ begin
 end;
 
 procedure TPyDelphiFrame.SetDelphiObject(const Value: TFrame);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiScreen }
+
+class function TPyDelphiScreen.DelphiObjectClass: TClass;
+begin
+  Result := TScreen;
+end;
+
+function TPyDelphiScreen.GetDelphiObject: TScreen;
+begin
+  Result := TScreen(inherited DelphiObject);
+end;
+
+procedure TPyDelphiScreen.SetDelphiObject(const Value: TScreen);
 begin
   inherited DelphiObject := Value;
 end;
