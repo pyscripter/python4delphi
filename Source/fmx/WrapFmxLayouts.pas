@@ -106,6 +106,16 @@ type
     property DelphiObject: TGridPanelLayout read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiFlowLayout = class(TPyDelphiControl)
+  private
+    function  GetDelphiObject: TFlowLayout;
+    procedure SetDelphiObject(const Value: TFlowLayout);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TFlowLayout read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -143,6 +153,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFramedVertScrollBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGridLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGridPanelLayout);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFlowLayout);
 end;
 
 { TPyDelphiLayout }
@@ -315,6 +326,23 @@ end;
 
 procedure TPyDelphiGridPanelLayout.SetDelphiObject(
   const Value: TGridPanelLayout);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiFlowLayout }
+
+class function TPyDelphiFlowLayout.DelphiObjectClass: TClass;
+begin
+  Result := TFlowLayout;
+end;
+
+function TPyDelphiFlowLayout.GetDelphiObject: TFlowLayout;
+begin
+  Result := TFlowLayout(inherited DelphiObject);
+end;
+
+procedure TPyDelphiFlowLayout.SetDelphiObject(const Value: TFlowLayout);
 begin
   inherited DelphiObject := Value;
 end;
