@@ -3,7 +3,7 @@ unit WrapFmxGrids;
 interface
 
 uses
-  FMX.Grid, WrapFmxControls;
+  FMX.Grid, WrapFmxControls, WrapFmxScrollBox;
 
 type
   TPyDelphiColumn = class(TPyDelphiControl)
@@ -156,6 +156,16 @@ type
     property DelphiObject: TGlyphColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiGlyphCustomGrid = class(TPyDelphiCustomPresentedScrollBox)
+  private
+    function  GetDelphiObject: TCustomGrid;
+    procedure SetDelphiObject(const Value: TCustomGrid);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomGrid read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -201,6 +211,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFloatColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiIntegerColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphCustomGrid);
 end;
 
 { TPyDelphiColumn }
@@ -456,6 +467,23 @@ begin
 end;
 
 procedure TPyDelphiGlyphColumn.SetDelphiObject(const Value: TGlyphColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiGlyphCustomGrid }
+
+class function TPyDelphiGlyphCustomGrid.DelphiObjectClass: TClass;
+begin
+  Result := TCustomGrid;
+end;
+
+function TPyDelphiGlyphCustomGrid.GetDelphiObject: TCustomGrid;
+begin
+  Result := TCustomGrid(inherited DelphiObject);
+end;
+
+procedure TPyDelphiGlyphCustomGrid.SetDelphiObject(const Value: TCustomGrid);
 begin
   inherited DelphiObject := Value;
 end;
