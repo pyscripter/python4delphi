@@ -50,6 +50,17 @@ type
     property DelphiObject: TCustomPopupForm read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiForm = class(TPyDelphiCustomForm)
+  private
+    function GetDelphiObject: TForm;
+    procedure SetDelphiObject(const Value: TForm);
+  public
+    // Class methods
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TForm read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -94,6 +105,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCommonCustomForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupForm);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiForm);
 end;
 
 { TPyDelphiApplication }
@@ -162,6 +174,23 @@ end;
 
 procedure TPyDelphiCustomPopupForm.SetDelphiObject(
   const Value: TCustomPopupForm);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiForm }
+
+class function TPyDelphiForm.DelphiObjectClass: TClass;
+begin
+  Result := TForm;
+end;
+
+function TPyDelphiForm.GetDelphiObject: TForm;
+begin
+  Result := TForm(inherited DelphiObject);
+end;
+
+procedure TPyDelphiForm.SetDelphiObject(const Value: TForm);
 begin
   inherited DelphiObject := Value;
 end;
