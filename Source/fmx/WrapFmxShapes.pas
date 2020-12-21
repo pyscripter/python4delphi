@@ -65,6 +65,15 @@ type
     property DelphiObject: TCalloutRectangle read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiEllipse = class(TPyDelphiShape)
+    function  GetDelphiObject: TEllipse;
+    procedure SetDelphiObject(const Value: TEllipse);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TEllipse read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -101,6 +110,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCaretRectangle);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRoundRect);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCalloutRectangle);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiEllipse);
 end;
 
 { TPyDelphiShape }
@@ -158,7 +168,7 @@ end;
 
 class function TPyDelphiCaretRectangle.DelphiObjectClass: TClass;
 begin
-   Result := TCaretRectangle;
+  Result := TCaretRectangle;
 end;
 
 function TPyDelphiCaretRectangle.GetDelphiObject: TCaretRectangle;
@@ -175,7 +185,7 @@ end;
 
 class function TPyDelphiRoundRect.DelphiObjectClass: TClass;
 begin
-   Result := TRoundRect;
+  Result := TRoundRect;
 end;
 
 function TPyDelphiRoundRect.GetDelphiObject: TRoundRect;
@@ -192,7 +202,7 @@ end;
 
 class function TPyDelphiCalloutRectangle.DelphiObjectClass: TClass;
 begin
-   Result := TCalloutRectangle;
+  Result := TCalloutRectangle;
 end;
 
 function TPyDelphiCalloutRectangle.GetDelphiObject: TCalloutRectangle;
@@ -202,6 +212,23 @@ end;
 
 procedure TPyDelphiCalloutRectangle.SetDelphiObject(
   const Value: TCalloutRectangle);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiEllipse }
+
+class function TPyDelphiEllipse.DelphiObjectClass: TClass;
+begin
+  Result := TEllipse;
+end;
+
+function TPyDelphiEllipse.GetDelphiObject: TEllipse;
+begin
+  Result := TEllipse(inherited DelphiObject);
+end;
+
+procedure TPyDelphiEllipse.SetDelphiObject(const Value: TEllipse);
 begin
   inherited DelphiObject := Value;
 end;
