@@ -36,6 +36,26 @@ type
     property DelphiObject: TCustomScrollBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiScrollBox = class(TPyDelphiCustomScrollBox)
+  private
+    function  GetDelphiObject: TScrollBox;
+    procedure SetDelphiObject(const Value: TScrollBox);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TScrollBox read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiVertScrollBox = class(TPyDelphiCustomScrollBox)
+  private
+    function  GetDelphiObject: TVertScrollBox;
+    procedure SetDelphiObject(const Value: TVertScrollBox);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TVertScrollBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -66,6 +86,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScaledLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomScrollBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScrollBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiVertScrollBox);
 end;
 
 { TPyDelphiLayout }
@@ -116,6 +138,40 @@ end;
 
 procedure TPyDelphiCustomScrollBox.SetDelphiObject(
   const Value: TCustomScrollBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiScrollBox }
+
+class function TPyDelphiScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := TScrollBox;
+end;
+
+function TPyDelphiScrollBox.GetDelphiObject: TScrollBox;
+begin
+  Result := TScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiScrollBox.SetDelphiObject(const Value: TScrollBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiVertScrollBox }
+
+class function TPyDelphiVertScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := TVertScrollBox;
+end;
+
+function TPyDelphiVertScrollBox.GetDelphiObject: TVertScrollBox;
+begin
+  Result := TVertScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiVertScrollBox.SetDelphiObject(const Value: TVertScrollBox);
 begin
   inherited DelphiObject := Value;
 end;
