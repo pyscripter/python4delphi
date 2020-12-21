@@ -3,7 +3,7 @@ unit WrapFmxLayouts;
 interface
 
 uses
-  FMX.Layouts, WrapFmxControls, WrapDelphi;
+  FMX.Layouts, WrapDelphi, WrapFmxControls;
 
 type
   TPyDelphiLayout = class(TPyDelphiControl)
@@ -24,6 +24,16 @@ type
     class function  DelphiObjectClass : TClass; override;
     // Properties
     property DelphiObject: TScaledLayout read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiCustomScrollBox = class(TPyDelphiStyledControl)
+  private
+    function  GetDelphiObject: TCustomScrollBox;
+    procedure SetDelphiObject(const Value: TCustomScrollBox);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomScrollBox read GetDelphiObject write SetDelphiObject;
   end;
 
 implementation
@@ -55,6 +65,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScaledLayout);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomScrollBox);
 end;
 
 { TPyDelphiLayout }
@@ -87,6 +98,24 @@ begin
 end;
 
 procedure TPyDelphiScaledLayout.SetDelphiObject(const Value: TScaledLayout);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomScrollBox }
+
+class function TPyDelphiCustomScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := TCustomScrollBox;
+end;
+
+function TPyDelphiCustomScrollBox.GetDelphiObject: TCustomScrollBox;
+begin
+  Result := TCustomScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomScrollBox.SetDelphiObject(
+  const Value: TCustomScrollBox);
 begin
   inherited DelphiObject := Value;
 end;
