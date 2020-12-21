@@ -146,6 +146,16 @@ type
     property DelphiObject: TIntegerColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiGlyphColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TGlyphColumn;
+    procedure SetDelphiObject(const Value: TGlyphColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TGlyphColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -190,6 +200,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCurrencyColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFloatColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiIntegerColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphColumn);
 end;
 
 { TPyDelphiColumn }
@@ -428,6 +439,23 @@ begin
 end;
 
 procedure TPyDelphiIntegerColumn.SetDelphiObject(const Value: TIntegerColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiGlyphColumn }
+
+class function TPyDelphiGlyphColumn.DelphiObjectClass: TClass;
+begin
+  Result := TGlyphColumn;
+end;
+
+function TPyDelphiGlyphColumn.GetDelphiObject: TGlyphColumn;
+begin
+  Result := TGlyphColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiGlyphColumn.SetDelphiObject(const Value: TGlyphColumn);
 begin
   inherited DelphiObject := Value;
 end;
