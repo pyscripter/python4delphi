@@ -3,7 +3,7 @@ unit WrapFmxForms;
 interface
 
 uses
-  FMX.Forms, PythonEngine, WrapDelphiClasses, WrapFmxTypes;
+  FMX.Forms, PythonEngine, WrapDelphiClasses, WrapFmxTypes, WrapFmxControls;
 
 type
   TPyDelphiApplication = class(TPyDelphiComponent)
@@ -61,6 +61,17 @@ type
     property DelphiObject: TForm read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiFrame = class(TPyDelphiControl)
+  private
+    function GetDelphiObject: TFrame;
+    procedure SetDelphiObject(const Value: TFrame);
+  public
+    // Class methods
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TFrame read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -106,6 +117,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiForm);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFrame);
 end;
 
 { TPyDelphiApplication }
@@ -191,6 +203,23 @@ begin
 end;
 
 procedure TPyDelphiForm.SetDelphiObject(const Value: TForm);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiFrame }
+
+class function TPyDelphiFrame.DelphiObjectClass: TClass;
+begin
+  Result := TFrame;
+end;
+
+function TPyDelphiFrame.GetDelphiObject: TFrame;
+begin
+  Result := TFrame(inherited DelphiObject);
+end;
+
+procedure TPyDelphiFrame.SetDelphiObject(const Value: TFrame);
 begin
   inherited DelphiObject := Value;
 end;
