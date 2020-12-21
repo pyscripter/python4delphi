@@ -36,6 +36,16 @@ type
     property DelphiObject: TProgressColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCheckColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TCheckColumn;
+    procedure SetDelphiObject(const Value: TCheckColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCheckColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -69,6 +79,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStringColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiProgressColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCheckColumn);
 end;
 
 { TPyDelphiColumn }
@@ -118,6 +129,23 @@ begin
 end;
 
 procedure TPyDelphiProgressColumn.SetDelphiObject(const Value: TProgressColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCheckColumn }
+
+class function TPyDelphiCheckColumn.DelphiObjectClass: TClass;
+begin
+  Result := TCheckColumn;
+end;
+
+function TPyDelphiCheckColumn.GetDelphiObject: TCheckColumn;
+begin
+  Result := TCheckColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCheckColumn.SetDelphiObject(const Value: TCheckColumn);
 begin
   inherited DelphiObject := Value;
 end;
