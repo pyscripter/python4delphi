@@ -86,6 +86,16 @@ type
     property DelphiObject: TPresentedFramedScrollBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomPresentedFramedVertScrollBox = class(TPyDelphiCustomPresentedVertScrollBox)
+  private
+    function GetDelphiObject: TCustomPresentedFramedVertScrollBox;
+    procedure SetDelphiObject(const Value: TCustomPresentedFramedVertScrollBox);
+  public
+    class function DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomPresentedFramedVertScrollBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -124,6 +134,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedHorzScrollBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPresentedFrameScrollBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedFrameScrollBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPresentedFramedVertScrollBox);
 end;
 
 { TPyDelphiCustomPresentedScrollBox }
@@ -266,6 +277,24 @@ end;
 
 procedure TPyDelphiPresentedFrameScrollBox.SetDelphiObject(
   const Value: TPresentedFramedScrollBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomPresentedFramedVertScrollBox }
+
+class function TPyDelphiCustomPresentedFramedVertScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := TCustomPresentedFramedVertScrollBox;
+end;
+
+function TPyDelphiCustomPresentedFramedVertScrollBox.GetDelphiObject: TCustomPresentedFramedVertScrollBox;
+begin
+  Result := TCustomPresentedFramedVertScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomPresentedFramedVertScrollBox.SetDelphiObject(
+  const Value: TCustomPresentedFramedVertScrollBox);
 begin
   inherited DelphiObject := Value;
 end;
