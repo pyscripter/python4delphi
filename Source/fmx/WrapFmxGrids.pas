@@ -116,6 +116,16 @@ type
     property DelphiObject: TCustomNumberColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCurrencyColumn = class(TPyDelphiCustomNumberColumn)
+  private
+    function  GetDelphiObject: TCurrencyColumn;
+    procedure SetDelphiObject(const Value: TCurrencyColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCurrencyColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -157,6 +167,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopupColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCurrencyColumn);
 end;
 
 { TPyDelphiColumn }
@@ -344,6 +355,23 @@ end;
 
 procedure TPyDelphiCustomNumberColumn.SetDelphiObject(
   const Value: TCustomNumberColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCurrencyColumn }
+
+class function TPyDelphiCurrencyColumn.DelphiObjectClass: TClass;
+begin
+  Result := TCurrencyColumn;
+end;
+
+function TPyDelphiCurrencyColumn.GetDelphiObject: TCurrencyColumn;
+begin
+  Result := TCurrencyColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCurrencyColumn.SetDelphiObject(const Value: TCurrencyColumn);
 begin
   inherited DelphiObject := Value;
 end;
