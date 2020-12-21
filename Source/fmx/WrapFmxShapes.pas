@@ -128,6 +128,15 @@ type
     property DelphiObject: TText read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiImage = class(TPyDelphiControl)
+    function  GetDelphiObject: TImage;
+    procedure SetDelphiObject(const Value: TImage);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TImage read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -331,7 +340,7 @@ end;
 
 class function TPyDelphiArc.DelphiObjectClass: TClass;
 begin
-  Result := TArc
+  Result := TArc;
 end;
 
 function TPyDelphiArc.GetDelphiObject: TArc;
@@ -348,7 +357,7 @@ end;
 
 class function TPyDelphiCustomPath.DelphiObjectClass: TClass;
 begin
-  Result := TCustomPath
+  Result := TCustomPath;
 end;
 
 function TPyDelphiCustomPath.GetDelphiObject: TCustomPath;
@@ -365,7 +374,7 @@ end;
 
 class function TPyDelphiPath.DelphiObjectClass: TClass;
 begin
-  Result := TPath
+  Result := TPath;
 end;
 
 function TPyDelphiPath.GetDelphiObject: TPath;
@@ -382,7 +391,7 @@ end;
 
 class function TPyDelphiText.DelphiObjectClass: TClass;
 begin
-  Result := TText
+  Result := TText;
 end;
 
 function TPyDelphiText.GetDelphiObject: TText;
@@ -391,6 +400,23 @@ begin
 end;
 
 procedure TPyDelphiText.SetDelphiObject(const Value: TText);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiImage }
+
+class function TPyDelphiImage.DelphiObjectClass: TClass;
+begin
+  Result := TImage;
+end;
+
+function TPyDelphiImage.GetDelphiObject: TImage;
+begin
+  Result := TImage(inherited DelphiObject);
+end;
+
+procedure TPyDelphiImage.SetDelphiObject(const Value: TImage);
 begin
   inherited DelphiObject := Value;
 end;
