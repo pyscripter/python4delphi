@@ -26,6 +26,16 @@ type
     property DelphiObject: TLine read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiRectangle = class(TPyDelphiShape)
+  private
+    function  GetDelphiObject: TRectangle;
+    procedure SetDelphiObject(const Value: TRectangle);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TRectangle read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -58,6 +68,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiShape);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLine);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRectangle);
 end;
 
 { TPyDelphiShape }
@@ -90,6 +101,23 @@ begin
 end;
 
 procedure TPyDelphiLine.SetDelphiObject(const Value: TLine);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiRectangle }
+
+class function TPyDelphiRectangle.DelphiObjectClass: TClass;
+begin
+  Result := TRectangle;
+end;
+
+function TPyDelphiRectangle.GetDelphiObject: TRectangle;
+begin
+  Result := TRectangle(inherited DelphiObject);
+end;
+
+procedure TPyDelphiRectangle.SetDelphiObject(const Value: TRectangle);
 begin
   inherited DelphiObject := Value;
 end;
