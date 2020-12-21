@@ -96,6 +96,16 @@ type
     property DelphiObject: TPopupColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiImageColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TImageColumn;
+    procedure SetDelphiObject(const Value: TImageColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TImageColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -135,6 +145,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimeColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopupColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageColumn);
 end;
 
 { TPyDelphiColumn }
@@ -287,6 +298,23 @@ begin
 end;
 
 procedure TPyDelphiPopupColumn.SetDelphiObject(const Value: TPopupColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiImageColumn }
+
+class function TPyDelphiImageColumn.DelphiObjectClass: TClass;
+begin
+  Result := TImageColumn;
+end;
+
+function TPyDelphiImageColumn.GetDelphiObject: TImageColumn;
+begin
+  Result := TImageColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiImageColumn.SetDelphiObject(const Value: TImageColumn);
 begin
   inherited DelphiObject := Value;
 end;
