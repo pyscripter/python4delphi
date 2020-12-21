@@ -119,6 +119,15 @@ type
     property DelphiObject: TPath read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiText = class(TPyDelphiControl)
+    function  GetDelphiObject: TText;
+    procedure SetDelphiObject(const Value: TText);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TText read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -161,6 +170,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiArc);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPath);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPath);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiText);
 end;
 
 { TPyDelphiShape }
@@ -364,6 +374,23 @@ begin
 end;
 
 procedure TPyDelphiPath.SetDelphiObject(const Value: TPath);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiText }
+
+class function TPyDelphiText.DelphiObjectClass: TClass;
+begin
+  Result := TText
+end;
+
+function TPyDelphiText.GetDelphiObject: TText;
+begin
+  Result := TText(inherited DelphiObject);
+end;
+
+procedure TPyDelphiText.SetDelphiObject(const Value: TText);
 begin
   inherited DelphiObject := Value;
 end;
