@@ -68,6 +68,7 @@ procedure TFormsRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiApplication);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCommonCustomForm);
 end;
 
