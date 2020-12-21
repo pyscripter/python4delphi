@@ -46,6 +46,16 @@ type
     property DelphiObject: TCaretRectangle read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiRoundRect = class(TPyDelphiShape)
+  private
+    function  GetDelphiObject: TRoundRect;
+    procedure SetDelphiObject(const Value: TRoundRect);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TRoundRect read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -80,6 +90,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLine);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRectangle);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCaretRectangle);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiRoundRect);
 end;
 
 { TPyDelphiShape }
@@ -146,6 +157,23 @@ begin
 end;
 
 procedure TPyDelphiCaretRectangle.SetDelphiObject(const Value: TCaretRectangle);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiRoundRect }
+
+class function TPyDelphiRoundRect.DelphiObjectClass: TClass;
+begin
+   Result := TRoundRect;
+end;
+
+function TPyDelphiRoundRect.GetDelphiObject: TRoundRect;
+begin
+  Result := TRoundRect(inherited DelphiObject);
+end;
+
+procedure TPyDelphiRoundRect.SetDelphiObject(const Value: TRoundRect);
 begin
   inherited DelphiObject := Value;
 end;
