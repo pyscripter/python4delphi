@@ -126,6 +126,16 @@ type
     property DelphiObject: TCustomBufferedLayout read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiBufferedLayout = class(TPyDelphiCustomBufferedLayout)
+  private
+    function  GetDelphiObject: TBufferedLayout;
+    procedure SetDelphiObject(const Value: TBufferedLayout);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TBufferedLayout read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -165,6 +175,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGridPanelLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFlowLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomBufferedLayout);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBufferedLayout);
 end;
 
 { TPyDelphiLayout }
@@ -372,6 +383,23 @@ end;
 
 procedure TPyDelphiCustomBufferedLayout.SetDelphiObject(
   const Value: TCustomBufferedLayout);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiBufferedLayout }
+
+class function TPyDelphiBufferedLayout.DelphiObjectClass: TClass;
+begin
+  Result := TBufferedLayout;
+end;
+
+function TPyDelphiBufferedLayout.GetDelphiObject: TBufferedLayout;
+begin
+  Result := TBufferedLayout(inherited DelphiObject);
+end;
+
+procedure TPyDelphiBufferedLayout.SetDelphiObject(const Value: TBufferedLayout);
 begin
   inherited DelphiObject := Value;
 end;
