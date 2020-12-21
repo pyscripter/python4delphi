@@ -28,6 +28,17 @@ type
     property DelphiObject: TCommonCustomForm read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomForm = class(TPyDelphiCommonCustomForm)
+  private
+    function GetDelphiObject: TCustomForm;
+    procedure SetDelphiObject(const Value: TCustomForm);
+  public
+    // Class methods
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TCustomForm read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -103,6 +114,23 @@ end;
 
 procedure TPyDelphiCommonCustomForm.SetDelphiObject(
   const Value: TCommonCustomForm);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomForm }
+
+class function TPyDelphiCustomForm.DelphiObjectClass: TClass;
+begin
+  Result := TCustomForm;
+end;
+
+function TPyDelphiCustomForm.GetDelphiObject: TCustomForm;
+begin
+  Result := TCustomForm(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomForm.SetDelphiObject(const Value: TCustomForm);
 begin
   inherited DelphiObject := Value;
 end;
