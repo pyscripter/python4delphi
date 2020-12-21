@@ -16,6 +16,16 @@ type
     property DelphiObject: TShape read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiLine = class(TPyDelphiShape)
+  private
+    function  GetDelphiObject: TLine;
+    procedure SetDelphiObject(const Value: TLine);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TLine read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -46,6 +56,7 @@ procedure TShapesRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLine);
 end;
 
 { TPyDelphiShape }
@@ -61,6 +72,23 @@ begin
 end;
 
 procedure TPyDelphiShape.SetDelphiObject(const Value: TShape);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiLine }
+
+class function TPyDelphiLine.DelphiObjectClass: TClass;
+begin
+  Result := TLine;
+end;
+
+function TPyDelphiLine.GetDelphiObject: TLine;
+begin
+  Result := TLine(inherited DelphiObject);
+end;
+
+procedure TPyDelphiLine.SetDelphiObject(const Value: TLine);
 begin
   inherited DelphiObject := Value;
 end;
