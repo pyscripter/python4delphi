@@ -16,6 +16,16 @@ type
     property DelphiObject: TCustomPresentedScrollBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiPresentedScrollBox = class(TPyDelphiCustomPresentedScrollBox)
+  private
+    function GetDelphiObject: TPresentedScrollBox;
+    procedure SetDelphiObject(const Value: TPresentedScrollBox);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TPresentedScrollBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -47,6 +57,7 @@ procedure TScrollBoxRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPresentedScrollBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedScrollBox);
 end;
 
 { TPyDelphiCustomPresentedScrollBox }
@@ -63,6 +74,24 @@ end;
 
 procedure TPyDelphiCustomPresentedScrollBox.SetDelphiObject(
   const Value: TCustomPresentedScrollBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPresentedScrollBox }
+
+class function TPyDelphiPresentedScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := TPresentedScrollBox;
+end;
+
+function TPyDelphiPresentedScrollBox.GetDelphiObject: TPresentedScrollBox;
+begin
+  Result := TPresentedScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPresentedScrollBox.SetDelphiObject(
+  const Value: TPresentedScrollBox);
 begin
   inherited DelphiObject := Value;
 end;
