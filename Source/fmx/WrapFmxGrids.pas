@@ -86,6 +86,16 @@ type
     property DelphiObject: TDateColumn read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiPopupColumn = class(TPyDelphiColumn)
+  private
+    function  GetDelphiObject: TPopupColumn;
+    procedure SetDelphiObject(const Value: TPopupColumn);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TPopupColumn read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -124,6 +134,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateTimeColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimeColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateColumn);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopupColumn);
 end;
 
 { TPyDelphiColumn }
@@ -259,6 +270,23 @@ begin
 end;
 
 procedure TPyDelphiDateColumn.SetDelphiObject(const Value: TDateColumn);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPopupColumn }
+
+class function TPyDelphiPopupColumn.DelphiObjectClass: TClass;
+begin
+  Result := TPopupColumn;
+end;
+
+function TPyDelphiPopupColumn.GetDelphiObject: TPopupColumn;
+begin
+  Result := TPopupColumn(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPopupColumn.SetDelphiObject(const Value: TPopupColumn);
 begin
   inherited DelphiObject := Value;
 end;
