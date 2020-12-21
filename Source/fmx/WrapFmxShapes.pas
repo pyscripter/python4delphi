@@ -146,6 +146,15 @@ type
     property DelphiObject: TPaintBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiSelection = class(TPyDelphiControl)
+    function  GetDelphiObject: TSelection;
+    procedure SetDelphiObject(const Value: TSelection);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TSelection read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -191,6 +200,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiText);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImage);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPaintBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSelection);
 end;
 
 { TPyDelphiShape }
@@ -445,6 +455,23 @@ begin
 end;
 
 procedure TPyDelphiPaintBox.SetDelphiObject(const Value: TPaintBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSelection }
+
+class function TPyDelphiSelection.DelphiObjectClass: TClass;
+begin
+  Result := TSelection;
+end;
+
+function TPyDelphiSelection.GetDelphiObject: TSelection;
+begin
+  Result := TSelection(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSelection.SetDelphiObject(const Value: TSelection);
 begin
   inherited DelphiObject := Value;
 end;
