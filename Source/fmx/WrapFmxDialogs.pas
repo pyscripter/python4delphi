@@ -3,11 +3,11 @@ unit WrapFmxDialogs;
 interface
 
 uses
-  FMX.Dialogs, WrapDelphiClasses, PythonEngine;
+  FMX.Dialogs, WrapFmxTypes, PythonEngine;
 
 
 type
-  TPyDelphiOpenDialog = class(TPyDelphiComponent)
+  TPyDelphiOpenDialog = class(TPyDelphiFmxObject)
   private
     function GetDelphiObject: TOpenDialog;
     procedure SetDelphiObject(const Value: TOpenDialog);
