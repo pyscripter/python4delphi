@@ -56,6 +56,16 @@ type
     property DelphiObject: TVertScrollBox read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiHorzScrollBox = class(TPyDelphiCustomScrollBox)
+  private
+    function  GetDelphiObject: THorzScrollBox;
+    procedure SetDelphiObject(const Value: THorzScrollBox);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: THorzScrollBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -88,6 +98,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomScrollBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScrollBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiVertScrollBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiHorzScrollBox);
 end;
 
 { TPyDelphiLayout }
@@ -172,6 +183,23 @@ begin
 end;
 
 procedure TPyDelphiVertScrollBox.SetDelphiObject(const Value: TVertScrollBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiHorzScrollBox }
+
+class function TPyDelphiHorzScrollBox.DelphiObjectClass: TClass;
+begin
+  Result := THorzScrollBox;
+end;
+
+function TPyDelphiHorzScrollBox.GetDelphiObject: THorzScrollBox;
+begin
+  Result := THorzScrollBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiHorzScrollBox.SetDelphiObject(const Value: THorzScrollBox);
 begin
   inherited DelphiObject := Value;
 end;
