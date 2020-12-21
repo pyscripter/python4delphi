@@ -156,7 +156,7 @@ type
     property DelphiObject: TGlyphColumn read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiGlyphCustomGrid = class(TPyDelphiCustomPresentedScrollBox)
+  TPyDelphiCustomGrid = class(TPyDelphiCustomPresentedScrollBox)
   private
     function  GetDelphiObject: TCustomGrid;
     procedure SetDelphiObject(const Value: TCustomGrid);
@@ -164,6 +164,16 @@ type
     class function  DelphiObjectClass : TClass; override;
     // Properties
     property DelphiObject: TCustomGrid read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiGrid = class(TPyDelphiCustomGrid)
+  private
+    function GetDelphiObject: TGrid;
+    procedure SetDelphiObject(const Value: TGrid);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TGrid read GetDelphiObject write SetDelphiObject;
   end;
 
 implementation
@@ -211,7 +221,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFloatColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiIntegerColumn);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphColumn);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGlyphCustomGrid);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomGrid);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGrid);
 end;
 
 { TPyDelphiColumn }
@@ -473,17 +484,34 @@ end;
 
 { TPyDelphiGlyphCustomGrid }
 
-class function TPyDelphiGlyphCustomGrid.DelphiObjectClass: TClass;
+class function TPyDelphiCustomGrid.DelphiObjectClass: TClass;
 begin
   Result := TCustomGrid;
 end;
 
-function TPyDelphiGlyphCustomGrid.GetDelphiObject: TCustomGrid;
+function TPyDelphiCustomGrid.GetDelphiObject: TCustomGrid;
 begin
   Result := TCustomGrid(inherited DelphiObject);
 end;
 
-procedure TPyDelphiGlyphCustomGrid.SetDelphiObject(const Value: TCustomGrid);
+procedure TPyDelphiCustomGrid.SetDelphiObject(const Value: TCustomGrid);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiGrid }
+
+class function TPyDelphiGrid.DelphiObjectClass: TClass;
+begin
+  Result := TGrid;
+end;
+
+function TPyDelphiGrid.GetDelphiObject: TGrid;
+begin
+  Result := TGrid(inherited DelphiObject);
+end;
+
+procedure TPyDelphiGrid.SetDelphiObject(const Value: TGrid);
 begin
   inherited DelphiObject := Value;
 end;
