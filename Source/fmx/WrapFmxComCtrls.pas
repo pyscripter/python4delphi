@@ -1,3 +1,5 @@
+{$I Definition.Inc}
+
 unit WrapFmxComCtrls;
 
 interface
