@@ -5,7 +5,8 @@ unit WrapFmxForms;
 interface
 
 uses
-  FMX.Forms, PythonEngine, WrapDelphiClasses, WrapFmxTypes, WrapFmxControls;
+  System.Classes, FMX.Forms,
+  PythonEngine, WrapFmxTypes, WrapDelphiClasses, WrapFmxControls;
 
 type
   TPyDelphiApplication = class(TPyDelphiComponent)
@@ -23,7 +24,9 @@ type
   private
     function GetDelphiObject: TCommonCustomForm;
     procedure SetDelphiObject(const Value: TCommonCustomForm);
+    function HasFormRes(const AClass: TClass): boolean;
   public
+    function CreateComponent(AOwner: TComponent): TComponent; override;
     // Class methods
     class function DelphiObjectClass: TClass; override;
     // Properties
@@ -88,7 +91,7 @@ type
 implementation
 
 uses
-  WrapDelphi;
+  WrapDelphi, System.Types;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -153,6 +156,46 @@ end;
 
 { TPyDelphiCommonCustomForm }
 
+function TPyDelphiCommonCustomForm.CreateComponent(
+  AOwner: TComponent): TComponent;
+type
+  TCommonCustomFormClass = class of TCommonCustomForm;
+var
+  LClass: TClass;
+  LFormClass: TCommonCustomFormClass;
+  LClassName: string;
+begin
+  //if we have a subclass of our Form wrapper, then check if we can find a
+  //Delphi class that would have the same name as the Python class.
+  //This would allow Python to instanciate an existing Delphi form class,
+  //insted of only using a blank form.
+  if (ob_type <> PythonType.TheTypePtr) then begin
+    LClassName := string(ob_type.tp_name);
+    LClass := GetClass(LClassName);
+    if not Assigned(LClass) then
+      LClass := GetClass('T' + LClassName);
+    if Assigned(LClass) and LClass.InheritsFrom(TCommonCustomForm) then
+      LFormClass := TCommonCustomFormClass(LClass);
+  end else begin
+    //get de default form class
+    if DelphiObjectClass.InheritsFrom(TCommonCustomForm) then
+      LFormClass := TCommonCustomFormClass(DelphiObjectClass);
+  end;
+
+  //if it's not a design form, so we create it as a non-resourced form,
+  //using the non-resourced constructor.
+  //if the Owner is TApplication, then we have to call its CreateForm method,
+  //otherwise we won't have a mian form defined, as the main form is the first
+  //created form. Of course, this is a concern only when Python controls all the
+  //GUI and calls Apllication.Run by itself.
+  if not HasFormRes(LFormClass) then
+    Result := LFormClass.CreateNew(AOwner)
+  else if (AOwner = Application) then
+    Application.CreateForm(LFormClass, Result)
+  else
+    Result := LFormClass.Create(AOwner);
+end;
+
 class function TPyDelphiCommonCustomForm.DelphiObjectClass: TClass;
 begin
   Result := TCommonCustomForm;
@@ -161,6 +204,13 @@ end;
 function TPyDelphiCommonCustomForm.GetDelphiObject: TCommonCustomForm;
 begin
   Result := TCommonCustomForm(inherited DelphiObject);
+end;
+
+function TPyDelphiCommonCustomForm.HasFormRes(const AClass: TClass): boolean;
+begin
+  Result := FindResource(
+    FindResourceHInstance(FindClassHInstance(AClass)),
+    PChar(AClass.ClassName), PChar(RT_RCDATA)) <> 0;
 end;
 
 procedure TPyDelphiCommonCustomForm.SetDelphiObject(
