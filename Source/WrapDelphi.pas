@@ -1040,11 +1040,15 @@ begin
           Value := V.Cast(TypeInfo);
           Result := True;
         end;
-      tkInteger, tkFloat, tkInt64,
-      tkVariant:
+      tkInteger, tkFloat, tkInt64:
         begin
           V :=  TValue.FromVariant(GetPythonEngine.PyObjectAsVariant(PyValue));
           Value := V.Cast(TypeInfo);
+          Result := True;
+        end;
+      tkVariant:
+        begin
+          Value :=  TValue.From<Variant>(GetPythonEngine.PyObjectAsVariant(PyValue));
           Result := True;
         end;
       tkEnumeration:
