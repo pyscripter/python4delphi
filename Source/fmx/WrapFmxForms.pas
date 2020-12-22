@@ -5,7 +5,7 @@ unit WrapFmxForms;
 interface
 
 uses
-  System.Classes, FMX.Forms,
+  System.Classes, System.SysUtils, FMX.Forms,
   PythonEngine, WrapFmxTypes, WrapDelphiClasses, WrapFmxControls;
 
 type
@@ -88,6 +88,8 @@ type
     property DelphiObject: TScreen read GetDelphiObject write SetDelphiObject;
   end;
 
+  EInvalidFormClass = class(Exception);
+
 implementation
 
 uses
@@ -165,6 +167,11 @@ var
   LFormClass: TCommonCustomFormClass;
   LClassName: string;
 begin
+  LFormClass := nil;
+  //get de default form class
+  if DelphiObjectClass.InheritsFrom(TCommonCustomForm) then
+    LFormClass := TCommonCustomFormClass(DelphiObjectClass);
+
   //if we have a subclass of our Form wrapper, then check if we can find a
   //Delphi class that would have the same name as the Python class.
   //This would allow Python to instanciate an existing Delphi form class,
@@ -176,11 +183,11 @@ begin
       LClass := GetClass('T' + LClassName);
     if Assigned(LClass) and LClass.InheritsFrom(TCommonCustomForm) then
       LFormClass := TCommonCustomFormClass(LClass);
-  end else begin
-    //get de default form class
-    if DelphiObjectClass.InheritsFrom(TCommonCustomForm) then
-      LFormClass := TCommonCustomFormClass(DelphiObjectClass);
   end;
+
+  if not Assigned(LFormClass) then
+    raise EInvalidFormClass.CreateFmt('Type %s is not a valid form class', [
+      DelphiObjectClass.ClassName]);
 
   //if it's not a design form, so we create it as a non-resourced form,
   //using the non-resourced constructor.
