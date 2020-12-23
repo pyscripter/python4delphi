@@ -1040,11 +1040,13 @@ begin
           Value := V.Cast(TypeInfo);
           Result := True;
         end;
-      tkInteger, tkFloat, tkInt64,
-      tkVariant:
+      tkInteger, tkFloat, tkInt64, tkVariant:
         begin
-          V :=  TValue.FromVariant(GetPythonEngine.PyObjectAsVariant(PyValue));
-          Value := V.Cast(TypeInfo);
+          V := TValue.From<Variant>(GetPythonEngine.PyObjectAsVariant(PyValue));
+          if TypeInfo^.Kind = tkVariant then
+            Value := V
+          else
+            Value := V.Cast(TypeInfo);
           Result := True;
         end;
       tkEnumeration:
