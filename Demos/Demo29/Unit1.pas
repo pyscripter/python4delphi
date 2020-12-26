@@ -10,7 +10,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ExtDlgs, StdCtrls, ExtCtrls, PythonEngine, Vcl.PythonGUIInputOutput;
+  Dialogs, ExtDlgs, StdCtrls, ExtCtrls, PythonEngine,
+  PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)
@@ -88,9 +89,18 @@ begin
         presult := PyEval_CallObjectWithKeywords(
             ExtractPythonObjectFrom(MainModule.ImageToBytes), pargs, nil);
         try
-          if (P = nil) or (PyBytes_AsStringAndSize(presult, P, Len) < 0) then begin
+          if PyBytes_AsStringAndSize(presult, P, Len) < 0 then begin
             ShowMessage('This does not work and needs fixing');
             Abort;
+          end;
+
+          _stream := TMemoryStream.Create();
+          try
+            _stream.Write(P^, Len);
+            _stream.Position := 0;
+            Image1.Picture.Graphic.LoadFromStream(_stream);
+          finally
+            _stream.Free;
           end;
         finally
           Py_XDECREF(pResult);
@@ -98,15 +108,6 @@ begin
       finally
         Py_DECREF(pargs);
       end;
-    end;
-
-    _stream := TMemoryStream.Create();
-    try
-      _stream.Write(P^, Len);
-      _stream.Position := 0;
-      Image1.Picture.Graphic.LoadFromStream(_stream);
-    finally
-      _stream.Free;
     end;
   end
   else
