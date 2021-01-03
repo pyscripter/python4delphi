@@ -253,10 +253,26 @@ const
   TPFLAGS_DEFAULT = [tpfBaseType, tpHaveVersionTag];
 
 //-------  Python opcodes  ----------//
-Const
+const
    single_input                     = 256;
    file_input                       = 257;
    eval_input                       = 258;
+
+  // UnicodeObject.h
+const
+  // Return values of the PyUnicode_KIND() macro
+
+  {
+     PyUnicode_WCHAR_KIND is deprecated. Will be removed in Python 12.
+     String contains only wstr byte characters.  This is only possible
+     when the string was created with a legacy API and _PyUnicode_Ready()
+     has not been called yet.
+  }
+  PyUnicode_WCHAR_KIND = 0;
+
+  PyUnicode_1BYTE_KIND = 1;
+  PyUnicode_2BYTE_KIND = 2;
+  PyUnicode_4BYTE_KIND = 4;
 
   // structmember.h
 const
@@ -1521,9 +1537,12 @@ type
     PyUnicode_FromWideChar:function (const w:PWideChar; size:NativeInt):PPyObject; cdecl;
     PyUnicode_FromString:function (s:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
+    PyUnicode_FromKindAndData:function (kind:integer;const buffer:pointer;size:NativeInt):PPyObject; cdecl;
     PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:NativeInt):integer; cdecl;
     PyUnicode_AsUTF8:function (unicode: PPyObject):PAnsiChar; cdecl;
+    PyUnicode_AsUTF8AndSize:function (unicode: PPyObject; size: PNativeInt):PAnsiChar; cdecl;
     PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
+    PyUnicode_DecodeUTF16:function (const s:PAnsiChar; size: NativeInt; const errors: PAnsiChar; byteoder: PInteger):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
     PyUnicode_GetSize:function (unicode:PPyObject):NativeInt; cdecl;
@@ -1554,7 +1573,7 @@ type
     PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
     PyNode_Free                     : procedure( n : PNode ); cdecl;
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
-    PyMem_Malloc                    : function ( size : NativeInt ) : Pointer;
+    PyMem_Malloc                    : function ( size : NativeUInt ) : Pointer;
 
     Py_SetProgramName               : procedure( name: PWideChar); cdecl;
     Py_IsInitialized                : function : integer; cdecl;
@@ -3470,9 +3489,12 @@ begin
   PyUnicode_FromWideChar      := Import(AnsiString(Format('PyUnicode%s_FromWideChar',[UnicodeSuffix])));
   PyUnicode_FromString        := Import(AnsiString(Format('PyUnicode%s_FromString',[UnicodeSuffix])));
   PyUnicode_FromStringAndSize := Import(AnsiString(Format('PyUnicode%s_FromStringAndSize',[UnicodeSuffix])));
+  PyUnicode_FromKindAndData   := Import(AnsiString(Format('PyUnicode%s_FromKindAndData',[UnicodeSuffix])));
   PyUnicode_AsWideChar        := Import(AnsiString(Format('PyUnicode%s_AsWideChar',[UnicodeSuffix])));
   PyUnicode_AsUTF8            := Import(AnsiString(Format('PyUnicode%s_AsUTF8',[UnicodeSuffix])));
+  PyUnicode_AsUTF8AndSize     := Import(AnsiString(Format('PyUnicode%s_AsUTF8AndSize',[UnicodeSuffix])));
   PyUnicode_Decode            := Import(AnsiString(Format('PyUnicode%s_Decode',[UnicodeSuffix])));
+  PyUnicode_DecodeUTF16       := Import(AnsiString(Format('PyUnicode%s_DecodeUTF16',[UnicodeSuffix])));
   PyUnicode_AsEncodedString   := Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[UnicodeSuffix])));
   PyUnicode_FromOrdinal       := Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[UnicodeSuffix])));
   PyUnicode_GetSize           := Import(AnsiString(Format('PyUnicode%s_GetSize',[UnicodeSuffix])));
