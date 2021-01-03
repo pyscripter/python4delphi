@@ -116,7 +116,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
@@ -124,11 +124,12 @@ const
     (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
-    (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013)
+    (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3m.so'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4m.so'; RegVersion: '3.4'; APIVersion: 1013),
@@ -136,11 +137,12 @@ const
     (DllName: 'libpython3.6m.so'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8m.so'; RegVersion: '3.8'; APIVersion: 1013),
-    (DllName: 'libpython3.9m.so'; RegVersion: '3.9'; APIVersion: 1013)
+    (DllName: 'libpython3.9m.so'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'libpython3.9m.so'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
@@ -148,7 +150,8 @@ const
     (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
-    (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013)
+    (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$endif}
 
@@ -1421,7 +1424,7 @@ type
     PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
     PyLong_FromUnsignedLong:function(val:LongWord): PPyObject; cdecl;
     PyLong_AsUnsignedLong:function(ob:PPyObject): LongWord; cdecl;
-    PyLong_FromUnicode:function(ob:PPyObject; a, b : integer): PPyObject; cdecl;
+    PyLong_FromUnicodeObject:function(ob:PPyObject; base : integer): PPyObject; cdecl;
     PyLong_FromLongLong:function(val:Int64): PPyObject; cdecl;
     PyLong_FromUnsignedLongLong:function(val:UInt64) : PPyObject; cdecl;
     PyLong_AsLongLong:function(ob:PPyObject): Int64; cdecl;
@@ -1457,7 +1460,6 @@ type
     PyNumber_Rshift:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PyNumber_Subtract:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PyNumber_Xor:function (ob1,ob2:PPyObject):PPyObject; cdecl;
-    PyOS_InitInterrupts:procedure; cdecl;
     PyOS_InterruptOccurred:function :integer; cdecl;
     PyObject_CallObject:function (ob,args:PPyObject):PPyObject; cdecl;
     PyObject_CallMethod : function ( obj : PPyObject; method, format : PAnsiChar {...}) : PPyObject; cdecl varargs;
@@ -1553,7 +1555,7 @@ type
     PyBool_FromLong: function ( ok : Integer) : PPyObject; cdecl;
     PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;
     Py_AtExit:function (proc: AtExitProc):integer; cdecl;
-    Py_CompileStringExFlags:function (s1,s2:PAnsiChar;i:integer;flags:PPyCompilerFlags;optimize:integer):PPyObject; cdecl;
+    Py_CompileStringExFlags:function (str,filename:PAnsiChar;start:integer;flags:PPyCompilerFlags;optimize:integer):PPyObject; cdecl;
     Py_FatalError:procedure(s:PAnsiChar); cdecl;
     _PyObject_New:function (obt:PPyTypeObject;ob:PPyObject):PPyObject; cdecl;
     _PyBytes_Resize:function (var ob:PPyObject;i:NativeInt):integer; cdecl;
@@ -1600,8 +1602,8 @@ type
   // TODO - deal with the following:
   // the PyParser_* functions are deprecated in python 3.9 and will be removed in
   // Python 3.10
-  function PyParser_SimpleParseString( str : PAnsiChar; start : Integer) : PNode; cdecl;
-  function Py_CompileString( s1,s2:PAnsiChar;i:integer) : PPyObject; cdecl;
+  function PyParser_SimpleParseString(str : PAnsiChar; start : Integer) : PNode; cdecl;
+  function Py_CompileString(str,filename:PAnsiChar;start:integer) : PPyObject; cdecl;
 
   // functions redefined in Delphi
   class procedure Py_INCREF(op: PPyObject); static; inline;
@@ -2714,12 +2716,7 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 function CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString; overload;
 function CleanString(const s : UnicodeString; AppendLF : Boolean = True) : UnicodeString; overload;
 
-//#######################################################
-//##                                                   ##
-//##        Global variables                           ##
-//##                                                   ##
-//#######################################################
-
+procedure DetectPythonVersionFromLibName(const LibName: string; out MajorVersion, MinorVersion: integer);
 
 implementation
 
@@ -3124,8 +3121,7 @@ end;
 procedure TPythonInterface.AfterLoad;
 begin
   inherited;
-  FMajorVersion := StrToInt(DLLName[7 {$IFNDEF MSWINDOWS}+3{$ENDIF}]);
-  FMinorVersion := StrToInt(DLLName[8{$IFNDEF MSWINDOWS}+4{$ENDIF}]);
+  DetectPythonVersionFromLibName(DLLName, FMajorVersion, FMinorVersion);
 
   FBuiltInModuleName := 'builtins';
 
@@ -3370,7 +3366,7 @@ begin
   PyLong_FromString         := Import('PyLong_FromString');
   PyLong_FromUnsignedLong   := Import('PyLong_FromUnsignedLong');
   PyLong_AsUnsignedLong     := Import('PyLong_AsUnsignedLong');
-  PyLong_FromUnicode        := Import('PyLong_FromUnicode');
+  PyLong_FromUnicodeObject  := Import('PyLong_FromUnicodeObject');
   PyLong_FromLongLong       := Import('PyLong_FromLongLong');
   PyLong_FromUnsignedLongLong := Import('PyLong_FromUnsignedLongLong');
   PyLong_AsLongLong         := Import('PyLong_AsLongLong');
@@ -3406,7 +3402,6 @@ begin
   PyNumber_Rshift           := Import('PyNumber_Rshift');
   PyNumber_Subtract         := Import('PyNumber_Subtract');
   PyNumber_Xor              := Import('PyNumber_Xor');
-  PyOS_InitInterrupts       := Import('PyOS_InitInterrupts');
   PyOS_InterruptOccurred    := Import('PyOS_InterruptOccurred');
   PyObject_CallObject       := Import('PyObject_CallObject');
   PyObject_CallMethod       := Import('PyObject_CallMethod');
@@ -3521,8 +3516,13 @@ begin
   Py_GetPythonHome            := Import('Py_GetPythonHome');
   Py_GetPrefix                := Import('Py_GetPrefix');
   Py_GetProgramName           := Import('Py_GetProgramName');
-  PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
-  PyNode_Free                 := Import('PyNode_Free');
+
+  if (FMajorVersion = 3) and (MinorVersion < 10) then
+  begin
+    PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
+    PyNode_Free                 := Import('PyNode_Free');
+  end;
+
   PyErr_NewException          := Import('PyErr_NewException');
   try
     PyMem_Malloc := Import ('PyMem_Malloc');
@@ -3551,9 +3551,9 @@ begin
   PyGILState_Release       := Import('PyGILState_Release');
 end;
 
-function TPythonInterface.Py_CompileString(s1,s2:PAnsiChar;i:integer):PPyObject;
+function TPythonInterface.Py_CompileString(str,filename:PAnsiChar;start:integer):PPyObject;
 begin
-  Result := Py_CompileStringExFlags(s1, s2, i, nil, -1);
+  Result := Py_CompileStringExFlags(str, filename, start, nil, -1);
 end;
 
 function TPythonInterface.PyParser_SimpleParseString( str : PAnsiChar; start : integer) : PNode; cdecl;
@@ -4283,7 +4283,7 @@ begin
         VersionSuffix := '';
 {$IFDEF CPUX86}
         MajorVersion := StrToInt(RegVersion[1]);
-        MinorVersion := StrToInt(RegVersion[3]);
+        MinorVersion := StrToInt(Copy(RegVersion, 3));
         if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
           VersionSuffix := '-32';
 {$ENDIF}
@@ -4604,11 +4604,21 @@ end;
 function TPythonEngine.CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
 var
   n : PNode;
+  PyCode: PPyObject;
 begin
-  n := PyParser_SimpleParseString( PAnsiChar(str), mode );
-  result := Assigned(n);
-  if Assigned( n ) then
-    PyNode_Free(n);
+  if (FMajorVersion = 3) and (MinorVersion < 10) then
+  begin
+    n := PyParser_SimpleParseString( PAnsiChar(str), mode );
+    result := Assigned(n);
+    if Assigned( n ) then
+      PyNode_Free(n);
+  end
+  else
+  begin
+    PyCode := Py_CompileString(PAnsiChar(str), '<string>', mode);
+    Result := Assigned(PyCode);
+    Py_XDECREF(PyCode);
+  end;
 end;
 
 procedure TPythonEngine.RaiseError;
@@ -8949,6 +8959,30 @@ begin
   end;
 end;
 {$ENDIF}
+
+procedure DetectPythonVersionFromLibName(const LibName: string; out MajorVersion, MinorVersion: integer);
+var
+  NPos: integer;
+  S: String;
+begin
+  //Win: "python310.dll"
+  //Linux: "libpython3.10.so"
+  S := LibName;
+  NPos := Pos('python', LowerCase(S));
+  if NPos>0 then
+  begin
+    Inc(NPos, Length('python'));
+    MajorVersion := StrToIntDef(S[NPos], 3);
+    Inc(NPos);
+    if LibName[NPos]='.' then
+      Inc(NPos);
+    S := Copy(S, NPos);
+    NPos := Pos('.', S);
+    if NPos > 1 then
+      MinorVersion := StrToIntDef(Copy(S, 1, NPos-1), 3);
+  end;
+end;
+
 
 end.
 
