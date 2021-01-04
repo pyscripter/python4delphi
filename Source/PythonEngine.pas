@@ -1876,6 +1876,7 @@ type
     function PyUnicodeFromString(const AString : UnicodeString) : PPyObject; overload;
     function PyUnicodeFromString(const AString: AnsiString): PPyObject; overload;
     function PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
+    function PyBytesAsAnsiString( obj : PPyObject ) : AnsiString;
 
     // Public Properties
     property ClientCount : Integer read GetClientCount;
@@ -2693,7 +2694,8 @@ procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
-function GetPythonVersionFromDLLName(const DLLFileName : string): string;
+function  SysVersionFromDLLName(const DLLFileName : string): string;
+procedure PythonVersionFromDLLName(const LibName: string; out MajorVersion, MinorVersion: integer);
 
 { Helper functions}
 (*
@@ -2715,8 +2717,6 @@ procedure MaskFPUExceptions(ExceptionsMasked : boolean;
 *)
 function CleanString(const s : AnsiString; AppendLF : Boolean = True) : AnsiString; overload;
 function CleanString(const s : UnicodeString; AppendLF : Boolean = True) : UnicodeString; overload;
-
-procedure DetectPythonVersionFromLibName(const LibName: string; out MajorVersion, MinorVersion: integer);
 
 implementation
 
@@ -3121,7 +3121,7 @@ end;
 procedure TPythonInterface.AfterLoad;
 begin
   inherited;
-  DetectPythonVersionFromLibName(DLLName, FMajorVersion, FMinorVersion);
+  PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion);
 
   FBuiltInModuleName := 'builtins';
 
@@ -3641,7 +3641,7 @@ end;
 
 function TPythonInterface.PyClass_Check( obj : PPyObject ) : Boolean;
 begin
-  Result := Assigned( obj ) and (PyObject_IsInstance(obj, PPyObject(PyType_Type)) <> 0);
+  Result := Assigned( obj ) and (PyObject_IsInstance(obj, PPyObject(PyType_Type)) = 1);
 end;
 
 function TPythonInterface.PyType_CheckExact( obj : PPyObject ) : Boolean;
@@ -4071,7 +4071,7 @@ begin
       end;
     end
   else
-    RegVersion := GetPythonVersionFromDLLName(aDllName);
+    RegVersion := SysVersionFromDLLName(aDllName);
   inherited;
 end;
 
@@ -4851,7 +4851,8 @@ begin
   end;
   S := PyObject_Str( obj );
   if Assigned(S) and PyUnicode_Check(S) then
-    Result := PyUnicodeAsString(S);
+    W := PyUnicodeAsString(S);
+    Result := string(W);
   Py_XDECREF(S);
 end;
 
@@ -5565,6 +5566,20 @@ begin
   strings.Clear;
   for i := 0 to PyTuple_Size( tuple ) - 1 do
     strings.Add( PyObjectAsString( PyTuple_GetItem( tuple, i ) ) );
+end;
+
+function TPythonEngine.PyBytesAsAnsiString(obj: PPyObject): AnsiString;
+var
+  buffer: PAnsiChar;
+  size: NativeInt;
+begin
+  if PyBytes_Check(obj) then
+  begin
+     PyBytes_AsStringAndSize(obj, buffer, size);
+     SetString(Result, buffer, size);
+  end
+  else
+    raise EPythonError.Create('PyBytesAsAnsiString expects a Bytes Python object');
 end;
 
 function TPythonEngine.PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
@@ -8832,9 +8847,12 @@ begin
                                 TPythonType, TPythonModule, TPythonDelphiVar]);
 end;
 
-function GetPythonVersionFromDLLName(const DLLFileName : string): string;
+function SysVersionFromDLLName(const DLLFileName : string): string;
+var
+  Minor, Major: integer;
 begin
-  Result := DLLFileName[{$IFDEF MSWINDOWS}7{$ELSE}10{$ENDIF}] + '.' + DLLFileName[{$IFDEF MSWINDOWS}8{$ELSE}11{$ENDIF}];
+  PythonVersionFromDLLName(DLLFileName, Major, Minor);
+  Result := Format('%d.%d', [Major, Minor]);
 end;
 
 function PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
@@ -8960,7 +8978,7 @@ begin
 end;
 {$ENDIF}
 
-procedure DetectPythonVersionFromLibName(const LibName: string; out MajorVersion, MinorVersion: integer);
+procedure PythonVersionFromDLLName(const LibName: string; out MajorVersion, MinorVersion: integer);
 var
   NPos: integer;
   S: String;
