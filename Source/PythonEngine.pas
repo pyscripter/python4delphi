@@ -1876,6 +1876,7 @@ type
     function PyUnicodeFromString(const AString : UnicodeString) : PPyObject; overload;
     function PyUnicodeFromString(const AString: AnsiString): PPyObject; overload;
     function PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
+    function PyUnicodeAsUTF8String( obj : PPyObject ) : RawByteString;
     function PyBytesAsAnsiString( obj : PPyObject ) : AnsiString;
 
     // Public Properties
@@ -5615,6 +5616,26 @@ begin
   else
     raise EPythonError.Create('PyUnicodeAsString expects a Unicode Python object');
 end;
+
+function TPythonEngine.PyUnicodeAsUTF8String( obj : PPyObject ) : RawByteString;
+var
+  buffer: PAnsiChar;
+  size: NativeInt;
+begin
+  if PyUnicode_Check(obj) then
+  begin
+    Result := '';
+    buffer := PyUnicode_AsUTF8AndSize(obj, @size);
+    if Assigned(buffer) then
+      SetString(Result, buffer, size)
+    else
+      Result := '';
+    SetCodePage(Result, CP_UTF8, False);
+  end
+  else
+    raise EPythonError.Create('PyUnicodeAsUTF8String expects a Unicode Python object');
+end;
+
 
 function TPythonEngine.PyUnicodeFromString(const AString : UnicodeString) : PPyObject;
 {$IFDEF POSIX}
