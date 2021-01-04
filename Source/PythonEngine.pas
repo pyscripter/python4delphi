@@ -138,7 +138,7 @@ const
     (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8m.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9m.so'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'libpython3.9m.so'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'libpython3.10m.so'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
@@ -2732,6 +2732,13 @@ uses
 {$ENDIF}
   Math;
 
+(*******************************************************)
+(**                                                   **)
+(**            Resource strings                       **)
+(**                                                   **)
+(*******************************************************)
+resourcestring
+SPyConvertionError = 'Conversion Error: %s expects a %s Python object';
 
 (*******************************************************)
 (**                                                   **)
@@ -5580,7 +5587,7 @@ begin
      SetString(Result, buffer, size);
   end
   else
-    raise EPythonError.Create('PyBytesAsAnsiString expects a Bytes Python object');
+    raise EPythonError.CreateFmt(SPyConvertionError, ['PyBytesAsAnsiString', 'Bytes']);
 end;
 
 function TPythonEngine.PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
@@ -5614,7 +5621,7 @@ begin
       Result := '';
   end
   else
-    raise EPythonError.Create('PyUnicodeAsString expects a Unicode Python object');
+    raise EPythonError.CreateFmt(SPyConvertionError, ['PyUnicodeAsString', 'Unicode']);
 end;
 
 function TPythonEngine.PyUnicodeAsUTF8String( obj : PPyObject ) : RawByteString;
@@ -5633,7 +5640,7 @@ begin
     SetCodePage(Result, CP_UTF8, False);
   end
   else
-    raise EPythonError.Create('PyUnicodeAsUTF8String expects a Unicode Python object');
+    raise EPythonError.CreateFmt(SPyConvertionError, ['PyUnicodeAsUTF8String', 'Unicode']);
 end;
 
 
