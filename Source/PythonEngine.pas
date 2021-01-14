@@ -9006,29 +9006,45 @@ begin
 end;
 {$ENDIF}
 
-procedure PythonVersionFromDLLName(const LibName: string; out MajorVersion, MinorVersion: integer);
+procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
+//Windows: 'c:\some\path\python310.dll'
+//Linux: '/some/path/libpython3.10.so'
+const
+  cPython = 'python';
 var
   NPos: integer;
-  S: String;
+  ch: char;
 begin
-  //Win: "python310.dll"
-  //Linux: "libpython3.10.so"
-  S := LibName;
-  NPos := Pos('python', LowerCase(S));
-  if NPos>0 then
-  begin
-    Inc(NPos, Length('python'));
-    MajorVersion := StrToIntDef(S[NPos], 3);
-    Inc(NPos);
-    if LibName[NPos]='.' then
-      Inc(NPos);
-    S := Copy(S, NPos);
-    NPos := Pos('.', S);
-    if NPos > 1 then
-      MinorVersion := StrToIntDef(Copy(S, 1, NPos-1), 3);
+  MajorVersion:= 0;
+  MinorVersion:= 0;
+  LibName:= LowerCase(ExtractFileName(LibName)); //strip path
+  NPos:= Pos(cPython, LibName);
+  if NPos=0 then exit;
+  Inc(NPos, Length(cPython));
+  if NPos>Length(LibName) then exit;
+  ch:= LibName[NPos];
+  case ch of
+    '2'..'5': //support major versions 2...5, default 3
+      MajorVersion:= StrToIntDef(ch, 3);
+    else
+      exit;
   end;
+  Delete(LibName, 1, NPos);
+  if LibName='' then exit;
+  case LibName[1] of
+    '.': //Unix name with dot
+      Delete(LibName, 1, 1);
+    '0'..'9': //Windows name w/o dot
+      begin end;
+    else //unknown char after major version
+      exit;
+  end;
+  NPos:= Pos('.', LibName); //dot with extension is required
+  if NPos=0 then exit;
+  Delete(LibName, NPos, MaxInt);
+  //support minor versions 0...MaxInt
+  MinorVersion:= StrToIntDef(LibName, 0);
 end;
-
 
 end.
 
