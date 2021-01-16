@@ -9008,15 +9008,17 @@ end;
 
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
 //Windows: 'c:\some\path\python310.dll'
-//Linux: '/some/path/libpython3.10.so'
+//Linux: '/some/path/libpython3.10m.so'
 const
   cPython = 'python';
+  DefaultMajor = 3;
+  DefaultMinor = 4;
 var
   NPos: integer;
   ch: char;
 begin
-  MajorVersion:= 0;
-  MinorVersion:= 0;
+  MajorVersion:= DefaultMajor;
+  MinorVersion:= DefaultMinor;
   LibName:= LowerCase(ExtractFileName(LibName)); //strip path
   NPos:= Pos(cPython, LibName);
   if NPos=0 then exit;
@@ -9024,8 +9026,8 @@ begin
   if NPos>Length(LibName) then exit;
   ch:= LibName[NPos];
   case ch of
-    '2'..'5': //support major versions 2...5, default 3
-      MajorVersion:= StrToIntDef(ch, 3);
+    '2'..'5': //support major versions 2...5
+      MajorVersion:= StrToIntDef(ch, DefaultMajor);
     else
       exit;
   end;
@@ -9051,7 +9053,7 @@ begin
     end;
   end;
   //the rest is minor version number '0'...'999'
-  MinorVersion:= StrToIntDef(LibName, 0);
+  MinorVersion:= StrToIntDef(LibName, DefaultMinor);
 end;
 
 
