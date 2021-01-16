@@ -9039,12 +9039,21 @@ begin
     else //unknown char after major version
       exit;
   end;
-  NPos:= Pos('.', LibName); //dot with extension is required
-  if NPos=0 then exit;
-  Delete(LibName, NPos, MaxInt);
-  //support minor versions 0...MaxInt
+  //strip file extension and handle 'libpython3.10m.so'
+  for NPos:= 1 to Length(LibName) do
+  begin
+    case LibName[NPos] of
+      '.', 'a'..'z':
+        begin
+          SetLength(LibName, NPos-1);
+          Break
+        end;
+    end;
+  end;
+  //the rest is minor version number '0'...'999'
   MinorVersion:= StrToIntDef(LibName, 0);
 end;
+
 
 end.
 
