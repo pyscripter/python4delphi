@@ -2696,7 +2696,7 @@ procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function  SysVersionFromDLLName(const DLLFileName : string): string;
-procedure PythonVersionFromDLLName(const LibName: string; out MajorVersion, MinorVersion: integer);
+procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
 
 { Helper functions}
 (*
