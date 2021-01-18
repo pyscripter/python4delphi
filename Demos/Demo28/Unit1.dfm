@@ -140,10 +140,9 @@ object Form1: TForm1
     Engine = PythonEngine1
     OnCreate = ptStringListCreate
     TypeName = 'TStringList'
-    TypeFlags = [tpfHaveGetCharBuffer, tpfHaveSequenceIn, tpfHaveInplaceOps, tpfHaveRichCompare, tpfHaveWeakRefs, tpfHaveIter, tpfHaveClass, tpfBaseType]
     Prefix = 'Create'
     Module = pmP4D
-    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr, bsIter]
+    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsIter]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = [ssLength, ssItem, ssAssItem]
@@ -164,7 +163,7 @@ object Form1: TForm1
     TypeName = 'TStringListIterator'
     Prefix = 'Create'
     Module = pmP4D
-    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr, bsIter, bsIterNext]
+    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsIter, bsIterNext]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []

@@ -7391,7 +7391,7 @@ end;
 constructor TTypeServices.Create;
 begin
   inherited;
-  FBasic := [bsGetAttr, bsSetAttr, bsRepr, bsStr];
+  FBasic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr];
 end;
 
 procedure TTypeServices.AssignTo( Dest: TPersistent );
