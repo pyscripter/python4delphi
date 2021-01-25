@@ -2613,8 +2613,8 @@ type
     ////////////////
 
     // Basic services
-    function  GetAttr(key : PAnsiChar) : PPyObject; override;
-    function  SetAttr(key : PAnsiChar; value : PPyObject) : Integer; override;
+    function  GetAttrO( key: PPyObject) : PPyObject; override;
+    function  SetAttrO( key, value: PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
 
     // Class methods
@@ -8439,26 +8439,26 @@ end;
 
 // Then we override the needed services
 
-function  TPyVar.GetAttr(key : PAnsiChar) : PPyObject;
+function  TPyVar.GetAttrO( key: PPyObject) : PPyObject;
 begin
   with GetPythonEngine do
     begin
-      if CompareText( string(key), 'Value') = 0 then
+      if CompareText( PyObjectAsString(key), 'Value') = 0 then
         Result := GetValue
       else
-        Result := inherited GetAttr(key);
+        Result := inherited GetAttrO(key);
     end;
 end;
 
-function  TPyVar.SetAttr(key : PAnsiChar; value : PPyObject) : Integer;
+function  TPyVar.SetAttrO( key, value: PPyObject) : Integer;
 begin
   Result := 0;
   with GetPythonEngine do
     begin
-      if CompareText( string(key), 'Value' ) = 0 then
+      if CompareText( PyObjectAsString(key), 'Value' ) = 0 then
         SetValue( value )
       else
-        Result := inherited SetAttr(key, value);
+        Result := inherited SetAttrO(key, value);
     end;
 end;
 
