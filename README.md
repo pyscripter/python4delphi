@@ -1,6 +1,6 @@
 ![P4D Logo](https://github.com/pyscripter/python4delphi/wiki/Images/Python4Delphi(wide-transparent).png)
 
-[Python](https://www.python.org) for [Delphi](https://www.delphi.com/) (P4D) is a set of free components that wrap up the Python DLL into Delphi and Lazarus (FPC). They let you easily execute Python scripts, create new Python modules and new Python types. You can create Python extensions as DLLs and much more. P4D provides different levels of functionality:
+[Python](https://www.python.org) for [Delphi](https://www.embarcadero.com/products/delphi) (P4D) is a set of free components that wrap up the Python DLL into Delphi and Lazarus (FPC). They let you easily execute Python scripts, create new Python modules and new Python types. You can create Python extensions as DLLs and much more. P4D provides different levels of functionality:
 
   * **Low-level access to the python API**
   * **High-level bi-directional interaction with Python**

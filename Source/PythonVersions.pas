@@ -92,7 +92,9 @@ Uses
 function TPythonVersion.GetDLLName: string;
 begin
   {$IFDEF MSWINDOWS}
-  Result := 'python' + SysVersion[1] + SysVersion[3] + '.dll';
+  Result := SysVersion;
+  Delete(Result, 2, 1);
+  Result := 'python' + Result + '.dll';
   {$ELSE}
   Result := 'libpython' + SysVersion + '.so';
   {$ENDIF}
@@ -506,7 +508,7 @@ begin
   end;
   PythonVersion.DLLPath := DLLPath;
 
-  SysVersion := GetPythonVersionFromDLLName(DLLFileName);
+  SysVersion := SysVersionFromDLLName(DLLFileName);
 
   PythonVersion.SysVersion := SysVersion;
   PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;

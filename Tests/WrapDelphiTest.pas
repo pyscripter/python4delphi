@@ -47,6 +47,7 @@ type
     ObjectField: TObject;
     RecordField: TTestRecord;
     InterfaceField: ITestInterface;
+    function GetData: TObject;
     procedure BuyFruits(AFruits: TFruits);
     procedure SellFruits(const AFruits: TFruitDynArray);
     procedure SellFruitsInt(const AFruits:TIntegerDynArray);
@@ -56,6 +57,7 @@ type
     property Fruits: TFruits read FFruits write FFruits;
     function SetStringField(var Value: Integer): string; overload;
     function SetStringField(const Value: string): string; overload;
+    procedure PassVariantArray(const Value: Variant);
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -116,6 +118,10 @@ type
     procedure TestGetStaticArray;
     [Test]
     procedure TestMethodWithVarAndOverload;
+    [Test]
+    procedure TestFreeReturnedObject;
+    [Test]
+    procedure TestPassVariantArray;
   end;
 
 implementation
@@ -138,6 +144,16 @@ end;
 
 
 { TTestVarPyth }
+
+procedure TTestWrapDelphi.TestFreeReturnedObject;
+begin
+  PythonEngine.ExecString(
+    'from delphi import rtti_var' + sLineBreak +
+    'obj = rtti_var.GetData()' + sLineBreak +
+    'obj.Free()'
+    );
+  Assert.Pass;
+end;
 
 procedure TTestWrapDelphi.SetupFixture;
 var
@@ -320,6 +336,15 @@ begin
   Assert.IsTrue(rtti_var.ObjectField = None);
 end;
 
+procedure TTestWrapDelphi.TestPassVariantArray;
+begin
+  PythonEngine.ExecString(
+    'from delphi import rtti_var' + sLineBreak +
+    'rtti_var.PassVariantArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])'
+    );
+  Assert.Pass;
+end;
+
 procedure TTestWrapDelphi.TestRecord;
 begin
   Rtti_rec.StringField := 'abcd';
@@ -417,6 +442,11 @@ begin
   Result := StringField;
 end;
 
+function TTestRttiAccess.GetData: TObject;
+begin
+  Result := TStringList.Create;
+end;
+
 function TTestRttiAccess.GetDynArray: TInt64DynArray;
 var
   I: Integer;
@@ -432,6 +462,11 @@ var
 begin
   for I := 0 to Length(Result) - 1 do
     Result[I] := I;
+end;
+
+procedure TTestRttiAccess.PassVariantArray(const Value: Variant);
+begin
+  Assert.IsTrue(VarIsArray(Value) and (VarArrayHighBound(Value, 1) = 9));
 end;
 
 procedure TTestRttiAccess.SellFruits(const AFruits: TFruitDynArray);

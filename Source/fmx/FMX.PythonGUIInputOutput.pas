@@ -104,7 +104,7 @@ end;
 {------------------------------------------------------------------------------}
 function  TPythonGUIInputOutput.ReceiveData : AnsiString;
 Var
-  LResult : string;
+  LResult : AnsiString;
 begin
   if Assigned(FOnReceiveData) then
     Result := inherited ReceiveData
@@ -120,15 +120,16 @@ begin
 end;
 
 function TPythonGUIInputOutput.ReceiveUniData: UnicodeString;
+Var
+  LResult: string;
 begin
   if Assigned( FOnReceiveUniData ) then
     Result := inherited ReceiveUniData
   else
   begin
-    var LResult: string;
     TDialogService.InputQuery('Query from Python', ['Enter text'], [''],
       procedure(const AResult: TModalResult; const AValues: array of string) begin
-        LResult := AnsiString(AValues[0]);
+        LResult := AValues[0];
       end
     );
     Result := LResult;

@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, PythonVersions,
-  PythonEngine, Vcl.PythonGUIInputOutput;
+  PythonEngine, Vcl.PythonGUIInputOutput, PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)
@@ -119,9 +119,6 @@ begin
   PythonType1.TypeName := 'Point';
   PythonType1.Prefix := 'Create';
   PythonType1.Services.Basic := [bsRepr,bsStr,bsGetAttrO,bsSetAttrO];
-  PythonType1.TypeFlags :=
-    [tpfHaveGetCharBuffer,tpfHaveSequenceIn,tpfHaveInplaceOps,
-    tpfHaveRichCompare,tpfHaveWeakRefs,tpfHaveIter,tpfHaveClass,tpfBaseType];
   PythonType1.Module := PythonModule1;
 
   PythonEngine1.LoadDll;

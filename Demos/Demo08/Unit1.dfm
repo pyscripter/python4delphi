@@ -161,7 +161,7 @@ object Form1: TForm1
     TypeName = 'Point'
     Prefix = 'Create'
     Module = PythonModule1
-    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr, bsRichCompare]
+    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []

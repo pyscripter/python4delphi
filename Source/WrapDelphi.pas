@@ -521,8 +521,6 @@ Type
     function  GetContainerAccess: TContainerAccess;
     procedure SetDelphiObject(const Value: TObject);
   protected
-    fCanFreeOwnedObject : Boolean;
-
     function CheckBound : Boolean;
     function HasContainerAccessClass : Boolean;
     procedure SubscribeToFreeNotification; virtual;
@@ -906,7 +904,6 @@ resourcestring
   rs_ErrSqAss = 'Container %s does not support indexed write (f[i] = x)';
   rs_ErrSqContains = 'Container %s does not support the Contains protocol';
   rs_ErrCheckBound = 'Delphi wrapper %s is not bound';
-  rs_ErrFree = 'The Delphi object cannot be freed, since it is not Owned';
   rs_ErrSequence = 'Wrapper %s does not support sequences';
   rs_ErrInvalidArgs = '"%s" called with invalid arguments.'#$A'Error: %s';
   rs_ErrInvalidRet = 'Call "%s" returned a value that could not be coverted to Python'#$A'Error: %s';
@@ -1043,11 +1040,13 @@ begin
           Value := V.Cast(TypeInfo);
           Result := True;
         end;
-      tkInteger, tkFloat, tkInt64,
-      tkVariant:
+      tkInteger, tkFloat, tkInt64, tkVariant:
         begin
-          V :=  TValue.FromVariant(GetPythonEngine.PyObjectAsVariant(PyValue));
-          Value := V.Cast(TypeInfo);
+          V := TValue.From<Variant>(GetPythonEngine.PyObjectAsVariant(PyValue));
+          if TypeInfo^.Kind = tkVariant then
+            Value := V
+          else
+            Value := V.Cast(TypeInfo);
           Result := True;
         end;
       tkEnumeration:
@@ -1778,15 +1777,13 @@ begin
   begin
     if PyArg_ParseTuple( args, ':Free' ) <> 0 then
     begin
-      if Owned or fCanFreeOwnedObject then begin
-        DelphiObject := nil; // this will free the object automatically
-        Owned := False;
-        Result := ReturnNone;
-      end else begin
-        PyErr_SetObject (PyExc_AttributeError^,
-          PyUnicodeFromString(rs_ErrFree));
-        Result := nil;
+      if Assigned(fDelphiObject)then
+      begin
+        UnSubscribeToFreeNotification;
+        FreeAndNil(fDelphiObject);
       end;
+      Owned := False;
+      Result := ReturnNone;
     end
     else
       Result := nil;

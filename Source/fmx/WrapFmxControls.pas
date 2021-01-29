@@ -6,8 +6,9 @@ interface
 
 uses
   Classes, SysUtils, TypInfo, Types,
-  Fmx.Controls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes;
+  FMX.Types, FMX.Controls,
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes,
+  FMX.Controls.Presentation;
 
 type
   {
@@ -31,14 +32,17 @@ type
     function CanFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     function SetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
     function ResetFocus_Wrapper(args: PPyObject): PPyObject; cdecl;
+    function PrepareForPaint_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_Visible(AContext: Pointer): PPyObject; cdecl;
     function Get_ControlsCount( AContext : Pointer) : PPyObject; cdecl;
     function Get_Controls(AContext: Pointer): PPyObject; cdecl;
     function Get_IsFocused( AContext : Pointer) : PPyObject; cdecl;
     function Get_ParentControl( AContext : Pointer) : PPyObject; cdecl;
+    function Get_Position(AContext: Pointer): PPyObject; cdecl;
     // Property Setters
     function Set_Visible(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Position(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
@@ -65,10 +69,74 @@ type
     property Container : TControl read GetContainer;
   end;
 
-implementation
+  TPyDelphiStyledControl = class(TPyDelphiControl)
+  private
+    function GetDelphiObject: TStyledControl;
+    procedure SetDelphiObject(const Value: TStyledControl);
+  protected
+    // Exposed Methods
+    function ApplyStyleLookup_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    function NeedStyleLookup_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    function Inflate_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    // Property Getters
+    function Get_DefaultStyleLookupName(AContext: Pointer): PPyObject; cdecl;
+    function Get_StyleLookup(AContext: Pointer): PPyObject; cdecl;
+    function Get_AutoTranslate(AContext: Pointer): PPyObject; cdecl;
+    function Get_AdjustSizeValue(AContext: Pointer): PPyObject; cdecl;
+    function Get_AdjustType(AContext: Pointer): PPyObject; cdecl;
+    function Get_StyleState(AContext: Pointer): PPyObject; cdecl;
+    // Property Setters
+    function Set_StyleLookup(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_AutoTranslate(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure RegisterMethods(PythonType: TPythonType); override;
+    // Properties
+    property DelphiObject: TStyledControl read GetDelphiObject write SetDelphiObject;
+  end;
 
-uses
-  FMX.Types;
+  TPyDelphiTextControl = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TTextControl;
+    procedure SetDelphiObject(const Value: TTextControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TTextControl read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiStyleBook = class(TPyDelphiFmxObject)
+  private
+    function GetDelphiObject: TStyleBook;
+    procedure SetDelphiObject(const Value: TStyleBook);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TStyleBook read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiPopup = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPopup;
+    procedure SetDelphiObject(const Value: TPopup);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPopup read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiPresentedControl = class(TPyDelphiStyledControl)
+  private
+    function GetDelphiObject: TPresentedControl;
+    procedure SetDelphiObject(const Value: TPresentedControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TPresentedControl read GetDelphiObject write SetDelphiObject;
+  end;
+
+implementation
 
 type
 { Register the wrappers, the globals and the constants }
@@ -125,6 +193,18 @@ begin
   end;
 end;
 
+function TPyDelphiControl.PrepareForPaint_Wrapper(args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':PrepareForPaint') <> 0 then begin
+      DelphiObject.PrepareForPaint;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
 class function TPyDelphiControl.DelphiObjectClass: TClass;
 begin
   Result := TControl;
@@ -161,6 +241,12 @@ begin
   Result := Wrap(DelphiObject.ParentControl);
 end;
 
+function TPyDelphiControl.Get_Position(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := Wrap(DelphiObject.Position);
+end;
+
 function TPyDelphiControl.Get_Visible(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
@@ -178,6 +264,8 @@ begin
         'Returns an iterator over contained controls', nil);
   PythonType.AddGetSet('IsFocused', @TPyDelphiControl.Get_IsFocused, nil,
         'Determines whether the control has input focus.', nil);
+  PythonType.AddGetSet('Position', @TPyDelphiControl.Get_Position, @TPyDelphiControl.Set_Position,
+        'Returns an access to the position of the control inside its parent', nil);
 end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
@@ -210,6 +298,9 @@ begin
   PythonType.AddMethod('ResetFocus', @TPyDelphiControl.ResetFocus_Wrapper,
     'TControl.ResetFocus()'#10 +
     'Removes the focus from a control of from any children of the control.');
+  PythonType.AddMethod('PrepareForPaint', @TPyDelphiControl.PrepareForPaint_Wrapper,
+    'TControl.PrepareForPaint()'#10 +
+    'Prepares the current control for painting.');
 end;
 
 function TPyDelphiControl.Repaint_Wrapper(args: PPyObject): PPyObject;
@@ -304,6 +395,21 @@ begin
   end;
 end;
 
+function TPyDelphiControl.Set_Position(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TObject;
+begin
+  Adjust(@Self);
+  if CheckObjAttribute(AValue, 'Position', TPosition, LValue) then
+  begin
+    DelphiObject.Position := TPosition(LValue);
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
 function TPyDelphiControl.Set_Visible(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -336,6 +442,10 @@ procedure TControlsRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
 end;
 
 { TControlsAccess }
@@ -402,6 +512,232 @@ end;
 class function TControlsAccess.SupportsIndexOf: Boolean;
 begin
   Result := True;
+end;
+
+{ TPyDelphiStyledControl }
+
+function TPyDelphiStyledControl.ApplyStyleLookup_Wrapper(
+  args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':ApplyStyleLookup') <> 0 then begin
+      DelphiObject.ApplyStyleLookup;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
+class function TPyDelphiStyledControl.DelphiObjectClass: TClass;
+begin
+  Result := TStyledControl;
+end;
+
+function TPyDelphiStyledControl.GetDelphiObject: TStyledControl;
+begin
+  Result := TStyledControl(inherited DelphiObject);
+end;
+
+function TPyDelphiStyledControl.Get_AdjustSizeValue(
+  AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := WrapSizeF(PyDelphiWrapper, DelphiObject.AdjustSizeValue);
+end;
+
+function TPyDelphiStyledControl.Get_AdjustType(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyLong_FromLong(Ord(DelphiObject.AdjustType));
+end;
+
+function TPyDelphiStyledControl.Get_AutoTranslate(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.VariantAsPyObject(Self.DelphiObject.AutoTranslate);
+end;
+
+function TPyDelphiStyledControl.Get_DefaultStyleLookupName(
+  AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.DefaultStyleLookupName);
+end;
+
+function TPyDelphiStyledControl.Get_StyleLookup(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(DelphiObject.StyleLookup);
+end;
+
+function TPyDelphiStyledControl.Get_StyleState(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyLong_FromLong(Ord(DelphiObject.StyleState));
+end;
+
+function TPyDelphiStyledControl.Inflate_Wrapper(args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':Inflate') <> 0 then begin
+      DelphiObject.Inflate;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
+function TPyDelphiStyledControl.NeedStyleLookup_Wrapper(
+  args: PPyObject): PPyObject;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':NeedStyleLookup') <> 0 then begin
+      DelphiObject.NeedStyleLookup;
+      Result := ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
+class procedure TPyDelphiStyledControl.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do begin
+    AddGetSet('DefaultStyleLookupName', @TPyDelphiStyledControl.Get_StyleLookup, nil,
+      'Returns a string with the name of the default style of this control', nil);
+    AddGetSet('StyleLookup', @TPyDelphiStyledControl.Get_StyleLookup, @TPyDelphiStyledControl.Set_StyleLookup,
+      'Specifies the name of the resource object to which the current TStyledControl is linked', nil);
+    AddGetSet('AutoTranslate', @TPyDelphiStyledControl.Get_AutoTranslate, @TPyDelphiStyledControl.Set_AutoTranslate,
+      'Specifies whether the control''s text should be translated', nil);
+    AddGetSet('AdjustSizeValue', @TPyDelphiStyledControl.Get_AdjustSizeValue, nil,
+      'Updates the width and height of this control according to its current style', nil);
+    AddGetSet('AdjustType', @TPyDelphiStyledControl.Get_AdjustType, nil,
+      'Determines if and how the width and height of this control should be '
+      + 'modified to take the fixed space dictated by the style of this control', nil);
+    AddGetSet('StyleState', @TPyDelphiStyledControl.Get_StyleState, nil,
+      'This property allows you to define the current state of style', nil);
+  end;
+end;
+
+class procedure TPyDelphiStyledControl.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddMethod('ApplyStyleLookup', @TPyDelphiStyledControl.ApplyStyleLookup_Wrapper,
+    'TStyledControl.ApplyStyleLookup()'#10 +
+    'Gets and applies the style of a TStyledControl.');
+  PythonType.AddMethod('NeedStyleLookup', @TPyDelphiStyledControl.NeedStyleLookup_Wrapper,
+    'TStyledControl.NeedStyleLookup()'#10 +
+    'Call this procedure to indicate that this control requires to get and apply its style lookup.');
+  PythonType.AddMethod('Inflate', @TPyDelphiStyledControl.Inflate_Wrapper,
+    'TStyledControl.Inflate()'#10 +
+    'Call this procedure to get and apply its style lookup.');
+end;
+
+procedure TPyDelphiStyledControl.SetDelphiObject(const Value: TStyledControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiStyledControl.Set_AutoTranslate(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: Boolean;
+begin
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, 'AutoTranslate', LValue) then
+  begin
+    DelphiObject.AutoTranslate := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+function TPyDelphiStyledControl.Set_StyleLookup(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: string;
+begin
+  if CheckStrAttribute(AValue, 'StyleLookup', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      DelphiObject.StyleLookup := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+{ TPyDelphiTextControl }
+
+class function TPyDelphiTextControl.DelphiObjectClass: TClass;
+begin
+  Result := TTextControl;
+end;
+
+function TPyDelphiTextControl.GetDelphiObject: TTextControl;
+begin
+  Result := TTextControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTextControl.SetDelphiObject(const Value: TTextControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStyleBook }
+
+class function TPyDelphiStyleBook.DelphiObjectClass: TClass;
+begin
+  Result := TStyleBook;
+end;
+
+function TPyDelphiStyleBook.GetDelphiObject: TStyleBook;
+begin
+  Result := TStyleBook(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStyleBook.SetDelphiObject(const Value: TStyleBook);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPopup }
+
+class function TPyDelphiPopup.DelphiObjectClass: TClass;
+begin
+  Result := TPopup;
+end;
+
+function TPyDelphiPopup.GetDelphiObject: TPopup;
+begin
+  Result := TPopup(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPopup.SetDelphiObject(const Value: TPopup);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiPresentedControl }
+
+class function TPyDelphiPresentedControl.DelphiObjectClass: TClass;
+begin
+  Result := TPresentedControl;
+end;
+
+function TPyDelphiPresentedControl.GetDelphiObject: TPresentedControl;
+begin
+  Result := TPresentedControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiPresentedControl.SetDelphiObject(
+  const Value: TPresentedControl);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization
