@@ -11,7 +11,6 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Style = []
   OldCreateOrder = True
-  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
   object Memo1: TMemo

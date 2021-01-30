@@ -23,7 +23,6 @@ type
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
   public
   end;
@@ -58,11 +57,6 @@ begin
       if Execute then
         Memo1.Lines.SaveToFile( FileName );
     end;
-end;
-
-procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
-begin
-  PythonEngine1.Finalize;
 end;
 
 end.
