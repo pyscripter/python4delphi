@@ -1748,7 +1748,6 @@ type
     FRedirectIO:                 Boolean;
     FOnAfterInit:                TNotifyEvent;
     FClients:                    TList;
-    FLock:                       TCriticalSection;
     FExecModule:                 AnsiString;
     FAutoFinalize:               Boolean;
     FProgramName:                UnicodeString;
@@ -1801,8 +1800,6 @@ type
     destructor  Destroy; override;
 
     // Public methods
-    procedure  Lock;
-    procedure  Unlock;
     procedure  SetPythonHome(const PythonHome: UnicodeString);
     procedure  SetProgramName(const ProgramName: UnicodeString);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
@@ -3936,7 +3933,6 @@ var
   i : Integer;
 begin
   inherited;
-  FLock                    := TCriticalSection.Create;
   FInitScript              := TstringList.Create;
   FClients                 := TList.Create;
   FRedirectIO              := True;
@@ -3968,7 +3964,6 @@ begin
   FClients.Free;
   FInitScript.Free;
   FTraceback.Free;
-  FLock.Free;
 {$IFNDEF FPC}
   inherited;
 {$ENDIF}
@@ -4037,16 +4032,6 @@ begin
   FPyDateTime_TZInfoType      := nil;
   FPyDateTime_TimeTZType      := nil;
   FPyDateTime_DateTimeTZType  := nil;
-end;
-
-procedure TPythonEngine.Lock;
-begin
-  FLock.Enter;
-end;
-
-procedure TPythonEngine.Unlock;
-begin
-  FLock.Leave;
 end;
 
 procedure TPythonEngine.AfterLoad;

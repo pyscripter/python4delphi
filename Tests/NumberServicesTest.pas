@@ -282,9 +282,6 @@ begin
     try
       inherited;
 
-      // obtain lock
-      Lock;
-
       // create object
       FRandomInteger := TRandomInteger.Create;
 
@@ -294,9 +291,6 @@ begin
         // try to parse
         if (PyArg_ParseTuple(args, '|O:CreateWith', @val1) <> 0) and Assigned(val1) then
           FRandomInteger.Value := PythonToTRandomInteger(val1).Value;
-
-      // unlock
-      Unlock;
     except
       on e: Exception do
         PyErr_SetString(PyExc_Exception^, PAnsiChar(AnsiString(e.Message)));
