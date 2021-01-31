@@ -3958,15 +3958,10 @@ begin
   GlobalVars := nil;
   Destroying;
   Finalize;
-{$IFDEF FPC}
-  inherited;
-{$ENDIF}  // Free our objects
   FClients.Free;
   FInitScript.Free;
   FTraceback.Free;
-{$IFNDEF FPC}
   inherited;
-{$ENDIF}
 end;
 
 procedure TPythonEngine.Finalize;
