@@ -2637,20 +2637,21 @@ type
   TPythonThread = class(TThread)
   private
     fThreadState:      PPyThreadState;
-    f_savethreadstate: PPyThreadState;
     fThreadExecMode:   TThreadExecMode;
+  private class threadvar
+    f_savethreadstate: PPyThreadState;
 
 // Do not overwrite Execute! Use ExecuteWithPython instead!
     procedure Execute; override;
   protected
     procedure ExecuteWithPython; virtual; abstract;
 
-    procedure Py_Begin_Allow_Threads;
-    procedure Py_End_Allow_Threads;
+    class procedure Py_Begin_Allow_Threads;
+    class procedure Py_End_Allow_Threads;
 // The following procedures are redundant and only for
 // compatibility to the C API documentation.
-    procedure Py_Begin_Block_Threads;
-    procedure Py_Begin_Unblock_Threads;
+    class procedure Py_Begin_Block_Threads;
+    class procedure Py_Begin_Unblock_Threads;
 
   public
     property ThreadState : PPyThreadState read  fThreadState;
@@ -8600,24 +8601,24 @@ begin
 end;
 
 
-procedure TPythonThread.Py_Begin_Allow_Threads;
+class procedure TPythonThread.Py_Begin_Allow_Threads;
 begin
   with GetPythonEngine do
     f_savethreadstate := PyEval_SaveThread;
 end;
 
-procedure TPythonThread.Py_End_Allow_Threads;
+class procedure TPythonThread.Py_End_Allow_Threads;
 begin
   with GetPythonEngine do
-    PyEval_RestoreThread( f_savethreadstate);
+    PyEval_RestoreThread(f_savethreadstate);
 end;
 
-procedure TPythonThread.Py_Begin_Block_Threads;
+class procedure TPythonThread.Py_Begin_Block_Threads;
 begin
   Py_End_Allow_Threads;
 end;
 
-procedure TPythonThread.Py_Begin_Unblock_Threads;
+class procedure TPythonThread.Py_Begin_Unblock_Threads;
 begin
   Py_Begin_Allow_Threads;
 end;
