@@ -52,6 +52,7 @@ requires
   vcl;
 
 contains
+  DynamicDll in '..\..\..\Source\DynamicDll.pas',
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
   WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
