@@ -2641,19 +2641,18 @@ type
   private class threadvar
     f_savethreadstate: PPyThreadState;
 
-// Do not overwrite Execute! Use ExecuteWithPython instead!
+    // Do not overwrite Execute! Use ExecuteWithPython instead!
     procedure Execute; override;
   protected
     procedure ExecuteWithPython; virtual; abstract;
-
+  public
     class procedure Py_Begin_Allow_Threads;
     class procedure Py_End_Allow_Threads;
-// The following procedures are redundant and only for
-// compatibility to the C API documentation.
+    // The following procedures are redundant and only for
+    // compatibility to the C API documentation.
     class procedure Py_Begin_Block_Threads;
     class procedure Py_Begin_Unblock_Threads;
 
-  public
     property ThreadState : PPyThreadState read  fThreadState;
     property ThreadExecMode: TThreadExecMode read fThreadExecMode write fThreadExecMode;
   end;
