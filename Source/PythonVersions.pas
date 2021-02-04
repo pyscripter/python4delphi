@@ -435,21 +435,18 @@ function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVer
 
   function FindPythonDLL(APath : string): string;
   Var
-    FindFileData: TWIN32FindData;
-    Handle : THandle;
     DLLFileName: string;
+    I: integer;
   begin
     Result := '';
-    Handle := FindFirstFile(PWideChar(APath+'\python??.dll'), FindFileData);
-    if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
-    DLLFileName:= FindFileData.cFileName;
-    // skip if python3.dll was found
-    if Length(DLLFileName) <> 12 then FindNextFile(Handle, FindFileData);
-    if Handle = INVALID_HANDLE_VALUE then Exit;
-    Windows.FindClose(Handle);
-    DLLFileName:= FindFileData.cFileName;
-    if Length(DLLFileName) = 12 then
-      Result := DLLFileName;
+    APath := IncludeTrailingPathDelimiter(APath);
+    for I := High(PYTHON_KNOWN_VERSIONS) downto COMPILED_FOR_PYTHON_VERSION_INDEX do begin
+      DLLFileName := PYTHON_KNOWN_VERSIONS[I].DLLName;
+      if FileExists(APath+DLLFileName) then begin
+        Result := DLLFileName;
+        exit;
+      end;
+    end;
   end;
 
   function GetVenvBasePrefix(InstallPath: string): string;
