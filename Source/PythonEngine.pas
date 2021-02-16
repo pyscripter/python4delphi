@@ -180,7 +180,16 @@ const
 type
   // Delphi equivalent used by TPyObject
   TRichComparisonOpcode = (pyLT, pyLE, pyEQ, pyNE, pyGT, pyGE);
-const
+
+{$IFDEF MSWINDOWS}
+  C_Long = Integer;
+  C_ULong = Cardinal;
+{$ELSE}
+  C_Long= NativeInt;
+  C_ULong = NativeUInt;
+{$ENDIF}
+
+  const
 {
 Type flags (tp_flags)
 
@@ -202,42 +211,42 @@ given type object has a specified feature.
 }
 
 // Set if the type object is dynamically allocated
-  Py_TPFLAGS_HEAPTYPE = (1 shl 9);
+  Py_TPFLAGS_HEAPTYPE = (C_ULong(1) shl 9);
 
 // Set if the type allows subclassing
-  Py_TPFLAGS_BASETYPE = (1 shl 10);
+  Py_TPFLAGS_BASETYPE = (C_ULong(1) shl 10);
 
 // Set if the type is 'ready' -- fully initialized
-  Py_TPFLAGS_READY = (1 shl 12);
+  Py_TPFLAGS_READY = (C_ULong(1) shl 12);
 
 // Set while the type is being 'readied', to prevent recursive ready calls
-  Py_TPFLAGS_READYING = (1 shl 13);
+  Py_TPFLAGS_READYING = (C_ULong(1) shl 13);
 
 // Objects support garbage collection (see objimp.h)
-  Py_TPFLAGS_HAVE_GC = (1 shl 14);
+  Py_TPFLAGS_HAVE_GC = (C_ULong(1) shl 14);
 
 // Set if the type implements the vectorcall protocol (PEP 590) */
-  _Py_TPFLAGS_HAVE_VECTORCALL = (1 shl 11);
+  _Py_TPFLAGS_HAVE_VECTORCALL = (C_ULong(1) shl 11);
 
 // Objects behave like an unbound method
-  Py_TPFLAGS_METHOD_DESCRIPTOR = (1 shl 17);
+  Py_TPFLAGS_METHOD_DESCRIPTOR = (C_ULong(1) shl 17);
 
 // Objects support type attribute cache
-  Py_TPFLAGS_HAVE_VERSION_TAG = (1 shl 18);
-  Py_TPFLAGS_VALID_VERSION_TAG = (1 shl 19);
+  Py_TPFLAGS_HAVE_VERSION_TAG = (C_ULong(1) shl 18);
+  Py_TPFLAGS_VALID_VERSION_TAG = (C_ULong(1) shl 19);
 
 // Type is abstract and cannot be instantiated
-  Py_TPFLAGS_IS_ABSTRACT = (1 shl 20);
+  Py_TPFLAGS_IS_ABSTRACT = (C_ULong(1) shl 20);
 
 // These flags are used to determine if a type is a subclass.
-  Py_TPFLAGS_LONG_SUBCLASS       = (1 shl 24);
-  Py_TPFLAGS_LIST_SUBCLASS       = (1 shl 25);
-  Py_TPFLAGS_TUPLE_SUBCLASS      = (1 shl 26);
-  Py_TPFLAGS_BYTES_SUBCLASS      = (1 shl 27);
-  Py_TPFLAGS_UNICODE_SUBCLASS    = (1 shl 28);
-  Py_TPFLAGS_DICT_SUBCLASS       = (1 shl 29);
-  Py_TPFLAGS_BASE_EXC_SUBCLASS   = (1 shl 30);
-  Py_TPFLAGS_TYPE_SUBCLASS       = (1 shl 31);
+  Py_TPFLAGS_LONG_SUBCLASS       = (C_ULong(1) shl 24);
+  Py_TPFLAGS_LIST_SUBCLASS       = (C_ULong(1) shl 25);
+  Py_TPFLAGS_TUPLE_SUBCLASS      = (C_ULong(1) shl 26);
+  Py_TPFLAGS_BYTES_SUBCLASS      = (C_ULong(1) shl 27);
+  Py_TPFLAGS_UNICODE_SUBCLASS    = (C_ULong(1) shl 28);
+  Py_TPFLAGS_DICT_SUBCLASS       = (C_ULong(1) shl 29);
+  Py_TPFLAGS_BASE_EXC_SUBCLASS   = (C_ULong(1) shl 30);
+  Py_TPFLAGS_TYPE_SUBCLASS       = (C_ULong(1) shl 31);
 
   Py_TPFLAGS_DEFAULT  = Py_TPFLAGS_BASETYPE or Py_TPFLAGS_HAVE_VERSION_TAG;
 
@@ -339,7 +348,6 @@ type
   PPyObject	    = ^PyObject;
   PPPyObject	    = ^PPyObject;
   PPPPyObject	    = ^PPPyObject;
-  PPyIntObject	    = ^PyIntObject;
   PPyTypeObject     = ^PyTypeObject;
   PPySliceObject    = ^PySliceObject;
 
@@ -448,12 +456,6 @@ type
   PyObject = {$IFNDEF CPUX64}packed{$ENDIF} record
     ob_refcnt: NativeInt;
     ob_type:   PPyTypeObject;
-  end;
-
-  PyIntObject = {$IFNDEF CPUX64}packed{$ENDIF} record
-    ob_refcnt : NativeInt;
-    ob_type   : PPyTypeObject;
-    ob_ival   : LongInt;
   end;
 
   _frozen = {$IFNDEF CPUX64}packed{$ENDIF} record
@@ -641,7 +643,7 @@ type
     // Functions to access object as input/output buffer
     tp_as_buffer:   Pointer; // PPyBufferProcs - not implemented
     // Flags to define presence of optional/expanded features
-    tp_flags:       LongInt;
+    tp_flags:       C_ULong;
 
     tp_doc:         PAnsiChar; // Documentation string
 
@@ -1233,8 +1235,8 @@ type
 
     Py_None:            PPyObject;
     Py_Ellipsis:        PPyObject;
-    Py_False:           PPyIntObject;
-    Py_True:            PPyIntObject;
+    Py_False:           PPyObject;
+    Py_True:            PPyObject;
     Py_NotImplemented:  PPyObject;
 
     PyExc_AttributeError: PPPyObject;
@@ -1401,7 +1403,7 @@ type
     PyFunction_GetGlobals:function (ob:PPyObject):PPyObject; cdecl;
     PyFunction_New:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PyImport_AddModule:function (name:PAnsiChar):PPyObject; cdecl;
-    PyImport_GetMagicNumber:function :LongInt; cdecl;
+    PyImport_GetMagicNumber:function :C_Long; cdecl;
     PyImport_ImportFrozenModule:function (key:PAnsiChar):integer; cdecl;
     PyImport_ImportModule:function (name:PAnsiChar):PPyObject; cdecl;
     PyImport_Import:function (name:PPyObject):PPyObject; cdecl;
@@ -1418,12 +1420,12 @@ type
     PyList_Size:function (ob:PPyObject):NativeInt; cdecl;
     PyList_Sort:function (ob:PPyObject):integer; cdecl;
     PyLong_AsDouble:function (ob:PPyObject):DOUBLE; cdecl;
-    PyLong_AsLong:function (ob:PPyObject):LongInt; cdecl;
+    PyLong_AsLong:function (ob:PPyObject):C_Long; cdecl;
     PyLong_FromDouble:function (db:double):PPyObject; cdecl;
-    PyLong_FromLong:function (l:LongInt):PPyObject; cdecl;
+    PyLong_FromLong:function (l:C_Long):PPyObject; cdecl;
     PyLong_FromString:function (pc:PAnsiChar;var ppc:PAnsiChar;i:integer):PPyObject; cdecl;
-    PyLong_FromUnsignedLong:function(val:LongWord): PPyObject; cdecl;
-    PyLong_AsUnsignedLong:function(ob:PPyObject): LongWord; cdecl;
+    PyLong_FromUnsignedLong:function(val:C_ULong): PPyObject; cdecl;
+    PyLong_AsUnsignedLong:function(ob:PPyObject): C_ULong; cdecl;
     PyLong_FromUnicodeObject:function(ob:PPyObject; base : integer): PPyObject; cdecl;
     PyLong_FromLongLong:function(val:Int64): PPyObject; cdecl;
     PyLong_FromUnsignedLongLong:function(val:UInt64) : PPyObject; cdecl;
@@ -1553,7 +1555,7 @@ type
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWrapper_New: function ( ob1, ob2 : PPyObject) : PPyObject; cdecl;
     PyBool_FromLong: function ( ok : Integer) : PPyObject; cdecl;
-    PyThreadState_SetAsyncExc: function(t_id :LongInt; exc :PPyObject) : Integer; cdecl;
+    PyThreadState_SetAsyncExc: function(t_id:C_ULong; exc:PPyObject) : Integer; cdecl;
     Py_AtExit:function (proc: AtExitProc):integer; cdecl;
     Py_CompileStringExFlags:function (str,filename:PAnsiChar;start:integer;flags:PPyCompilerFlags;optimize:integer):PPyObject; cdecl;
     Py_FatalError:procedure(s:PAnsiChar); cdecl;
@@ -2495,7 +2497,7 @@ type
       function  CreateMethod( pSelf, args : PPyObject ) : PPyObject; cdecl;
       procedure InitServices;
       procedure SetDocString( value : TStringList );
-      function  TypeFlagsAsInt : LongInt;
+      function  TypeFlagsAsInt : C_ULong;
       function  GetMembersStartOffset : Integer; override;
       procedure ModuleReady(Sender : TObject); override;
       procedure ReallocMethods; override;
@@ -3352,7 +3354,6 @@ begin
   PyImport_ImportModule     := Import('PyImport_ImportModule');
   PyImport_Import           := Import('PyImport_Import');
   PyImport_ReloadModule     := Import('PyImport_ReloadModule');
-  PyLong_AsLong             := Import('PyLong_AsLong');
   PyList_Append             := Import('PyList_Append');
   PyList_AsTuple            := Import('PyList_AsTuple');
   PyList_GetItem            := Import('PyList_GetItem');
@@ -7520,7 +7521,7 @@ begin
   FDocString.Assign( value );
 end;
 
-function  TPythonType.TypeFlagsAsInt : LongInt;
+function  TPythonType.TypeFlagsAsInt : C_ULong;
 begin
   Result := 0;
   if tpfHeapType in TypeFlags then
