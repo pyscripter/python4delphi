@@ -1731,6 +1731,7 @@ type
 
       procedure Clear;
       procedure Refresh;
+      procedure AddItem(const Context, FileName: string; LineNo: Integer);
 
       property ItemCount : Integer read GetItemCount;
       property Items[ idx : Integer ] : TTracebackItem read GetItem;
@@ -3804,6 +3805,18 @@ begin
   Clear;
   FItems.Free;
   inherited;
+end;
+
+procedure TPythonTraceback.AddItem(const Context, FileName: string;
+  LineNo: Integer);
+var
+  Item: TTracebackItem;
+begin
+  Item := TTracebackItem.Create;
+  Item.Context := Context;
+  Item.FileName := FileName;
+  Item.LineNo := LineNo;
+  FItems.Add(Item);
 end;
 
 procedure TPythonTraceback.Clear;
