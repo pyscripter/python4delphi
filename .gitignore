@@ -46,3 +46,6 @@
 *.Patch
 *.#00
 *.pch
+*.prjmgc
+*.user
+*.pyd
