@@ -36,6 +36,18 @@ requires
   Python;
 
 contains
-  FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas';
+  FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas',
+  WrapFmxActnList in '..\..\..\Source\fmx\WrapFmxActnList.pas',
+  WrapFmxComCtrls in '..\..\..\Source\fmx\WrapFmxComCtrls.pas',
+  WrapFmxControls in '..\..\..\Source\fmx\WrapFmxControls.pas',
+  WrapFmxDialogs in '..\..\..\Source\fmx\WrapFmxDialogs.pas',
+  WrapFmxForms in '..\..\..\Source\fmx\WrapFmxForms.pas',
+  WrapFmxGrids in '..\..\..\Source\fmx\WrapFmxGrids.pas',
+  WrapFmxLayouts in '..\..\..\Source\fmx\WrapFmxLayouts.pas',
+  WrapFmxScrollBox in '..\..\..\Source\fmx\WrapFmxScrollBox.pas',
+  WrapFmxShapes in '..\..\..\Source\fmx\WrapFmxShapes.pas',
+  WrapFmxStdCtrls in '..\..\..\Source\fmx\WrapFmxStdCtrls.pas',
+  WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas',
+  WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas';
 
 end.

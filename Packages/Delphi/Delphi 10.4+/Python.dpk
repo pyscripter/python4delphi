@@ -30,13 +30,21 @@ package Python;
 {$IMPLICITBUILD ON}
 
 requires
-  DesignIDE,
   rtl,
-  vcl;
+  dbrtl,
+  FireDAC,
+  FireDACCommonDriver,
+  FireDACCommon;
 
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
   PythonEngine in '..\..\..\Source\PythonEngine.pas',
-  WrapDelphi in '..\..\..\Source\WrapDelphi.pas';
+  PythonVersions in '..\..\..\Source\PythonVersions.pas',
+  VarPyth in '..\..\..\Source\VarPyth.pas',
+  WrapDelphi in '..\..\..\Source\WrapDelphi.pas',
+  WrapDelphiClasses in '..\..\..\Source\WrapDelphiClasses.pas',
+  WrapDelphiTypes in '..\..\..\Source\WrapDelphiTypes.pas',
+  WrapDelphiWindows in '..\..\..\Source\WrapDelphiWindows.pas',
+  WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas';
 
 end.
