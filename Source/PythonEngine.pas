@@ -2923,9 +2923,12 @@ begin
     {$IFDEF MSWINDOWS}
     ExceptMask := GetExceptionMask;
     try
-      FDLLHandle := LoadLibraryExA(
-        PAnsiChar(AnsiString(GetDllPath+DllName)), 0,
-        LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR or LOAD_LIBRARY_DEFAULT_DIRS);
+      {$IFDEF FPC}
+      FDLLHandle := LoadLibraryExA(PAnsiChar(AnsiString(GetDllPath+DllName)),
+      {$ELSE}
+      FDLLHandle := LoadLibraryEx(PWideChar(GetDllPath+DllName),
+      {$ENDIF}
+        0, LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR or LOAD_LIBRARY_DEFAULT_DIRS);
     finally
       SetExceptionMask(ExceptMask);
     end;
