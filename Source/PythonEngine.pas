@@ -2909,17 +2909,26 @@ end;
 (*******************************************************)
 
 procedure TDynamicDll.DoOpenDll(const aDllName : string);
+{$IFDEF MSWINDOWS}
+const
+  LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = $00000100;
+  LOAD_LIBRARY_DEFAULT_DIRS = $00001000;
+Var
+  ExceptMask: TFPUExceptionMask;
+{$ENDIF}
 begin
   if not IsHandleValid then
   begin
     FDllName := aDllName;
     {$IFDEF MSWINDOWS}
-    FDLLHandle := SafeLoadLibrary(
-      {$IFDEF FPC}
-      PAnsiChar(AnsiString(GetDllPath+DllName))
-      {$ELSE}
-      GetDllPath+DllName
-      {$ENDIF});
+    ExceptMask := GetExceptionMask;
+    try
+      FDLLHandle := LoadLibraryExA(
+        PAnsiChar(AnsiString(GetDllPath+DllName)), 0,
+        LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR or LOAD_LIBRARY_DEFAULT_DIRS);
+    finally
+      SetExceptionMask(ExceptMask);
+    end;
     {$ELSE}
     //Linux: need here RTLD_GLOBAL, so Python can do "import ctypes"
     FDLLHandle := THandle(dlopen(PAnsiChar(AnsiString(GetDllPath+DllName)),
