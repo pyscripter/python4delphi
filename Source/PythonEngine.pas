@@ -1795,6 +1795,7 @@ type
     procedure SetGlobalVars(const Value: PPyObject);
     procedure SetLocalVars(const Value: PPyObject);
     procedure SetPyFlags(const Value: TPythonFlags);
+    procedure SetIO(InputOutput: TPythonInputOutput);
     procedure AssignPyFlags;
 
   public
@@ -1896,7 +1897,7 @@ type
     property DatetimeConversionMode: TDatetimeConversionMode read FDatetimeConversionMode write FDatetimeConversionMode default DEFAULT_DATETIME_CONVERSION_MODE;
     property InitScript: TStrings read FInitScript write SetInitScript;
     property InitThreads: Boolean read FInitThreads write SetInitThreads default False;
-    property IO: TPythonInputOutput read FIO write FIO;
+    property IO: TPythonInputOutput read FIO write SetIO;
     property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default [];
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
     property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
@@ -4241,6 +4242,18 @@ begin
     if Value and Assigned(PyEval_InitThreads) then
       PyEval_InitThreads;
     FInitThreads := Value;
+  end;
+end;
+
+procedure TPythonEngine.SetIO(InputOutput: TPythonInputOutput);
+begin
+  if InputOutput <> fIO then
+  begin
+    if Assigned(fIO) then
+      fIO.RemoveFreeNotification(Self);
+    fIO := InputOutput;
+    if Assigned(fIO) then
+      fIO.FreeNotification(Self);
   end;
 end;
 
