@@ -1,6 +1,6 @@
 ﻿unit Unit1;
 
-{$I Definition.Inc}
+//{$I Definition.Inc}
 
 interface
 

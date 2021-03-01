@@ -1,19 +1,19 @@
 program Demo31;
 
-{$I Definition.Inc}
+//{$I Definition.Inc}
 
 uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
   Unit2 in 'Unit2.pas' {TestForm},
-  WrapDelphiExtCtrls,
+  WrapDelphiVclExtCtrls,
   WrapDelphiTypes,
   WrapDelphiWindows,
-  WrapDelphiComCtrls,
-  WrapDelphiGrids,
-  WrapDelphiGraphics,
-  WrapDelphiButtons,
-  WrapDelphiDialogs;
+  WrapDelphiVclComCtrls,
+  WrapDelphiVclGrids,
+  WrapDelphiVclGraphics,
+  WrapDelphiVclButtons,
+  WrapDelphiVclDialogs;
 
 {$R *.res}
 

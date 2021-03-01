@@ -38,17 +38,17 @@ requires
 
 contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
-  WrapDelphiActnList in '..\..\..\Source\WrapDelphiActnList.pas',
-  WrapDelphiButtons in '..\..\..\Source\WrapDelphiButtons.pas',
-  WrapDelphiComCtrls in '..\..\..\Source\WrapDelphiComCtrls.pas',
-  WrapDelphiControls in '..\..\..\Source\WrapDelphiControls.pas',
-  WrapDelphiDialogs in '..\..\..\Source\WrapDelphiDialogs.pas',
-  WrapDelphiExtCtrls in '..\..\..\Source\WrapDelphiExtCtrls.pas',
-  WrapDelphiForms in '..\..\..\Source\WrapDelphiForms.pas',
-  WrapDelphiGraphics in '..\..\..\Source\WrapDelphiGraphics.pas',
-  WrapDelphiGrids in '..\..\..\Source\WrapDelphiGrids.pas',
-  WrapDelphiSamplesSpin in '..\..\..\Source\WrapDelphiSamplesSpin.pas',
-  WrapDelphiStdCtrls in '..\..\..\Source\WrapDelphiStdCtrls.pas',
-  WrapDelphiVCL in '..\..\..\Source\WrapDelphiVCL.pas';
+  WrapDelphiVclActnList in '..\..\..\Source\vcl\WrapDelphiVclActnList.pas',
+  WrapDelphiVclButtons in '..\..\..\Source\vcl\WrapDelphiVclButtons.pas',
+  WrapDelphiVclComCtrls in '..\..\..\Source\vcl\WrapDelphiVclComCtrls.pas',
+  WrapDelphiVclControls in '..\..\..\Source\vcl\WrapDelphiVclControls.pas',
+  WrapDelphiVclDialogs in '..\..\..\Source\vcl\WrapDelphiVclDialogs.pas',
+  WrapDelphiVclExtCtrls in '..\..\..\Source\vcl\WrapDelphiVclExtCtrls.pas',
+  WrapDelphiVclForms in '..\..\..\Source\vcl\WrapDelphiVclForms.pas',
+  WrapDelphiVclGraphics in '..\..\..\Source\vcl\WrapDelphiVclGraphics.pas',
+  WrapDelphiVclGrids in '..\..\..\Source\vcl\WrapDelphiVclGrids.pas',
+  WrapDelphiVclSamplesSpin in '..\..\..\Source\vcl\WrapDelphiVclSamplesSpin.pas',
+  WrapDelphiVclStdCtrls in '..\..\..\Source\vcl\WrapDelphiVclStdCtrls.pas',
+  WrapDelphiVCL in '..\..\..\Source\vcl\WrapDelphiVCL.pas';
 
 end.

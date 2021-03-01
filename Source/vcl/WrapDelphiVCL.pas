@@ -13,15 +13,15 @@ uses
   WrapDelphiTypes,
   WrapDelphiClasses,
   WrapDelphiWindows,
-  WrapDelphiControls,
-  WrapDelphiGraphics,
-  WrapDelphiForms,
-  WrapDelphiActnList,
-  WrapDelphiStdCtrls,
-  WrapDelphiComCtrls,
-  WrapDelphiExtCtrls,
-  WrapDelphiButtons,
-  WrapDelphiGrids,
-  WrapDelphiSamplesSpin;
+  WrapDelphiVclControls,
+  WrapDelphiVclGraphics,
+  WrapDelphiVclForms,
+  WrapDelphiVclActnList,
+  WrapDelphiVclStdCtrls,
+  WrapDelphiVclComCtrls,
+  WrapDelphiVclExtCtrls,
+  WrapDelphiVclButtons,
+  WrapDelphiVclGrids,
+  WrapDelphiVclSamplesSpin;
 
 end.

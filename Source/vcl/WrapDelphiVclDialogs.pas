@@ -1,11 +1,12 @@
-unit WrapDelphiDialogs;
-{$I Definition.Inc}
+{$I ..\Definition.Inc}
+
+unit WrapDelphiVclDialogs;
 
 interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapDelphiControls, Windows, Dialogs, TypInfo;
+  WrapDelphiVclControls, Windows, Dialogs, TypInfo;
 
 type
   TPyDelphiOpenDialog = class(TPyDelphiComponent)

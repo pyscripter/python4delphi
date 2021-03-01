@@ -3,11 +3,11 @@
 #pragma hdrstop
 
 #include "Unit1.h"
-#pragma comment (lib,"Python_D")
+//#pragma comment (lib,"Python_D")
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "PythonEngine"
-#pragma link "PythonGUIInputOutput"
+#pragma link "Vcl.PythonGUIInputOutput"
 #pragma resource "*.dfm"
 TForm1 *Form1;
 

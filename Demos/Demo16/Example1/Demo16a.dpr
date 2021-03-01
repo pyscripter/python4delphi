@@ -1,6 +1,6 @@
 program Demo16a;
 
-{$I Definition.Inc}
+//{$I Definition.Inc}
 
 uses
   Forms,

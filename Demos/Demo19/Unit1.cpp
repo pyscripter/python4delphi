@@ -6,7 +6,7 @@
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
 #pragma link "PythonEngine"
-#pragma link "PythonGUIInputOutput"
+#pragma link "Vcl.PythonGUIInputOutput"
 #pragma resource "*.dfm"
 TForm1 *Form1;
 //---------------------------------------------------------------------------
