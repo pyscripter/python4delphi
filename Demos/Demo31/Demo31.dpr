@@ -6,14 +6,14 @@ uses
   Forms,
   Unit1 in 'Unit1.pas' {Form1},
   Unit2 in 'Unit2.pas' {TestForm},
-  WrapDelphiVclExtCtrls,
   WrapDelphiTypes,
   WrapDelphiWindows,
-  WrapDelphiVclComCtrls,
-  WrapDelphiVclGrids,
-  WrapDelphiVclGraphics,
-  WrapDelphiVclButtons,
-  WrapDelphiVclDialogs;
+  WrapVclExtCtrls,
+  WrapVclComCtrls,
+  WrapVclGrids,
+  WrapVclGraphics,
+  WrapVclButtons,
+  WrapVclDialogs;
 
 {$R *.res}
 

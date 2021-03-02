@@ -6,7 +6,7 @@
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Package</AppType>
     </PropertyGroup>
@@ -98,18 +98,18 @@
         <DCCReference Include="Python.dcp"/>
         <DCCReference Include="VclSmp.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclActnList.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclButtons.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclComCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclControls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclDialogs.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclExtCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclForms.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclGraphics.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclGrids.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclSamplesSpin.pas"/>
-        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVclStdCtrls.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVCL.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclActnList.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclButtons.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclComCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclControls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclDialogs.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclExtCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclForms.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclGraphics.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclGrids.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclSamplesSpin.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclStdCtrls.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -155,6 +155,12 @@
                 </DeployFile>
                 <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\PythonVcl270.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>PythonVcl.bpl</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64\PythonVcl270.bpl" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>PythonVcl.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
