@@ -1,6 +1,6 @@
 {$I ..\Definition.Inc}
 
-unit WrapDelphiVclActnList;
+unit WrapVclActnList;
 
 interface
 

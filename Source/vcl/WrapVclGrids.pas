@@ -1,12 +1,12 @@
 {$I ..\Definition.Inc}
 
-unit WrapDelphiVclGrids;
+unit WrapVclGrids;
 
 interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapDelphiVclControls, Windows, Grids, TypInfo;
+  WrapVclControls, Windows, Grids, TypInfo;
 
 type
   TDrawCellEventHandler = class(TEventHandler)

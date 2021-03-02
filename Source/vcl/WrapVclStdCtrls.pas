@@ -1,12 +1,12 @@
 {$I ..\Definition.Inc}
 
-unit WrapDelphiVclStdCtrls;
+unit WrapVclStdCtrls;
 
 interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapDelphiVclControls, Windows, StdCtrls;
+  WrapVclControls, Windows, StdCtrls;
 
 type
   TPyDelphiButton = class (TPyDelphiWinControl)

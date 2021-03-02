@@ -1,11 +1,11 @@
 {$I ..\Definition.Inc}
 
-unit WrapDelphiVclExtCtrls;
+unit WrapVclExtCtrls;
 
 interface
 
 uses
-  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapDelphiVclControls,
+  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapVclControls,
   Windows, ExtCtrls;
 
 type
