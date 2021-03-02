@@ -1,6 +1,6 @@
 program ThrdDemo;
 
-{$I Definition.Inc}
+
 
 uses
   Forms,

@@ -1,6 +1,6 @@
 unit SortThds;
 
-{$I Definition.Inc}
+
 
 interface
 

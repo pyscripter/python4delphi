@@ -1,6 +1,6 @@
 unit ThSort;
 
-{$I Definition.Inc}
+
 
 interface
 

@@ -7,7 +7,7 @@
 #include <StdCtrls.hpp>
 #include <Forms.hpp>
 #include "PythonEngine.hpp"
-#include "PythonGUIInputOutput.hpp"
+#include "Vcl.PythonGUIInputOutput.hpp"
 #include <ExtCtrls.hpp>
 //---------------------------------------------------------------------------
 // New Python type Point

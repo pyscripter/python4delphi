@@ -1,6 +1,6 @@
 ﻿unit Unit1;
 
-{$I Definition.Inc}
+
 
 interface
 
@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, PythonVersions,
-  PythonEngine, Vcl.PythonGUIInputOutput, PythonGUIInputOutput;
+  PythonEngine, Vcl.PythonGUIInputOutput;
 
 type
   TForm1 = class(TForm)
@@ -290,7 +290,7 @@ begin
     end;
 end;
 
-/////////////////////////////////////////////////
+///
 
 procedure TForm1.Button1Click(Sender: TObject);
 var

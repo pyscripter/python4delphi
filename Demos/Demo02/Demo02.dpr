@@ -3,7 +3,7 @@
 // JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
 program Demo02;
 
-{$I Definition.Inc}
+
 
 uses
   Forms,

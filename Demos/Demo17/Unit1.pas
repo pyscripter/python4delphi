@@ -2,7 +2,7 @@ unit Unit1;
 
 interface
 
-{$I Definition.Inc}
+
 
 uses
   SysUtils, Classes,

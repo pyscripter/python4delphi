@@ -7,7 +7,7 @@
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
-        <TargetedPlatforms>1</TargetedPlatforms>
+        <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Package</AppType>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -15,6 +15,11 @@
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Base)'=='true') or '$(Base_Win32)'!=''">
         <Base_Win32>true</Base_Win32>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
+        <Base_Win64>true</Base_Win64>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
@@ -60,6 +65,11 @@
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
@@ -88,18 +98,18 @@
         <DCCReference Include="Python.dcp"/>
         <DCCReference Include="VclSmp.dcp"/>
         <DCCReference Include="..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiActnList.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiButtons.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiComCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiControls.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiDialogs.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiExtCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiForms.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiGraphics.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiGrids.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiSamplesSpin.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiStdCtrls.pas"/>
-        <DCCReference Include="..\..\..\Source\WrapDelphiVCL.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapDelphiVCL.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclActnList.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclButtons.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclComCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclControls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclDialogs.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclExtCtrls.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclForms.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclGraphics.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclGrids.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclSamplesSpin.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclStdCtrls.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -145,6 +155,12 @@
                 </DeployFile>
                 <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\PythonVcl270.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
+                        <RemoteName>PythonVcl.bpl</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\21.0\Bpl\Win64\PythonVcl270.bpl" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win64">
                         <RemoteName>PythonVcl.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
@@ -834,7 +850,7 @@
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
-                <Platform value="Win64">False</Platform>
+                <Platform value="Win64">True</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>

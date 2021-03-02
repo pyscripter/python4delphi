@@ -1,12 +1,12 @@
-{$I Definition.Inc}
+{$I ..\Definition.Inc}
 
-unit WrapDelphiComCtrls;
+unit WrapVclComCtrls;
 
 interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapDelphiControls, Windows, ComCtrls, TypInfo;
+  WrapVclControls, Windows, ComCtrls, TypInfo;
 
 type
   TTabChangingEventHandler = class(TEventHandler)
