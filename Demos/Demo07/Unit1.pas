@@ -205,7 +205,7 @@ begin
           // Else check for a method
           Result := PyObject_GenericGetAttr(obj, PyUnicodeFromString(key));
           if not Assigned(Result) then
-            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown attribute "%s"',[key]))));
         end;
     end;
 end;
@@ -226,7 +226,7 @@ begin
             Result := 0;
           end
         else
-          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Attribute "%s" needs an integer',[key])));
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Attribute "%s" needs an integer',[key]))));
       // Check for attribute y
       end else if key = 'y' then begin
         if PyLong_Check(value) then
@@ -235,9 +235,9 @@ begin
             Result := 0;
           end
         else
-          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Attribute "%s" needs an integer',[key])));
+          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Attribute "%s" needs an integer',[key]))));
       end else
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown attribute "%s"',[key])));
+        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown attribute "%s"',[key]))));
     end;
 end;
 

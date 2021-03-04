@@ -138,7 +138,7 @@ object Form1: TForm1
     OnInitialization = PythonType1Initialization
     TypeName = 'Point'
     Prefix = 'Create'
-    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr]
+    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr, bsTraverse]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []
