@@ -2,7 +2,7 @@
 // JCL_DEBUG_EXPERT_INSERTJDBG OFF
 program Demo32;
 
-{$I Definition.Inc}
+
 
 uses
   Forms,

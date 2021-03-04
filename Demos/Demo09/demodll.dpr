@@ -3,7 +3,7 @@
 // JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
 library demodll;
 
-{$I Definition.Inc}
+
 
 uses
   SysUtils,

@@ -1,11 +1,11 @@
-{$I Definition.Inc}
+{$I ..\Definition.Inc}
 
-unit WrapDelphiForms;
+unit WrapVclForms;
 
 interface
 
 uses
-  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapDelphiControls,
+  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapVclControls,
   Windows, Forms, Graphics, TypInfo;
 
 type
