@@ -615,7 +615,8 @@ type
     ob_type:        PPyTypeObject;
     ob_size:        NativeInt; // Number of items in variable part
     tp_name:        PAnsiChar; // For printing
-    tp_basicsize, tp_itemsize: NativeInt; // For allocation
+    tp_basicsize,
+    tp_itemsize:    NativeInt; // For allocation
 
     // Methods to implement standard operations
 
