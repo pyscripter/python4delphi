@@ -175,7 +175,7 @@ public
   procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
 end;
 
-function SqlTimeToVarDate(V : Variant) : Variant;
+function SqlTimeToVarDate(const V : Variant) : Variant;
 
 implementation
 
@@ -2230,7 +2230,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDBField);
 end;
 
-function SqlTimeToVarDate(V : Variant) : Variant;
+function SqlTimeToVarDate(const V : Variant) : Variant;
 begin
   if VarIsSQLTimeStamp(V) or VarIsSQLTimeStampOffset(V) then
     VarCast(Result, V, varDate)

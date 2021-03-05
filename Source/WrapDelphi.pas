@@ -836,7 +836,7 @@ Type
     function  RegisterHelperType(APyObjectClass : TPyObjectClass) : TPythonType;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : PyCFunction; ADocString : PAnsiChar ): PPyMethodDef; overload;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : TDelphiMethod; ADocString : PAnsiChar ): PPyMethodDef; overload;
-    function  GetHelperType(TypeName : string) : TPythonType;
+    function  GetHelperType(const TypeName : string) : TPythonType;
     //  Function that provides a Python object wrapping an object
     function Wrap(AObj : TObject; AOwnership: TObjectOwnership = soReference) : PPyObject;
     {$IFDEF EXTENDED_RTTI}
@@ -845,7 +845,7 @@ Type
     //  Function that provides a Python object wrapping an interface
     //  Note the the interface must be compiled in {$M+} mode and have a guid
     //  Usage: WrapInterface(TValue.From(YourInterfaceReference))
-    function WrapInterface(IValue: TValue): PPyObject;
+    function WrapInterface(const IValue: TValue): PPyObject;
     {$ENDIF}
     // properties
     property EventHandlers : TEventHandlers read fEventHandlerList;
@@ -1892,7 +1892,7 @@ begin
 end;
 
 function SetRttiAttr(const ParentAddr: Pointer;  ParentType: TRttiStructuredType;
-  AttrName: string; Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+  const AttrName: string; Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
   out ErrMsg: string): Boolean;
 var
   Prop: TRttiProperty;
@@ -3562,7 +3562,7 @@ begin
     fEventHandlerList.Clear;
 end;
 
-function TPyDelphiWrapper.GetHelperType(TypeName: string): TPythonType;
+function TPyDelphiWrapper.GetHelperType(const TypeName: string): TPythonType;
 var
   Index : integer;
 begin
@@ -3780,7 +3780,7 @@ begin
   end;
 end;
 
-function TPyDelphiWrapper.WrapInterface(IValue: TValue): PPyObject;
+function TPyDelphiWrapper.WrapInterface(const IValue: TValue): PPyObject;
 var
   PythonType: TPythonType;
   Address: Pointer;
