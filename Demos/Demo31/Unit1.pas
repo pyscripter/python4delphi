@@ -39,6 +39,7 @@ var
 implementation
 
 {$R *.dfm}
+{$I Definition.inc}
 
 Uses
   TypInfo,
