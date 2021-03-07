@@ -1090,7 +1090,7 @@ begin
         begin
           PVarParm^.VType := varOleStr;
           Temp := VarArgGetValue(VAList, Pointer);
-          if PAnsiString(Temp)^ <> '' then
+          if AnsiString(Temp) <> '' then
           begin
             {
             This line causes a crash and is replaced with the one below in line with unicode strings
