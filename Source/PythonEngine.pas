@@ -1828,7 +1828,7 @@ type
     function   EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject; overload;
     function   EvalStringsAsStr( strings : TStrings ) : string;
     function   EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
-    function   EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
+    function   EvalFunction(pyfunc:PPyObject; const args: array of const): Variant;
     function   EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
     function   CheckEvalSyntax( const str : AnsiString ) : Boolean;
     function   CheckExecSyntax( const str : AnsiString ) : Boolean;
@@ -1844,19 +1844,19 @@ type
     function   MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
     function   VariantAsPyObject( const V : Variant ) : PPyObject; virtual;
     function   PyObjectAsVariant( obj : PPyObject ) : Variant; virtual;
-    function   VarRecAsPyObject( v : TVarRec ) : PPyObject;
+    function   VarRecAsPyObject( const v : TVarRec ) : PPyObject;
     function   MakePyTuple( const objects : array of PPyObject ) : PPyObject;
     function   MakePyList( const objects : array of PPyObject ) : PPyObject;
-    function   ArrayToPyTuple( items : array of const) : PPyObject;
-    function   ArrayToPyList( items : array of const) : PPyObject;
-    function   ArrayToPyDict( items : array of const) : PPyObject;
+    function   ArrayToPyTuple( const items : array of const) : PPyObject;
+    function   ArrayToPyList( const items : array of const) : PPyObject;
+    function   ArrayToPyDict( const items : array of const) : PPyObject;
     function   StringsToPyList( strings : TStrings ) : PPyObject;
     function   StringsToPyTuple( strings : TStrings ) : PPyObject;
     procedure  PyListToStrings( list : PPyObject; strings : TStrings );
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
     function   ReturnNone : PPyObject;
     function   FindModule( const ModuleName : AnsiString ) : PPyObject;
-    function   FindFunction(ModuleName,FuncName: AnsiString): PPyObject;
+    function   FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
     function   SetToList( data : Pointer; size : Integer ) : PPyObject;
     procedure  ListToSet( List : PPyObject; data : Pointer; size : Integer );
     procedure  CheckError(ACatchStopEx : Boolean = False);
@@ -2235,7 +2235,7 @@ type
       procedure AddClient( client : TEngineClient );
       function  ErrorByName( const AName : AnsiString ) : TError;
       procedure RaiseError( const error, msg : AnsiString );
-      procedure RaiseErrorFmt( const error, format : AnsiString; Args : array of const );
+      procedure RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
       procedure RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
       procedure BuildErrors;
       procedure SetVar( const varName : AnsiString; value : PPyObject );
@@ -4493,7 +4493,7 @@ begin
   end;
 end;
 
-function TPythonEngine.EvalFunction(pyfunc:PPyObject; args: array of const): Variant;
+function TPythonEngine.EvalFunction(pyfunc:PPyObject; const args: array of const): Variant;
 var pargs: PPyObject;
 begin
   CheckPython;
@@ -5017,7 +5017,7 @@ begin
   raise Exception.CreateFmt('Could not find module: %s', [aModuleName]);
 end;
 
-function   TPythonEngine.MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
+function TPythonEngine.MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
 var
   i : Integer;
 begin
@@ -5361,7 +5361,7 @@ begin
     Result := Null;
 end;
 
-function TPythonEngine.VarRecAsPyObject( v : TVarRec ) : PPyObject;
+function TPythonEngine.VarRecAsPyObject( const v : TVarRec ) : PPyObject;
 begin
   case v.VType of
     vtInteger:       Result := PyLong_FromLong( v.VInteger );
@@ -5448,7 +5448,7 @@ begin
     end;
 end;
 
-function TPythonEngine.ArrayToPyTuple( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyTuple( const items : array of const) : PPyObject;
 var
   i : Integer;
 begin
@@ -5459,7 +5459,7 @@ begin
     PyTuple_SetItem( Result, i, VarRecAsPyObject( items[i] ) );
 end;
 
-function TPythonEngine.ArrayToPyList( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyList( const items : array of const) : PPyObject;
 var
   i : Integer;
 begin
@@ -5471,9 +5471,9 @@ begin
 end;
 
 // You must give each entry as a couple key(string)/value
-function TPythonEngine.ArrayToPyDict( items : array of const) : PPyObject;
+function TPythonEngine.ArrayToPyDict( const items : array of const) : PPyObject;
 
-  function VarRecAsString( v : TVarRec ) : AnsiString;
+  function VarRecAsString( const v : TVarRec ) : AnsiString;
   begin
     case v.VType of
       vtChar:          Result := v.VChar;
@@ -5700,7 +5700,7 @@ begin
     Result := nil;
 end;
 
-function TPythonEngine.FindFunction(ModuleName,FuncName: AnsiString): PPyObject;
+function TPythonEngine.FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
 var
   module,func: PPyObject;
 begin
@@ -6836,7 +6836,7 @@ begin
   ErrorByName( error ).RaiseError( msg );
 end;
 
-procedure TPythonModule.RaiseErrorFmt( const error, format : AnsiString; Args : array of const );
+procedure TPythonModule.RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
 begin
   RaiseError( error, AnsiString(SysUtils.Format( string(format), Args )) );
 end;
