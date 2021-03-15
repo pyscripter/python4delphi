@@ -48,6 +48,8 @@ contains
   WrapFmxShapes in '..\..\..\Source\fmx\WrapFmxShapes.pas',
   WrapFmxStdCtrls in '..\..\..\Source\fmx\WrapFmxStdCtrls.pas',
   WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas',
-  WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas';
+  WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas',
+  WrapFmxEdit in '..\..\..\Source\fmx\WrapFmxEdit.pas',
+  WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas';
 
 end.
