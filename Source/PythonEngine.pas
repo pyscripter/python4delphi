@@ -1855,6 +1855,8 @@ type
     procedure  PyListToStrings( list : PPyObject; strings : TStrings );
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
     function   ReturnNone : PPyObject;
+    function   ReturnTrue : PPyObject;
+    function   ReturnFalse : PPyObject;
     function   FindModule( const ModuleName : AnsiString ) : PPyObject;
     function   FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
     function   SetToList( data : Pointer; size : Integer ) : PPyObject;
@@ -5682,9 +5684,21 @@ begin
 {$ENDIF}
 end;
 
+function TPythonEngine.ReturnFalse : PPyObject;
+begin
+  Result := Py_False;
+  Py_INCREF( Result );
+end;
+
 function TPythonEngine.ReturnNone : PPyObject;
 begin
   Result := Py_None;
+  Py_INCREF( Result );
+end;
+
+function TPythonEngine.ReturnTrue : PPyObject;
+begin
+  Result := Py_True;
   Py_INCREF( Result );
 end;
 
