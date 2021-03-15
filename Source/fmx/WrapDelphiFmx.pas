@@ -12,7 +12,7 @@ uses
   WrapFmxTypes,
   WrapFmxStdCtrls,
   WrapFmxEdit,
-  WrapFmxList,
+  WrapFmxListBox,
   WrapFmxActnList,
   WrapFmxComCtrls,
   WrapFmxDialogs,

@@ -1,14 +1,14 @@
-{$I Definition.Inc}
+{$I ..\Definition.Inc}
 
 unit WrapFmxListBox;
 
 interface
 
 uses
-	FMX.ListBox, WrapFmxTypes, PythonEngine;
+	FMX.ListBox, WrapFmxTypes, WrapFmxControls, WrapFmxLayouts, PythonEngine;
 
 type
-	TPyListBoxItem = class(TPyDelphiFMXObject)
+	TPyListBoxItem = class(TPyDelphiTextControl)
 	private
 		function GetDelphiObject: TListBoxItem;
 		procedure SetDelphiObject(const Value: TListBoxItem);
@@ -17,7 +17,19 @@ type
 		property DelphiObject: TListBoxItem read GetDelphiObject
 			write SetDelphiObject;
 	end;
-	TPyDelphiListBox = class(TPyDelphiFMXObject)
+
+  TPyDelphiCustomListBox = class(TPyDelphiScrollBox)
+  private
+		function GetDelphiObject: TCustomListBox;
+		procedure SetDelphiObject(const Value: TCustomListBox);
+	public
+		class function DelphiObjectClass: TClass; override;
+		// Properties
+		property DelphiObject: TCustomListBox read GetDelphiObject
+			write SetDelphiObject;
+  end;
+
+	TPyDelphiListBox = class(TPyDelphiCustomListBox)
 	private
 		function GetDelphiObject: TListBox;
 		procedure SetDelphiObject(const Value: TListBox);
@@ -58,7 +70,43 @@ procedure TListBoxRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyListBoxItem);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListBox);
+end;
+
+{ TPyListBoxItem }
+
+class function TPyListBoxItem.DelphiObjectClass: TClass;
+begin
+	Result := TListBox;
+end;
+
+function TPyListBoxItem.GetDelphiObject: TListBoxItem;
+begin
+	Result := TListBoxItem(inherited DelphiObject);
+end;
+
+procedure TPyListBoxItem.SetDelphiObject(const Value: TListBoxItem);
+begin
+	inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomListBox }
+
+class function TPyDelphiCustomListBox.DelphiObjectClass: TClass;
+begin
+	Result := TCustomListBox;
+end;
+
+function TPyDelphiCustomListBox.GetDelphiObject: TCustomListBox;
+begin
+	Result := TCustomListBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomListBox.SetDelphiObject(const Value: TCustomListBox);
+begin
+	inherited DelphiObject := Value;
 end;
 
 { TPyDelphiListBox }
@@ -75,23 +123,6 @@ end;
 
 
 procedure TPyDelphiListBox.SetDelphiObject(const Value: TListBox);
-begin
-	inherited DelphiObject := Value;
-end;
-
-{ TPyListBoxItem }
-
-class function TPyListBoxItem.DelphiObjectClass: TClass;
-begin
-	Result := TListBox;
-end;
-
-function TPyListBoxItem.GetDelphiObject: TListBoxItem;
-begin
-	Result := TListBox(inherited DelphiObject);
-end;
-
-procedure TPyListBoxItem.SetDelphiObject(const Value: TListBoxItem);
 begin
 	inherited DelphiObject := Value;
 end;

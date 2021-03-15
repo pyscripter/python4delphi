@@ -1,15 +1,26 @@
-{$I Definition.Inc}
+{$I ..\Definition.Inc}
 
 unit WrapFmxEdit;
 
 interface
 
 uses
-	FMX.Edit, WrapFmxTypes, PythonEngine;
+	FMX.Edit, PythonEngine, WrapFmxTypes, WrapFmxControls;
 
 
 type
-	TPyDelphiEdit = class(TPyDelphiFMXObject)
+  TPyDelphiCustomEdit = class(TPyDelphiPresentedControl)
+	private
+		function GetDelphiObject: TCustomEdit;
+		procedure SetDelphiObject(const Value: TCustomEdit);
+	public
+		class function DelphiObjectClass: TClass; override;
+		// Properties
+		property DelphiObject: TCustomEdit read GetDelphiObject
+			write SetDelphiObject;
+	end;
+
+	TPyDelphiEdit = class(TPyDelphiCustomEdit)
 	private
 		function GetDelphiObject: TEdit;
 		procedure SetDelphiObject(const Value: TEdit);
@@ -50,7 +61,25 @@ procedure TEditRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomEdit);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiEdit);
+end;
+
+{ TPyDelphiCustomEdit }
+
+class function TPyDelphiCustomEdit.DelphiObjectClass: TClass;
+begin
+	Result := TCustomEdit;
+end;
+
+function TPyDelphiCustomEdit.GetDelphiObject: TCustomEdit;
+begin
+	Result := TCustomEdit(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomEdit.SetDelphiObject(const Value: TCustomEdit);
+begin
+	inherited DelphiObject := Value;
 end;
 
 { TPyDelphiEdit }
