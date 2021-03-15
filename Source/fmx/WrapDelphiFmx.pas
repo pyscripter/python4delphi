@@ -11,6 +11,8 @@ uses
   WrapFireDac,
   WrapFmxTypes,
   WrapFmxStdCtrls,
+  WrapFmxEdit,
+  WrapFmxList,
   WrapFmxActnList,
   WrapFmxComCtrls,
   WrapFmxDialogs,
