@@ -23,7 +23,6 @@ object Form1: TForm1
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 584
   end
   object Memo1: TMemo
     Left = 0
@@ -161,7 +160,7 @@ object Form1: TForm1
     TypeName = 'Point'
     Prefix = 'Create'
     Module = PythonModule1
-    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare]
+    Services.Basic = [bsGetAttr, bsSetAttr, bsRepr, bsStr, bsRichCompare]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []
