@@ -136,9 +136,9 @@ const
     (DllName: 'libpython3.5m.so'; RegVersion: '3.5'; APIVersion: 1013),
     (DllName: 'libpython3.6m.so'; RegVersion: '3.6'; APIVersion: 1013),
     (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
-    (DllName: 'libpython3.8m.so'; RegVersion: '3.8'; APIVersion: 1013),
-    (DllName: 'libpython3.9m.so'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'libpython3.10m.so'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
