@@ -153,7 +153,7 @@ const
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013)
     );
-{$endif}
+{$ENDIF}
 
   COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
 
@@ -2954,11 +2954,14 @@ var
 begin
   Result := DllPath;
 
-  {$IFDEF MSWINDOWS}
   if DLLPath = '' then begin
+    {$IFDEF MSWINDOWS}
     IsPythonVersionRegistered(RegVersion, Result, AllUserInstall);
+    {$ENDIF}
+    {$IFDEF DARWIN}
+    Result := '/Library/Frameworks/Python.framework/Versions/' + RegVersion + '/lib/';
+    {$ENDIF}
   end;
-  {$ENDIF}
 
   if Result <> '' then
   begin
