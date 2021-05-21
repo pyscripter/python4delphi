@@ -4218,7 +4218,7 @@ begin
   CheckRegistry;
   if Assigned(Py_SetProgramName) then
   begin
-    if FProgramName = '' then
+    if ProgramName = '' then
       ProgramName := UnicodeString(ParamStr(0));
     Py_SetProgramName(PWCharT(FProgramName));
   end;
@@ -4375,23 +4375,33 @@ end;
 
 procedure TPythonEngine.SetProgramArgs;
 var
-  i, argc : Integer;
+  I, argc : Integer;
   wargv : array of PWCharT;
   WL : array of WCharTString;
+  TempS: UnicodeString;
 begin
   // we build a string list of the arguments, because ParamStr returns a volatile string
-  // and we want to build an array of PAnsiChar, pointing to valid strings.
+  // and we want to build an array of PWCharT, pointing to valid strings.
   argc := ParamCount;
   SetLength(wargv, argc + 1);
   // build the PWideChar array
   SetLength(WL, argc+1);
-  for i := 0 to argc do begin
+  for I := 0 to argc do begin
+    {
+       ... the first entry should refer to the script file to be executed rather
+       than the executable hosting the Python interpreter. If there isn’t a
+       script that will be run, the first entry in argv can be an empty string.
+    }
+    if I = 0 then
+      TempS := ''
+    else
+      TempS := ParamStr(I);
     {$IFDEF POSIX}
-    WL := UnicodeStringToUCS4String(ParamStr(i));
+    WL := UnicodeStringToUCS4String(TempS);
     {$ELSE}
-    WL[i] := UnicodeString(ParamStr(i));
+    WL[I] := UnicodeString(TempS);
     {$ENDIF}
-    wargv[i] := PWCharT(WL[i]);
+    wargv[I] := PWCharT(WL[I]);
   end;
   // set the argv list of the sys module with the application arguments
   PySys_SetArgv( argc + 1, PPWCharT(wargv) );
