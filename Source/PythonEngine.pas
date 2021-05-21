@@ -181,12 +181,27 @@ type
   // Delphi equivalent used by TPyObject
   TRichComparisonOpcode = (pyLT, pyLE, pyEQ, pyNE, pyGT, pyGE);
 
+
+// C long is 8 bytes in non-Windows 64-bit operating systems
+// Same Delphi's LongInt but not fpc LongInt which is always 4 bytes
+// Hence the following
 {$IFDEF MSWINDOWS}
   C_Long = Integer;
   C_ULong = Cardinal;
 {$ELSE}
-  C_Long= NativeInt;
+  C_Long = NativeInt;
   C_ULong = NativeUInt;
+{$ENDIF}
+
+// wchar_t is 4 bytes on Linux/OS X/Android but 2 bytes on Windows
+{$IFDEF POSIX}
+  PWCharT = PUCSChar;
+  PPWCharT = PUCSChar^;
+  WCharTString = UCS4String;
+{$ELSE}
+  PWCharT = PWideChar;
+  PPWCharT = PPWideChar;
+  WCharTString = UnicodeString;
 {$ENDIF}
 
   const
@@ -1380,7 +1395,7 @@ type
     PyRun_SimpleString:   function( str: PAnsiChar): Integer; cdecl;
     PyBytes_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
     PyBytes_AsStringAndSize: function( ob: PPyObject; var buffer: PAnsiChar; var size: NativeInt): integer; cdecl;
-    PySys_SetArgv:        procedure( argc: Integer; argv: PPWideChar); cdecl;
+    PySys_SetArgv:        procedure( argc: Integer; argv: PPWCharT); cdecl;
 
     PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
 // Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
@@ -1539,11 +1554,11 @@ type
     PyType_GenericAlloc:function(atype: PPyTypeObject; nitems:NativeInt) : PPyObject; cdecl;
     PyType_GenericNew:function(atype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
     PyType_Ready:function(atype: PPyTypeObject) : integer; cdecl;
-    PyUnicode_FromWideChar:function (const w:PWideChar; size:NativeInt):PPyObject; cdecl;
+    PyUnicode_FromWideChar:function (const w:PWCharT; size:NativeInt):PPyObject; cdecl;
     PyUnicode_FromString:function (s:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
     PyUnicode_FromKindAndData:function (kind:integer;const buffer:pointer;size:NativeInt):PPyObject; cdecl;
-    PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWideChar; size:NativeInt):integer; cdecl;
+    PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWCharT; size:NativeInt):integer; cdecl;
     PyUnicode_AsUTF8:function (unicode: PPyObject):PAnsiChar; cdecl;
     PyUnicode_AsUTF8AndSize:function (unicode: PPyObject; size: PNativeInt):PAnsiChar; cdecl;
     PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
@@ -1570,8 +1585,8 @@ type
     Py_GetCopyright                 : function : PAnsiChar; cdecl;
     Py_GetExecPrefix                : function : PAnsiChar; cdecl;
     Py_GetPath                      : function : PAnsiChar; cdecl;
-    Py_SetPythonHome                : procedure (home : PWideChar); cdecl;
-    Py_GetPythonHome                : function : PWideChar; cdecl;
+    Py_SetPythonHome                : procedure (home : PWCharT); cdecl;
+    Py_GetPythonHome                : function : PWCharT; cdecl;
     Py_GetPrefix                    : function : PAnsiChar; cdecl;
     Py_GetProgramName               : function : PAnsiChar; cdecl;
 
@@ -1580,7 +1595,7 @@ type
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
     PyMem_Malloc                    : function ( size : NativeUInt ) : Pointer;
 
-    Py_SetProgramName               : procedure( name: PWideChar); cdecl;
+    Py_SetProgramName               : procedure( name: PWCharT); cdecl;
     Py_IsInitialized                : function : integer; cdecl;
     Py_GetProgramFullPath           : function : PAnsiChar; cdecl;
     Py_NewInterpreter               : function : PPyThreadState; cdecl;
@@ -1754,8 +1769,8 @@ type
     FClients:                    TList;
     FExecModule:                 AnsiString;
     FAutoFinalize:               Boolean;
-    FProgramName:                UnicodeString;
-    FPythonHome:                 UnicodeString;
+    FProgramName:                WCharTString;
+    FPythonHome:                 WCharTString;
     FInitThreads:                Boolean;
     FOnPathInitialization:       TPathInitializationEvent;
     FOnSysPathInit:              TSysPathInitEvent;
@@ -1775,6 +1790,8 @@ type
     FPyDateTime_TZInfoType:      PPyObject;
     FPyDateTime_TimeTZType:      PPyObject;
     FPyDateTime_DateTimeTZType:  PPyObject;
+    function  GetPythonHome: UnicodeString;
+    function  GetProgramName: UnicodeString;
 
   protected
     procedure  Initialize;
@@ -1892,8 +1909,8 @@ type
     property LocalVars : PPyObject read FLocalVars Write SetLocalVars;
     property GlobalVars : PPyObject read FGlobalVars Write SetGlobalVars;
     property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
-    property PythonHome: UnicodeString read FPythonHome write SetPythonHome;
-    property ProgramName: UnicodeString read FProgramName write SetProgramName;
+    property PythonHome: UnicodeString read GetPythonHome write SetPythonHome;
+    property ProgramName: UnicodeString read GetProgramName write SetProgramName;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
     property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
@@ -4202,12 +4219,12 @@ begin
   if Assigned(Py_SetProgramName) then
   begin
     if FProgramName = '' then
-      FProgramName := UnicodeString(ParamStr(0));
-    Py_SetProgramName(PWideChar(FProgramName));
+      ProgramName := UnicodeString(ParamStr(0));
+    Py_SetProgramName(PWCharT(FProgramName));
   end;
   AssignPyFlags;
-  if FPythonHome <> '' then
-    Py_SetPythonHome(PWideChar(FPythonHome));
+  if Length(FPythonHome) > 0 then
+    Py_SetPythonHome(PWCharT(FPythonHome));
   Py_Initialize;
   if Assigned(Py_IsInitialized) then
     FInitialized := Py_IsInitialized() <> 0
@@ -4359,34 +4376,25 @@ end;
 procedure TPythonEngine.SetProgramArgs;
 var
   i, argc : Integer;
-  wargv : array of PWideChar;
-  {$IFDEF POSIX}
-  UCS4L : array of UCS4String;
-  {$ELSE}
-  WL : array of UnicodeString;
-  {$ENDIF}
+  wargv : array of PWCharT;
+  WL : array of WCharTString;
 begin
   // we build a string list of the arguments, because ParamStr returns a volatile string
   // and we want to build an array of PAnsiChar, pointing to valid strings.
   argc := ParamCount;
   SetLength(wargv, argc + 1);
   // build the PWideChar array
-  {$IFDEF POSIX}
-  // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
-  SetLength(UCS4L, argc+1);
-  for i := 0 to argc do begin
-    UCS4L[i] := WideStringToUCS4String(ParamStr(i));
-    wargv[i] := @UCS4L[i][0];
-  end;
-  {$ELSE}
   SetLength(WL, argc+1);
   for i := 0 to argc do begin
+    {$IFDEF POSIX}
+    WL := UnicodeStringToUCS4String(ParamStr(i));
+    {$ELSE}
     WL[i] := UnicodeString(ParamStr(i));
-    wargv[i] := PWideChar(WL[i]);
+    {$ENDIF}
+    wargv[i] := PWCharT(WL[i]);
   end;
-  {$ENDIF}
   // set the argv list of the sys module with the application arguments
-  PySys_SetArgv( argc + 1, PPWideChar(wargv) );
+  PySys_SetArgv( argc + 1, PPWCharT(wargv) );
 end;
 
 procedure TPythonEngine.InitWinConsole;
@@ -4451,14 +4459,40 @@ begin
   end; // of if
 end;
 
+function  TPythonEngine.GetPythonHome: UnicodeString;
+begin
+{$IFDEF POSIX}
+  Result := UCS4StringToUnicodeString(FPythonHome);
+{$ELSE}
+  Result := FPythonHome;
+{$ENDIF}
+end;
+
+function  TPythonEngine.GetProgramName: UnicodeString;
+begin
+{$IFDEF POSIX}
+  Result := UCS4StringToUnicodeString(FProgramName);
+{$ELSE}
+  Result := FProgramName;
+{$ENDIF}
+end;
+
 procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
-  FPythonHome := PythonHome;
+{$IFDEF POSIX}
+  FPythonHome :=  UnicodeStringToUCS4String(PythonHome);
+{$ELSE}
+  FPythonHome :=  PythonHome;
+{$ENDIF}
 end;
 
 procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
 begin
+{$IFDEF POSIX}
+  FProgramName := UnicodeStringToUCS4String(ProgramName);
+{$ELSE}
   FProgramName := ProgramName;
+{$ENDIF}
 end;
 
 function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
@@ -5638,7 +5672,7 @@ begin
       if PyUnicode_AsWideChar(obj, @_ucs4Str[0], _size) <> _size then
         raise EPythonError.Create('Could not copy the whole Unicode string into its buffer');
       Result := UCS4StringToWideString(_ucs4Str);
-      // remove trailing zeros (needed by Kylix1)
+      // remove trailing zeros
       while (Length(Result) > 0) and (Result[Length(Result)] = #0) do
         Delete(Result, Length(Result), 1);
 {$ELSE}
@@ -5683,9 +5717,9 @@ begin
 {$IFDEF POSIX}
   // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
   _ucs4Str := WideStringToUCS4String(AString);
-  Result := PyUnicode_FromWideChar( {PWideChar}(@_ucs4Str[0]), Length(_ucs4Str)-1 {trim trailing zero});
+  Result := PyUnicode_FromWideChar(@_ucs4Str[0], Length(_ucs4Str)-1 {trim trailing zero});
 {$ELSE}
-  Result := PyUnicode_FromWideChar( PWideChar(AString), Length(AString) );
+  Result := PyUnicode_FromWideChar(PWideChar(AString), Length(AString));
 {$ENDIF}
 end;
 
