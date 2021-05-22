@@ -4216,12 +4216,8 @@ begin
 
   gPythonEngine := Self;
   CheckRegistry;
-  if Assigned(Py_SetProgramName) then
-  begin
-    if ProgramName = '' then
-      ProgramName := UnicodeString(ParamStr(0));
+  if Assigned(Py_SetProgramName) and (ProgramName <> '') then
     Py_SetProgramName(PWCharT(FProgramName));
-  end;
   AssignPyFlags;
   if Length(FPythonHome) > 0 then
     Py_SetPythonHome(PWCharT(FPythonHome));
