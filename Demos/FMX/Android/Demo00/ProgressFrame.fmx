@@ -1,0 +1,62 @@
+object ProgressViewFrame: TProgressViewFrame
+  Align = Client
+  Locked = True
+  HitTest = False
+  Size.Width = 313.000000000000000000
+  Size.Height = 168.000000000000000000
+  Size.PlatformDefault = False
+  object pnlBackground: TPanel
+    Align = Client
+    Opacity = 0.000000000000000000
+    Size.Width = 313.000000000000000000
+    Size.Height = 168.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 2
+  end
+  object pnlContent: TPanel
+    Align = Center
+    Size.Width = 300.000000000000000000
+    Size.Height = 168.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object lbDescription: TLabel
+      Align = Top
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 45.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 45.000000000000000000
+      Size.Width = 280.000000000000000000
+      Size.Height = 24.000000000000000000
+      Size.PlatformDefault = False
+      Text = 'lbDescription'
+      TabOrder = 0
+    end
+    object lblCurrentAction: TLabel
+      Align = Top
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 2.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 95.000000000000000000
+      Size.Width = 280.000000000000000000
+      Size.Height = 21.000000000000000000
+      Size.PlatformDefault = False
+      TextSettings.WordWrap = False
+      Text = 'lblCurrentAction'
+      TabOrder = 1
+    end
+    object pbProgress: TProgressBar
+      Align = Top
+      Orientation = Horizontal
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 4.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Position.X = 10.000000000000000000
+      Position.Y = 73.000000000000000000
+      Size.Width = 280.000000000000000000
+      Size.Height = 20.000000000000000000
+      Size.PlatformDefault = False
+    end
+  end
+end
