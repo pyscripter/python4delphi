@@ -1,4 +1,4 @@
-unit PyEnv;
+unit PyEnvTest;
 
 interface
 
@@ -6,7 +6,6 @@ uses
   DUnitX.TestFramework, PythonEngine;
 
 type
-  {$M+}
   [TestFixture]
   TPyEnvTest = class
   private
@@ -68,6 +67,8 @@ begin
 end;
 
 initialization
+  {$IFDEF ANDROID}
   TDUnitX.RegisterTestFixture(TPyEnvTest);
+  {$ENDIF}
 
 end.
