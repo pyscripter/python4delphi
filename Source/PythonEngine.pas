@@ -190,6 +190,15 @@ const
   Py_NE = 3;
   Py_GT = 4;
   Py_GE = 5;
+
+  {$IFDEF ANDROID}
+    {$IFDEF CPUARM32}
+      DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctARMSTD;
+    {$ENDIF CPUARM32}
+  {$ELSE}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctCDECL;
+  {$ENDIF ANDROID}
+
 type
   // Delphi equivalent used by TPyObject
   TRichComparisonOpcode = (pyLT, pyLE, pyEQ, pyNE, pyGT, pyGE);
@@ -6287,7 +6296,7 @@ function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, DEFAULT_CALLBACK_TYPE),
                        ADocString );
 end;
 
@@ -6296,7 +6305,7 @@ function  TMethodsContainer.AddDelphiMethodWithKeywords(  AMethodName  : PAnsiCh
                                                           ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, DEFAULT_CALLBACK_TYPE),
                        ADocString );
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
@@ -8116,7 +8125,7 @@ begin
       begin
         tp_init             := TPythonType_InitSubtype;
         tp_alloc            := TPythonType_AllocSubtypeInst;
-        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, ctCDECL);
+        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
         tp_free             := FreeSubtypeInst;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
@@ -8326,7 +8335,7 @@ begin
     begin
       meth := CreateMethod;
       FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
-      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, ctCDECL);
+      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, DEFAULT_CALLBACK_TYPE);
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil)
