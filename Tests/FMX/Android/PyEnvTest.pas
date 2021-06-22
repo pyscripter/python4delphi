@@ -67,8 +67,6 @@ begin
 end;
 
 initialization
-  {$IFDEF ANDROID}
   TDUnitX.RegisterTestFixture(TPyEnvTest);
-  {$ENDIF}
 
 end.

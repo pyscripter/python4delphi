@@ -32,7 +32,7 @@ interface
 uses SysUtils;
 
 type
-  TCallType = (ctSTDCALL, ctCDECL);
+  TCallType = (ctSTDCALL, ctCDECL, ctARMSTD);
   TCallBack = procedure of object;
 
   function  GetCallBack( self: TObject; method: Pointer;
@@ -159,6 +159,7 @@ begin
   // determine if there is already a page assigned and
   // that it has enough space requested block
   page:=CodeMemPages;
+
   if (page = nil) or (PtrCalcType(CodeMemPages^.CodeBlocks) - PtrCalcType(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
   begin
     // allocate new Page
@@ -258,6 +259,34 @@ begin
   end;
 end;
 
+procedure DeleteCallBack( Proc: Pointer);
+begin
+  FreeCodeMem(Proc);
+end;
+
+procedure FreeCallBacks;
+var
+  page, nextpage: PCodeMemPage;
+begin
+  // free each allocated page
+  page := CodeMemPages;
+  while page <> nil do
+  begin
+    nextpage := page^.Next;
+
+    // free the memory
+  {$IFDEF MSWINDOWS}
+    VirtualFree(page, 0, MEM_RELEASE);
+  {$ELSE}
+	//FreeMem(page);
+    munmap(page,PageSize);
+  {$ENDIF}
+
+    page := nextpage;
+  end;
+  CodeMemPages := nil;
+end;
+
 function  GetOfObjectCallBack( CallBack: TCallBack;
                                argnum: Integer; calltype: TCallType): Pointer;
 begin
@@ -267,13 +296,19 @@ begin
 end;
 
 {$IFDEF CPUX64}
-{$DEFINE 64_BIT_CALLBACK}
+  {$DEFINE 64_BIT_CALLBACK}
 {$ELSE}
-{$IFDEF MACOS}
-{$DEFINE ALIGNED_32_BIT_CALLBACK}
-{$ELSE}
-{$DEFINE SIMPLE_32_BIT_CALLBACK}
-{$ENDIF MACOS}
+  {$IFDEF ANDROID}
+    {$IFDEF CPUARM32}
+      {$DEFINE ARM_32_BIT_CALLBACK}
+    {$ENDIF CPUARM32}
+  {$ELSE}
+    {$IFDEF MACOS}
+      {$DEFINE ALIGNED_32_BIT_CALLBACK}
+    {$ELSE}
+      {$DEFINE SIMPLE_32_BIT_CALLBACK}
+    {$ENDIF MACOS}
+  {$ENDIF ANDROID}
 {$ENDIF CPUX64}
 
 {$IFDEF SIMPLE_32_BIT_CALLBACK}
@@ -565,33 +600,73 @@ begin
 end;
 {$ENDIF}
 
-procedure DeleteCallBack( Proc: Pointer);
-begin
-  FreeCodeMem(Proc);
-end;
-
-procedure FreeCallBacks;
+{$IFDEF ARM_32_BIT_CALLBACK}
+function  GetCallBack(Self: TObject; Method: Pointer; ArgNum: Integer;
+  CallType: TCallType): Pointer;
+const
+  S1: array[0..123] of byte = (
+//big-endian
+//offset     <start>:
+ {+  0:}	 $80, $40, $2d, $e9, // push	{r7, lr}
+ {+  4:}	 $0d, $70, $a0, $e1, // mov	r7, sp
+ {+  8:}	 $1e, $04, $2d, $e9, // push	{r1, r2, r3, r4, sl}
+ {+  c:}	 $5c, $40, $9f, $e5, // ldr	r4, [pc, #92]	; 70 <loop+0x1c>
+ {+ 10:}	 $00, $00, $54, $e3, // cmp	r4, #0
+ {+ 14:}	 $04, $d0, $4d, $c0, // subgt	sp, sp, r4
+ {+ 18:}	 $04, $50, $a0, $c1, // movgt	r5, r4
+ {+ 1c:}	 $04, $50, $85, $c2, // addgt	r5, r5, #4
+ {+ 20:}	 $04, $60, $a0, $c1, // movgt	r6, r4
+ {+ 24:}	 $04, $60, $46, $c2, // subgt	r6, r6, #4
+ {+ 28:}	 $09, $00, $00, $cb, // blgt	54 <loop>
+ {+ 2c:}	 $0f, $00, $2d, $e9, // push	{r0, r1, r2, r3}
+ {+ 30:}	 $3c, $00, $9f, $e5, // ldr	r0, [pc, #60]	; 74 <loop+0x20>
+ {+ 34:}	 $0e, $00, $bd, $e8, // pop	{r1, r2, r3}
+ {+ 38:}	 $38, $a0, $9f, $e5, // ldr	sl, [pc, #56]	; 78 <loop+0x24>
+ {+ 3c:}	 $3a, $ff, $2f, $e1, // blx	sl
+ {+ 40:}	 $00, $00, $54, $e3, // cmp	r4, #0
+ {+ 44:}	 $04, $d0, $8d, $c0, // addgt	sp, sp, r4
+ {+ 48:}	 $04, $40, $9d, $e4, // pop	{r4}		; (ldr r4, [sp], #4)
+ {+ 4c:}	 $1e, $04, $bd, $e8, // pop	{r1, r2, r3, r4, sl}
+ {+ 50:}	 $80, $80, $bd, $e8, // pop	{r7, pc}
+//offset + 00000054   <loop>:
+ {+ 54:}	 $05, $a0, $97, $e7, // ldr	sl, [r7, r5]
+ {+ 58:}	 $06, $a0, $8d, $e7, // str	sl, [sp, r6]
+ {+ 5c:}	 $04, $50, $45, $e2, // sub	r5, r5, #4
+ {+ 60:}	 $04, $60, $46, $e2, // sub	r6, r6, #4
+ {+ 64:}	 $00, $00, $56, $e3, // cmp	r6, #0
+ {+ 68:}	 $f9, $ff, $ff, $aa, // bge	54 <loop>
+ {+ 6c:}	 $1e, $ff, $2f, $e1, // bx	lr
+//offset + 00000070   <literal pool>
+ {+ 70:}	 $00, $00, $00, $00, // stack space for stack parameters
+ {+ 74:}	 $00, $00, $00, $00, // Self
+ {+ 78:}	 $00, $00, $00, $00  // Method
+);
+const
+  ARM_INSTRUCTION_SIZE = 4;
+  ARM_ARGUMENT_COUNT_IN_REGISTERS = 4;
 var
-  page, nextpage: PCodeMemPage;
+  P, Q: PByte;
+  LLiteralPool: TArray<pointer>;
+  I: Integer;
 begin
-  // free each allocated page
-  page := CodeMemPages;
-  while page <> nil do
-  begin
-    nextpage := page^.Next;
+  GetCodeMem(Q, SizeOf(S1));
+  P := Q;
+  Move(S1, P^, SizeOf(S1));
 
-    // free the memory
-  {$IFDEF MSWINDOWS}
-    VirtualFree(page, 0, MEM_RELEASE);
-  {$ELSE}
-	//FreeMem(page);
-    munmap(page,PageSize);
-  {$ENDIF}		  
+  LLiteralPool := TArray<pointer>.Create(
+    Pointer((ArgNum - ARM_ARGUMENT_COUNT_IN_REGISTERS) * ARM_INSTRUCTION_SIZE),
+    Self,
+    Method);
 
-    page := nextpage;
+  Inc(P, Length(S1) - (Length(LLiteralPool) * ARM_INSTRUCTION_SIZE));
+  for I := Low(LLiteralPool) to High(LLiteralPool) do begin
+    Move(LLiteralPool[I], P^, SizeOf(pointer));
+    Inc(P, ARM_INSTRUCTION_SIZE);
   end;
-  CodeMemPages := nil;
+
+  Result := Pointer(Q); //set arm mode
 end;
+{$ENDIF ARM_32_BIT_CALLBACK}
 
 initialization
 finalization

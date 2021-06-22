@@ -28,14 +28,14 @@ implementation
 
 
 type
-  TTwoArgStdFunction = function (arg1, arg2: string): integer; stdcall;
-  TThreeArgCDeclProcedure = procedure (arg1, arg2, arg3: string); cdecl;
+  TTwoArgArmStdFunction = function (arg1, arg2: string): integer;
+  TThreeArgArmStdProcedure = procedure (arg1, arg2, arg3: string);
 
-  TFourArgStdFunction = function(arg1, arg2, arg3, arg4: integer): integer; stdcall;
-  TFiveArgCdeclFunction = function(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
+  TFourArgArmStdFunction = function(arg1, arg2, arg3, arg4: integer): integer;
+  TFiveArgArmStdFunction = function(arg1, arg2, arg3, arg4, arg5: integer): integer;
 
-  TMyFuncCallback = function(arg1, arg2: string): integer of object; stdcall;
-  TMyProcCallback = procedure (arg1, arg2, arg3: string) of object; cdecl;
+  TMyFuncCallback = function(arg1, arg2: string): integer of object;
+  TMyProcCallback = procedure (arg1, arg2, arg3: string) of object;
 
 
   TTestObj = class
@@ -43,10 +43,10 @@ type
     Argument1: string;
     Argument2: string;
     Argument3: string;
-    function TwoArgStdFunction(arg1, arg2: string): integer; stdcall;
-    procedure ThreeArgCdeclProcedure(arg1, arg2, arg3: string); cdecl;
-    function FourArgStdFunction(arg1, arg2, arg3, arg4: integer): integer; stdcall;
-    function FiveArgCdeclFunction(arg1, arg2, arg3, arg4, arg5: integer): integer; cdecl;
+    function TwoArgArmStdFunction(arg1, arg2: string): integer;
+    procedure ThreeArgArmStdProcedure(arg1, arg2, arg3: string);
+    function FourArgArmStdFunction(arg1, arg2, arg3, arg4: integer): integer;
+    function FiveArgArmStdFunction(arg1, arg2, arg3, arg4, arg5: integer): integer;
   end;
 
   [TestFixture]
@@ -61,46 +61,40 @@ type
     [Test]
     procedure TestDeleteOnEmptyAllocator;
     [Test]
-    procedure TestCallBackStdCall;
+    procedure TestCallBackArmStd;
     [Test]
-    procedure TestCallBackCDecl;
-    [Test]
-    procedure TestOfObjectCallBackStdCall;
-    [Test]
-    procedure TestOfObjectCallBackCDecl;
+    procedure TestOfObjectCallBackArmStd;
     [Test]
     procedure TestDeleteCallBack;
     [Test]
-    procedure TestFourArgStdFunction;
+    procedure TestFourArgArmStdFunction;
     [Test]
-    procedure TestFiveArgCdeclFunction;
+    procedure TestFiveArgArmStdFunction;
     [Test]
     procedure TestMemoryMgmt;
-    [Test]
-    procedure TestBug01;
   end;
 
 { TTestObj }
 
-function TTestObj.FiveArgCdeclFunction(arg1, arg2, arg3, arg4,
+function TTestObj.FiveArgArmStdFunction(arg1, arg2, arg3, arg4,
   arg5: integer): integer;
 begin
   Result := arg1 * arg4 + arg2 * arg5 + arg3;
 end;
 
-function TTestObj.FourArgStdFunction(arg1, arg2, arg3, arg4: integer): integer;
+function TTestObj.FourArgArmStdFunction(arg1, arg2, arg3, arg4: integer): integer;
 begin
   Result := arg1 * arg3 + arg2 * arg4;
 end;
 
-procedure TTestObj.ThreeArgCdeclProcedure(arg1, arg2, arg3: string);
+procedure TTestObj.ThreeArgArmStdProcedure(arg1, arg2, arg3: string);
 begin
   Argument1:=arg1;
   Argument2:=arg2;
   Argument3:=arg3;
 end;
 
-function TTestObj.TwoArgStdFunction(arg1, arg2: string): integer;
+function TTestObj.TwoArgArmStdFunction(arg1, arg2: string): integer;
 begin
   Argument1:=arg1;
   Argument2:=arg2;
@@ -120,9 +114,25 @@ begin
   FreeCallBacks;
 end;
 
-procedure TMethodCallbackTest.TestBug01;
+procedure TMethodCallbackTest.TestMemoryMgmt;
 const
-   AllocCount = {$IFDEF CPUX64}{$IFDEF MSWINDOWS}51{$ELSE}88{$ENDIF}{$ELSE}90{$ENDIF};
+   AllocCount = {$IFDEF CPUX64}
+                  {$IFDEF MSWINDOWS}
+                  51
+                  {$ELSE}
+                  88
+                  {$ENDIF}
+                {$ELSE}
+                {$IFDEF ANDROID}
+                    {$IFDEF CPUARM32}
+                    31
+                    {$ELSE}
+                    90
+                    {$ENDIF CPUARM32}
+                  {$ELSE}
+                  90
+                  {$ENDIF}
+                {$ENDIF};
 var
   i: integer;
   ptr: Pointer;
@@ -154,46 +164,27 @@ I'm sorry about that. Hope it didn't cause too many problems up to now.
   Assert.AreEqual(0, CodeMemPageCount);
 
   for i:=1 to AllocCount do
-    ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
+    ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgArmStdProcedure, 5, ctArmStd);
 
   // there should still be 1 page allocated
   Assert.AreEqual(1, CodeMemPageCount);
 
   // get one callback more and we should have 2 pages
-  ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
+  ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgArmStdProcedure, 5, ctArmStd);
   // getting CodeMemPageCount would crash as the next page pointer was overwritten by the
   // last allocation
   Assert.AreEqual(2, CodeMemPageCount);
-
 end;
 
-procedure TMethodCallbackTest.TestCallBackCDecl;
+procedure TMethodCallbackTest.TestCallBackArmStd;
 var
   ptr: pointer;
-  proc: TThreeArgCdeclProcedure;
+  func: TTwoArgArmStdFunction;
 begin
-  ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
+  ptr:=GetCallBack(fTestObj, @TTestObj.TwoArgArmStdFunction, 2, ctArmStd);
 
   //---call method through pointer
-  proc:=TThreeArgCdeclProcedure(ptr);
-
-  proc('first arg', 'second arg', 'third arg');
-
-  Assert.AreEqual('first arg', fTestObj.Argument1);
-  Assert.AreEqual('second arg', fTestObj.Argument2);
-  Assert.AreEqual('third arg', fTestObj.Argument3);
-
-end;
-
-procedure TMethodCallbackTest.TestCallBackStdCall;
-var
-  ptr: pointer;
-  func: TTwoArgStdFunction;
-begin
-  ptr:=GetCallBack(fTestObj, @TTestObj.TwoArgStdFunction, 2, ctStdcall);
-
-  //---call method through pointer
-  func:=TTwoArgStdFunction(ptr);
+  func:=TTwoArgArmStdFunction(ptr);
 
   Assert.AreEqual(1, func('first arg', 'second arg'));
   Assert.AreEqual(string('first arg'), fTestObj.Argument1);
@@ -203,22 +194,22 @@ end;
 procedure TMethodCallbackTest.TestDeleteCallBack;
 var
   ptr1, ptr2, ptr3: Pointer;
-  proc: TThreeArgCdeclProcedure;
-  func: TTwoArgStdFunction;
+  proc: TThreeArgArmStdProcedure;
+  func: TTwoArgArmStdFunction;
 begin
   //---we create 3 callbacks and delete them.
   // if there aren't any AV, we assume it works...
-  ptr1:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  ptr2:=GetCallBack(fTestObj, @TTestObj.TwoArgStdFunction, 2, ctStdcall);
+  ptr1:=GetCallBack(fTestObj, @TTestObj.ThreeArgArmStdProcedure, 3, ctArmStd);
+  ptr2:=GetCallBack(fTestObj, @TTestObj.TwoArgArmStdFunction, 2, ctArmStd);
   DeleteCallBack(ptr1);
-  ptr1:=GetCallBack(fTestObj, @TTestObj.TwoArgStdFunction, 2, ctStdcall);
-  ptr3:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
+  ptr1:=GetCallBack(fTestObj, @TTestObj.TwoArgArmStdFunction, 2, ctArmStd);
+  ptr3:=GetCallBack(fTestObj, @TTestObj.ThreeArgArmStdProcedure, 3, ctArmStd);
 
-  func:=TTwoArgStdFunction(ptr1);
+  func:=TTwoArgArmStdFunction(ptr1);
   func('arg1', 'arg2');
-  func:=TTwoArgStdFunction(ptr2);
+  func:=TTwoArgArmStdFunction(ptr2);
   func('arg1', 'arg2');
-  proc:=TThreeArgCdeclProcedure(ptr3);
+  proc:=TThreeArgArmStdProcedure(ptr3);
   proc('arg1', 'arg2', 'arg3');
 
   DeleteCallBack(ptr1);
@@ -236,100 +227,35 @@ begin
   Assert.Pass();
 end;
 
-procedure TMethodCallbackTest.TestFiveArgCdeclFunction;
+procedure TMethodCallbackTest.TestFiveArgArmStdFunction;
 Var
-  CallBack : TFiveArgCdeclFunction;
+  CallBack : TFiveArgArmStdFunction;
 begin
-   CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgCdeclFunction, 5, ctCDECL);
+   CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgArmStdFunction, 5, ctArmStd);
    Assert.AreEqual(CallBack(1,2,3,4,5), 1*4+2*5+3);
    DeleteCallBack(@CallBack);
 end;
 
-procedure TMethodCallbackTest.TestFourArgStdFunction;
+procedure TMethodCallbackTest.TestFourArgArmStdFunction;
 Var
-  CallBack : TFourArgStdFunction;
+  CallBack : TFourArgArmStdFunction;
 begin
-   CallBack := GetCallBack(fTestObj, @TTestObj.FourArgStdFunction, 4, ctSTDCALL);
+   CallBack := GetCallBack(fTestObj, @TTestObj.FourArgArmStdFunction, 4, ctArmStd);
    Assert.AreEqual(CallBack(1,2,3,4), 1*3+2*4);
    DeleteCallBack(@CallBack);
 end;
 
-procedure TMethodCallbackTest.TestMemoryMgmt;
-const
-   AllocCount = {$IFDEF CPUX64}{$IFDEF MSWINDOWS}101{$ELSE}88{$ENDIF}{$ELSE}110{$ENDIF};
-var
-  i: integer;
-  ptr, ptr1, ptr2: Pointer;
-begin
-  //---Test the code-memory manager
-
-  // one ThreeArgDecl callback uses 33 bytes code + 4 bytes Next pointer = 37 bytes
-  // we should be able to allocate 110 Callbacks per page
-
-  FreeCallBacks;
-  Assert.AreEqual(0, CodeMemPageCount);
-
-  for i:=1 to AllocCount do
-    ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-
-  // there should still be 1 page allocated
-  Assert.AreEqual(1, CodeMemPageCount);
-
-  // get one callback more and we should have 2 pages
-  ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  Assert.AreEqual(2, CodeMemPageCount);
-
-  // get some more memory
-  ptr1:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  ptr2:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  Assert.AreEqual(2, CodeMemPageCount);
-
-
-  // now Free the callbacks on page 2
-  DeleteCallBack(ptr1);
-  Assert.AreEqual(2, CodeMemPageCount);
-  DeleteCallBack(ptr);
-  Assert.AreEqual(2, CodeMemPageCount);
-  DeleteCallBack(ptr2);
-  // page count should be back to 1
-  Assert.AreEqual(1, CodeMemPageCount);
-
-  // allocate one more and page count should go up to 2 again
-  ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
-  Assert.AreEqual(2, CodeMemPageCount);
-end;
-
-procedure TMethodCallbackTest.TestOfObjectCallBackCDecl;
+procedure TMethodCallbackTest.TestOfObjectCallBackArmStd;
 var
   ptr: pointer;
-  proc: TThreeArgCdeclProcedure;
-  cb: TMyProcCallBack;
-begin
-  cb:= fTestObj.ThreeArgCdeclProcedure;
-  ptr:=GetOfObjectCallBack(TCallBack(cb), 3, ctCdecl);
-
-  //---call method through pointer
-  proc:=TThreeArgCdeclProcedure(ptr);
-
-  proc('first arg', 'second arg', 'third arg');
-
-  Assert.AreEqual('first arg', fTestObj.Argument1);
-  Assert.AreEqual('second arg', fTestObj.Argument2);
-  Assert.AreEqual('third arg', fTestObj.Argument3);
-
-end;
-
-procedure TMethodCallbackTest.TestOfObjectCallBackStdCall;
-var
-  ptr: pointer;
-  func: TTwoArgStdFunction;
+  func: TTwoArgArmStdFunction;
   cb: TMyFuncCallBack;
 begin
-  cb:=fTestObj.TwoArgStdFunction;
-  ptr:=GetOfObjectCallBack(TCallBack(cb), 2, ctStdcall);
+  cb:=fTestObj.TwoArgArmStdFunction;
+  ptr:=GetOfObjectCallBack(TCallBack(cb), 2, ctARMSTD);
 
   //---call method through pointer
-  func:=TTwoArgStdFunction(ptr);
+  func:=TTwoArgArmStdFunction(ptr);
 
   Assert.AreEqual(1, func('first arg', 'second arg'));
   Assert.AreEqual('first arg', fTestObj.Argument1);
