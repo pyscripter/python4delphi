@@ -195,8 +195,8 @@ type
 
 // wchar_t is 4 bytes on Linux/OS X/Android but 2 bytes on Windows
 {$IFDEF POSIX}
-  PWCharT = PUCSChar;
-  PPWCharT = PUCSChar^;
+  PWCharT = PUCS4Char;
+  PPWCharT = PUCS4Char^;
   WCharTString = UCS4String;
 {$ELSE}
   PWCharT = PWideChar;
