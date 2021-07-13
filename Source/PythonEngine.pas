@@ -196,7 +196,7 @@ type
 // wchar_t is 4 bytes on Linux/OS X/Android but 2 bytes on Windows
 {$IFDEF POSIX}
   PWCharT = PUCS4Char;
-  PPWCharT = PUCS4Char^;
+  PPWCharT = ^PUCS4Char;
   WCharTString = UCS4String;
 {$ELSE}
   PWCharT = PWideChar;
@@ -4380,7 +4380,7 @@ begin
   // and we want to build an array of PWCharT, pointing to valid strings.
   argc := ParamCount;
   SetLength(wargv, argc + 1);
-  // build the PWideChar array
+  // build the PWCharT array
   SetLength(WL, argc+1);
   for I := 0 to argc do begin
     {
@@ -4393,7 +4393,7 @@ begin
     else
       TempS := ParamStr(I);
     {$IFDEF POSIX}
-    WL := UnicodeStringToUCS4String(TempS);
+    WL[Ι] := UnicodeStringToUCS4String(TempS);
     {$ELSE}
     WL[I] := UnicodeString(TempS);
     {$ENDIF}
