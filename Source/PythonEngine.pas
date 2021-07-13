@@ -4216,7 +4216,7 @@ begin
 
   gPythonEngine := Self;
   CheckRegistry;
-  if Assigned(Py_SetProgramName) and (ProgramName <> '') then
+  if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
     Py_SetProgramName(PWCharT(FProgramName));
   AssignPyFlags;
   if Length(FPythonHome) > 0 then
@@ -4468,7 +4468,10 @@ end;
 function  TPythonEngine.GetPythonHome: UnicodeString;
 begin
 {$IFDEF POSIX}
-  Result := UCS4StringToUnicodeString(FPythonHome);
+  if Length(FPythonHome) = 0 then
+    Result := ''
+  else
+    Result := UCS4StringToUnicodeString(FPythonHome);
 {$ELSE}
   Result := FPythonHome;
 {$ENDIF}
@@ -4477,7 +4480,10 @@ end;
 function  TPythonEngine.GetProgramName: UnicodeString;
 begin
 {$IFDEF POSIX}
-  Result := UCS4StringToUnicodeString(FProgramName);
+  if Length(FProgramName) = 0 then
+    Result := ''
+  else
+    Result := UCS4StringToUnicodeString(FProgramName);
 {$ELSE}
   Result := FProgramName;
 {$ENDIF}
