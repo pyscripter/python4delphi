@@ -4393,7 +4393,7 @@ begin
     else
       TempS := ParamStr(I);
     {$IFDEF POSIX}
-    WL[Ι] := UnicodeStringToUCS4String(TempS);
+    WL[I] := UnicodeStringToUCS4String(TempS);
     {$ELSE}
     WL[I] := UnicodeString(TempS);
     {$ENDIF}
