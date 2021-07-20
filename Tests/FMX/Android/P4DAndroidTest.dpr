@@ -7,7 +7,8 @@ uses
   NumberServicesTest in 'NumberServicesTest.pas',
   PyEnvTest in 'PyEnvTest.pas',
   PythonLoad in 'PythonLoad.pas',
-  VarPythTest in 'VarPythTest.pas';
+  VarPythTest in 'VarPythTest.pas',
+  WrapDelphiTest in 'WrapDelphiTest.pas';
 
 {$R *.res}
 begin
