@@ -1,3 +1,37 @@
+(**************************************************************************)
+(*                                                                        *)
+(* Module:  Unit 'VarPythTest'    Copyright (c) 2021                      *)
+(*                                                                        *)
+(*                                  Lucas Moura Belo - lmbelo             *)
+(*                                  lucas.belo@live.com                   *)
+(*                                  BH, Brazil                            *)
+(*                                                                        *)
+(*                                  PyScripter                            *)
+(*                                  e-mail: pyscripter@gmail.com          *)
+(*                                                                        *)
+(*  Project pages:      https://github.com/Embarcadero/python4delphi      *)
+(*                      https://github.com/pyscripter/python4delphi       *)
+(**************************************************************************)
+(*  Functionality:  Test unit for variants                                *)
+(*                                                                        *)
+(*                                                                        *)
+(**************************************************************************)
+(* This source code is distributed with no WARRANTY, for no reason or use.*)
+(* Everyone is allowed to use and change this code free for his own tasks *)
+(* and projects, as long as this header and its copyright text is intact. *)
+(* For changed versions of this code, which are public distributed the    *)
+(* following additional conditions have to be fullfilled:                 *)
+(* 1) The header has to contain a comment on the change and the author of *)
+(*    it.                                                                 *)
+(* 2) A copy of the changed source has to be sent to the above E-Mail     *)
+(*    address or my then valid address, if this is possible to the        *)
+(*    author.                                                             *)
+(* The second condition has the target to maintain an up to date central  *)
+(* version of the component. If this condition is not acceptable for      *)
+(* confidential or legal reasons, everyone is free to derive a component  *)
+(* or to generate a diff file to my or other original sources.            *)
+(**************************************************************************)
+
 unit VarPythTest;
 
 interface
@@ -52,12 +86,10 @@ begin
   TPythonLoad.Configure(FPythonEngine);
   FPythonEngine.LoadDll;
 end;
-
 procedure TVarPythTest.TearDownFixture;
 begin
   FPythonEngine.Free();
 end;
-
 procedure TVarPythTest.TestDates;
 var
   a, b, _timeMod : Variant;
@@ -69,13 +101,10 @@ var
   _hour2, _min2, _sec2, _msec2 : Word;
 begin
   _timeMod := Import('time'); // get the time module of Python
-
   _date := Now;
   DecodeDate( _date, _year, _month, _day );
   DecodeTime( _date, _hour, _min, _sec, _msec );
-
   b := _timeMod.localtime(_timeMod.time()); // same as Now in Delphi
-
   a := VarPythonCreate(_date);
   Assert.IsTrue( a.Length = 9 );
   Assert.IsTrue( a.GetItem(0) = _year );
@@ -96,7 +125,6 @@ begin
   // don't test the 9th item of the tuple, because it's the daylight saving,
   // and it's not computed by the Python for Delphi.
   //Assert.IsTrue( b.GetItem(8) = a.GetItem(8) );
-
   _date2 := b;
   DecodeDate( _date2, _year2, _month2, _day2 );
   DecodeTime( _date2, _hour2, _min2, _sec2, _msec2 );
@@ -106,11 +134,9 @@ begin
   Assert.IsTrue( _hour2 = _hour );
   Assert.IsTrue( _min2 = _min );
   Assert.IsTrue( _sec2 = _sec );
-
   // test new datetime module
   _timeMod := Import('datetime'); // get the datetime module of Python
   //or _timeMod := DatetimeModule; // get the datetime module of Python
-
   a := _timeMod.datetime(2002, 12, 30, 22, 15, 38, 827738);
   Assert.IsTrue(VarIsPythonDateTime(a));
   Assert.IsTrue(VarIsPythonDate(a));
@@ -123,7 +149,6 @@ begin
   Assert.IsTrue(a.minute   = 15);
   Assert.IsTrue(a.second   = 38);
   Assert.IsTrue(a.microsecond  = 827738);
-
   _date := a;
   DecodeDate( _date, _year, _month, _day );
   DecodeTime( _date, _hour, _min, _sec, _msec );
@@ -134,7 +159,6 @@ begin
   Assert.IsTrue(_min   = 15);
   Assert.IsTrue(_sec   = 38);
   Assert.IsTrue(_msec  = 827738 div 1000);
-
   a := _timeMod.date(2002, 12, 30);
   Assert.IsTrue(not VarIsPythonDateTime(a));
   Assert.IsTrue(VarIsPythonDate(a));
@@ -153,7 +177,6 @@ begin
   Assert.IsTrue(a.year  = 2002);
   Assert.IsTrue(a.month = 12);
   Assert.IsTrue(a.day   = 30);
-
   a := _timeMod.time(22, 15, 38, 827738);
   Assert.IsTrue(not VarIsPythonDateTime(a));
   Assert.IsTrue(not VarIsPythonDate(a));
@@ -169,7 +192,6 @@ begin
   Assert.IsTrue(_min   = 15);
   Assert.IsTrue(_sec   = 38);
   Assert.IsTrue(_msec  = 827738 div 1000);
-
   a := DatetimeModule.datetime(2002, 12, 30, 22, 15, 38, 827738);
   b := _timeMod.datetime(2002, 12, 30, 22, 16, 38, 827738);
   c := b - a;
@@ -184,7 +206,6 @@ begin
   Assert.IsTrue(_min = 1);
   Assert.IsTrue(_sec = 0);
   Assert.IsTrue(_msec = 0);
-
   c := a - b;
   Assert.IsTrue(VarIsPythonDateTimeDelta(c));
   Assert.IsTrue(c.days = -1);
@@ -198,14 +219,12 @@ begin
   Assert.IsTrue(_min = 1);
   Assert.IsTrue(_sec = 0);
   Assert.IsTrue(_msec = 0);
-
   c := a + (b-a);
   Assert.IsTrue(VarIsPythonDateTime(c));
   Assert.IsTrue(c = b);
   Assert.IsTrue(c <> a);
   Assert.IsTrue(a < b);
   Assert.IsTrue(b > a);
-
   GetPythonEngine.DatetimeConversionMode := dcmToDatetime;
   try
     _date := EncodeDate(2003, 01, 28) + EncodeTime(12, 22, 33, 450);
@@ -233,9 +252,7 @@ begin
   finally
     GetPythonEngine.DatetimeConversionMode := dcmToTuple;
   end;
-
 end;
-
 procedure TVarPythTest.TestFloats;
 var
   a, b, c : Variant;
@@ -249,17 +266,14 @@ begin
   Assert.IsTrue(VarIsPythonNumber(a));
   Assert.IsTrue(VarIsPythonFloat(a));
   Assert.IsTrue(Double(a) = 2.5);
-
   dbl_b := 3.2;
   b := VarPythonCreate(dbl_b);
   Assert.IsTrue(VarIsPython(b));
   Assert.IsTrue(VarIsPythonNumber(b));
   Assert.IsTrue(VarIsPythonFloat(b));
   Assert.IsTrue(Double(b) = dbl_b); // note that Assert.IsTrue(Double(b) = 3.2) fails.
-
   // arithmetic operations
   //----------------------
-
   // addition
   c := a + b;
   // check result of operation
@@ -274,7 +288,6 @@ begin
   Assert.IsTrue( Double(c) = (dbl_a+1+dbl_b) );
   c := 1 + a + b;
   Assert.IsTrue( Double(c) = (1+dbl_a+dbl_b) );
-
   // substraction
   c := b - a;
   Assert.IsTrue( Double(c) = (dbl_b - dbl_a) );
@@ -285,7 +298,6 @@ begin
   Assert.IsTrue( Double(c) = (dbl_b-1-dbl_a) );
   c := 1 - b - a;
   Assert.IsTrue( Double(c) = (1-dbl_b-dbl_a) );
-
   // multiplication
   c := a * b;
   dbl_c := dbl_a * dbl_b;
@@ -300,26 +312,21 @@ begin
   c := 2 * a * b;
   dbl_c := 2 * dbl_a * dbl_b;
   Assert.IsTrue( Double(c) = dbl_c );
-
   // division: in Python a division between 2 integers is the same as the integer division
   c := b / a;
   dbl_c := dbl_b / dbl_a;
   Assert.IsTrue( Double(c) = dbl_c );
-
   // negation
   c := -a;
   Assert.IsTrue( Double(c) = -dbl_a );
-
   // comparisons
   //------------
-
   // equal
   c := a = b;
   Assert.IsTrue(c = False);
   c := a = a;
   Assert.IsTrue(c = True);
   Assert.IsTrue( a = dbl_a);
-
   // not equal
   c := a <> b;
   Assert.IsTrue(c = True);
@@ -327,44 +334,36 @@ begin
   c := a <> a;
   Assert.IsTrue(c = False);
   Assert.IsTrue( a = dbl_a);
-
   // greater than
   c := a > b; Assert.IsTrue(c = False);
   c := b > a; Assert.IsTrue(c = True);
   Assert.IsTrue( a > (dbl_a-1));
-
   // greater or equal than
   c := a >= b; Assert.IsTrue(c = False);
   c := b >= a; Assert.IsTrue(c = True);
   c := a >= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a >= dbl_a );
-
   // less than
   c := a < b; Assert.IsTrue(c = True);
   c := b < a; Assert.IsTrue(c = False);
   Assert.IsTrue( a < dbl_b);
-
   // less or equal than
   c := a <= b; Assert.IsTrue(c = True);
   c := b <= a; Assert.IsTrue(c = False);
   c := a <= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a <= dbl_a);
-
   // parenthesis
   c := a * ((a * b) / b);
   dbl_c := dbl_a * ((dbl_a * dbl_b) / dbl_b);
   Assert.IsTrue( c = dbl_c );
-
   // copy
   c := a;
   Assert.IsTrue( c = a);
   Assert.IsTrue( VarIsSame(c, a) ); // checks if 2 variants share the same Python object.
-
   // casts
   int := a;
   Assert.IsTrue(int = 2);
 end;
-
 procedure TVarPythTest.TestIntegers;
 var
   a, b, c : Variant;
@@ -376,16 +375,13 @@ begin
   Assert.IsTrue(VarIsPythonNumber(a));
   Assert.IsTrue(VarIsPythonInteger(a));
   Assert.IsTrue(Integer(a) = 2);
-
   b := VarPythonCreate(3);
   Assert.IsTrue(VarIsPython(b));
   Assert.IsTrue(VarIsPythonNumber(b));
   Assert.IsTrue(VarIsPythonInteger(b));
   Assert.IsTrue(Integer(b) = 3);
-
   // arithmetic operations
   //----------------------
-
   // addition
   c := a + b;
   // check result of operation
@@ -400,7 +396,6 @@ begin
   Assert.IsTrue( Integer(c) = 6 );
   c := 1 + a + b;
   Assert.IsTrue( Integer(c) = 6 );
-
   // substraction
   c := b - a;
   Assert.IsTrue( Integer(c) = 1 );
@@ -411,7 +406,6 @@ begin
   Assert.IsTrue( Integer(c) = 0 );
   c := 1 - b - a;
   Assert.IsTrue( Integer(c) = -4 );
-
   // multiplication
   c := a * b;
   Assert.IsTrue( Integer(c) = 6 );
@@ -422,16 +416,13 @@ begin
   Assert.IsTrue( Integer(c) = 12 );
   c := 2 * a * b;
   Assert.IsTrue( Integer(c) = 12 );
-
   // integer division
   c := b div a;
   Assert.IsTrue( Integer(c) = 1 );
-
   // division: in Python a division between 2 integers is the same as the integer division
   c := b / a;
   Assert.IsTrue( c = 1.5 );
   Assert.IsTrue( Integer(c) = 2 );
-
   // modulus
   c := b mod a;
   Assert.IsTrue( Integer(c) = 1 );
@@ -442,63 +433,51 @@ begin
     Assert.IsTrue(Integer(c.GetItem(0)) = 1); // division
     Assert.IsTrue(Integer(c.GetItem(1)) = 1); // modulo
   end;
-
   // power
   c := BuiltinModule.pow(a, b);
   Assert.IsTrue(c = 8);
-
   // negation
   c := -a;
   Assert.IsTrue( Integer(c) = -2 );
-
   // logical operations
   //------------------
-
   // inverse
   c := not a; // in python it would be: c = ~2
   Assert.IsTrue( Integer(c) = -3 );
-
   // shift left (<<)
   c := a shl b;
   Assert.IsTrue( Integer(c) = 16 );
   c := a shl 1;
   Assert.IsTrue( Integer(c) = 4 );
-
   // shift right (>>)
   c := a shl b;
   c := c shr b;
   Assert.IsTrue( Integer(c) = Integer(a) );
   c := b shr 1;
   Assert.IsTrue( Integer(c) = 1 );
-
   // and
   c := a and (a*5);
   Assert.IsTrue( Integer(c) = Integer(a) );
   c := a and 6;
   Assert.IsTrue( Integer(c) = Integer(a) );
-
   // or
   c := a or b;
   Assert.IsTrue( Integer(c) = 3 );
   c := a or 3;
   Assert.IsTrue( Integer(c) = 3 );
-
   // xor
   c := a xor b;
   Assert.IsTrue( Integer(c) = 1 );
   c := a xor 3;
   Assert.IsTrue( Integer(c) = 1 );
-
   // comparisons
   //------------
-
   // equal
   c := a = b;
   Assert.IsTrue(c = False);
   c := a = a;
   Assert.IsTrue(c = True);
   Assert.IsTrue( a = 2);
-
   // not equal
   c := a <> b;
   Assert.IsTrue(c = True);
@@ -506,38 +485,31 @@ begin
   c := a <> a;
   Assert.IsTrue(c = False);
   Assert.IsTrue( a = 2);
-
   // greater than
   c := a > b; Assert.IsTrue(c = False);
   c := b > a; Assert.IsTrue(c = True);
   Assert.IsTrue( a > 1);
-
   // greater or equal than
   c := a >= b; Assert.IsTrue(c = False);
   c := b >= a; Assert.IsTrue(c = True);
   c := a >= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a >= 2 );
-
   // less than
   c := a < b; Assert.IsTrue(c = True);
   c := b < a; Assert.IsTrue(c = False);
   Assert.IsTrue( a < 6);
-
   // less or equal than
   c := a <= b; Assert.IsTrue(c = True);
   c := b <= a; Assert.IsTrue(c = False);
   c := a <= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a <= 2);
-
   // parenthesis
   c := a * ((a * b) div b);
   Assert.IsTrue( c = a*2 );
-
   // copy
   c := a;
   Assert.IsTrue( c = a);
   Assert.IsTrue( VarIsSame(c, a) ); // checks if 2 variants share the same Python object.
-
   // test long long (Int64)
   big := Int64(MaxInt)*4;
   b := VarPythonCreate(big);
@@ -555,7 +527,6 @@ begin
   Assert.IsTrue(VarIsBool(c));
   Assert.IsTrue(not VarIsTrue(c));
 end;
-
 procedure TVarPythTest.TestIterator;
 var
   Module: Variant;
@@ -568,7 +539,6 @@ begin
   end;
   Assert.IsTrue(Count = len(SysModule.modules));
 end;
-
 procedure TVarPythTest.TestMappings;
 var
   a, b, c, keys, values : Variant;
@@ -579,9 +549,9 @@ begin
   Assert.IsTrue(VarIsPythonMapping(a));
   Assert.IsTrue(VarIsPythonDict(a));
   // There is a bug in D2010 in which Char('a') gets translated to integer parameter
-  a.SetItem('a', 0 );
-  a.SetItem('b', 1 );
-  a.SetItem('c', 2 );
+  a.SetItem( string('a'), 1 );
+  a.SetItem( string('b'), 2 );
+  a.SetItem( string('c'), 3 );
   Assert.IsTrue(a.Length = 3); // this is a special property that does the same as: len(a) in Python
   Assert.IsTrue(a.Length() = 3); // this is a special method that does the same as the special property
   Assert.IsTrue(len(a) = 3);
@@ -803,7 +773,6 @@ begin
   Assert.IsTrue(f.GetItem(2) = 4);
   Assert.IsTrue(f.GetItem(3) = 3);
 end;
-
 procedure TVarPythTest.TestSequences;
 var
   a, b, c : Variant;
@@ -989,7 +958,6 @@ begin
   end;
   Assert.IsTrue(cpt = 4);
 end;
-
 procedure TVarPythTest.TestStrings;
 var
   a, b, c : Variant;
@@ -1001,12 +969,10 @@ begin
   Assert.IsTrue(VarIsPython(a));
   Assert.IsTrue(VarIsPythonString(a));
   Assert.IsTrue(string(a) = 'abc');
-
   b := VarPythonCreate('def');
   Assert.IsTrue(VarIsPython(b));
   Assert.IsTrue(VarIsPythonString(b));
   Assert.IsTrue(string(b) = 'def');
-
   // concatenation
   c := a + b;
   // check result of operation
@@ -1021,21 +987,17 @@ begin
   Assert.IsTrue( string(c) = 'abc!def' );
   c := '!' + a + b;
   Assert.IsTrue( string(c) = '!abcdef' );
-
   // multiplication
   c := a * 3; // in Python the multiplication of string concatenates n times the string
   Assert.IsTrue( string(c) = 'abcabcabc' );
-
   // comparisons
   //------------
-
   // equal
   c := a = b;
   Assert.IsTrue(c = False);
   c := a = a;
   Assert.IsTrue(c = True);
   Assert.IsTrue( a = 'abc');
-
   // not equal
   c := a <> b;
   Assert.IsTrue(c = True);
@@ -1043,29 +1005,24 @@ begin
   c := a <> a;
   Assert.IsTrue(c = False);
   Assert.IsTrue( a = 'abc');
-
   // greater than
   c := a > b; Assert.IsTrue(c = False);
   c := b > a; Assert.IsTrue(c = True);
   Assert.IsTrue( a > 'aaa');
-
   // greater or equal than
   c := a >= b; Assert.IsTrue(c = False);
   c := b >= a; Assert.IsTrue(c = True);
   c := a >= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a >= 'abc' );
-
   // less than
   c := a < b; Assert.IsTrue(c = True);
   c := b < a; Assert.IsTrue(c = False);
   Assert.IsTrue( a < 'bbb');
-
   // less or equal than
   c := a <= b; Assert.IsTrue(c = True);
   c := b <= a; Assert.IsTrue(c = False);
   c := a <= a; Assert.IsTrue(c = True);
   Assert.IsTrue( a <= 'abc');
-
   // copy
   c := a;
   Assert.IsTrue( c = a);
@@ -1075,7 +1032,6 @@ begin
   Assert.IsTrue(a.length = 0);
   Assert.IsTrue(a = '');
   Assert.IsTrue(string(a) = '');
-
   // Unicode strings
   b := VarPythonEval( 'u"Hello world!"' );
   Assert.IsTrue( VarIsPythonUnicode(b) );
