@@ -1,18 +1,35 @@
 (**************************************************************************)
 (*                                                                        *)
-(* Module:  Unit 'MethodCallbackTest'  Copyright (c) 2006                 *)
+(* Module:  Unit 'MethodCallbackTest'    Copyright (c) 2021               *)
 (*                                                                        *)
-(* Version: 0.0                        Vertec AG, Samuel Iseli            *)
-(*                                     samuel.iseli@vertec.ch             *)
-(*                                     Zurich, Switzerland                *)
+(*                                  Lucas Moura Belo - lmbelo             *)
+(*                                  lucas.belo@live.com                   *)
+(*                                  BH, Brazil                            *)
 (*                                                                        *)
+(*                                  PyScripter                            *)
+(*                                  e-mail: pyscripter@gmail.com          *)
+(*                                                                        *)
+(*  Project pages:      https://github.com/Embarcadero/python4delphi      *)
+(*                      https://github.com/pyscripter/python4delphi       *)
 (**************************************************************************)
-(* Test unit for MethodCallback                                           *)
+(*  Functionality:  Test unit for MethodCallback                          *)
+(*                                                                        *)
+(*                                                                        *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
-(* Everyone is allowed to use and change this code free, as long as this  *)
-(* header and its copyright text is intact.                               *)
-(* Samuel Iseli 2006-02-27                                                *)
+(* Everyone is allowed to use and change this code free for his own tasks *)
+(* and projects, as long as this header and its copyright text is intact. *)
+(* For changed versions of this code, which are public distributed the    *)
+(* following additional conditions have to be fullfilled:                 *)
+(* 1) The header has to contain a comment on the change and the author of *)
+(*    it.                                                                 *)
+(* 2) A copy of the changed source has to be sent to the above E-Mail     *)
+(*    address or my then valid address, if this is possible to the        *)
+(*    author.                                                             *)
+(* The second condition has the target to maintain an up to date central  *)
+(* version of the component. If this condition is not acceptable for      *)
+(* confidential or legal reasons, everyone is free to derive a component  *)
+(* or to generate a diff file to my or other original sources.            *)
 (**************************************************************************)
 
 unit MethodCallBackTest;
@@ -26,7 +43,6 @@ uses
 
 implementation
 
-
 type
   TTwoArgArmStdFunction = function (arg1, arg2: string): integer;
   TThreeArgArmStdProcedure = procedure (arg1, arg2, arg3: string);
@@ -36,7 +52,6 @@ type
 
   TMyFuncCallback = function(arg1, arg2: string): integer of object;
   TMyProcCallback = procedure (arg1, arg2, arg3: string) of object;
-
 
   TTestObj = class
   public
@@ -137,27 +152,6 @@ var
   i: integer;
   ptr: Pointer;
 begin
-  {
-I discovered a severe Bug in my memory manager code in MethodCallbacks.
-The pointer arithmetic when checking free space in an allocated memory block is wrong.
-
-The line that checks for free space in the current page is:
-
-  if (page = nil) or (Longint(CodeMemPages^.CodeBlocks) -
-Longint(Pointer(CodeMemPages)) <= (size + sizeof(PCodeMemBlock))) then
-
-but it should be
-
-  if (page = nil) or (Longint(CodeMemPages^.CodeBlocks) -
-Longint(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
-
-The old version didn't count the pointers of the TCodeMemPage structure (Next and Codeblocks).
-The error causes access violations on allocating the last block in a page when the requested size is smaller then the supposed (wrong) free space +8.
-
-Therefore it doesn't occur very often and the tests didn't catch it.
-I'm sorry about that. Hope it didn't cause too many problems up to now.
-  }
-
   //---Test the code-memory manager
 
   FreeCallBacks;
@@ -231,18 +225,18 @@ procedure TMethodCallbackTest.TestFiveArgArmStdFunction;
 Var
   CallBack : TFiveArgArmStdFunction;
 begin
-   CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgArmStdFunction, 5, ctArmStd);
-   Assert.AreEqual(CallBack(1,2,3,4,5), 1*4+2*5+3);
-   DeleteCallBack(@CallBack);
+  CallBack := GetCallBack(fTestObj, @TTestObj.FiveArgArmStdFunction, 5, ctArmStd);
+  Assert.AreEqual(CallBack(1,2,3,4,5), 1*4+2*5+3);
+  DeleteCallBack(@CallBack);
 end;
 
 procedure TMethodCallbackTest.TestFourArgArmStdFunction;
 Var
   CallBack : TFourArgArmStdFunction;
 begin
-   CallBack := GetCallBack(fTestObj, @TTestObj.FourArgArmStdFunction, 4, ctArmStd);
-   Assert.AreEqual(CallBack(1,2,3,4), 1*3+2*4);
-   DeleteCallBack(@CallBack);
+  CallBack := GetCallBack(fTestObj, @TTestObj.FourArgArmStdFunction, 4, ctArmStd);
+  Assert.AreEqual(CallBack(1,2,3,4), 1*3+2*4);
+  DeleteCallBack(@CallBack);
 end;
 
 procedure TMethodCallbackTest.TestOfObjectCallBackArmStd;
@@ -261,7 +255,6 @@ begin
   Assert.AreEqual('first arg', fTestObj.Argument1);
   Assert.AreEqual('second arg', fTestObj.Argument2);
 end;
-
 
 initialization
   TDUnitX.RegisterTestFixture(TMethodCallBackTest);
