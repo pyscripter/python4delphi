@@ -4,7 +4,7 @@
 (*                                                                        *)
 (*                                  Lucas Moura Belo - lmbelo             *)
 (*                                  lucas.belo@live.com                   *)
-(*                                  Brazil                                *)
+(*                                  BH, Brazil                            *)
 (*                                                                        *)
 (*                                  PyScripter                            *)
 (*                                  e-mail: pyscripter@gmail.com          *)
@@ -31,6 +31,7 @@
 (* confidential or legal reasons, everyone is free to derive a component  *)
 (* or to generate a diff file to my or other original sources.            *)
 (**************************************************************************)
+
 unit PythonLoad;
 
 interface
