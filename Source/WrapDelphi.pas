@@ -2786,7 +2786,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     Num: Int64;
   begin
     Result := False;
-    if (RttiParam.ParamType = nil) or (RttiParam.ParamType.Handle = nil) or (GetTypeData(RttiParam.ParamType.Handle)) = nil) then
+    if (RttiParam.ParamType = nil) or (RttiParam.ParamType.Handle = nil) or (GetTypeData(RttiParam.ParamType.Handle) = nil) then
       Exit;
     elType := GetTypeData(RttiParam.ParamType.Handle).elType;
     if elType = nil then
