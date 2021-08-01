@@ -131,19 +131,19 @@ end;
 
 procedure TMethodCallbackTest.TestMemoryMgmt;
 const
-   AllocCount = {$IFDEF CPUX64}
-                  {$IFDEF MSWINDOWS}
-                  51
+   AllocCount = {$IFDEF CPUARM}
+                  {$IFDEF CPUARM32}
+                  31
                   {$ELSE}
-                  88
-                  {$ENDIF}
+                  46
+                  {$ENDIF CPUARM32}
                 {$ELSE}
-                {$IFDEF ANDROID}
-                    {$IFDEF CPUARM32}
-                    31
+                  {$IFDEF CPUX64}
+                    {$IFDEF MSWINDOWS}
+                    51
                     {$ELSE}
-                    90
-                    {$ENDIF CPUARM32}
+                    88
+                    {$ENDIF}
                   {$ELSE}
                   90
                   {$ENDIF}
