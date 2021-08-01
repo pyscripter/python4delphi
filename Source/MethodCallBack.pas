@@ -17,6 +17,7 @@
 (*      Morgan Martinet     (p4d@mmm-experts.com)                         *)
 (*      Samuel Iseli        (iseli@vertec.ch)                             *)
 (*      Andrey Gruzdev      (andrey.gruzdev@gmail.com)                    *)
+(*      Lucas Belo          (lucas.belo@live.com)                         *)
 (**************************************************************************)
 (* This source code is distributed with no WARRANTY, for no reason or use.*)
 (* Everyone is allowed to use and change this code free, as long as this  *)
@@ -159,7 +160,6 @@ begin
   // determine if there is already a page assigned and
   // that it has enough space requested block
   page:=CodeMemPages;
-
   if (page = nil) or (PtrCalcType(CodeMemPages^.CodeBlocks) - PtrCalcType(Pointer(CodeMemPages)) <= (size + 3*sizeof(PCodeMemBlock))) then
   begin
     // allocate new Page
@@ -295,21 +295,17 @@ begin
                          argnum, calltype);
 end;
 
-{$IFDEF CPUX64}
-  {$DEFINE 64_BIT_CALLBACK}
-{$ELSE}
-  {$IFDEF ANDROID}
-    {$IFDEF CPUARM32}
-      {$DEFINE ARM_32_BIT_CALLBACK}
-    {$ENDIF CPUARM32}
+{$IFNDEF CPUARM}
+  {$IFDEF CPUX64}
+    {$DEFINE 64_BIT_CALLBACK}
   {$ELSE}
     {$IFDEF MACOS}
       {$DEFINE ALIGNED_32_BIT_CALLBACK}
     {$ELSE}
       {$DEFINE SIMPLE_32_BIT_CALLBACK}
     {$ENDIF MACOS}
-  {$ENDIF ANDROID}
-{$ENDIF CPUX64}
+  {$ENDIF CPUX64}
+{$ENDIF CPUARM}
 
 {$IFDEF SIMPLE_32_BIT_CALLBACK}
 // win32 inplementation
@@ -600,7 +596,7 @@ begin
 end;
 {$ENDIF}
 
-{$IFDEF ARM_32_BIT_CALLBACK}
+{$IFDEF CPUARM32}
 function  GetCallBack(Self: TObject; Method: Pointer; ArgNum: Integer;
   CallType: TCallType): Pointer;
 const
@@ -658,17 +654,68 @@ begin
     Self,
     Method);
 
-  Inc(P, Length(S1) - (Length(LLiteralPool) * ARM_INSTRUCTION_SIZE));
+  Inc(P, Length(S1) - (Length(LLiteralPool) * SizeOf(pointer)));
   for I := Low(LLiteralPool) to High(LLiteralPool) do begin
     Move(LLiteralPool[I], P^, SizeOf(pointer));
-    Inc(P, ARM_INSTRUCTION_SIZE);
+    Inc(P, SizeOf(pointer));
   end;
 
   Result := Pointer(Q); //set arm mode
 end;
-{$ENDIF ARM_32_BIT_CALLBACK}
+{$ENDIF CPUARM32}
+
+{$IFDEF CPUARM64}
+function  GetCallBack(Self: TObject; Method: Pointer; ArgNum: Integer;
+  CallType: TCallType): Pointer;
+const
+  S1: array[0..79] of byte = (
+//big-endian
+//offset  <_start>:
+  $fd, $7b, $bf, $a9,  //	stp	x29, x30, [sp, #-16]!
+  $fd, $03, $00, $91,  //	mov	x29, sp
+  $e0, $07, $bf, $a9,  //	stp	x0, x1, [sp, #-16]!
+  $e2, $0f, $bf, $a9,  //	stp	x2, x3, [sp, #-16]!
+  $e4, $17, $bf, $a9,  //	stp	x4, x5, [sp, #-16]!
+  $e6, $1f, $bf, $a9,  //	stp	x6, x7, [sp, #-16]!
+  $0a, $00, $00, $10,  //	adr	x10, #0 <_start+0x18>
+  $40, $15, $40, $f9,  //	ldr	x0, [x10, #40]
+  $49, $19, $40, $f9,  //	ldr	x9, [x10, #48]
+  $e7, $2f, $c1, $a8,  //	ldp	x7, x11, [sp], #16
+  $e5, $1b, $c1, $a8,  //	ldp	x5, x6, [sp], #16
+  $e3, $13, $c1, $a8,  //	ldp	x3, x4, [sp], #16
+  $e1, $0b, $c1, $a8,  //	ldp	x1, x2, [sp], #16
+  $20, $01, $3f, $d6,  //	blr	x9
+  $fd, $7b, $c1, $a8,  //	ldp	x29, x30, [sp], #16
+  $c0, $03, $5f, $d6,  //	ret
+  $00, $00, $00, $00,  //	.word	0x00000000 //Self
+  $00, $00, $00, $00,  //	.word	0x00000000
+  $00, $00, $00, $00,  //	.word	0x00000000 //Method
+  $00, $00, $00, $00   //	.word	0x00000000
+);
+var
+  P, Q: PByte;
+  LLiteralPool: TArray<pointer>;
+  I: Integer;
+begin
+  GetCodeMem(Q, SizeOf(S1));
+  P := Q;
+  Move(S1, P^, SizeOf(S1));
+
+  LLiteralPool := TArray<pointer>.Create(Self, Method);
+
+  Inc(P, Length(S1) - (Length(LLiteralPool) * SizeOf(pointer)));
+  for I := Low(LLiteralPool) to High(LLiteralPool) do begin
+    Move(LLiteralPool[I], P^, SizeOf(pointer));
+    Inc(P, SizeOf(pointer));
+  end;
+
+  Result := Pointer(Q); //set arm mode
+end;
+{$ENDIF CPUARM64}
 
 initialization
+
 finalization
   FreeCallBacks;
+
 end.
