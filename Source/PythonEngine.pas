@@ -191,13 +191,11 @@ const
   Py_GT = 4;
   Py_GE = 5;
 
-  {$IFDEF ANDROID}
-    {$IFDEF CPUARM32}
-      DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctARMSTD;
-    {$ENDIF CPUARM32}
+  {$IFDEF CPUARM}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctARMSTD;
   {$ELSE}
     DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctCDECL;
-  {$ENDIF ANDROID}
+  {$ENDIF CPUARM}
 
 type
   // Delphi equivalent used by TPyObject
@@ -425,7 +423,7 @@ type
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
   allocfunc         = function ( self: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 
-  PyNumberMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyNumberMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      nb_add           : binaryfunc;
      nb_subtract      : binaryfunc;
      nb_multiply      : binaryfunc;
@@ -465,7 +463,7 @@ type
   end;
   PPyNumberMethods = ^PyNumberMethods;
 
-  PySequenceMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PySequenceMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      sq_length    : lenfunc;
      sq_concat    : binaryfunc;
      sq_repeat    : ssizeargfunc;
@@ -479,46 +477,46 @@ type
   end;
   PPySequenceMethods = ^PySequenceMethods;
 
-  PyMappingMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMappingMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      mp_length	      : lenfunc;
      mp_subscript     : binaryfunc;
      mp_ass_subscript : objobjargproc;
   end;
   PPyMappingMethods = ^PyMappingMethods;
 
-  Py_complex =  {$IFNDEF CPUX64}packed{$ENDIF} record
+  Py_complex =  {$IFDEF CPUX86}packed{$ENDIF} record
      real : double;
      imag : double;
   end;
 
-  PyObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt: NativeInt;
     ob_type:   PPyTypeObject;
   end;
 
-  _frozen = {$IFNDEF CPUX64}packed{$ENDIF} record
+  _frozen = {$IFDEF CPUX86}packed{$ENDIF} record
      name	: PAnsiChar;
      code	: PByte;
      size	: Integer;
   end;
 
-  PySliceObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PySliceObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:          NativeInt;
     ob_type:            PPyTypeObject;
     start, stop, step:  PPyObject;
   end;
 
   PPyMethodDef = ^PyMethodDef;
-  PyMethodDef  = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMethodDef  = {$IFDEF CPUX86}packed{$ENDIF} record
      ml_name:  PAnsiChar;
      ml_meth:  PyCFunction;
-     ml_flags: {$IFDEF ANDROID}NativeInt{$ELSE}Integer{$ENDIF};
+     ml_flags: Integer;
      ml_doc:   PAnsiChar;
   end;
 
   // structmember.h
   PPyMemberDef = ^PyMemberDef;
-  PyMemberDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMemberDef = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     _type : integer;
     offset : NativeInt;
@@ -534,7 +532,7 @@ type
   setter = function ( obj, value : PPyObject; context : Pointer) : integer; cdecl;
 
   PPyGetSetDef = ^PyGetSetDef;
-  PyGetSetDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyGetSetDef = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     get : getter;
     _set : setter;
@@ -545,7 +543,7 @@ type
   wrapperfunc = function (self, args: PPyObject; wrapped : Pointer) : PPyObject; cdecl;
 
   pwrapperbase = ^wrapperbase;
-  wrapperbase = {$IFNDEF CPUX64}packed{$ENDIF} record
+  wrapperbase = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     wrapper : wrapperfunc;
     doc : PAnsiChar;
@@ -560,7 +558,7 @@ type
   }
 
   PPyDescrObject = ^PyDescrObject;
-  PyDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -570,7 +568,7 @@ type
   end;
 
   PPyMethodDescrObject = ^PyMethodDescrObject;
-  PyMethodDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMethodDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -583,7 +581,7 @@ type
   end;
 
   PPyMemberDescrObject = ^PyMemberDescrObject;
-  PyMemberDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMemberDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -596,7 +594,7 @@ type
   end;
 
   PPyGetSetDescrObject = ^PyGetSetDescrObject;
-  PyGetSetDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyGetSetDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -609,7 +607,7 @@ type
   end;
 
   PPyWrapperDescrObject = ^PyWrapperDescrObject;
-  PyWrapperDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyWrapperDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -623,7 +621,7 @@ type
   end;
 
   PPyModuleDef_Base = ^PyModuleDef_Base;
-  PyModuleDef_Base = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyModuleDef_Base = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -634,7 +632,7 @@ type
   end;
 
   PPyModuleDef = ^PyModuleDef;
-  PyModuleDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyModuleDef = {$IFDEF CPUX86}packed{$ENDIF} record
     m_base : PyModuleDef_Base;
     m_name : PAnsiChar;
     m_doc : PAnsiChar;
@@ -648,7 +646,7 @@ type
 
 
   // object.h
-  PyTypeObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyTypeObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
     ob_size:        NativeInt; // Number of items in variable part
@@ -747,7 +745,7 @@ type
   // Parse tree node interface
 
   PNode = ^node;
-  node = {$IFNDEF CPUX64}packed{$ENDIF} record
+  node = {$IFDEF CPUX86}packed{$ENDIF} record
     n_type      : smallint;
     n_str       : PAnsiChar;
     n_lineno    : integer;
@@ -757,7 +755,7 @@ type
   end;
 
   PPyCompilerFlags = ^PyCompilerFlags;
-  PyCompilerFlags = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyCompilerFlags = {$IFDEF CPUX86}packed{$ENDIF} record
     flags : integer;
     cf_feature_version : integer;  //added in Python 3.8
   end;
@@ -789,7 +787,7 @@ const
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
 type
-  PyDateTime_Delta = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDateTime_Delta = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -801,7 +799,7 @@ type
   end;
   PPyDateTime_Delta = ^PyDateTime_Delta;
 
-  PyDateTime_TZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record // a pure abstract base clase
+  PyDateTime_TZInfo = {$IFDEF CPUX86}packed{$ENDIF} record // a pure abstract base clase
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -823,7 +821,7 @@ type
  * convenient to cast to, when getting at the hastzinfo member of objects
  * starting with _PyTZINFO_HEAD.
  *}
-  _PyDateTime_BaseTZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record
+  _PyDateTime_BaseTZInfo = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -846,7 +844,7 @@ type
 	unsigned char data[_PyDateTime_TIME_DATASIZE];
 }
 
-  _PyDateTime_BaseTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
+  _PyDateTime_BaseTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo false
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -861,7 +859,7 @@ type
   end;
   _PPyDateTime_BaseTime = ^_PyDateTime_BaseTime;
 
-  PyDateTime_Time = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
+  PyDateTime_Time = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -884,7 +882,7 @@ type
  * the plain date type is a base class for datetime, so it must also have
  * a hastzinfo member (although it's unused there).
  *}
-  PyDateTime_Date = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDateTime_Date = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -903,7 +901,7 @@ type
 	unsigned char data[_PyDateTime_DATETIME_DATASIZE];
 }
 
-  _PyDateTime_BaseDateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
+  _PyDateTime_BaseDateTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo false
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -916,7 +914,7 @@ type
   end;
   _PPyDateTime_BaseDateTime = ^_PyDateTime_BaseDateTime;
 
-  PyDateTime_DateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
+  PyDateTime_DateTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_DATETIMEHEAD
       // Start of _PyTZINFO_HEAD
         // Start of the Head of an object
