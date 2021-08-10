@@ -7,7 +7,9 @@ implementation
 uses
   WrapDelphiTypes,
   WrapDelphiClasses,
+  {$IFNDEF ANDROID}
   WrapDelphiWindows,
+  {$ENDIF ANDROID}
   WrapFireDac,
   WrapFmxTypes,
   WrapFmxStdCtrls,
