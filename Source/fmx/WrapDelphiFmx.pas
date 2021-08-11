@@ -22,6 +22,7 @@ uses
   WrapFmxShapes,
   WrapFmxLayouts,
   WrapFmxScrollBox,
-  WrapFmxGrids;
+  WrapFmxGrids,
+  WrapFmxMedia;
 
 end.
