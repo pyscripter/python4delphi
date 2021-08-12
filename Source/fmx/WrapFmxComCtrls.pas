@@ -18,6 +18,16 @@ type
     property DelphiObject: TTabControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiTabItem = class(TPyDelphiTextControl)
+  private
+    function GetDelphiObject: TTabItem;
+    procedure SetDelphiObject(const Value: TTabItem);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TTabItem read GetDelphiObject write SetDelphiObject;
+  end;
+
   TPyDelphiCustomMultiView = class(TPyDelphiPresentedControl)
   private
     function GetDelphiObject: TCustomMultiView;
@@ -69,6 +79,7 @@ procedure TComCtrlsRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabItem);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomMultiView);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMultiView);
 end;
@@ -90,7 +101,24 @@ begin
   inherited DelphiObject := Value;
 end;
 
-  { TPyDelphiCustomMultiView }
+{ TPyDelphiTabItem }
+
+class function TPyDelphiTabItem.DelphiObjectClass: TClass;
+begin
+  Result := TTabItem;
+end;
+
+function TPyDelphiTabItem.GetDelphiObject: TTabItem;
+begin
+  Result := TTabItem(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTabItem.SetDelphiObject(const Value: TTabItem);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomMultiView }
 
 class function TPyDelphiCustomMultiView.DelphiObjectClass: TClass;
 begin
