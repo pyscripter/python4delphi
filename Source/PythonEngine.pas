@@ -2559,7 +2559,8 @@ type
       // methods
       ///////////////////////////////////////
       function  NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
-
+    public
+      const TYPE_COMP_NAME_SUFFIX = 'Type';
     public
       constructor Create( AOwner : TComponent ); override;
       destructor  Destroy; override;
@@ -2739,6 +2740,8 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
+function  PythonToPythonType(obj: PPyObject): TPythonType;
+function  IsDelphiClass( obj : PPyObject ) : Boolean;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
@@ -5092,7 +5095,7 @@ begin
     Result := AnsiString(str);
 end;
 
-function   TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
+function TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
 var
   i : Integer;
 begin
@@ -7577,6 +7580,16 @@ begin
     raise EPythonError.CreateFmt( 'Python object "%s" is not a Delphi class', [GetPythonEngine.PyObjectAsString(obj)] );
 end;
 
+function PythonToPythonType(obj: PPyObject): TPythonType;
+begin
+  if IsDelphiClass(obj) then
+    Result := TPythonType(
+      GetPythonEngine.FindClient(
+        string(PPyTypeObject(obj)^.tp_name + TPythonType.TYPE_COMP_NAME_SUFFIX)))
+  else
+    Result := nil;
+end;
+
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 var
   call_tp_free : Boolean;
@@ -9023,6 +9036,21 @@ begin
         Break;
       end;
       t := t^.tp_base;
+    end;
+  end;
+end;
+
+function IsDelphiClass(obj: PPyObject): boolean;
+var
+  t : PPyTypeObject;
+begin
+  Result := False;
+  if Assigned(obj) then
+  begin
+    if GetPythonEngine.PyClass_Check(obj) then
+    begin
+      t := GetPythonEngine.TypeByName(AnsiString(PPyTypeObject(obj)^.tp_name));
+      Result := Assigned(t);
     end;
   end;
 end;
