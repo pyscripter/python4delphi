@@ -50,6 +50,7 @@ contains
   WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas',
   WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas',
   WrapFmxEdit in '..\..\..\Source\fmx\WrapFmxEdit.pas',
-  WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas';
+  WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas',
+  WrapFmxMedia in '..\..\..\Source\fmx\WrapFmxMedia.pas';
 
 end.
