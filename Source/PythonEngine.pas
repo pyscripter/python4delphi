@@ -765,6 +765,9 @@ const
 
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
+  PyGILState_LOCKED = 0;
+  PyGILState_UNLOCKED = 1;
+
 type
   PyDateTime_Delta = {$IFNDEF CPUX64}packed{$ENDIF} record
     // Start of the Head of an object
@@ -914,7 +917,7 @@ type
 //##         GIL state                                 ##
 //##                                                   ##
 //#######################################################
-  PyGILState_STATE = (PyGILState_LOCKED, PyGILState_UNLOCKED);
+  PyGILState_STATE = type Integer; // (PyGILState_LOCKED, PyGILState_UNLOCKED);
 
 //#######################################################
 //##                                                   ##
