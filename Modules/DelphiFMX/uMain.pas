@@ -25,8 +25,9 @@ begin
     gEngine.AutoFinalize := False;
     gEngine.UseLastKnownVersion := False;
     // Adapt to the desired python version - Will only work with this version
-    gEngine.RegVersion := '3.9';
-    gEngine.DllName := 'python39.dll';
+    var PythonVersionIndex := {$I PythonVersionIndex.inc}; // 7 = 3.9
+    gEngine.RegVersion := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].RegVersion;
+    gEngine.DllName := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].DllName;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;

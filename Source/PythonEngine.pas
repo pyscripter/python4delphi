@@ -156,7 +156,7 @@ const
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[1..1] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[7..7] of TPythonVersionProp =
     {$IFDEF DEBUG}
       (
       (DllName: 'libpython3.9d.so'; RegVersion: '3.9'; APIVersion: 1013)
