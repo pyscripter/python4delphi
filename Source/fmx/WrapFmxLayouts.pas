@@ -5,7 +5,7 @@ unit WrapFmxLayouts;
 interface
 
 uses
-  FMX.Layouts, FMX.BufferedLayout, WrapDelphi, WrapFmxControls;
+  FMX.Layouts, {$IFNDEF LINUX}FMX.BufferedLayout,{$ENDIF LINUX} WrapDelphi, WrapFmxControls;
 
 type
   TPyDelphiLayout = class(TPyDelphiControl)
@@ -118,6 +118,7 @@ type
     property DelphiObject: TFlowLayout read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFNDEF LINUX}
   TPyDelphiCustomBufferedLayout = class(TPyDelphiLayout)
   private
     function  GetDelphiObject: TCustomBufferedLayout;
@@ -137,6 +138,7 @@ type
     // Properties
     property DelphiObject: TBufferedLayout read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF LINUX}
 
 implementation
 
@@ -176,8 +178,10 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGridLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiGridPanelLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFlowLayout);
+  {$IFNDEF LINUX}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomBufferedLayout);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBufferedLayout);
+  {$ENDIF LINUX}
 end;
 
 { TPyDelphiLayout }
@@ -371,6 +375,7 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{$IFNDEF LINUX}
 { TPyDelphiCustomBufferedLayout }
 
 class function TPyDelphiCustomBufferedLayout.DelphiObjectClass: TClass;
@@ -405,6 +410,7 @@ procedure TPyDelphiBufferedLayout.SetDelphiObject(const Value: TBufferedLayout);
 begin
   inherited DelphiObject := Value;
 end;
+{$ENDIF LINUX}
 
 initialization
   RegisteredUnits.Add(TLayoutsRegistration.Create);
