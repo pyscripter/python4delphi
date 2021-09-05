@@ -440,15 +440,15 @@ function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVer
     DLLFileName: string;
   begin
     Result := '';
-    Handle := FindFirstFile(PWideChar(APath+'\python??.dll'), FindFileData);
+    Handle := FindFirstFile(PWideChar(APath+'\python*.dll'), FindFileData);
     if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
     DLLFileName:= FindFileData.cFileName;
     // skip if python3.dll was found
-    if Length(DLLFileName) <> 12 then FindNextFile(Handle, FindFileData);
+    if Length(DLLFileName) <= 11 then FindNextFile(Handle, FindFileData);
     if Handle = INVALID_HANDLE_VALUE then Exit;
     Windows.FindClose(Handle);
     DLLFileName:= FindFileData.cFileName;
-    if Length(DLLFileName) = 12 then
+    if Length(DLLFileName) > 11 then
       Result := DLLFileName;
   end;
 
