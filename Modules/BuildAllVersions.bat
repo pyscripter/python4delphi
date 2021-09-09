@@ -1,6 +1,6 @@
 @echo off
 call rsvars.bat
-for /L %%G in (6,1,7) do (
+for /L %%G in (4,1,7) do (
     echo %%G > DelphiFMX\PythonVersionIndex.inc
     echo %%G > DelphiVCL\PythonVersionIndex.inc
     rmdir /s /q DelphiFMX\pyd%%G >nul
