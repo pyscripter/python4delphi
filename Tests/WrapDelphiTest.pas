@@ -221,9 +221,9 @@ end;
 procedure TTestWrapDelphi.TestDoubleField;
 begin
   TestRttiAccess.DoubleField := 3.14;
-  Assert.AreEqual(double(Rtti_Var.DoubleField), double(3.14));
+  Assert.AreEqual<double>(Rtti_Var.DoubleField, 3.14);
   Rtti_Var.DoubleField := 1.23;
-  Assert.AreEqual(double(TestRttiAccess.DoubleField), double(1.23));
+  Assert.AreEqual<double>(TestRttiAccess.DoubleField, 1.23);
 end;
 
 procedure TTestWrapDelphi.TestEnumField;
@@ -354,7 +354,7 @@ begin
   Assert.AreEqual(Rec.StringField, '1234');
   Rtti_rec.SubRecord.DoubleField := 3.14;
   Assert.IsTrue(rtti_rec.SubRecord.DoubleField = 3.14);
-  Assert.AreEqual(Rec.SubRecord.DoubleField, 3.14);
+  Assert.AreEqual<double>(Rec.SubRecord.DoubleField, 3.14);
 end;
 
 procedure TTestWrapDelphi.TestRecordField;
@@ -390,7 +390,7 @@ procedure TTestWrapDelphi.TestSetProps;
 begin
   rtti_var.SetProps(StringField := 'abc', DoubleField := 1.234);
   Assert.AreEqual(TestRttiAccess.StringField, 'abc');
-  Assert.AreEqual(TestRttiAccess.DoubleField, 1.234);
+  Assert.AreEqual<double>(TestRttiAccess.DoubleField, 1.234);
 end;
 
 procedure TTestWrapDelphi.TestStringField;
