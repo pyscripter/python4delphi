@@ -1,4 +1,4 @@
-## P4D Installation using MultiInstaller
+## P4D Installation using [MultiInstaller](https://github.com/pyscripter/MultiInstaller)
 
 Use for Delphi Tokyo (10.2) or later to install all packages in one step.  For versions earlier than Delphi Seattle (10.4) select only the first package in step 2 and manually add the Source\Vcl folder to the search path.   
 
