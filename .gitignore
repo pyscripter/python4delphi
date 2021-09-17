@@ -3,6 +3,7 @@
 *.dcu
 *.obj
 *.exe
+*.dll
 *.bpl
 *.bpi
 *.dcp
@@ -46,3 +47,4 @@
 *.Patch
 *.#00
 *.pch
+/Tests/TestInsightSettings.ini

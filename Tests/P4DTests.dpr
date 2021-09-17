@@ -6,10 +6,13 @@ program P4DTests;
 {$APPTYPE CONSOLE}
 {$ENDIF}{$STRONGLINKTYPES ON}
 uses
+  {$IFDEF FASTMM4}
+  FastMM4,
+  {$ENDIF}
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-  {$ENDIF }
+  {$ENDIF}
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.StackTrace.Jcl,
@@ -17,6 +20,7 @@ uses
   MethodCallBackTest in 'MethodCallBackTest.pas',
   VarPythTest in 'VarPythTest.pas',
   WrapDelphiTest in 'WrapDelphiTest.pas',
+  WrapDelphiEventHandlerTest in 'WrapDelphiEventHandlerTest.pas',
   NumberServicesTest in 'NumberServicesTest.pas';
 
 var
