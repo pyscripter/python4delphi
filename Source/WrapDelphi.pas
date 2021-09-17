@@ -875,7 +875,8 @@ Type
                               out AValue : TObject) : Boolean;
   function  CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : string) : Boolean;
   function  CheckEnum(const AEnumName : string; AValue, AMinValue, AMaxValue : Integer) : Boolean;
-  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject;
+  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject; overload;
+  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; AObject: TObject) : PPyObject; overload;
   function  SetToPython(ATypeInfo: PTypeInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
@@ -1301,6 +1302,16 @@ begin
   _varParam := PythonToDelphi(Result) as TPyDelphiVarParameter;
   tmp := GetPythonEngine.VariantAsPyObject(AValue);
   _varParam.Value := tmp; // refcount was incremented
+  GetPythonEngine.Py_DECREF(tmp);
+end;
+
+function CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; AObject: TObject) : PPyObject;
+var
+  tmp: PPyObject;
+begin
+  Result := PyDelphiWrapper.VarParamType.CreateInstance;
+  tmp := PyDelphiWrapper.Wrap(AObject);
+  (PythonToDelphi(Result) as TPyDelphiVarParameter).Value := tmp;
   GetPythonEngine.Py_DECREF(tmp);
 end;
 
