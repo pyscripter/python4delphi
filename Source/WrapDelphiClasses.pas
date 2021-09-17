@@ -237,6 +237,43 @@ type
     property DelphiObject: TBasicAction read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiStream = class(TPyDelphiObject)
+  private
+    function GetDelphiObject: TStream;
+    procedure SetDelphiObject(Value: TStream);
+  public
+    class function DelphiObjectClass : TClass; override;
+    class procedure RegisterMethods( PythonType : TPythonType ); override;
+
+    property DelphiObject: TStream read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiMemoryStream = class(TPyDelphiStream)
+  private
+    function GetDelphiObject: TMemoryStream;
+    procedure SetDelphiObject(Value: TMemoryStream);
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+
+    class function  DelphiObjectClass : TClass; override;
+    class procedure SetupType( PythonType : TPythonType ); override;
+
+    property DelphiObject: TMemoryStream read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiFileStream = class(TPyDelphiStream)
+  private
+    function GetDelphiObject: TFileStream;
+    procedure SetDelphiObject(Value: TFileStream);
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+
+    class function  DelphiObjectClass : TClass; override;
+    class procedure SetupType(PythonType : TPythonType); override;
+
+    property DelphiObject: TFileStream read GetDelphiObject write SetDelphiObject;
+  end;
+  
   { Helper functions }
 
   function ShiftToPython(AShift : TShiftState) : PPyObject;
@@ -280,6 +317,19 @@ begin
   APyDelphiWrapper.DefineVar('ssRight',  'ssRight');
   APyDelphiWrapper.DefineVar('ssMiddle', 'ssMiddle');
   APyDelphiWrapper.DefineVar('ssDouble', 'ssDouble');
+
+  APyDelphiWrapper.DefineVar('fmCreate', fmCreate);
+  APyDelphiWrapper.DefineVar('fmOpenRead', fmOpenRead);
+  APyDelphiWrapper.DefineVar('fmOpenWrite', fmOpenWrite);
+  APyDelphiWrapper.DefineVar('fmOpenReadWrite', fmOpenReadWrite);
+  APyDelphiWrapper.DefineVar('fmExclusive', fmExclusive);
+  // platform
+  // APyDelphiWrapper.DefineVar('fmShareCompat', fmShareCompat);
+  APyDelphiWrapper.DefineVar('fmShareExclusive', fmShareExclusive);
+  APyDelphiWrapper.DefineVar('fmShareDenyWrite', fmShareDenyWrite);
+  // platform
+  // APyDelphiWrapper.DefineVar('fmShareDenyRead', fmShareDenyRead);
+  APyDelphiWrapper.DefineVar('fmShareDenyNone', fmShareDenyNone);
 end;
 
 function TClassesRegistration.Name: string;
@@ -295,6 +345,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiComponent);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStrings);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBasicAction);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMemoryStream);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFileStream);
 end;
 
 { Helper functions }
@@ -1743,6 +1795,100 @@ begin
     end;
   end;
   FInstance := Component;
+end;
+
+
+{ TPyDelphiStream }
+class function TPyDelphiStream.DelphiObjectClass: TClass;
+begin
+  Result := TStream;
+end;
+
+function TPyDelphiStream.GetDelphiObject: TStream;
+begin
+  Result := TStream(inherited DelphiObject);
+end;
+
+class procedure TPyDelphiStream.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+  {TODO Read, Write}
+end;
+
+procedure TPyDelphiStream.SetDelphiObject(Value: TStream);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiMemoryStream }
+
+constructor TPyDelphiMemoryStream.CreateWith(APythonType: TPythonType; args: PPyObject);
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple( args, ':Create' ) <> 0 then
+  begin
+    DelphiObject := TMemoryStream(DelphiObjectClass().NewInstance());
+    DelphiObject.Create();
+    Owned := True;
+  end;
+end;
+
+class function TPyDelphiMemoryStream.DelphiObjectClass: TClass;
+begin
+  Result := TMemoryStream;
+end;
+
+function TPyDelphiMemoryStream.GetDelphiObject: TMemoryStream;
+begin
+  Result := TMemoryStream(inherited GetDelphiObject());
+end;
+
+procedure TPyDelphiMemoryStream.SetDelphiObject(Value: TMemoryStream);
+begin
+  inherited DelphiObject := Value;
+end;
+
+class procedure TPyDelphiMemoryStream.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.GenerateCreateFunction := True;
+end;
+
+{ TPyDelphiFileStream }
+
+constructor TPyDelphiFileStream.CreateWith(APythonType: TPythonType; args: PPyObject);
+var
+  PFileName: PAnsiChar;
+  Mode: Word;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'sH:Create', @PFileName, @Mode) <> 0 then
+  begin
+    DelphiObject := TFileStream(DelphiObjectClass().NewInstance());
+    DelphiObject.Create(UTF8ToString(RawByteString(PFileName)), Mode);
+    Owned := True;
+  end;
+end;
+
+class function TPyDelphiFileStream.DelphiObjectClass: TClass;
+begin
+  Result := TFileStream;
+end;
+
+function TPyDelphiFileStream.GetDelphiObject: TFileStream;
+begin
+  Result := TFileStream(inherited GetDelphiObject());
+end;
+
+procedure TPyDelphiFileStream.SetDelphiObject(Value: TFileStream);
+begin
+  inherited DelphiObject := Value;
+end;
+
+class procedure TPyDelphiFileStream.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.GenerateCreateFunction := True;
 end;
 
 initialization
