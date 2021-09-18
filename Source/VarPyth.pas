@@ -691,7 +691,7 @@ end;
 
 function BuiltinModule : Variant;
 begin
-  Result := Import(AnsiString(GetPythonEngine.BuiltInModuleName));
+  Result := Import(GetPythonEngine.BuiltInModuleName);
 end;
 
 function SysModule : Variant;
