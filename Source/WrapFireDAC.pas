@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, SysUtils, Variants, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  Windows, System.AnsiStrings, System.Rtti, DB,
+  System.AnsiStrings, System.Rtti, DB,
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Stan.Param, FireDAC.DatS,

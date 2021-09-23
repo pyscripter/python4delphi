@@ -1,0 +1,180 @@
+object PyMainForm: TPyMainForm
+  Left = 0
+  Top = 0
+  Caption = 'MainForm'
+  ClientHeight = 743
+  ClientWidth = 349
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 3
+  object spInputOutput: TSplitter
+    Align = Top
+    Cursor = crVSplit
+    MinSize = 20.000000000000000000
+    Position.Y = 265.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 8.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object tbTop: TToolBar
+    Size.Width = 349.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Label1: TLabel
+      Align = Client
+      Size.Width = 349.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'toollabel'
+      TextSettings.HorzAlign = Center
+      Text = 'Python4Delphi - PyLoad'
+      TabOrder = 1
+    end
+  end
+  object tbBottom: TToolBar
+    Align = Bottom
+    Position.Y = 695.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object btnRun: TButton
+      Action = actRun
+      Align = Center
+      Enabled = True
+      ImageIndex = -1
+      Size.Width = 48.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'playtoolbutton'
+      TabOrder = 0
+    end
+  end
+  object Layout1: TLayout
+    Align = Top
+    Position.Y = 48.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 217.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    object mmOutput: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      ReadOnly = True
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 207.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Viewport.Width = 321.000000000000000000
+      Viewport.Height = 199.000000000000000000
+    end
+    object Layout2: TLayout
+      Anchors = [akRight, akBottom]
+      Position.X = 284.000000000000000000
+      Position.Y = 163.000000000000000000
+      TabOrder = 6
+      object Circle1: TCircle
+        Align = Contents
+        Fill.Color = claGainsboro
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+      end
+      object btnClearOutput: TButton
+        Action = actClearOutput
+        Align = Client
+        Enabled = True
+        ImageIndex = -1
+        Size.Width = 48.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'trashtoolbutton'
+        TabOrder = 3
+      end
+    end
+  end
+  object Layout3: TLayout
+    Align = Client
+    Size.Width = 349.000000000000000000
+    Size.Height = 422.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    object mmInput: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 412.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 321.000000000000000000
+      Viewport.Height = 404.000000000000000000
+    end
+    object Layout4: TLayout
+      Anchors = [akRight, akBottom]
+      Position.X = 284.000000000000000000
+      Position.Y = 358.000000000000000000
+      TabOrder = 6
+      object Circle2: TCircle
+        Align = Contents
+        Fill.Color = claGainsboro
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+      end
+      object btnClearInput: TButton
+        Action = actClearInput
+        Align = Client
+        Enabled = True
+        ImageIndex = -1
+        Size.Width = 48.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'trashtoolbutton'
+        TabOrder = 3
+      end
+    end
+  end
+  object PythonEngine1: TPythonEngine
+    AutoLoad = False
+    IO = PythonGUIInputOutput1
+    Left = 258
+    Top = 56
+  end
+  object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
+    Output = mmOutput
+    Left = 259
+    Top = 112
+  end
+  object ActionList1: TActionList
+    Left = 288
+    Top = 320
+    object actRun: TAction
+      Text = 'Run'
+      OnExecute = actRunExecute
+    end
+    object actClearOutput: TAction
+      Text = 'actClearOutput'
+      OnExecute = actClearOutputExecute
+    end
+    object actClearInput: TAction
+      Text = 'actClearInput'
+      OnExecute = actClearInputExecute
+    end
+  end
+end

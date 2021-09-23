@@ -95,7 +95,8 @@ uses
 {$IF not Defined(FPC) and (CompilerVersion >= 23)}
 const
   {$IF CompilerVersion >= 33}
-    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32 or pidOSX64 or pidLinux64;
+    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32 or pidOSX64
+                         or pidLinux64 or pidAndroid32Arm or pidAndroid64Arm;
   {$ELSE}
     pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32;
   {$IFEND}
@@ -154,6 +155,18 @@ const
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
+{$IFDEF ANDROID}
+  PYTHON_KNOWN_VERSIONS: array[7..7] of TPythonVersionProp =
+    {$IFDEF DEBUG}
+      (
+      (DllName: 'libpython3.9d.so'; RegVersion: '3.9'; APIVersion: 1013)
+      );
+    {$ELSE}
+      (
+      (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013)
+      );
+    {$ENDIF}
+{$ENDIF}
 
   COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
 
@@ -177,6 +190,13 @@ const
   Py_NE = 3;
   Py_GT = 4;
   Py_GE = 5;
+
+  {$IFDEF CPUARM}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctARMSTD;
+  {$ELSE}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctCDECL;
+  {$ENDIF CPUARM}
+
 type
   // Delphi equivalent used by TPyObject
   TRichComparisonOpcode = (pyLT, pyLE, pyEQ, pyNE, pyGT, pyGE);
@@ -203,6 +223,7 @@ type
   PPWCharT = PPWideChar;
   WCharTString = UnicodeString;
 {$ENDIF}
+
 
   const
 {
@@ -402,7 +423,7 @@ type
   newfunc           = function ( subtype: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
   allocfunc         = function ( self: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
 
-  PyNumberMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyNumberMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      nb_add           : binaryfunc;
      nb_subtract      : binaryfunc;
      nb_multiply      : binaryfunc;
@@ -442,7 +463,7 @@ type
   end;
   PPyNumberMethods = ^PyNumberMethods;
 
-  PySequenceMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PySequenceMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      sq_length    : lenfunc;
      sq_concat    : binaryfunc;
      sq_repeat    : ssizeargfunc;
@@ -456,37 +477,37 @@ type
   end;
   PPySequenceMethods = ^PySequenceMethods;
 
-  PyMappingMethods = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMappingMethods = {$IFDEF CPUX86}packed{$ENDIF} record
      mp_length	      : lenfunc;
      mp_subscript     : binaryfunc;
      mp_ass_subscript : objobjargproc;
   end;
   PPyMappingMethods = ^PyMappingMethods;
 
-  Py_complex =  {$IFNDEF CPUX64}packed{$ENDIF} record
+  Py_complex =  {$IFDEF CPUX86}packed{$ENDIF} record
      real : double;
      imag : double;
   end;
 
-  PyObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt: NativeInt;
     ob_type:   PPyTypeObject;
   end;
 
-  _frozen = {$IFNDEF CPUX64}packed{$ENDIF} record
+  _frozen = {$IFDEF CPUX86}packed{$ENDIF} record
      name	: PAnsiChar;
      code	: PByte;
      size	: Integer;
   end;
 
-  PySliceObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PySliceObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:          NativeInt;
     ob_type:            PPyTypeObject;
     start, stop, step:  PPyObject;
   end;
 
   PPyMethodDef = ^PyMethodDef;
-  PyMethodDef  = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMethodDef  = {$IFDEF CPUX86}packed{$ENDIF} record
      ml_name:  PAnsiChar;
      ml_meth:  PyCFunction;
      ml_flags: Integer;
@@ -495,11 +516,11 @@ type
 
   // structmember.h
   PPyMemberDef = ^PyMemberDef;
-  PyMemberDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMemberDef = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     _type : integer;
     offset : NativeInt;
-    flags : integer;
+    flags : Integer;
     doc : PAnsiChar;
   end;
 
@@ -511,7 +532,7 @@ type
   setter = function ( obj, value : PPyObject; context : Pointer) : integer; cdecl;
 
   PPyGetSetDef = ^PyGetSetDef;
-  PyGetSetDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyGetSetDef = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     get : getter;
     _set : setter;
@@ -522,7 +543,7 @@ type
   wrapperfunc = function (self, args: PPyObject; wrapped : Pointer) : PPyObject; cdecl;
 
   pwrapperbase = ^wrapperbase;
-  wrapperbase = {$IFNDEF CPUX64}packed{$ENDIF} record
+  wrapperbase = {$IFDEF CPUX86}packed{$ENDIF} record
     name : PAnsiChar;
     wrapper : wrapperfunc;
     doc : PAnsiChar;
@@ -537,7 +558,7 @@ type
   }
 
   PPyDescrObject = ^PyDescrObject;
-  PyDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -547,7 +568,7 @@ type
   end;
 
   PPyMethodDescrObject = ^PyMethodDescrObject;
-  PyMethodDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMethodDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -560,7 +581,7 @@ type
   end;
 
   PPyMemberDescrObject = ^PyMemberDescrObject;
-  PyMemberDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyMemberDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -573,7 +594,7 @@ type
   end;
 
   PPyGetSetDescrObject = ^PyGetSetDescrObject;
-  PyGetSetDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyGetSetDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -586,7 +607,7 @@ type
   end;
 
   PPyWrapperDescrObject = ^PyWrapperDescrObject;
-  PyWrapperDescrObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyWrapperDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -600,7 +621,7 @@ type
   end;
 
   PPyModuleDef_Base = ^PyModuleDef_Base;
-  PyModuleDef_Base = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyModuleDef_Base = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -611,7 +632,7 @@ type
   end;
 
   PPyModuleDef = ^PyModuleDef;
-  PyModuleDef = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyModuleDef = {$IFDEF CPUX86}packed{$ENDIF} record
     m_base : PyModuleDef_Base;
     m_name : PAnsiChar;
     m_doc : PAnsiChar;
@@ -625,7 +646,7 @@ type
 
 
   // object.h
-  PyTypeObject = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyTypeObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
     ob_size:        NativeInt; // Number of items in variable part
@@ -724,7 +745,7 @@ type
   // Parse tree node interface
 
   PNode = ^node;
-  node = {$IFNDEF CPUX64}packed{$ENDIF} record
+  node = {$IFDEF CPUX86}packed{$ENDIF} record
     n_type      : smallint;
     n_str       : PAnsiChar;
     n_lineno    : integer;
@@ -734,7 +755,7 @@ type
   end;
 
   PPyCompilerFlags = ^PyCompilerFlags;
-  PyCompilerFlags = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyCompilerFlags = {$IFDEF CPUX86}packed{$ENDIF} record
     flags : integer;
     cf_feature_version : integer;  //added in Python 3.8
   end;
@@ -766,7 +787,7 @@ const
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
 type
-  PyDateTime_Delta = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDateTime_Delta = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -778,7 +799,7 @@ type
   end;
   PPyDateTime_Delta = ^PyDateTime_Delta;
 
-  PyDateTime_TZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record // a pure abstract base clase
+  PyDateTime_TZInfo = {$IFDEF CPUX86}packed{$ENDIF} record // a pure abstract base clase
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
     ob_type    : PPyTypeObject;
@@ -800,7 +821,7 @@ type
  * convenient to cast to, when getting at the hastzinfo member of objects
  * starting with _PyTZINFO_HEAD.
  *}
-  _PyDateTime_BaseTZInfo = {$IFNDEF CPUX64}packed{$ENDIF} record
+  _PyDateTime_BaseTZInfo = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -823,7 +844,7 @@ type
 	unsigned char data[_PyDateTime_TIME_DATASIZE];
 }
 
-  _PyDateTime_BaseTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
+  _PyDateTime_BaseTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo false
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -838,7 +859,7 @@ type
   end;
   _PPyDateTime_BaseTime = ^_PyDateTime_BaseTime;
 
-  PyDateTime_Time = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
+  PyDateTime_Time = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
@@ -861,7 +882,7 @@ type
  * the plain date type is a base class for datetime, so it must also have
  * a hastzinfo member (although it's unused there).
  *}
-  PyDateTime_Date = {$IFNDEF CPUX64}packed{$ENDIF} record
+  PyDateTime_Date = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -880,7 +901,7 @@ type
 	unsigned char data[_PyDateTime_DATETIME_DATASIZE];
 }
 
-  _PyDateTime_BaseDateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo false
+  _PyDateTime_BaseDateTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo false
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
     ob_refcnt  : NativeInt;
@@ -893,7 +914,7 @@ type
   end;
   _PPyDateTime_BaseDateTime = ^_PyDateTime_BaseDateTime;
 
-  PyDateTime_DateTime = {$IFNDEF CPUX64}packed{$ENDIF} record // hastzinfo true
+  PyDateTime_DateTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo true
     // Start of _PyDateTime_DATETIMEHEAD
       // Start of _PyTZINFO_HEAD
         // Start of the Head of an object
@@ -1585,10 +1606,13 @@ type
     Py_GetCopyright                 : function : PAnsiChar; cdecl;
     Py_GetExecPrefix                : function : PAnsiChar; cdecl;
     Py_GetPath                      : function : PAnsiChar; cdecl;
+
+    Py_SetPath                      : procedure (path: PWCharT); cdecl;
+
     Py_SetPythonHome                : procedure (home : PWCharT); cdecl;
     Py_GetPythonHome                : function : PWCharT; cdecl;
     Py_GetPrefix                    : function : PAnsiChar; cdecl;
-    Py_GetProgramName               : function : PAnsiChar; cdecl;
+    Py_GetProgramName               : function : PWCharT; cdecl;
 
     PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
     PyNode_Free                     : procedure( n : PNode ); cdecl;
@@ -1771,6 +1795,7 @@ type
     FAutoFinalize:               Boolean;
     FProgramName:                WCharTString;
     FPythonHome:                 WCharTString;
+    FPythonPath:                 WCharTString;
     FInitThreads:                Boolean;
     FOnPathInitialization:       TPathInitializationEvent;
     FOnSysPathInit:              TSysPathInitEvent;
@@ -1792,6 +1817,8 @@ type
     FPyDateTime_DateTimeTZType:  PPyObject;
     function  GetPythonHome: UnicodeString;
     function  GetProgramName: UnicodeString;
+    function GetPythonPath: UnicodeString;
+    procedure SetPythonPath(const Value: UnicodeString);
 
   protected
     procedure  Initialize;
@@ -1911,6 +1938,7 @@ type
     property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
     property PythonHome: UnicodeString read GetPythonHome write SetPythonHome;
     property ProgramName: UnicodeString read GetProgramName write SetProgramName;
+    property PythonPath: UnicodeString read GetPythonPath write SetPythonPath;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
     property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
@@ -2531,7 +2559,8 @@ type
       // methods
       ///////////////////////////////////////
       function  NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject; cdecl;
-
+    public
+      const TYPE_COMP_NAME_SUFFIX = 'Type';
     public
       constructor Create( AOwner : TComponent ); override;
       destructor  Destroy; override;
@@ -2711,6 +2740,8 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
+function  PythonToPythonType(obj: PPyObject): TPythonType;
+function  IsDelphiClass( obj : PPyObject ) : Boolean;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
@@ -3557,6 +3588,7 @@ begin
   Py_GetCopyright             := Import('Py_GetCopyright');
   Py_GetExecPrefix            := Import('Py_GetExecPrefix');
   Py_GetPath                  := Import('Py_GetPath');
+  Py_SetPath                  := Import('Py_SetPath');
   Py_SetPythonHome            := Import('Py_SetPythonHome');
   Py_GetPythonHome            := Import('Py_GetPythonHome');
   Py_GetPrefix                := Import('Py_GetPrefix');
@@ -4219,8 +4251,10 @@ begin
   if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
     Py_SetProgramName(PWCharT(FProgramName));
   AssignPyFlags;
-  if Length(FPythonHome) > 0 then
+  if Assigned(Py_SetPythonHome) and (PythonHome <> '') then
     Py_SetPythonHome(PWCharT(FPythonHome));
+  if Assigned(Py_SetPath) and (PythonPath <> '') then
+    Py_SetPath(PWCharT(FPythonPath));
   Py_Initialize;
   if Assigned(Py_IsInitialized) then
     FInitialized := Py_IsInitialized() <> 0
@@ -4477,6 +4511,18 @@ begin
 {$ENDIF}
 end;
 
+function TPythonEngine.GetPythonPath: UnicodeString;
+begin
+{$IFDEF POSIX}
+  if (Length(FPythonPath) > 0) then
+    Result := UCS4StringToUnicodeString(FPythonPath)
+  else
+    Result := '';
+{$ELSE}
+  Result := FPythonPath;
+{$ENDIF}
+end;
+
 function  TPythonEngine.GetProgramName: UnicodeString;
 begin
 {$IFDEF POSIX}
@@ -4495,6 +4541,15 @@ begin
   FPythonHome :=  UnicodeStringToUCS4String(PythonHome);
 {$ELSE}
   FPythonHome :=  PythonHome;
+{$ENDIF}
+end;
+
+procedure TPythonEngine.SetPythonPath(const Value: UnicodeString);
+begin
+{$IFDEF POSIX}
+  FPythonPath :=  UnicodeStringToUCS4String(Value);
+{$ELSE}
+  FPythonPath :=  Value;
 {$ENDIF}
 end;
 
@@ -5040,7 +5095,7 @@ begin
     Result := AnsiString(str);
 end;
 
-function   TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
+function TPythonEngine.TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
 var
   i : Integer;
 begin
@@ -6242,7 +6297,7 @@ function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, DEFAULT_CALLBACK_TYPE),
                        ADocString );
 end;
 
@@ -6251,7 +6306,7 @@ function  TMethodsContainer.AddDelphiMethodWithKeywords(  AMethodName  : PAnsiCh
                                                           ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, DEFAULT_CALLBACK_TYPE),
                        ADocString );
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
@@ -7525,6 +7580,16 @@ begin
     raise EPythonError.CreateFmt( 'Python object "%s" is not a Delphi class', [GetPythonEngine.PyObjectAsString(obj)] );
 end;
 
+function PythonToPythonType(obj: PPyObject): TPythonType;
+begin
+  if IsDelphiClass(obj) then
+    Result := TPythonType(
+      GetPythonEngine.FindClient(
+        string(PPyTypeObject(obj)^.tp_name + TPythonType.TYPE_COMP_NAME_SUFFIX)))
+  else
+    Result := nil;
+end;
+
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 var
   call_tp_free : Boolean;
@@ -8071,7 +8136,7 @@ begin
       begin
         tp_init             := TPythonType_InitSubtype;
         tp_alloc            := TPythonType_AllocSubtypeInst;
-        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, ctCDECL);
+        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
         tp_free             := FreeSubtypeInst;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
@@ -8281,7 +8346,7 @@ begin
     begin
       meth := CreateMethod;
       FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
-      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, ctCDECL);
+      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, DEFAULT_CALLBACK_TYPE);
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil)
@@ -8971,6 +9036,21 @@ begin
         Break;
       end;
       t := t^.tp_base;
+    end;
+  end;
+end;
+
+function IsDelphiClass(obj: PPyObject): boolean;
+var
+  t : PPyTypeObject;
+begin
+  Result := False;
+  if Assigned(obj) then
+  begin
+    if GetPythonEngine.PyClass_Check(obj) then
+    begin
+      t := GetPythonEngine.TypeByName(AnsiString(PPyTypeObject(obj)^.tp_name));
+      Result := Assigned(t);
     end;
   end;
 end;

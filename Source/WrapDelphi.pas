@@ -918,6 +918,7 @@ resourcestring
   rs_NotPublished = 'Event handling is available only for published properties';
   rs_ExpectedObject = 'Expected a Pascal object';
   rs_ExpectedRecord = 'Expected a Pascal record';
+  rs_ExpectedClass = 'Expected a Pascal class';
   rs_ExpectedInterface = 'Expected a Pascal interface';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
@@ -1160,6 +1161,38 @@ begin
   else
     ErrMsg := rs_ExpectedObject;
 end;
+
+function ValidateClassRefProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out Clazz: TClass; out ErrMsg: string): Boolean;
+var
+  LPythonType: TPythonType;
+begin
+  if (PyValue = GetPythonEngine.Py_None) then begin
+     Result := True;
+     Clazz := nil;
+     Exit;
+  end;
+
+  Result := False;
+  if IsDelphiClass(PyValue) then
+  begin
+    LPythonType := PythonToPythonType(PyValue);
+    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
+    begin
+      Clazz := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
+      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
+      if Assigned(TypeInfo) and (Clazz.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleClasses;
+    end
+    else
+      ErrMsg := rs_ExpectedClass;
+  end
+  else
+    ErrMsg := rs_ExpectedClass;
+end;
+
 
 function CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
 begin
@@ -2088,7 +2121,7 @@ class procedure TPyRttiObject.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'RttiObject';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName + TPythonType.TYPE_COMP_NAME_SUFFIX);
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper of a Pascal record';
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr];
@@ -2113,7 +2146,7 @@ class procedure TPyPascalRecord.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'PascalRecord';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName + TPythonType.TYPE_COMP_NAME_SUFFIX);
 end;
 
 { TPyPascalInterface }
@@ -2127,7 +2160,7 @@ class procedure TPyPascalInterface.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'PascalInterface';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName + TPythonType.TYPE_COMP_NAME_SUFFIX);
 end;
 
 {$ENDIF}
@@ -2623,7 +2656,7 @@ var
 begin
   inherited;
   PythonType.TypeName := AnsiString(GetTypeName);
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName + TPythonType.TYPE_COMP_NAME_SUFFIX);
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
@@ -2820,6 +2853,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     Index: Integer;
     ErrMsg: string;
     Obj: TObject;
+    Clazz: TClass;
     PyValue : PPyObject;
     Param: TRttiParameter;
     Params : TArray<TRttiParameter>;
@@ -2856,6 +2890,15 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
               if ValidateClassProperty(PyValue, Param.ParamType.Handle, Obj, ErrMsg)
               then
                 Args[Index] := Obj
+              else begin
+                Result := nil;
+                Break
+              end
+            end
+            else if (Param.ParamType.TypeKind = tkClassRef) then
+            begin
+              if ValidateClassRefProperty(PyValue, Param.ParamType.Handle, Clazz, ErrMsg) then
+                Args[Index] := Clazz
               else begin
                 Result := nil;
                 Break
@@ -3078,7 +3121,7 @@ class procedure TPyDelphiVarParameter.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'VarParameter';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName + TPythonType.TYPE_COMP_NAME_SUFFIX);
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Container object allowing modification of Delphi var parameters from Python';
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];

@@ -15,7 +15,8 @@ uses
 const
   PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
                          or pidOSX32 or pidOSX64
-                         or pidLinux64;
+                         or pidLinux64
+                         or pidAndroid32Arm or pidAndroid64Arm;
 
 type
   [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]

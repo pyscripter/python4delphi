@@ -1,0 +1,434 @@
+object PyMainForm: TPyMainForm
+  Left = 0
+  Top = 0
+  Caption = 'MainForm'
+  ClientHeight = 743
+  ClientWidth = 349
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  DesignerMasterStyle = 3
+  object spInputOutput: TSplitter
+    Align = Top
+    Cursor = crVSplit
+    MinSize = 20.000000000000000000
+    Position.Y = 265.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 8.000000000000000000
+    Size.PlatformDefault = False
+  end
+  object tbTop: TToolBar
+    Size.Width = 349.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 0
+    object Label1: TLabel
+      Align = Client
+      Size.Width = 349.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'toollabel'
+      TextSettings.HorzAlign = Center
+      Text = 'Python4Delphi - Camera Preview'
+      TabOrder = 1
+    end
+  end
+  object tbBottom: TToolBar
+    Align = Bottom
+    Position.Y = 695.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 48.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 1
+    object btnRun: TButton
+      Action = actRun
+      Align = Center
+      Enabled = True
+      ImageIndex = -1
+      Size.Width = 48.000000000000000000
+      Size.Height = 48.000000000000000000
+      Size.PlatformDefault = False
+      StyleLookup = 'playtoolbutton'
+      TabOrder = 0
+    end
+  end
+  object Layout1: TLayout
+    Align = Top
+    Position.Y = 48.000000000000000000
+    Size.Width = 349.000000000000000000
+    Size.Height = 217.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 5
+    object mmOutput: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      ReadOnly = True
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Top = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 207.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 1
+      Viewport.Width = 321.000000000000000000
+      Viewport.Height = 199.000000000000000000
+    end
+    object Layout2: TLayout
+      Anchors = [akRight, akBottom]
+      Position.X = 284.000000000000000000
+      Position.Y = 163.000000000000000000
+      TabOrder = 6
+      object Circle1: TCircle
+        Align = Contents
+        Fill.Color = claGainsboro
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+      end
+      object btnClearOutput: TButton
+        Action = actClearOutput
+        Align = Client
+        Enabled = True
+        ImageIndex = -1
+        Size.Width = 48.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'trashtoolbutton'
+        TabOrder = 3
+      end
+    end
+  end
+  object Layout3: TLayout
+    Align = Client
+    Size.Width = 349.000000000000000000
+    Size.Height = 422.000000000000000000
+    Size.PlatformDefault = False
+    TabOrder = 6
+    object mmInput: TMemo
+      Touch.InteractiveGestures = [Pan, LongTap, DoubleTap]
+      DataDetectorTypes = []
+      Lines.Strings = (
+        '#The fmx module is exposed by PythonModule1 component'
+        ''
+        '#Module classes'
+        
+          'from fmx import (Form, Button, TabControl, TabItem, Layout, Labe' +
+          'l,'
+        
+          '                 SpeedButton, CameraComponent, ActionList, Actio' +
+          'n, Image)'
+        ''
+        '#Module variables'
+        'from fmx import MainForm, CameraComp, ImageBuff'
+        ''
+        '#Module methods'
+        
+          'from fmx import AskDelphiForCameraPermission, AskDelphiToShowFra' +
+          'me'
+        ''
+        'class CameraPreview(Form):'
+        '  def OnActListUpdate(self, action, handled):'
+        '    if CameraComp.Value.Active:'
+        '      self.btnCamera.Action = self.actStop'
+        '    else:'
+        '      self.btnCamera.Action = self.actStart'
+        ''
+        '  def OnActListExec(self, action, handled):'
+        '    #Ask for Delphi if the camera permission has been granted'
+        '    if not AskDelphiForCameraPermission(self):'
+        '      handled = True'
+        ''
+        '  def OnActStartExec(self, sender):'
+        '    print("Starting camera.")'
+        '    CameraComp.Value.Active = True'
+        ''
+        '  def OnActStopExec(self, sender):'
+        '    print("Stopping camera.")'
+        '    CameraComp.Value.Active = False'
+        ''
+        '  def OnActFrontExec(self, sender):'
+        '    print("Switching to front camera.")'
+        '    CameraComp.Value.Kind = '#39'FrontCamera'#39
+        ''
+        '  def OnActBackExec(self, sender):'
+        '    print("Switching to back camera.")'
+        '    CameraComp.Value.Kind = '#39'BackCamera'#39
+        ''
+        '  def OnCamSampleBufferReady(self, sender, time):'
+        '    self.tbPages.TabIndex = 1'
+        '    AskDelphiToShowFrame(self)'
+        ''
+        '  def __init__(self, owner):'
+        '    self.Caption = '#39'Camera previewer'#39
+        ''
+        '    #Creates the camera component'
+        '    #Links directly to the Delphi'#39's "FPyCamera" variable'
+        '    CameraComp.Value = CameraComponent(MainForm)'
+        
+          '    CameraComp.Value.OnSampleBufferReady = self.OnCamSampleBuffe' +
+          'rReady'
+        ''
+        '    #ActionList'
+        '    self.actList = ActionList(self)'
+        '    self.actList.OnUpdate = self.OnActListUpdate'
+        '    self.actList.OnExecute = self.OnActListExec'
+        ''
+        '    #Start camera action'
+        '    self.actStart = Action(self)'
+        '    self.actStart.ActionList = self.actList'
+        '    self.actStart.Text = '#39'Start'#39
+        '    self.actStart.OnExecute = self.OnActStartExec'
+        ''
+        '    #Stop camera action'
+        '    self.actStop = Action(self)'
+        '    self.actStop.ActionList = self.actList'
+        '    self.actStop.Text = '#39'Stop'#39
+        '    self.actStop.OnExecute = self.OnActStopExec'
+        ''
+        '    #Set front camera option'
+        '    self.actFront = Action(self)'
+        '    self.actFront.ActionList = self.actList'
+        '    self.actFront.Text = '#39'Front'#39
+        '    self.actFront.OnExecute = self.OnActFrontExec'
+        ''
+        '    #Set back camera option'
+        '    self.actBack = Action(self)'
+        '    self.actBack.ActionList = self.actList'
+        '    self.actBack.Text = '#39'Back'#39
+        '    self.actBack.OnExecute = self.OnActBackExec'
+        ''
+        '    #Camera button'
+        '    self.btnCamera = Button(self)'
+        '    self.btnCamera.Parent = self'
+        '    self.btnCamera.Align = "Bottom"'
+        '    self.btnCamera.Margins.Left = 10'
+        '    self.btnCamera.Margins.Top = 10'
+        '    self.btnCamera.Margins.Right = 10'
+        '    self.btnCamera.Margins.Bottom = 10'
+        '    self.btnCamera.Action = self.actStart'
+        ''
+        '    #Stop camera button'
+        '    #self.btnStop = Button(self)'
+        '    #self.btnStop.Parent = self'
+        '    #self.btnStop.Align = "Top"'
+        '    #self.btnStop.Margins.Left = 10'
+        '    #self.btnStop.Margins.Top = 10'
+        '    #self.btnStop.Margins.Right = 10'
+        '    #self.btnStop.Margins.Bottom = 10'
+        '    #self.btnStop.Text = '#39'Stop Camera'#39
+        '    #self.btnStop.Action = self.actStop'
+        ''
+        '    #Start camera button'
+        '    #self.btnStart = Button(self)'
+        '    #self.btnStart.Parent = self'
+        '    #self.btnStart.Align = "Top"'
+        '    #self.btnStart.Margins.Left = 10'
+        '    #self.btnStart.Margins.Top = 10'
+        '    #self.btnStart.Margins.Right = 10'
+        '    #self.btnStart.Text = '#39'Start Camera'#39
+        '    #self.btnStart.Action = self.actStart'
+        ''
+        '    #TTabControl component'
+        '    self.tbPages = TabControl(self)'
+        '    self.tbPages.Parent = self'
+        '    self.tbPages.Align = "Client"'
+        '    self.tbPages.Margins.Top = 10'
+        '    self.tbPages.StyleLookup = "tabcontrolstyle"'
+        '    self.tbPages.TabPosition = "Top"'
+        ''
+        '    #TTabItem component - Settings'
+        '    pageSettings = self.tbPages.Add(TabItem)'
+        '    pageSettings.Text = '#39'SETTINGS'#39
+        ''
+        '    #Settings container'
+        '    self.ltSettings = Layout(pageSettings)'
+        '    self.ltSettings.Parent = pageSettings'
+        '    self.ltSettings.Align = "Client"'
+        ''
+        '    #Camera type container'
+        '    self.ltCamType = Layout(self.ltSettings)'
+        '    self.ltCamType.Parent = self.ltSettings'
+        '    self.ltCamType.Align = "Top"'
+        '    self.ltCamType.Height = 120'
+        ''
+        '    #Camera type label'
+        '    self.lbCamType = Label(self.ltCamType)'
+        '    self.lbCamType.Parent = self.ltCamType'
+        '    self.lbCamType.Align = "Top"'
+        '    self.lbCamType.Margins.Left = 5'
+        '    self.lbCamType.Margins.Top = 10'
+        '    self.lbCamType.Margins.Right = 5'
+        '    self.lbCamType.Text = '#39'Camera type:'#39
+        ''
+        '    #Camera type selection container'
+        '    self.ltCamTypeSel = Layout(self.ltCamType)'
+        '    self.ltCamTypeSel.Parent = self.ltCamType'
+        '    self.ltCamTypeSel.Align = "Client"'
+        '    self.ltCamTypeSel.Height = 72'
+        '    self.ltCamTypeSel.Margins.Top = 5'
+        '    self.ltCamTypeSel.Margins.Left = 5'
+        '    self.ltCamTypeSel.Margins.Right = 5'
+        ''
+        '    #Camera type selection segment'
+        '    self.ltCamTypeSeg = Layout(self.ltCamTypeSel)'
+        '    self.ltCamTypeSeg.Parent = self.ltCamTypeSel'
+        '    self.ltCamTypeSeg.Align = "Center"'
+        '    self.ltCamTypeSeg.Height = 72'
+        '    self.ltCamTypeSeg.Width = self.ltCamTypeSel.Width'
+        ''
+        '    #Front camera button'
+        '    self.btnFrontCam = SpeedButton(self.ltCamTypeSeg)'
+        '    self.btnFrontCam.Parent = self.ltCamTypeSeg'
+        '    self.btnFrontCam.Align = "None"'
+        '    self.btnFrontCam.Width = (self.ltCamTypeSeg.Width / 2)'
+        '    self.btnFrontCam.Position.X = 0'
+        '    self.btnFrontCam.GroupName = "CameraTypeSegment"'
+        '    self.btnFrontCam.StyleLookup = "buttonstyle"'
+        '    self.btnFrontCam.Action = self.actFront'
+        ''
+        '    #Rear camera button'
+        '    self.btnBackCam = SpeedButton(self.ltCamTypeSeg)'
+        '    self.btnBackCam.Parent = self.ltCamTypeSeg'
+        '    self.btnBackCam.Align = "None"'
+        '    self.btnBackCam.Width = (self.ltCamTypeSeg.Width / 2)'
+        '    self.btnBackCam.Position.X = self.btnFrontCam.Width'
+        '    self.btnBackCam.GroupName = "CameraTypeSegment"'
+        '    self.btnBackCam.StyleLookup = "buttonstyle"'
+        '    self.btnBackCam.Action = self.actBack'
+        ''
+        '    #TTabItem component - Camera Preview'
+        '    self.pageCameraPreview = self.tbPages.Add(TabItem)'
+        '    self.pageCameraPreview.Text = '#39'CAMERA PREVIEW'#39
+        ''
+        '    #Image buff preview'
+        '    ImageBuff.Value = Image(self.pageCameraPreview)'
+        '    ImageBuff.Value.Parent = self.pageCameraPreview'
+        '    ImageBuff.Value.Align = "Client"'
+        ''
+        'if __name__ == '#39'__main__'#39':'
+        '  f = CameraPreview(MainForm)'
+        '  f.Show()'
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        ''
+        '')
+      Align = Client
+      Margins.Left = 10.000000000000000000
+      Margins.Right = 10.000000000000000000
+      Margins.Bottom = 10.000000000000000000
+      Size.Width = 329.000000000000000000
+      Size.Height = 412.000000000000000000
+      Size.PlatformDefault = False
+      TabOrder = 0
+      Viewport.Width = 316.000000000000000000
+      Viewport.Height = 399.000000000000000000
+    end
+    object Layout4: TLayout
+      Anchors = [akRight, akBottom]
+      Position.X = 284.000000000000000000
+      Position.Y = 358.000000000000000000
+      TabOrder = 6
+      object Circle2: TCircle
+        Align = Contents
+        Fill.Color = claGainsboro
+        Size.Width = 50.000000000000000000
+        Size.Height = 50.000000000000000000
+        Size.PlatformDefault = False
+        Stroke.Thickness = 0.000000000000000000
+      end
+      object btnClearInput: TButton
+        Action = actClearInput
+        Align = Client
+        Enabled = True
+        ImageIndex = -1
+        Size.Width = 48.000000000000000000
+        Size.Height = 48.000000000000000000
+        Size.PlatformDefault = False
+        StyleLookup = 'trashtoolbutton'
+        TabOrder = 3
+      end
+    end
+  end
+  object PythonEngine1: TPythonEngine
+    AutoLoad = False
+    IO = PythonGUIInputOutput1
+    Left = 258
+    Top = 56
+  end
+  object PythonGUIInputOutput1: TPythonGUIInputOutput
+    UnicodeIO = True
+    RawOutput = False
+    Output = mmOutput
+    Left = 259
+    Top = 112
+  end
+  object ActionList1: TActionList
+    Left = 176
+    Top = 56
+    object actRun: TAction
+      Text = 'Run'
+      OnExecute = actRunExecute
+    end
+    object actClearOutput: TAction
+      Text = 'actClearOutput'
+      OnExecute = actClearOutputExecute
+    end
+    object actClearInput: TAction
+      Text = 'actClearInput'
+      OnExecute = actClearInputExecute
+    end
+  end
+  object PythonModule1: TPythonModule
+    Engine = PythonEngine1
+    OnInitialization = PythonModule1Initialization
+    ModuleName = 'fmx'
+    Errors = <>
+    Left = 256
+    Top = 168
+  end
+  object PyDelphiWrapper1: TPyDelphiWrapper
+    Engine = PythonEngine1
+    Module = PythonModule1
+    Left = 256
+    Top = 224
+  end
+  object PythonDelphiVar1: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = 'fmx'
+    VarName = 'CameraComp'
+    OnExtGetData = PythonDelphiVar1ExtGetData
+    OnExtSetData = PythonDelphiVar1ExtSetData
+    Left = 256
+    Top = 280
+  end
+  object PythonDelphiVar2: TPythonDelphiVar
+    Engine = PythonEngine1
+    Module = 'fmx'
+    VarName = 'ImageBuff'
+    OnExtGetData = PythonDelphiVar2ExtGetData
+    OnExtSetData = PythonDelphiVar2ExtSetData
+    Left = 256
+    Top = 336
+  end
+end

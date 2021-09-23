@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{8CE82B03-1B21-45C9-8091-DF9D8A8F4E5C}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DelphiFMX\DelphiFMX.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DelphiVCL\DelphiVCL.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DelphiFMX">
+        <MSBuild Projects="DelphiFMX\DelphiFMX.dproj"/>
+    </Target>
+    <Target Name="DelphiFMX:Clean">
+        <MSBuild Projects="DelphiFMX\DelphiFMX.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DelphiFMX:Make">
+        <MSBuild Projects="DelphiFMX\DelphiFMX.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DelphiVCL">
+        <MSBuild Projects="DelphiVCL\DelphiVCL.dproj"/>
+    </Target>
+    <Target Name="DelphiVCL:Clean">
+        <MSBuild Projects="DelphiVCL\DelphiVCL.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DelphiVCL:Make">
+        <MSBuild Projects="DelphiVCL\DelphiVCL.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DelphiFMX;DelphiVCL"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DelphiFMX:Clean;DelphiVCL:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DelphiFMX:Make;DelphiVCL:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

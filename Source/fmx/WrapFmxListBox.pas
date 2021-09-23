@@ -79,7 +79,7 @@ end;
 
 class function TPyListBoxItem.DelphiObjectClass: TClass;
 begin
-	Result := TListBox;
+	Result := TListBoxItem;
 end;
 
 function TPyListBoxItem.GetDelphiObject: TListBoxItem;
