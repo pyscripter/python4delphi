@@ -638,7 +638,7 @@ end;
 
 procedure TPyDelphiTrackBar.SetDelphiObject(const Value: TTrackBar);
 begin
-  DelphiObject := Value;
+  inherited DelphiObject := Value;
 end;
 
 initialization
