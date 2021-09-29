@@ -22,6 +22,7 @@ uses
   WrapVclExtCtrls,
   WrapVclButtons,
   WrapVclGrids,
-  WrapVclSamplesSpin;
+  WrapVclSamplesSpin,
+  WrapVclWinXCtrls;
 
 end.
