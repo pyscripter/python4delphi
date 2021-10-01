@@ -282,7 +282,7 @@ class procedure TPyDelphiPoint.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Point';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TPoint type';
@@ -503,7 +503,7 @@ class procedure TPyDelphiRect.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Rect';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TRect type';
@@ -575,7 +575,7 @@ class procedure TPyDelphiSize.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'Size';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi TSize type';

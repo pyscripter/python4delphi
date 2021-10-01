@@ -786,8 +786,6 @@ const
 
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
-  PyGILState_LOCKED = 0;
-  PyGILState_UNLOCKED = 1;
 
 type
   PyDateTime_Delta = {$IFDEF CPUX86}packed{$ENDIF} record
@@ -938,6 +936,10 @@ type
 //##         GIL state                                 ##
 //##                                                   ##
 //#######################################################
+const
+  PyGILState_LOCKED = 0;
+  PyGILState_UNLOCKED = 1;
+type
   PyGILState_STATE = type Integer; // (PyGILState_LOCKED, PyGILState_UNLOCKED);
 
 //#######################################################
@@ -1607,14 +1609,12 @@ type
     PyEval_EvalCode                 : function ( co : PPyObject; globals, locals : PPyObject) : PPyObject; cdecl;
     Py_GetVersion                   : function : PAnsiChar; cdecl;
     Py_GetCopyright                 : function : PAnsiChar; cdecl;
-    Py_GetExecPrefix                : function : PAnsiChar; cdecl;
-    Py_GetPath                      : function : PAnsiChar; cdecl;
-
+    Py_GetExecPrefix                : function : PWCharT; cdecl;
+    Py_GetPath                      : function : PWCharT; cdecl;
     Py_SetPath                      : procedure (path: PWCharT); cdecl;
-
     Py_SetPythonHome                : procedure (home : PWCharT); cdecl;
     Py_GetPythonHome                : function : PWCharT; cdecl;
-    Py_GetPrefix                    : function : PAnsiChar; cdecl;
+    Py_GetPrefix                    : function : PWCharT; cdecl;
     Py_GetProgramName               : function : PWCharT; cdecl;
 
     PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
