@@ -57,8 +57,7 @@ type
     The function result has the semantics of Delphi compare functions
     -1: A is bigger (newer), 0: equal versions, 1: B is bigger (newer)
   *)
-  function  CompareVersions(A, B : string) : Integer;
-
+  function CompareVersions(A, B : string) : Integer;
 
   {$IFDEF MSWINDOWS}
   (* Checks whether an executable was compiled for X64 *)
@@ -69,11 +68,14 @@ type
   function GetRegisteredPythonVersion(SysVersion: string;
     out PythonVersion: TPythonVersion): Boolean;
   (* Returns all registered Python versions *)
-  function GetRegisteredPythonVersions : TPythonVersions;
+  function GetRegisteredPythonVersions(const MinVersion: string = '0.0';
+    const MaxVersion: string = '100.100'): TPythonVersions;
   (* Returns the highest numbered registered Python version *)
-  function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
+  function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion;
+    const MinVersion: string = '0.0'; const MaxVersion: string = '100.100'): Boolean;
   function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion;
-     AcceptVirtualEnvs: Boolean = True): Boolean;
+    AcceptVirtualEnvs: Boolean = True; const MinVersion: string = '0.0';
+    const MaxVersion: string = '100.100'): Boolean;
   {$ENDIF}
 
 implementation
@@ -402,7 +404,8 @@ begin
   PythonVersion.IsRegistered := Result;
 end;
 
-function GetRegisteredPythonVersions : TPythonVersions;
+function GetRegisteredPythonVersions(const MinVersion: string = '0.0';
+  const MaxVersion: string = '100.100'): TPythonVersions;
 Var
   Count: Integer;
   I: Integer;
@@ -411,27 +414,40 @@ begin
   Count := 0;
   SetLength(Result, High(PYTHON_KNOWN_VERSIONS));
   for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
+  begin
+    if CompareVersions(PYTHON_KNOWN_VERSIONS[I].RegVersion, MaxVersion) < 0 then
+      continue;
+    if CompareVersions(PYTHON_KNOWN_VERSIONS[I].RegVersion, MinVersion) > 0 then
+      break;
     if GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion) then
     begin
       Result[Count] := PythonVersion;
       Inc(Count);
     end;
+  end;
   SetLength(Result, Count);
 end;
 
-function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion): Boolean;
+function GetLatestRegisteredPythonVersion(out PythonVersion: TPythonVersion;
+  const MinVersion: string = '0.0'; const MaxVersion: string = '100.100'): Boolean;
 Var
   I: Integer;
 begin
+  Result := False;
   for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
   begin
-    Result := GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion);
-    if Result then break;
+    if CompareVersions(PYTHON_KNOWN_VERSIONS[I].RegVersion, MaxVersion) < 0 then
+      continue;
+    if CompareVersions(PYTHON_KNOWN_VERSIONS[I].RegVersion, MinVersion) > 0 then
+      break;
+    if GetRegisteredPythonVersion(PYTHON_KNOWN_VERSIONS[I].RegVersion, PythonVersion) then
+      Exit(True);
   end;
 end;
 
 function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVersion;
-  AcceptVirtualEnvs: Boolean = True): Boolean;
+  AcceptVirtualEnvs: Boolean = True; const MinVersion: string = '0.0';
+  const MaxVersion: string = '100.100'): Boolean;
 
   function FindPythonDLL(APath : string): string;
   Var
@@ -440,15 +456,15 @@ function PythonVersionFromPath(const Path: string; out PythonVersion: TPythonVer
     DLLFileName: string;
   begin
     Result := '';
-    Handle := FindFirstFile(PWideChar(APath+'\python??.dll'), FindFileData);
+    Handle := FindFirstFile(PWideChar(APath+'\python*.dll'), FindFileData);
     if Handle = INVALID_HANDLE_VALUE then Exit;  // not python dll
     DLLFileName:= FindFileData.cFileName;
     // skip if python3.dll was found
-    if Length(DLLFileName) <> 12 then FindNextFile(Handle, FindFileData);
+    if Length(DLLFileName) <= 11 then FindNextFile(Handle, FindFileData);
     if Handle = INVALID_HANDLE_VALUE then Exit;
     Windows.FindClose(Handle);
     DLLFileName:= FindFileData.cFileName;
-    if Length(DLLFileName) = 12 then
+    if Length(DLLFileName) > 11 then
       Result := DLLFileName;
   end;
 
@@ -513,11 +529,15 @@ begin
   PythonVersion.SysVersion := SysVersion;
   PythonVersion.fSysArchitecture := PythonVersion.ExpectedArchitecture;
 
-  for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
-    if PYTHON_KNOWN_VERSIONS[I].RegVersion = SysVersion then begin
-      Result := True;
-      break;
-    end;
+  if (CompareVersions(MinVersion, SysVersion) >= 0) and
+    (CompareVersions(MaxVersion, SysVersion) <= 0)
+  then
+    // Full search in case some python version is not supported
+    for I := High(PYTHON_KNOWN_VERSIONS) downto 1 do
+      if PYTHON_KNOWN_VERSIONS[I].RegVersion = SysVersion then begin
+        Result := True;
+        break;
+      end;
 end;
 
 {$ENDIF}

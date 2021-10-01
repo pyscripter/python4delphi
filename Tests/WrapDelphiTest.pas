@@ -6,7 +6,8 @@ unit WrapDelphiTest;
 interface
 
 uses
-  Types,
+  System.Types,
+  System.Classes,
   DUnitX.TestFramework,
   PythonEngine,
   WrapDelphi;
@@ -35,6 +36,7 @@ type
 
   TFruitDynArray = TArray<TFruit>;
   TStaticArray = array[0..999] of Int64;
+
   TTestRttiAccess = class
   private
     FFruit: TFruit;
@@ -58,6 +60,7 @@ type
     function SetStringField(var Value: Integer): string; overload;
     function SetStringField(const Value: string): string; overload;
     procedure PassVariantArray(const Value: Variant);
+    function ClassRefParam(ClassRef: TPersistentClass): string;
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -122,6 +125,8 @@ type
     procedure TestFreeReturnedObject;
     [Test]
     procedure TestPassVariantArray;
+    [Test]
+    procedure TestClassRefParam;
   end;
 
 implementation
@@ -129,7 +134,6 @@ implementation
 Uses
   System.SysUtils,
   System.Variants,
-  System.Classes,
   System.Rtti,
   VarPyth,
   WrapDelphiClasses;
@@ -201,7 +205,7 @@ begin
   Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
   DelphiModule.SetVar('rtti_interface', Py);
   PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface');
+  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Collection, Strings');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
   Rtti_Interface := MainModule.rtti_interface;
@@ -218,12 +222,22 @@ begin
   TestRttiAccess.Free;
 end;
 
+procedure TTestWrapDelphi.TestClassRefParam;
+begin
+  Assert.AreEqual<string>(Rtti_Var.ClassRefParam(MainModule.Collection), 'TCollection');
+  Assert.AreEqual<string>(Rtti_Var.ClassRefParam(MainModule.Strings), 'TStrings');
+  Assert.WillRaise(procedure
+  begin
+    Rtti_Var.ClassRefParam(MainModule.Object)
+  end);
+end;
+
 procedure TTestWrapDelphi.TestDoubleField;
 begin
   TestRttiAccess.DoubleField := 3.14;
-  Assert.AreEqual(double(Rtti_Var.DoubleField), double(3.14));
+  Assert.AreEqual<double>(Rtti_Var.DoubleField, 3.14);
   Rtti_Var.DoubleField := 1.23;
-  Assert.AreEqual(double(TestRttiAccess.DoubleField), double(1.23));
+  Assert.AreEqual<double>(TestRttiAccess.DoubleField, 1.23);
 end;
 
 procedure TTestWrapDelphi.TestEnumField;
@@ -354,7 +368,7 @@ begin
   Assert.AreEqual(Rec.StringField, '1234');
   Rtti_rec.SubRecord.DoubleField := 3.14;
   Assert.IsTrue(rtti_rec.SubRecord.DoubleField = 3.14);
-  Assert.AreEqual(Rec.SubRecord.DoubleField, 3.14);
+  Assert.AreEqual<double>(Rec.SubRecord.DoubleField, 3.14);
 end;
 
 procedure TTestWrapDelphi.TestRecordField;
@@ -390,7 +404,7 @@ procedure TTestWrapDelphi.TestSetProps;
 begin
   rtti_var.SetProps(StringField := 'abc', DoubleField := 1.234);
   Assert.AreEqual(TestRttiAccess.StringField, 'abc');
-  Assert.AreEqual(TestRttiAccess.DoubleField, 1.234);
+  Assert.AreEqual<double>(TestRttiAccess.DoubleField, 1.234);
 end;
 
 procedure TTestWrapDelphi.TestStringField;
@@ -440,6 +454,11 @@ function TTestRttiAccess.SetStringField(var Value: Integer): string;
 begin
   StringField := IntToStr(Value);
   Result := StringField;
+end;
+
+function TTestRttiAccess.ClassRefParam(ClassRef: TPersistentClass): string;
+begin
+  Result := ClassRef.ClassName;
 end;
 
 function TTestRttiAccess.GetData: TObject;

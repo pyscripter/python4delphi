@@ -786,6 +786,9 @@ const
 
   { # of bytes for year, month, day, hour, minute, second, and usecond. }
   _PyDateTime_DATETIME_DATASIZE = 10;
+  PyGILState_LOCKED = 0;
+  PyGILState_UNLOCKED = 1;
+
 type
   PyDateTime_Delta = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
@@ -935,7 +938,7 @@ type
 //##         GIL state                                 ##
 //##                                                   ##
 //#######################################################
-  PyGILState_STATE = (PyGILState_LOCKED, PyGILState_UNLOCKED);
+  PyGILState_STATE = type Integer; // (PyGILState_LOCKED, PyGILState_UNLOCKED);
 
 //#######################################################
 //##                                                   ##
@@ -1780,6 +1783,8 @@ type
       property Limit : Integer read FLimit write FLimit;
   end;
 
+  TPythonType = class; //forward declaration
+
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
@@ -1883,6 +1888,7 @@ type
     procedure  AddClient( client : TEngineClient );
     procedure  RemoveClient( client : TEngineClient );
     function   FindClient( const aName : string ) : TEngineClient;
+    function   FindPythonType( const TypeName : AnsiString ) : TPythonType;
     function   TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
     function   ModuleByName( const aModuleName : AnsiString ) : PPyObject;
     function   MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
@@ -2311,9 +2317,6 @@ type
 //--                                                   --
 //-------------------------------------------------------
 
-type
-  TPythonType = class; //forward declaration
-
 {
         A                    B                                                      C
         +-------------------++------------------------------------------------------+
@@ -2740,8 +2743,6 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
-function  PythonToPythonType(obj: PPyObject): TPythonType;
-function  IsDelphiClass( obj : PPyObject ) : Boolean;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
@@ -5820,6 +5821,19 @@ begin
     Result := nil;
 end;
 
+function TPythonEngine.FindPythonType(const TypeName: AnsiString): TPythonType;
+var
+  i : Integer;
+begin
+  Result := nil;
+  for i := 0 to ClientCount - 1 do
+    if (Clients[i] is TPythonType) and (TPythonType(Clients[i]).TypeName = TypeName) then
+    begin
+      Result := TPythonType(Clients[i]);
+      Break;
+    end;
+end;
+
 function TPythonEngine.FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
 var
   module,func: PPyObject;
@@ -7580,16 +7594,6 @@ begin
     raise EPythonError.CreateFmt( 'Python object "%s" is not a Delphi class', [GetPythonEngine.PyObjectAsString(obj)] );
 end;
 
-function PythonToPythonType(obj: PPyObject): TPythonType;
-begin
-  if IsDelphiClass(obj) then
-    Result := TPythonType(
-      GetPythonEngine.FindClient(
-        string(PPyTypeObject(obj)^.tp_name + TPythonType.TYPE_COMP_NAME_SUFFIX)))
-  else
-    Result := nil;
-end;
-
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 var
   call_tp_free : Boolean;
@@ -8947,22 +8951,6 @@ function pyio_GetTypesStats(self, args : PPyObject) : PPyObject;
       end;
   end;
 
-  function FindType( const TName : AnsiString ) : TPythonType;
-  var
-    i : Integer;
-  begin
-    Result := nil;
-    with GetPythonEngine do
-      for i := 0 to ClientCount - 1 do
-        if Clients[i] is TPythonType then
-          with TPythonType(Clients[i]) do
-            if TypeName = TName then
-              begin
-                Result := TPythonType(Clients[i]);
-                Break;
-              end;
-  end;
-
 var
   i : Integer;
   T : TPythonType;
@@ -8976,7 +8964,7 @@ begin
         for i := 0 to PyTuple_Size(args)-1 do
           begin
             str := AnsiString(PyObjectAsString( PyTuple_GetItem(args, i) ));
-            T := FindType( str );
+            T := FindPythonType( str );
             if Assigned(T) then
               begin
                 obj := HandleType( T );
@@ -9036,21 +9024,6 @@ begin
         Break;
       end;
       t := t^.tp_base;
-    end;
-  end;
-end;
-
-function IsDelphiClass(obj: PPyObject): boolean;
-var
-  t : PPyTypeObject;
-begin
-  Result := False;
-  if Assigned(obj) then
-  begin
-    if GetPythonEngine.PyClass_Check(obj) then
-    begin
-      t := GetPythonEngine.TypeByName(AnsiString(PPyTypeObject(obj)^.tp_name));
-      Result := Assigned(t);
     end;
   end;
 end;

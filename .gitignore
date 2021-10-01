@@ -3,6 +3,7 @@
 *.dcu
 *.obj
 *.exe
+*.dll
 *.bpl
 *.bpi
 *.dcp
@@ -50,3 +51,4 @@
 /Modules/DelphiVCL/pyd
 /Modules/DelphiFMX/dcu
 /Modules/DelphiVCL/dcu
+/Tests/TestInsightSettings.ini

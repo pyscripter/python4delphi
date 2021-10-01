@@ -875,7 +875,8 @@ Type
                               out AValue : TObject) : Boolean;
   function  CheckCallableAttribute(AAttribute : PPyObject; const AAttributeName : string) : Boolean;
   function  CheckEnum(const AEnumName : string; AValue, AMinValue, AMaxValue : Integer) : Boolean;
-  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject;
+  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject; overload;
+  function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; AObject: TObject) : PPyObject; overload;
   function  SetToPython(ATypeInfo: PTypeInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
@@ -1131,6 +1132,46 @@ begin
     ErrMsg := rs_ExpectedInterface;
 end;
 
+function ValidateClassRef(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out ClassRef: TClass; out ErrMsg: string): Boolean;
+var
+  LTypeName: AnsiString;
+  LPythonType: TPythonType;
+begin
+  ClassRef := nil;
+  if (PyValue = GetPythonEngine.Py_None) then begin
+     Result := True;
+     Exit;
+  end;
+
+  Result := False;
+  // Is PyValue a Python type?
+  if PyValue^.ob_type^.tp_name = 'type' then
+    LTypeName := PPyTypeObject(PyValue).tp_name
+  else
+  begin
+    ErrMsg := rs_ExpectedClass;
+    Exit;
+  end;
+
+  LPythonType := GetPythonEngine.FindPythonType(LTypeName);
+  if Assigned(LPythonType) then
+  begin
+    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
+    begin
+      ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
+      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
+      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleClasses;
+    end
+    else
+      ErrMsg := rs_ExpectedClass;
+  end
+  else
+    ErrMsg := rs_ExpectedClass;
+end;
 {$ENDIF}
 
 function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
@@ -1161,38 +1202,6 @@ begin
   else
     ErrMsg := rs_ExpectedObject;
 end;
-
-function ValidateClassRefProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
-  out Clazz: TClass; out ErrMsg: string): Boolean;
-var
-  LPythonType: TPythonType;
-begin
-  if (PyValue = GetPythonEngine.Py_None) then begin
-     Result := True;
-     Clazz := nil;
-     Exit;
-  end;
-
-  Result := False;
-  if IsDelphiClass(PyValue) then
-  begin
-    LPythonType := PythonToPythonType(PyValue);
-    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
-    begin
-      Clazz := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
-      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
-      if Assigned(TypeInfo) and (Clazz.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
-        Result := True
-      else
-        ErrMsg := rs_IncompatibleClasses;
-    end
-    else
-      ErrMsg := rs_ExpectedClass;
-  end
-  else
-    ErrMsg := rs_ExpectedClass;
-end;
-
 
 function CheckIndex(AIndex, ACount : Integer; const AIndexName : string = 'Index') : Boolean;
 begin
@@ -1334,6 +1343,16 @@ begin
   _varParam := PythonToDelphi(Result) as TPyDelphiVarParameter;
   tmp := GetPythonEngine.VariantAsPyObject(AValue);
   _varParam.Value := tmp; // refcount was incremented
+  GetPythonEngine.Py_DECREF(tmp);
+end;
+
+function CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; AObject: TObject) : PPyObject;
+var
+  tmp: PPyObject;
+begin
+  Result := PyDelphiWrapper.VarParamType.CreateInstance;
+  tmp := PyDelphiWrapper.Wrap(AObject);
+  (PythonToDelphi(Result) as TPyDelphiVarParameter).Value := tmp;
   GetPythonEngine.Py_DECREF(tmp);
 end;
 
@@ -2853,7 +2872,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     Index: Integer;
     ErrMsg: string;
     Obj: TObject;
-    Clazz: TClass;
+    ClassRef: TClass;
     PyValue : PPyObject;
     Param: TRttiParameter;
     Params : TArray<TRttiParameter>;
@@ -2897,8 +2916,8 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
             end
             else if (Param.ParamType.TypeKind = tkClassRef) then
             begin
-              if ValidateClassRefProperty(PyValue, Param.ParamType.Handle, Clazz, ErrMsg) then
-                Args[Index] := Clazz
+              if ValidateClassRef(PyValue, Param.ParamType.Handle, ClassRef, ErrMsg) then
+                Args[Index] := ClassRef
               else begin
                 Result := nil;
                 Break

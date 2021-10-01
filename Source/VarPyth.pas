@@ -107,7 +107,7 @@ function MainModule: Variant; // return the main module that's used for executin
 function BuiltinModule: Variant; // return the builtin module
 function SysModule: Variant; // return the builtin module 'sys'
 function DatetimeModule: Variant; // return the builtin module 'datetime'
-function Import( const AModule : AnsiString ): Variant; // import a Python module and return the module object.
+function Import(const AModule: string): Variant; // import a Python module and return the module object.
 function len(const AValue : Variant ): NativeInt; // return the length of a Python collection.
 function _type(const AValue : Variant ): Variant; // return the type object of a Python object.
 function iter(const AValue : Variant ): Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
@@ -691,7 +691,7 @@ end;
 
 function BuiltinModule : Variant;
 begin
-  Result := Import(AnsiString(GetPythonEngine.BuiltInModuleName));
+  Result := Import(GetPythonEngine.BuiltInModuleName);
 end;
 
 function SysModule : Variant;
@@ -704,7 +704,7 @@ begin
   Result := Import('datetime');
 end;
 
-function Import( const AModule : AnsiString ) : Variant;
+function Import(const AModule: string): Variant;
 var
   _module : PPyObject;
   _module_name : PPyObject;
