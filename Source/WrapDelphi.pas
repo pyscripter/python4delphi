@@ -920,6 +920,7 @@ resourcestring
   rs_ExpectedObject = 'Expected a Pascal object';
   rs_ExpectedRecord = 'Expected a Pascal record';
   rs_ExpectedInterface = 'Expected a Pascal interface';
+  rs_ExpectedClass = 'Expected a Pascal class';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
   rs_ErrEventNoSuport = 'Class %s does not support events because it must '+
@@ -1131,6 +1132,46 @@ begin
     ErrMsg := rs_ExpectedInterface;
 end;
 
+function ValidateClassRef(PyValue: PPyObject; TypeInfo: PTypeInfo;
+  out ClassRef: TClass; out ErrMsg: string): Boolean;
+var
+  LTypeName: AnsiString;
+  LPythonType: TPythonType;
+begin
+  ClassRef := nil;
+  if (PyValue = GetPythonEngine.Py_None) then begin
+     Result := True;
+     Exit;
+  end;
+
+  Result := False;
+  // Is PyValue a Python type?
+  if PyValue^.ob_type^.tp_name = 'type' then
+    LTypeName := PPyTypeObject(PyValue).tp_name
+  else
+  begin
+    ErrMsg := rs_ExpectedClass;
+    Exit;
+  end;
+
+  LPythonType := GetPythonEngine.FindPythonType(LTypeName);
+  if Assigned(LPythonType) then
+  begin
+    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
+    begin
+      ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
+      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
+      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleClasses;
+    end
+    else
+      ErrMsg := rs_ExpectedClass;
+  end
+  else
+    ErrMsg := rs_ExpectedClass;
+end;
 {$ENDIF}
 
 function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
@@ -2831,6 +2872,7 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
     Index: Integer;
     ErrMsg: string;
     Obj: TObject;
+    ClassRef: TClass;
     PyValue : PPyObject;
     Param: TRttiParameter;
     Params : TArray<TRttiParameter>;
@@ -2867,6 +2909,15 @@ function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
               if ValidateClassProperty(PyValue, Param.ParamType.Handle, Obj, ErrMsg)
               then
                 Args[Index] := Obj
+              else begin
+                Result := nil;
+                Break
+              end
+            end
+            else if (Param.ParamType.TypeKind = tkClassRef) then
+            begin
+              if ValidateClassRef(PyValue, Param.ParamType.Handle, ClassRef, ErrMsg) then
+                Args[Index] := ClassRef
               else begin
                 Result := nil;
                 Break
