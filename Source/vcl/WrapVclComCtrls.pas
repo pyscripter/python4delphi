@@ -103,6 +103,16 @@ type
     property DelphiObject: TPageControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiTrackBar = class (TPyDelphiWinControl)
+  private
+    function GetDelphiObject: TTrackBar;
+    procedure SetDelphiObject(const Value: TTrackBar);
+  public
+    class function DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TTrackBar read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -137,6 +147,7 @@ begin
   {$ENDIF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPageControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabSheet);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTabChangingEventHandler);
 end;
@@ -611,6 +622,23 @@ end;
 class function TTabChangingEventHandler.GetTypeInfo: PTypeInfo;
 begin
   Result := System.TypeInfo(TTabChangingEvent);
+end;
+
+{ TPyDelphiTrackBar }
+
+class function TPyDelphiTrackBar.DelphiObjectClass: TClass;
+begin
+  Result := TTrackBar;
+end;
+
+function TPyDelphiTrackBar.GetDelphiObject: TTrackBar;
+begin
+  Result := TTrackBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTrackBar.SetDelphiObject(const Value: TTrackBar);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization

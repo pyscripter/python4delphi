@@ -34,7 +34,9 @@ requires
   rtl,
   vcl,
   Python,
-  VclSmp;
+  VclSmp,
+  vclimg,
+  vclwinx;
 
 contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
@@ -49,6 +51,8 @@ contains
   WrapVclGraphics in '..\..\..\Source\vcl\WrapVclGraphics.pas',
   WrapVclGrids in '..\..\..\Source\vcl\WrapVclGrids.pas',
   WrapVclSamplesSpin in '..\..\..\Source\vcl\WrapVclSamplesSpin.pas',
-  WrapVclStdCtrls in '..\..\..\Source\vcl\WrapVclStdCtrls.pas';
+  WrapVclStdCtrls in '..\..\..\Source\vcl\WrapVclStdCtrls.pas',
+  WrapVclWinXCtrls in '..\..\..\Source\vcl\WrapVclWinXCtrls.pas',
+  WrapVclThemes in '..\..\..\Source\vcl\WrapVclThemes.pas';
 
 end.
