@@ -23,6 +23,7 @@ uses
   WrapVclButtons,
   WrapVclGrids,
   WrapVclSamplesSpin,
-  WrapVclWinXCtrls;
+  WrapVclWinXCtrls,
+  WrapVclThemes;
 
 end.
