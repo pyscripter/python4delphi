@@ -178,7 +178,7 @@ class procedure TPyDelphiPointF.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'PointF';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi FMX TPointF type';
@@ -502,7 +502,7 @@ class procedure TPyDelphiSizeF.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'SizeF';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'wrapper for Delphi FMX TSizeF type';

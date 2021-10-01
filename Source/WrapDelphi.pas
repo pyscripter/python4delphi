@@ -2140,7 +2140,7 @@ class procedure TPyRttiObject.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'RttiObject';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper of a Pascal record';
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr];
@@ -2165,7 +2165,7 @@ class procedure TPyPascalRecord.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'PascalRecord';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
 end;
 
 { TPyPascalInterface }
@@ -2179,7 +2179,7 @@ class procedure TPyPascalInterface.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'PascalInterface';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
 end;
 
 {$ENDIF}
@@ -2675,7 +2675,7 @@ var
 begin
   inherited;
   PythonType.TypeName := AnsiString(GetTypeName);
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
@@ -3140,7 +3140,7 @@ class procedure TPyDelphiVarParameter.SetupType(PythonType: TPythonType);
 begin
   inherited;
   PythonType.TypeName := 'VarParameter';
-  PythonType.Name := string(PythonType.TypeName) + 'Type';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Container object allowing modification of Delphi var parameters from Python';
   PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
