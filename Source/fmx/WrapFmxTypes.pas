@@ -94,6 +94,15 @@ type
     property DelphiObject: TPosition read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomPopupMenu = class(TPyDelphiFMXObject)
+  private
+    function GetDelphiObject: TCustomPopupMenu;
+    procedure SetDelphiObject(const Value: TCustomPopupMenu);
+  public
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TCustomPopupMenu read GetDelphiObject write SetDelphiObject;
+  end;
+
   {Helper functions}
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
   function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
@@ -233,6 +242,7 @@ begin
   APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
 end;
 
 { Helper functions }
@@ -537,6 +547,24 @@ begin
     end
     else
       Result := -1;
+end;
+
+{ TPyDelphiCustomPopupMenu }
+
+class function TPyDelphiCustomPopupMenu.DelphiObjectClass: TClass;
+begin
+  Result := TCustomPopupMenu;
+end;
+
+function TPyDelphiCustomPopupMenu.GetDelphiObject: TCustomPopupMenu;
+begin
+  Result := TCustomPopupMenu(inherited DelphiObject)
+end;
+
+procedure TPyDelphiCustomPopupMenu.SetDelphiObject(
+  const Value: TCustomPopupMenu);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization

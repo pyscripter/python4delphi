@@ -23,6 +23,7 @@ uses
   WrapFmxLayouts,
   WrapFmxScrollBox,
   WrapFmxGrids,
-  WrapFmxMedia;
+  WrapFmxMedia,
+  WrapFmxMenus;
 
 end.
