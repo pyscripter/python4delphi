@@ -24,6 +24,7 @@ uses
   WrapFmxScrollBox,
   WrapFmxGrids,
   WrapFmxMedia,
-  WrapFmxMenus;
+  WrapFmxMenus,
+  WrapFmxStyles;
 
 end.
