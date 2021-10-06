@@ -1,5 +1,4 @@
 {$I ..\Definition.Inc}
-
 unit WrapFmxTypes;
 
 interface
@@ -23,14 +22,11 @@ type
     function Set_X(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Y(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
-
+    constructor CreateWith(APythonType: TPythonType; Args: PPyObject); override;
     function Compare(obj: PPyObject): Integer; override;
     function Repr: PPyObject; override;
-
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     class procedure SetupType(PythonType: TPythonType); override;
-
     property Value : TPointF read FValue write FValue;
   end;
 
@@ -46,14 +42,34 @@ type
     function Set_Height(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
     constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
-
     function Compare(obj: PPyObject): Integer; override;
     function Repr: PPyObject; override;
-
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     class procedure SetupType(PythonType: TPythonType); override;
-
     property Value : TSizeF read FValue write FValue;
+  end;
+
+  TPyDelphiRectF = class(TPyObject)
+  private
+    FValue: TRectF;
+  protected
+    // Exposed Getters
+    function Get_Top(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Bottom(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Left(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Right(Acontext: Pointer): PPyObject; cdecl;
+    // Exposed Setters
+    function Set_Top(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Bottom(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Left(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+    function Set_Right(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    function Compare(obj: PPyObject): Integer; override;
+    function Repr: PPyObject; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure SetupType(PythonType: TPythonType); override;
+    property Value: TRectF read FValue write FValue;
   end;
 
   TPyDelphiFmxObject = class(TPyDelphiComponent)
@@ -87,6 +103,7 @@ type
     function Set_Y(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Point(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
     class function DelphiObjectClass: TClass; override;
     class procedure RegisterMethods(PythonType: TPythonType); override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -103,11 +120,41 @@ type
     property DelphiObject: TCustomPopupMenu read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiBounds = class(TPyDelphiPersistent)
+  private
+    function GetDelphiObject: TBounds;
+    procedure SetDelphiObject(const Value: TBounds);
+  protected
+    function Get_Rect(Acontext: Pointer): PPyObject; cdecl;
+    function Set_Rect(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    property DelphiObject: TBounds read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiControlSize = class(TPyDelphiPersistent)
+  private
+    function GetDelphiObject: TControlSize;
+    procedure SetDelphiObject(const Value: TControlSize);
+  protected
+    function Get_SizeF(Acontext: Pointer): PPyObject; cdecl;
+    function Set_SizeF(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    property DelphiObject: TControlSize read GetDelphiObject write SetDelphiObject;
+  end;
+
   {Helper functions}
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
   function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
-  function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
-  function CheckSizeFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TSizeF) : Boolean;
+  function WrapRectF(APyDelphiWrapper: TPyDelphiWrapper; const ARect : TRectF) : PPyObject;
+  function CheckPointFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TPointF): Boolean;
+  function CheckSizeFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TSizeF): Boolean;
+  function CheckRectFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TRectF): Boolean;
 
 implementation
 
@@ -141,7 +188,7 @@ begin
 end;
 
 constructor TPyDelphiPointF.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+  Args: PPyObject);
 var
   x, y : single;
 begin
@@ -240,9 +287,12 @@ begin
   inherited;
   APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
   APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiRectF);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
 end;
 
 { Helper functions }
@@ -262,6 +312,15 @@ begin
   LType := APyDelphiWrapper.GetHelperType('SizeFType');
   Result := LType.CreateInstance;
   (PythonToDelphi(Result) as TPyDelphiSizeF).Value := ASize;
+end;
+
+function WrapRectF(APyDelphiWrapper: TPyDelphiWrapper; const ARect : TRectF) : PPyObject;
+var
+  LType : TPythonType;
+begin
+  LType := APyDelphiWrapper.GetHelperType('RectFType');
+  Result := LType.CreateInstance;
+  (PythonToDelphi(Result) as TPyDelphiRectF).Value := ARect;
 end;
 
 function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
@@ -298,6 +357,25 @@ begin
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
           PAnsiChar(AnsiString(Format('%s receives only SizeF objects', [AAttributeName]))));
+    end;
+  end;
+end;
+
+function CheckRectFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TRectF): Boolean;
+begin
+  with GetPythonEngine do
+  begin
+    if IsDelphiObject(AAttribute) and (PythonToDelphi(AAttribute) is TPyDelphiRectF) then
+    begin
+      AValue := TPyDelphiRectF(PythonToDelphi(AAttribute)).Value;
+      Result := True;
+    end
+    else
+    begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_AttributeError^,
+          PAnsiChar(AnsiString(Format('%s receives only RectF objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -353,6 +431,18 @@ begin
 end;
 
 { TPyDelphiPosition }
+
+constructor TPyDelphiPosition.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LPPosition: PPyObject;
+  LPointF: TPointF;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'O:Create', @LPPosition) <> 0 then
+    if CheckPointFAttribute(LPPosition, 'PointF', LPointF) then
+      DelphiObject := TPosition.Create(LPointF);
+end;
 
 class function TPyDelphiPosition.DelphiObjectClass: TClass;
 begin
@@ -533,7 +623,6 @@ begin
     else
       Result := -1;
 end;
-
 function TPyDelphiSizeF.Set_Width(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -548,7 +637,6 @@ begin
     else
       Result := -1;
 end;
-
 { TPyDelphiCustomPopupMenu }
 
 class function TPyDelphiCustomPopupMenu.DelphiObjectClass: TClass;
@@ -565,6 +653,272 @@ procedure TPyDelphiCustomPopupMenu.SetDelphiObject(
   const Value: TCustomPopupMenu);
 begin
   inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiBounds }
+
+constructor TPyDelphiBounds.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LPBounds: PPyObject;
+  LRectF: TRectF;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'O:Create', @LPBounds) <> 0 then
+    if CheckRectFAttribute(LPBounds, 'RectF', LRectF) then
+      DelphiObject := TBounds.Create(LRectF);
+end;
+
+class function TPyDelphiBounds.DelphiObjectClass: TClass;
+begin
+  Result := TBounds
+end;
+
+function TPyDelphiBounds.GetDelphiObject: TBounds;
+begin
+  Result := TBounds(inherited DelphiObject);
+end;
+
+function TPyDelphiBounds.Get_Rect(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := WrapRectF(PyDelphiWrapper, DelphiObject.Rect);
+end;
+
+class procedure TPyDelphiBounds.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do begin
+    AddGetSet('Rect', @TPyDelphiBounds.Get_Rect, @TPyDelphiBounds.Set_Rect,
+        'Provides access to the rect of a control', nil);
+  end;
+end;
+
+procedure TPyDelphiBounds.SetDelphiObject(const Value: TBounds);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiBounds.Set_Rect(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TRectF;
+begin
+  Adjust(@Self);
+  if CheckRectFAttribute(AValue, 'Rect', LValue) then
+  begin
+    DelphiObject.Rect := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+{ TPyDelphiControlSize }
+
+constructor TPyDelphiControlSize.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LPControlSize: PPyObject;
+  LSizeF: TSizeF;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'O:Create', @LPControlSize) <> 0 then
+    if CheckSizeFAttribute(LPControlSize, 'SizeF', LSizeF) then
+      DelphiObject := TControlSize.Create(LSizeF);
+end;
+
+class function TPyDelphiControlSize.DelphiObjectClass: TClass;
+begin
+  Result := TControlSize;
+end;
+
+function TPyDelphiControlSize.GetDelphiObject: TControlSize;
+begin
+  Result := TControlSize(inherited DelphiObject);
+end;
+
+function TPyDelphiControlSize.Get_SizeF(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := WrapSizeF(PyDelphiWrapper, DelphiObject.Size);
+end;
+
+class procedure TPyDelphiControlSize.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do begin
+    AddGetSet('Size', @TPyDelphiControlSize.Get_SizeF, @TPyDelphiControlSize.Set_SizeF,
+        'Provides access to the size of a control', nil);
+  end;
+end;
+
+procedure TPyDelphiControlSize.SetDelphiObject(const Value: TControlSize);
+begin
+  inherited DelphiObject := Value;
+end;
+
+function TPyDelphiControlSize.Set_SizeF(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TSizeF;
+begin
+  Adjust(@Self);
+  if CheckSizeFAttribute(AValue, 'Size', LValue) then
+  begin
+    DelphiObject.Size := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+{ TPyDelphiRectF }
+
+function TPyDelphiRectF.Compare(obj: PPyObject): Integer;
+var
+  LOther : TPyDelphiRectF;
+begin
+  if IsDelphiObject(obj) and (PythonToDelphi(obj) is TPyDelphiPointF) then
+  begin
+    LOther := TPyDelphiRectF(PythonToDelphi(obj));
+    Result := CompareValue(Value.Left, LOther.Value.Left)
+          and CompareValue(Value.Top, LOther.Value.Top)
+          and CompareValue(Value.Right, LOther.Value.Right)
+          and CompareValue(Value.Bottom, LOther.Value.Bottom);
+  end
+  else
+    Result := 1;
+end;
+
+constructor TPyDelphiRectF.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LLeft, LTop, LRight, LBottom : single;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(args, 'ffff:Create', @LLeft, @LTop, @LRight, @LBottom) <> 0 then
+  begin
+   FValue.Left := LLeft;
+   FValue.Top := LTop;
+   FValue.Right := LRight;
+   FValue.Bottom := LBottom;
+  end
+end;
+
+function TPyDelphiRectF.Get_Bottom(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Bottom);
+end;
+
+function TPyDelphiRectF.Get_Left(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Left);
+end;
+
+function TPyDelphiRectF.Get_Right(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Right);
+end;
+
+function TPyDelphiRectF.Get_Top(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyFloat_FromDouble(Value.Top);
+end;
+
+class procedure TPyDelphiRectF.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do
+    begin
+      AddGetSet('Left', @TPyDelphiRectF.Get_Left, @TPyDelphiRectF.Set_Left,
+        'Provides access to the left of a rectf', nil);
+      AddGetSet('Top', @TPyDelphiRectF.Get_Top, @TPyDelphiRectF.Set_Top,
+        'Provides access to the top of a rectf', nil);
+      AddGetSet('Right', @TPyDelphiRectF.Get_Right, @TPyDelphiRectF.Set_Right,
+        'Provides access to the right of a rectf', nil);
+      AddGetSet('Bottom', @TPyDelphiRectF.Get_Bottom, @TPyDelphiRectF.Set_Bottom,
+        'Provides access to the bottom of a rectf', nil);
+    end;
+end;
+
+function TPyDelphiRectF.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<RectF (%f, %f, %f, %f)>',
+    [Value.Left, Value.Top, Value.Right, Value.Bottom]));
+end;
+
+class procedure TPyDelphiRectF.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.TypeName := 'RectF';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
+  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
+  PythonType.GenerateCreateFunction := False;
+  PythonType.DocString.Text := 'wrapper for Delphi FMX TRectF type';
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+end;
+
+function TPyDelphiRectF.Set_Bottom(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Bottom', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Bottom := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+function TPyDelphiRectF.Set_Left(AValue: PPyObject; AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Left', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Left := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+function TPyDelphiRectF.Set_Right(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Right', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Right := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
+function TPyDelphiRectF.Set_Top(AValue: PPyObject; AContext: Pointer): integer;
+var
+  LValue: double;
+begin
+  if CheckFloatAttribute(AValue, 'Top', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Top := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
 end;
 
 initialization

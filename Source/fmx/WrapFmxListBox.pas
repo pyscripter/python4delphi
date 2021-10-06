@@ -40,6 +40,28 @@ type
 			write SetDelphiObject;
 	end;
 
+  TPyDelphiCustomComboBox = class(TPyDelphiStyledControl)
+  private
+		function GetDelphiObject: TCustomComboBox;
+		procedure SetDelphiObject(const Value: TCustomComboBox);
+	public
+		class function DelphiObjectClass: TClass; override;
+		// Properties
+		property DelphiObject: TCustomComboBox read GetDelphiObject
+			write SetDelphiObject;
+  end;
+
+	TPyDelphiComboBox = class(TPyDelphiCustomComboBox)
+	private
+		function GetDelphiObject: TComboBox;
+		procedure SetDelphiObject(const Value: TComboBox);
+	public
+		class function DelphiObjectClass: TClass; override;
+		// Properties
+		property DelphiObject: TComboBox read GetDelphiObject
+			write SetDelphiObject;
+	end;
+
 implementation
 
 uses
@@ -73,6 +95,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyListBoxItem);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomComboBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiComboBox);
 end;
 
 { TPyListBoxItem }
@@ -125,6 +149,40 @@ end;
 procedure TPyDelphiListBox.SetDelphiObject(const Value: TListBox);
 begin
 	inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomComboBox }
+
+class function TPyDelphiCustomComboBox.DelphiObjectClass: TClass;
+begin
+  Result := TCustomComboBox;
+end;
+
+function TPyDelphiCustomComboBox.GetDelphiObject: TCustomComboBox;
+begin
+  Result := TCustomComboBox(inherited DelphiObject)
+end;
+
+procedure TPyDelphiCustomComboBox.SetDelphiObject(const Value: TCustomComboBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiComboBox }
+
+class function TPyDelphiComboBox.DelphiObjectClass: TClass;
+begin
+  Result := TComboBox;
+end;
+
+function TPyDelphiComboBox.GetDelphiObject: TComboBox;
+begin
+  Result := TComboBox(inherited DelphiObject)
+end;
+
+procedure TPyDelphiComboBox.SetDelphiObject(const Value: TComboBox);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization

@@ -52,6 +52,7 @@ contains
   WrapFmxEdit in '..\..\..\Source\fmx\WrapFmxEdit.pas',
   WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas',
   WrapFmxMedia in '..\..\..\Source\fmx\WrapFmxMedia.pas',
-  WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas';
+  WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas',
+  WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas';
 
 end.

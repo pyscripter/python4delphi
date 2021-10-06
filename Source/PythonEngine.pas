@@ -95,8 +95,7 @@ uses
 {$IF not Defined(FPC) and (CompilerVersion >= 23)}
 const
   {$IF CompilerVersion >= 33}
-    pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32 or pidOSX64
-                         or pidLinux64 or pidAndroid32Arm or pidAndroid64Arm;
+    pidSupportedPlatforms = pidAllPlatforms;
   {$ELSE}
     pidSupportedPlatforms = pidWin32 or pidWin64 or pidOSX32;
   {$IFEND}

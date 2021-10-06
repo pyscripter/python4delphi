@@ -1,6 +1,7 @@
 library DelphiFMX;
 
 uses
+  System.StartUpCopy,
   SysUtils,
   Classes,
   uMain in 'uMain.pas';
