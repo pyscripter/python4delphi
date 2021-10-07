@@ -1849,10 +1849,9 @@ begin
   with GetPythonEngine do begin
     l_oTable := DelphiObject;
     try
-      if l_oTable.Active then begin
+      if l_oTable.Active then
         l_oTable.CancelRange;
-        Result := ReturnNone;
-      end;
+      Result := ReturnNone;
     except
       on E : Exception do begin
         RaiseDBError( E );
