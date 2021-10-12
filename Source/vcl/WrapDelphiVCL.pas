@@ -18,6 +18,7 @@ uses
   WrapVclGraphics,
   WrapVclForms,
   WrapVclActnList,
+  WrapVclMenus,
   WrapVclStdCtrls,
   WrapVclComCtrls,
   WrapVclExtCtrls,
