@@ -1373,7 +1373,7 @@ begin
       PyObject := PyDelphiWrapper.Wrap(Sender);
       PyTuple := PyTuple_New(1);
       try
-        GetPythonEngine.PyTuple_SetItem(PyTuple, 0, PyObject);
+        PyTuple_SetItem(PyTuple, 0, PyObject);
         PyResult := PyObject_CallObject(ACallable, PyTuple);
         if Assigned(PyResult) then Py_DECREF(PyResult);
       finally

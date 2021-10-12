@@ -45,6 +45,7 @@ contains
   WrapDelphiClasses in '..\..\..\Source\WrapDelphiClasses.pas',
   WrapDelphiTypes in '..\..\..\Source\WrapDelphiTypes.pas',
   WrapDelphiWindows in '..\..\..\Source\WrapDelphiWindows.pas',
-  WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas';
+  WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas',
+  WrapActions in '..\..\..\Source\WrapActions.pas';
 
 end.

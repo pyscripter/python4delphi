@@ -13,9 +13,7 @@ uses
   PythonEngine;
 
 const
-  PID_SUPPORTED_PLATFORMS = pidWin32 or pidWin64
-                         or pidOSX32 or pidOSX64
-                         or pidLinux64;
+  PID_SUPPORTED_PLATFORMS = pidAllPlatforms;
 
 type
   [ComponentPlatformsAttribute(PID_SUPPORTED_PLATFORMS)]

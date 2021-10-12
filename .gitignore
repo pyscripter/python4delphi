@@ -15,6 +15,7 @@
 *.rsj
 *.compiled
 *.lib
+*.pyd
 
 # Generated source #
 ###################

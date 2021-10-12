@@ -7,7 +7,9 @@ implementation
 uses
   WrapDelphiTypes,
   WrapDelphiClasses,
+  {$IFDEF Windows}
   WrapDelphiWindows,
+  {$ENDIF Windows}
   WrapFireDac,
   WrapFmxTypes,
   WrapFmxStdCtrls,
@@ -20,6 +22,9 @@ uses
   WrapFmxShapes,
   WrapFmxLayouts,
   WrapFmxScrollBox,
-  WrapFmxGrids;
+  WrapFmxGrids,
+  WrapFmxMedia,
+  WrapFmxMenus,
+  WrapFmxStyles;
 
 end.

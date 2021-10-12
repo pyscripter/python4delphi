@@ -6,7 +6,8 @@ interface
 
 uses
   System.Classes, System.SysUtils, FMX.Forms,
-  PythonEngine, WrapFmxTypes, WrapDelphiClasses, WrapFmxControls;
+  PythonEngine, WrapFmxTypes, WrapDelphiClasses, WrapFmxControls, WrapDelphi,
+  System.TypInfo, System.UITypes;
 
 type
   TPyDelphiApplication = class(TPyDelphiComponent)
@@ -18,6 +19,24 @@ type
     class function DelphiObjectClass: TClass; override;
     // Properties
     property DelphiObject: TApplication read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TCloseQueryEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; var CanClose : Boolean);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TCloseEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; var Action: TCloseAction);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
   end;
 
   TPyDelphiCommonCustomForm = class(TPyDelphiFmxObject)
@@ -93,7 +112,7 @@ type
 implementation
 
 uses
-  WrapDelphi, System.Types;
+  System.Types;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -137,6 +156,9 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFrame);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScreen);
+
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseQueryEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseEventHandler);
 end;
 
 { TPyDelphiApplication }
@@ -154,6 +176,101 @@ end;
 procedure TPyDelphiApplication.SetDelphiObject(const Value: TApplication);
 begin
   inherited DelphiObject := Value;
+end;
+
+{ TCloseQueryEventHandler }
+
+constructor TCloseQueryEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TCloseQueryEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TCloseQueryEventHandler.DoEvent(Sender: TObject;
+  var CanClose: Boolean);
+var
+  LPyObject, LPyTuple, LPyResult, LPyCanClose : PPyObject;
+  LVarParam : TPyDelphiVarParameter;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyCanClose := CreateVarParam(PyDelphiWrapper, CanClose);
+      LVarParam := PythonToDelphi(LPyCanClose) as TPyDelphiVarParameter;
+      LPyTuple := PyTuple_New(2);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyCanClose);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          CanClose := PyObject_IsTrue(LVarParam.Value) = 1;
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TCloseQueryEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TCloseQueryEvent);
+end;
+
+{ TCloseEventHandler }
+
+constructor TCloseEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TCloseEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TCloseEventHandler.DoEvent(Sender: TObject; var Action: TCloseAction);
+var
+  LPyObject, LPyTuple, LPyResult, LPyAction : PPyObject;
+  LVarParam : TPyDelphiVarParameter;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyAction := CreateVarParam(PyDelphiWrapper, NativeInt(Action));
+      LVarParam := PythonToDelphi(LPyAction) as TPyDelphiVarParameter;
+      LPyTuple := PyTuple_New(2);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyAction);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          if PyLong_Check(LVarParam.Value) and
+             CheckEnum('TCloseAction', PyLong_AsLong(LVarParam.Value), Ord(Low(TCloseAction)), Ord(High(TCloseAction))) then
+            Action := TCloseAction(PyLong_AsLong(LVarParam.Value));
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TCloseEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TCloseEvent);
 end;
 
 { TPyDelphiCommonCustomForm }

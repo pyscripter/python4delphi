@@ -1,6 +1,6 @@
 {$REGION 'Licence'}
 {
-   Wrapper classes for FireDec TFDTable and TFDQuery
+   Wrapper classes for FireDAC TFDTable and TFDQuery
    Original Code by https://github.com/hartmutdavid
 ==============================================================================}
 {$ENDREGION}
@@ -9,13 +9,32 @@ unit WrapFireDAC;
 interface
 
 uses
-  Classes, SysUtils, Variants, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  Windows, System.AnsiStrings, System.Rtti, DB,
-  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
-  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
-  FireDAC.Phys, FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  FireDAC.Comp.UI, FireDAC.Stan.ExprFuncs;
+  System.Classes,
+  System.SysUtils,
+  System.Variants,
+  System.AnsiStrings,
+  System.Rtti,
+  WrapDelphiClasses,
+  Data.DB,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Stan.Pool,
+  FireDAC.Stan.Async,
+  FireDAC.Phys,
+  FireDAC.Stan.Param,
+  FireDAC.DatS,
+  FireDAC.DApt.Intf,
+  FireDAC.DApt,
+  FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.UI,
+  FireDAC.Stan.ExprFuncs,
+  PythonEngine,
+  WrapDelphi;
 
 type
 
