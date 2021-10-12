@@ -126,7 +126,6 @@ end;
 
 function TActionListAccess.IndexOf(AValue: PPyObject): Integer;
 var
-  i: Integer;
   _obj: TPyObject;
   _item: TContainedAction;
 begin
@@ -140,12 +139,7 @@ begin
         (TPyDelphiObject(_obj).DelphiObject is TContainedAction) then
       begin
         _item := TContainedAction(TPyDelphiObject(_obj).DelphiObject);
-        for i := 0 to Container.ActionCount - 1 do
-          if Container.Actions[i] = _item then
-          begin
-            Result := i;
-            Break;
-          end;
+        Result := _item.Index;
       end;
     end;
   end;
