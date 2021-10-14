@@ -1162,8 +1162,8 @@ begin
     if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
     begin
       ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
-      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
-      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
+      TypeInfo := GetTypeData(TypeInfo)^.InstanceType^;
+      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(GetTypeData(TypeInfo)^.ClassType)) then
         Result := True
       else
         ErrMsg := rs_IncompatibleClasses;
