@@ -1,7 +1,6 @@
 {-----------------------------------------------------------------------------
  Unit Name: PythonVersions
- Author:    Kiriakos
- Date:      PyScripter
+ Author:    PyScripter
  Purpose:   Discover and get info about Python versions
             Part of the Python for Delphi library
 
