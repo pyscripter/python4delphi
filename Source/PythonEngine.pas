@@ -5185,7 +5185,12 @@ begin
     varShortInt,
     varWord,
     varLongWord,
-    varInteger:  Result := PyLong_FromLong( DeRefV );
+  {$IFDEF FPC}
+    // See https://github.com/pyscripter/python4delphi/issues/334
+    varInteger:  Result := PyLong_FromLong(Integer(DeRefV));
+  {$ELSE}
+    varInteger:  Result := PyLong_FromLong(DeRefV);
+  {$ENDIF}
     varInt64:    Result := PyLong_FromLongLong( DeRefV );
     varSingle,
     varDouble,
