@@ -60,7 +60,7 @@ uses
   System.IOUtils;
 
 const
-  PY_KNOWN_VER = 1;
+  PY_KNOWN_VER = 7;
 
 { TPythonLoad }
 
