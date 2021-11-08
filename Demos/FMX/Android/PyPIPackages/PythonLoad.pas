@@ -47,6 +47,8 @@ type
     class function GetPyHome(): string; static;
     class function GetPyBin(): string; static;
     class function GetPyLib(): string; static;
+    class function GetPyTmp(): string; static;
+    class function GetPyInterpreter(): string; static;
 
     class procedure Extract(const AExtractEvent: TExtractEvent;
       const AZipProgress: TZipProgressEvent); static;
@@ -97,6 +99,19 @@ begin
   Result := TPath.Combine(GetPyRoot(), 'usr');
 end;
 
+class function TPythonLoad.GetPyInterpreter: string;
+const
+  PYTHON_INTERPRETER: array[0..0] of string = (
+    {$IFDEF DEBUG}
+      'python3.9d'
+    {$ELSE}
+      'python3.9'
+    {$ENDIF}
+    );
+begin
+  Result := TPath.Combine(TPath.GetLibraryPath(), PYTHON_INTERPRETER[0]);
+end;
+
 class function TPythonLoad.GetPyLib: string;
 begin
   Result := TPath.Combine(GetPyHome(), 'lib');
@@ -105,6 +120,11 @@ end;
 class function TPythonLoad.GetPyRoot: string;
 begin
   Result := TPath.Combine(TPath.GetDocumentsPath(), 'build');
+end;
+
+class function TPythonLoad.GetPyTmp: string;
+begin
+  Result := TPath.GetTempPath();
 end;
 
 class function TPythonLoad.GetPyZip: string;
