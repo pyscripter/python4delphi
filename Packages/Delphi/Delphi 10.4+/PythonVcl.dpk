@@ -42,6 +42,7 @@ contains
   Vcl.PythonGUIInputOutput in '..\..\..\Source\vcl\Vcl.PythonGUIInputOutput.pas',
   WrapDelphiVCL in '..\..\..\Source\vcl\WrapDelphiVCL.pas',
   WrapVclActnList in '..\..\..\Source\vcl\WrapVclActnList.pas',
+  WrapVclMenus in '..\..\..\Source\vcl\WrapVclMenus.pas',
   WrapVclButtons in '..\..\..\Source\vcl\WrapVclButtons.pas',
   WrapVclComCtrls in '..\..\..\Source\vcl\WrapVclComCtrls.pas',
   WrapVclControls in '..\..\..\Source\vcl\WrapVclControls.pas',

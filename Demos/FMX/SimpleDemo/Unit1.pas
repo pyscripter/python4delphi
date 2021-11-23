@@ -6,7 +6,7 @@ uses
   System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
   FMX.Types, FMX.Controls, FMX.Forms, FMX.Graphics, FMX.Dialogs,
   FMX.Controls.Presentation, FMX.ScrollBox, FMX.Memo, FMX.StdCtrls,
-  PythonEngine, PythonVersions, System.SyncObjs;
+  PythonEngine, PythonVersions, System.SyncObjs, FMX.Memo.Types;
 
 type
   TForm1 = class(TForm)
@@ -93,9 +93,14 @@ begin
             fOutputStream.Read(WS[1], Length(WS) * 2);
             fOutputStream.Size := 0;
             if (MemoOut.Lines.Count > 0) and (MemoOut.Lines[MemoOut.Lines.Count -1] <> '') then
-            MemoOut.Lines.Add('');
-            MemoOut.Text := MemoOut.Text + WS;
-            MemoOut.GoToTextEnd;
+            MemoOut.BeginUpdate;
+            try
+              MemoOut.Lines.Add('');
+              MemoOut.Text := MemoOut.Text + WS;
+              MemoOut.GoToTextEnd;
+            finally
+              MemoOut.EndUpdate;
+            end;
           end;
         finally
           fCriticalSection.Leave;

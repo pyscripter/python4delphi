@@ -300,6 +300,9 @@ class TTestForm(Form):
   - Wrapping of Records using extended RTTI
   - Wrapping of Interfaces using extended RTTI (see unit tests)
 
+    2021
+    - FMX Wrapping by Lucas Belo
+    - Vcl Menu and Toolbar wrapping by PyScripter
  TODO:
   - Extend SetProps: if property receiving the value is a TStrings and the value a sequence,
     then assign the sequence content to the TStrings.
@@ -308,7 +311,6 @@ class TTestForm(Form):
   - Create a simple app that just initializes Python and executes a script? To avoid having a console...
   - Bug with Delphi pyd: can't change the application title, because TApplication creates its own handle
   - Wrap TApplicationEvents. In fact define the events used by TApplicationEvents.
-  - Wrap TMenu and Toolbar
   - Wrap TObjectList
   - Unit Test all exposed attributes
   - Wrap simple types like TMessage
@@ -1160,8 +1162,8 @@ begin
     if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
     begin
       ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
-      TypeInfo := TypeInfo^.TypeData^.InstanceType^;
-      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(TypeInfo^.TypeData^.ClassType)) then
+      TypeInfo := GetTypeData(TypeInfo)^.InstanceType^;
+      if Assigned(TypeInfo) and (ClassRef.InheritsFrom(GetTypeData(TypeInfo)^.ClassType)) then
         Result := True
       else
         ErrMsg := rs_IncompatibleClasses;
@@ -1373,7 +1375,7 @@ begin
       PyObject := PyDelphiWrapper.Wrap(Sender);
       PyTuple := PyTuple_New(1);
       try
-        GetPythonEngine.PyTuple_SetItem(PyTuple, 0, PyObject);
+        PyTuple_SetItem(PyTuple, 0, PyObject);
         PyResult := PyObject_CallObject(ACallable, PyTuple);
         if Assigned(PyResult) then Py_DECREF(PyResult);
       finally

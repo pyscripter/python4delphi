@@ -5,8 +5,14 @@ unit WrapVclControls;
 interface
 
 uses
-  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, Controls,
-  TypInfo, Types;
+  System.Classes,
+  System.SysUtils,
+  System.TypInfo,
+  System.Types,
+  Vcl.Controls,
+  PythonEngine,
+  WrapDelphi,
+  WrapDelphiClasses;
 
 type
   {

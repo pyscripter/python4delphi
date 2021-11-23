@@ -5232,7 +5232,12 @@ begin
     varShortInt,
     varWord,
     varLongWord,
-    varInteger:  Result := PyLong_FromLong( DeRefV );
+  {$IFDEF FPC}
+    // See https://github.com/pyscripter/python4delphi/issues/334
+    varInteger:  Result := PyLong_FromLong(Integer(DeRefV));
+  {$ELSE}
+    varInteger:  Result := PyLong_FromLong(DeRefV);
+  {$ENDIF}
     varInt64:    Result := PyLong_FromLongLong( DeRefV );
     varSingle,
     varDouble,
@@ -9121,7 +9126,7 @@ begin
   InstallPath := '';
   AllUserInstall := False;
   MajorVersion := StrToInt(PythonVersion[1]);
-  MinorVersion := StrToInt(PythonVersion[3]);
+  MinorVersion := StrToInt(Copy(PythonVersion, 3));
   VersionSuffix := '';
 {$IFDEF CPUX86}
   if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then

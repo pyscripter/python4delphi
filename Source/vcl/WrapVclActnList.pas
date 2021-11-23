@@ -5,48 +5,56 @@ unit WrapVclActnList;
 interface
 
 uses
-  Classes, PythonEngine, WrapDelphi, WrapDelphiClasses, ActnList;
+  System.Classes,
+  PythonEngine, WrapDelphi,
+  WrapDelphiClasses,
+  WrapActions,
+  Vcl.ActnList;
 
 type
   {
-    Access to the Action items of the TCustomActionList collection.
+     Same as TPyDelphiContainedActionList but having wrappers, exposes
+     the types and allows the use of the constructors e.g. ActionList()
   }
-  TActionListAccess = class(TContainerAccess)
+  TPyDelphiCustomActionList = class(TPyDelphiContainedActionList)
   private
-    function GetContainer: TCustomActionList;
+    function GetDelphiObject: TCustomActionList;
+    procedure SetDelphiObject(const Value: TCustomActionList);
   public
-    function GetItem(AIndex : Integer) : PPyObject; override;
-    function GetSize : Integer; override;
-    function IndexOf(AValue : PPyObject) : Integer; override;
-
-    class function ExpectedContainerClass : TClass; override;
-    class function SupportsIndexOf : Boolean; override;
-    class function Name : string; override;
-
-    property Container : TCustomActionList read GetContainer;
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TCustomActionList read GetDelphiObject
+      write SetDelphiObject;
   end;
 
-  {
-     PyObject wrapping TCustomActionList
-     Exposes properties ActionCount and Actions
-  }
-  TPyDelphiCustomActionList = class (TPyDelphiComponent)
+  TPyDelphiActionList = class (TPyDelphiCustomActionList)
   private
-    function  GetDelphiObject: TCustomActionList;
-    procedure SetDelphiObject(const Value: TCustomActionList);
-  protected
-    // property getters
-    function Get_ActionCount(AContext : Pointer) : PPyObject; cdecl;
-    function Get_Actions(AContext : Pointer) : PPyObject; cdecl;
+    function  GetDelphiObject: TActionList;
+    procedure SetDelphiObject(const Value: TActionList);
   public
     // Class methods
     class function  DelphiObjectClass : TClass; override;
-    class procedure RegisterGetSets( PythonType : TPythonType ); override;
-    class function  GetContainerAccessClass : TContainerAccessClass; override;
     // Properties
-    property DelphiObject: TCustomActionList read GetDelphiObject write SetDelphiObject;
+    property DelphiObject: TActionList read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomAction = class(TPyDelphiContainedAction)
+  private
+    function GetDelphiObject: TCustomAction;
+    procedure SetDelphiObject(const Value: TCustomAction);
+  public
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TCustomAction read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
+  TPyDelphiAction = class(TPyDelphiContainedAction)
+  private
+    function GetDelphiObject: TAction;
+    procedure SetDelphiObject(const Value: TAction);
+  public
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TAction read GetDelphiObject write SetDelphiObject;
+  end;
 
 implementation
 
@@ -56,37 +64,28 @@ type
   public
     function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
-    procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
 { TActnListRegistration }
 
-procedure TActnListRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-end;
-
 function TActnListRegistration.Name: string;
 begin
-  Result := 'ActnList';
+  Result := 'Vcl.ActnList';
 end;
 
 procedure TActnListRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomActionList);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActionList);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomAction);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAction);
 end;
 
 { TPyDelphiCustomActionList }
-
 class function TPyDelphiCustomActionList.DelphiObjectClass: TClass;
 begin
   Result := TCustomActionList;
-end;
-
-class function TPyDelphiCustomActionList.GetContainerAccessClass: TContainerAccessClass;
-begin
-  Result := TActionListAccess;
 end;
 
 function TPyDelphiCustomActionList.GetDelphiObject: TCustomActionList;
@@ -94,98 +93,64 @@ begin
   Result := TCustomActionList(inherited DelphiObject);
 end;
 
-function TPyDelphiCustomActionList.Get_ActionCount(AContext: Pointer): PPyObject;
-begin
-  Adjust(@Self);
-  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ActionCount);
-end;
-
-function TPyDelphiCustomActionList.Get_Actions(AContext: Pointer): PPyObject;
-begin
-  Adjust(@Self);
-  Result := PyDelphiWrapper.DefaultContainerType.CreateInstance;
-  with PythonToDelphi(Result) as TPyDelphiContainer do
-    Setup(Self.PyDelphiWrapper, TActionListAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
-end;
-
-class procedure TPyDelphiCustomActionList.RegisterGetSets(
-  PythonType: TPythonType);
-begin
-  inherited;
-  with PythonType do
-    begin
-      AddGetSet('ActionCount', @TPyDelphiCustomActionList.Get_ActionCount, nil,
-        'Indicates the number of actions in the action list.', nil);
-      AddGetSet('Actions', @TPyDelphiCustomActionList.Get_Actions, nil,
-        'Lists the actions maintained by the action list.', nil);
-    end;
-end;
-
-procedure TPyDelphiCustomActionList.SetDelphiObject(
-  const Value: TCustomActionList);
+procedure TPyDelphiCustomActionList.SetDelphiObject
+  (const Value: TCustomActionList);
 begin
   inherited DelphiObject := Value;
 end;
 
-{ TActionListAccess }
+{ TPyDelphiActionList }
 
-class function TActionListAccess.ExpectedContainerClass: TClass;
+class function TPyDelphiActionList.DelphiObjectClass: TClass;
 begin
-  Result := TCustomActionList;
+  Result := TActionList;
 end;
 
-function TActionListAccess.GetContainer: TCustomActionList;
+function TPyDelphiActionList.GetDelphiObject: TActionList;
 begin
-  Result := TCustomActionList(inherited Container);
+  Result := TActionList(inherited DelphiObject);
 end;
 
-function TActionListAccess.GetItem(AIndex: Integer): PPyObject;
+procedure TPyDelphiActionList.SetDelphiObject(
+  const Value: TActionList);
 begin
-  Result := Wrap(Container.Actions[AIndex]);
+  inherited DelphiObject := Value;
 end;
 
-function TActionListAccess.GetSize: Integer;
+{ TPyDelphiCustomAction }
+
+class function TPyDelphiCustomAction.DelphiObjectClass: TClass;
 begin
-  Result := Container.ActionCount;
+  Result := TCustomAction;
 end;
 
-function TActionListAccess.IndexOf(AValue: PPyObject): Integer;
-var
-  i : Integer;
-  _obj : TPyObject;
-  _item : TBasicAction;
+function TPyDelphiCustomAction.GetDelphiObject: TCustomAction;
 begin
-  Result := -1;
-  with GetPythonEngine do
-  begin
-    if IsDelphiObject(AValue) then
-    begin
-      _obj := PythonToDelphi(AValue);
-      if (_obj is TPyDelphiObject) and (TPyDelphiObject(_obj).DelphiObject is TBasicAction) then
-      begin
-        _item := TBasicAction(TPyDelphiObject(_obj).DelphiObject);
-        for i := 0 to Container.ActionCount-1 do
-          if Container.Actions[i] = _item then
-          begin
-            Result := i;
-            Break;
-          end;
-      end;
-    end;
-  end;
+  Result := TCustomAction(inherited DelphiObject);
 end;
 
-class function TActionListAccess.Name: string;
+procedure TPyDelphiCustomAction.SetDelphiObject(const Value: TCustomAction);
 begin
-  Result := 'TCustomActionList.Actions';
+  inherited DelphiObject := Value;
 end;
 
-class function TActionListAccess.SupportsIndexOf: Boolean;
+{ TPyDelphiAction }
+
+class function TPyDelphiAction.DelphiObjectClass: TClass;
 begin
-  Result := True;
+  Result := TAction;
 end;
 
+function TPyDelphiAction.GetDelphiObject: TAction;
+begin
+  Result := TAction(inherited DelphiObject);
+end;
+
+procedure TPyDelphiAction.SetDelphiObject(const Value: TAction);
+begin
+  inherited DelphiObject := Value;
+end;
 
 initialization
-  RegisteredUnits.Add( TActnListRegistration.Create );
+  RegisteredUnits.Add(TActnListRegistration.Create);
 end.

@@ -5,7 +5,7 @@ interface
 
 uses
   System.Classes, FMX.ActnList, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  System.Actions, WrapActions, WrapActionList;
+  System.Actions, WrapActions;
 
 type
   TPyDelphiCustomActionList = class(TPyDelphiContainedActionList)

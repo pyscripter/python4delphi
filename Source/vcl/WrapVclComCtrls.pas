@@ -5,8 +5,15 @@ unit WrapVclComCtrls;
 interface
 
 uses
-  Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapVclControls, Windows, ComCtrls, TypInfo;
+  Winapi.Windows,
+  System.SysUtils,
+  System.Classes,
+  System.TypInfo,
+  Vcl.ComCtrls,
+  PythonEngine,
+  WrapDelphi,
+  WrapDelphiClasses,
+  WrapVclControls;
 
 type
   TTabChangingEventHandler = class(TEventHandler)
@@ -113,10 +120,50 @@ type
     property DelphiObject: TTrackBar read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiToolButton = class(TPyDelphiGraphicControl)
+  private
+    function GetDelphiObject: TToolButton;
+    procedure SetDelphiObject(const Value: TToolButton);
+  public
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TToolButton read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
+  TToolbarAccess = class(TContainerAccess)
+  private
+    function GetContainer: TToolbar;
+  public
+    function GetItem(AIndex: Integer): PPyObject; override;
+    function GetSize: Integer; override;
+    function IndexOf(AValue: PPyObject): Integer; override;
+    class function ExpectedContainerClass: TClass; override;
+    class function SupportsIndexOf: Boolean; override;
+    class function Name: string; override;
+    property Container: TToolbar read GetContainer;
+  end;
+
+  TPyDelphiToolbar = class(TPyDelphiWinControl)
+  private
+    function GetDelphiObject: TToolbar;
+    procedure SetDelphiObject(const Value: TToolbar);
+  protected
+    function Get_ButtonCount(AContext: Pointer): PPyObject; cdecl;
+    function Get_Buttons(AContext: Pointer): PPyObject; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class function GetContainerAccessClass: TContainerAccessClass; override;
+
+    property DelphiObject: TToolbar read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
 implementation
 
 uses
-  WrapDelphiTypes, ExtCtrls;
+  WrapDelphiTypes,
+  Vcl.ExtCtrls;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -148,6 +195,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPageControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabSheet);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolButton);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolbar);
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTabChangingEventHandler);
 end;
@@ -326,7 +375,7 @@ begin
         'Specifies the page currently displayed by the page control.', nil);
   {$IFNDEF FPC}
   PythonType.AddGetSet('Canvas', @TPyDelphiPageControl.Get_Canvas, nil,
-        'Gives access to the tab control’s canvas.', nil);
+        'Gives access to the tab controlï¿½s canvas.', nil);
   {$ENDIF FPC}
   PythonType.AddGetSet('PageCount', @TPyDelphiPageControl.Get_PageCount, nil,
         'Indicates the number of pages in the TPageControl object.', nil);
@@ -641,9 +690,128 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{ TPyDelphiToolButton }
+
+class function TPyDelphiToolButton.DelphiObjectClass: TClass;
+begin
+  Result := TToolButton;
+end;
+
+function TPyDelphiToolButton.GetDelphiObject: TToolButton;
+begin
+  Result := TToolButton(inherited DelphiObject);
+end;
+
+procedure TPyDelphiToolButton.SetDelphiObject(const Value: TToolButton);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TToolbarAccess }
+
+class function TToolbarAccess.ExpectedContainerClass: TClass;
+begin
+  Result := TToolbar;
+end;
+
+function TToolbarAccess.GetContainer: TToolbar;
+begin
+  Result := TToolbar(inherited Container);
+end;
+
+function TToolbarAccess.GetItem(AIndex: Integer): PPyObject;
+begin
+  Result := Wrap( Container.Buttons[AIndex] );
+end;
+
+function TToolbarAccess.GetSize: Integer;
+begin
+  Result := Container.ButtonCount;
+end;
+
+function TToolbarAccess.IndexOf(AValue: PPyObject): Integer;
+var
+  _obj: TPyObject;
+  _item: TToolButton;
+begin
+  Result := -1;
+  with GetPythonEngine do
+  begin
+    if IsDelphiObject(AValue) then
+    begin
+      _obj := PythonToDelphi(AValue);
+      if (_obj is TPyDelphiObject) and
+        (TPyDelphiObject(_obj).DelphiObject is TToolButton) then
+      begin
+        _item := TToolButton(TPyDelphiObject(_obj).DelphiObject);
+        Result := _item.Index;
+      end;
+    end;
+  end;
+end;
+
+class function TToolbarAccess.Name: string;
+begin
+  Result := 'Toolbar.Buttons'
+end;
+
+class function TToolbarAccess.SupportsIndexOf: Boolean;
+begin
+  Result := True;
+end;
+
+{ TPyDelphiToolbar }
+
+class function TPyDelphiToolbar.DelphiObjectClass: TClass;
+begin
+  Result := TToolbar;
+end;
+
+class function TPyDelphiToolbar.GetContainerAccessClass: TContainerAccessClass;
+begin
+  Result := TToolbarAccess;
+end;
+
+function TPyDelphiToolbar.GetDelphiObject: TToolbar;
+begin
+  Result := TToolbar(inherited DelphiObject);
+end;
+
+function TPyDelphiToolbar.Get_Buttons(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := PyDelphiWrapper.DefaultContainerType.CreateInstance;
+  with PythonToDelphi(Result) as TPyDelphiContainer do
+    Setup(Self.PyDelphiWrapper, TToolbarAccess.Create(Self.PyDelphiWrapper,
+      Self.DelphiObject));
+end;
+
+function TPyDelphiToolbar.Get_ButtonCount(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ButtonCount);
+end;
+
+class procedure TPyDelphiToolbar.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do
+  begin
+    AddGetSet('ButtonCount', @TPyDelphiToolbar.Get_ButtonCount, nil,
+      'Indicates the number of buttons in the toolbar.', nil);
+    AddGetSet('Actions', @TPyDelphiToolbar.Get_Buttons, nil,
+      'Lists the buttons of the toolbar.', nil);
+  end;
+end;
+
+procedure TPyDelphiToolbar.SetDelphiObject(const Value: TToolbar);
+begin
+  inherited DelphiObject := Value;
+end;
+
 initialization
   RegisteredUnits.Add( TComCtrlsRegistration.Create );
   {$IFNDEF FPC}
-  Classes.RegisterClasses([TDateTimePicker]);
+  System.Classes.RegisterClasses([TDateTimePicker]);
   {$ENDIF FPC}
 end.

@@ -1,6 +1,6 @@
 {$REGION 'Licence'}
 {
-   Wrapper classes for FireDec TFDTable and TFDQuery
+   Wrapper classes for FireDAC TFDTable and TFDQuery
    Original Code by https://github.com/hartmutdavid
 ==============================================================================}
 {$ENDREGION}
@@ -9,13 +9,32 @@ unit WrapFireDAC;
 interface
 
 uses
-  Classes, SysUtils, Variants, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  System.AnsiStrings, System.Rtti, DB,
-  FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Error, FireDAC.UI.Intf,
-  FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
-  FireDAC.Phys, FireDAC.Stan.Param, FireDAC.DatS,
-  FireDAC.DApt.Intf, FireDAC.DApt, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
-  FireDAC.Comp.UI, FireDAC.Stan.ExprFuncs;
+  System.Classes,
+  System.SysUtils,
+  System.Variants,
+  System.AnsiStrings,
+  System.Rtti,
+  WrapDelphiClasses,
+  Data.DB,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Stan.Pool,
+  FireDAC.Stan.Async,
+  FireDAC.Phys,
+  FireDAC.Stan.Param,
+  FireDAC.DatS,
+  FireDAC.DApt.Intf,
+  FireDAC.DApt,
+  FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet,
+  FireDAC.Comp.UI,
+  FireDAC.Stan.ExprFuncs,
+  PythonEngine,
+  WrapDelphi;
 
 type
 
@@ -1417,10 +1436,10 @@ begin
       else if l_sUpperKey = 'MODIFIED' then
         Result := VariantAsPyObject( l_oTable.Modified )
       else if l_sUpperKey = 'ISRANGED' then
-        // Ermöglicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
+        // Ermï¿½glicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
         Result := VariantAsPyObject( l_oTable.IsRanged )
       else if l_sUpperKey = 'KEYEXCLUSIVE' then
-        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
+        // Ermittelt oder setzt die Einbeziehung der niedrigsten und hï¿½chsten Werte in einen gefilterten Bereich.
         Result := VariantAsPyObject( l_oTable.KeyExclusive )
       else if l_sUpperKey = 'KEYFIELDCOUNT' then
         // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
@@ -1508,7 +1527,7 @@ begin
         Result := 0;
       end
       else if l_sUpperKey = 'KEYEXCLUSIVE' then begin
-        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
+        // Ermittelt oder setzt die Einbeziehung der niedrigsten und hï¿½chsten Werte in einen gefilterten Bereich.
         l_oTable.KeyExclusive := PyObjectAsVariant( value );
         Result := 0;
       end
@@ -1849,10 +1868,9 @@ begin
   with GetPythonEngine do begin
     l_oTable := DelphiObject;
     try
-      if l_oTable.Active then begin
+      if l_oTable.Active then
         l_oTable.CancelRange;
-        Result := ReturnNone;
-      end;
+      Result := ReturnNone;
     except
       on E : Exception do begin
         RaiseDBError( E );
