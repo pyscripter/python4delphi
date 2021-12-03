@@ -16,10 +16,11 @@ exports
 {$IFDEF MSWINDOWS}
 {$E pyd}
 {$ENDIF}
+{$WARN SYMBOL_PLATFORM OFF}
 {$IFDEF LINUX}
 {$SONAME 'DelphiFMX'}
-
 {$ENDIF}
+{$WARN SYMBOL_PLATFORM ON}
 
 begin
 end.
