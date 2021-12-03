@@ -87,7 +87,7 @@ begin
 
     if not TryLoadVerFromModuleDefs() then
       if not TryLoadVerFromIncFile() then
-        Result := gEngine.ReturnNone;
+        Exit(gEngine.ReturnNone);
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
