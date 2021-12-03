@@ -17,7 +17,7 @@ var
 
 function GetModuleDir(): string;
 begin
-  Result := TPath.GetDirectoryName(GetModuleName(HInstance));
+  Result := ExtractFilePath(GetModuleName(HInstance));
 end;
 
 function GetModuleDefsLogFilePath(): string;
@@ -38,8 +38,18 @@ procedure Dump(const AText: string);
 begin
   try
     TFile.AppendAllText(GetModuleDefsLogFilePath(),
-      DateTimeToStr(Now()) + ': ' + AText + sLineBreak);
+      DateTimeToStr(Now())
+    + ': '
+    + AText
+    + sLineBreak);
   except
+    on E: Exception do
+      TFile.AppendAllText(TPath.Combine(
+        GetCurrentDir(), 'dump.txt', false), E.Message
+        + sLineBreak
+        + 'while dumping: '
+        + AText
+        + sLineBreak);
   end;
 end;
 
@@ -100,6 +110,8 @@ begin
 
     gEngine.LoadDll;
   except
+    on E: Exception do
+      Dump(E.Message);
   end;
   Result := gModule.Module;
 end;

@@ -16,30 +16,40 @@ var
   gDelphiWrapper : TPyDelphiWrapper;
 
 function GetModuleDir(): string;
-begin
-  Result := TPath.GetDirectoryName(GetModuleName(HInstance));
+begin       //Avoid invalid chars error on MacOS
+  Result := ExtractFilePath(GetModuleName(HInstance));
 end;
 
 function GetModuleDefsLogFilePath(): string;
 const
   MODULE_DEFS_LOG = 'moduledefs.log';
 begin
-  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_LOG);
+  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_LOG, false);
 end;
 
 function GetModuleDefsJSONFilePath(): string;
 const
   MODULE_DEFS_JSON = 'moduledefs.json';
 begin
-  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_JSON);
+  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_JSON, false);
 end;
 
 procedure Dump(const AText: string);
 begin
   try
     TFile.AppendAllText(GetModuleDefsLogFilePath(),
-      DateTimeToStr(Now()) + ': ' + AText + sLineBreak);
+      DateTimeToStr(Now())
+    + ': '
+    + AText
+    + sLineBreak);
   except
+    on E: Exception do
+      TFile.AppendAllText(TPath.Combine(
+        GetCurrentDir(), 'dump.txt', false), E.Message
+        + sLineBreak
+        + 'while dumping: '
+        + AText
+        + sLineBreak);
   end;
 end;
 
@@ -100,6 +110,8 @@ begin
 
     gEngine.LoadDll;
   except
+    on E: Exception do
+      Dump(E.Message);
   end;
   Result := gModule.Module;
 end;
@@ -113,6 +125,7 @@ finalization
   gEngine.Free;
   gModule.Free;
   gDelphiWrapper.Free;
+
 end.
 
 
