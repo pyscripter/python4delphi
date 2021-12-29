@@ -2,13 +2,14 @@ unit uMain;
 
 interface
 
-uses PythonEngine, System.SysUtils;
+uses PythonEngine;
 
 function PyInit_DelphiFMX: PPyObject; cdecl;
 
 implementation
 
-uses WrapDelphi, WrapDelphiFMX, System.IOUtils, System.JSON;
+uses System.IOUtils, System.SysUtils, System.JSON, FMX.Dialogs,
+  WrapDelphi, WrapDelphiFMX;
 
 var
   gEngine : TPythonEngine;
@@ -127,8 +128,14 @@ begin
 
     gEngine.LoadDll;
   except
-    on E: Exception do
+    on E: Exception do begin
+      var LErrorMsg := 'An error occurred: ' + E.Message;
+      if IsConsole then
+        WriteLn(LErrorMsg)
+      else
+        ShowMessage(LErrorMsg);
       Dump(E.Message);
+    end;
   end;
   Result := gModule.Module;
 end;
