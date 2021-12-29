@@ -8,8 +8,7 @@ function PyInit_DelphiFMX: PPyObject; cdecl;
 
 implementation
 
-uses System.IOUtils, System.SysUtils, System.JSON, FMX.Dialogs,
-  WrapDelphi, WrapDelphiFMX;
+uses System.IOUtils, System.SysUtils, System.JSON, WrapDelphi, WrapDelphiFMX;
 
 var
   gEngine : TPythonEngine;
@@ -129,11 +128,7 @@ begin
     gEngine.LoadDll;
   except
     on E: Exception do begin
-      var LErrorMsg := 'An error occurred: ' + E.Message;
-      if IsConsole then
-        WriteLn(LErrorMsg)
-      else
-        ShowMessage(LErrorMsg);
+      WriteLn('An error occurred: ' + E.Message);
       Dump(E.Message);
     end;
   end;
