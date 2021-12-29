@@ -61,6 +61,22 @@ begin
   var LFilePath := GetModuleDefsJSONFilePath();
   if TFile.Exists(LFilePath) then begin
     var LJson := TJSONObject.ParseJSONValue(TFile.ReadAllText(LFilePath));
+
+    var LPythonHome := String.Empty;
+    if LJson.TryGetValue<string>('python_home', LPythonHome) then begin
+      gEngine.PythonHome := LPythonHome;
+    end;
+
+    var LPythonBin := String.Empty;
+    if LJson.TryGetValue<string>('python_bin', LPythonBin) then begin
+      gEngine.ProgramName := LPythonBin;
+    end;
+
+    var LPythonLib := String.Empty;
+    if LJson.TryGetValue<string>('python_lib', LPythonLib) then begin
+      gEngine.DllPath := LPythonLib;
+    end;
+
     if LJson.TryGetValue<string>('python_ver', LPythonVer) then begin
       for var I := Low(PYTHON_KNOWN_VERSIONS) to High(PYTHON_KNOWN_VERSIONS) do begin
         if (PYTHON_KNOWN_VERSIONS[I].RegVersion = LPythonVer) then begin
