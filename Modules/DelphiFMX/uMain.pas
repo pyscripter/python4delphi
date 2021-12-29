@@ -61,6 +61,8 @@ begin
   var LFilePath := GetModuleDefsJSONFilePath();
   if TFile.Exists(LFilePath) then begin
     var LJson := TJSONObject.ParseJSONValue(TFile.ReadAllText(LFilePath));
+    if not Assigned(LJson) then
+      Exit(false);
 
     var LPythonHome := String.Empty;
     if LJson.TryGetValue<string>('python_home', LPythonHome) then begin
