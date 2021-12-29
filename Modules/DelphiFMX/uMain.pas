@@ -54,8 +54,6 @@ begin
 end;
 
 function TryLoadVerFromModuleDefs(): boolean;
-var
-  LPythonVer: string;
 begin
   //Load Python using the moduledefs.json file - it cracks the single version limitation
   var LFilePath := GetModuleDefsJSONFilePath();
@@ -79,6 +77,7 @@ begin
       gEngine.DllPath := LPythonLib;
     end;
 
+    var LPythonVer: string;
     if LJson.TryGetValue<string>('python_ver', LPythonVer) then begin
       for var I := Low(PYTHON_KNOWN_VERSIONS) to High(PYTHON_KNOWN_VERSIONS) do begin
         if (PYTHON_KNOWN_VERSIONS[I].RegVersion = LPythonVer) then begin
