@@ -10,7 +10,6 @@ uses
   {$IFDEF Windows}
   WrapDelphiWindows,
   {$ENDIF Windows}
-  WrapFireDac,
   WrapFmxTypes,
   WrapFmxStdCtrls,
   WrapFmxEdit,
