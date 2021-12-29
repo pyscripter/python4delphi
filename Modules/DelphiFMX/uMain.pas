@@ -77,12 +77,18 @@ begin
       gEngine.DllPath := LPythonLib;
     end;
 
+    var LPythonSharedLib := String.Empty;
+    if LJson.TryGetValue<string>('python_shared_lib', LPythonSharedLib) then begin
+      gEngine.DllName := LPythonSharedLib;
+    end;
+
     var LPythonVer: string;
     if LJson.TryGetValue<string>('python_ver', LPythonVer) then begin
       for var I := Low(PYTHON_KNOWN_VERSIONS) to High(PYTHON_KNOWN_VERSIONS) do begin
         if (PYTHON_KNOWN_VERSIONS[I].RegVersion = LPythonVer) then begin
           gEngine.RegVersion := PYTHON_KNOWN_VERSIONS[I].RegVersion;
-          gEngine.DllName := PYTHON_KNOWN_VERSIONS[I].DllName;
+          if LPythonSharedLib.IsEmpty() then
+            gEngine.DllName := PYTHON_KNOWN_VERSIONS[I].DllName;
           Dump(Format('Module has been set to Python %s using the module defs file', [gEngine.RegVersion]));
           Exit(true);
         end;
@@ -126,13 +132,14 @@ begin
     gDelphiWrapper.Module := gModule;
 
     gEngine.LoadDll;
+    Result := gModule.Module;
   except
     on E: Exception do begin
       WriteLn('An error occurred: ' + E.Message);
       Dump(E.Message);
+      Result := gEngine.ReturnNone;
     end;
   end;
-  Result := gModule.Module;
 end;
 
 initialization
