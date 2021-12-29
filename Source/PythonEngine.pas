@@ -8295,7 +8295,7 @@ end;
 
 procedure TPythonType.Finalize;
 begin
-  Engine.Py_CLEAR(FCreateFunc);
+  Engine.Py_DECREF(FCreateFunc);
   FCreateFunc := nil;
   inherited;
 end;
@@ -8358,7 +8358,6 @@ begin
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil);
-      Engine.Py_INCREF(FCreateFunc);
     end;
     Assert(Assigned(FCreateFunc));
   end;
