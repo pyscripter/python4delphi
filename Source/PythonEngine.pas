@@ -8295,7 +8295,7 @@ end;
 
 procedure TPythonType.Finalize;
 begin
-  Engine.Py_XDECREF(FCreateFunc);
+  Engine.Py_CLEAR(FCreateFunc);
   FCreateFunc := nil;
   inherited;
 end;
@@ -8357,7 +8357,8 @@ begin
       FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, DEFAULT_CALLBACK_TYPE);
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
-      FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil)
+      FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil);
+      Engine.Py_INCREF(FCreateFunc);
     end;
     Assert(Assigned(FCreateFunc));
   end;
