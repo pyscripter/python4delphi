@@ -84,7 +84,7 @@ begin
         if (PYTHON_KNOWN_VERSIONS[I].RegVersion = LPythonVer) then begin
           gEngine.RegVersion := PYTHON_KNOWN_VERSIONS[I].RegVersion;
           gEngine.DllName := PYTHON_KNOWN_VERSIONS[I].DllName;
-          Dump('Module has been set to Python' + gEngine.RegVersion);
+          Dump(Format('Module has been set to Python %s using the module defs file', [gEngine.RegVersion]));
           Exit(true);
         end;
       end;
@@ -99,7 +99,7 @@ begin
   var PythonVersionIndex := {$I PythonVersionIndex.inc}; // 7 = 3.9
   gEngine.RegVersion := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].RegVersion;
   gEngine.DllName := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].DllName;
-  Dump('Module has been set to Python' + gEngine.RegVersion);
+  Dump(Format('Module has been set to Python %s using the version index file', [gEngine.RegVersion]));
   Exit(true);
 end;
 
