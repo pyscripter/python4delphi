@@ -20,18 +20,23 @@ begin       //Avoid invalid chars error on MacOS
   Result := ExtractFilePath(GetModuleName(HInstance));
 end;
 
+function GetModuleDefsDir(): string;
+begin
+  Result := TDirectory.GetParent(ExcludeTrailingPathDelimiter(GetModuleDir()));
+end;
+
 function GetModuleDefsLogFilePath(): string;
 const
   MODULE_DEFS_LOG = 'moduledefs.log';
 begin
-  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_LOG, false);
+  Result := TPath.Combine(GetModuleDefsDir(), MODULE_DEFS_LOG, false);
 end;
 
 function GetModuleDefsJSONFilePath(): string;
 const
   MODULE_DEFS_JSON = 'moduledefs.json';
 begin
-  Result := TPath.Combine(GetModuleDir(), MODULE_DEFS_JSON, false);
+  Result := TPath.Combine(GetModuleDefsDir(), MODULE_DEFS_JSON, false);
 end;
 
 procedure Dump(const AText: string);
