@@ -7,6 +7,34 @@ uses
   PythonEngine, WrapDelphi, Vcl.Themes, Vcl.Styles;
 
 type
+  TPyDelphiStyleInfo = class(TPyObject)
+  private
+    FValue: TStyleInfo;
+  protected
+    // Exposed Getters
+    function Get_Name(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Author(Acontext: Pointer): PPyObject; cdecl;
+    function Get_AuthorEMail(Acontext: Pointer): PPyObject; cdecl;
+    function Get_AuthorUrl(Acontext: Pointer): PPyObject; cdecl;
+    function Get_Version(Acontext: Pointer): PPyObject; cdecl;
+    // Exposed Setters
+    function Set_Name(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
+    function Set_Author(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
+    function Set_AuthorEMail(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
+    function Set_AuthorUrl(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
+    function Set_Version(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
+  public
+    constructor CreateWith(APythonType: TPythonType; AArgs: PPyObject); override;
+
+    function Compare(AObj: PPyObject) : Integer; override;
+    function Repr: PPyObject; override;
+
+    class procedure RegisterGetSets(APythonType: TPythonType ); override;
+    class procedure SetupType(APythonType: TPythonType ); override;
+
+    property Value: TStyleInfo read fValue write fValue;
+  end;
+
   TPyDelphiStyleManager = class(TPyDelphiObject)
   private
     function GetDelphiObject: TStyleManager;
@@ -14,6 +42,11 @@ type
   protected
     function Get_StyleNames(AContext: Pointer): PPyObject; cdecl;
     function Get_ActiveStyle(AContext: Pointer): PPyObject; cdecl;
+    // Exposed Methods
+    function LoadFromFileName_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
+    function IsValidStyle_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
+    // Property Getters
+    function Get_filename(AContext: Pointer): PPyObject; cdecl;
   public
     constructor Create( APythonType : TPythonType ); override;
     constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
@@ -38,10 +71,24 @@ type
     property Container : TStyleManager read GetContainer;
   end;
 
+  { Helper functions }
+  function WrapStyleInfo(APyDelphiWrapper: TPyDelphiWrapper; [ref] AStyleInfo: TStyleInfo): PPyObject;
+
 implementation
 
 uses
-  Vcl.Controls;
+  System.SysUtils, Vcl.Controls;
+
+{ Helper functions }
+
+function WrapStyleInfo(APyDelphiWrapper: TPyDelphiWrapper; [ref] AStyleInfo: TStyleInfo) : PPyObject;
+var
+  LType: TPythonType;
+begin
+  LType := APyDelphiWrapper.GetHelperType('StyleInfoType');
+  Result := LType.CreateInstance();
+  (PythonToDelphi(Result) as TPyDelphiStyleInfo).Value := AStyleInfo;
+end;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -69,6 +116,7 @@ procedure TVclThemesRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleManager);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiStyleInfo);
 end;
 
 { TPyDelphiStyleManager }
@@ -111,6 +159,42 @@ begin
     TStyleManagerStyleNamesAccess.Create(Self.PyDelphiWrapper, Self.DelphiObject));
 end;
 
+function TPyDelphiStyleManager.IsValidStyle_Wrapper(AArgs: PPyObject): PPyObject;
+var
+  LFileName: PAnsiChar;
+  LIsValid: Boolean;
+  LStyleInfo: TStyleInfo;
+begin
+  Adjust(@Self);
+  with GetPythonEngine do
+  begin
+    if PyArg_ParseTuple(AArgs, 's:IsValidStyle', @LFileName) <> 0 then
+    begin
+      LIsValid := TStyleManager.IsValidStyle(string(LFileName), LStyleInfo);
+      Result := PyTuple_New(2);
+      PyTuple_SetItem(Result, 0, PyBool_FromLong(Ord(LIsValid)));
+      PyTuple_SetItem(Result, 1, WrapStyleInfo(PyDelphiWrapper, LStyleInfo));
+    end else
+      Result := nil;
+  end;
+end;
+
+function TPyDelphiStyleManager.LoadFromFileName_Wrapper(
+  AArgs: PPyObject): PPyObject;
+var
+  LFileName: PAnsiChar;
+begin
+  with GetPythonEngine do
+  begin
+    if PyArg_ParseTuple(AArgs, 's:LoadFromFile', @LFileName) <> 0 then
+    begin
+      TStyleManager.LoadFromFile(string(LFileName));
+      Result := GetPythonEngine().ReturnNone();
+    end else
+      Result := nil;
+  end;
+end;
+
 class procedure TPyDelphiStyleManager.RegisterGetSets(PythonType: TPythonType);
 begin
   inherited;
@@ -125,6 +209,13 @@ end;
 class procedure TPyDelphiStyleManager.RegisterMethods(PythonType: TPythonType);
 begin
   inherited;
+  PythonType.AddMethod('LoadFromFile', @TPyDelphiStyleManager.LoadFromFileName_Wrapper,
+    'TStyleManager.LoadFromFile()'#10 +
+    'Loads a VCL style from a file');
+  PythonType.AddMethod('IsValidStyle', @TPyDelphiStyleManager.IsValidStyle_Wrapper,
+    'TStyleManager.IsValidStyle()'#10 +
+    'Check if a Vcl Style file is valid');
+
 end;
 
 procedure TPyDelphiStyleManager.SetDelphiObject(const Value: TStyleManager);
@@ -157,6 +248,190 @@ end;
 class function TStyleManagerStyleNamesAccess.Name: string;
 begin
   Result := 'TStyleManager.StyleNames';
+end;
+
+{ TPyDelphiStyleInfo }
+
+constructor TPyDelphiStyleInfo.CreateWith(APythonType: TPythonType;
+  AArgs: PPyObject);
+var
+  LName: PAnsiChar;
+  LAuthor: PAnsiChar;
+  LAuthorEMail: PAnsiChar;
+  LAuthorURL: PAnsiChar;
+  LVersion: PAnsiChar;
+begin
+  inherited;
+  if APythonType.Engine.PyArg_ParseTuple(AArgs, 'sssss:Create', @LName, @LAuthor, @LAuthorEMail, @LAuthorURL, @LVersion) <> 0 then
+  begin
+    FValue.Name := string(LName);
+    FValue.Author := string(LAuthor);
+    FValue.AuthorEMail := string(LAuthorEMail);
+    FValue.AuthorURL := string(LAuthorURL);
+    FValue.Version := string(LVersion);
+  end
+end;
+
+function TPyDelphiStyleInfo.Compare(AObj: PPyObject): Integer;
+var
+  LOther : TPyDelphiStyleInfo;
+begin
+  if IsDelphiObject(AObj) and (PythonToDelphi(AObj) is TPyDelphiStyleInfo) then
+  begin
+    LOther := TPyDelphiStyleInfo(PythonToDelphi(AObj));
+
+    Result := Ord(
+      (LOther.Value.Name = Value.Name)
+      and (LOther.Value.Author = Value.Author)
+      and (LOther.Value.AuthorEMail = Value.AuthorEMail)
+      and (LOther.Value.AuthorURL = Value.AuthorURL)
+      and (LOther.Value.Version = Value.Version)
+    );
+  end
+  else
+    Result := 1;
+end;
+
+function TPyDelphiStyleInfo.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(Format(
+    '<StyleInfo (%s, %s, %s, %s, %s)>',
+    [Value.Name, Value.Author, Value.AuthorEMail, Value.AuthorURL, Value.Version]));
+end;
+
+function TPyDelphiStyleInfo.Get_Name(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(Value.Name);
+end;
+
+function TPyDelphiStyleInfo.Get_Author(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(Value.Author);
+end;
+
+function TPyDelphiStyleInfo.Get_AuthorEMail(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(Value.AuthorEMail);
+end;
+
+function TPyDelphiStyleInfo.Get_AuthorUrl(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(Value.AuthorURL);
+end;
+
+function TPyDelphiStyleInfo.Get_Version(Acontext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := GetPythonEngine.PyUnicodeFromString(Value.Version);
+end;
+
+function TPyDelphiStyleInfo.Set_Name(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  LValue : string;
+begin
+  if CheckStrAttribute(AValue, 'Name', LValue) then
+  with GetPythonEngine do begin
+    Adjust(@Self);
+    FValue.Name := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+function TPyDelphiStyleInfo.Set_Author(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  LValue : string;
+begin
+  if CheckStrAttribute(AValue, 'Author', LValue) then
+  with GetPythonEngine do begin
+    Adjust(@Self);
+    FValue.Author := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+function TPyDelphiStyleInfo.Set_AuthorEMail(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  LValue : string;
+begin
+  if CheckStrAttribute(AValue, 'AuthorEMAil', LValue) then
+  with GetPythonEngine do begin
+    Adjust(@Self);
+    FValue.AuthorEMAil := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+
+end;
+
+function TPyDelphiStyleInfo.Set_AuthorUrl(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  LValue : string;
+begin
+  if CheckStrAttribute(AValue, 'AuthorUrl', LValue) then
+  with GetPythonEngine do begin
+    Adjust(@Self);
+    FValue.AuthorUrl := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+function TPyDelphiStyleInfo.Set_Version(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  LValue : string;
+begin
+  if CheckStrAttribute(AValue, 'Version', LValue) then
+  with GetPythonEngine do begin
+    Adjust(@Self);
+    FValue.Version := LValue;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
+
+class procedure TPyDelphiStyleInfo.RegisterGetSets(APythonType: TPythonType);
+begin
+  inherited;
+  with APythonType do
+  begin
+    AddGetSet('Name', @TPyDelphiStyleInfo.Get_Name, @TPyDelphiStyleInfo.Set_Name,
+      'Provides access to the Name of a Style Info', nil);
+    AddGetSet('Author', @TPyDelphiStyleInfo.Get_Author, @TPyDelphiStyleInfo.Set_Author,
+      'Provides access to the Author of a Style Info', nil);
+    AddGetSet('AuthorEMail', @TPyDelphiStyleInfo.Get_AuthorEMail, @TPyDelphiStyleInfo.Set_AuthorEMail,
+      'Provides access to the Author E-Mail of a Style Info', nil);
+    AddGetSet('AuthorUrl', @TPyDelphiStyleInfo.Get_AuthorUrl, @TPyDelphiStyleInfo.Set_AuthorUrl,
+      'Provides access to the Author URL of a Style Info', nil);
+    AddGetSet('Version', @TPyDelphiStyleInfo.Get_Version, @TPyDelphiStyleInfo.Set_Version,
+      'Provides access to the Version of a Style Info', nil);
+  end;
+end;
+
+class procedure TPyDelphiStyleInfo.SetupType(APythonType: TPythonType);
+begin
+  inherited;
+  APythonType.TypeName := 'StyleInfo';
+  APythonType.Name := string(APythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
+  APythonType.TypeFlags := APythonType.TypeFlags + [tpfBaseType];
+  APythonType.GenerateCreateFunction := False;
+  APythonType.DocString.Text := 'wrapper for Delphi TStyleInfo type';
+  APythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
 end;
 
 initialization
