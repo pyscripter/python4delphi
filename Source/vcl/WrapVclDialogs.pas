@@ -27,6 +27,24 @@ type
       write SetDelphiObject;
   end;
 
+  TPyDelphiFileOpenDialog = class(TPyDelphiComponent)
+  private
+    function GetDelphiObject: TFileOpenDialog;
+    procedure SetDelphiObject(const Value: TFileOpenDialog);
+  protected
+    // Exposed Methods
+    function Execute_Wrapper(args: PPyObject): PPyObject; cdecl;
+    // Property Getters
+    function Get_filename(AContext: Pointer): PPyObject; cdecl;
+  public
+    class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure RegisterMethods( PythonType : TPythonType ); override;
+    // Properties
+    property DelphiObject: TFileOpenDialog read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -57,9 +75,11 @@ procedure TDialogRegistration.RegisterWrappers(APyDelphiWrapper
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiOpenDialog);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFileOpenDialog);
 end;
 
 { TPyDelphiOpenDialog }
+
 class function TPyDelphiOpenDialog.DelphiObjectClass: TClass;
 begin
   Result := TOpenDialog;
@@ -108,6 +128,59 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{ TPyDelphiFileOpenDialog }
+
+class function TPyDelphiFileOpenDialog.DelphiObjectClass: TClass;
+begin
+  Result := TFileOpenDialog;
+end;
+
+function TPyDelphiFileOpenDialog.Execute_Wrapper(args: PPyObject): PPyObject;
+begin
+  // We adjust the transmitted self argument
+  Adjust(@Self);
+  with GetPythonEngine do begin
+    if PyArg_ParseTuple( args, ':Execute') <> 0 then
+      Result := VariantAsPyObject(DelphiObject.Execute())
+    else
+      Result := nil;
+  end;
+end;
+
+function TPyDelphiFileOpenDialog.GetDelphiObject: TFileOpenDialog;
+begin
+  Result := TFileOpenDialog(inherited DelphiObject);
+end;
+
+function TPyDelphiFileOpenDialog.Get_filename(AContext: Pointer): PPyObject;
+begin
+  Adjust(@self);
+  Result := GetPythonEngine.VariantAsPyObject(DelphiObject.FileName);
+end;
+
+class procedure TPyDelphiFileOpenDialog.RegisterGetSets(
+  PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddGetSet('FileName', @TPyDelphiFileOpenDialog.Get_filename,
+    nil, '', nil);
+end;
+
+class procedure TPyDelphiFileOpenDialog.RegisterMethods(
+  PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddMethod('Execute', @TPyDelphiFileOpenDialog.Execute_Wrapper,
+    'TFileOpenDialog.Execute()'#10 +
+    'Displays the dialog');
+end;
+
+procedure TPyDelphiFileOpenDialog.SetDelphiObject(const Value: TFileOpenDialog);
+begin
+  inherited DelphiObject := Value;
+end;
+
 initialization
   RegisteredUnits.Add(TDialogRegistration.Create);
+
 end.
