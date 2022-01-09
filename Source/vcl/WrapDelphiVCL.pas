@@ -26,6 +26,7 @@ uses
   WrapVclGrids,
   WrapVclSamplesSpin,
   WrapVclWinXCtrls,
-  WrapVclThemes;
+  WrapVclThemes,
+  WrapVclDialogs;
 
 end.
