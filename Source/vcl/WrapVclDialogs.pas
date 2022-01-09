@@ -50,6 +50,22 @@ implementation
 uses
   WrapDelphiTypes;
 
+{ Global Functions }
+function ShowMessage_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
+var
+  LMsg: string;
+begin
+  with GetPythonEngine do
+  begin
+    if PyArg_ParseTuple(args, 's:ShowMessage', @LMsg) <> 0 then
+    begin
+      ShowMessage(LMsg);
+      Result := GetPythonEngine.ReturnNone;
+    end else
+      Result := nil;
+  end;
+end;
+
 { Register the wrappers, the globals and the constants }
 type
   TDialogRegistration = class(TRegisteredUnit)
@@ -57,9 +73,19 @@ type
     function Name: string; override;
     procedure RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper: TPyDelphiWrapper); override;
+    procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
   { TDialogRegistration }
+procedure TDialogRegistration.DefineFunctions(
+  APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+    APyDelphiWrapper.RegisterFunction(PAnsiChar('ShowMessage'), ShowMessage_Wrapper,
+       PAnsiChar('ShowMessage_Wrapper()'#10 +
+       'Show a custom message as a dialog box.'));
+end;
+
 procedure TDialogRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
