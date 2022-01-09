@@ -4,7 +4,7 @@ unit WrapVclThemes;
 interface
 
 uses
-  PythonEngine, WrapDelphi, Vcl.Themes;
+  PythonEngine, WrapDelphi, Vcl.Themes, Vcl.Styles;
 
 type
   TPyDelphiStyleManager = class(TPyDelphiObject)
