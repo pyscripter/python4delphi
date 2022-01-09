@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses,
-  WrapVclControls, Windows, Dialogs, TypInfo;
+  WrapVclControls, Windows, Dialogs, TypInfo, Winapi.ActiveX;
 
 type
   TPyDelphiOpenDialog = class(TPyDelphiComponent)
@@ -208,5 +208,9 @@ end;
 
 initialization
   RegisteredUnits.Add(TDialogRegistration.Create);
+  CoInitialize(nil);
+
+finalization
+  CoUninitialize();
 
 end.
