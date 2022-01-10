@@ -35,6 +35,20 @@ type
     property Value: TStyleInfo read fValue write fValue;
   end;
 
+  TPyDelphiCustomStyleServices = class(TPyDelphiObject)
+  private
+    function GetDelphiObject: TCustomStyleServices;
+    procedure SetDelphiObject(const Value: TCustomStyleServices);
+  public
+    constructor Create( APythonType : TPythonType ); override;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+
+    class function DelphiObjectClass : TClass; override;
+    class procedure RegisterMethods( PythonType : TPythonType ); override;
+    // Properties
+    property DelphiObject: TCustomStyleServices read GetDelphiObject write SetDelphiObject;
+  end;
+
   TPyDelphiStyleManager = class(TPyDelphiObject)
   private
     function GetDelphiObject: TStyleManager;
@@ -45,10 +59,7 @@ type
     // Exposed Methods
     function LoadFromFileName_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
     function IsValidStyle_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
-    // Property Getters
-    function Get_filename(AContext: Pointer): PPyObject; cdecl;
   public
-    constructor Create( APythonType : TPythonType ); override;
     constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
 
     class function DelphiObjectClass : TClass; override;
@@ -77,7 +88,7 @@ type
 implementation
 
 uses
-  System.SysUtils, Vcl.Controls;
+  System.SysUtils;
 
 { Helper functions }
 
@@ -97,9 +108,16 @@ type
     function Name: string; override;
     procedure RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper: TPyDelphiWrapper); override;
+    procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
 { TVclThemesRegistration }
+
+procedure TVclThemesRegistration.DefineFunctions(
+  APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+end;
 
 procedure TVclThemesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
@@ -116,15 +134,11 @@ procedure TVclThemesRegistration.RegisterWrappers(
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleManager);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomStyleServices);
   APyDelphiWrapper.RegisterHelperType(TPyDelphiStyleInfo);
 end;
 
 { TPyDelphiStyleManager }
-
-constructor TPyDelphiStyleManager.Create(APythonType: TPythonType);
-begin
-  inherited;
-end;
 
 constructor TPyDelphiStyleManager.CreateWith(APythonType: TPythonType;
   args: PPyObject);
@@ -215,7 +229,6 @@ begin
   PythonType.AddMethod('IsValidStyle', @TPyDelphiStyleManager.IsValidStyle_Wrapper,
     'TStyleManager.IsValidStyle()'#10 +
     'Check if a Vcl Style file is valid');
-
 end;
 
 procedure TPyDelphiStyleManager.SetDelphiObject(const Value: TStyleManager);
@@ -372,7 +385,6 @@ begin
   end
   else
     Result := -1;
-
 end;
 
 function TPyDelphiStyleInfo.Set_AuthorUrl(AValue: PPyObject;
@@ -432,6 +444,42 @@ begin
   APythonType.GenerateCreateFunction := False;
   APythonType.DocString.Text := 'wrapper for Delphi TStyleInfo type';
   APythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+end;
+
+{ TPyDelphiStyleServices }
+
+constructor TPyDelphiCustomStyleServices.Create(APythonType: TPythonType);
+begin
+  inherited;
+end;
+
+constructor TPyDelphiCustomStyleServices.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+begin
+  inherited;
+  DelphiObject := StyleServices();
+end;
+
+class function TPyDelphiCustomStyleServices.DelphiObjectClass: TClass;
+begin
+  Result := TCustomStyleServices;
+end;
+
+function TPyDelphiCustomStyleServices.GetDelphiObject: TCustomStyleServices;
+begin
+  Result := TCustomStyleServices(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomStyleServices.SetDelphiObject(
+  const Value: TCustomStyleServices);
+begin
+  inherited DelphiObject := Value;
+end;
+
+class procedure TPyDelphiCustomStyleServices.RegisterMethods(
+  PythonType: TPythonType);
+begin
+  inherited;
 end;
 
 initialization
