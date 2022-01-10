@@ -88,7 +88,31 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  System.SysUtils, Vcl.Controls, MethodCallBack;
+
+{ Global Functions }
+
+function StyleServices_Wrapper(APyDelphiWrapper: TPyDelphiWrapper; pself, args: PPyObject): PPyObject; cdecl;
+var
+  LPyObj: PPyObject;
+  LControl: TControl;
+begin
+  LControl := nil;
+  with GetPythonEngine do
+  begin
+    if PyTuple_Check(args) then begin
+      if PyTuple_Size(args) = 0 then
+        Result := APyDelphiWrapper.Wrap(StyleServices())
+      else if (PyArg_ParseTuple(args, 'O:StyleServices', @LPyObj) <> 0)
+        and CheckObjAttribute(LPyObj, 'AControl', TControl, TObject(LControl)) then
+      begin
+        Result := APyDelphiWrapper.Wrap(StyleServices(LControl));
+      end else
+        Result := nil;
+    end else
+      Result := nil;
+  end;
+end;
 
 { Helper functions }
 
@@ -117,6 +141,10 @@ procedure TVclThemesRegistration.DefineFunctions(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('StyleServices'),
+    GetCallBack(APyDelphiWrapper, @StyleServices_Wrapper, 2, DEFAULT_CALLBACK_TYPE),
+    PAnsiChar('StyleServices_Wrapper()'#10 +
+    'Get a StyleServices instance.'));
 end;
 
 procedure TVclThemesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
