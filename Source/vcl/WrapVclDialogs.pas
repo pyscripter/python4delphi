@@ -81,9 +81,9 @@ procedure TDialogRegistration.DefineFunctions(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
-    APyDelphiWrapper.RegisterFunction(PAnsiChar('ShowMessage'), ShowMessage_Wrapper,
-       PAnsiChar('ShowMessage_Wrapper()'#10 +
-       'Show a custom message as a dialog box.'));
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('ShowMessage'), ShowMessage_Wrapper,
+    PAnsiChar('ShowMessage_Wrapper()'#10 +
+    'Show a custom message as a dialog box.'));
 end;
 
 procedure TDialogRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
