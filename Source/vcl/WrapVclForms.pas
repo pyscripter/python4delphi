@@ -43,6 +43,8 @@ type
     function CloseQuery_Wrapper(args: PPyObject): PPyObject; cdecl;
     function ShowModal_Wrapper(args: PPyObject): PPyObject; cdecl;
     function Release_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    //Load properties from .pydfm file
+    function LoadProps_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_ModalResult(AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
@@ -365,7 +367,18 @@ type
 implementation
 
 uses
-  WrapDelphiTypes;
+  WrapDelphiTypes, System.IOUtils, System.Rtti;
+
+type
+  TPyDfmReader = class(TReader)
+  private
+    FPyObject: TPyDelphiObject;
+    procedure DoFind(Reader: TReader; const ClassName: string; var ComponentClass: TComponentClass);
+  protected
+    procedure SetName(Component: TComponent; var Name: string); override;
+  public
+    constructor Create(APyObject: TPyDelphiObject; Stream: TStream; BufSize: Integer);
+  end;
 
 { Global Functions }
 function FreeConsole_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
@@ -550,6 +563,9 @@ begin
   PythonType.AddMethod('Release', @TPyDelphiCustomForm.Release_Wrapper,
     'TForm.Release()'#10 +
     'Releases (destroys) the wrapped Form');
+  PythonType.AddMethod('LoadProps', @TPyDelphiCustomForm.LoadProps_Wrapper,
+    'TForm.LoadProps()'#10 +
+    'Load properties from a .pydfm file');
 end;
 
 class function TPyDelphiCustomForm.DelphiObjectClass: TClass;
@@ -561,6 +577,52 @@ function TPyDelphiCustomForm.Get_ModalResult(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
   Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ModalResult);
+end;
+
+function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
+
+  function FindResource(): string;
+  var
+    LStr: PAnsiChar;
+  begin
+    with GetPythonEngine() do begin
+      if PyArg_ParseTuple(args, 's:LoadProps', @LStr) <> 0 then begin
+        Result := string(LStr);
+      end else
+        Result := String.Empty;
+    end;
+  end;
+
+  function InternalReadComponent(const AResFile: string; const AInstance: TComponent): boolean;
+  begin
+    if AResFile.IsEmpty or not TFile.Exists(AResFile) then
+      Exit(false);
+
+    var LStream := TFileStream.Create(AResFile, fmOpenRead);
+    try
+      var LReader := TPyDfmReader.Create(Self, LStream, 4096);
+      try
+        LReader.ReadRootComponent(DelphiObject);
+      finally
+        LReader.Free;
+      end;
+    finally
+      LStream.Free();
+    end;
+    Result := true;
+  end;
+
+  function InitComponent(): Boolean;
+  begin
+    Result := InternalReadComponent(FindResource(), DelphiObject);
+  end;
+
+begin
+  Adjust(@Self);
+  if InitComponent() then
+    Result := GetPythonEngine().ReturnTrue
+  else
+    Result := GetPythonEngine().ReturnFalse;
 end;
 
 function TPyDelphiCustomForm.Set_ModalResult(AValue: PPyObject;
@@ -2609,6 +2671,60 @@ end;
 class function TCloseEventHandler.GetTypeInfo: PTypeInfo;
 begin
   Result := System.TypeInfo(TCloseEvent);
+end;
+
+{ TPyDfmReader }
+
+constructor TPyDfmReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
+  BufSize: Integer);
+begin
+  inherited Create(Stream, BufSize);
+  OnFindComponentClass := DoFind;
+  FPyObject := APyObject;
+end;
+
+procedure TPyDfmReader.DoFind(Reader: TReader; const ClassName: string;
+  var ComponentClass: TComponentClass);
+var
+  LClass: TClass;
+  LCtx: TRttiContext;
+  LType: TRttiType;
+begin
+  LClass := GetClass(ClassName);
+  if (LClass.InheritsFrom(TComponent)) then begin
+    ComponentClass := TComponentClass(LClass);
+    Exit;
+  end;
+
+  LCtx := TRttiContext.Create();
+  try
+    for LType in LCtx.GetTypes() do
+    begin
+      if LType.IsInstance and LType.Name.EndsWith(ClassName) then begin
+        if LType.AsInstance.MetaclassType.InheritsFrom(TComponent) then begin
+          ComponentClass := TComponentClass(LType.AsInstance.MetaclassType);
+          Break;
+        end;
+      end;
+    end;
+  finally
+    LCtx.Free();
+  end;
+end;
+
+procedure TPyDfmReader.SetName(Component: TComponent; var Name: string);
+var
+  LPyKey: PPyObject;
+begin
+  inherited;
+  with GetPythonEngine() do begin
+    LPyKey := PyUnicodeFromString(Name);
+    try
+      PyObject_GenericSetAttr(FPyObject.GetSelf(), LPyKey, FPyObject.Wrap(Component));
+    finally
+      Py_XDecRef(LPyKey);
+    end;
+  end;
 end;
 
 initialization
