@@ -2691,7 +2691,7 @@ var
   LType: TRttiType;
 begin
   LClass := GetClass(ClassName);
-  if (LClass.InheritsFrom(TComponent)) then begin
+  if Assigned(LClass) and (LClass.InheritsFrom(TComponent)) then begin
     ComponentClass := TComponentClass(LClass);
     Exit;
   end;
