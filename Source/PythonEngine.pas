@@ -155,16 +155,12 @@ const
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[7..7] of TPythonVersionProp =
-    {$IFDEF DEBUG}
-      (
-      (DllName: 'libpython3.9d.so'; RegVersion: '3.9'; APIVersion: 1013)
-      );
-    {$ELSE}
-      (
-      (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013)
-      );
-    {$ENDIF}
+  PYTHON_KNOWN_VERSIONS: array[5..7] of TPythonVersionProp =
+    (
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013)
+    );
 {$ENDIF}
 
   COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
