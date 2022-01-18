@@ -128,6 +128,9 @@ type
   PtrCalcType = NativeInt;
 {$ENDIF}
 
+  EMProtectError = class(Exception)
+  end;
+
 {$IFNDEF MSWINDOWS}
 {$IFDEF FPC}
 function mmap(Addr: Pointer; Len: Integer; Prot: Integer; Flags: Integer; FileDes: Integer; Off: Integer): Pointer; cdecl;
@@ -175,12 +178,36 @@ begin
       ptr := nil;
       exit;
     end;
-    mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
-	{$ENDIF}
+    {$IFDEF APPLE_SILICON}
+      {
+        macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
+        rejects a permission change from NONE -> RWX, resulting a "Permission
+        Denied" error.
+        Solution: give RW permission, make memory changes, then change RW to X
+      }
+      if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
+        raise EMProtectError.CreateFmt('MProtect error: %s', [
+          SysErrorMessage(GetLastError())]);
+    {$ELSE}
+      mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
+	  {$ENDIF}
+  {$ENDIF}
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
     // init pointer to end of page
     page^.CodeBlocks:=Pointer(PtrCalcType(page) + PageSize);
+  end else begin
+    {$IFDEF APPLE_SILICON}
+      {
+        macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
+        rejects a permission change from NONE -> RWX.
+        Solution: give RW permission, make memory changes, then change RW to X
+      }
+      //RW permission to the entire page for new changes...
+      if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
+        raise EMProtectError.CreateFmt('MProtect error: %s', [
+          SysErrorMessage(GetLastError())]);
+    {$ENDIF}
   end;
 
   //---blocks are assigned starting from the end of the page
@@ -708,6 +735,18 @@ begin
     Move(LLiteralPool[I], P^, SizeOf(pointer));
     Inc(P, SizeOf(pointer));
   end;
+
+  {$IFDEF APPLE_SILICON}
+    {
+      macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
+      rejects a permission change from NONE -> RWX.
+      Solution: give RW permission, make memory changes, then change RW to X
+    }
+    //X permission to the entire page for executions...
+    if mprotect(CodeMemPages, PageSize, PROT_EXEC) <> 0 then
+      raise EMProtectError.CreateFmt('MProtect error: %s', [
+        SysErrorMessage(GetLastError())]);
+  {$ENDIF}
 
   Result := Pointer(Q); //set arm mode
 end;
