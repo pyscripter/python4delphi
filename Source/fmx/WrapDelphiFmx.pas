@@ -24,6 +24,7 @@ uses
   WrapFmxGrids,
   WrapFmxMedia,
   WrapFmxMenus,
-  WrapFmxStyles;
+  WrapFmxStyles,
+  WrapFmxMemo;
 
 end.
