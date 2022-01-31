@@ -4,7 +4,8 @@ uses
   System.StartUpCopy,
   SysUtils,
   Classes,
-  uMain in 'uMain.pas';
+  uMain in 'uMain.pas',
+  ModuleSpecs in 'ModuleSpecs.pas';
 
 {$I ..\..\Source\Definition.Inc}
 
