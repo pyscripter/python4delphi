@@ -28,8 +28,10 @@ type
 
   TPythonEngineModuleAdapter = class(TPythonEngine)
   private
+    {$IFDEF LINUX}
     function CheckForHostSymbols(): boolean;
     procedure LoadSymbols();
+    {$ENDIF}
   public
     procedure LoadDll();
   end;
@@ -37,7 +39,7 @@ type
 implementation
 
 uses
-  System.SysUtils, System.IOUtils, System.JSON, System.Threading;
+  System.SysUtils, System.IOUtils, System.JSON;
 
 { TModulePaths }
 
@@ -135,6 +137,7 @@ end;
 
 { TPythonEngineModuleAdapter }
 
+{$IFDEF LINUX}
 function TPythonEngineModuleAdapter.CheckForHostSymbols: boolean;
 type
   TPy_IsInitialized = function: integer; cdecl;
@@ -153,6 +156,7 @@ begin
   FDLLHandle := 0;
   AfterLoad();
 end;
+{$ENDIF}
 
 procedure TPythonEngineModuleAdapter.LoadDll;
 begin
