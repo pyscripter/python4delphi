@@ -25,6 +25,7 @@ uses
   WrapFmxMedia,
   WrapFmxMenus,
   WrapFmxStyles,
-  WrapFmxMemo;
+  WrapFmxMemo,
+  WrapFmxColors;
 
 end.
