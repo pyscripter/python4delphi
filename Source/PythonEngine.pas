@@ -4244,7 +4244,7 @@ begin
 
   gPythonEngine := Self;
   CheckRegistry;
-  if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
+  if Assigned(Py_SetProgramName) and (ProgramName <> '') then
     Py_SetProgramName(PWCharT(FProgramName));
   AssignPyFlags;
   if Assigned(Py_SetPythonHome) and (PythonHome <> '') then
