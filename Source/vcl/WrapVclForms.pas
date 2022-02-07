@@ -370,7 +370,7 @@ uses
   WrapDelphiTypes, System.IOUtils, System.Rtti;
 
 type
-  TPyDfmReader = class(TReader)
+  TPyFormFileReader = class(TReader)
   private
     FPyObject: TPyDelphiObject;
     procedure DoFind(Reader: TReader; const ClassName: string; var ComponentClass: TComponentClass);
@@ -593,21 +593,59 @@ function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
     end;
   end;
 
+  procedure ReadRootComponent(const AStream: TStream);
+  begin
+    AStream.Position := 0;
+    var LReader := TPyFormFileReader.Create(Self, AStream, 4096);
+    try
+      LReader.ReadRootComponent(DelphiObject);
+    finally
+      LReader.Free;
+    end;
+  end;
+
+  function HasValidSignature(const AStream: TStream): boolean;
+  const
+    FilerSignature: UInt32 = $30465054; // ($54, $50, $46, $30) 'TPF0'
+  var
+    LSignature: UInt32;
+  begin
+    AStream.Position := 0;
+    var LReader := TReader.Create(AStream, AStream.Size);
+    try
+      LReader.Read(LSignature, SizeOf(LSignature));
+      Result := (LSignature = FilerSignature);
+      AStream.Position := 0;
+    finally
+      LReader.Free();
+    end;
+  end;
+
   function InternalReadComponent(const AResFile: string; const AInstance: TComponent): boolean;
   begin
     if AResFile.IsEmpty or not TFile.Exists(AResFile) then
       Exit(false);
 
-    var LStream := TFileStream.Create(AResFile, fmOpenRead);
+    var LInput := TFileStream.Create(AResFile, fmOpenRead);
     try
-      var LReader := TPyDfmReader.Create(Self, LStream, 4096);
-      try
-        LReader.ReadRootComponent(DelphiObject);
-      finally
-        LReader.Free;
+      //The current form file is a valid binary file
+      if HasValidSignature(LInput) then
+        ReadRootComponent(LInput)
+      else begin
+        var LOutput := TMemoryStream.Create();
+        try
+          //we assume the form file is a text file, then we try to get the bin info
+          ObjectTextToBinary(LInput, LOutput);
+          if HasValidSignature(LOutput) then
+            ReadRootComponent(LOutput)
+          else
+            Exit(false);
+        finally
+          LOutput.Free();
+        end;
       end;
     finally
-      LStream.Free();
+      LInput.Free();
     end;
     Result := true;
   end;
@@ -2673,9 +2711,9 @@ begin
   Result := System.TypeInfo(TCloseEvent);
 end;
 
-{ TPyDfmReader }
+{ TPyFormFileReader }
 
-constructor TPyDfmReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
+constructor TPyFormFileReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
   BufSize: Integer);
 begin
   inherited Create(Stream, BufSize);
@@ -2683,7 +2721,7 @@ begin
   FPyObject := APyObject;
 end;
 
-procedure TPyDfmReader.DoFind(Reader: TReader; const ClassName: string;
+procedure TPyFormFileReader.DoFind(Reader: TReader; const ClassName: string;
   var ComponentClass: TComponentClass);
 var
   LClass: TClass;
@@ -2712,7 +2750,7 @@ begin
   end;
 end;
 
-procedure TPyDfmReader.SetName(Component: TComponent; var Name: string);
+procedure TPyFormFileReader.SetName(Component: TComponent; var Name: string);
 var
   LPyKey: PPyObject;
 begin
