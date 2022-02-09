@@ -118,19 +118,6 @@ implementation
 uses
   System.Types, System.IOUtils, System.Rtti;
 
-type
-  TPyFormFileReader = class(TReader)
-  private
-    FPyObject: TPyDelphiObject;
-    procedure DoFind(Reader: TReader; const ClassName: string; var ComponentClass: TComponentClass);
-  protected
-    procedure SetName(Component: TComponent; var Name: string); override;
-  public
-    constructor Create(APyObject: TPyDelphiObject; Stream: TStream; BufSize: Integer);
-
-    function HasValidSignature(): boolean;
-  end;
-
 { Register the wrappers, the globals and the constants }
 type
   TFormsRegistration = class(TRegisteredUnit)
@@ -369,71 +356,9 @@ function TPyDelphiCommonCustomForm.LoadProps_Wrapper(
     end;
   end;
 
-  procedure ReadRootComponent(const AStream: TStream);
-  begin
-    AStream.Position := 0;
-    var LReader := TPyFormFileReader.Create(Self, AStream, 4096);
-    try
-      LReader.ReadRootComponent(DelphiObject);
-    finally
-      LReader.Free;
-    end;
-  end;
-
-  function HasValidSignature(const AStream: TStream): boolean;
-  const
-    FilerSignature: UInt32 = $30465054; // ($54, $50, $46, $30) 'TPF0'
-  var
-    LSignature: UInt32;
-  begin
-    AStream.Position := 0;
-    var LReader := TReader.Create(AStream, AStream.Size);
-    try
-      LReader.Read(LSignature, SizeOf(LSignature));
-      Result := (LSignature = FilerSignature);
-      AStream.Position := 0;
-    finally
-      LReader.Free();
-    end;
-  end;
-
-  function InternalReadComponent(const AResFile: string; const AInstance: TComponent): boolean;
-  begin
-    if AResFile.IsEmpty or not TFile.Exists(AResFile) then
-      Exit(false);
-
-    var LInput := TFileStream.Create(AResFile, fmOpenRead);
-    try
-      //The current form file is a valid binary file
-      if HasValidSignature(LInput) then
-        ReadRootComponent(LInput)
-      else begin
-        var LOutput := TMemoryStream.Create();
-        try
-          //we assume the form file is a text file, then we try to get the bin info
-          ObjectTextToBinary(LInput, LOutput);
-          if HasValidSignature(LOutput) then
-            ReadRootComponent(LOutput)
-          else
-            Exit(false);
-        finally
-          LOutput.Free();
-        end;
-      end;
-    finally
-      LInput.Free();
-    end;
-    Result := true;
-  end;
-
-  function InitComponent(): Boolean;
-  begin
-    Result := InternalReadComponent(FindResource(), DelphiObject);
-  end;
-
 begin
   Adjust(@Self);
-  if InitComponent() then
+  if InternalReadComponent(FindResource(), DelphiObject) then
     Result := GetPythonEngine().ReturnTrue
   else
     Result := GetPythonEngine().ReturnFalse;
@@ -538,75 +463,6 @@ end;
 procedure TPyDelphiScreen.SetDelphiObject(const Value: TScreen);
 begin
   inherited DelphiObject := Value;
-end;
-
-{ TPyFormFileReader }
-
-constructor TPyFormFileReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
-  BufSize: Integer);
-begin
-  inherited Create(Stream, BufSize);
-  OnFindComponentClass := DoFind;
-  FPyObject := APyObject;
-end;
-
-procedure TPyFormFileReader.DoFind(Reader: TReader; const ClassName: string;
-  var ComponentClass: TComponentClass);
-var
-  LClass: TClass;
-  LCtx: TRttiContext;
-  LType: TRttiType;
-begin
-  LClass := GetClass(ClassName);
-  if Assigned(LClass) and (LClass.InheritsFrom(TComponent)) then begin
-    ComponentClass := TComponentClass(LClass);
-    Exit;
-  end;
-
-  LCtx := TRttiContext.Create();
-  try
-    for LType in LCtx.GetTypes() do
-    begin
-      if LType.IsInstance and LType.Name.EndsWith(ClassName) then begin
-        if LType.AsInstance.MetaclassType.InheritsFrom(TComponent) then begin
-          ComponentClass := TComponentClass(LType.AsInstance.MetaclassType);
-          Break;
-        end;
-      end;
-    end;
-  finally
-    LCtx.Free();
-  end;
-end;
-
-function TPyFormFileReader.HasValidSignature: boolean;
-const
-  FilerSignature: UInt32 = $30465054; // ($54, $50, $46, $30) 'TPF0'
-var
-  LSignature: UInt32;
-begin
-  SetPosition(0);
-  try
-    Read(LSignature, SizeOf(LSignature));
-    Result := LSignature = FilerSignature;
-  finally
-    SetPosition(0);
-  end;
-end;
-
-procedure TPyFormFileReader.SetName(Component: TComponent; var Name: string);
-var
-  LPyKey: PPyObject;
-begin
-  inherited;
-  with GetPythonEngine() do begin
-    LPyKey := PyUnicodeFromString(Name);
-    try
-      PyObject_GenericSetAttr(FPyObject.GetSelf(), LPyKey, FPyObject.Wrap(Component));
-    finally
-      Py_XDecRef(LPyKey);
-    end;
-  end;
 end;
 
 Initialization
