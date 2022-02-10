@@ -55,6 +55,7 @@ contains
   WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas',
   WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas',
   WrapFmxMemo in '..\..\..\Source\fmx\WrapFmxMemo.pas',
-  WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas';
+  WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas',
+  WrapFmxListView in '..\..\..\Source\fmx\WrapFmxListView.pas';
 
 end.

@@ -14,6 +14,7 @@ uses
   WrapFmxStdCtrls,
   WrapFmxEdit,
   WrapFmxListBox,
+  WrapFmxListView,
   WrapFmxActnList,
   WrapFmxComCtrls,
   WrapFmxDialogs,
