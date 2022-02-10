@@ -56,7 +56,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyListView = class(TPyAppearanceListView)
+  TPyListView = class(TPyCustomListView)
 	private
 		function GetDelphiObject: TListView;
 		procedure SetDelphiObject(const Value: TListView);
