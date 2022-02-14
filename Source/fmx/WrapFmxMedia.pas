@@ -193,7 +193,6 @@ begin
 end;
 
 initialization
-
-RegisteredUnits.Add(TFMXMediaRegistration.Create());
+  RegisteredUnits.Add(TFMXMediaRegistration.Create());
 
 end.
