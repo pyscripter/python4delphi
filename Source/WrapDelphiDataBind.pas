@@ -3,7 +3,7 @@ unit WrapDelphiDataBind;
 interface
 
 uses
-  Data.Bind.Components, Data.Bind.ObjectScope,
+  Data.Bind.Components, Data.Bind.ObjectScope, Data.Bind.Controls,
   WrapDelphiClasses;
 
 type

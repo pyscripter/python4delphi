@@ -3,7 +3,7 @@ unit WrapFmxDataBind;
 interface
 
 uses
-  FMX.Bind.Navigator,
+  FMX.Bind.Navigator, FMX.Bind.Editors, Fmx.Bind.DBEngExt, Data.Bind.EngExt,
   WrapFmxActnList;
 
 type
