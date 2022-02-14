@@ -395,7 +395,7 @@ begin
         'Specifies the page currently displayed by the page control.', nil);
   {$IFNDEF FPC}
   PythonType.AddGetSet('Canvas', @TPyDelphiPageControl.Get_Canvas, nil,
-        'Gives access to the tab control�s canvas.', nil);
+        'Gives access to the tab control canvas.', nil);
   {$ENDIF FPC}
   PythonType.AddGetSet('PageCount', @TPyDelphiPageControl.Get_PageCount, nil,
         'Indicates the number of pages in the TPageControl object.', nil);

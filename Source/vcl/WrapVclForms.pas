@@ -1776,7 +1776,7 @@ begin
       'Indicates the current help file.', nil);
     {$ENDIF FPC}
     AddGetSet('ExeName', @TPyDelphiApplication.Get_ExeName, nil,
-      'Contains the file name of the application’s executable file including path information.', nil);
+      'Contains the file name of the application''s executable file including path information.', nil);
     {$IFNDEF FPC}
     AddGetSet('DialogHandle', @TPyDelphiApplication.Get_DialogHandle, @TPyDelphiApplication.Set_DialogHandle,
       'Provides a mechanism for using non-VCL dialog boxes in an application.', nil);

@@ -1,4 +1,4 @@
-{$REGION 'Licence'}
+﻿{$REGION 'Licence'}
 {
    Wrapper classes for FireDAC TFDTable and TFDQuery
    Original Code by https://github.com/hartmutdavid
@@ -1436,10 +1436,8 @@ begin
       else if l_sUpperKey = 'MODIFIED' then
         Result := VariantAsPyObject( l_oTable.Modified )
       else if l_sUpperKey = 'ISRANGED' then
-        // Erm�glicht das Ermitteln des aktuellen Bereichsfilterungsmodus.
         Result := VariantAsPyObject( l_oTable.IsRanged )
       else if l_sUpperKey = 'KEYEXCLUSIVE' then
-        // Ermittelt oder setzt die Einbeziehung der niedrigsten und h�chsten Werte in einen gefilterten Bereich.
         Result := VariantAsPyObject( l_oTable.KeyExclusive )
       else if l_sUpperKey = 'KEYFIELDCOUNT' then
         // Ermittelt oder setzt die Anzahl der in der Bereichsfilterung zu verwendenden Indexfelder
