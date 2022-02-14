@@ -4,7 +4,8 @@ unit WrapFmxMedia;
 interface
 
 uses
-  PythonEngine, WrapFmxTypes, FMX.Media, WrapDelphi, System.TypInfo;
+  System.TypInfo,  FMX.Media,
+  PythonEngine, WrapDelphi, WrapFmxTypes, WrapFmxControls;
 
 type
   TSampleBufferReadyEventHandler = class(TEventHandler)
@@ -26,6 +27,28 @@ type
     class procedure RegisterMethods(PythonType: TPythonType); override;
   public
     property DelphiObject: TCameraComponent read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
+  TPyDelphiMediaPlayer = class(TPyDelphiFmxObject)
+  private
+    function GetDelphiObject: TMediaPlayer;
+    procedure SetDelphiObject(const Value: TMediaPlayer);
+  public
+    class function DelphiObjectClass: TClass; override;
+  public
+    property DelphiObject: TMediaPlayer read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
+  TPyDelphiMediaPlayerControl = class(TPyDelphiControl)
+  private
+    function GetDelphiObject: TMediaPlayerControl;
+    procedure SetDelphiObject(const Value: TMediaPlayerControl);
+  public
+    class function DelphiObjectClass: TClass; override;
+  public
+    property DelphiObject: TMediaPlayerControl read GetDelphiObject
       write SetDelphiObject;
   end;
 
@@ -56,6 +79,8 @@ procedure TFMXMediaRegistration.RegisterWrappers(APyDelphiWrapper
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCameraComponent);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayer);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayerControl);
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TSampleBufferReadyEventHandler);
 end;
@@ -128,6 +153,41 @@ end;
 
 procedure TPyDelphiCameraComponent.SetDelphiObject
   (const Value: TCameraComponent);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiMediaPlayer }
+
+class function TPyDelphiMediaPlayer.DelphiObjectClass: TClass;
+begin
+  Result := TMediaPlayer;
+end;
+
+function TPyDelphiMediaPlayer.GetDelphiObject: TMediaPlayer;
+begin
+  Result := TMediaPlayer(inherited DelphiObject);
+end;
+
+procedure TPyDelphiMediaPlayer.SetDelphiObject(const Value: TMediaPlayer);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiMediaPlayerControl }
+
+class function TPyDelphiMediaPlayerControl.DelphiObjectClass: TClass;
+begin
+  Result := TMediaPlayerControl;
+end;
+
+function TPyDelphiMediaPlayerControl.GetDelphiObject: TMediaPlayerControl;
+begin
+  Result := TMediaPlayerControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiMediaPlayerControl.SetDelphiObject(
+  const Value: TMediaPlayerControl);
 begin
   inherited DelphiObject := Value;
 end;
