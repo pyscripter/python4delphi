@@ -1733,7 +1733,7 @@ begin
   with GetPythonEngine() do begin
     LPyKey := PyUnicodeFromString(Name);
     try
-      PyObject_GenericSetAttr(
+      PyObject_SetAttr(
         FPyObject.GetSelf(), LPyKey, FPyObject.Wrap(Component));
 
       if PyErr_Occurred <> nil then
