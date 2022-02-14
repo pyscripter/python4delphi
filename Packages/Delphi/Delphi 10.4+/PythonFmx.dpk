@@ -33,7 +33,8 @@ package PythonFmx;
 requires
   rtl,
   fmx,
-  Python;
+  Python,
+  bindcompfmx;
 
 contains
   FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas',
