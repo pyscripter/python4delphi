@@ -1709,6 +1709,9 @@ begin
           LPyPropName := PyUnicodeFromString(PropName);
           try
             PyObject_SetAttr(FPyObject.Wrap(FInstance), LPyPropName, LCallable);
+
+            if PyErr_Occurred <> nil then
+              CheckError(false);
           finally
             Py_XDecRef(LPyPropName);
           end;
@@ -1732,6 +1735,9 @@ begin
     try
       PyObject_GenericSetAttr(
         FPyObject.GetSelf(), LPyKey, FPyObject.Wrap(Component));
+
+      if PyErr_Occurred <> nil then
+        CheckError(false);
     finally
       Py_XDecRef(LPyKey);
     end;
