@@ -13,6 +13,7 @@ uses
   WrapDelphiTypes,
   WrapDelphiClasses,
   WrapDelphiWindows,
+  WrapDelphiDataBind,
   WrapActions,
   WrapVclControls,
   WrapVclGraphics,

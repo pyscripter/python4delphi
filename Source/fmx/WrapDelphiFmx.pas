@@ -10,6 +10,7 @@ uses
   {$IFDEF Windows}
   WrapDelphiWindows,
   {$ENDIF Windows}
+  WrapDelphiDataBind,
   WrapFmxTypes,
   WrapFmxStdCtrls,
   WrapFmxEdit,
@@ -27,6 +28,7 @@ uses
   WrapFmxMenus,
   WrapFmxStyles,
   WrapFmxMemo,
-  WrapFmxColors;
+  WrapFmxColors,
+  WrapFmxDataBind;
 
 end.
