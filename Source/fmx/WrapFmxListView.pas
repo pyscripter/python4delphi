@@ -3,10 +3,11 @@ unit WrapFmxListView;
 interface
 
 uses
-	FMX.ListView, WrapFmxControls, PythonEngine;
+	System.TypInfo, FMX.ListView, FMX.ListView.Types, FMX.ListView.Appearances,
+  PythonEngine, WrapDelphi, WrapFmxControls;
 
 type
-  TPyAdapterListView = class(TPyDelphiStyledControl)
+  TPyDelphiAdapterListView = class(TPyDelphiStyledControl)
 	private
 		function GetDelphiObject: TAdapterListView;
 		procedure SetDelphiObject(const Value: TAdapterListView);
@@ -16,7 +17,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyListViewBase = class(TPyAdapterListView)
+  TPyDelphiListViewBase = class(TPyDelphiAdapterListView)
 	private
 		function GetDelphiObject: TListViewBase;
 		procedure SetDelphiObject(const Value: TListViewBase);
@@ -26,7 +27,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyPresentedListView = class(TPyListViewBase)
+  TPyDelphiPresentedListView = class(TPyDelphiListViewBase)
 	private
 		function GetDelphiObject: TPresentedListView;
 		procedure SetDelphiObject(const Value: TPresentedListView);
@@ -36,7 +37,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyAppearanceListView = class(TPyPresentedListView)
+  TPyDelphiAppearanceListView = class(TPyDelphiPresentedListView)
 	private
 		function GetDelphiObject: TAppearanceListView;
 		procedure SetDelphiObject(const Value: TAppearanceListView);
@@ -46,7 +47,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyCustomListView = class(TPyAppearanceListView)
+  TPyDelphiCustomListView = class(TPyDelphiAppearanceListView)
 	private
 		function GetDelphiObject: TCustomListView;
 		procedure SetDelphiObject(const Value: TCustomListView);
@@ -56,7 +57,7 @@ type
 			write SetDelphiObject;
 	end;
 
-  TPyListView = class(TPyCustomListView)
+  TPyDelphiListView = class(TPyDelphiCustomListView)
 	private
 		function GetDelphiObject: TListView;
 		procedure SetDelphiObject(const Value: TListView);
@@ -66,10 +67,17 @@ type
 			write SetDelphiObject;
 	end;
 
-implementation
+  //Events
+  TItemEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(const Sender: TObject; const AItem: TListViewItem);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
 
-uses
-	WrapDelphi;
+implementation
 
 { Register the wrappers, the globals and the constants }
 type
@@ -96,115 +104,161 @@ procedure TListViewRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyAdapterListView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyListViewBase);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyPresentedListView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyAppearanceListView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyCustomListView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAdapterListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListViewBase);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAppearanceListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListView);
+
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TItemEventHandler);
 end;
 
-{ TPyAdapterListView }
+{ TPyDelphiAdapterListView }
 
-class function TPyAdapterListView.DelphiObjectClass: TClass;
+class function TPyDelphiAdapterListView.DelphiObjectClass: TClass;
 begin
 	Result := TAdapterListView;
 end;
 
-function TPyAdapterListView.GetDelphiObject: TAdapterListView;
+function TPyDelphiAdapterListView.GetDelphiObject: TAdapterListView;
 begin
 	Result := TAdapterListView(inherited DelphiObject);
 end;
 
-procedure TPyAdapterListView.SetDelphiObject(const Value: TAdapterListView);
+procedure TPyDelphiAdapterListView.SetDelphiObject(const Value: TAdapterListView);
 begin
 	inherited DelphiObject := Value;
 end;
 
-{ TPyListViewBase }
+{ TPyDelphiListViewBase }
 
-class function TPyListViewBase.DelphiObjectClass: TClass;
+class function TPyDelphiListViewBase.DelphiObjectClass: TClass;
 begin
 	Result := TListViewBase;
 end;
 
-function TPyListViewBase.GetDelphiObject: TListViewBase;
+function TPyDelphiListViewBase.GetDelphiObject: TListViewBase;
 begin
 	Result := TListViewBase(inherited DelphiObject);
 end;
 
-procedure TPyListViewBase.SetDelphiObject(const Value: TListViewBase);
+procedure TPyDelphiListViewBase.SetDelphiObject(const Value: TListViewBase);
 begin
 	inherited DelphiObject := Value;
 end;
 
-{ TPyPresentedListView }
+{ TPyDelphiPresentedListView }
 
-class function TPyPresentedListView.DelphiObjectClass: TClass;
+class function TPyDelphiPresentedListView.DelphiObjectClass: TClass;
 begin
 	Result := TPresentedListView;
 end;
 
-function TPyPresentedListView.GetDelphiObject: TPresentedListView;
+function TPyDelphiPresentedListView.GetDelphiObject: TPresentedListView;
 begin
 	Result := TPresentedListView(inherited DelphiObject);
 end;
 
-procedure TPyPresentedListView.SetDelphiObject(const Value: TPresentedListView);
+procedure TPyDelphiPresentedListView.SetDelphiObject(const Value: TPresentedListView);
 begin
 	inherited DelphiObject := Value;
 end;
 
-{ TPyAppearanceListView }
+{ TPyDelphiAppearanceListView }
 
-class function TPyAppearanceListView.DelphiObjectClass: TClass;
+class function TPyDelphiAppearanceListView.DelphiObjectClass: TClass;
 begin
 	Result := TAppearanceListView;
 end;
 
-function TPyAppearanceListView.GetDelphiObject: TAppearanceListView;
+function TPyDelphiAppearanceListView.GetDelphiObject: TAppearanceListView;
 begin
 	Result := TAppearanceListView(inherited DelphiObject);
 end;
 
-procedure TPyAppearanceListView.SetDelphiObject(
+procedure TPyDelphiAppearanceListView.SetDelphiObject(
   const Value: TAppearanceListView);
 begin
 	inherited DelphiObject := Value;
 end;
 
-{ TPyCustomListView }
+{ TPyDelphiCustomListView }
 
-class function TPyCustomListView.DelphiObjectClass: TClass;
+class function TPyDelphiCustomListView.DelphiObjectClass: TClass;
 begin
 	Result := TCustomListView;
 end;
 
-function TPyCustomListView.GetDelphiObject: TCustomListView;
+function TPyDelphiCustomListView.GetDelphiObject: TCustomListView;
 begin
 	Result := TCustomListView(inherited DelphiObject);
 end;
 
-procedure TPyCustomListView.SetDelphiObject(const Value: TCustomListView);
+procedure TPyDelphiCustomListView.SetDelphiObject(const Value: TCustomListView);
 begin
 	inherited DelphiObject := Value;
 end;
 
-{ TPyListView }
+{ TPyDelphiListView }
 
-class function TPyListView.DelphiObjectClass: TClass;
+class function TPyDelphiListView.DelphiObjectClass: TClass;
 begin
 	Result := TListView;
 end;
 
-function TPyListView.GetDelphiObject: TListView;
+function TPyDelphiListView.GetDelphiObject: TListView;
 begin
 	Result := TListView(inherited DelphiObject);
 end;
 
-procedure TPyListView.SetDelphiObject(const Value: TListView);
+procedure TPyDelphiListView.SetDelphiObject(const Value: TListView);
 begin
 	inherited DelphiObject := Value;
+end;
+
+{ TItemEventHandler }
+
+constructor TItemEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TItemEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+class function TItemEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TAppearanceListView.TItemEvent);
+end;
+
+procedure TItemEventHandler.DoEvent(const Sender: TObject;
+  const AItem: TListViewItem);
+var
+  LPyObject: PPyObject;
+  LPyItem: PPyObject;
+  LPyTuple: PPyObject;
+  LPyResult: PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyItem := PyDelphiWrapper.Wrap(AItem);
+      LPyTuple := PyTuple_New(2);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyItem);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        Py_XDECREF(LPyResult);
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
 end;
 
 initialization
