@@ -1525,7 +1525,6 @@ begin
         Result := 0;
       end
       else if l_sUpperKey = 'KEYEXCLUSIVE' then begin
-        // Ermittelt oder setzt die Einbeziehung der niedrigsten und höchsten Werte in einen gefilterten Bereich.
         l_oTable.KeyExclusive := PyObjectAsVariant( value );
         Result := 0;
       end
