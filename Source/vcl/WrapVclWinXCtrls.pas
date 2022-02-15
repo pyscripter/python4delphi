@@ -25,6 +25,24 @@ type
     property DelphiObject: TActivityIndicator read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomCustomToggleSwitch = class (TPyDelphiCustomControl)
+  private
+    function GetDelphiObject: TCustomToggleSwitch;
+    procedure SetDelphiObject(const Value: TCustomToggleSwitch);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TCustomToggleSwitch read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiToggleSwitch = class (TPyDelphiCustomCustomToggleSwitch)
+  private
+    function GetDelphiObject: TToggleSwitch;
+    procedure SetDelphiObject(const Value: TToggleSwitch);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TToggleSwitch read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -57,6 +75,8 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomActivityIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActivityIndicator);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
 end;
 
 { TPyDelphiCustomActivityIndicator }
@@ -91,6 +111,41 @@ end;
 
 procedure TPyDelphiActivityIndicator.SetDelphiObject(
   const Value: TActivityIndicator);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomCustomToggleSwitch }
+
+class function TPyDelphiCustomCustomToggleSwitch.DelphiObjectClass: TClass;
+begin
+  Result := TCustomToggleSwitch;
+end;
+
+function TPyDelphiCustomCustomToggleSwitch.GetDelphiObject: TCustomToggleSwitch;
+begin
+  Result := TCustomToggleSwitch(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomCustomToggleSwitch.SetDelphiObject(
+  const Value: TCustomToggleSwitch);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiToggleSwitch }
+
+class function TPyDelphiToggleSwitch.DelphiObjectClass: TClass;
+begin
+  Result := TToggleSwitch;
+end;
+
+function TPyDelphiToggleSwitch.GetDelphiObject: TToggleSwitch;
+begin
+  Result := TToggleSwitch(inherited DelphiObject);
+end;
+
+procedure TPyDelphiToggleSwitch.SetDelphiObject(const Value: TToggleSwitch);
 begin
   inherited DelphiObject := Value;
 end;

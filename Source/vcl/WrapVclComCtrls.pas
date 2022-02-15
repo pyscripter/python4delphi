@@ -1,4 +1,4 @@
-{$I ..\Definition.Inc}
+﻿{$I ..\Definition.Inc}
 
 unit WrapVclComCtrls;
 
@@ -159,6 +159,24 @@ type
       write SetDelphiObject;
   end;
 
+  TPyDelphiCustomCustomTabControl = class (TPyDelphiWinControl)
+  private
+    function GetDelphiObject: TCustomTabControl;
+    procedure SetDelphiObject(const Value: TCustomTabControl);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TCustomTabControl read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiCustomTabControl = class (TPyDelphiCustomCustomTabControl)
+  private
+    function GetDelphiObject: TTabControl;
+    procedure SetDelphiObject(const Value: TTabControl);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TTabControl read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -197,6 +215,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolButton);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolbar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomTabControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTabControl);
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTabChangingEventHandler);
 end;
@@ -805,6 +825,41 @@ begin
 end;
 
 procedure TPyDelphiToolbar.SetDelphiObject(const Value: TToolbar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomCustomTabControl }
+
+class function TPyDelphiCustomCustomTabControl.DelphiObjectClass: TClass;
+begin
+  Result := TCustomTabControl;
+end;
+
+function TPyDelphiCustomCustomTabControl.GetDelphiObject: TCustomTabControl;
+begin
+  Result := TCustomTabControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomCustomTabControl.SetDelphiObject(
+  const Value: TCustomTabControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomTabControl }
+
+class function TPyDelphiCustomTabControl.DelphiObjectClass: TClass;
+begin
+  Result := TTabControl;
+end;
+
+function TPyDelphiCustomTabControl.GetDelphiObject: TTabControl;
+begin
+  Result := TTabControl(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomTabControl.SetDelphiObject(const Value: TTabControl);
 begin
   inherited DelphiObject := Value;
 end;

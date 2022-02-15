@@ -53,6 +53,10 @@ contains
   WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas',
   WrapFmxMedia in '..\..\..\Source\fmx\WrapFmxMedia.pas',
   WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas',
-  WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas';
+  WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas',
+  WrapFmxMemo in '..\..\..\Source\fmx\WrapFmxMemo.pas',
+  WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas',
+  WrapFmxListView in '..\..\..\Source\fmx\WrapFmxListView.pas',
+  WrapFmxDataBind in '..\..\..\Source\fmx\WrapFmxDataBind.pas';
 
 end.

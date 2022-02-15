@@ -13,6 +13,7 @@ uses
   WrapDelphiTypes,
   WrapDelphiClasses,
   WrapDelphiWindows,
+  WrapDelphiDataBind,
   WrapActions,
   WrapVclControls,
   WrapVclGraphics,
@@ -26,6 +27,7 @@ uses
   WrapVclGrids,
   WrapVclSamplesSpin,
   WrapVclWinXCtrls,
-  WrapVclThemes;
+  WrapVclThemes,
+  WrapVclDialogs;
 
 end.

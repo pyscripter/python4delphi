@@ -44,10 +44,14 @@ type
     function GetDelphiObject: TCommonCustomForm;
     procedure SetDelphiObject(const Value: TCommonCustomForm);
     function HasFormRes(const AClass: TClass): boolean;
+  protected
+    //Load properties from .pydfm file
+    function LoadProps_Wrapper(args : PPyObject) : PPyObject; cdecl;
   public
     function CreateComponent(AOwner: TComponent): TComponent; override;
     // Class methods
     class function DelphiObjectClass: TClass; override;
+    class procedure RegisterMethods(PythonType: TPythonType); override;
     // Properties
     property DelphiObject: TCommonCustomForm read GetDelphiObject write SetDelphiObject;
   end;
@@ -112,7 +116,7 @@ type
 implementation
 
 uses
-  System.Types;
+  System.Types, System.IOUtils, System.Rtti;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -337,6 +341,38 @@ begin
     PChar(AClass.ClassName), PChar(RT_RCDATA)) <> 0;
 end;
 
+function TPyDelphiCommonCustomForm.LoadProps_Wrapper(
+  args: PPyObject): PPyObject;
+
+  function FindResource(): string;
+  var
+    LStr: PAnsiChar;
+  begin
+    with GetPythonEngine() do begin
+      if PyArg_ParseTuple(args, 's:LoadProps', @LStr) <> 0 then begin
+        Result := string(LStr);
+      end else
+        Result := String.Empty;
+    end;
+  end;
+
+begin
+  Adjust(@Self);
+  if InternalReadComponent(FindResource(), DelphiObject) then
+    Result := GetPythonEngine().ReturnTrue
+  else
+    Result := GetPythonEngine().ReturnFalse;
+end;
+
+class procedure TPyDelphiCommonCustomForm.RegisterMethods(
+  PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddMethod('LoadProps', @TPyDelphiCustomForm.LoadProps_Wrapper,
+    'TCommonCustomForm.LoadProps()'#10 +
+    'Load properties from a .pydfm file');
+end;
+
 procedure TPyDelphiCommonCustomForm.SetDelphiObject(
   const Value: TCommonCustomForm);
 begin
@@ -429,7 +465,7 @@ begin
   inherited DelphiObject := Value;
 end;
 
-initialization
+Initialization
   RegisteredUnits.Add(TFormsRegistration.Create);
 
 end.

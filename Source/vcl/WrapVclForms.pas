@@ -43,6 +43,8 @@ type
     function CloseQuery_Wrapper(args: PPyObject): PPyObject; cdecl;
     function ShowModal_Wrapper(args: PPyObject): PPyObject; cdecl;
     function Release_Wrapper(args : PPyObject) : PPyObject; cdecl;
+    //Load properties from .pydfm file
+    function LoadProps_Wrapper(args : PPyObject) : PPyObject; cdecl;
     // Property Getters
     function Get_ModalResult(AContext : Pointer) : PPyObject; cdecl;
     // Property Setters
@@ -365,7 +367,7 @@ type
 implementation
 
 uses
-  WrapDelphiTypes;
+  WrapDelphiTypes, System.IOUtils, System.Rtti;
 
 { Global Functions }
 function FreeConsole_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
@@ -550,6 +552,9 @@ begin
   PythonType.AddMethod('Release', @TPyDelphiCustomForm.Release_Wrapper,
     'TForm.Release()'#10 +
     'Releases (destroys) the wrapped Form');
+  PythonType.AddMethod('LoadProps', @TPyDelphiCustomForm.LoadProps_Wrapper,
+    'TForm.LoadProps()'#10 +
+    'Load properties from a .pydfm file');
 end;
 
 class function TPyDelphiCustomForm.DelphiObjectClass: TClass;
@@ -561,6 +566,28 @@ function TPyDelphiCustomForm.Get_ModalResult(AContext: Pointer): PPyObject;
 begin
   Adjust(@Self);
   Result := GetPythonEngine.PyLong_FromLong(DelphiObject.ModalResult);
+end;
+
+function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
+
+  function FindResource(): string;
+  var
+    LStr: PAnsiChar;
+  begin
+    with GetPythonEngine() do begin
+      if PyArg_ParseTuple(args, 's:LoadProps', @LStr) <> 0 then begin
+        Result := string(LStr);
+      end else
+        Result := String.Empty;
+    end;
+  end;
+
+begin
+  Adjust(@Self);
+  if InternalReadComponent(FindResource(), DelphiObject) then
+    Result := GetPythonEngine().ReturnTrue
+  else
+    Result := GetPythonEngine().ReturnFalse;
 end;
 
 function TPyDelphiCustomForm.Set_ModalResult(AValue: PPyObject;

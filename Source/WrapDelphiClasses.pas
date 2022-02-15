@@ -107,6 +107,8 @@ type
     function  CreateComponent(AOwner : TComponent) : TComponent; virtual;
     procedure SubscribeToFreeNotification; override;
     procedure UnSubscribeToFreeNotification; override;
+    function InternalReadComponent(const AResFile: string;
+      const AInstance: TComponent): boolean; virtual;
     // Exposed Methods
     function GetParentComponent_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HasParent_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -242,7 +244,20 @@ type
 implementation
 
 uses
-  TypInfo;
+  TypInfo, System.IOUtils, System.Rtti;
+
+type
+  TPyReader = class(TReader)
+  private
+    FPyObject: TPyDelphiObject;
+    FInstance: TComponent;
+    procedure DoFind(Reader: TReader; const ClassName: string; var ComponentClass: TComponentClass);
+  protected
+    procedure SetName(Component: TComponent; var Name: string); override;
+    function FindMethod(Root: TComponent; const AMethodName: string): Pointer; override;
+  public
+    constructor Create(APyObject: TPyDelphiObject; Stream: TStream; BufSize: Integer);
+  end;
 
 { Register the wrappers, the globals and the constants }
 type
@@ -875,6 +890,65 @@ begin
     end else
       Result := nil;
   end;
+end;
+
+function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
+  const AInstance: TComponent): boolean;
+
+  procedure ReadRootComponent(const AStream: TStream);
+  begin
+    AStream.Position := 0;
+    var LReader := TPyReader.Create(Self, AStream, 4096);
+    try
+      LReader.ReadRootComponent(DelphiObject);
+    finally
+      LReader.Free;
+    end;
+  end;
+
+  function HasValidSignature(const AStream: TStream): boolean;
+  const
+    FilerSignature: UInt32 = $30465054; // ($54, $50, $46, $30) 'TPF0'
+  var
+    LSignature: UInt32;
+  begin
+    AStream.Position := 0;
+    var LReader := TReader.Create(AStream, AStream.Size);
+    try
+      LReader.Read(LSignature, SizeOf(LSignature));
+      Result := (LSignature = FilerSignature);
+      AStream.Position := 0;
+    finally
+      LReader.Free();
+    end;
+  end;
+
+begin
+  if AResFile.IsEmpty or not TFile.Exists(AResFile) then
+    Exit(false);
+
+  var LInput := TFileStream.Create(AResFile, fmOpenRead);
+  try
+    //The current form file is a valid binary file
+    if HasValidSignature(LInput) then
+      ReadRootComponent(LInput)
+    else begin
+      var LOutput := TMemoryStream.Create();
+      try
+        //we assume the form file is a text file, then we try to get the bin info
+        ObjectTextToBinary(LInput, LOutput);
+        if HasValidSignature(LOutput) then
+          ReadRootComponent(LOutput)
+        else
+          Exit(false);
+      finally
+        LOutput.Free();
+      end;
+    end;
+  finally
+    LInput.Free();
+  end;
+  Result := true;
 end;
 
 function TPyDelphiComponent.GetAttrO(key: PPyObject): PPyObject;
@@ -1573,6 +1647,102 @@ begin
     else
       Result := -1;
   end;
+end;
+
+{ TPyReader }
+
+constructor TPyReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
+  BufSize: Integer);
+begin
+  inherited Create(Stream, BufSize);
+  OnFindComponentClass := DoFind;
+  FPyObject := APyObject;
+  FInstance := APyObject.DelphiObject as TComponent;
+end;
+
+procedure TPyReader.DoFind(Reader: TReader; const ClassName: string;
+  var ComponentClass: TComponentClass);
+var
+  LClass: TClass;
+  LCtx: TRttiContext;
+  LType: TRttiType;
+begin
+  LClass := GetClass(ClassName);
+  if Assigned(LClass) and (LClass.InheritsFrom(TComponent)) then begin
+    ComponentClass := TComponentClass(LClass);
+    Exit;
+  end;
+
+  LCtx := TRttiContext.Create();
+  try
+    for LType in LCtx.GetTypes() do
+    begin
+      if LType.IsInstance and LType.Name.EndsWith(ClassName) then begin
+        if LType.AsInstance.MetaclassType.InheritsFrom(TComponent) then begin
+          ComponentClass := TComponentClass(LType.AsInstance.MetaclassType);
+          Break;
+        end;
+      end;
+    end;
+  finally
+    LCtx.Free();
+  end;
+end;
+
+function TPyReader.FindMethod(Root: TComponent;
+  const AMethodName: string): Pointer;
+var
+  LPyMethodName: PPyObject;
+  LPyPropName: PPyObject;
+  LCallable: PPyObject;
+begin
+  Result := nil;
+  if Assigned(GetPropInfo(FInstance, PropName)) then begin
+    with GetPythonEngine() do begin
+      LPyMethodName := PyUnicodeFromString(AMethodName);
+      try
+        LCallable := FPyObject.GetAttrO(LPyMethodName);
+        try
+          if not Assigned(LCallable) then
+            Exit();
+
+          LPyPropName := PyUnicodeFromString(PropName);
+          try
+            PyObject_SetAttr(FPyObject.Wrap(FInstance), LPyPropName, LCallable);
+
+            if PyErr_Occurred <> nil then
+              CheckError(false);
+          finally
+            Py_XDecRef(LPyPropName);
+          end;
+        finally
+          Py_XDecRef(LCallable);
+        end;
+      finally
+        Py_XDecRef(LPyMethodName);
+      end;
+    end;
+  end;
+end;
+
+procedure TPyReader.SetName(Component: TComponent; var Name: string);
+var
+  LPyKey: PPyObject;
+begin
+  inherited;
+  with GetPythonEngine() do begin
+    LPyKey := PyUnicodeFromString(Name);
+    try
+      PyObject_GenericSetAttr(
+        FPyObject.GetSelf(), LPyKey, FPyObject.Wrap(Component));
+
+      if PyErr_Occurred <> nil then
+        CheckError(false);
+    finally
+      Py_XDecRef(LPyKey);
+    end;
+  end;
+  FInstance := Component;
 end;
 
 initialization

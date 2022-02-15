@@ -921,8 +921,8 @@ resourcestring
   rs_NotPublished = 'Event handling is available only for published properties';
   rs_ExpectedObject = 'Expected a Pascal object';
   rs_ExpectedRecord = 'Expected a Pascal record';
-  rs_ExpectedInterface = 'Expected a Pascal interface';
   rs_ExpectedClass = 'Expected a Pascal class';
+  rs_ExpectedInterface = 'Expected a Pascal interface';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
   rs_ErrEventNoSuport = 'Class %s does not support events because it must '+

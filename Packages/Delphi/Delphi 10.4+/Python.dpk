@@ -34,7 +34,9 @@ requires
   dbrtl,
   FireDAC,
   FireDACCommonDriver,
-  FireDACCommon;
+  FireDACCommon,
+  bindengine,
+  bindcomp;
 
 contains
   MethodCallBack in '..\..\..\Source\MethodCallBack.pas',
@@ -46,6 +48,7 @@ contains
   WrapDelphiTypes in '..\..\..\Source\WrapDelphiTypes.pas',
   WrapDelphiWindows in '..\..\..\Source\WrapDelphiWindows.pas',
   WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas',
-  WrapActions in '..\..\..\Source\WrapActions.pas';
+  WrapActions in '..\..\..\Source\WrapActions.pas',
+  WrapDelphiDataBind in '..\..\..\Source\WrapDelphiDataBind.pas';
 
 end.

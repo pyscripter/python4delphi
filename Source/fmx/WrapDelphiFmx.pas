@@ -10,11 +10,12 @@ uses
   {$IFDEF Windows}
   WrapDelphiWindows,
   {$ENDIF Windows}
-  WrapFireDac,
+  WrapDelphiDataBind,
   WrapFmxTypes,
   WrapFmxStdCtrls,
   WrapFmxEdit,
   WrapFmxListBox,
+  WrapFmxListView,
   WrapFmxActnList,
   WrapFmxComCtrls,
   WrapFmxDialogs,
@@ -25,6 +26,9 @@ uses
   WrapFmxGrids,
   WrapFmxMedia,
   WrapFmxMenus,
-  WrapFmxStyles;
+  WrapFmxStyles,
+  WrapFmxMemo,
+  WrapFmxColors,
+  WrapFmxDataBind;
 
 end.
