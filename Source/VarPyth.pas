@@ -276,9 +276,9 @@ type
     Reserved1, Reserved2, Reserved3: Word;
     VPython: TPythonData;
     Reserved4: Integer;
-    {$IFDEF CPUX64}
+    {$IF DEFINED(CPUX64) OR DEFINED(CPU64BITS)}
     Reserved5: Integer;  // size is 24 bytes in 64bit
-    {$ENDIF CPUX64}
+    {$IFEND}
   end;
 
 
@@ -1069,14 +1069,13 @@ begin
         varVariant:
           begin
             PVarParm^.VType := varEmpty;
-{$IFDEF CPUX64}
-
-//          PVariant(PVarParm)^ := PVariant(Params^)^;
+            {$IFDEF CPU64BITS}
+            //PVariant(PVarParm)^ := PVariant(Params^)^;
             PVariant(PVarParm)^ := VarArgGetValue(VAList, PVariant)^;
-{$ELSE}
-//          PVariant(PVarParm)^ := PVariant(Params)^;
+            {$ELSE}
+            //PVariant(PVarParm)^ := PVariant(Params)^;
             PVariant(PVarParm)^ := VarArgGetValue(VAList, Variant);
-{$ENDIF}
+            {$ENDIF}
           end;
         varUnknown:   PVarParm^.VUnknown := VarArgGetValue(VAList, Pointer);
         varSmallint:  PVarParm^.VSmallInt := VarArgGetValue(VAList, SmallInt);
@@ -1252,7 +1251,7 @@ begin
         varVariant:
         begin
           PVarParam^.VType := varEmpty;
-          {$IFDEF CPUX64}
+          {$IFDEF CPU64BITS}
           PVariant(PVarParam)^ := PVariant(Params^)^;
           {$ELSE}
           PVariant(PVarParam)^ := PVariant(Params^)^; //it arrives here as a pointer for 32bits also
@@ -1325,16 +1324,16 @@ begin
       end;
       case ArgType of
         varError: ; // don't increase param pointer
-{$IFDEF CPUARM}
-      varDouble, varCurrency, varDate, varInt64, varUInt64:
-        Inc(PByte(Params), 8);
-      varVariant:
-        {$IFDEF CPUX64}
+        {$IFDEF CPUARM}
+        varDouble, varCurrency, varDate, varInt64, varUInt64:
+          Inc(PByte(Params), 8);
+        varVariant:
+        {$IFDEF CPU64BITS}
         Inc(PByte(Params), SizeOf(Variant));
         {$ELSE}
         Inc(PByte(Params), SizeOf(Pointer));
-        {$ENDIF CPUX64}
-{$ENDIF CPUARM}
+        {$ENDIF}
+        {$ENDIF CPUARM}
       else
         Inc(PByte(Params), SizeOf(Pointer));
       end;
@@ -1426,14 +1425,13 @@ begin
         varVariant:
           begin
             PVarParm^.VType := varEmpty;
-{$IFDEF CPUX64}
-
-//          PVariant(PVarParm)^ := PVariant(Params^)^;
+            {$IFDEF CPU64BITS}
+            //PVariant(PVarParm)^ := PVariant(Params^)^;
             PVariant(PVarParm)^ := VarArgGetValue(VAList, PVariant)^;
-{$ELSE}
-//          PVariant(PVarParm)^ := PVariant(Params)^;
+            {$ELSE}
+            //PVariant(PVarParm)^ := PVariant(Params)^;
             PVariant(PVarParm)^ := VarArgGetValue(VAList, Variant);
-{$ENDIF}
+            {$ENDIF}
           end;
         varUnknown:   PVarParm^.VUnknown := VarArgGetValue(VAList, Pointer);
         varSmallint:  PVarParm^.VSmallInt := VarArgGetValue(VAList, SmallInt);
