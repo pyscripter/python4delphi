@@ -1186,6 +1186,7 @@ type
     FOnBeforeLoad       : TNotifyEvent;
     FOnAfterLoad        : TNotifyEvent;
     FOnBeforeUnload     : TNotifyEvent;
+    FInExtensionModule   : Boolean;
 
     function  Import(const funcname: AnsiString; canFail : Boolean = True): Pointer;
     procedure Loaded; override;
@@ -1205,6 +1206,7 @@ type
     procedure OpenDll(const aDllName : string);
     function  IsHandleValid : Boolean;
     procedure LoadDll;
+    procedure LoadDllInExtensionModule;
     procedure UnloadDll;
     procedure Quit;
 
@@ -2998,7 +3000,7 @@ var
 begin
   Result := DllPath;
 
-  if DLLPath = '' then begin
+  if (DLLPath = '') and not FInExtensionModule then begin
     {$IFDEF MSWINDOWS}
     IsPythonVersionRegistered(RegVersion, Result, AllUserInstall);
     {$ENDIF}
@@ -3104,6 +3106,12 @@ end;
 procedure TDynamicDll.LoadDll;
 begin
   OpenDll( DllName );
+end;
+
+procedure TDynamicDll.LoadDllInExtensionModule;
+begin
+  FInExtensionModule := True;
+  LoadDLL;
 end;
 
 procedure TDynamicDll.UnloadDll;
@@ -4243,28 +4251,34 @@ begin
     raise Exception.Create('There is already one instance of TPythonEngine running' );
 
   gPythonEngine := Self;
-  CheckRegistry;
-  if Assigned(Py_SetProgramName) and (ProgramName <> '') then
-    Py_SetProgramName(PWCharT(FProgramName));
-  AssignPyFlags;
-  if Assigned(Py_SetPythonHome) and (PythonHome <> '') then
-    Py_SetPythonHome(PWCharT(FPythonHome));
-  if Assigned(Py_SetPath) and (PythonPath <> '') then
-    Py_SetPath(PWCharT(FPythonPath));
-  Py_Initialize;
-  if Assigned(Py_IsInitialized) then
-    FInitialized := Py_IsInitialized() <> 0
-  else
-    FInitialized := True;
+
   FIORedirected := False;
-  InitSysPath;
-  SetProgramArgs;
+  if FInExtensionModule then
+    FInitialized := True
+  else
+  begin
+    CheckRegistry;
+    if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
+      Py_SetProgramName(PWCharT(FProgramName));
+    AssignPyFlags;
+    if Length(FPythonHome) > 0 then
+      Py_SetPythonHome(PWCharT(FPythonHome));
+    Py_Initialize;
+    if Assigned(Py_IsInitialized) then
+      FInitialized := Py_IsInitialized() <> 0
+    else
+      FInitialized := True;
+    InitSysPath;
+    SetProgramArgs;
+    if InitThreads and Assigned(PyEval_InitThreads) then
+      PyEval_InitThreads;
+    if RedirectIO and Assigned(FIO) then
+      DoRedirectIO;
+  end;
+
   GetTimeStructType;
   GetDateTimeTypes;
-  if InitThreads and Assigned(PyEval_InitThreads) then
-    PyEval_InitThreads;
-  if RedirectIO and Assigned(FIO) then
-    DoRedirectIO;
+
   for i := 0 to ClientCount - 1 do
     with Clients[i] do
       if not Initialized then

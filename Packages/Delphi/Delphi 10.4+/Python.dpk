@@ -49,7 +49,6 @@ contains
   WrapDelphiWindows in '..\..\..\Source\WrapDelphiWindows.pas',
   WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas',
   WrapActions in '..\..\..\Source\WrapActions.pas',
-  WrapActionList in '..\..\..\Source\WrapActionList.pas',
   WrapDelphiDataBind in '..\..\..\Source\WrapDelphiDataBind.pas';
 
 end.

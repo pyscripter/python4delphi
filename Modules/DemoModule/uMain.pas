@@ -50,16 +50,14 @@ begin
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
     gEngine.UseLastKnownVersion := False;
-    // Adapt to the desired python version
-    gEngine.RegVersion := '3.8';
-    gEngine.DllName := 'python38.dll';
+    gEngine.UseLastKnownVersion := True;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
     gModule.ModuleName := 'DemoModule';
     gModule.AddMethod('is_prime', delphi_is_prime, 'is_prime(n) -> bool' );
 
-    gEngine.LoadDll;
+    gEngine.LoadDllInExtensionModule;
   except
   end;
   Result := gModule.Module;
