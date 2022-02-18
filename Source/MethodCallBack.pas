@@ -155,6 +155,9 @@ procedure GetCodeMem(var ptr: PByte; size: integer);
 var
   page: PCodeMemPage;
   block: PCodeMemBlock;
+  {$IFNDEF MSWINDOWS}
+  flags: integer;
+  {$ENDIF}
 begin
   //---allocates Block from executable memory
   // executable memory is requested in pages via VirtualAlloc
@@ -178,37 +181,40 @@ begin
       ptr := nil;
       exit;
     end;
-    {$IFDEF APPLE_SILICON}
-      {
+    {
         macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
         rejects a permission change from NONE -> RWX, resulting a "Permission
         Denied" error.
         Solution: give RW permission, make memory changes, then change RW to X
-      }
-      if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
-        raise EMProtectError.CreateFmt('MProtect error: %s', [
-          SysErrorMessage(GetLastError())]);
+    }
+    {$IF DEFINED(OSX) AND DEFINED(CPUARM64)}
+    flags := PROT_READ or PROT_WRITE;
     {$ELSE}
-      mprotect(page, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC);
-	  {$ENDIF}
+    flags := PROT_READ or PROT_WRITE or PROT_EXEC;
+    {$IFEND}
+    if mprotect(page, PageSize, flags) <> 0 then
+      raise EMProtectError.CreateFmt('MProtect error: %s', [
+        SysErrorMessage(GetLastError())]);
   {$ENDIF}
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
     // init pointer to end of page
     page^.CodeBlocks:=Pointer(PtrCalcType(page) + PageSize);
+  {$IF DEFINED(OSX) AND DEFINED(CPUARM64)}
   end else begin
-    {$IFDEF APPLE_SILICON}
-      {
-        macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
-        rejects a permission change from NONE -> RWX.
-        Solution: give RW permission, make memory changes, then change RW to X
-      }
-      //RW permission to the entire page for new changes...
-      if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
-        raise EMProtectError.CreateFmt('MProtect error: %s', [
-          SysErrorMessage(GetLastError())]);
-    {$ENDIF}
+    {
+      macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
+      rejects a permission change from NONE -> RWX.
+      Solution: give RW permission, make memory changes, then change RW to X
+    }
+    //RW permission to the entire page for new changes...
+    if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
+      raise EMProtectError.CreateFmt('MProtect error: %s', [
+        SysErrorMessage(GetLastError())]);
   end;
+  {$ELSE}
+  end;
+  {$IFEND}
 
   //---blocks are assigned starting from the end of the page
   block:=Pointer(PtrCalcType(page^.codeBlocks) - (size + sizeof(PCodeMemBlock)));
@@ -736,7 +742,7 @@ begin
     Inc(P, SizeOf(pointer));
   end;
 
-  {$IFDEF APPLE_SILICON}
+  {$IF DEFINED(OSX) AND DEFINED(CPUARM64)}
     {
       macOS for M1 has a bug (Apple Feedback FB8994773) in which mprotect
       rejects a permission change from NONE -> RWX.
@@ -746,7 +752,7 @@ begin
     if mprotect(CodeMemPages, PageSize, PROT_EXEC) <> 0 then
       raise EMProtectError.CreateFmt('MProtect error: %s', [
         SysErrorMessage(GetLastError())]);
-  {$ENDIF}
+  {$IFEND}
 
   Result := Pointer(Q); //set arm mode
 end;
