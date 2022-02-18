@@ -62,7 +62,7 @@ uses
   System.IOUtils;
 
 const
-  PY_KNOWN_VER = 1;
+  PY_KNOWN_VER = 7;
 
 { TPythonLoad }
 
@@ -118,18 +118,12 @@ end;
 
 class procedure TPythonLoad.Configure(const APythonEngine: TPythonEngine);
 begin
-  APythonEngine.AutoLoad := False;
   APythonEngine.UseLastKnownVersion := false;
   APythonEngine.ProgramName := TPythonLoad.GetPyBin();
   APythonEngine.PythonHome := TPythonLoad.GetPyHome();
   APythonEngine.RegVersion := PYTHON_KNOWN_VERSIONS[PY_KNOWN_VER].RegVersion;
   APythonEngine.DllName := PYTHON_KNOWN_VERSIONS[PY_KNOWN_VER].DllName;
   APythonEngine.APIVersion := PYTHON_KNOWN_VERSIONS[PY_KNOWN_VER].APIVersion;
-  APythonEngine.FatalAbort := False;
-  APythonEngine.FatalMsgDlg := False;
-  APythonEngine.AutoFinalize := True;
-  APythonEngine.InitThreads := True;
-  APythonEngine.PyFlags := [pfInteractive];
 end;
 
 end.

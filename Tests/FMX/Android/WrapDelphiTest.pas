@@ -101,7 +101,7 @@ type
   [TestFixture]
   TTestWrapDelphi = class(TObject)
   private
-    PythonEngine: TPythonEngine;
+    FPythonEngine: TPythonEngine;
     DelphiModule: TPythonModule;
     PyDelphiWrapper: TPyDelphiWrapper;
     Rtti_Var: Variant;
@@ -178,7 +178,7 @@ end;
 
 procedure TTestWrapDelphi.TestFreeReturnedObject;
 begin
-  PythonEngine.ExecString(
+  FPythonEngine.ExecString(
     'from delphi import rtti_var' + sLineBreak +
     'obj = rtti_var.GetData()' + sLineBreak +
     'obj.Free()'
@@ -190,23 +190,23 @@ procedure TTestWrapDelphi.SetupFixture;
 var
   Py : PPyObject;
 begin
-  PythonEngine := TPythonEngine.Create(nil);
-  PythonEngine.Name := 'PythonEngine';
-  TPythonLoad.Configure(PythonEngine);
+  FPythonEngine := TPythonEngine.Create(nil);
+  FPythonEngine.Name := 'PythonEngine';
+  TPythonLoad.Configure(FPythonEngine);
 
   DelphiModule := TPythonModule.Create(nil);
 
   DelphiModule.Name := 'DelphiModule';
-  DelphiModule.Engine := PythonEngine;
+  DelphiModule.Engine := FPythonEngine;
   DelphiModule.ModuleName := 'delphi';
 
   PyDelphiWrapper := TPyDelphiWrapper.Create(nil);
 
   PyDelphiWrapper.Name := 'PyDelphiWrapper';
-  PyDelphiWrapper.Engine := PythonEngine;
+  PyDelphiWrapper.Engine := FPythonEngine;
   PyDelphiWrapper.Module := DelphiModule;
 
-  PythonEngine.LoadDll;
+  FPythonEngine.LoadDll;
   //  Then wrap the an instance our TTestRTTIAccess
   //  It will allow us to to test access to public fields and methods as well
   //  public (as well as published) properties.
@@ -216,15 +216,15 @@ begin
   TestRttiAccess.InterfaceField := TTestInterfaceImpl.Create;
   Py := PyDelphiWrapper.Wrap(TestRttiAccess, TObjectOwnership.soReference);
   DelphiModule.SetVar('rtti_var', Py);
-  PythonEngine.Py_DecRef(Py);
+  FPythonEngine.Py_DecRef(Py);
   Py := PyDelphiWrapper.WrapRecord(@Rec, TRttiContext.Create.GetType(TypeInfo(TTestRecord)) as TRttiStructuredType);
   DelphiModule.SetVar('rtti_rec', Py);
-  PythonEngine.Py_DecRef(Py);
+  FPythonEngine.Py_DecRef(Py);
   FTestInterface := TTestInterfaceImpl.Create;
   Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
   DelphiModule.SetVar('rtti_interface', Py);
-  PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface');
+  FPythonEngine.Py_DecRef(Py);
+  FPythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
   Rtti_Interface := MainModule.rtti_interface;
@@ -235,7 +235,7 @@ begin
   VarClear(Rtti_Var);
   VarClear(Rtti_Rec);
   VarClear(Rtti_Interface);
-  PythonEngine.Free;
+  FPythonEngine.Free;
   PyDelphiWrapper.Free;
   DelphiModule.Free;
   TestRttiAccess.Free;
@@ -273,7 +273,7 @@ begin
   List := Rtti_Var.GetDynArray();
   Assert.IsTrue(VarIsPythonList(List));
   Assert.AreEqual(1000000, Integer(len(List)));
-  Assert.AreEqual(Int64(999999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999999))));
+  Assert.AreEqual(Int64(999999), Int64(FPythonEngine.PyObjectAsVariant(FPythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999999))));
 end;
 
 procedure TTestWrapDelphi.TestGetStaticArray;
@@ -283,7 +283,7 @@ begin
   List := Rtti_Var.GetStaticArray();
   Assert.IsTrue(VarIsPythonList(List));
   Assert.AreEqual(1000, Integer(len(List)));
-  Assert.AreEqual(Int64(999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999))));
+  Assert.AreEqual(Int64(999), Int64(FPythonEngine.PyObjectAsVariant(FPythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999))));
 end;
 
 procedure TTestWrapDelphi.TestInterface;
@@ -341,7 +341,7 @@ begin
   'myComp = MyComponent(None)';
   ;
 
-  PythonEngine.ExecString(Script);
+  FPythonEngine.ExecString(Script);
   myComp := MainModule.myComp;
   // accessing inherited property
   Assert.IsTrue(myComp.Name = '');
@@ -361,7 +361,7 @@ end;
 
 procedure TTestWrapDelphi.TestPassVariantArray;
 begin
-  PythonEngine.ExecString(
+  FPythonEngine.ExecString(
     'from delphi import rtti_var' + sLineBreak +
     'rtti_var.PassVariantArray([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])'
     );
