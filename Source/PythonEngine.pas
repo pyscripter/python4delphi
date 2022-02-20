@@ -2729,7 +2729,7 @@ procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function  SysVersionFromDLLName(const DLLFileName : string): string;
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
-function SpliVersionFromRegVersion(const ARegVersion: string;
+function VersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
 
 { Helper functions}
@@ -3246,7 +3246,7 @@ begin
   inherited;
   if not FInExtensionModule then
     PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion)
-  else if not SpliVersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
+  else if not VersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
     raise EDLLLoadError.Create('Undetermined Python version.');
 
   FBuiltInModuleName := 'builtins';
@@ -4408,8 +4408,8 @@ var
   Path : string;
   NewPath : string;
 {$IFDEF CPUX86}
-  MajorVersion : integer;
-  MinorVersion : integer;
+  LMajorVersion : integer;
+  LMinorVersion : integer;
 {$ENDIF}
   VersionSuffix: string;
 {$ENDIF}
@@ -4421,9 +4421,8 @@ begin
       try
         VersionSuffix := '';
 {$IFDEF CPUX86}
-        MajorVersion := StrToInt(RegVersion[1]);
-        MinorVersion := StrToInt(Copy(RegVersion, 3));
-        if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+        VersionFromRegVersion(RegVersion, LMajorVersion, LMinorVersion);
+        if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
           VersionSuffix := '-32';
 {$ENDIF}
         key := Format('\Software\Python\PythonCore\%s%s\PythonPath', [RegVersion, VersionSuffix]);
@@ -9153,17 +9152,16 @@ function IsPythonVersionRegistered(PythonVersion : string;
 var
   key: string;
   VersionSuffix: string;
-  MajorVersion : integer;
-  MinorVersion : integer;
+  LMajorVersion : integer;
+  LMinorVersion : integer;
 begin
   Result := False;
   InstallPath := '';
   AllUserInstall := False;
-  MajorVersion := StrToInt(PythonVersion[1]);
-  MinorVersion := StrToInt(Copy(PythonVersion, 3));
   VersionSuffix := '';
+  VersionFromRegVersion(PythonVersion, LMajorVersion, LMinorVersion);
 {$IFDEF CPUX86}
-  if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+  if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
     VersionSuffix := '-32';
 {$ENDIF}
   key := Format('\Software\Python\PythonCore\%s%s\InstallPath', [PythonVersion, VersionSuffix]);
@@ -9191,7 +9189,7 @@ begin
         RootKey := HKEY_LOCAL_MACHINE;
         if OpenKey(Key, False) then begin
           AllUserInstall := True;
-          if (MajorVersion > 3) or ((MajorVersion = 3)  and (MinorVersion >= 5)) then
+          if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
             InstallPath := ReadString('');
           Result := True;
         end;
@@ -9253,7 +9251,7 @@ begin
   MinorVersion:= StrToIntDef(LibName, DefaultMinor);
 end;
 
-function SpliVersionFromRegVersion(const ARegVersion: string;
+function VersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
 var
   LSepPos: integer;
