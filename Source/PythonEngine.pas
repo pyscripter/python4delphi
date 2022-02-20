@@ -154,6 +154,14 @@ const
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013)
     );
 {$ENDIF}
+{$IFDEF ANDROID}
+  PYTHON_KNOWN_VERSIONS: array[6..8] of TPythonVersionProp =
+    (
+    (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
+    (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
+    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013)
+    );
+{$ENDIF}
 
   COMPILED_FOR_PYTHON_VERSION_INDEX = High(PYTHON_KNOWN_VERSIONS);
 
@@ -177,6 +185,13 @@ const
   Py_NE = 3;
   Py_GT = 4;
   Py_GE = 5;
+
+  {$IFDEF CPUARM}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctARMSTD;
+  {$ELSE}
+    DEFAULT_CALLBACK_TYPE: TCallType = TCallType.ctCDECL;
+  {$ENDIF CPUARM}
+
 type
   // Delphi equivalent used by TPyObject
   TRichComparisonOpcode = (pyLT, pyLE, pyEQ, pyNE, pyGT, pyGE);
@@ -203,6 +218,7 @@ type
   PPWCharT = PPWideChar;
   WCharTString = UnicodeString;
 {$ENDIF}
+
 
   const
 {
@@ -1783,6 +1799,7 @@ type
     FAutoFinalize:               Boolean;
     FProgramName:                WCharTString;
     FPythonHome:                 WCharTString;
+    FPythonPath:                 WCharTString;
     FInitThreads:                Boolean;
     FOnPathInitialization:       TPathInitializationEvent;
     FOnSysPathInit:              TSysPathInitEvent;
@@ -1804,6 +1821,8 @@ type
     FPyDateTime_DateTimeTZType:  PPyObject;
     function  GetPythonHome: UnicodeString;
     function  GetProgramName: UnicodeString;
+    function GetPythonPath: UnicodeString;
+    procedure SetPythonPath(const Value: UnicodeString);
 
   protected
     procedure  Initialize;
@@ -1924,6 +1943,7 @@ type
     property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
     property PythonHome: UnicodeString read GetPythonHome write SetPythonHome;
     property ProgramName: UnicodeString read GetProgramName write SetProgramName;
+    property PythonPath: UnicodeString read GetPythonPath write SetPythonPath;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
     property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
@@ -4565,6 +4585,18 @@ begin
 {$ENDIF}
 end;
 
+function TPythonEngine.GetPythonPath: UnicodeString;
+begin
+{$IFDEF POSIX}
+  if (Length(FPythonPath) > 0) then
+    Result := UCS4StringToUnicodeString(FPythonPath)
+  else
+    Result := '';
+{$ELSE}
+  Result := FPythonPath;
+{$ENDIF}
+end;
+
 function  TPythonEngine.GetProgramName: UnicodeString;
 begin
 {$IFDEF POSIX}
@@ -4583,6 +4615,15 @@ begin
   FPythonHome :=  UnicodeStringToUCS4String(PythonHome);
 {$ELSE}
   FPythonHome :=  PythonHome;
+{$ENDIF}
+end;
+
+procedure TPythonEngine.SetPythonPath(const Value: UnicodeString);
+begin
+{$IFDEF POSIX}
+  FPythonPath :=  UnicodeStringToUCS4String(Value);
+{$ELSE}
+  FPythonPath :=  Value;
 {$ENDIF}
 end;
 
@@ -6348,7 +6389,7 @@ function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 2, DEFAULT_CALLBACK_TYPE),
                        ADocString );
 end;
 
@@ -6357,7 +6398,7 @@ function  TMethodsContainer.AddDelphiMethodWithKeywords(  AMethodName  : PAnsiCh
                                                           ADocString : PAnsiChar ) : PPyMethodDef;
 begin
   Result := AddMethod( AMethodName,
-                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, ctCDECL),
+                       GetOfObjectCallBack( TCallBack(ADelphiMethod), 3, DEFAULT_CALLBACK_TYPE),
                        ADocString );
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
@@ -8177,7 +8218,7 @@ begin
       begin
         tp_init             := TPythonType_InitSubtype;
         tp_alloc            := TPythonType_AllocSubtypeInst;
-        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, ctCDECL);
+        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
         tp_free             := FreeSubtypeInst;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
@@ -8328,7 +8369,7 @@ end;
 
 procedure TPythonType.Finalize;
 begin
-  Engine.Py_XDECREF(FCreateFunc);
+  Engine.Py_CLEAR(FCreateFunc);
   FCreateFunc := nil;
   inherited;
 end;
@@ -8387,10 +8428,11 @@ begin
     begin
       meth := CreateMethod;
       FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
-      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, ctCDECL);
+      FCreateFuncDef.ml_meth  := GetOfObjectCallBack( TCallBack(meth), 2, DEFAULT_CALLBACK_TYPE);
       FCreateFuncDef.ml_flags := METH_VARARGS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
-      FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil)
+      FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil);
+      Engine.Py_INCREF(FCreateFunc);
     end;
     Assert(Assigned(FCreateFunc));
   end;
