@@ -2729,7 +2729,7 @@ procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function  SysVersionFromDLLName(const DLLFileName : string): string;
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
-function VersionFromRegVersion(const ARegVersion: string;
+function PythonVersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
 
 { Helper functions}
@@ -3246,7 +3246,7 @@ begin
   inherited;
   if not FInExtensionModule then
     PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion)
-  else if not VersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
+  else if not PythonVersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
     raise EDLLLoadError.Create('Undetermined Python version.');
 
   FBuiltInModuleName := 'builtins';
@@ -4421,7 +4421,7 @@ begin
       try
         VersionSuffix := '';
 {$IFDEF CPUX86}
-        VersionFromRegVersion(RegVersion, LMajorVersion, LMinorVersion);
+        PythonVersionFromRegVersion(RegVersion, LMajorVersion, LMinorVersion);
         if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
           VersionSuffix := '-32';
 {$ENDIF}
@@ -9159,7 +9159,7 @@ begin
   InstallPath := '';
   AllUserInstall := False;
   VersionSuffix := '';
-  VersionFromRegVersion(PythonVersion, LMajorVersion, LMinorVersion);
+  PythonVersionFromRegVersion(PythonVersion, LMajorVersion, LMinorVersion);
 {$IFDEF CPUX86}
   if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
     VersionSuffix := '-32';
@@ -9251,7 +9251,7 @@ begin
   MinorVersion:= StrToIntDef(LibName, DefaultMinor);
 end;
 
-function VersionFromRegVersion(const ARegVersion: string;
+function PythonVersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
 var
   LSepPos: integer;
