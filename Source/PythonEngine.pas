@@ -1181,6 +1181,8 @@ type
     procedure DoOpenDll(const aDllName : string); virtual;
     function  GetDllPath : string;
 
+    function HasHostSymbols(): boolean;
+    procedure LoadFromHostSymbols();
   public
     // Constructors & Destructors
     constructor Create(AOwner: TComponent); override;
@@ -2727,6 +2729,8 @@ procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function  SysVersionFromDLLName(const DLLFileName : string): string;
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
+function SpliVersionFromRegVersion(const ARegVersion: string;
+  out AMajorVersion, AMinorVersion: integer): boolean;
 
 { Helper functions}
 (*
@@ -3083,6 +3087,47 @@ begin
 {$ENDIF}
 end;
 
+procedure TDynamicDll.LoadFromHostSymbols;
+var
+  LPy_GetVersion: function: PAnsiChar; cdecl;
+  LPy_GetProgramFullPath: function: PAnsiChar; cdecl;
+  LVersion: string;
+  LInfo: TPythonVersionProp;
+  LFound: boolean;
+begin
+  BeforeLoad();
+  //According to the doc:
+  //Return the full program name of the Python executable.
+  //The value is available to Python code as sys.executable.
+  LPy_GetProgramFullPath := Import('Py_GetProgramFullPath');
+  DllName := ExtractFileName(String(LPy_GetProgramFullPath()));
+
+  //According to the doc:
+  //The first word (up to the first space character) is the current Python version
+  LPy_GetVersion := Import('Py_GetVersion');
+  LVersion := String(LPy_GetVersion());
+  LVersion := Copy(LVersion, 1, Pos(' ', LVersion));
+  //the first three characters are the major and minor version separated by a period.
+  if (Length(LVersion) > 3) and (LVersion[4] <> '.') then
+    LVersion := Copy(LVersion, 1, 4) //e.g. 3.10
+  else
+    LVersion := Copy(LVersion, 1, 3); //e.g. 3.9
+
+  LFound := false;
+  for LInfo in PYTHON_KNOWN_VERSIONS do
+    if (LInfo.RegVersion = LVersion) then begin
+      RegVersion := LInfo.RegVersion;
+      APIVersion := LInfo.APIVersion;
+      LFound := true;
+      Break;
+    end;
+
+  if not LFound then
+    raise EDLLLoadError.Create('Undetermined Python version from host symbols.');
+
+  AfterLoad();
+end;
+
 procedure TDynamicDll.LoadDll;
 begin
   OpenDll( DllName );
@@ -3090,8 +3135,14 @@ end;
 
 procedure TDynamicDll.LoadDllInExtensionModule;
 begin
+  //We want to look in for host symbols at first
+  FDLLHandle := 0;
+
   FInExtensionModule := True;
-  LoadDLL;
+  if HasHostSymbols() then
+    LoadFromHostSymbols()
+  else
+    LoadDLL;
 end;
 
 procedure TDynamicDll.UnloadDll;
@@ -3124,6 +3175,17 @@ end;
 function  TDynamicDll.GetQuitMessage : string;
 begin
   Result := Format( 'Dll %s could not be loaded. We must quit.', [DllName]);
+end;
+
+function TDynamicDll.HasHostSymbols: boolean;
+var
+  LPy_IsInitialized: function: integer; cdecl;
+begin
+  if not ModuleIsLib then
+    Exit(false);
+
+  LPy_IsInitialized := Import('Py_IsInitialized', false);
+  Result := Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
 end;
 
 procedure TDynamicDll.Quit;
@@ -3182,7 +3244,10 @@ end;
 procedure TPythonInterface.AfterLoad;
 begin
   inherited;
-  PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion);
+  if not FInExtensionModule then
+    PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion)
+  else if not SpliVersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
+    raise EDLLLoadError.Create('Undetermined Python version.');
 
   FBuiltInModuleName := 'builtins';
 
@@ -3578,7 +3643,7 @@ begin
   Py_GetPrefix                := Import('Py_GetPrefix');
   Py_GetProgramName           := Import('Py_GetProgramName');
 
-  if (FMajorVersion = 3) and (MinorVersion < 10) then
+  if (FMajorVersion = 3) and (FMinorVersion < 10) then
   begin
     PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
     PyNode_Free                 := Import('PyNode_Free');
@@ -9188,6 +9253,18 @@ begin
   MinorVersion:= StrToIntDef(LibName, DefaultMinor);
 end;
 
+function SpliVersionFromRegVersion(const ARegVersion: string;
+  out AMajorVersion, AMinorVersion: integer): boolean;
+var
+  LSepPos: integer;
+begin
+  //RegVersion supported format: [x.x or x.xx or x[..].x[..]]
+  LSepPos := Pos('.', ARegVersion);
+  AMajorVersion := StrToIntDef(Copy(ARegVersion, 1, LSepPos - 1), 0);
+  AMinorVersion := StrToIntDef(Copy(ARegVersion, LSepPos + 1, Length(ARegVersion) - LSepPos), 0);
+
+  Result := (AMajorVersion > 0) and (AMinorVersion > 0);
+end;
 
 end.
 
