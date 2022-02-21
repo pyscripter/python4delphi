@@ -864,6 +864,7 @@ Type
 
   { Singletons }
   function RegisteredUnits : TRegisteredUnits;
+  function GlobalDelphiWrapper: TPyDelphiWrapper;
 
   { Helper Functions }
 
@@ -944,6 +945,18 @@ begin
   if not Assigned(gRegisteredUnits) then
     gRegisteredUnits := TRegisteredUnits.Create;
   Result := gRegisteredUnits;
+end;
+
+function GlobalDelphiWrapper: TPyDelphiWrapper;
+var
+  Engine: TPythonEngine;
+  I: Integer;
+begin
+  Engine := GetPythonEngine;
+  for I := 0 to Engine.ClientCount -1 do
+    if Engine.Clients[I] is TPyDelphiWrapper then
+      Exit(TPyDelphiWrapper(Engine.Clients[I]));
+  Result := nil;
 end;
 
 { Helper functions }
