@@ -11,8 +11,12 @@ implementation
 uses
   System.SysUtils, ModuleSpecs, WrapDelphi, WrapDelphiFMX;
 
+type
+  TPythonEngine = class(PythonEngine.TPythonEngine)  
+  end;
+  
 var
-  gEngine : TPythonEngineModuleAdapter;
+  gEngine : TPythonEngine;
   gModule : TPythonModule;
   gDelphiWrapper : TPyDelphiWrapper;
 
@@ -20,14 +24,22 @@ var
 // So if the project is named DelphiFMX then
 //   the function must be PyInit_DelphiFMX
 function PyInit_DelphiFMX: PPyObject;
+var
+  LMsg: string;
 begin
   try
-    gEngine := TPythonEngineModuleAdapter.Create(nil);
+    gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
     gEngine.UseLastKnownVersion := False;
 
-    if not TPythonLoad.TryLoadVerFromModuleDefs(gEngine) then
-      Exit(gEngine.ReturnNone);
+    if not TPythonLoad.TryLoadVerFromModuleDefs(gEngine) 
+      and not gEngine.HasHostSymbols() then 
+    begin
+      LMsg := Format(UNABLE_LOAD_MODULE_DEFS_MSG, [MODULE_DEFS_JSON_FILE]);
+      WriteLn('An error has occurred: ' + LMsg);
+      TPythonLog.Log(LMsg);
+      Exit(nil);
+    end;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
@@ -38,15 +50,14 @@ begin
     gDelphiWrapper.Engine := gEngine;
     gDelphiWrapper.Module := gModule;
 
-    gEngine.LoadDll();
-    Result := gModule.Module;
+    gEngine.LoadDllInExtensionModule();    
   except
     on E: Exception do begin
-      WriteLn('An error occurred: ' + E.Message);
+      WriteLn('An error has occurred: ' + E.Message);
       TPythonLog.Log(E.Message);
-      Result := gEngine.ReturnNone;
     end;
   end;
+  Result := gModule.Module;
 end;
 
 initialization

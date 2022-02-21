@@ -3,9 +3,10 @@ library DelphiVCL;
 uses
   SysUtils,
   Classes,
-  uMain in 'uMain.pas';
+  uMain in 'uMain.pas',
+  ModuleSpecs in 'ModuleSpecs.pas';
 
-{$I Definition.Inc}
+{$I ..\..\Source\Definition.Inc}
 
 exports
   // This must match the pattern "PyInit_[ProjectName]"
