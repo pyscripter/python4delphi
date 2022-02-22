@@ -9,12 +9,8 @@ function PyInit_DelphiFMX: PPyObject; cdecl;
 implementation
 
 uses
-  System.SysUtils, ModuleSpecs, WrapDelphi, WrapDelphiFMX;
+  System.SysUtils, WrapDelphi, WrapDelphiFMX;
 
-type
-  TPythonEngine = class(PythonEngine.TPythonEngine)  
-  end;
-  
 var
   gEngine : TPythonEngine;
   gModule : TPythonModule;
@@ -24,22 +20,11 @@ var
 // So if the project is named DelphiFMX then
 //   the function must be PyInit_DelphiFMX
 function PyInit_DelphiFMX: PPyObject;
-var
-  LMsg: string;
 begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
-    gEngine.UseLastKnownVersion := False;
-
-    if not TPythonLoad.TryLoadVerFromModuleDefs(gEngine) 
-      and not gEngine.HasHostSymbols() then 
-    begin
-      LMsg := Format(UNABLE_LOAD_MODULE_DEFS_MSG, [MODULE_DEFS_JSON_FILE]);
-      WriteLn('An error has occurred: ' + LMsg);
-      TPythonLog.Log(LMsg);
-      Exit(nil);
-    end;
+    gEngine.UseLastKnownVersion := true;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
@@ -54,7 +39,6 @@ begin
   except
     on E: Exception do begin
       WriteLn('An error has occurred: ' + E.Message);
-      TPythonLog.Log(E.Message);
     end;
   end;
   Result := gModule.Module;

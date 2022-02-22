@@ -9,11 +9,7 @@ function PyInit_DelphiVCL: PPyObject; cdecl;
 implementation
 
 uses
-  System.SysUtils, ModuleSpecs, WrapDelphi, WrapDelphiVCL;
-
-type
-  TPythonEngine = class(PythonEngine.TPythonEngine)
-  end;
+  System.SysUtils, WrapDelphi, WrapDelphiVCL;
 
 var
   gEngine : TPythonEngine;
@@ -24,22 +20,11 @@ var
 // So if the project is named DelphiVCL then
 //   the function must be PyInit_DelphiVCL
 function PyInit_DelphiVCL: PPyObject;
-var
-  LMsg: string;
 begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
-    gEngine.UseLastKnownVersion := False;
-
-    if not TPythonLoad.TryLoadVerFromModuleDefs(gEngine)
-      and not gEngine.HasHostSymbols() then
-    begin
-      LMsg := Format(UNABLE_LOAD_MODULE_DEFS_MSG, [MODULE_DEFS_JSON_FILE]);
-      WriteLn('An error has occurred: ' + LMsg);
-      TPythonLog.Log(LMsg);
-      Exit(nil);
-    end;
+    gEngine.UseLastKnownVersion := true;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
@@ -54,7 +39,6 @@ begin
   except
     on E: Exception do begin
       WriteLn('An error has occurred: ' + E.Message);
-      TPythonLog.Log(E.Message);
     end;
   end;
   Result := gModule.Module;
@@ -69,6 +53,7 @@ finalization
   gEngine.Free;
   gModule.Free;
   gDelphiWrapper.Free;
+
 end.
 
 
