@@ -1197,8 +1197,13 @@ type
     procedure DoOpenDll(const aDllName : string); virtual;
     function  GetDllPath : string;
 
+    procedure LoadPythonInfoFromModule;
+    function GetPythonModuleFromProcess(): NativeUInt;
     function HasHostSymbols(): boolean;
     procedure LoadFromHostSymbols();
+    //Loading strategies
+    function TryLoadFromHostSymbols(): boolean;
+    function TryLoadFromCurrentProcess(): boolean;
   public
     // Constructors & Destructors
     constructor Create(AOwner: TComponent); override;
@@ -2783,6 +2788,7 @@ uses
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   Registry,
+  PsAPI,
 {$ENDIF}
   Math;
 
@@ -3019,6 +3025,123 @@ begin
   end;
 end;
 
+function TDynamicDll.GetPythonModuleFromProcess(): NativeUInt;
+
+{$IFNDEF FPC}
+
+function HasSymbols(const AModule: NativeUInt): boolean;
+  var
+    LPy_GetBuildInfo: function : PAnsiChar; cdecl;
+    LPy_IsInitialized: function: integer; cdecl;
+  begin
+    FDLLHandle := AModule;
+    try
+      LPy_GetBuildInfo := Import('Py_GetBuildInfo', false);
+      LPy_IsInitialized := Import('Py_IsInitialized', false);
+      Result := Assigned(LPy_GetBuildInfo) and Assigned(LPy_GetBuildInfo())
+        and Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
+    finally
+      FDLLHandle := 0;
+    end;
+  end;
+
+{$IFDEF LINUX}
+  function GetPythonModule: NativeUInt;
+  type
+    plink_map = ^link_map;
+    link_map = record
+      l_addr: Pointer;
+      l_name: PAnsiChar;
+      l_ld: Pointer;
+      l_next, l_prev: plink_map;
+    end;
+  var
+    LPseudoHandle: NativeUInt;
+    LPLinkMap: plink_map;
+    LModuleName: string;
+    LModuleHandle: NativeUInt;
+  begin
+    //In Linux pseudo handle is in fact a pointer to the the corresponding link_map structure
+    //The dlopen(nil, RTLD_NOW) result is the pseudo handle for the main executable (similar to GetModuleHandle(nil) in Windows).
+    LPseudoHandle := dlopen(nil, RTLD_NOW);
+    //Points to the first link_map
+    LPLinkMap := plink_map(LPseudoHandle).l_next.l_next;
+    while Assigned(LPLinkMap) do begin
+      LModuleName := String(LPLinkMap.l_name);
+      LModuleHandle := LoadLibrary(PChar(LModuleName));
+      if HasSymbols(LModuleHandle) then
+        Exit(LModuleHandle);
+      LPLinkMap := LPLinkMap.l_next;
+    end;
+    Result := 0;
+  end;
+{$ENDIF LINUX}
+
+{$IFDEF OSX}
+  function GetPythonModule: NativeUInt;
+  var
+    LIndex: integer;
+    LName: PAnsiChar;
+    LModuleName: string;
+    LModuleHandle: NativeUInt;
+  begin
+    LIndex := 0;
+    LName := _dyld_get_image_name(LIndex);
+    while (LName <> nil) do begin
+      LModuleName := String(LName);
+      LModuleHandle := LoadLibrary(PChar(LModuleName));
+      if HasSymbols(LModuleHandle) then
+        Exit(LModuleHandle);
+      Inc(LIndex);
+      LName := _dyld_get_image_name(LIndex);
+    end;
+    Result := 0;
+  end;
+{$ENDIF OSX}
+
+{$IFDEF MSWINDOWS}
+  function GetPythonModule: NativeUInt;
+  var
+    LHProcess: NativeUInt;
+    LHModules: array of NativeUInt;
+    LCbNeeded: Cardinal;
+    I: Integer;
+    LModName: array[0..1024] of char;
+  begin
+    SetLength(LHModules, 1024);
+    LHProcess := OpenProcess(PROCESS_QUERY_INFORMATION + PROCESS_VM_READ, false, GetCurrentProcessId());
+    if LHProcess > 0 then begin
+      try
+        if EnumProcessModules(LHProcess, @LHModules[0], 1024 * SizeOf(HMODULE), LCbNeeded) then begin
+          SetLength(LHModules, LCbNeeded div SizeOf(THandle));
+          for I := 0 to Length(LHModules) -1 do begin
+            GetModuleBaseName(LHProcess, LHModules[I], LModName, SizeOf(LModName));
+            if HasSymbols(LHModules[I]) then begin
+              Exit(LHModules[I]);
+            end;
+          end;
+        end;
+      finally
+        CloseHandle(LHProcess);
+      end;
+    end;
+    Result := 0;
+  end;
+{$ENDIF MSWINDOWS}
+{$ENDIF FPC}
+
+begin
+  {$IF DEFINED(LINUX) OR DEFINED(OSX) OR DEFINED(MSWINDOWS)}
+    {$IFNDEF FPC}
+    Result := GetPythonModule();
+    {$ELSE}
+    Result := 0;
+    {$ENDIF}
+  {$ELSE}
+  Result := 0;
+  {$IFEND}
+end;
+
 procedure  TDynamicDll.OpenDll(const aDllName : string);
 var
   s : string;
@@ -3107,7 +3230,35 @@ begin
 {$ENDIF}
 end;
 
+function TDynamicDll.TryLoadFromCurrentProcess: boolean;
+begin
+  FDLLHandle := GetPythonModuleFromProcess();
+  if not IsHandleValid() then
+    Exit(false);
+
+  BeforeLoad();
+  LoadPythonInfoFromModule();
+  AfterLoad();
+  Result := true;
+end;
+
+function TDynamicDll.TryLoadFromHostSymbols: boolean;
+begin
+  //We want to look in for host symbols at first
+  FDLLHandle := 0;
+  Result := HasHostSymbols();
+  if Result then
+    LoadFromHostSymbols();
+end;
+
 procedure TDynamicDll.LoadFromHostSymbols;
+begin
+  BeforeLoad();
+  LoadPythonInfoFromModule();
+  AfterLoad();
+end;
+
+procedure TDynamicDll.LoadPythonInfoFromModule;
 var
   LPy_GetVersion: function: PAnsiChar; cdecl;
   LPy_GetProgramFullPath: function: PAnsiChar; cdecl;
@@ -3115,7 +3266,6 @@ var
   LInfo: TPythonVersionProp;
   LFound: boolean;
 begin
-  BeforeLoad();
   //According to the doc:
   //Return the full program name of the Python executable.
   //The value is available to Python code as sys.executable.
@@ -3143,9 +3293,7 @@ begin
     end;
 
   if not LFound then
-    raise EDLLLoadError.Create('Undetermined Python version from host symbols.');
-
-  AfterLoad();
+    raise EDLLLoadError.Create('Undetermined Python version from loaded module.');
 end;
 
 procedure TDynamicDll.LoadDll;
@@ -3155,14 +3303,18 @@ end;
 
 procedure TDynamicDll.LoadDllInExtensionModule;
 begin
-  //We want to look in for host symbols at first
-  FDLLHandle := 0;
+  if not ModuleIsLib then
+    Exit;
 
   FInExtensionModule := True;
-  if HasHostSymbols() then
-    LoadFromHostSymbols()
-  else
-    LoadDLL;
+
+  if TryLoadFromHostSymbols() then
+    Exit;
+
+  if TryLoadFromCurrentProcess() then
+    Exit;
+
+  LoadDLL();
 end;
 
 procedure TDynamicDll.UnloadDll;
@@ -3201,9 +3353,6 @@ function TDynamicDll.HasHostSymbols: boolean;
 var
   LPy_IsInitialized: function: integer; cdecl;
 begin
-  if not ModuleIsLib then
-    Exit(false);
-
   LPy_IsInitialized := Import('Py_IsInitialized', false);
   Result := Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
 end;
@@ -9241,6 +9390,7 @@ begin
   except
   end;
 end;
+
 {$ENDIF}
 
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
