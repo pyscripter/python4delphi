@@ -4,7 +4,7 @@ interface
 
 uses
   FMX.Colors,
-  WrapFmxControls, WrapFmxStdCtrls, WrapFmxListBox;
+  PythonEngine, WrapFmxControls, WrapFmxStdCtrls, WrapFmxListBox;
 
 type
   TPyDelphiColorBox = class(TPyDelphiControl)
@@ -13,6 +13,7 @@ type
 		procedure SetDelphiObject(const Value: TColorBox);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorBox read GetDelphiObject
 			write SetDelphiObject;
@@ -35,6 +36,7 @@ type
 		procedure SetDelphiObject(const Value: TColorPicker);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorPicker read GetDelphiObject
 			write SetDelphiObject;
@@ -57,6 +59,7 @@ type
 		procedure SetDelphiObject(const Value: TColorPanel);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorPanel read GetDelphiObject
 			write SetDelphiObject;
@@ -68,6 +71,7 @@ type
 		procedure SetDelphiObject(const Value: TComboColorBox);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TComboColorBox read GetDelphiObject
 			write SetDelphiObject;
@@ -79,6 +83,7 @@ type
 		procedure SetDelphiObject(const Value: TColorButton);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorButton read GetDelphiObject
 			write SetDelphiObject;
@@ -90,6 +95,7 @@ type
 		procedure SetDelphiObject(const Value: TColorListBox);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorListBox read GetDelphiObject
 			write SetDelphiObject;
@@ -101,6 +107,7 @@ type
 		procedure SetDelphiObject(const Value: TCustomColorComboBox);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TCustomColorComboBox read GetDelphiObject
 			write SetDelphiObject;
@@ -112,6 +119,7 @@ type
 		procedure SetDelphiObject(const Value: TColorComboBox);
 	public
 		class function DelphiObjectClass: TClass; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
 		// Properties
 		property DelphiObject: TColorComboBox read GetDelphiObject
 			write SetDelphiObject;
@@ -120,10 +128,21 @@ type
 implementation
 
 uses
-  WrapDelphi;
+  System.Rtti, WrapDelphi;
 
-{ Register the wrappers, the globals and the constants }
 type
+  { Type extension }
+  TPyDelphiCommonColorEx = class
+  protected
+    // Property Getters
+    class function Get_Color(AContext: Pointer): PPyObject; cdecl;
+    // Property Setters
+    class function Set_Color(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  protected
+    class procedure RegisterGetSets(const APythonType: TPythonType);
+  end;
+
+  { Register the wrappers, the globals and the constants }
 	TColorsRegistration = class(TRegisteredUnit)
   public
     function Name: string; override;
@@ -171,6 +190,12 @@ begin
 	Result := TColorBox(inherited DelphiObject);
 end;
 
+class procedure TPyDelphiColorBox.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
+end;
+
 procedure TPyDelphiColorBox.SetDelphiObject(const Value: TColorBox);
 begin
 	inherited DelphiObject := Value;
@@ -203,6 +228,12 @@ end;
 function TPyDelphiColorPicker.GetDelphiObject: TColorPicker;
 begin
 	Result := TColorPicker(inherited DelphiObject);
+end;
+
+class procedure TPyDelphiColorPicker.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
 end;
 
 procedure TPyDelphiColorPicker.SetDelphiObject(const Value: TColorPicker);
@@ -240,6 +271,12 @@ begin
 	Result := TColorPanel(inherited DelphiObject);
 end;
 
+class procedure TPyDelphiColorPanel.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
+end;
+
 procedure TPyDelphiColorPanel.SetDelphiObject(const Value: TColorPanel);
 begin
 	inherited DelphiObject := Value;
@@ -255,6 +292,12 @@ end;
 function TPyDelphiComboColorBox.GetDelphiObject: TComboColorBox;
 begin
 	Result := TComboColorBox(inherited DelphiObject);
+end;
+
+class procedure TPyDelphiComboColorBox.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
 end;
 
 procedure TPyDelphiComboColorBox.SetDelphiObject(const Value: TComboColorBox);
@@ -274,6 +317,12 @@ begin
 	Result := TColorButton(inherited DelphiObject);
 end;
 
+class procedure TPyDelphiColorButton.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
+end;
+
 procedure TPyDelphiColorButton.SetDelphiObject(const Value: TColorButton);
 begin
 	inherited DelphiObject := Value;
@@ -289,6 +338,12 @@ end;
 function TPyDelphiColorListBox.GetDelphiObject: TColorListBox;
 begin
 	Result := TColorListBox(inherited DelphiObject);
+end;
+
+class procedure TPyDelphiColorListBox.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
 end;
 
 procedure TPyDelphiColorListBox.SetDelphiObject(const Value: TColorListBox);
@@ -308,6 +363,13 @@ begin
 	Result := TCustomColorComboBox(inherited DelphiObject);
 end;
 
+class procedure TPyDelphiCustomColorComboBox.RegisterGetSets(
+  PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
+end;
+
 procedure TPyDelphiCustomColorComboBox.SetDelphiObject(
   const Value: TCustomColorComboBox);
 begin
@@ -321,6 +383,12 @@ begin
   Result := TColorComboBox;
 end;
 
+class procedure TPyDelphiColorComboBox.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  TPyDelphiCommonColorEx.RegisterGetSets(PythonType);
+end;
+
 function TPyDelphiColorComboBox.GetDelphiObject: TColorComboBox;
 begin
 	Result := TColorComboBox(inherited DelphiObject);
@@ -329,6 +397,71 @@ end;
 procedure TPyDelphiColorComboBox.SetDelphiObject(const Value: TColorComboBox);
 begin
 	inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCommonColorEx }
+
+class procedure TPyDelphiCommonColorEx.RegisterGetSets(
+  const APythonType: TPythonType);
+begin
+  with APythonType do begin
+    //Fixing the cardinal->variant/variant->cardinal conversion error
+    AddGetSet('Color',
+      @TPyDelphiCommonColorEx.Get_Color,
+      @TPyDelphiCommonColorEx.Set_Color,
+      'Returns a integer with the color value', nil);
+  end;
+end;
+
+class function TPyDelphiCommonColorEx.Get_Color(AContext: Pointer): PPyObject;
+var
+  LSelf: TPyDelphiControl;
+  LRttiCtx: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiProp: TRttiProperty;
+begin
+  LSelf := PythonToDelphi(PPyObject(Self)) as TPyDelphiControl;
+  LRttiCtx := TRttiContext.Create();
+  try
+    LRttiType := LRttiCtx.GetType(LSelf.DelphiObject.ClassInfo);
+    LRttiProp := LRttiType.GetProperty('Color');
+    if not Assigned(LRttiProp) then
+      Exit(GetPythonEngine().Py_None);
+
+    Result := GetPythonEngine().PyLong_FromLong(
+      LRttiProp.GetValue(LSelf.DelphiObject).AsInteger);
+  finally
+    LRttiCtx.Free();
+  end;
+end;
+
+class function TPyDelphiCommonColorEx.Set_Color(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: integer;
+  LSelf: TPyDelphiControl;
+  LRttiCtx: TRttiContext;
+  LRttiType: TRttiType;
+  LRttiProp: TRttiProperty;
+begin
+  if CheckIntAttribute(AValue, 'Color', LValue) then begin
+    with GetPythonEngine() do begin
+      LSelf := PythonToDelphi(PPyObject(Self)) as TPyDelphiControl;
+      LRttiCtx := TRttiContext.Create();
+      try
+        LRttiType := LRttiCtx.GetType(LSelf.DelphiObject.ClassInfo);
+        LRttiProp := LRttiType.GetProperty('Color');
+        if not Assigned(LRttiProp) then
+          Exit(-1);
+
+        LRttiProp.SetValue(LSelf.DelphiObject, LValue);
+      finally
+        LRttiCtx.Free();
+      end;
+      Result := 0;
+    end;
+  end else
+    Result := -1;
 end;
 
 initialization
