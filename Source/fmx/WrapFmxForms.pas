@@ -363,9 +363,10 @@ begin
       Exit(GetPythonEngine().ReturnTrue);
   except
     on E: Exception do
-      GetModule().RaiseDelphiRunTimeError(E);
+      with GetPythonEngine do
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
   end;
-  Result := GetPythonEngine().ReturnFalse;
+  Result := nil;
 end;
 
 class procedure TPyDelphiCommonCustomForm.RegisterMethods(
