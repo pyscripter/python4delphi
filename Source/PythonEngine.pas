@@ -2272,6 +2272,7 @@ type
       FErrors : TErrors;
       FOnAfterInitialization : TNotifyEvent;
       FDocString : TStringList;
+      FDelphiRunTimeError: boolean;
 
       function GetClientCount : Integer;
       function GetClients( idx : Integer ) : TEngineClient;
@@ -2279,6 +2280,8 @@ type
       procedure SetModuleName( const val : AnsiString );
       procedure SetDocString( value : TStringList );
 
+      //Default errors
+      procedure CreateErrors;
     public
       // Constructors & destructors
       constructor Create( AOwner : TComponent ); override;
@@ -2302,11 +2305,16 @@ type
       procedure SetVarFromVariant( const varName : AnsiString; const value : Variant );
       function  GetVarAsVariant( const varName: AnsiString ) : Variant;
 
+      //Raise default errors
+      procedure RaiseDelphiRunTimeError(const AMsg: string); overload;
+      procedure RaiseDelphiRunTimeError(const AException: Exception); overload;
+
       // Public properties
       property Module : PPyObject read FModule;
       property Clients[ idx : Integer ] : TEngineClient read GetClients;
       property ClientCount : Integer read GetClientCount;
-
+      //Module errors
+      property DelphiRunTimeError: boolean read FDelphiRunTimeError write FDelphiRunTimeError;
     published
       property DocString : TStringList read FDocString write SetDocString;
       property ModuleName : AnsiString read FModuleName write SetModuleName;
@@ -6876,6 +6884,7 @@ begin
   begin
     Name := TError(Source).Name;
     Text := TError(Source).Text;
+    ErrorType := TError(Source).ErrorType;
     Exit;
   end;
   inherited Assign(Source);
@@ -7095,6 +7104,16 @@ begin
   FDocString := TStringList.Create;
 end;
 
+procedure TPythonModule.CreateErrors;
+begin
+  if FDelphiRunTimeError then
+    with FErrors.Add() do begin
+      ErrorType := etClass;
+      Name := 'DelphiRunTime';
+      Text := 'Delphi run-time error';
+    end;
+end;
+
 destructor  TPythonModule.Destroy;
 begin
   FDocString.Free;
@@ -7102,7 +7121,6 @@ begin
   FErrors.Free;
   inherited;
 end;
-
 
 procedure TPythonModule.SetDocString( value : TStringList );
 begin
@@ -7192,6 +7210,25 @@ begin
   raise Exception.CreateFmt( 'Could not find error "%s"', [AName] );
 end;
 
+procedure TPythonModule.RaiseDelphiRunTimeError(const AException: Exception);
+var
+  LMsg: string;
+begin
+  LMsg := AException.Message;
+  if AException.StackTrace <> '' then
+    LMsg := LMsg + sLineBreak + AException.StackTrace;
+  RaiseDelphiRunTimeError(LMsg);
+end;
+
+procedure TPythonModule.RaiseDelphiRunTimeError(const AMsg: string);
+begin
+  if not FDelphiRunTimeError then
+    Exit;
+
+  RaiseError('DelphiRunTime', AnsiString(AMsg));
+  Engine.CheckError();
+end;
+
 procedure TPythonModule.RaiseError( const error, msg : AnsiString );
 begin
   ErrorByName( error ).RaiseError( msg );
@@ -7213,6 +7250,8 @@ var
   d : PPyObject;
 begin
   CheckEngine;
+  //Create default errors
+  CreateErrors();
   with Engine do
     begin
       d := PyModule_GetDict( Module );
