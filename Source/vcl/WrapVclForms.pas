@@ -584,10 +584,14 @@ function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
 
 begin
   Adjust(@Self);
-  if InternalReadComponent(FindResource(), DelphiObject) then
-    Result := GetPythonEngine().ReturnTrue
-  else
-    Result := GetPythonEngine().ReturnFalse;
+  try
+    if InternalReadComponent(FindResource(), DelphiObject) then
+      Exit(GetPythonEngine().ReturnTrue);
+  except
+    on E: Exception do
+      GetModule().RaiseDelphiRunTimeError(E);
+  end;
+  Result := GetPythonEngine().ReturnFalse;
 end;
 
 function TPyDelphiCustomForm.Set_ModalResult(AValue: PPyObject;

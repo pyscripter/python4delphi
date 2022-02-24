@@ -30,6 +30,7 @@ begin
     gModule.Engine := gEngine;
     // This must match the ProjectName and the function name pattern
     gModule.ModuleName := 'DelphiFMX';
+    gModule.DelphiRunTimeError := true;
 
     gDelphiWrapper := TPyDelphiWrapper.Create(nil);
     gDelphiWrapper.Engine := gEngine;
