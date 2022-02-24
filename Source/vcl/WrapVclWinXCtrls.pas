@@ -4,7 +4,7 @@ unit WrapVclWinXCtrls;
 interface
 
 uses
-  Vcl.WinXCtrls, WrapVclControls;
+  Vcl.WinXCtrls, Vcl.NumberBox, WrapVclControls, WrapVclStdCtrls;
 
 type
   TPyDelphiCustomActivityIndicator = class (TPyDelphiCustomControl)
@@ -43,6 +43,24 @@ type
     property DelphiObject: TToggleSwitch read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomNumberBox = class(TPyDelphiCustomEdit)
+  private
+    function GetDelphiObject: TCustomNumberBox;
+    procedure SetDelphiObject(const Value: TCustomNumberBox);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TCustomNumberBox read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiNumberBox = class(TPyDelphiCustomNumberBox)
+  private
+    function GetDelphiObject: TNumberBox;
+    procedure SetDelphiObject(const Value: TNumberBox);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TNumberBox read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -77,6 +95,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActivityIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
 end;
 
 { TPyDelphiCustomActivityIndicator }
@@ -146,6 +166,41 @@ begin
 end;
 
 procedure TPyDelphiToggleSwitch.SetDelphiObject(const Value: TToggleSwitch);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomNumberBox }
+
+class function TPyDelphiCustomNumberBox.DelphiObjectClass: TClass;
+begin
+  Result := TCustomNumberBox;
+end;
+
+function TPyDelphiCustomNumberBox.GetDelphiObject: TCustomNumberBox;
+begin
+  Result := TCustomNumberBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomNumberBox.SetDelphiObject(
+  const Value: TCustomNumberBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiNumberBox }
+
+class function TPyDelphiNumberBox.DelphiObjectClass: TClass;
+begin
+  Result := TNumberBox;
+end;
+
+function TPyDelphiNumberBox.GetDelphiObject: TNumberBox;
+begin
+  Result := TNumberBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiNumberBox.SetDelphiObject(const Value: TNumberBox);
 begin
   inherited DelphiObject := Value;
 end;
