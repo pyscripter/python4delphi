@@ -4,7 +4,9 @@ unit WrapVclWinXCtrls;
 interface
 
 uses
-  Vcl.WinXCtrls, Vcl.NumberBox, WrapVclControls, WrapVclStdCtrls;
+  Vcl.WinXCtrls,
+  {$IFDEF DELPHI10_4_OR_HIGHER}Vcl.NumberBox,{$ENDIF DELPHI10_4_OR_HIGHER}
+  WrapVclControls, WrapVclStdCtrls;
 
 type
   TPyDelphiCustomActivityIndicator = class (TPyDelphiCustomControl)
@@ -43,6 +45,7 @@ type
     property DelphiObject: TToggleSwitch read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IFDEF DELPHI10_4_OR_HIGHER}
   TPyDelphiCustomNumberBox = class(TPyDelphiCustomEdit)
   private
     function GetDelphiObject: TCustomNumberBox;
@@ -60,6 +63,7 @@ type
     class function DelphiObjectClass : TClass; override;
     property DelphiObject: TNumberBox read GetDelphiObject write SetDelphiObject;
   end;
+  {$ENDIF DELPHI10_4_OR_HIGHER}
 
 implementation
 
@@ -95,8 +99,10 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActivityIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
+  {$IFDEF DELPHI10_4_OR_HIGHER}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
+  {$ENDIF DELPHI10_4_OR_HIGHER}
 end;
 
 { TPyDelphiCustomActivityIndicator }
@@ -170,6 +176,8 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{$IFDEF DELPHI10_4_OR_HIGHER}
+
 { TPyDelphiCustomNumberBox }
 
 class function TPyDelphiCustomNumberBox.DelphiObjectClass: TClass;
@@ -204,6 +212,8 @@ procedure TPyDelphiNumberBox.SetDelphiObject(const Value: TNumberBox);
 begin
   inherited DelphiObject := Value;
 end;
+
+{$ENDIF DELPHI10_4_OR_HIGHER}
 
 initialization
   RegisteredUnits.Add(TWinXCtrlsRegistration.Create());
