@@ -25,6 +25,5 @@ exports
 {$WARN SYMBOL_PLATFORM ON}
 
 begin
-  GlobalUseMetal := true;
 end.
 
