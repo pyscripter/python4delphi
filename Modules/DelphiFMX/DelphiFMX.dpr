@@ -6,6 +6,7 @@ uses
   Classes,
   FMX.Forms,
   FMX.Types,
+  FMX.Context.Metal,
   uMain in 'uMain.pas';
 
 {$I ..\..\Source\Definition.Inc}
@@ -25,5 +26,6 @@ exports
 {$WARN SYMBOL_PLATFORM ON}
 
 begin
+  GlobalUseMetal := TCustomContextMetal.IsMetalSupported();
 end.
 
