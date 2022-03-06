@@ -4,6 +4,8 @@ uses
   System.StartUpCopy,
   SysUtils,
   Classes,
+  FMX.Forms,
+  FMX.Types,
   uMain in 'uMain.pas';
 
 {$I ..\..\Source\Definition.Inc}
@@ -23,5 +25,6 @@ exports
 {$WARN SYMBOL_PLATFORM ON}
 
 begin
+  GlobalUseMetal := true;
 end.
 
