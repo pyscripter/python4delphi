@@ -28,6 +28,7 @@ uses
   WrapVclSamplesSpin,
   WrapVclWinXCtrls,
   WrapVclThemes,
-  WrapVclDialogs;
+  WrapVclDialogs,
+  WrapVclMedia;
 
 end.
