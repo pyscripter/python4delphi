@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FMX.StdCtrls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxControls;
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxControls, WrapFmxActnList;
 
 type
   TPyDelphiPresentedTextControl = class(TPyDelphiStyledControl)
