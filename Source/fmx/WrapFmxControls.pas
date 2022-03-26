@@ -6,9 +6,8 @@ interface
 
 uses
   Classes, SysUtils, TypInfo, Types,
-  FMX.Types, FMX.Controls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes,
-  FMX.Controls.Presentation;
+  FMX.Types, FMX.Controls, FMX.Controls.Presentation,
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes, WrapFmxActnList;
 
 type
   {
@@ -136,6 +135,17 @@ type
     property DelphiObject: TPresentedControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomControlAction = class(TPyDelphiCustomAction)
+  private
+    function GetDelphiObject: TCustomControlAction;
+    procedure SetDelphiObject(const Value: TCustomControlAction);
+  public
+    class function DelphiObjectClass: TClass; override;
+  public
+    property DelphiObject: TCustomControlAction read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
 implementation
 
 type
@@ -146,6 +156,30 @@ type
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
+
+{ TControlsRegistration }
+
+procedure TControlsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+end;
+
+function TControlsRegistration.Name: string;
+begin
+  Result := 'Controls';
+end;
+
+procedure TControlsRegistration.RegisterWrappers(
+  APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControlAction);
+end;
 
 { TPyDelphiControl }
 
@@ -423,29 +457,6 @@ begin
   end
   else
     Result := -1;
-end;
-
-{ TControlsRegistration }
-
-procedure TControlsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-end;
-
-function TControlsRegistration.Name: string;
-begin
-  Result := 'Controls';
-end;
-
-procedure TControlsRegistration.RegisterWrappers(
-  APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
 end;
 
 { TControlsAccess }
@@ -736,6 +747,24 @@ end;
 
 procedure TPyDelphiPresentedControl.SetDelphiObject(
   const Value: TPresentedControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomControlAction }
+
+class function TPyDelphiCustomControlAction.DelphiObjectClass: TClass;
+begin
+  Result := TCustomControlAction;
+end;
+
+function TPyDelphiCustomControlAction.GetDelphiObject: TCustomControlAction;
+begin
+  Result := TCustomControlAction(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomControlAction.SetDelphiObject(
+  const Value: TCustomControlAction);
 begin
   inherited DelphiObject := Value;
 end;
