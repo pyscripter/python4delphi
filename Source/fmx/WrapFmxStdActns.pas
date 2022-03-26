@@ -165,7 +165,7 @@ type
 implementation
 
 type
-  TFMXStdActns = class(TRegisteredUnit)
+  TStdActnsRegistration = class(TRegisteredUnit)
   public
     function Name: string; override;
     procedure RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper); override;
@@ -174,17 +174,17 @@ type
 
 { TFMXStdActns }
 
-function TFMXStdActns.Name: string;
+function TStdActnsRegistration.Name: string;
 begin
   Result := 'StdActns';
 end;
 
-procedure TFMXStdActns.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
+procedure TStdActnsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
 end;
 
-procedure TFMXStdActns.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
+procedure TStdActnsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiHintAction);
@@ -201,7 +201,6 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiValueRange);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomValueRangeAction);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiValueRangeAction);
-
 end;
 
 { TPyDelphiHintAction }
@@ -448,5 +447,8 @@ procedure TPyDelphiValueRangeAction.SetDelphiObject(
 begin
   inherited DelphiObject := Value;
 end;
+
+initialization
+  RegisteredUnits.Add(TStdActnsRegistration.Create);
 
 end.
