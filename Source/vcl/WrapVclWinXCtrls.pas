@@ -5,7 +5,11 @@ interface
 
 uses
   Vcl.WinXCtrls,
-  {$IFDEF DELPHI10_4_OR_HIGHER}Vcl.NumberBox,{$ENDIF DELPHI10_4_OR_HIGHER}
+  {$IFDEF DELPHI10_4_OR_HIGHER}
+  {$IF RTLVersion1042}
+    Vcl.NumberBox,
+  {$IFEND}
+  {$ENDIF DELPHI10_4_OR_HIGHER}
   WrapVclControls, WrapVclStdCtrls;
 
 type
@@ -46,6 +50,7 @@ type
   end;
 
   {$IFDEF DELPHI10_4_OR_HIGHER}
+  {$IF RTLVersion1042}
   TPyDelphiCustomNumberBox = class(TPyDelphiCustomEdit)
   private
     function GetDelphiObject: TCustomNumberBox;
@@ -63,6 +68,7 @@ type
     class function DelphiObjectClass : TClass; override;
     property DelphiObject: TNumberBox read GetDelphiObject write SetDelphiObject;
   end;
+  {$IFEND}
   {$ENDIF DELPHI10_4_OR_HIGHER}
 
 implementation
@@ -100,8 +106,10 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
   {$IFDEF DELPHI10_4_OR_HIGHER}
+  {$IF RTLVersion1042}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
+  {$IFEND}
   {$ENDIF DELPHI10_4_OR_HIGHER}
 end;
 
@@ -177,6 +185,7 @@ begin
 end;
 
 {$IFDEF DELPHI10_4_OR_HIGHER}
+{$IF RTLVersion1042}
 
 { TPyDelphiCustomNumberBox }
 
@@ -213,6 +222,7 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{$IFEND}
 {$ENDIF DELPHI10_4_OR_HIGHER}
 
 initialization

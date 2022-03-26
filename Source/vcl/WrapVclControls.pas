@@ -144,6 +144,26 @@ type
       PropertyInfo : PPropInfo; Callable : PPyObject); override;
     class function GetTypeInfo : PTypeInfo; override;
   end;
+  
+  { TMouseEvent wrapper }
+  TMouseEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X: Integer; Y: Integer);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  { TMouseMoveEvent wrapper }
+  TMouseMoveEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; Shift: TShiftState; X: Integer; Y: Integer);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
 
 implementation
 
@@ -192,6 +212,9 @@ begin
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyPressEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
+
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseMoveEventHandler);
 end;
 
 { TPyDelphiControl }
@@ -752,6 +775,100 @@ end;
 class function TKeyEventHandler.GetTypeInfo: PTypeInfo;
 begin
   Result := System.TypeInfo(TKeyEvent);
+end;
+
+{ TMouseEventHandler }
+
+constructor TMouseEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  Method : TMethod;
+begin
+  inherited;
+  Method.Code := @TMouseEventHandler.DoEvent;
+  Method.Data := Self;
+  SetMethodProp(Component, PropertyInfo, Method);
+end;
+
+procedure TMouseEventHandler.DoEvent(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X: Integer; Y: Integer);
+var
+  PyObject, PyTuple, PyButton, PyX, PyY, PyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      PyObject := PyDelphiWrapper.Wrap(Sender);
+      PyButton := PyLong_FromLong(Ord(Button));
+      PyX := PyLong_FromLong(X);
+      PyY := PyLong_FromLong(Y);
+      PyTuple := PyTuple_New(5);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 0, PyObject);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 1, PyButton);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 2, ShiftToPython(Shift));
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 3, PyX);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 4, PyY);
+      try
+        PyResult := PyObject_CallObject(Callable, PyTuple);
+        if Assigned(PyResult) then
+        begin
+          Py_DECREF(PyResult);
+        end;
+      finally
+        Py_DECREF(PyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TMouseEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TMouseEvent);
+end;
+
+{ TMouseMoveEventHandler }
+
+constructor TMouseMoveEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  Method : TMethod;
+begin
+  inherited;
+  Method.Code := @TMouseMoveEventHandler.DoEvent;
+  Method.Data := Self;
+  SetMethodProp(Component, PropertyInfo, Method);
+end;
+
+procedure TMouseMoveEventHandler.DoEvent(Sender: TObject; Shift: TShiftState; X: Integer; Y: Integer);
+var
+  PyObject, PyTuple, PyX, PyY, PyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      PyObject := PyDelphiWrapper.Wrap(Sender);
+      PyX := PyLong_FromLong(X);
+      PyY := PyLong_FromLong(Y);
+      PyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 0, PyObject);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 1, ShiftToPython(Shift));
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 2, PyX);
+      GetPythonEngine.PyTuple_SetItem(PyTuple, 3, PyY);
+      try
+        PyResult := PyObject_CallObject(Callable, PyTuple);
+        if Assigned(PyResult) then
+        begin
+          Py_DECREF(PyResult);
+        end;
+      finally
+        Py_DECREF(PyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TMouseMoveEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TMouseMoveEvent);
 end;
 
 initialization
