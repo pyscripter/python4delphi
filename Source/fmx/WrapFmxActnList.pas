@@ -49,6 +49,15 @@ type
     property DelphiObject: TAction read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomViewAction = class(TPyDelphiCustomAction)
+  private
+    function GetDelphiObject: TCustomViewAction;
+    procedure SetDelphiObject(const Value: TCustomViewAction);
+  public
+    class function DelphiObjectClass: TClass; override;
+    property DelphiObject: TCustomViewAction read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -79,6 +88,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActionList);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomAction);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAction);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomViewAction);
 end;
 
 { TPyDelphiCustomActionList }
@@ -145,6 +155,24 @@ begin
 end;
 
 procedure TPyDelphiAction.SetDelphiObject(const Value: TAction);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomViewAction }
+
+class function TPyDelphiCustomViewAction.DelphiObjectClass: TClass;
+begin
+  Result := TCustomViewAction;
+end;
+
+function TPyDelphiCustomViewAction.GetDelphiObject: TCustomViewAction;
+begin
+  Result := TCustomViewAction(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomViewAction.SetDelphiObject(
+  const Value: TCustomViewAction);
 begin
   inherited DelphiObject := Value;
 end;
