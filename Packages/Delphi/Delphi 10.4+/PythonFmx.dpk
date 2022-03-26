@@ -58,6 +58,7 @@ contains
   WrapFmxMemo in '..\..\..\Source\fmx\WrapFmxMemo.pas',
   WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas',
   WrapFmxListView in '..\..\..\Source\fmx\WrapFmxListView.pas',
-  WrapFmxDataBind in '..\..\..\Source\fmx\WrapFmxDataBind.pas';
+  WrapFmxDataBind in '..\..\..\Source\fmx\WrapFmxDataBind.pas',
+  WrapFmxStdActns in '..\..\..\Source\fmx\WrapFmxStdActns.pas';
 
 end.
