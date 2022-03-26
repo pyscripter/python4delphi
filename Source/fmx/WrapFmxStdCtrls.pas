@@ -5,7 +5,7 @@ unit WrapFmxStdCtrls;
 interface
 
 uses
-  Classes, SysUtils, FMX.StdCtrls, FMX.Controls,
+  Classes, SysUtils, FMX.StdCtrls,
   PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxControls, WrapFmxActnList;
 
 type
@@ -329,17 +329,6 @@ type
     property DelphiObject: TPathLabel read GetDelphiObject write SetDelphiObject;
   end;
 
-  TPyDelphiCustomControlAction = class(TPyDelphiCustomAction)
-  private
-    function GetDelphiObject: TCustomControlAction;
-    procedure SetDelphiObject(const Value: TCustomControlAction);
-  public
-    class function DelphiObjectClass: TClass; override;
-  public
-    property DelphiObject: TCustomControlAction read GetDelphiObject
-      write SetDelphiObject;
-  end;
-
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -399,7 +388,6 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiExpander);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPathLabel);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControlAction);
 end;
 
 { TPyDelphiPresentedTextControl }
@@ -944,24 +932,6 @@ begin
 end;
 
 procedure TPyDelphiPathLabel.SetDelphiObject(const Value: TPathLabel);
-begin
-  inherited DelphiObject := Value;
-end;
-
-{ TPyDelphiCustomControlAction }
-
-class function TPyDelphiCustomControlAction.DelphiObjectClass: TClass;
-begin
-  Result := TCustomControlAction;
-end;
-
-function TPyDelphiCustomControlAction.GetDelphiObject: TCustomControlAction;
-begin
-  Result := TCustomControlAction(inherited DelphiObject);
-end;
-
-procedure TPyDelphiCustomControlAction.SetDelphiObject(
-  const Value: TCustomControlAction);
 begin
   inherited DelphiObject := Value;
 end;
