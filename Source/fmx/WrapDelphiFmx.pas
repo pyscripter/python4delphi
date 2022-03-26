@@ -17,6 +17,7 @@ uses
   WrapFmxListBox,
   WrapFmxListView,
   WrapFmxActnList,
+  WrapFmxStdActns,
   WrapFmxComCtrls,
   WrapFmxDialogs,
   WrapFmxForms,
