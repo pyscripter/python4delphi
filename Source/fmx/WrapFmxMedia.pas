@@ -173,8 +173,6 @@ end;
 procedure TFMXMediaRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
-  APyDelphiWrapper.DefineVar('Audio', TMediaType.Audio);
-  APyDelphiWrapper.DefineVar('Video', TMediaType.Video);
 end;
 
 procedure TFMXMediaRegistration.RegisterWrappers(APyDelphiWrapper
