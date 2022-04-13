@@ -5,11 +5,9 @@ interface
 
 uses
   Vcl.WinXCtrls,
-  {$IFDEF DELPHI10_4_OR_HIGHER}
-  {$IF RTLVersion1042}
-    Vcl.NumberBox,
-  {$IFEND}
-  {$ENDIF DELPHI10_4_OR_HIGHER}
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+  Vcl.NumberBox,
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
   WrapVclControls, WrapVclStdCtrls;
 
 type
@@ -49,8 +47,7 @@ type
     property DelphiObject: TToggleSwitch read GetDelphiObject write SetDelphiObject;
   end;
 
-  {$IFDEF DELPHI10_4_OR_HIGHER}
-  {$IF RTLVersion1042}
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
   TPyDelphiCustomNumberBox = class(TPyDelphiCustomEdit)
   private
     function GetDelphiObject: TCustomNumberBox;
@@ -68,8 +65,7 @@ type
     class function DelphiObjectClass : TClass; override;
     property DelphiObject: TNumberBox read GetDelphiObject write SetDelphiObject;
   end;
-  {$IFEND}
-  {$ENDIF DELPHI10_4_OR_HIGHER}
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 
 implementation
 
@@ -105,12 +101,10 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActivityIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
-  {$IFDEF DELPHI10_4_OR_HIGHER}
-  {$IF RTLVersion1042}
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
-  {$IFEND}
-  {$ENDIF DELPHI10_4_OR_HIGHER}
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 end;
 
 { TPyDelphiCustomActivityIndicator }
@@ -184,8 +178,7 @@ begin
   inherited DelphiObject := Value;
 end;
 
-{$IFDEF DELPHI10_4_OR_HIGHER}
-{$IF RTLVersion1042}
+{$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 
 { TPyDelphiCustomNumberBox }
 
@@ -222,8 +215,7 @@ begin
   inherited DelphiObject := Value;
 end;
 
-{$IFEND}
-{$ENDIF DELPHI10_4_OR_HIGHER}
+{$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 
 initialization
   RegisteredUnits.Add(TWinXCtrlsRegistration.Create());
