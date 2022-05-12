@@ -38,6 +38,10 @@
 *.rc
 *.res
 *.local
+*.bak
+*.Patch
+*.#00
+*.pch
 
 # Output Folders  #
 ###################
@@ -45,10 +49,7 @@
 /Win64
 /OSX32
 /__history
-*.bak
-*.Patch
-*.#00
-*.pch
+__recovery/
 /Modules/DelphiFMX/pyd
 /Modules/DelphiVCL/pyd
 /Modules/DelphiFMX/dcu
