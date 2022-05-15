@@ -4,11 +4,13 @@ unit WrapDelphiWindows;
 
 interface
 
+{$IFDEF Windows}
 uses
   Windows, Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses;
-
+{$ENDIF Windows}
 implementation
 
+{$IFDEF Windows}
 { Register the wrappers, the globals and the constants }
 type
   TWindowsRegistration = class(TRegisteredUnit)
@@ -76,5 +78,6 @@ end;
 
 initialization
   RegisteredUnits.Add( TWindowsRegistration.Create );
+{$ENDIF Windows}
 end.
 
