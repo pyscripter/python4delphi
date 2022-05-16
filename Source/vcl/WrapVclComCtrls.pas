@@ -177,6 +177,24 @@ type
     property DelphiObject: TTabControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomStatusBar = class (TPyDelphiWinControl)
+  private
+    function GetDelphiObject: TCustomStatusBar;
+    procedure SetDelphiObject(const Value: TCustomStatusBar);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TCustomStatusBar read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiStatusBar = class (TPyDelphiCustomStatusBar)
+  private
+    function GetDelphiObject: TStatusBar;
+    procedure SetDelphiObject(const Value: TStatusBar);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TStatusBar read GetDelphiObject write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -217,6 +235,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolbar);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomTabControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTabControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomStatusBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTabChangingEventHandler);
 end;
@@ -860,6 +880,41 @@ begin
 end;
 
 procedure TPyDelphiCustomTabControl.SetDelphiObject(const Value: TTabControl);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomStatusBar }
+
+class function TPyDelphiCustomStatusBar.DelphiObjectClass: TClass;
+begin
+  Result := TCustomStatusBar;
+end;
+
+function TPyDelphiCustomStatusBar.GetDelphiObject: TCustomStatusBar;
+begin
+  Result := TCustomStatusBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomStatusBar.SetDelphiObject(
+  const Value: TCustomStatusBar);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiStatusBar }
+
+class function TPyDelphiStatusBar.DelphiObjectClass: TClass;
+begin
+  Result := TStatusBar;
+end;
+
+function TPyDelphiStatusBar.GetDelphiObject: TStatusBar;
+begin
+  Result := TStatusBar(inherited DelphiObject);
+end;
+
+procedure TPyDelphiStatusBar.SetDelphiObject(const Value: TStatusBar);
 begin
   inherited DelphiObject := Value;
 end;
