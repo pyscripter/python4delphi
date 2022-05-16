@@ -45,6 +45,17 @@ type
       write SetDelphiObject;
   end;
 
+  TPyDelphiSaveDialog = class(TPyDelphiOpenDialog)
+  private
+    function GetDelphiObject: TSaveDialog;
+    procedure SetDelphiObject(const Value: TSaveDialog);
+  public
+    class function DelphiObjectClass: TClass; override;
+    // Properties
+    property DelphiObject: TSaveDialog read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
 implementation
 
 uses
@@ -102,6 +113,7 @@ begin
   inherited;
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiOpenDialog);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFileOpenDialog);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSaveDialog);
 end;
 
 { TPyDelphiOpenDialog }
@@ -202,6 +214,23 @@ begin
 end;
 
 procedure TPyDelphiFileOpenDialog.SetDelphiObject(const Value: TFileOpenDialog);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiSaveDialog }
+
+class function TPyDelphiSaveDialog.DelphiObjectClass: TClass;
+begin
+  Result := TSaveDialog;
+end;
+
+function TPyDelphiSaveDialog.GetDelphiObject: TSaveDialog;
+begin
+  Result := TSaveDialog(inherited DelphiObject);
+end;
+
+procedure TPyDelphiSaveDialog.SetDelphiObject(const Value: TSaveDialog);
 begin
   inherited DelphiObject := Value;
 end;
