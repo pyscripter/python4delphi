@@ -7,7 +7,7 @@
 
 - [Video replay](https://blogs.embarcadero.com/combining-the-strengths-of-delphi-and-python/)
 
-- [Slides]()
+- [Slides](Python%20for%20Delphi%20Developers%20II.pdf)
 
 - Source code is included in this folder.  [Demo33](https://github.com/pyscripter/python4delphi/tree/master/Demos/Demo33) is in the Demos directory and the python extension [module demos](https://github.com/pyscripter/python4delphi/tree/master/Modules/DemoModule) are in the Modules directory.
 
