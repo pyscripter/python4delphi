@@ -58,3 +58,4 @@ __recovery/
 /Modules/DelphiFMX/dcu
 /Modules/DelphiVCL/dcu
 Release/
+*.a
