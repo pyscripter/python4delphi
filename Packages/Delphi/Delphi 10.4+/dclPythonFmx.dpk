@@ -33,7 +33,7 @@ package dclPythonFmx;
 
 requires
   rtl,
-  PythonFmx;
+  pythonfmx;
 
 contains
   FMX.PythonReg in '..\..\..\Source\fmx\FMX.PythonReg.pas';

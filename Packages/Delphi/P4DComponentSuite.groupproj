@@ -16,10 +16,13 @@
             <Dependencies>Delphi 10.4+\PythonVcl.dproj</Dependencies>
         </Projects>
         <Projects Include="Delphi 10.4+\PythonFmx.dproj">
-            <Dependencies>Delphi 10.4+\PythonVcl.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
         <Projects Include="Delphi 10.4+\dclPythonFmx.dproj">
-            <Dependencies>Delphi 10.4+\PythonFmx.dproj</Dependencies>
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Delphi 10.4+\PythonCommon.dproj">
+            <Dependencies/>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -65,32 +68,41 @@
     <Target Name="dclPythonVcl:Make" DependsOnTargets="PythonVcl:Make">
         <MSBuild Projects="Delphi 10.4+\dclPythonVcl.dproj" Targets="Make"/>
     </Target>
-    <Target Name="PythonFmx" DependsOnTargets="PythonVcl">
+    <Target Name="PythonFmx">
         <MSBuild Projects="Delphi 10.4+\PythonFmx.dproj"/>
     </Target>
-    <Target Name="PythonFmx:Clean" DependsOnTargets="PythonVcl:Clean">
+    <Target Name="PythonFmx:Clean">
         <MSBuild Projects="Delphi 10.4+\PythonFmx.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="PythonFmx:Make" DependsOnTargets="PythonVcl:Make">
+    <Target Name="PythonFmx:Make">
         <MSBuild Projects="Delphi 10.4+\PythonFmx.dproj" Targets="Make"/>
     </Target>
-    <Target Name="dclPythonFmx" DependsOnTargets="PythonFmx">
+    <Target Name="dclPythonFmx">
         <MSBuild Projects="Delphi 10.4+\dclPythonFmx.dproj"/>
     </Target>
-    <Target Name="dclPythonFmx:Clean" DependsOnTargets="PythonFmx:Clean">
+    <Target Name="dclPythonFmx:Clean">
         <MSBuild Projects="Delphi 10.4+\dclPythonFmx.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="dclPythonFmx:Make" DependsOnTargets="PythonFmx:Make">
+    <Target Name="dclPythonFmx:Make">
         <MSBuild Projects="Delphi 10.4+\dclPythonFmx.dproj" Targets="Make"/>
     </Target>
+    <Target Name="PythonCommon">
+        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj"/>
+    </Target>
+    <Target Name="PythonCommon:Clean">
+        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="PythonCommon:Make">
+        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Python;dclPython;PythonVcl;dclPythonVcl;PythonFmx;dclPythonFmx"/>
+        <CallTarget Targets="Python;dclPython;PythonVcl;dclPythonVcl;PythonFmx;dclPythonFmx;PythonCommon"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Python:Clean;dclPython:Clean;PythonVcl:Clean;dclPythonVcl:Clean;PythonFmx:Clean;dclPythonFmx:Clean"/>
+        <CallTarget Targets="Python:Clean;dclPython:Clean;PythonVcl:Clean;dclPythonVcl:Clean;PythonFmx:Clean;dclPythonFmx:Clean;PythonCommon:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Python:Make;dclPython:Make;PythonVcl:Make;dclPythonVcl:Make;PythonFmx:Make;dclPythonFmx:Make"/>
+        <CallTarget Targets="Python:Make;dclPython:Make;PythonVcl:Make;dclPythonVcl:Make;PythonFmx:Make;dclPythonFmx:Make;PythonCommon:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
