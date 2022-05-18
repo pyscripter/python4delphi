@@ -40,7 +40,7 @@ unit VarPyth;
 interface
 
 uses
-  Variants, PythonEngine;
+  Variants, PythonEngine, Classes;
 
 type
   TSequenceType = (stTuple, stList);
@@ -135,10 +135,12 @@ type
 
 function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
 
+function VarPyToStrings(const AValue : Variant; const AStrings: TStrings): Integer;
+
 implementation
 
 uses
-  VarUtils, SysUtils, TypInfo, Classes;
+  VarUtils, SysUtils, TypInfo;
 
 type
   TNamedParamDesc = record
@@ -289,6 +291,7 @@ resourcestring
   SCantConvertValueToPythonObject = 'Can''t convert Value into a Python object';
   SCantCreateNewSequenceObject = 'Can''t create a new sequence object';
   SExpectedPythonVariant = 'Expected a Python variant';
+  SExpectedPythonList = 'Expected a Python List: ';
 
 { Python variant creation utils }
 
@@ -2814,6 +2817,17 @@ end;
 function TVarPyEnumerateHelper.GetEnumerator: TVarPyEnumerator;
 begin
   Result := TVarPyEnumerator.Create(FIterable);
+end;
+
+function VarPyToStrings(const AValue : Variant; const AStrings: TStrings): Integer;
+begin
+  Assert(Assigned(AStrings));
+  if VarIsPythonList(AValue) then
+    GetPythonEngine.PyListToStrings(
+      ExtractPythonObjectFrom(AValue), AStrings)
+  else
+    raise Exception.Create(SExpectedPythonList + _type(AValue));
+  Result := AStrings.Count;
 end;
 
 initialization
