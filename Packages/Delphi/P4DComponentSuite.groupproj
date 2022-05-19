@@ -21,9 +21,6 @@
         <Projects Include="Delphi 10.4+\dclPythonFmx.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="Delphi 10.4+\PythonCommon.dproj">
-            <Dependencies/>
-        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -86,23 +83,14 @@
     <Target Name="dclPythonFmx:Make">
         <MSBuild Projects="Delphi 10.4+\dclPythonFmx.dproj" Targets="Make"/>
     </Target>
-    <Target Name="PythonCommon">
-        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj"/>
-    </Target>
-    <Target Name="PythonCommon:Clean">
-        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="PythonCommon:Make">
-        <MSBuild Projects="Delphi 10.4+\PythonCommon.dproj" Targets="Make"/>
-    </Target>
     <Target Name="Build">
-        <CallTarget Targets="Python;dclPython;PythonVcl;dclPythonVcl;PythonFmx;dclPythonFmx;PythonCommon"/>
+        <CallTarget Targets="Python;dclPython;PythonVcl;dclPythonVcl;PythonFmx;dclPythonFmx"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="Python:Clean;dclPython:Clean;PythonVcl:Clean;dclPythonVcl:Clean;PythonFmx:Clean;dclPythonFmx:Clean;PythonCommon:Clean"/>
+        <CallTarget Targets="Python:Clean;dclPython:Clean;PythonVcl:Clean;dclPythonVcl:Clean;PythonFmx:Clean;dclPythonFmx:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="Python:Make;dclPython:Make;PythonVcl:Make;dclPythonVcl:Make;PythonFmx:Make;dclPythonFmx:Make;PythonCommon:Make"/>
+        <CallTarget Targets="Python:Make;dclPython:Make;PythonVcl:Make;dclPythonVcl:Make;PythonFmx:Make;dclPythonFmx:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
