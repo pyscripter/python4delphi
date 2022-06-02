@@ -16,6 +16,17 @@ type
       SetBounds and Repaint
      Exposes properties Parent and Visible
   }
+
+  { TKeyEvent wrapper }
+  TKeyEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; var Key: Word; var KeyChar: WideChar; Shift: TShiftState);
+  public
+    constructor Create(APyDelphiWrapper: TPyDelphiWrapper; AComponent: TObject;
+      APropertyInfo: PPropInfo; ACallable: PPyObject); override;
+    class function GetTypeInfo: PTypeInfo; override;
+  end;
+
   TPyDelphiControl = class (TPyDelphiFmxObject)
   private
     function  GetDelphiObject: TControl;
@@ -179,6 +190,8 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControlAction);
+
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
 end;
 
 { TPyDelphiControl }
@@ -767,6 +780,75 @@ procedure TPyDelphiCustomControlAction.SetDelphiObject(
   const Value: TCustomControlAction);
 begin
   inherited DelphiObject := Value;
+end;
+
+{ TKeyEventHandler }
+
+constructor TKeyEventHandler.Create(APyDelphiWrapper: TPyDelphiWrapper;
+  AComponent: TObject; APropertyInfo: PPropInfo; ACallable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TKeyEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(AComponent, APropertyInfo, LMethod);
+end;
+
+class function TKeyEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TKeyEvent);
+end;
+
+procedure TKeyEventHandler.DoEvent(Sender: TObject; var Key: Word;
+  var KeyChar: WideChar; Shift: TShiftState);
+var
+  LPyObject: PPyObject;
+  LPyTuple: PPyObject;
+  LPyResult: PPyObject;
+  LPyKey: PPyObject;
+  LVarKeyParam: TPyDelphiVarParameter;
+  LPyKeyChar: PPyObject;
+  LVarKeyCharParam: TPyDelphiVarParameter;
+  LKeyCharStr: string;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      //var parameters
+      LPyKey := CreateVarParam(PyDelphiWrapper, Key);
+      LVarKeyParam := PythonToDelphi(LPyKey) as TPyDelphiVarParameter;
+      LPyKeyChar := CreateVarParam(PyDelphiWrapper, KeyChar);
+      LVarKeyCharParam := PythonToDelphi(LPyKeyChar) as TPyDelphiVarParameter;
+
+      LPyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyKey);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyKeyChar);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, ShiftToPython(Shift));
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          if PyLong_Check(LVarKeyParam.Value) then
+            Key := PyLong_AsLong(LVarKeyParam.Value);
+
+          if (LVarKeyCharParam.Value = Py_None) then
+            KeyChar := #0
+          else if PyUnicode_Check(LVarKeyCharParam.Value) then
+          begin
+            LKeyCharStr := PyUnicodeAsString(LVarKeyCharParam.Value);
+            if Length(LKeyCharStr) > 0 then
+              KeyChar := LKeyCharStr[1];
+          end;
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError();
+    end;
 end;
 
 initialization
