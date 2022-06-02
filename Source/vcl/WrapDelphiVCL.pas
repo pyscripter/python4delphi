@@ -12,7 +12,9 @@ implementation
 uses
   WrapDelphiTypes,
   WrapDelphiClasses,
+  {$IFDEF MSWINDOWS}
   WrapDelphiWindows,
+  {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
   WrapActions,
   WrapVclControls,

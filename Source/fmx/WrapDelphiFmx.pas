@@ -7,9 +7,9 @@ implementation
 uses
   WrapDelphiTypes,
   WrapDelphiClasses,
-  {$IFDEF Windows}
+  {$IFDEF MSWINDOWS}
   WrapDelphiWindows,
-  {$ENDIF Windows}
+  {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
   WrapFmxTypes,
   WrapFmxStdCtrls,
