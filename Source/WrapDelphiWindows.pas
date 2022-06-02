@@ -4,23 +4,39 @@ unit WrapDelphiWindows;
 
 interface
 
-{$IFDEF Windows}
 uses
   Windows, Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses;
-{$ENDIF Windows}
+
 implementation
 
-{$IFDEF Windows}
+{$IFDEF DELPHI11_OR_HIGHER}
+uses
+  System.Win.HighDpi, Winapi.ShellScaling;
+{$ENDIF DELPHI11_OR_HIGHER}
+
 { Register the wrappers, the globals and the constants }
 type
   TWindowsRegistration = class(TRegisteredUnit)
+  private
+    {$IFDEF DELPHI11_OR_HIGHER}
+    class function IsDpiAware_Wrapper(PySelf, AArgs: PPyObject): PPyObject; cdecl; static;
+    class function SetHighDpiAware_Wrapper(PySelf, AArgs: PPyObject): PPyObject; cdecl; static;
+    class function GetProcessDpiAwareness_Wrapper(PySelf, AArgs: PPyObject): PPyObject; cdecl; static;
+    class function SetProcessDpiAwareness_Wrapper(PySelf, AArgs: PPyObject): PPyObject; cdecl; static;
+    {$ENDIF DELPHI11_OR_HIGHER}
   public
     function Name : string; override;
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
+    procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
 { TWindowsRegistration }
+
+function TWindowsRegistration.Name: string;
+begin
+  Result := 'Windows';
+end;
 
 procedure TWindowsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
@@ -66,9 +82,31 @@ begin
   {$ENDIF FPC}
 end;
 
-function TWindowsRegistration.Name: string;
+procedure TWindowsRegistration.DefineFunctions(
+  APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  Result := 'Windows';
+  inherited;
+  {$IFDEF DELPHI11_OR_HIGHER}
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('IsDpiAware'),
+    TWindowsRegistration.IsDpiAware_Wrapper,
+    PAnsiChar('IsDPIAware()'#10 +
+    'Check for process DPI awareness.'));
+
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('SetHighDpiAware'),
+    TWindowsRegistration.SetHighDpiAware_Wrapper,
+    PAnsiChar('SetHighDpiAware()'#10 +
+    'Automatically set the DPI awareness that best fits to the process.'));
+
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('GetProcessDpiAwareness'),
+    TWindowsRegistration.GetProcessDpiAwareness_Wrapper,
+    PAnsiChar('GetProcessDpiAwareness()'#10 +
+    'Get the DPI awareness of the process.'));
+
+  APyDelphiWrapper.RegisterFunction(PAnsiChar('SetProcessDpiAwareness'),
+    TWindowsRegistration.SetProcessDpiAwareness_Wrapper,
+    PAnsiChar('SetProcessDpiAwareness()'#10 +
+    'Set the DPI awareness to the process.'));
+  {$ENDIF DELPHI11_OR_HIGHER}
 end;
 
 procedure TWindowsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
@@ -76,8 +114,84 @@ begin
   inherited;
 end;
 
+{$IFDEF DELPHI11_OR_HIGHER}
+class function TWindowsRegistration.IsDpiAware_Wrapper(PySelf, AArgs: PPyObject): PPyObject;
+begin
+  with GetPythonEngine() do
+  begin
+    if IsDpiAware() then
+      Result := GetPythonEngine().ReturnTrue()
+    else
+      Result := GetPythonEngine().ReturnFalse();
+  end;
+end;
+
+class function TWindowsRegistration.SetHighDpiAware_Wrapper(PySelf, AArgs: PPyObject): PPyObject;
+begin
+  with GetPythonEngine() do
+  begin
+    if SetHighDpiAware() then
+      Result := GetPythonEngine().ReturnTrue()
+    else
+      Result := GetPythonEngine().ReturnFalse();
+  end;
+end;
+
+class function TWindowsRegistration.GetProcessDpiAwareness_Wrapper(PySelf,
+  AArgs: PPyObject): PPyObject;
+var
+  LErrorCode: HResult;
+  LDpiAwareness: TProcessDpiAwareness;
+begin
+  with GetPythonEngine() do
+  begin
+    if (PyArg_ParseTuple(AArgs, ':GetProcessDpiAwareness') <> 0) then
+    begin
+      LErrorCode :=  WinAPI.ShellScaling.GetProcessDpiAwareness(GetCurrentProcess(), LDpiAwareness);
+
+      Result := PyList_New(0);
+      PyList_Append(Result, PyLong_FromLong(LErrorCode));
+      PyList_Append(Result, PyLong_FromLong(Ord(LDpiAwareness)));
+    end else
+      Result := nil;
+  end;
+end;
+
+class function TWindowsRegistration.SetProcessDpiAwareness_Wrapper(PySelf,
+  AArgs: PPyObject): PPyObject;
+var
+  LErrorCode: HResult;
+  LDpiAwareness: integer;
+begin
+  with GetPythonEngine() do
+  begin
+    if (PyArg_ParseTuple(AArgs, 'i:SetProcessDpiAwareness', @LDpiAwareness) <> 0) then
+    begin
+      if not (LDpiAwareness in [
+        Ord(Low(TProcessDpiAwareness))
+        ..
+        Ord(High(TProcessDpiAwareness))]) then
+      begin
+        PyErr_SetString(PyExc_ValueError^, 'DPI awareness value out of range');
+        Result := nil;
+      end else begin
+        LErrorCode :=  WinAPI.ShellScaling.SetProcessDpiAwareness(TProcessDpiAwareness(LDpiAwareness));
+        Result := PyLong_FromLong(LErrorCode);
+      end;
+    end else
+      Result := nil;
+  end;
+end;
+{$ENDIF DELPHI11_OR_HIGHER}
+
 initialization
   RegisteredUnits.Add( TWindowsRegistration.Create );
-{$ENDIF Windows}
+
+  {$IFDEF MSWINDOWS}
+    {$IFDEF DELPHI11_OR_HIGHER}
+    SetHighDpiAware();
+    {$ENDIF DELPHI11_OR_HIGHER}
+  {$ENDIF MSWINDOWS}
+
 end.
 
