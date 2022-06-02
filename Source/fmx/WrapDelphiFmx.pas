@@ -12,6 +12,7 @@ uses
   {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
   WrapFmxTypes,
+  WrapFmxControls,
   WrapFmxStdCtrls,
   WrapFmxEdit,
   WrapFmxListBox,
