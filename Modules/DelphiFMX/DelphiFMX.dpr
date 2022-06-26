@@ -4,6 +4,11 @@ uses
   System.StartUpCopy,
   SysUtils,
   Classes,
+  FMX.Forms,
+  FMX.Types,
+  {$IFDEF OSX}
+  FMX.Context.Metal,
+  {$ENDIF OSX}
   uMain in 'uMain.pas';
 
 {$I ..\..\Source\Definition.Inc}
@@ -16,11 +21,15 @@ exports
 {$IFDEF MSWINDOWS}
 {$E pyd}
 {$ENDIF}
+{$WARN SYMBOL_PLATFORM OFF}
 {$IFDEF LINUX}
 {$SONAME 'DelphiFMX'}
-
 {$ENDIF}
+{$WARN SYMBOL_PLATFORM ON}
 
 begin
+  {$IFDEF OSX}
+  GlobalUseMetal := TCustomContextMetal.IsMetalSupported();
+  {$ENDIF OSX}
 end.
 

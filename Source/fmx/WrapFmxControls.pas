@@ -6,9 +6,8 @@ interface
 
 uses
   Classes, SysUtils, TypInfo, Types,
-  FMX.Types, FMX.Controls,
-  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes,
-  FMX.Controls.Presentation;
+  FMX.Types, FMX.Controls, FMX.Controls.Presentation,
+  PythonEngine, WrapDelphi, WrapDelphiClasses, WrapFmxTypes, WrapFmxActnList;
 
 type
   {
@@ -17,6 +16,17 @@ type
       SetBounds and Repaint
      Exposes properties Parent and Visible
   }
+
+  { TKeyEvent wrapper }
+  TKeyEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; var Key: Word; var KeyChar: WideChar; Shift: TShiftState);
+  public
+    constructor Create(APyDelphiWrapper: TPyDelphiWrapper; AComponent: TObject;
+      APropertyInfo: PPropInfo; ACallable: PPyObject); override;
+    class function GetTypeInfo: PTypeInfo; override;
+  end;
+
   TPyDelphiControl = class (TPyDelphiFmxObject)
   private
     function  GetDelphiObject: TControl;
@@ -136,6 +146,17 @@ type
     property DelphiObject: TPresentedControl read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiCustomControlAction = class(TPyDelphiCustomAction)
+  private
+    function GetDelphiObject: TCustomControlAction;
+    procedure SetDelphiObject(const Value: TCustomControlAction);
+  public
+    class function DelphiObjectClass: TClass; override;
+  public
+    property DelphiObject: TCustomControlAction read GetDelphiObject
+      write SetDelphiObject;
+  end;
+
 implementation
 
 type
@@ -146,6 +167,32 @@ type
     procedure RegisterWrappers(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
+
+{ TControlsRegistration }
+
+procedure TControlsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+end;
+
+function TControlsRegistration.Name: string;
+begin
+  Result := 'Controls';
+end;
+
+procedure TControlsRegistration.RegisterWrappers(
+  APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControlAction);
+
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
+end;
 
 { TPyDelphiControl }
 
@@ -423,29 +470,6 @@ begin
   end
   else
     Result := -1;
-end;
-
-{ TControlsRegistration }
-
-procedure TControlsRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-end;
-
-function TControlsRegistration.Name: string;
-begin
-  Result := 'Controls';
-end;
-
-procedure TControlsRegistration.RegisterWrappers(
-  APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
 end;
 
 { TControlsAccess }
@@ -738,6 +762,93 @@ procedure TPyDelphiPresentedControl.SetDelphiObject(
   const Value: TPresentedControl);
 begin
   inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiCustomControlAction }
+
+class function TPyDelphiCustomControlAction.DelphiObjectClass: TClass;
+begin
+  Result := TCustomControlAction;
+end;
+
+function TPyDelphiCustomControlAction.GetDelphiObject: TCustomControlAction;
+begin
+  Result := TCustomControlAction(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomControlAction.SetDelphiObject(
+  const Value: TCustomControlAction);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TKeyEventHandler }
+
+constructor TKeyEventHandler.Create(APyDelphiWrapper: TPyDelphiWrapper;
+  AComponent: TObject; APropertyInfo: PPropInfo; ACallable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TKeyEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(AComponent, APropertyInfo, LMethod);
+end;
+
+class function TKeyEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TKeyEvent);
+end;
+
+procedure TKeyEventHandler.DoEvent(Sender: TObject; var Key: Word;
+  var KeyChar: WideChar; Shift: TShiftState);
+var
+  LPyObject: PPyObject;
+  LPyTuple: PPyObject;
+  LPyResult: PPyObject;
+  LPyKey: PPyObject;
+  LVarKeyParam: TPyDelphiVarParameter;
+  LPyKeyChar: PPyObject;
+  LVarKeyCharParam: TPyDelphiVarParameter;
+  LKeyCharStr: string;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      //var parameters
+      LPyKey := CreateVarParam(PyDelphiWrapper, Key);
+      LVarKeyParam := PythonToDelphi(LPyKey) as TPyDelphiVarParameter;
+      LPyKeyChar := CreateVarParam(PyDelphiWrapper, KeyChar);
+      LVarKeyCharParam := PythonToDelphi(LPyKeyChar) as TPyDelphiVarParameter;
+
+      LPyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyKey);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyKeyChar);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, ShiftToPython(Shift));
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          if PyLong_Check(LVarKeyParam.Value) then
+            Key := PyLong_AsLong(LVarKeyParam.Value);
+
+          if (LVarKeyCharParam.Value = Py_None) then
+            KeyChar := #0
+          else if PyUnicode_Check(LVarKeyCharParam.Value) then
+          begin
+            LKeyCharStr := PyUnicodeAsString(LVarKeyCharParam.Value);
+            if Length(LKeyCharStr) > 0 then
+              KeyChar := LKeyCharStr[1];
+          end;
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError();
+    end;
 end;
 
 initialization

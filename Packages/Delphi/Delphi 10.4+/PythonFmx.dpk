@@ -13,8 +13,8 @@ package PythonFmx;
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
 {$OPTIMIZATION OFF}
-{$OVERFLOWCHECKS OFF}
-{$RANGECHECKS OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES ON}
@@ -33,30 +33,32 @@ package PythonFmx;
 requires
   rtl,
   fmx,
-  Python;
+  bindcompfmx,
+  python;
 
 contains
   FMX.PythonGUIInputOutput in '..\..\..\Source\fmx\FMX.PythonGUIInputOutput.pas',
+  WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas',
   WrapFmxActnList in '..\..\..\Source\fmx\WrapFmxActnList.pas',
+  WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas',
   WrapFmxComCtrls in '..\..\..\Source\fmx\WrapFmxComCtrls.pas',
   WrapFmxControls in '..\..\..\Source\fmx\WrapFmxControls.pas',
+  WrapFmxDataBind in '..\..\..\Source\fmx\WrapFmxDataBind.pas',
   WrapFmxDialogs in '..\..\..\Source\fmx\WrapFmxDialogs.pas',
+  WrapFmxEdit in '..\..\..\Source\fmx\WrapFmxEdit.pas',
   WrapFmxForms in '..\..\..\Source\fmx\WrapFmxForms.pas',
   WrapFmxGrids in '..\..\..\Source\fmx\WrapFmxGrids.pas',
   WrapFmxLayouts in '..\..\..\Source\fmx\WrapFmxLayouts.pas',
+  WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas',
+  WrapFmxListView in '..\..\..\Source\fmx\WrapFmxListView.pas',
+  WrapFmxMedia in '..\..\..\Source\fmx\WrapFmxMedia.pas',
+  WrapFmxMemo in '..\..\..\Source\fmx\WrapFmxMemo.pas',
+  WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas',
   WrapFmxScrollBox in '..\..\..\Source\fmx\WrapFmxScrollBox.pas',
   WrapFmxShapes in '..\..\..\Source\fmx\WrapFmxShapes.pas',
+  WrapFmxStdActns in '..\..\..\Source\fmx\WrapFmxStdActns.pas',
   WrapFmxStdCtrls in '..\..\..\Source\fmx\WrapFmxStdCtrls.pas',
-  WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas',
-  WrapDelphiFmx in '..\..\..\Source\fmx\WrapDelphiFmx.pas',
-  WrapFmxEdit in '..\..\..\Source\fmx\WrapFmxEdit.pas',
-  WrapFmxListBox in '..\..\..\Source\fmx\WrapFmxListBox.pas',
-  WrapFmxMedia in '..\..\..\Source\fmx\WrapFmxMedia.pas',
-  WrapFmxMenus in '..\..\..\Source\fmx\WrapFmxMenus.pas',
   WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas',
-  WrapFmxMemo in '..\..\..\Source\fmx\WrapFmxMemo.pas',
-  WrapFmxColors in '..\..\..\Source\fmx\WrapFmxColors.pas',
-  WrapFmxListView in '..\..\..\Source\fmx\WrapFmxListView.pas',
-  WrapFmxDataBind in '..\..\..\Source\fmx\WrapFmxDataBind.pas';
+  WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas';
 
 end.

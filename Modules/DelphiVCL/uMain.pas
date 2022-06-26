@@ -8,7 +8,8 @@ function PyInit_DelphiVCL: PPyObject; cdecl;
 
 implementation
 
-uses WrapDelphi, WrapDelphiVCL;
+uses
+  System.SysUtils, WrapDelphi, WrapDelphiVCL;
 
 var
   gEngine : TPythonEngine;
@@ -23,11 +24,7 @@ begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
-    gEngine.UseLastKnownVersion := False;
-    // Adapt to the desired python version - Will only work with this version
-    var PythonVersionIndex := {$I PythonVersionIndex.inc}; // 7 = 3.9
-    gEngine.RegVersion := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].RegVersion;
-    gEngine.DllName := PYTHON_KNOWN_VERSIONS[PythonVersionIndex].DllName;
+    gEngine.UseLastKnownVersion := true;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
@@ -38,8 +35,11 @@ begin
     gDelphiWrapper.Engine := gEngine;
     gDelphiWrapper.Module := gModule;
 
-    gEngine.LoadDll;
+    gEngine.LoadDllInExtensionModule();
   except
+    on E: Exception do begin
+      WriteLn('An error has occurred: ' + E.Message);
+    end;
   end;
   Result := gModule.Module;
 end;
@@ -48,10 +48,12 @@ initialization
   gEngine := nil;
   gModule := nil;
   gDelphiWrapper := nil;
+
 finalization
   gEngine.Free;
   gModule.Free;
   gDelphiWrapper.Free;
+
 end.
 
 

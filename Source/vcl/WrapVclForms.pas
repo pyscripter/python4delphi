@@ -584,10 +584,17 @@ function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
 
 begin
   Adjust(@Self);
-  if InternalReadComponent(FindResource(), DelphiObject) then
-    Result := GetPythonEngine().ReturnTrue
-  else
-    Result := GetPythonEngine().ReturnFalse;
+  try
+    if InternalReadComponent(FindResource(), DelphiObject) then
+      Exit(GetPythonEngine().ReturnTrue)
+    else
+      Exit(GetPythonEngine().ReturnFalse);
+  except
+    on E: Exception do
+      GetPythonEngine().PyErr_SetString(PyExc_RuntimeError^, 
+        PAnsiChar(AnsiString(E.Message)));
+  end;
+  Result := nil;
 end;
 
 function TPyDelphiCustomForm.Set_ModalResult(AValue: PPyObject;
@@ -1041,9 +1048,9 @@ begin
       AddGetSet('DesktopRect', @TPyDelphiScreen.Get_DesktopRect, nil,
         'Specifies the boundaries of the virtual desktop relative to the upper-left corner of the primary monitor.', nil);
       AddGetSet('DesktopLeft', @TPyDelphiScreen.Get_DesktopLeft, nil,
-        'Specifies the x-coordinate of the desktop’s left edge relative to the upper-left corner of the primary monitor.', nil);
+        'Specifies the x-coordinate of the desktopâ€™s left edge relative to the upper-left corner of the primary monitor.', nil);
       AddGetSet('DesktopTop', @TPyDelphiScreen.Get_DesktopTop, nil,
-        'Specifies the y-coordinate of the entire desktop’s top edge relative to the upper-left corner of the primary monitor.', nil);
+        'Specifies the y-coordinate of the entire desktopâ€™s top edge relative to the upper-left corner of the primary monitor.', nil);
       {$ENDIF FPC}
       AddGetSet('DesktopWidth', @TPyDelphiScreen.Get_DesktopWidth, nil,
         'Specifies the width of the entire virtual desktop.', nil);
@@ -1106,7 +1113,7 @@ begin
     'Allows forms to be aligned in the screen.');
   PythonType.AddMethod('Realign', @TPyDelphiScreen.Realign_Wrapper,
     'TScreen.Realign()'#10 +
-    'Realigns the screen’s forms according to their Align properties.');
+    'Realigns the screenâ€™s forms according to their Align properties.');
   PythonType.AddMethod('ResetFonts', @TPyDelphiScreen.ResetFonts_Wrapper,
     'TScreen.ResetFonts()'#10 +
     'Reinitializes the fonts listed in the Fonts property.');
@@ -1399,7 +1406,7 @@ begin
     AddGetSet('Handle', @TPyDelphiMonitor.Get_Handle, nil,
               'Indicates the Windows handle for the monitor.', nil);
     AddGetSet('MonitorNum', @TPyDelphiMonitor.Get_MonitorNum, nil,
-              'Specifies the index of the monitor in the global screen object’s Monitors list.', nil);
+              'Specifies the index of the monitor in the global screen objectâ€™s Monitors list.', nil);
     AddGetSet('Left', @TPyDelphiMonitor.Get_Left, nil,
               'Indicates the logical position of the left edge of the monitor.', nil);
     AddGetSet('Height', @TPyDelphiMonitor.Get_Height, nil,
@@ -1794,7 +1801,7 @@ begin
     AddGetSet('HintHidePause', @TPyDelphiApplication.Get_HintHidePause, @TPyDelphiApplication.Set_HintHidePause,
       'Specifies the time interval to wait before hiding the Help Hint if the mouse has not moved from the control or menu item.', nil);
     AddGetSet('HintShortCuts', @TPyDelphiApplication.Get_HintShortCuts, @TPyDelphiApplication.Set_HintShortCuts,
-      'Specifies whether the application’s pop-up hints include shortcut information.', nil);
+      'Specifies whether the applicationâ€™s pop-up hints include shortcut information.', nil);
     AddGetSet('HintShortPause', @TPyDelphiApplication.Get_HintShortPause, @TPyDelphiApplication.Set_HintShortPause,
       'Specifies the time period to wait before bringing up a hint if another hint has already been shown.', nil);
     AddGetSet('Icon', @TPyDelphiApplication.Get_Icon, @TPyDelphiApplication.Set_Icon,

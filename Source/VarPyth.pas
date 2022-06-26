@@ -40,7 +40,7 @@ unit VarPyth;
 interface
 
 uses
-  Variants, PythonEngine;
+  Variants, PythonEngine, Classes;
 
 type
   TSequenceType = (stTuple, stList);
@@ -108,6 +108,7 @@ function BuiltinModule: Variant; // return the builtin module
 function SysModule: Variant; // return the builtin module 'sys'
 function DatetimeModule: Variant; // return the builtin module 'datetime'
 function Import(const AModule: string): Variant; // import a Python module and return the module object.
+function Reload(const AModule: Variant): Variant; //reload a Python imported module and return the module object.
 function len(const AValue : Variant ): NativeInt; // return the length of a Python collection.
 function _type(const AValue : Variant ): Variant; // return the type object of a Python object.
 function iter(const AValue : Variant ): Variant; // return an iterator for the container AValue. You can call the 'next' method of the iterator until you catch the EPyStopIteration exception.
@@ -134,10 +135,13 @@ type
 
 function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
 
+// Adds a python iterable items to a TStrings
+procedure VarPyToStrings(const AValue : Variant; const AStrings: TStrings);
+
 implementation
 
 uses
-  VarUtils, SysUtils, TypInfo, Classes;
+  VarUtils, SysUtils, TypInfo;
 
 type
   TNamedParamDesc = record
@@ -275,9 +279,9 @@ type
     Reserved1, Reserved2, Reserved3: Word;
     VPython: TPythonData;
     Reserved4: Integer;
-    {$IFDEF CPUX64}
+    {$IFDEF CPU64BITS}
     Reserved5: Integer;  // size is 24 bytes in 64bit
-    {$ENDIF CPUX64}
+    {$ENDIF CPU64BITS}
   end;
 
 
@@ -723,6 +727,22 @@ begin
       Result := VarPythonCreate(_module);
     finally
       Py_XDecRef(_module);
+    end; // of try
+  end; // of with
+end;
+
+function Reload(const AModule: Variant): Variant;
+var
+  LModule: PPyObject;
+begin
+  with GetPythonEngine() do begin
+    LModule := PyImport_ReloadModule(ExtractPythonObjectFrom(AModule));
+    CheckError();
+    Assert(Assigned(LModule));
+    try
+      Result := VarPythonCreate(LModule);
+    finally
+      Py_XDecRef(LModule);
     end; // of try
   end; // of with
 end;
@@ -2432,6 +2452,14 @@ end;
 function TVarPyEnumerateHelper.GetEnumerator: TVarPyEnumerator;
 begin
   Result.Create(FIterable);
+end;
+
+procedure VarPyToStrings(const AValue : Variant; const AStrings: TStrings);
+var
+  V: Variant;
+begin
+  for V in VarPyIterate(AValue) do
+    AStrings.Add(V)
 end;
 
 initialization

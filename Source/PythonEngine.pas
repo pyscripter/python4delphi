@@ -2278,7 +2278,6 @@ type
       procedure SetErrors( val : TErrors );
       procedure SetModuleName( const val : AnsiString );
       procedure SetDocString( value : TStringList );
-
     public
       // Constructors & destructors
       constructor Create( AOwner : TComponent ); override;
@@ -2306,7 +2305,6 @@ type
       property Module : PPyObject read FModule;
       property Clients[ idx : Integer ] : TEngineClient read GetClients;
       property ClientCount : Integer read GetClientCount;
-
     published
       property DocString : TStringList read FDocString write SetDocString;
       property ModuleName : AnsiString read FModuleName write SetModuleName;
@@ -6876,6 +6874,7 @@ begin
   begin
     Name := TError(Source).Name;
     Text := TError(Source).Text;
+    ErrorType := TError(Source).ErrorType;
     Exit;
   end;
   inherited Assign(Source);
@@ -7102,7 +7101,6 @@ begin
   FErrors.Free;
   inherited;
 end;
-
 
 procedure TPythonModule.SetDocString( value : TStringList );
 begin

@@ -104,13 +104,7 @@ end;
 function TPythonVersion.ExpectedArchitecture: string;
 begin
   Result := '';
-  {$IFDEF CPUX64}
-  Result := '64bit';
-  {$ENDIF}
-  {$IFDEF CPU64}
-  Result := '64bit';
-  {$ENDIF}
-  {$IFDEF CPU64bits}
+  {$IF Defined(CPUX64) or Defined(CPU64) or Defined(CPU64bits)}
   Result := '64bit';
   {$ENDIF}
   if Result = '' then

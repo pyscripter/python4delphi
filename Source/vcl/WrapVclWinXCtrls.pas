@@ -4,7 +4,11 @@ unit WrapVclWinXCtrls;
 interface
 
 uses
-  Vcl.WinXCtrls, WrapVclControls;
+  Vcl.WinXCtrls,
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+  Vcl.NumberBox,
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+  WrapVclControls, WrapVclStdCtrls;
 
 type
   TPyDelphiCustomActivityIndicator = class (TPyDelphiCustomControl)
@@ -43,6 +47,26 @@ type
     property DelphiObject: TToggleSwitch read GetDelphiObject write SetDelphiObject;
   end;
 
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+  TPyDelphiCustomNumberBox = class(TPyDelphiCustomEdit)
+  private
+    function GetDelphiObject: TCustomNumberBox;
+    procedure SetDelphiObject(const Value: TCustomNumberBox);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TCustomNumberBox read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiNumberBox = class(TPyDelphiCustomNumberBox)
+  private
+    function GetDelphiObject: TNumberBox;
+    procedure SetDelphiObject(const Value: TNumberBox);
+  public
+    class function DelphiObjectClass : TClass; override;
+    property DelphiObject: TNumberBox read GetDelphiObject write SetDelphiObject;
+  end;
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+
 implementation
 
 uses
@@ -77,6 +101,10 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiActivityIndicator);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomToggleSwitch);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToggleSwitch);
+  {$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomNumberBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
+  {$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 end;
 
 { TPyDelphiCustomActivityIndicator }
@@ -149,6 +177,45 @@ procedure TPyDelphiToggleSwitch.SetDelphiObject(const Value: TToggleSwitch);
 begin
   inherited DelphiObject := Value;
 end;
+
+{$IF DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
+
+{ TPyDelphiCustomNumberBox }
+
+class function TPyDelphiCustomNumberBox.DelphiObjectClass: TClass;
+begin
+  Result := TCustomNumberBox;
+end;
+
+function TPyDelphiCustomNumberBox.GetDelphiObject: TCustomNumberBox;
+begin
+  Result := TCustomNumberBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomNumberBox.SetDelphiObject(
+  const Value: TCustomNumberBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiNumberBox }
+
+class function TPyDelphiNumberBox.DelphiObjectClass: TClass;
+begin
+  Result := TNumberBox;
+end;
+
+function TPyDelphiNumberBox.GetDelphiObject: TNumberBox;
+begin
+  Result := TNumberBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiNumberBox.SetDelphiObject(const Value: TNumberBox);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{$IFEND DEFINED(DELPHI11_OR_HIGHER) or DEFINED(DELPHI10_4_2)}
 
 initialization
   RegisteredUnits.Add(TWinXCtrlsRegistration.Create());

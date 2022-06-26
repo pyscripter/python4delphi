@@ -5,7 +5,7 @@ uses
   Classes,
   uMain in 'uMain.pas';
 
-{$I Definition.Inc}
+{$I ..\..\Source\Definition.Inc}
 
 exports
   // This must match the pattern "PyInit_[ProjectName]"

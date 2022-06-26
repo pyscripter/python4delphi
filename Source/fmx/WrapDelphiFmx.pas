@@ -7,16 +7,18 @@ implementation
 uses
   WrapDelphiTypes,
   WrapDelphiClasses,
-  {$IFDEF Windows}
+  {$IFDEF MSWINDOWS}
   WrapDelphiWindows,
-  {$ENDIF Windows}
+  {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
   WrapFmxTypes,
+  WrapFmxControls,
   WrapFmxStdCtrls,
   WrapFmxEdit,
   WrapFmxListBox,
   WrapFmxListView,
   WrapFmxActnList,
+  WrapFmxStdActns,
   WrapFmxComCtrls,
   WrapFmxDialogs,
   WrapFmxForms,

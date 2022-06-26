@@ -14,9 +14,15 @@ type
   private
     function GetDelphiObject: TApplication;
     procedure SetDelphiObject(const Value: TApplication);
+  protected
+    // Class methods
+    function Initialize_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
+    function Run_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
   public
+    constructor Create( APythonType : TPythonType ); override;
     // Class methods
     class function DelphiObjectClass: TClass; override;
+    class procedure RegisterMethods(APythonType: TPythonType); override;
     // Properties
     property DelphiObject: TApplication read GetDelphiObject write SetDelphiObject;
   end;
@@ -116,7 +122,14 @@ type
 implementation
 
 uses
-  System.Types, System.IOUtils, System.Rtti;
+  System.Types, System.IOUtils, System.Rtti, System.Messaging;
+
+{$IFDEF OSX}
+var
+  gDelphiMainForm: TCommonCustomForm;
+  gPythonMainForm: TCommonCustomForm;
+  gFormsCreatedSubscription: integer;
+{$ENDIF OSX}
 
 { Register the wrappers, the globals and the constants }
 type
@@ -127,6 +140,13 @@ type
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
     procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
+
+{$IFDEF OSX}
+  TInternalMainForm = class(TForm)
+  public
+    constructor Create(AOwner: TComponent); override;
+  end;
+{$ENDIF}
 
 { TFormsRegistration }
 
@@ -167,6 +187,28 @@ end;
 
 { TPyDelphiApplication }
 
+constructor TPyDelphiApplication.Create(APythonType: TPythonType);
+begin
+  inherited;
+  {$IFDEF OSX}
+  gFormsCreatedSubscription := TMessageManager.DefaultManager.SubscribeToMessage(
+    TFormsCreatedMessage,
+    procedure(const Sender: TObject; const M: TMessage) begin
+      if (Sender = Application) and Assigned(gDelphiMainForm) then begin
+        if Assigned(gPythonMainForm) then begin
+          Application.MainForm := gPythonMainForm;
+          gPythonMainForm.Hide();
+          gPythonMainForm.Show();
+        end;
+        FreeAndNil(gDelphiMainForm);
+        gPythonMainForm := nil;
+        TMessageManager.DefaultManager.Unsubscribe(TFormsCreatedMessage,
+          gFormsCreatedSubscription);
+      end;
+    end);
+  {$ENDIF OSX}
+end;
+
 class function TPyDelphiApplication.DelphiObjectClass: TClass;
 begin
   Result := TApplication;
@@ -180,6 +222,41 @@ end;
 procedure TPyDelphiApplication.SetDelphiObject(const Value: TApplication);
 begin
   inherited DelphiObject := Value;
+end;
+
+function TPyDelphiApplication.Initialize_Wrapper(AArgs: PPyObject): PPyObject;
+begin
+  Application.Initialize();
+  {$IFDEF OSX}
+  //The application initialization routine in macOS requires
+  //the main form standard creation way,
+  //due to MainMenu creation and others.
+  Application.CreateForm(TInternalMainForm, gDelphiMainForm);
+  {$ENDIF OSX}
+  Result := GetPythonEngine().ReturnNone();
+end;
+
+function TPyDelphiApplication.Run_Wrapper(AArgs: PPyObject): PPyObject;
+begin
+  {$IFDEF OSX}
+  gPythonMainForm := Application.MainForm;
+  Application.MainForm := nil;
+  {$ENDIF OSX}
+  Application.Run();
+  Result := GetPythonEngine().ReturnNone();
+end;
+
+class procedure TPyDelphiApplication.RegisterMethods(APythonType: TPythonType);
+begin
+  inherited;
+  with APythonType do begin
+    AddMethod('Initialize', @TPyDelphiApplication.Initialize_Wrapper,
+      'TApplication.Initialize()'#10 +
+      'Initialize the application');
+    AddMethod('Run', @TPyDelphiApplication.Run_Wrapper,
+      'TApplication.Run()'#10 +
+      'Run the application');
+  end;
 end;
 
 { TCloseQueryEventHandler }
@@ -358,10 +435,15 @@ function TPyDelphiCommonCustomForm.LoadProps_Wrapper(
 
 begin
   Adjust(@Self);
-  if InternalReadComponent(FindResource(), DelphiObject) then
-    Result := GetPythonEngine().ReturnTrue
-  else
-    Result := GetPythonEngine().ReturnFalse;
+  try
+    if InternalReadComponent(FindResource(), DelphiObject) then
+      Exit(GetPythonEngine().ReturnTrue);
+  except
+    on E: Exception do
+      with GetPythonEngine do
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
+  end;
+  Result := nil;
 end;
 
 class procedure TPyDelphiCommonCustomForm.RegisterMethods(
@@ -464,6 +546,21 @@ procedure TPyDelphiScreen.SetDelphiObject(const Value: TScreen);
 begin
   inherited DelphiObject := Value;
 end;
+
+{$IFDEF OSX}
+
+{ TInternalMainForm }
+
+constructor TInternalMainForm.Create(AOwner: TComponent);
+begin
+  CreateNew(AOwner);
+  Name := '_InternalDelphiMainForm';
+  Left := -10;
+  ClientHeight := 1;
+  ClientWidth := 1;
+end;
+
+{$ENDIF OSX}
 
 Initialization
   RegisteredUnits.Add(TFormsRegistration.Create);
