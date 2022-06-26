@@ -896,9 +896,11 @@ function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
   const AInstance: TComponent): boolean;
 
   procedure ReadRootComponent(const AStream: TStream);
+  var
+    Reader: TPyReader;
   begin
     AStream.Position := 0;
-    var LReader := TPyReader.Create(Self, AStream, 4096);
+    LReader := TPyReader.Create(Self, AStream, 4096);
     try
       LReader.ReadRootComponent(DelphiObject);
     finally
@@ -911,9 +913,10 @@ function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
     FilerSignature: UInt32 = $30465054; // ($54, $50, $46, $30) 'TPF0'
   var
     LSignature: UInt32;
+    LReader : TReader;
   begin
     AStream.Position := 0;
-    var LReader := TReader.Create(AStream, AStream.Size);
+    LReader := TReader.Create(AStream, AStream.Size);
     try
       LReader.Read(LSignature, SizeOf(LSignature));
       Result := (LSignature = FilerSignature);
@@ -923,17 +926,20 @@ function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
     end;
   end;
 
+var
+  LInput: TFileStream;
+  LOutput: TMemoryStream;
 begin
   if AResFile.IsEmpty or not TFile.Exists(AResFile) then
     Exit(false);
 
-  var LInput := TFileStream.Create(AResFile, fmOpenRead);
+  LInput := TFileStream.Create(AResFile, fmOpenRead);
   try
     //The current form file is a valid binary file
     if HasValidSignature(LInput) then
       ReadRootComponent(LInput)
     else begin
-      var LOutput := TMemoryStream.Create();
+      LOutput := TMemoryStream.Create();
       try
         //we assume the form file is a text file, then we try to get the bin info
         ObjectTextToBinary(LInput, LOutput);
