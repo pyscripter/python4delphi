@@ -88,7 +88,7 @@ begin
           Result := VariantAsPyObject(rgSex.ItemIndex)
         else
           begin
-            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown property "%s"', [key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(UTF8Encode(Format('Unknown property "%s"', [key]))));
             Result := nil;
           end;
       end
@@ -136,7 +136,7 @@ begin
           end
         else
           begin
-            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Format('Unknown property "%s"', [key])));
+            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(UTF8Encode(Format('Unknown property "%s"', [key]))));
             Result := nil;
           end;
       end
