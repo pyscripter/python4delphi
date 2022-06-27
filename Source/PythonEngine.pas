@@ -116,7 +116,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
@@ -125,11 +125,12 @@ const
     (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013),
+    (DllName: 'python311.dll'; RegVersion: '3.11'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3m.so'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4m.so'; RegVersion: '3.4'; APIVersion: 1013),
@@ -138,11 +139,12 @@ const
     (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
+    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
@@ -151,15 +153,17 @@ const
     (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013),
+    (DllName: 'libpython3.11.dylib'; RegVersion: '3.11'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[6..8] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[6..9] of TPythonVersionProp =
     (
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
-    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013)
+    (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
+    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013)
     );
 {$ENDIF}
 
@@ -1537,7 +1541,7 @@ type
     PyObject_Call:function (ob, args, kw:PPyObject):PPyObject; cdecl;
     PyObject_GenericGetAttr:function (obj, name : PPyObject) : PPyObject; cdecl;
     PyObject_GenericSetAttr:function (obj, name, value : PPyObject) : Integer; cdecl;
-    PyObject_GC_Malloc:function (size:NativeUInt):PPyObject; cdecl;
+    PyObject_Malloc:function (size:NativeUInt):PPyObject; cdecl;
     PyObject_GC_New:function (t:PPyTypeObject):PPyObject; cdecl;
     PyObject_GC_NewVar:function (t:PPyTypeObject; size:NativeInt):PPyObject; cdecl;
     PyObject_GC_Resize:function (t:PPyObject; newsize:NativeInt):PPyObject; cdecl;
@@ -3723,7 +3727,7 @@ begin
   PyObject_Call             := Import('PyObject_Call');
   PyObject_GenericGetAttr   := Import('PyObject_GenericGetAttr');
   PyObject_GenericSetAttr   := Import('PyObject_GenericSetAttr');
-  PyObject_GC_Malloc        := Import('_PyObject_GC_Malloc');
+  PyObject_Malloc           := Import('PyObject_Malloc');
   PyObject_GC_New           := Import('_PyObject_GC_New');
   PyObject_GC_NewVar        := Import('_PyObject_GC_NewVar');
   PyObject_GC_Resize        := Import('_PyObject_GC_Resize');

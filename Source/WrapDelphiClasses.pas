@@ -897,7 +897,7 @@ function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
 
   procedure ReadRootComponent(const AStream: TStream);
   var
-    Reader: TPyReader;
+    LReader: TPyReader;
   begin
     AStream.Position := 0;
     LReader := TPyReader.Create(Self, AStream, 4096);
