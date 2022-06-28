@@ -62,8 +62,8 @@ unit PythonEngine;
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
 
 {$IFNDEF FPC}
-  {$IFNDEF DELPHI2010_OR_HIGHER}
-      Error! Delphi 2010 or higher is required!
+  {$IFNDEF DELPHIXE2_OR_HIGHER}
+      Error! Delphi XE2 or higher is required!
   {$ENDIF}
 {$ENDIF}
 

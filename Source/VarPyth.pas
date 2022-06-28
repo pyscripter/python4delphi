@@ -150,14 +150,8 @@ type
   end;
   TNamedParamArray = array of TNamedParamDesc;
 
-{$IFDEF DELPHIXE2_OR_HIGHER}
-  {$DEFINE USESYSTEMDISPINVOKE}  //Delphi 2010 DispInvoke is buggy
-  {$IF defined(OSX64) or defined(LINUX) or not defined(DELPHI10_4_OR_HIGHER)}
-    {$DEFINE PATCHEDSYSTEMDISPINVOKE}  //To correct memory leaks
-  {$IFEND}
-{$ENDIF}
-{$IF DEFINED(FPC_FULLVERSION) and (FPC_FULLVERSION >= 20500)}
-  {$DEFINE USESYSTEMDISPINVOKE}
+{$IF not defined(FPC) and (defined(OSX64) or defined(LINUX) or not defined(DELPHI10_4_OR_HIGHER))}
+  {$DEFINE PATCHEDSYSTEMDISPINVOKE}  //To correct memory leaks
 {$IFEND}
 
   { Python variant type handler }
@@ -173,20 +167,13 @@ type
       const Arguments: TVarDataArray): PPyObject;
     function  VarDataToPythonObject( AVarData : TVarData ) : PPyObject;
     procedure PyhonVarDataCreate( var Dest : TVarData; AObject : PPyObject );
-    {$IFNDEF USESYSTEMDISPINVOKE}
-    procedure DoDispInvoke(Dest: PVarData; var Source: TVarData;
-      CallDesc: PCallDesc; Params: Pointer); virtual;
-    function GetPropertyWithArg(var Dest: TVarData; const V: TVarData;
-      const AName: AnsiString; AArg : TVarData): Boolean; virtual;
-    {$ENDIF USESYSTEMDISPINVOKE}
-    {$IFNDEF FPC}
-    function FixupIdent(const AText: string): string; override;
-    {$ENDIF FPC}
     {$IFDEF FPC}
     procedure VarDataClear(var Dest: TVarData);
     procedure VarDataCopyNoInd(var Dest: TVarData; const Source: TVarData);
     procedure VarDataCastTo(var Dest: TVarData; const Source: TVarData;
       const AVarType: TVarType); overload;
+    {$ELSE}
+    function FixupIdent(const AText: string): string; override;
     {$ENDIF FPC}
   public
     procedure Clear(var V: TVarData); override;
@@ -1158,7 +1145,6 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
 procedure TPythonVariantType.DispInvoke(Dest: PVarData;
    var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
 {$ENDIF}
-{$IFDEF USESYSTEMDISPINVOKE}
 {$IFDEF PATCHEDSYSTEMDISPINVOKE}
   //  Modified to correct memory leak QC102387 / RSP-23093
   procedure PatchedFinalizeDispatchInvokeArgs(CallDesc: PCallDesc; const Args: TVarDataArray; OrderLTR : Boolean);
@@ -1335,283 +1321,6 @@ begin
     if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
   end;
 end;
-
-{$ELSE USESYSTEMDISPINVOKE}
-begin
-  DoDispInvoke(Dest, Source, CallDesc, Params);
-end;
-
-procedure TPythonVariantType.DoDispInvoke(Dest: PVarData;
-  var Source: TVarData; CallDesc: PCallDesc; Params: Pointer);
-type
-  PParamRec = ^TParamRec;
-  TParamRec = array[0..3] of Integer;
-  TStringDesc = record
-    BStr: WideString;
-    PStr: PAnsiString;
-  end;
-var
-  LArguments: TVarDataArray;
-  LStrings: array of TStringDesc;
-  LStrCount: Integer;
-  LParamPtr: Pointer;
-  LNamedArgStart : Integer;     //arg position of 1st named argument (if any)
-  LNamePtr: PAnsiChar;
-
-  procedure ParseParam(I: Integer);
-  const
-    CArgTypeMask    = $7F;
-    CArgByRef       = $80;
-  var
-    LArgType: Integer;
-    LArgByRef: Boolean;
-  begin
-    LArgType := CallDesc^.ArgTypes[I] and CArgTypeMask;
-    LArgByRef := (CallDesc^.ArgTypes[I] and CArgByRef) <> 0;
-
-    if I >= LNamedArgStart then
-    begin
-      LNamePtr := LNamePtr + Succ(StrLen(LNamePtr));
-      fNamedParams[I-LNamedArgStart].Index := I;
-      fNamedParams[I-LNamedArgStart].Name  := AnsiString(LNamePtr);
-    end;
-
-    // error is an easy expansion
-    if LArgType = varError then
-      SetClearVarToEmptyParam(LArguments[I])
-
-    // literal string
-    else if LArgType = varStrArg then
-    begin
-      with LStrings[LStrCount] do
-        if LArgByRef then
-        begin
-          //BStr := StringToOleStr(PAnsiString(ParamPtr^)^);
-          BStr := WideString(System.Copy(PAnsiString(LParamPtr^)^, 1, MaxInt));
-          PStr := PAnsiString(LParamPtr^);
-          LArguments[I].VType := varOleStr or varByRef;
-          LArguments[I].VOleStr := @BStr;
-        end
-        else
-        begin
-          //BStr := StringToOleStr(PAnsiString(LParamPtr)^);
-          BStr := WideString(System.Copy(PAnsiString(LParamPtr)^, 1, MaxInt));
-          PStr := nil;
-          LArguments[I].VType := varOleStr;
-          if BStr = '' then
-            LArguments[I].VOleStr := nil
-          else
-            LArguments[I].VOleStr := PWideChar(BStr);
-        end;
-      Inc(LStrCount);
-    end
-
-    // value is by ref
-    else if LArgByRef then
-    begin
-      if (LArgType = varVariant) and
-         (PVarData(LParamPtr^)^.VType = varString)
-           or (PVarData(LParamPtr)^.VType = varUString)
-      then
-        //VarCast(PVariant(ParamPtr^)^, PVariant(ParamPtr^)^, varOleStr);
-        VarDataCastTo(PVarData(LParamPtr^)^, PVarData(LParamPtr^)^, varOleStr);
-      LArguments[I].VType := LArgType or varByRef;
-      LArguments[I].VPointer := Pointer(LParamPtr^);
-    end
-
-    // value is a variant
-    else if LArgType = varVariant then
-      if (PVarData(LParamPtr)^.VType = varString)
-        or (PVarData(LParamPtr)^.VType = varUString)
-      then
-      begin
-        with LStrings[LStrCount] do
-        begin
-          //BStr := StringToOleStr(AnsiString(PVarData(LParamPtr)^.VString));
-          if (PVarData(LParamPtr)^.VType = varString) then
-            BStr := WideString(System.Copy(AnsiString(PVarData(LParamPtr)^.VString), 1, MaxInt))
-          else
-            {$IFDEF FPC}
-            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VString), 1, MaxInt);
-            {$ELSE}
-            BStr := System.Copy(UnicodeString(PVarData(LParamPtr)^.VUString), 1, MaxInt);
-            {$ENDIF}
-          PStr := nil;
-          LArguments[I].VType := varOleStr;
-          LArguments[I].VOleStr := PWideChar(BStr);
-        end;
-        Inc(LStrCount);
-        Inc(NativeInt(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
-      end
-      else
-      begin
-        LArguments[I] := PVarData(LParamPtr)^;
-        Inc(NativeInt(LParamPtr), SizeOf(TVarData) - SizeOf(Pointer));
-      end
-    else
-    begin
-      LArguments[I].VType := LArgType;
-      case CVarTypeToElementInfo[LArgType].Size of
-        1, 2, 4:
-        begin
-          LArguments[I].VLongs[1] := PParamRec(LParamPtr)^[0];
-        end;
-        8:
-        begin
-          LArguments[I].VLongs[1] := PParamRec(LParamPtr)^[0];
-          LArguments[I].VLongs[2] := PParamRec(LParamPtr)^[1];
-          Inc(NativeInt(LParamPtr), 8 - SizeOf(Pointer));
-        end;
-      else
-        RaiseDispError;
-      end;
-    end;
-    Inc(NativeInt(LParamPtr), SizeOf(Pointer));
-  end;
-
-var
-  I, LArgCount: Integer;
-  LIdent: AnsiString;
-  LTemp: TVarData;
-begin
-  //------------------------------------------------------------------------------------
-  // Note that this method is mostly a copy&paste from  TInvokeableVariantType.DispInvoke
-  // because Borland assumes that the names are not case sensitive, whereas Python has
-  // case sensitive symbols.
-  // We modified the property get to allow the use of indexed properties.
-  //------------------------------------------------------------------------------------
-
-  // Grab the identifier
-  LArgCount := CallDesc^.ArgCount;
-  //After arg types, method name and named arg names are stored
-  //Position pointer on method name
-  LNamePtr := PAnsiChar(@CallDesc^.ArgTypes[LArgCount]);
-  LIdent := AnsiString(LNamePtr);
-  //Named params must be after positional params
-  LNamedArgStart := CallDesc^.ArgCount - CallDesc^.NamedArgCount;
-  SetLength(fNamedParams, CallDesc^.NamedArgCount);
-
-  // Parse the arguments
-  LParamPtr := Params;
-  SetLength(LArguments, LArgCount);
-  LStrCount := 0;
-  SetLength(LStrings, LArgCount);
-  for I := 0 to LArgCount - 1 do
-    ParseParam(I);
-
-  // What type of invoke is this?
-  case CallDesc^.CallType of
-    CDoMethod:
-      // procedure with N arguments
-      if Dest = nil then
-      begin
-        if not DoProcedure(Source, string(LIdent), LArguments) then
-        begin
-
-          // ok maybe its a function but first we must make room for a result
-          VarDataInit(LTemp);
-          try
-
-            // notate that the destination shouldn't be bothered with
-            // functions can still return stuff, we just do this so they
-            //  can tell that they don't need to if they don't want to
-            SetClearVarToEmptyParam(LTemp);
-
-            // ok lets try for that function
-            if not DoFunction(LTemp, Source, string(LIdent), LArguments) then
-              RaiseDispError;
-          finally
-            VarDataClear(LTemp);
-          end;
-        end
-      end
-
-      // property get or function with 0 argument
-      else if LArgCount = 0 then
-      begin
-        if not GetProperty(Dest^, Source, string(LIdent)) and
-           not DoFunction(Dest^, Source, string(LIdent), LArguments) then
-          RaiseDispError;
-      end
-
-      // function with N arguments
-      else if not DoFunction(Dest^, Source, string(LIdent), LArguments) then
-        RaiseDispError;
-
-    CPropertyGet:
-    begin
-      // here that code has been changed to allow the indexed properties.
-
-      if Dest = nil then // there must be a dest
-        RaiseDispError;
-      if LArgCount = 0 then // no args
-      begin
-        if not GetProperty(Dest^, Source, string(LIdent)) then   // get op be valid
-          RaiseDispError;
-      end
-      else if LArgCount = 1 then // only one arg
-      begin
-        if not GetPropertyWithArg(Dest^, Source, LIdent, LArguments[0]) then   // get op be valid
-          RaiseDispError;
-      end
-      else
-        raise Exception.Create( SMultiDimensionalPropsNotSupported );
-    end;
-
-    CPropertySet:
-      if not ((Dest = nil) and                         // there can't be a dest
-              (LArgCount = 1) and                       // can only be one arg
-              SetProperty(Source, string(LIdent), LArguments[0])) then // set op be valid
-        RaiseDispError;
-  else
-    RaiseDispError;
-  end;
-
-  // copy back the string info
-  I := LStrCount;
-  while I <> 0 do
-  begin
-    Dec(I);
-    with LStrings[I] do
-      if Assigned(PStr) then
-        PStr^ := AnsiString(System.Copy(BStr, 1, MaxInt));
-  end;
-end;
-
-function TPythonVariantType.GetPropertyWithArg(var Dest: TVarData;
-  const V: TVarData; const AName: AnsiString; AArg: TVarData): Boolean;
-var
-  _prop, _result : PPyObject;
-begin
-  with GetPythonEngine do
-  begin
-    _result := nil;
-    _prop := PyObject_GetAttrString(TPythonVarData(V).VPython.PyObject, PAnsiChar(AName));
-    CheckError;
-    if Assigned(_prop) then
-    begin
-      // here we check only sequences, as Delphi does not allow a type different from Integer
-      // to be used within brackets.
-      // But you can still access a dictionary with parenthesis, like: myObj.MyDict('MyKey')
-      // Note that we can't use the brackets on a Python variant that contains a list,
-      // because Delphi thinks it's a variant array, whereas it is not, of course!
-      // So: myList[0] won't work, but myObj.MyList[0] will!!!
-      if PySequence_Check(_prop) <> 0 then
-      begin
-        _result := PySequence_GetItem(_prop, Variant(AArg));
-        CheckError;
-      end; // of if
-    end; // of if
-    Result := Assigned(_result);
-    if Result then
-      try
-        PyhonVarDataCreate(Dest, _result);
-      finally
-        Py_XDecRef(_prop);
-      end; // of try
-  end; // of with
-end;
-{$ENDIF USESYSTEMDISPINVOKE}
 
 function TPythonVariantType.DoFunction(var Dest: TVarData;
   const V: TVarData; const AName: string;
