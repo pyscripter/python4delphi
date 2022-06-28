@@ -2790,7 +2790,11 @@ uses
 {$ENDIF}
 {$IFDEF MSWINDOWS}
   Registry,
+{$IFDEF FPC}
+  JwaPsApi,
+{$ELSE}
   PsAPI,
+{$ENDIF}
 {$ENDIF}
   Math;
 

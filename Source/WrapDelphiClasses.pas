@@ -107,8 +107,10 @@ type
     function  CreateComponent(AOwner : TComponent) : TComponent; virtual;
     procedure SubscribeToFreeNotification; override;
     procedure UnSubscribeToFreeNotification; override;
+{$IFNDEF FPC}
     function InternalReadComponent(const AResFile: string;
       const AInstance: TComponent): boolean; virtual;
+{$ENDIF}
     // Exposed Methods
     function GetParentComponent_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function HasParent_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -244,8 +246,9 @@ type
 implementation
 
 uses
-  TypInfo, System.IOUtils, System.Rtti;
+  TypInfo {$IFNDEF FPC}, System.Rtti{$ENDIF};
 
+{$IFNDEF FPC}
 type
   TPyReader = class(TReader)
   private
@@ -258,6 +261,7 @@ type
   public
     constructor Create(APyObject: TPyDelphiObject; Stream: TStream; BufSize: Integer);
   end;
+{$ENDIF}
 
 { Register the wrappers, the globals and the constants }
 type
@@ -892,6 +896,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 function TPyDelphiComponent.InternalReadComponent(const AResFile: string;
   const AInstance: TComponent): boolean;
 
@@ -930,7 +935,7 @@ var
   LInput: TFileStream;
   LOutput: TMemoryStream;
 begin
-  if AResFile.IsEmpty or not TFile.Exists(AResFile) then
+  if AResFile.IsEmpty or not FileExists(AResFile) then
     Exit(false);
 
   LInput := TFileStream.Create(AResFile, fmOpenRead);
@@ -956,6 +961,7 @@ begin
   end;
   Result := true;
 end;
+{$ENDIF}
 
 function TPyDelphiComponent.GetAttrO(key: PPyObject): PPyObject;
 Var
@@ -1655,6 +1661,7 @@ begin
   end;
 end;
 
+{$IFNDEF FPC}
 { TPyReader }
 
 constructor TPyReader.Create(APyObject: TPyDelphiObject; Stream: TStream;
@@ -1750,6 +1757,7 @@ begin
   end;
   FInstance := Component;
 end;
+{$ENDIF}
 
 initialization
   RegisteredUnits.Add(TClassesRegistration.Create);
