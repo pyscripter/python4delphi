@@ -591,8 +591,8 @@ begin
       Exit(GetPythonEngine().ReturnFalse);
   except
     on E: Exception do
-      GetPythonEngine().PyErr_SetString(PyExc_RuntimeError^, 
-        PAnsiChar(AnsiString(E.Message)));
+      with GetPythonEngine() do
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
   end;
   Result := nil;
 end;

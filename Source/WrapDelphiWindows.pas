@@ -185,7 +185,7 @@ end;
 {$ENDIF DELPHI11_OR_HIGHER}
 
 initialization
-  RegisteredUnits.Add( TWindowsRegistration.Create );
+  RegisteredUnits.Add(TWindowsRegistration.Create);
 
   {$IFDEF MSWINDOWS}
     {$IFDEF DELPHI11_OR_HIGHER}
