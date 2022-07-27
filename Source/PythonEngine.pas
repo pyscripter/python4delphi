@@ -1521,6 +1521,7 @@ type
     PyObject_GetAttrString:function (ob:PPyObject;c:PAnsiChar):PPyObject; cdecl;
     PyObject_GetItem:function (ob,key:PPyObject):PPyObject; cdecl;
     PyObject_DelItem:function (ob,key:PPyObject):PPyObject; cdecl;
+    PyObject_HasAttr:function (ob, attr_name:PPyObject):integer; cdecl;
     PyObject_HasAttrString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
     PyObject_Hash:function (ob:PPyObject):NativeInt; cdecl;
     PyObject_IsTrue:function (ob:PPyObject):integer; cdecl;
@@ -3711,6 +3712,7 @@ begin
   PyObject_GetAttrString    := Import('PyObject_GetAttrString');
   PyObject_GetItem          := Import('PyObject_GetItem');
   PyObject_DelItem          := Import('PyObject_DelItem');
+  PyObject_HasAttr          := Import('PyObject_HasAttr');
   PyObject_HasAttrString    := Import('PyObject_HasAttrString');
   PyObject_Hash             := Import('PyObject_Hash');
   PyObject_IsTrue           := Import('PyObject_IsTrue');
@@ -7311,11 +7313,12 @@ begin
   with Engine do
     begin
       obj := GetVar( varName );
-      try
-        Result := PyObjectAsVariant( obj );
-      finally
-        Py_XDecRef(obj);
-      end;
+      if Assigned(obj) then
+        try
+          Result := PyObjectAsVariant( obj );
+        finally
+          Py_XDecRef(obj);
+        end;
     end;
 end;
 

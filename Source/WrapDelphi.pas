@@ -2226,9 +2226,10 @@ begin
   Result := inherited GetAttrO(key);
   if GetPythonEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
 
-  if Assigned(DelphiObject) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
-  else
+  // should not happen
+  if not (Assigned(DelphiObject) and
+     CheckStrAttribute(Key, 'GetAttrO key parameter', KeyName))
+  then
     Exit;
 
   GetPythonEngine.PyErr_Clear;
@@ -2512,11 +2513,15 @@ end;
 
 function TPyDelphiObject.SetAttrO(key, value: PPyObject): Integer;
 (*
-    First look whether the attribute has ben wrapped (RegisterGetSet, RegisterMethod).
-    This is done by calling the inherited SetAttrO.  If this fails then
+    First look whether the attribute exists., e.g. has been wrapped with
+    RegisterGetSet, RegisterMethod, etc.
+    If it does then the inherited generic SetAttrO is called.
+    If the attribute does not exist or the generic SetAttO fails (unlikely) then
       -  Use Rtti to locate the property in DELPHIXE_OR_HIGHER (EXTENDED_RTTI)
       or for other versions
       -  Look for published properties
+    Finally, if all the above fail then you call the inherited generic SetAttrO
+    which adds a new field in the object dictionary
 *)
 
   function HandleEvent(PropInfo: PPropInfo; out ErrMsg: string) : Integer;
@@ -2582,20 +2587,29 @@ var
   {$ENDIF}
   KeyName: string;
   ErrMsg: string;
+  PyEngine: TPythonEngine;
+  PyObj: PPyobject;
 begin
   Result := -1;
-  if Assigned(DelphiObject) and GetPythonEngine.PyUnicode_Check(Key) then
-    KeyName := GetPythonEngine.PyUnicodeAsString(Key)
-  else begin
+  PyEngine := GetPythonEngine;
+
+  // should not happen
+  if not (Assigned(DelphiObject) and
+     CheckStrAttribute(Key, 'SetAttrO key parameter', KeyName))
+  then
     Exit;
+
+  // Only call the inherited method at this stage if the attribute exists
+  PyObj := PyEngine.PyObject_GenericGetAttr(GetSelf, key);
+  if Assigned(PyObj) then
+  begin
+    PyEngine.Py_DECREF(PyObj); // not needed
+    Result := inherited SetAttrO(key, value);
+    if Result = 0 then
+      Exit;
   end;
 
-  // Only call the inherited method if the attribute exists
-  if GetPythonEngine.PyObject_HasAttrString(GetSelf, PAnsiChar(key)) = 1 then
-    Result := inherited SetAttrO(key, value);
-  if Result = 0 then Exit;
-
-  GetPythonEngine.PyErr_Clear;
+  PyEngine.PyErr_Clear;
   {$IFDEF EXTENDED_RTTI}
   Context := TRttiContext.Create();
   try
@@ -2623,8 +2637,8 @@ begin
   if Result <> 0 then
     Result := inherited SetAttrO(key, value);
   if Result <> 0 then
-    with GetPythonEngine do
-      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
+    with PyEngine do
+      PyErr_SetObject(PyEngine.PyExc_AttributeError^, PyUnicodeFromString(
         Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
 end;
 
