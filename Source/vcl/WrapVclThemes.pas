@@ -103,11 +103,13 @@ begin
     if PyTuple_Check(args) then begin
       if PyTuple_Size(args) = 0 then
         Result := GlobalDelphiWrapper.Wrap(StyleServices())
+{$IF CompilerVersion > 33}
       else if (PyArg_ParseTuple(args, 'O:StyleServices', @LPyObj) <> 0)
-        and CheckObjAttribute(LPyObj, 'AControl', TControl, TObject(LControl)) then
-      begin
-        Result := GlobalDelphiWrapper.Wrap(StyleServices(LControl));
-      end else
+        and CheckObjAttribute(LPyObj, 'AControl', TControl, TObject(LControl))
+      then
+        Result := GlobalDelphiWrapper.Wrap(StyleServices(LControl))
+{$IFEND}
+      else
         Result := nil;
     end else
       Result := nil;
