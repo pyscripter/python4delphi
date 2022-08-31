@@ -1,0 +1,16 @@
+{
+	"name": "python4delphi",
+	"description": "Free components that wrap up Python into Delphi",
+	"version": "1.0.0",
+	"homepage": "https://github.com/Embarcadero/python4delphi",
+	"mainsrc": "Source",
+	"projects": [
+		"./Delphi/Delphi 10.4+/Python.dproj",
+		"./Delphi/Delphi 10.4+/dclPython.dproj",
+		"./Delphi/Delphi 10.4+/PythonVcl.dproj",
+		"./Delphi/Delphi 10.4+/dclPythonVcl.dproj",
+		"./Delphi/Delphi 10.4+/PythonFmx.dproj",
+		"./Delphi/Delphi 10.4+/dclPythonFmx.dproj"
+	],
+	"dependencies": {}
+}
