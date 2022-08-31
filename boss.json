@@ -5,12 +5,12 @@
 	"homepage": "https://github.com/Embarcadero/python4delphi",
 	"mainsrc": "Source",
 	"projects": [
-		"./Delphi/Delphi 10.4+/Python.dproj",
-		"./Delphi/Delphi 10.4+/dclPython.dproj",
-		"./Delphi/Delphi 10.4+/PythonVcl.dproj",
-		"./Delphi/Delphi 10.4+/dclPythonVcl.dproj",
-		"./Delphi/Delphi 10.4+/PythonFmx.dproj",
-		"./Delphi/Delphi 10.4+/dclPythonFmx.dproj"
+		"./Packages/Delphi/Delphi 10.4+/Python.dproj",
+		"./Packages/Delphi/Delphi 10.4+/dclPython.dproj",
+		"./Packages/Delphi/Delphi 10.4+/PythonVcl.dproj",
+		"./Packages/Delphi/Delphi 10.4+/dclPythonVcl.dproj",
+		"./Packages/Delphi/Delphi 10.4+/PythonFmx.dproj",
+		"./Packages/Delphi/Delphi 10.4+/dclPythonFmx.dproj"
 	],
 	"dependencies": {}
 }
