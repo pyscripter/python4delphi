@@ -197,11 +197,18 @@ if PyErr_Occurred() not nil - you should return nil from your mapped function
 
 function TThreadSortForm.SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
 var
-  psort, index: Integer;
+  psort: NativeInt;
+  index: Integer;
 begin
   with GetPythonEngine do
   begin
-    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'ii',@psort, @index) <> 0) then
+    if (PyErr_Occurred() = nil) and
+{$IFDEF CPU64BITS}
+      (PyArg_ParseTuple( args, 'Li',@psort, @index) <> 0)
+{$ELSE}
+      (PyArg_ParseTuple( args, 'ii',@psort, @index) <> 0)
+{$ENDIF}
+    then
     begin
       Result := PyLong_FromLong(TSortThread(psort)[index]);
     end else
@@ -211,11 +218,18 @@ end;
 
 function TThreadSortForm.SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
 var
-  psort, i, j: Integer;
+  psort: NativeInt;
+  i, j: Integer;
 begin
   with GetPythonEngine do
   begin
-    if (PyErr_Occurred() = nil) and (PyArg_ParseTuple( args, 'iii',@psort, @i, @j) <> 0) then
+    if (PyErr_Occurred() = nil) and
+{$IFDEF CPU64BITS}
+      (PyArg_ParseTuple( args, 'Lii',@psort, @i, @j) <> 0)
+{$ELSE}
+      (PyArg_ParseTuple( args, 'iii',@psort, @i, @j) <> 0)
+{$ENDIF}
+    then
     begin
       TSortThread(psort).VisualSwap(i,j);
       Result := ReturnNone;
