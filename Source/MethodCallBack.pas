@@ -194,7 +194,7 @@ begin
     {$IFEND}
     if mprotect(page, PageSize, flags) <> 0 then
       raise EMProtectError.CreateFmt('MProtect error: %s', [
-        SysErrorMessage(GetLastError())]);
+        SysErrorMessage({$IFDEF FPC}GetLastOSError{$ELSE}GetLastError{$ENDIF}())]);
   {$ENDIF}
     page^.next:=CodeMemPages;
     CodeMemPages:=page;
@@ -210,7 +210,7 @@ begin
     //RW permission to the entire page for new changes...
     if mprotect(page, PageSize, PROT_READ or PROT_WRITE) <> 0 then
       raise EMProtectError.CreateFmt('MProtect error: %s', [
-        SysErrorMessage(GetLastError())]);
+        SysErrorMessage({$IFDEF FPC}GetLastOSError{$ELSE}GetLastError{$ENDIF}())]);
   end;
   {$ELSE}
   end;
@@ -751,7 +751,7 @@ begin
     //X permission to the entire page for executions...
     if mprotect(CodeMemPages, PageSize, PROT_EXEC) <> 0 then
       raise EMProtectError.CreateFmt('MProtect error: %s', [
-        SysErrorMessage(GetLastError())]);
+        SysErrorMessage({$IFDEF FPC}GetLastOSError{$ELSE}GetLastError{$ENDIF}())]);
   {$IFEND}
 
   Result := Pointer(Q); //set arm mode
