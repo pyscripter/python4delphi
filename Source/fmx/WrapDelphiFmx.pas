@@ -11,6 +11,9 @@ uses
   WrapDelphiWindows,
   {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
+  {$IFNDEF LINUX}
+  WrapFmxDataBind,
+  {$ENDIF LINUX}
   WrapFmxTypes,
   WrapFmxControls,
   WrapFmxStdCtrls,
@@ -30,7 +33,6 @@ uses
   WrapFmxMenus,
   WrapFmxStyles,
   WrapFmxMemo,
-  WrapFmxColors,
-  WrapFmxDataBind;
+  WrapFmxColors;
 
 end.
