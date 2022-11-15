@@ -4271,7 +4271,7 @@ begin
   GlobalVars := nil;
   Destroying;
   Finalize;
-  FClients.Free;
+  FreeAndNil(FClients);
   FInitScript.Free;
   FTraceback.Free;
   inherited;
@@ -4567,7 +4567,7 @@ begin
     begin
       if AComponent = IO then
         IO := nil
-      else
+      else if Assigned(FClients) then
         begin
           for i := 0 to ClientCount - 1 do
             if Clients[i] = AComponent then

@@ -4,11 +4,11 @@ ClearChildAppSettings=0
 ClearChildPackageSettings=0
 ClearChildVersionInfo=0
 NormalizeDproj=1
-SplitDproj=0
-EnableMissingPlatforms=1
-RemoveUnusedPlatforms=1
+SplitDproj=1
+EnableMissingPlatforms=0
+RemoveUnusedPlatforms=0
 RefreshFormType=0
 RemoveExcludedPackages=1
 RemoveDeployment=1
-RemoveUWP=1
+RemoveUWP=0
 
