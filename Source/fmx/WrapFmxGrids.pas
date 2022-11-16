@@ -3,7 +3,7 @@ unit WrapFmxGrids;
 interface
 
 uses
-  FMX.Grid, WrapFmxControls, WrapFmxScrollBox;
+  FMX.Grid, FMX.Grid.Style, WrapFmxControls, WrapFmxScrollBox;
 
 type
   TPyDelphiColumn = class(TPyDelphiControl)
