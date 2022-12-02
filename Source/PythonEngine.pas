@@ -224,6 +224,7 @@ type
   WCharTString = UnicodeString;
 {$ENDIF}
 
+  Py_ssize_t = NativeInt;
 
   const
 {
@@ -931,6 +932,27 @@ type
   end;
   PPyDateTime_DateTime = ^PyDateTime_DateTime;
 
+  //bytearrayobject.h
+
+  //typedef struct {
+  //  PyObject_VAR_HEAD
+  //  Py_ssize_t ob_alloc;   /* How many bytes allocated in ob_bytes */
+  //  char *ob_bytes;        /* Physical backing buffer */
+  //  char *ob_start;        /* Logical start inside ob_bytes */
+  //  Py_ssize_t ob_exports; /* How many buffer exports */
+  //} PyByteArrayObject;
+
+  PyByteArrayObject = {$IFDEF CPUX86}packed{$ENDIF} record
+    // Start of PyObject_VAR_HEAD
+    // Start of the Head of an object
+    ob_base: PyObject;
+    ob_size: Py_ssize_t;
+    // End of the Head of an object
+    ob_bytes: PAnsiChar;
+    ob_start: PAnsiChar;
+    ob_exports: Py_ssize_t;
+  end;
+
 //#######################################################
 //##                                                   ##
 //##         GIL state                                 ##
@@ -1351,6 +1373,7 @@ type
     PyRange_Type: PPyTypeObject;
     PySlice_Type: PPyTypeObject;
     PyBytes_Type: PPyTypeObject;
+    PyByteArray_Type: PPyTypeObject;
     PyTuple_Type: PPyTypeObject;
     PyBaseObject_Type: PPyTypeObject;
     PyCallIter_Type: PPyTypeObject;
@@ -1430,6 +1453,7 @@ type
     PyRun_SimpleString:   function( str: PAnsiChar): Integer; cdecl;
     PyBytes_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
     PyBytes_AsStringAndSize: function( ob: PPyObject; var buffer: PAnsiChar; var size: NativeInt): integer; cdecl;
+    PyByteArray_AsString: function(ob: PPyObject): PAnsiChar; cdecl;
     PySys_SetArgv:        procedure( argc: Integer; argv: PPWCharT); cdecl;
 
     PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
@@ -1576,6 +1600,11 @@ type
     PyBytes_Size:function (ob:PPyObject):NativeInt; cdecl;
     PyBytes_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
     PyBytes_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
+    PyByteArray_Concat: procedure(var ob1: PPyObject; ob2: PPyObject); cdecl;
+    PyByteArray_Resize: procedure(var ob1: PPyObject; len: Py_ssize_t); cdecl;
+    PyByteArray_FromObject: function(ob:PPyObject): PPyObject; cdecl;
+    PyByteArray_FromStringAndSize: function(s: PAnsiChar; i: Py_ssize_t): PPyObject; cdecl;
+    PyByteArray_Size: function(ob: PPyObject): Py_ssize_t; cdecl;
     PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
     PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
     PySys_SetPath:procedure(path:PAnsiChar); cdecl;
@@ -1703,6 +1732,8 @@ type
 
   function PyBytes_Check( obj : PPyObject ) : Boolean;
   function PyBytes_CheckExact( obj : PPyObject ) : Boolean;
+  function PyByteArray_Check(obj: PPyObject): Boolean;
+  function PyByteArray_CheckExact(obj: PPyObject): Boolean;
   function PyFloat_Check( obj : PPyObject ) : Boolean;
   function PyFloat_CheckExact( obj : PPyObject ) : Boolean;
   function PyLong_Check( obj : PPyObject ) : Boolean;
@@ -3553,6 +3584,7 @@ begin
   PyRange_Type               := Import('PyRange_Type');
   PySlice_Type               := Import('PySlice_Type');
   PyBytes_Type               := Import('PyBytes_Type');
+  PyByteArray_Type           := Import('PyByteArray_Type');
   PyTuple_Type               := Import('PyTuple_Type');
   PyUnicode_Type             := Import('PyUnicode_Type');
   PyBaseObject_Type          := Import('PyBaseObject_Type');
@@ -3770,6 +3802,12 @@ begin
   PyBytes_DecodeEscape        := Import('PyBytes_DecodeEscape');
   PyBytes_Repr                := Import('PyBytes_Repr');
   _PyBytes_Resize             := Import('_PyBytes_Resize');
+  PyByteArray_AsString        := Import('PyByteArray_AsString');
+  PyByteArray_Concat          := Import('PyByteArray_Concat');
+  PyByteArray_Resize          := Import('PyByteArray_Resize');
+  PyByteArray_FromObject      := Import('PyByteArray_FromObject');
+  PyByteArray_FromStringAndSize := Import('PyByteArray_FromStringAndSize');
+  PyByteArray_Size            := Import('PyByteArray_Size');
   PySys_GetObject             := Import('PySys_GetObject');
   PySys_SetObject             := Import('PySys_SetObject');
   PySys_SetPath               := Import('PySys_SetPath');
@@ -3901,6 +3939,16 @@ begin
     op := nil;
     Py_DECREF(_py_tmp);
   end;
+end;
+
+function TPythonInterface.PyByteArray_Check(obj: PPyObject): Boolean;
+begin
+  Result := PyObject_TypeCheck(obj, PyByteArray_Type);
+end;
+
+function TPythonInterface.PyByteArray_CheckExact(obj: PPyObject): Boolean;
+begin
+  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyByteArray_Type));
 end;
 
 function TPythonInterface.PyBytes_Check( obj : PPyObject ) : Boolean;
