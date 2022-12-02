@@ -243,11 +243,23 @@ type
   private
     function GetDelphiObject: TStream;
     procedure SetDelphiObject(const Value: TStream);
+
+    function GetReadCount(const AArgs: PPyObject): integer; inline;
+  protected
+    function ReadBytes_Wrapper(const AArgs: PPyObject): PPyObject;
+    function ReadInt_Wrapper(const AArgs: PPyObject): PPyObject;
+    function ReadString_Wrapper(const AArgs: PPyObject): PPyObject;
+    function ReadFloat_Wrapper(const AArgs: PPyObject): PPyObject;
+
+    function WriteBytes_Wrapper(const AArgs: PPyObject): PPyObject;
+    function WriteInt_Wrapper(const AArgs: PPyObject): PPyObject;
+    function WriteString_Wrapper(const AArgs: PPyObject): PPyObject;
+    function WriteFloat_Wrapper(const AArgs: PPyObject): PPyObject;
   public
-    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     // Class methods
     class function  DelphiObjectClass : TClass; override;
     class procedure SetupType(PythonType: TPythonType); override;
+    class procedure RegisterMethods( PythonType : TPythonType ); override;
     // Properties
     property DelphiObject: TStream read GetDelphiObject write SetDelphiObject;
   end;
@@ -1895,12 +1907,6 @@ end;
 
 { TPyDelphiStream }
 
-constructor TPyDelphiStream.CreateWith(APythonType: TPythonType;
-  args, kwds: PPyObject);
-begin
-  inherited;
-end;
-
 class function TPyDelphiStream.DelphiObjectClass: TClass;
 begin
   Result := TStream;
@@ -1925,6 +1931,192 @@ begin
     PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpTypeSubclass]
 end;
 
+class procedure TPyDelphiStream.RegisterMethods(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.AddMethod('ReadBytes', @TPyDelphiStream.ReadBytes_Wrapper,
+    'TPyDelphiStream.ReadBytes()' + #10 + 'Read content as bytearray.');
+  PythonType.AddMethod('ReadInt', @TPyDelphiStream.ReadInt_Wrapper,
+    'TPyDelphiStream.ReadInt()' + #10 + 'Read content as integer.');
+  PythonType.AddMethod('ReadString', @TPyDelphiStream.ReadString_Wrapper,
+    'TPyDelphiStream.ReadString()' + #10 + 'Read content as string.');
+  PythonType.AddMethod('ReadFloat', @TPyDelphiStream.ReadFloat_Wrapper,
+    'TPyDelphiStream.ReadFloat()' + #10 + 'Read content as float.');
+
+  PythonType.AddMethod('WriteBytes', @TPyDelphiStream.WriteBytes_Wrapper,
+    'TPyDelphiStream.WriteBytes()' + #10 + 'Write content as bytearray.');
+  PythonType.AddMethod('WriteInt', @TPyDelphiStream.WriteInt_Wrapper,
+    'TPyDelphiStream.WriteInt()' + #10 + 'Write content as integer.');
+  PythonType.AddMethod('WriteString', @TPyDelphiStream.WriteString_Wrapper,
+    'TPyDelphiStream.WriteString()' + #10 + 'Write content as string.');
+  PythonType.AddMethod('WriteFloat', @TPyDelphiStream.WriteFloat_Wrapper,
+    'TPyDelphiStream.WriteFloat()' + #10 + 'Write content as float.');
+end;
+
+function TPyDelphiStream.GetReadCount(const AArgs: PPyObject): integer;
+begin
+  if GetPythonEngine().PyArg_ParseTuple(AArgs, 'i:Create', @Result) = 0 then
+    Result := 0;
+end;
+
+function TPyDelphiStream.ReadBytes_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LCount: Integer;
+  LValue: TBytes;
+  LItem: PPyObject;
+  LBytes: PPyObject;
+  LByte: byte;
+begin
+  Adjust(@Self);
+  //Returns multiple results
+  with GetPythonEngine() do begin
+    Result := PyList_New(0);
+    LCount := GetReadCount(AArgs);
+    if (LCount > 0) then begin
+      //The read result
+      SetLength(LValue, LCount);
+      LItem := PyLong_FromLong(DelphiObject.Read(LValue, LCount));
+      PyList_Append(Result, LItem);
+      Py_XDecRef(LItem);
+      //Create a list of bytes, then convert it to bytearray
+      LBytes := PyList_New(0);
+      for LByte in LValue do begin
+        LItem := PyLong_FromLong(LByte);
+        PyList_Append(LBytes, LItem);
+        Py_XDecRef(LItem);
+      end;
+      //The content
+      LItem := PyByteArray_FromObject(LBytes);
+      Py_XDecRef(LBytes);
+      PyList_Append(Result, LItem);
+      Py_XDecRef(LItem);
+    end;
+  end;
+end;
+
+function TPyDelphiStream.ReadFloat_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LValue: single;
+  LItem: PPyObject;
+begin
+  Adjust(@Self);
+  //Returns multiple results
+  with GetPythonEngine() do begin
+    Result := PyList_New(0);
+    //The read result
+    LItem := PyLong_FromLong(DelphiObject.Read(LValue, SizeOf(single)));
+    PyList_Append(Result, LItem);
+    Py_XDecRef(LItem);
+    //The content
+    LItem := PyFloat_FromDouble(LValue);
+    PyList_Append(Result, LItem);
+    Py_XDecRef(LItem);
+  end;
+end;
+
+function TPyDelphiStream.ReadInt_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LValue: integer;
+  LItem: PPyObject;
+begin
+  Adjust(@Self);
+  //Returns multiple results
+  with GetPythonEngine() do begin
+    Result := PyList_New(0);
+    //The read result
+    LItem := PyLong_FromLong(DelphiObject.Read(LValue, SizeOf(Integer)));
+    PyList_Append(Result, LItem);
+    Py_XDecRef(LItem);
+    //The content
+    LItem := PyLong_FromLong(LValue);
+    PyList_Append(Result, LItem);
+    Py_XDecRef(LItem);
+  end;
+end;
+
+function TPyDelphiStream.ReadString_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LCount: Integer;
+  LValue: string;
+  LItem: PPyObject;
+begin
+  Adjust(@Self);
+  //Returns multiple results
+  with GetPythonEngine() do begin
+    Result := PyList_New(0);
+    LCount := GetReadCount(AArgs);
+    if (LCount > 0) then begin
+      //The read result
+      SetLength(LValue, LCount);
+      LItem := PyLong_FromLong(DelphiObject.Read(Pointer(LValue)^, LCount * SizeOf(Char)));
+      PyList_Append(Result, LItem);
+      Py_XDecRef(LItem);
+      //The content
+      LItem := PyUnicodeFromString(LValue);
+      PyList_Append(Result, LItem);
+      Py_XDecRef(LItem);
+    end;
+  end;
+end;
+
+function TPyDelphiStream.WriteBytes_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LValue: PPyObject;
+  LCount: integer;
+  LBuffer: TBytes;
+begin
+  Adjust(@Self);
+  Result := nil;
+  with GetPythonEngine() do begin
+    if PyArg_ParseTuple(AArgs, 'Yi:Create', @LValue, @LCount) <> 0 then
+      if PyByteArray_Check(LValue) then begin
+        LBuffer := TEncoding.Default.GetBytes(String(PyByteArray_AsString(LValue)));
+        Result := PyLong_FromLong(DelphiObject.Write(LBuffer, LCount));
+      end;
+  end;
+end;
+
+function TPyDelphiStream.WriteFloat_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LValue: single;
+begin
+  Adjust(@Self);
+  Result := nil;
+  with GetPythonEngine() do begin
+    if PyArg_ParseTuple(AArgs, 'f:Create', @LValue) <> 0 then
+      Result := PyLong_FromLong(DelphiObject.Write(LValue, SizeOf(Single)));
+  end;
+end;
+
+function TPyDelphiStream.WriteInt_Wrapper(const AArgs: PPyObject): PPyObject;
+var
+  LValue: integer;
+begin
+  Adjust(@Self);
+  Result := nil;
+  with GetPythonEngine() do begin
+    if PyArg_ParseTuple(AArgs, 'i:Create', @LValue) <> 0 then
+      Result := PyLong_FromLong(DelphiObject.Write(LValue, SizeOf(Integer)));
+  end;
+end;
+
+function TPyDelphiStream.WriteString_Wrapper(
+  const AArgs: PPyObject): PPyObject;
+var
+  LValue: PAnsiChar;
+  LCount: integer;
+  LStr: string;
+begin
+  Adjust(@Self);
+  Result := nil;
+  with GetPythonEngine() do begin
+    if PyArg_ParseTuple(AArgs, 'si:Create', @LValue, @LCount) <> 0 then begin
+      LStr := String(LValue);
+      Result := PyLong_FromLong(DelphiObject.Write(Pointer(LStr)^, LCount * SizeOf(Char)));
+    end;
+  end;
+end;
+
 { TPyDelphiHandleStream }
 
 constructor TPyDelphiHandleStream.CreateWith(APythonType: TPythonType;
@@ -1936,6 +2128,9 @@ var
   LHandle: THandle;
 begin
   inherited;
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
+
   LParamCount := APythonType.Engine.PyTuple_Size(args);
   if (LParamCount = 1) then
     {$IFDEF CPUX64}
@@ -1974,6 +2169,8 @@ var
   LFileName: PAnsiChar;
 begin
   inherited;
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
 
   if (APythonType.PyObjectClass <> TPyDelphiFileStream) then
     Exit;
@@ -1986,6 +2183,10 @@ begin
     if APythonType.Engine.PyArg_ParseTuple(args, 'sHI:Create', @LFileName, @LMode, @LRights) <> 0 then
       DelphiObject := TFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights);
   end;
+
+  //Maybe it was created on the next attempt...
+  if Assigned(DelphiObject) then
+     APythonType.Engine.PyErr_Clear();
 end;
 
 class function TPyDelphiFileStream.DelphiObjectClass: TClass;
@@ -2020,6 +2221,9 @@ var
   LBufferSize: integer;
 begin
   inherited; //We MUST use the overloaded constructor
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
+
   //We need kwargs here due to constructor overloads with default value (BufferSize)
   LBufferSize := 32768;
   LArgCount := APythonType.Engine.PyTuple_Size(args);
@@ -2030,6 +2234,10 @@ begin
     if (APythonType.Engine.PyArg_ParseTupleAndKeywords(args, kwds, 'sHI|i:Create', @LKwArgs2[0], @LFileName, @LMode, @LRights, @LBufferSize) <> 0) then
       DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights, LBufferSize);
   end;
+
+  //Maybe it was created on the next attempt...
+  if Assigned(DelphiObject) then
+     APythonType.Engine.PyErr_Clear();
 end;
 
 class function TPyDelphiBufferedFileStream.DelphiObjectClass: TClass;
@@ -2093,18 +2301,27 @@ var
   LBytes: PPyObject;
 begin
   inherited;
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
+
   if (APythonType.Engine.PyTuple_Size(args) = 1) then
     if APythonType.Engine.PyArg_ParseTuple(args, 'Y:Create', @LBytes) <> 0 then begin
       if APythonType.Engine.PyByteArray_Check(LBytes) then begin
-        DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(TEncoding.Default.GetBytes(
-          String(APythonType.Engine.PyByteArray_AsString(LBytes))));
+        DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(
+          TEncoding.Default.GetBytes(
+            String(APythonType.Engine.PyByteArray_AsString(LBytes))));
       end;
     end else if APythonType.Engine.PyArg_ParseTuple(args, 'S:Create', @LBytes) <> 0 then begin
       if APythonType.Engine.PyBytes_Check(LBytes) then begin
-        DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(TEncoding.Default.GetBytes(
-          String(APythonType.Engine.PyBytes_AsString(LBytes))));
+        DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(
+          TEncoding.Default.GetBytes(
+            String(APythonType.Engine.PyBytes_AsString(LBytes))));
       end;
     end;
+
+  //Maybe it was created on the next attempt...
+  if Assigned(DelphiObject) then
+    APythonType.Engine.PyErr_Clear();
 end;
 
 class function TPyDelphiByteStream.DelphiObjectClass: TClass;
@@ -2132,6 +2349,9 @@ var
   LDataString: PAnsiChar;
 begin
   inherited;
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
+
   if (APythonType.Engine.PyTuple_Size(args) = 1) then
     if APythonType.Engine.PyArg_ParseTuple(args, 's:Create', @LDataString) <> 0 then
       DelphiObject := TStringStreamClass(DelphiObjectClass).Create(String(LDataString));
@@ -2165,19 +2385,32 @@ var
   LResType: PAnsiChar;
 begin
   inherited;
-  {$IFDEF CPUX64}
-  if APythonType.Engine.PyArg_ParseTuple(args, 'Kss:Create', @LHandle, @LResName, @LResType) <> 0 then
-  {$ELSE}
-  if APythonType.Engine.PyArg_ParseTuple(args, 'Iss:Create', @LHandle, @LResName, @LResType) <> 0 then
-  {$ENDIF}
-    DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PWideChar(String(LResType)))
-  else
-  {$IFDEF CPUX64}
-  if APythonType.Engine.PyArg_ParseTuple(args, 'Kis:Create', @LHandle, @LResId, @LResType) <> 0 then
-  {$ELSE}
-  if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType)) <> 0 then
-  {$ENDIF}
-    DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PWideChar(String(LResType)))
+  //Clear unsuccessful overloaded constructor error
+  APythonType.Engine.PyErr_Clear();
+
+  try
+    {$IFDEF CPUX64}
+    if APythonType.Engine.PyArg_ParseTuple(args, 'Kss:Create', @LHandle, @LResName, @LResType) <> 0 then
+    {$ELSE}
+    if APythonType.Engine.PyArg_ParseTuple(args, 'Iss:Create', @LHandle, @LResName, @LResType) <> 0 then
+    {$ENDIF}
+      DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PWideChar(String(LResType)))
+    else
+    {$IFDEF CPUX64}
+    if APythonType.Engine.PyArg_ParseTuple(args, 'Kis:Create', @LHandle, @LResId, @LResType) <> 0 then
+    {$ELSE}
+    if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType)) <> 0 then
+    {$ENDIF}
+      DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PWideChar(String(LResType)));
+  except
+    on E: Exception do
+      with GetPythonEngine do
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
+  end;
+
+  //Maybe it was created on the next attempt...
+  if Assigned(DelphiObject) then
+    APythonType.Engine.PyErr_Clear();
 end;
 
 class function TPyDelphiResourceStream.DelphiObjectClass: TClass;
