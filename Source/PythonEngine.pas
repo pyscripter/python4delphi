@@ -2397,7 +2397,8 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); virtual;
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); virtual;
+    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); overload; virtual;
+    constructor CreateWith( APythonType : TPythonType; args, kwds : PPyObject ); overload; virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -7401,6 +7402,12 @@ begin
   Create( APythonType );
 end;
 
+constructor TPyObject.CreateWith(APythonType: TPythonType; args,
+  kwds: PPyObject);
+begin
+  CreateWith(APythonType, args);
+end;
+
 destructor TPyObject.Destroy;
 begin
   if Assigned(PythonType) then
@@ -8126,7 +8133,7 @@ begin
     obj.ob_type := aType;
     obj.IsSubtype := aType <> @FType;
     obj.PythonAlloc := True;
-    obj.CreateWith(Self, args);
+    obj.CreateWith(Self, args, kwds);
     if Engine.PyErr_Occurred <> nil then
     begin
       Engine.Py_DECREF(Result);
@@ -8607,7 +8614,7 @@ begin
   CheckEngine;
   with Engine do
     begin
-      obj := PyObjectClass.CreateWith( Self, args );
+      obj := PyObjectClass.CreateWith( Self, args, nil );
       obj.ob_type := @FType;
       if PyErr_Occurred <> nil then
       begin
