@@ -759,6 +759,9 @@ type
     cf_feature_version : integer;  //added in Python 3.8
   end;
 
+  const
+   PyCF_ONLY_AST = $0400;
+
   // from datetime.h
 
 
