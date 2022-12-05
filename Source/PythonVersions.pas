@@ -180,7 +180,7 @@ begin
       Result := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\' + SR.Name
     else if Result = '' then
     begin
-      HtmlIndex := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\index.html';
+      HtmlIndex := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\html\index.html';
       if FileExists(HtmlIndex) then
         Result := HtmlIndex;
     end;
