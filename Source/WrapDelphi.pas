@@ -3033,9 +3033,9 @@ begin
 
   {$IFDEF EXPOSE_MEMBERS}
   ExposeMethods(DelphiObjectClass, PythonType,PythonType.Owner as TPyDelphiWrapper,
-    false, [], ['CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3']);
-  ExposeFields(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper);
-  ExposeProperties(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper);
+    true, [], ['CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3']);
+  ExposeFields(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper, true);
+  ExposeProperties(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper, true);
   {$ENDIF EXPOSE_MEMBERS}
 end;
 
