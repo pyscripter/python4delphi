@@ -3292,7 +3292,7 @@ begin
         if MatchStr(LRttiMethod.Name, AIncludedMethodNames) then
           LRttiElectedMethods := LRttiElectedMethods + [LRttiMethod];
     end else
-      Pointer(LRttiElectedMethods) := Pointer(LRttiMethods);
+      LRttiElectedMethods := LRttiMethods;
 
     for LRttiMethod in LRttiElectedMethods do begin
       //Public and published methods only
@@ -3370,7 +3370,7 @@ begin
         if MatchStr(LRttiProperty.Name, AIncludedPropertyNames) then
           LRttiElectedProperties := LRttiElectedProperties + [LRttiProperty];
     end else
-      Pointer(LRttiElectedProperties) := Pointer(LRttiProperties);
+      LRttiElectedProperties := LRttiProperties;
 
     for LRttiProperty in LRttiElectedProperties do begin
       //Public and published properties only
@@ -3450,7 +3450,7 @@ begin
         if MatchStr(LRttiField.Name, AIncludedFieldNames) then
           LRttiElectedFields := LRttiElectedFields + [LRttiField];
     end else
-      Pointer(LRttiElectedFields) := Pointer(LRttiFields);
+      LRttiElectedFields := LRttiFields;
 
     for LRttiField in LRttiElectedFields do begin
       //Public and published fields only
