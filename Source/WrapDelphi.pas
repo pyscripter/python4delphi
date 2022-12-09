@@ -541,7 +541,8 @@ Type
     function HasContainerAccessClass : Boolean;
     procedure SubscribeToFreeNotification; virtual;
     procedure UnSubscribeToFreeNotification; virtual;
-    class function GetTypeName : string; virtual;
+    class function GetTypeName : string; override;
+    class function GetTypeBase(): TPyObjectClass; override;
     // Exposed Methods
     function Free_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function InheritsFrom_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -2928,6 +2929,11 @@ begin
   end;
 end;
 
+class function TPyDelphiObject.GetTypeBase: TPyObjectClass;
+begin
+  Result := TPyObjectClass(Self.ClassParent);
+end;
+
 class function TPyDelphiObject.GetTypeName : string;
 begin
   Result := Copy(DelphiObjectClass.ClassName, 2, MaxInt);
@@ -3257,6 +3263,12 @@ begin
     if _ContainerAccessClass.SupportsIndexOf then
       PythonType.Services.Sequence := PythonType.Services.Sequence + [ssContains];
   end;
+
+  {$IFDEF EXPOSE_MEMBERS}
+  PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpfBaseType];
+  if Assigned(GetTypeBase()) and GetTypeBase().InheritsFrom(TPyDelphiObject) then
+    PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpTypeSubclass];
+  {$ENDIF EXPOSE_MEMBERS}
 end;
 
 {$IFDEF EXPOSE_MEMBERS}

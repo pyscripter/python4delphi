@@ -2384,12 +2384,16 @@ type
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
 }
   // The base class of all new Python types
+  TPyObjectClass = class of TPyObject;
   TPyObject = class
   private
     function  Get_ob_refcnt: NativeInt;
     function  Get_ob_type: PPyTypeObject;
     procedure Set_ob_refcnt(const Value: NativeInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
+  protected
+    class function GetTypeName(): string; virtual; abstract;
+    class function GetTypeBase(): TPyObjectClass; virtual; abstract;
   public
     PythonType     : TPythonType;
     IsSubtype      : Boolean;
@@ -2490,7 +2494,6 @@ type
     class procedure RegisterGetSets( APythonType : TPythonType ); virtual;
     class procedure SetupType( APythonType : TPythonType ); virtual;
   end;
-  TPyObjectClass = class of TPyObject;
 
   TBasicServices     = set of (bsGetAttr, bsSetAttr,
                                bsRepr, bsCompare, bsHash,
@@ -8561,6 +8564,10 @@ begin
 end;
 
 procedure TPythonType.Initialize;
+{$IFDEF EXPOSE_MEMBERS}
+var
+  LBasePythonType: TPythonType;
+{$ENDIF EXPOSE_MEMBERS}
 begin
   CheckEngine;
   with Engine, FType do
@@ -8569,6 +8576,13 @@ begin
       ob_refcnt := 1;
       tp_name   := PAnsiChar(FTypeName);
       tp_flags  := TypeFlagsAsInt;
+      {$IFDEF EXPOSE_MEMBERS}
+      if (TPFlag.tpTypeSubclass in TypeFlags) then begin
+        LBasePythonType := Engine.FindPythonType(AnsiString(PyObjectClass.GetTypeBase().GetTypeName()));
+        if Assigned(LBasePythonType) then
+          tp_base := LBasePythonType.TheTypePtr;
+      end;
+      {$ENDIF EXPOSE_MEMBERS}
     end;
   if Assigned(FModule) then
     begin
