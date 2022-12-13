@@ -4520,7 +4520,7 @@ begin
       'if sys.version_info > (3,11,0):'#13#10 + //1
       '    import os'#13#10 + //2
       ''#13#10 + //3
-      '    dllpath = os.path.join(sys.prefix, ''DLLs'')'#13#10 + //4
+      '    dllpath = os.path.join(sys.base_prefix, ''DLLs'')'#13#10 + //4
       '    if dllpath not in sys.path:'#13#10 + //5
       '        sys.path.insert(3, dllpath)'#13#10 + //6
       ''#13#10 + //7
