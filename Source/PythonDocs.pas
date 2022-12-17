@@ -481,7 +481,10 @@ begin
       Result := 'function'
     else
       Result := 'procedure';
-  end;
+  end else if ARttiNamedType is TRttiField then
+    Result := 'field'
+  else if ARttiNamedType is TRttiProperty then
+    Result := 'property';
 end;
 
 initialization
