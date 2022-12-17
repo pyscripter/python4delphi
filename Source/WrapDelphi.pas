@@ -531,6 +531,9 @@ Type
   {$ENDIF EXPOSE_MEMBERS}
 
   TPyDelphiObject = class (TPyInterfacedObject, IFreeNotificationSubscriber)
+  protected
+    class var
+      DocLoader: IAsyncResult;
   private
     fDelphiObject: TObject;
     fContainerAccess : TContainerAccess;
@@ -1009,7 +1012,8 @@ implementation
 Uses
   Math,
   StrUtils,
-  RTLConsts;
+  RTLConsts,
+  PythonDocs;
 
 resourcestring
   rs_ErrCheckIndex = '%s "%d" out of range';
@@ -3042,6 +3046,7 @@ begin
     true, [], ['CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3']);
   ExposeFields(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper, true);
   ExposeProperties(DelphiObjectClass, PythonType, PythonType.Owner as TPyDelphiWrapper, true);
+  DocLoader := nil;
   {$ENDIF EXPOSE_MEMBERS}
 end;
 
@@ -3248,6 +3253,7 @@ var
   _ContainerAccessClass : TContainerAccessClass;
 begin
   inherited;
+  DocLoader := TPythonDocServer.Instance.BeginLoadDoc(DelphiObjectClass.ClassInfo);
   PythonType.TypeName := AnsiString(GetTypeName);
   PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.GenerateCreateFunction := False;
@@ -3319,7 +3325,7 @@ begin
       if MatchStr(LRttiMethod.Name, LBuffer) then
         Continue;
 
-      //Craetes the virtual method implementation
+      //Creates the virtual method implementation
       LExposedMethod := TExposedMethodImplementation.Create(
         APythonType, LRttiMethod.Name, APyDelphiWrapper, APythonType, LRttiType);
 
@@ -3337,6 +3343,18 @@ begin
         //Feed the buffer
         SetLength(LBuffer, Length(LBuffer) + 1);
         LBuffer[Length(LBuffer) - 1] := LRttiMethod.Name;
+
+        //Try to load docs from doc server
+        var LDocs: TDocScanResult := nil;
+        if Assigned(DocLoader) then
+          LDocs := TPythonDocServer.Instance.EndLoadDoc(DocLoader);
+
+        //If we have docs available for this member, so let's extract it
+        if Assigned(LDocs) then begin
+          var LDocStr := String.Empty;
+          if LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(LRttiMethod), LDocStr) then
+            LExposedMethod.DocString := AnsiString(LDocStr);
+        end;
 
         //Adds the Python method
         APythonType.AddMethodWithKeywords(
@@ -3397,7 +3415,7 @@ begin
       if MatchStr(LRttiProperty.Name, LBuffer) then
         Continue;
 
-      //Craetes the virtual property implementation
+      //Creates the virtual property implementation
       LExposedProperty := TExposedPropertyImplementation.Create(
         APythonType, LRttiProperty.Name, APyDelphiWrapper, APythonType, LRttiType);
 
@@ -3415,6 +3433,18 @@ begin
         //Feed the buffer
         SetLength(LBuffer, Length(LBuffer) + 1);
         LBuffer[Length(LBuffer) - 1] := LRttiProperty.Name;
+
+        //Try to load docs from doc server
+        var LDocs: TDocScanResult := nil;
+        if Assigned(DocLoader) then
+          LDocs := TPythonDocServer.Instance.EndLoadDoc(DocLoader);
+
+        //If we have docs available for this member, so let's extract it
+        if Assigned(LDocs) then begin
+          var LDocStr := String.Empty;
+          if LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(LRttiProperty), LDocStr) then
+            LExposedProperty.DocString := AnsiString(LDocStr);
+        end;
 
         //Adds the Python attribute
         APythonType.AddGetSet(
@@ -3477,7 +3507,7 @@ begin
       if MatchStr(LRttiField.Name, LBuffer) then
         Continue;
 
-      //Craetes the virtual field implementation
+      //Creates the virtual field implementation
       LExposedField := TExposedFieldImplementation.Create(
         APythonType, LRttiField.Name, APyDelphiWrapper, APythonType, LRttiType);
 
@@ -3495,6 +3525,18 @@ begin
         //Feed the buffer
         SetLength(LBuffer, Length(LBuffer) + 1);
         LBuffer[Length(LBuffer) - 1] := LRttiField.Name;
+
+        //Try to load docs from doc server
+        var LDocs: TDocScanResult := nil;
+        if Assigned(DocLoader) then
+          LDocs := TPythonDocServer.Instance.EndLoadDoc(DocLoader);
+
+        //If we have docs available for this member, so let's extract it
+        if Assigned(LDocs) then begin
+          var LDocStr := String.Empty;
+          if LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(LRttiField), LDocStr) then
+            LExposedField.DocString := AnsiString(LDocStr);
+        end;
 
         //Adds the Python attribute
         APythonType.AddGetSet(
@@ -4220,6 +4262,8 @@ begin
   // Register wrappers for each Delphi unit
   for i := 0 to RegisteredUnits.Count-1 do
     RegisteredUnits[i].RegisterWrappers(Self);
+
+  TPythonDocServer.Instance.ClearBuffer();
 end;
 
 procedure TPyDelphiWrapper.DefineVar(const AName: string; const AValue: Variant);
@@ -4522,6 +4566,18 @@ end;
 
 initialization
   _InitRttiPool;
+
+  TPythonDocServer.Instance.DiscoverAndBufferizeTypes(
+    function(const ARttiType: TRttiType; out ATypeInfo: PTypeInfo): boolean
+    begin
+      Result := ARttiType.IsPublicType
+        and ARttiType.IsInstance
+        and ARttiType.AsInstance.MetaclassType.InheritsFrom(TPyDelphiObject);
+
+        if Result then
+          ATypeInfo := TPyDelphiObjectClass(ARttiType.AsInstance.MetaclassType).DelphiObjectClass.ClassInfo;
+    end);
+
 finalization
   _RttiContext.Free();
 {$ELSE}
