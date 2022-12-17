@@ -8578,7 +8578,8 @@ begin
       tp_flags  := TypeFlagsAsInt;
       {$IFDEF EXPOSE_MEMBERS}
       if (TPFlag.tpTypeSubclass in TypeFlags) then begin
-        LBasePythonType := Engine.FindPythonType(AnsiString(PyObjectClass.GetTypeBase().GetTypeName()));
+        LBasePythonType := Engine.FindPythonType(
+          AnsiString(PyObjectClass.GetTypeBase().GetTypeName()));
         if Assigned(LBasePythonType) then
           tp_base := LBasePythonType.TheTypePtr;
       end;
