@@ -2399,7 +2399,7 @@ begin
     {$IFDEF CPUX64}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Kis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ELSE}
-    if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType)) <> 0 then
+    if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ENDIF}
       DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PWideChar(String(LResType)));
   except
