@@ -61,6 +61,8 @@ type
 
   TPythonDocXML = class(TInterfacedObject, IPythonDocLoader, IPythonDocScanner)
   private
+    class var FDefaultDirectory: string;
+  private
     FDirectory: string;
 
     function LoadClassDoc(const AClassName: string; const AXmlDocument: IXmlDocument;
@@ -77,6 +79,7 @@ type
     constructor Create();
 
     property Directory: string read FDirectory write FDirectory;
+    class property DefaultDirectory: string read FDefaultDirectory write FDefaultDirectory;
   end;
 
   TPythonDocServer = class
@@ -134,7 +137,7 @@ uses
 constructor TPythonDocXML.Create;
 begin
   inherited;
-  FDirectory := 'C:\Users\Developer\Desktop';
+  FDirectory := FDefaultDirectory;
 end;
 
 function TPythonDocXML.LoadDoc(const ASymbolName, ADeclaringUnitName: string;
@@ -484,4 +487,11 @@ end;
 initialization
   DefaultDomVendor := sOmniXmlVendor;
   
+  {$IFDEF DEBUG}
+  TPythonDocXML.DefaultDirectory := TPath.Combine(ExtractFilePath(GetModuleName(HInstance)), 'docs');
+  {$ELSE}
+  TPythonDocXML.DefaultDirectory := TPath.Combine(TDirectory.GetParent(ExcludeTrailingPathDelimiter(
+    ExtractFilePath(GetModuleName(HInstance)))), 'docs');
+  {$ENDIF} 
+   
 end.
