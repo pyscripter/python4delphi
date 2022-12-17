@@ -760,6 +760,9 @@ type
     cf_feature_version : integer;  //added in Python 3.8
   end;
 
+  const
+   PyCF_ONLY_AST = $0400;
+
   // from datetime.h
 
 
@@ -1061,6 +1064,8 @@ Exception\n\
       ELineStr: UnicodeString;
       ELineNumber: Integer;
       EOffset: Integer;
+      EEndLineNumber: Integer;
+      EEndOffset: Integer;
    end;
    EPyIndentationError = class (EPySyntaxError);
    EPyTabError = class (EPyIndentationError);
@@ -4469,6 +4474,7 @@ procedure TPythonEngine.Initialize;
 
 var
   i : Integer;
+  WorkAround: AnsiString;
 begin
   if Assigned(gPythonEngine) then
     raise Exception.Create('There is already one instance of TPythonEngine running' );
@@ -4506,8 +4512,27 @@ begin
     with Clients[i] do
       if not Initialized then
         Initialize;
+
+  // WorkAround for https://github.com/python/cpython/issues/100171
+  if (MajorVersion = 3) and (MinorVersion >= 11) then
+  begin
+    WorkAround :=
+      'import sys'#13#10 + //0
+      'if sys.version_info > (3,11,0):'#13#10 + //1
+      '    import os'#13#10 + //2
+      ''#13#10 + //3
+      '    dllpath = os.path.join(sys.base_prefix, ''DLLs'')'#13#10 + //4
+      '    if dllpath not in sys.path:'#13#10 + //5
+      '        sys.path.insert(3, dllpath)'#13#10 + //6
+      ''#13#10 + //7
+      '    del dllpath'#13#10 + //8
+      '    del os'#13#10 + //9
+      'del sys'#13#10; //10
+    ExecString(WorkAround);
+  end;
+
   if InitScript.Count > 0 then
-    ExecStrings( InitScript );
+    ExecStrings(InitScript);
   if Assigned(FOnAfterInit) then
     FOnAfterInit(Self);
 end;
@@ -5005,12 +5030,14 @@ procedure TPythonEngine.RaiseError;
 
   function DefineSyntaxError( E : EPySyntaxError; const sType, sValue : UnicodeString; err_type, err_value : PPyObject ) : EPySyntaxError;
   var
-    s_value       : UnicodeString;
-    s_line        : UnicodeString;
-    s_filename    : UnicodeString;
-    i_line_number : Integer;
-    i_offset      : Integer;
-    tmp           : PPyObject;
+    s_value           : UnicodeString;
+    s_line            : UnicodeString;
+    s_filename        : UnicodeString;
+    i_line_number     : Integer;
+    i_offset          : Integer;
+    i_end_line_number : Integer;
+    i_end_offset      : Integer;
+    tmp               : PPyObject;
   begin
     Result := E;
     Result.EName  := sType;
@@ -5020,8 +5047,10 @@ procedure TPythonEngine.RaiseError;
     s_filename    := '';
     i_line_number := 0;
     i_offset      := 0;
+    i_end_line_number := 0;
+    i_end_offset      := 0;
     // Sometimes there's a tuple instead of instance...
-    if PyTuple_Check( err_value )  and (PyTuple_Size( err_value) >= 2) then
+    if PyTuple_Check(err_value)  and (PyTuple_Size( err_value) >= 2) then
     begin
       s_value := PyObjectAsString(PyTuple_GetItem( err_value, 0));
       err_value := PyTuple_GetItem( err_value, 1);
@@ -5066,19 +5095,34 @@ procedure TPythonEngine.RaiseError;
       if Assigned(tmp) and PyUnicode_Check(tmp) then
         s_value := PyUnicodeAsString(tmp);
       Py_XDECREF(tmp);
+      if MajorVersion >= 10 then
+      begin
+      // Get the end offset of the error
+        tmp := PyObject_GetAttrString(err_value, 'end_offset' );
+        if Assigned(tmp) and PyLong_Check(tmp) then
+          i_end_offset := PyLong_AsLong(tmp);
+        Py_XDECREF(tmp);
+        // Get the end line number of the error
+        tmp := PyObject_GetAttrString(err_value, 'end_lineno' );
+        if Assigned(tmp) and PyLong_Check(tmp) then
+          i_end_line_number := PyLong_AsLong(tmp);
+        Py_XDECREF(tmp);
+      end;
     end;
     // If all is ok
     if s_value <> '' then
       begin
         with Result do
           begin
-            Message     := Format('%s: %s (line %d, offset %d): ''%s''', [sType,s_value,i_line_number, i_offset,s_line]);
-            EName       := sType;
-            EValue      := s_value;
-            EFileName   := s_filename;
-            ELineNumber := i_line_number;
-            EOffset     := i_offset;
-            ELineStr    := s_line;
+            Message        := Format('%s: %s (line %d, offset %d): ''%s''', [sType,s_value,i_line_number, i_offset,s_line]);
+            EName          := sType;
+            EValue         := s_value;
+            EFileName      := s_filename;
+            ELineNumber    := i_line_number;
+            EOffset        := i_offset;
+            EEndLineNumber := i_end_line_number;
+            EEndOffset     := i_end_offset;
+            ELineStr       := s_line;
           end;
       end
     else

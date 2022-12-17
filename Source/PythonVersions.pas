@@ -166,6 +166,7 @@ end;
 function TPythonVersion.GetHelpFile: string;
 var
   PythonHelpFilePath: string;
+  HtmlIndex: string;
   Res: Integer;
   SR: TSearchRec;
 begin
@@ -176,7 +177,13 @@ begin
     PythonHelpFilePath := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\python*.chm';
     Res := FindFirst(PythonHelpFilePath, faAnyFile, SR);
     if Res = 0 then
-      Result := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\' + SR.Name;
+      Result := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\' + SR.Name
+    else if Result = '' then
+    begin
+      HtmlIndex := IncludeTrailingPathDelimiter(InstallPath) + 'Doc\html\index.html';
+      if FileExists(HtmlIndex) then
+        Result := HtmlIndex;
+    end;
     FindClose(SR);
   end;
 end;
