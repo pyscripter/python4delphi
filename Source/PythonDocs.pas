@@ -21,6 +21,7 @@ type
     class function BuildMemberIdentifier(const AXmlMember: IXMLNode): string; overload; static; inline;
     class function ExtractMemberPrefix(const ARttiNamedType: TRttiNamedObject): string; overload; static;
     class function BuildMemberIdentifier(const ARttiNamedType: TRttiNamedObject): string; overload; static; inline;
+    class function BuildMemberIdentifier(const ATypeInfo: PTypeInfo): string; overload; static; inline;
   end;
 
   {$SCOPEDENUMS ON}
@@ -122,6 +123,12 @@ type
 
     procedure DiscoverAndBufferizeTypes(APredicate: TDiscoverPredicate);
 
+    function ReadTypeDocStr(const ATypeInfo: PTypeInfo; out ADocStr: string): boolean; overload;
+    function ReadTypeDocStr<T>(out ADocStr: string): boolean; overload;
+
+    function ReadMemberDocStr(const AParent: PTypeInfo; const AMember: TRttiMember; out ADocStr: string): boolean; overload;
+    function ReadMemberDocStr<T>(const AMember: TRttiMember; out ADocStr: string): boolean; overload;
+
     property DocSource: TPythonDocSource read FDocSource write FDocSource;
     class property Instance: TPythonDocServer read GetInstance;
   end;
@@ -146,6 +153,9 @@ var
   LFiles: TArray<string>;
   LXmlDoc: IXMLDocument;
 begin
+  if not TDirectory.Exists(FDirectory) then
+    Exit(false);
+
   LFiles := TDirectory.GetFiles(FDirectory,
     ADeclaringUnitName + '.xml',
     TSearchOption.soAllDirectories);
@@ -203,8 +213,8 @@ var
   LXmlData: string;
   LXMLDoc: IXMLDocument;
 begin
-  SetLength(LXmlData, AStream.Size div 2);
-  AStream.Read(LXmlData[1], AStream.Size);
+  SetLength(LXmlData, AStream.Size div SizeOf(Char));
+  AStream.Read(LXmlData[Low(LXmlData)], AStream.Size);
 
   LXMLDoc := LoadXmlData(LXmlData);
   LXMLDoc.Active := true;
@@ -339,6 +349,45 @@ begin
   Result := FInstance;
 end;
 
+function TPythonDocServer.ReadTypeDocStr(const ATypeInfo: PTypeInfo;
+  out ADocStr: string): boolean;
+var
+  LAsyncResult: IAsyncResult;
+  LDocs: TDocScanResult;
+begin
+  Result := false;
+  if FBuffer.TryGetValue(ATypeInfo, LAsyncResult) then begin
+    LDocs := EndLoadDoc(LAsyncResult);
+    if Assigned(LDocs) then
+      Result := LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(ATypeInfo), ADocStr);
+  end;
+end;
+
+function TPythonDocServer.ReadTypeDocStr<T>(out ADocStr: string): boolean;
+begin
+  Result := ReadTypeDocStr(TypeInfo(T), ADocStr);
+end;
+
+function TPythonDocServer.ReadMemberDocStr(const AParent: PTypeInfo;
+  const AMember: TRttiMember; out ADocStr: string): boolean;
+var
+  LAsyncResult: IAsyncResult;
+  LDocs: TDocScanResult;
+begin
+  Result := false;
+  if FBuffer.TryGetValue(AParent, LAsyncResult) then begin
+    LDocs := EndLoadDoc(LAsyncResult);
+    if Assigned(LDocs) then
+      Result := LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(AMember), ADocStr);
+  end;
+end;
+
+function TPythonDocServer.ReadMemberDocStr<T>(const AMember: TRttiMember;
+  out ADocStr: string): boolean;
+begin
+  Result := ReadMemberDocStr(TypeInfo(T), AMember, ADocStr);
+end;
+
 class destructor TPythonDocServer.Destroy;
 begin
   FInstance.Free();
@@ -371,8 +420,6 @@ end;
 
 function TPythonDocServer.BeginLoadDoc(
   const ATypeInfo: PTypeInfo): IAsyncResult;
-var
-  LDocLoader: IPythonDocLoader;
 begin
   if FBuffer.TryGetValue(ATypeInfo, Result) then
     Exit;
@@ -383,6 +430,7 @@ begin
         function(): TDocScanResult
         var
           LStream: TStream;
+          LDocLoader: IPythonDocLoader;  
         begin
           LStream := TMemoryStream.Create();
           try
@@ -396,6 +444,8 @@ begin
             LStream.Free();
           end;
         end).Invoke();
+    else
+      Result := nil;
   end;
 end;
 
@@ -405,8 +455,14 @@ begin
 end;
 
 procedure TPythonDocServer.Bufferize(const ATypeInfo: PTypeInfo);
+var
+  LAsyncResult: IAsyncResult;
 begin
-  FBuffer.Add(ATypeInfo, BeginLoadDoc(ATypeInfo));
+  if not FBuffer.ContainsKey(ATypeInfo) then begin
+    LAsyncResult := BeginLoadDoc(ATypeInfo);
+    if Assigned(LAsyncResult) then    
+      FBuffer.Add(ATypeInfo, LAsyncResult);
+  end;
 end;
 
 procedure TPythonDocServer.Bufferize<T>;
@@ -463,6 +519,19 @@ class function TDocScanResult.ExtractMemberPrefix(
   const AXmlMember: IXMLNode): string;
 begin
   Result := AXmlMember.NodeName;
+end;
+
+class function TDocScanResult.BuildMemberIdentifier(
+  const ATypeInfo: PTypeInfo): string;
+var
+  LRttiContext: TRttiContext;
+begin
+  LRttiContext := TRttiContext.Create();
+  try
+    Result := BuildMemberIdentifier(LRttiContext.GetType(ATypeInfo));
+  finally
+    LRttiContext.Free();
+  end;
 end;
 
 class function TDocScanResult.ExtractMemberPrefix(
