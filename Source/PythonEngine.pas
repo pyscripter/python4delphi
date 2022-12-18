@@ -176,6 +176,8 @@ const
 
   METH_VARARGS  = $0001;
   METH_KEYWORDS = $0002;
+  METH_CLASS    = $0010;
+  METH_STATIC   = $0020;
 
   // Masks for the co_flags field of PyCodeObject
   CO_OPTIMIZED   = $0001;
@@ -2131,6 +2133,12 @@ type
       function  AddMethodWithKeywords( AMethodName  : PAnsiChar;
                                        AMethod  : PyCFunctionWithKW;
                                        ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddClassMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddStaticMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
       function  AddDelphiMethod( AMethodName  : PAnsiChar;
                                  ADelphiMethod: TDelphiMethod;
                                  ADocString : PAnsiChar ) : PPyMethodDef;
@@ -2786,6 +2794,9 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
+function  PythonToPythonType(const AObj: PPyObject): TPythonType;
+function  DelphiToPythonType(const AClass: TClass): TPythonType;
+function  IsDelphiClass(const AObj: PPyObject): Boolean;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
@@ -6594,6 +6605,20 @@ begin
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
 
+function TMethodsContainer.AddStaticMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddClassMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_STATIC;
+end;
+
+function TMethodsContainer.AddClassMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_CLASS;
+end;
+
 function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADelphiMethod: TDelphiMethod;
                                              ADocString : PAnsiChar ) : PPyMethodDef;
@@ -7880,6 +7905,19 @@ end;
 
 //////////////////////////////
 //  TPythonType
+
+function PythonToPythonType(const AObj: PPyObject): TPythonType;
+begin
+  if IsDelphiClass(AObj) then
+    Result := TPythonType(GetPythonEngine.FindPythonType(PPyTypeObject(AObj)^.tp_name))
+  else
+    Result := nil;
+end;
+
+function  DelphiToPythonType(const AClass: TClass): TPythonType;
+begin
+  Result := TPythonType(GetPythonEngine.FindPythonType(AnsiString(Copy(AClass.ClassName, 2, MaxInt))));
+end;
 
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 begin
@@ -9332,6 +9370,21 @@ begin
         Break;
       end;
       t := t^.tp_base;
+    end;
+  end;
+end;
+
+function IsDelphiClass(const AObj: PPyObject): boolean;
+var
+  LPyTypeObject : PPyTypeObject;
+begin
+  Result := False;
+  if Assigned(AObj) then
+  begin
+    if GetPythonEngine.PyClass_Check(AObj) then
+    begin
+      LPyTypeObject := GetPythonEngine.TypeByName(AnsiString(PPyTypeObject(AObj)^.tp_name));
+      Result := Assigned(LPyTypeObject);
     end;
   end;
 end;
