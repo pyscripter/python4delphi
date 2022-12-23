@@ -5284,7 +5284,7 @@ const
          '  def flush(self):' + LF +
          '     pass' + LF +
          '  def isatty(self):' + LF +
-         '     return True' + LF +
+         '     return False' + LF +
          'sys.old_stdin=sys.stdin'+LF+
          'sys.old_stdout=sys.stdout'+LF+
          'sys.old_stderr=sys.stderr'+LF+
