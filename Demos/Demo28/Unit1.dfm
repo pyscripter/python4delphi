@@ -13,8 +13,6 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -25,7 +23,6 @@ object Form1: TForm1
     Align = alTop
     Color = clBtnFace
     ParentColor = False
-    ExplicitWidth = 589
   end
   object Memo1: TMemo
     Left = 0
@@ -142,7 +139,7 @@ object Form1: TForm1
     TypeName = 'TStringList'
     Prefix = 'Create'
     Module = pmP4D
-    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsIter]
+    Services.Basic = [bsRepr, bsStr, bsGetAttrO, bsSetAttrO, bsIter]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = [ssLength, ssItem, ssAssItem]
@@ -163,7 +160,7 @@ object Form1: TForm1
     TypeName = 'TStringListIterator'
     Prefix = 'Create'
     Module = pmP4D
-    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsIter, bsIterNext]
+    Services.Basic = [bsRepr, bsStr, bsGetAttrO, bsSetAttrO, bsIter, bsIterNext]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []

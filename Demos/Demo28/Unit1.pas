@@ -18,7 +18,7 @@ type
   public
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith( PythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -46,7 +46,7 @@ type
     procedure SetStringList(const Value: TPyStringList);
   public
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith( PythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -145,8 +145,8 @@ begin
   fStrings := TStringList.Create;
 end;
 
-constructor TPyStringList.CreateWith(PythonType: TPythonType;
-  args: PPyObject);
+constructor TPyStringList.CreateWith(PythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   i : Integer;
 begin
@@ -239,8 +239,8 @@ begin
   inherited;
 end;
 
-constructor TPyStringListIterator.CreateWith(PythonType: TPythonType;
-  args: PPyObject);
+constructor TPyStringListIterator.CreateWith(PythonType: TPythonType; args,
+    kwds: PPyObject);
 var
   _obj : PPyObject;
   _stringList : TPyStringList;

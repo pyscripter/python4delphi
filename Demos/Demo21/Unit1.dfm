@@ -10,8 +10,6 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = True
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -20,8 +18,6 @@ object Form1: TForm1
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitTop = 153
-    ExplicitWidth = 536
   end
   object Memo1: TMemo
     Left = 0
@@ -145,7 +141,7 @@ object Form1: TForm1
     TypeName = 'Point'
     Prefix = 'Create'
     Module = PythonModule1
-    Services.Basic = [bsGetAttrO, bsSetAttrO, bsRepr, bsStr]
+    Services.Basic = [bsRepr, bsStr, bsGetAttrO, bsSetAttrO]
     Services.InplaceNumber = []
     Services.Number = []
     Services.Sequence = []

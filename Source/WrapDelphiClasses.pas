@@ -120,7 +120,7 @@ type
     function Get_Owner( AContext : Pointer) : PPyObject; cdecl;
     function Get_Components( AContext : Pointer) : PPyObject; cdecl;
   public
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith( APythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     function  GetAttrO( key: PPyObject) : PPyObject; override;
@@ -1096,8 +1096,8 @@ begin
   Result := TComponentClass(DelphiObjectClass).Create(AOwner);
 end;
 
-constructor TPyDelphiComponent.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiComponent.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   _obj : PPyObject;
   _owner : TObject;

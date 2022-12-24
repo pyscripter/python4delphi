@@ -24,7 +24,7 @@ type
     function Set_AuthorUrl(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
     function Set_Version(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; AArgs: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     function Compare(AObj: PPyObject) : Integer; override;
     function Repr: PPyObject; override;
@@ -41,7 +41,7 @@ type
     procedure SetDelphiObject(const Value: TCustomStyleServices);
   public
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     class function DelphiObjectClass : TClass; override;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -60,7 +60,7 @@ type
     function LoadFromFileName_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
     function IsValidStyle_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     class function DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -170,8 +170,8 @@ end;
 
 { TPyDelphiStyleManager }
 
-constructor TPyDelphiStyleManager.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiStyleManager.CreateWith(APythonType: TPythonType; args,
+    kwds: PPyObject);
 begin
   inherited;
   DelphiObject := TStyleManager.Create();
@@ -295,8 +295,8 @@ end;
 
 { TPyDelphiStyleInfo }
 
-constructor TPyDelphiStyleInfo.CreateWith(APythonType: TPythonType;
-  AArgs: PPyObject);
+constructor TPyDelphiStyleInfo.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   LName: PAnsiChar;
   LAuthor: PAnsiChar;
@@ -305,7 +305,7 @@ var
   LVersion: PAnsiChar;
 begin
   inherited;
-  if APythonType.Engine.PyArg_ParseTuple(AArgs, 'sssss:Create', @LName, @LAuthor, @LAuthorEMail, @LAuthorURL, @LVersion) <> 0 then
+  if APythonType.Engine.PyArg_ParseTuple(args, 'sssss:Create', @LName, @LAuthor, @LAuthorEMail, @LAuthorURL, @LVersion) <> 0 then
   begin
     FValue.Name := string(LName);
     FValue.Author := string(LAuthor);
@@ -484,7 +484,7 @@ begin
 end;
 
 constructor TPyDelphiCustomStyleServices.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+    args, kwds: PPyObject);
 begin
   inherited;
   DelphiObject := StyleServices();

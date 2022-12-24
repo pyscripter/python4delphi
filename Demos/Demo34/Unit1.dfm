@@ -13,9 +13,7 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -24,7 +22,6 @@ object Form1: TForm1
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 584
   end
   object Memo1: TMemo
     Left = 0
