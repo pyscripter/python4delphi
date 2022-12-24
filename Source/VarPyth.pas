@@ -2148,7 +2148,7 @@ end;
 
 function VarPyIterate(const AValue: Variant): TVarPyEnumerateHelper;
 begin
-  Result.Create(AValue);
+  Result := TVarPyEnumerateHelper.Create(AValue);
 end;
 
 { TVarPyEnumerateHelper }
@@ -2160,7 +2160,7 @@ end;
 
 function TVarPyEnumerateHelper.GetEnumerator: TVarPyEnumerator;
 begin
-  Result.Create(FIterable);
+  Result := TVarPyEnumerator.Create(FIterable);
 end;
 
 procedure VarPyToStrings(const AValue : Variant; const AStrings: TStrings);
@@ -2173,6 +2173,8 @@ end;
 
 initialization
   PythonVariantType := TPythonVariantType.Create;
+
 finalization
   FreeAndNil(PythonVariantType);
+
 end.
