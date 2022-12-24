@@ -110,11 +110,11 @@ object Form1: TForm1
         '----------")'
       'print("== create with keyword arguments ==")'
       'p = spam.Point(x=20, y=30)'
-      'print(p)'
-      'p = spam.Point(y = 30, x=20)'
-      'print(p)'
+      'print("Point(x=20, y=30) = ", p)'
+      'p = spam.Point(y=30, x=20)'
+      'print("Point(y=30, x=20) = ", p)'
       'p = spam.Point(20, y=30)'
-      'print(p)')
+      'print("Point(20, y=30) = ",p)')
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 0

@@ -113,9 +113,7 @@ var
 begin
   inherited;
   KeyArray := ['x', 'y'];
-  SetLength(KeyPointerArray, 3);
-  KeyPointerArray[0] := PAnsiChar(KeyArray[0]);
-  KeyPointerArray[1] := PAnsiChar(KeyArray[1]);
+  KeyPointerArray := [PAnsiChar(KeyArray[0]), PAnsiChar(KeyArray[1]), nil];
   with GetPythonEngine, DelphiObject as TPoint do
     begin
       if PyArg_ParseTupleAndKeywords(args, kwds, 'ii:CreatePoint',
