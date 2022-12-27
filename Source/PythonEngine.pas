@@ -1871,25 +1871,26 @@ type
     procedure  SetPythonHome(const PythonHome: UnicodeString);
     procedure  SetProgramName(const ProgramName: UnicodeString);
     function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
-    function   Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
-    function   Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
-    function   Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
+    function   Run_CommandAsString(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): string;
+    function   Run_CommandAsObject(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): PPyObject;
+    function   Run_CommandAsObjectWithDict(const command: AnsiString; mode: Integer; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject;
     function   EncodeString (const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
     {$IFDEF FPC}
     overload;
     function   EncodeString (const str: AnsiString): AnsiString; overload;
     {$ENDIF}
-    function   EncodeWindowsFilePath (const str: string): AnsiString;
-    procedure  ExecString(const command : AnsiString); overload;
-    procedure  ExecStrings( strings : TStrings ); overload;
-    function   EvalString(const command : AnsiString) : PPyObject; overload;
-    function   EvalStringAsStr(const command : AnsiString) : string;
-    function   EvalStrings( strings : TStrings ) : PPyObject; overload;
-    procedure  ExecString(const command : AnsiString; locals, globals : PPyObject ); overload;
-    procedure  ExecStrings( strings : TStrings; locals, globals : PPyObject ); overload;
-    function   EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject; overload;
-    function   EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject; overload;
-    function   EvalStringsAsStr( strings : TStrings ) : string;
+    function   EncodeWindowsFilePath(const str: string): AnsiString;
+    procedure  ExecString(const command: AnsiString; const FileName: string = '<string>'); overload;
+    procedure  ExecStrings(strings: TStrings; const FileName: string = '<string>'); overload;
+    procedure  ExecString(const command: AnsiString; locals, globals: PPyObject; const FileName: string = '<string>'); overload;
+    procedure  ExecFile(const FileName: string; locals: PPyObject = nil; globals: PPyObject = nil); overload;
+    procedure  ExecStrings(strings: TStrings; locals, globals: PPyObject; const FileName: string = '<string>'); overload;
+    function   EvalString(const command: AnsiString; const FileName: string = '<string>'): PPyObject; overload;
+    function   EvalStringAsStr(const command: AnsiString; const FileName: string = '<string>'): string;
+    function   EvalStrings(strings: TStrings; const FileName: string = '<string>'): PPyObject; overload;
+    function   EvalString(const command: AnsiString; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject; overload;
+    function   EvalStrings(strings: TStrings; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject; overload;
+    function   EvalStringsAsStr(strings: TStrings; const FileName: string = '<string>'): string;
     function   EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
     function   EvalFunction(pyfunc:PPyObject; const args: array of const): Variant;
     function   EvalFunctionNoArgs(pyfunc:PPyObject): Variant;
@@ -4882,40 +4883,55 @@ begin
   end;
 end;
 
-function TPythonEngine.EvalStringAsStr(const command : AnsiString) : string;
+function TPythonEngine.EvalStringAsStr(const command: AnsiString; const
+    FileName: string = '<string>'): string;
 begin
-  Result := Run_CommandAsString( command, eval_input );
+  Result := Run_CommandAsString(command, eval_input, FileName);
 end;
 
-function TPythonEngine.EvalString(const command : AnsiString) : PPyObject;
+function TPythonEngine.EvalString(const command: AnsiString; const FileName:
+    string = '<string>'): PPyObject;
 begin
-  Result := Run_CommandAsObject( command, eval_input );
+  Result := Run_CommandAsObject(command, eval_input, FileName);
 end;
 
-procedure TPythonEngine.ExecString(const command : AnsiString);
+procedure TPythonEngine.ExecString(const command: AnsiString; const FileName:
+    string = '<string>');
 begin
-  Py_XDecRef( Run_CommandAsObject( command, file_input ) );
+  Py_XDecRef(Run_CommandAsObject(command, file_input, FileName));
 end;
 
-function TPythonEngine.Run_CommandAsString(const command : AnsiString; mode : Integer) : string;
+function TPythonEngine.Run_CommandAsString(const command: AnsiString; mode:
+    Integer; const FileName: string = '<string>'): string;
 var
-  v : PPyObject;
+  PRes : PPyObject;
 begin
   Result := '';
-  v := Run_CommandAsObject( command, mode );
-  Result := PyObjectAsString( v );
-  Py_XDECREF(v);
+  PRes := Run_CommandAsObject(command, mode, FileName);
+  Result := PyObjectAsString(PRes);
+  Py_XDECREF(PRes);
 end;
 
-function TPythonEngine.Run_CommandAsObject(const command : AnsiString; mode : Integer) : PPyObject;
+function TPythonEngine.Run_CommandAsObject(const command: AnsiString; mode:
+    Integer; const FileName: string = '<string>'): PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict(command, mode, nil, nil);
+  Result := Run_CommandAsObjectWithDict(command, mode, nil, nil, FileName);
 end;
 
-function TPythonEngine.Run_CommandAsObjectWithDict(const command : AnsiString; mode : Integer; locals, globals : PPyObject) : PPyObject;
+function TPythonEngine.Run_CommandAsObjectWithDict(const command: AnsiString;
+    mode: Integer; locals, globals: PPyObject; const FileName: string =
+    '<string>'): PPyObject;
+{
+  This is the core function for executing/evaluating python code
+  Parameters:
+  - command: utf-8 encoded AnsiString with the code that will be executed or evaluated
+  - mode: one of the constants file_input, single_input, eval_input
+  - locals, globals: python dictionaries with local/global namespaces. Can be nil.
+  - FileName; optional string used when debugging code with external debuggers
+}
 var
   m : PPyObject;
-  _locals, _globals : PPyObject;
+  _locals, _globals, Code : PPyObject;
 begin
   CheckPython;
   Result := nil;
@@ -4941,7 +4957,11 @@ begin
     _globals := _locals;
 
   try
-    Result := PyRun_String(PAnsiChar(CleanString(command)), mode, _globals, _locals);
+    Code := Py_CompileString(PAnsiChar(CleanString(command)),
+      PAnsiChar(EncodeString(FileName)), mode);
+    if Code = nil then
+      CheckError(False);
+    Result := PyEval_EvalCode(Code, _globals, _locals );
     if Result = nil then
       CheckError(False);
   except
@@ -4952,39 +4972,62 @@ begin
   end;
 end;
 
-procedure TPythonEngine.ExecStrings( strings : TStrings );
+procedure TPythonEngine.ExecStrings(strings: TStrings; const FileName: string =
+    '<string>');
 begin
-  Py_XDecRef( Run_CommandAsObject( EncodeString(strings.Text) , file_input ) );
+  Py_XDecRef(Run_CommandAsObject(EncodeString(strings.Text), file_input, FileName));
 end;
 
-function TPythonEngine.EvalStrings( strings : TStrings ) : PPyObject;
+function TPythonEngine.EvalStrings(strings: TStrings; const FileName: string =
+    '<string>'): PPyObject;
 begin
-  Result := Run_CommandAsObject( EncodeString(strings.Text) , eval_input );
+  Result := Run_CommandAsObject(EncodeString(strings.Text) , eval_input, FileName);
 end;
 
-procedure TPythonEngine.ExecString(const command : AnsiString; locals, globals : PPyObject );
+procedure TPythonEngine.ExecFile(const FileName: string; locals,
+  globals: PPyObject);
+var
+  SL: TStringList;
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( command, file_input, locals, globals ) );
+  SL := TStringList.Create;
+  try
+    SL.LoadFromFile(FileName);
+    ExecStrings(SL, locals, globals, FileName);
+  finally
+    SL.Free;
+  end;
 end;
 
-procedure TPythonEngine.ExecStrings( strings : TStrings; locals, globals : PPyObject );
+procedure TPythonEngine.ExecString(const command: AnsiString; locals, globals:
+    PPyObject; const FileName: string = '<string>');
 begin
-  Py_XDecRef( Run_CommandAsObjectWithDict( EncodeString(strings.Text), file_input, locals, globals ) );
+  Py_XDecRef(Run_CommandAsObjectWithDict(command, file_input, locals, globals, FileName));
 end;
 
-function TPythonEngine.EvalString( const command : AnsiString; locals, globals : PPyObject ) : PPyObject;
+procedure TPythonEngine.ExecStrings(strings: TStrings; locals, globals:
+    PPyObject; const FileName: string = '<string>');
 begin
-  Result := Run_CommandAsObjectWithDict( command, eval_input, locals, globals );
+  Py_XDecRef( Run_CommandAsObjectWithDict(EncodeString(strings.Text),
+    file_input, locals, globals, FileName));
 end;
 
-function TPythonEngine.EvalStrings( strings : TStrings; locals, globals : PPyObject ) : PPyObject;
+function TPythonEngine.EvalString(const command: AnsiString; locals, globals:
+    PPyObject; const FileName: string = '<string>'): PPyObject;
 begin
-  Result := Run_CommandAsObjectWithDict( EncodeString(strings.Text), eval_input, locals, globals );
+  Result := Run_CommandAsObjectWithDict(command, eval_input, locals, globals, FileName);
 end;
 
-function TPythonEngine.EvalStringsAsStr( strings : TStrings ) : string;
+function TPythonEngine.EvalStrings(strings: TStrings; locals, globals:
+    PPyObject; const FileName: string = '<string>'): PPyObject;
 begin
-  Result := Run_CommandAsString( EncodeString(strings.Text), eval_input );
+  Result := Run_CommandAsObjectWithDict(EncodeString(strings.Text),
+    eval_input, locals, globals, FileName);
+end;
+
+function TPythonEngine.EvalStringsAsStr(strings: TStrings; const FileName:
+    string = '<string>'): string;
+begin
+  Result := Run_CommandAsString(EncodeString(strings.Text), eval_input, FileName);
 end;
 
 function TPythonEngine.CheckEvalSyntax( const str : AnsiString ) : Boolean;
