@@ -1022,7 +1022,7 @@ begin
     'Indicates whether the component has a parent to handle its filing.');
   PythonType.AddMethod('BindMethodsToEvents', @TPyDelphiComponent.BindMethodsToEvents,
     'TComponent.BindMethodsToEvents(prefix)'#10 +
-    'Connects methods to component events if they are named using the following patter: Prefix_ComponentName_EventName.'+#10+
+    'Connects methods to component events if they are named using the following pattern: Prefix_ComponentName_EventName.'+#10+
     'Example: def handle_button1_OnClick(Sender): pass'+#10+
     'The function returns a list of tuples. Each tuple contains the name of the component, the name of the event and the method object assigned to the event.'+#10+
     'Note that the prefix parameter is optional and will default to "handle_".');

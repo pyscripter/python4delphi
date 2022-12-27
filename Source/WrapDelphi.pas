@@ -3723,8 +3723,9 @@ end;
 
 procedure TPyDelphiWrapper.RegisterDelphiWrapper(
   AWrapperClass: TPyDelphiObjectClass);
-Var
+var
   RegisteredClass : TRegisteredClass;
+  Index: Integer;
 begin
   Assert(Assigned(AWrapperClass));
 
@@ -3734,6 +3735,15 @@ begin
   RegisteredClass.PythonType.Engine := Engine;
   RegisteredClass.PythonType.Module := fModule;
   RegisteredClass.PythonType.PyObjectClass := AWrapperClass;
+  // Find nearest registered parent class and set it as base
+  for Index := fClassRegister.Count - 1 downto 0 do
+    with TRegisteredClass(fClassRegister[Index]) do
+      if RegisteredClass.DelphiClass.InheritsFrom(DelphiClass) then
+      begin
+        RegisteredClass.PythonType.BaseType := PythonType;
+        Break;
+      end;
+
   fClassRegister.Add(RegisteredClass);
   if AWrapperClass.DelphiObjectClass.InheritsFrom(TPersistent) then
     Classes.RegisterClass(TPersistentClass(AWrapperClass.DelphiObjectClass));
