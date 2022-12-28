@@ -2352,8 +2352,27 @@ end;
 
 function TPyDelphiObject.Dir_Wrapper(args: PPyObject): PPyObject;
 var
-  i : Integer;
   SL : TStringList;
+  PyEngine: TPythonEngine;
+
+  procedure AddItemsFromDict(PyObj: PPyObject);
+  var
+    PyDict: PPyObject;
+    PyList: PPyObject;
+  begin
+    if PyEngine.PyObject_HasAttrString(PyObj, '__dict__') = 1 then
+    begin
+      PyDict := PyEngine.PyObject_GetAttrString(PyObj, '__dict__');
+      PyList := PyEngine.PyMapping_Keys(PyDict);
+      if Assigned(PyList) then
+        PyEngine.PyListToStrings(PyList, SL, False);
+      PyEngine.Py_XDECREF(PyList);
+      PyEngine.Py_XDECREF(PyDict);
+    end;
+  end;
+
+var
+  PyType: PPyTypeObject;
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;
@@ -2366,12 +2385,16 @@ begin
   SL := TStringList.Create;
   SL.Sorted := True;
   SL.Duplicates := dupIgnore;
+  PyEngine := GetPythonEngine;
   try
-    // Add methods
-    for i := 0 to PythonType.MethodCount - 1 do
-      SL.Add(string(AnsiString(PythonType.Methods[i].ml_name)));
-    for i := 0 to PythonType.GetSetCount - 1 do
-      SL.Add(string(AnsiString(PythonType.GetSet[i].name)));
+    AddItemsFromDict(GetSelf);
+    PyType := PythonType.TheTypePtr;
+    while PyType <> nil do
+    begin
+      AddItemsFromDict(PPyObject(PyType));
+      PyType := PyType.tp_base;
+    end;
+
 {$IFDEF EXTENDED_RTTI}
     Context := TRttiContext.Create();
     try

@@ -1,4 +1,4 @@
-{$I ..\Definition.Inc}
+﻿{$I ..\Definition.Inc}
 
 unit WrapVclForms;
 
@@ -529,7 +529,6 @@ end;
 
 class procedure TPyDelphiCustomForm.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('ModalResult', @TPyDelphiCustomForm.Get_ModalResult, @TPyDelphiCustomForm.Set_ModalResult,
@@ -539,7 +538,6 @@ end;
 
 class procedure TPyDelphiCustomForm.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Close', @TPyDelphiCustomForm.Close_Wrapper,
     'TForm.Close()'#10 +
     'Closes the wrapped Form');
@@ -1019,7 +1017,6 @@ end;
 
 class procedure TPyDelphiScreen.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('ActiveControl', @TPyDelphiScreen.Get_ActiveControl, nil,
@@ -1103,7 +1100,6 @@ end;
 
 class procedure TPyDelphiScreen.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   {$IFNDEF FPC}
   PythonType.AddMethod('DisableAlign', @TPyDelphiScreen.DisableAlign_Wrapper,
     'TScreen.DisableAlign()'#10 +
@@ -1400,7 +1396,6 @@ end;
 
 class procedure TPyDelphiMonitor.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
   begin
     AddGetSet('Handle', @TPyDelphiMonitor.Get_Handle, nil,
@@ -1769,7 +1764,6 @@ end;
 class procedure TPyDelphiApplication.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
   begin
     AddGetSet('Active', @TPyDelphiApplication.Get_Active, nil,
@@ -1836,7 +1830,6 @@ end;
 class procedure TPyDelphiApplication.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('ActivateHint', @TPyDelphiApplication.ActivateHint_Wrapper,
     'TApplication.ActivateHint()'#10 +
     'Displays a hint window for the control at a specified position.');

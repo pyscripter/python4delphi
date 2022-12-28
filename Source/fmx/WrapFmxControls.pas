@@ -302,7 +302,6 @@ end;
 
 class procedure TPyDelphiControl.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('Visible', @TPyDelphiControl.Get_Visible, @TPyDelphiControl.Set_Visible,
         'Returns/Sets the Control Visibility', nil);
   PythonType.AddGetSet('ControlsCount', @TPyDelphiControl.Get_ControlsCount, nil,
@@ -317,7 +316,6 @@ end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('BringToFront', @TPyDelphiControl.BringToFront_Wrapper,
     'TControl.BringToFront()'#10 +
     'Puts the control in front of all other controls in its parent control.');
@@ -628,7 +626,6 @@ end;
 
 class procedure TPyDelphiStyledControl.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('DefaultStyleLookupName', @TPyDelphiStyledControl.Get_StyleLookup, nil,
       'Returns a string with the name of the default style of this control', nil);
@@ -648,7 +645,6 @@ end;
 
 class procedure TPyDelphiStyledControl.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('ApplyStyleLookup', @TPyDelphiStyledControl.ApplyStyleLookup_Wrapper,
     'TStyledControl.ApplyStyleLookup()'#10 +
     'Gets and applies the style of a TStyledControl.');

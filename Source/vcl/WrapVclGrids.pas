@@ -518,7 +518,6 @@ end;
 class procedure TPyDelphiCustomDrawGrid.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Canvas', @TPyDelphiCustomDrawGrid.Get_Canvas, nil,
@@ -678,7 +677,6 @@ end;
 
 class procedure TPyDelphiStringGrid.RegisterMethods( PythonType : TPythonType );
 begin
-  inherited;
   PythonType.AddMethod('GetCell', @TPyDelphiStringGrid.GetCell,
     'TStringGrid.GetCell(col, row)'#10 +
     'Returns the content of a cell');

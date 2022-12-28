@@ -155,13 +155,11 @@ type
   function CheckPointFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TPointF): Boolean;
   function CheckSizeFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TSizeF): Boolean;
   function CheckRectFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TRectF): Boolean;
-
 implementation
-
 uses
   System.Math, System.SysUtils;
 
- { Register the wrappers, the globals and the constants }
+{ Register the wrappers, the globals and the constants }
 type
   TTypesRegistration = class(TRegisteredUnit)
   public
@@ -171,7 +169,6 @@ type
   end;
 
 { TPyDelphiPointF }
-
 function TPyDelphiPointF.Compare(obj: PPyObject): Integer;
 var
   _other : TPyDelphiPointF;
@@ -270,7 +267,6 @@ begin
 end;
 
 { TTypesRegistration }
-
 procedure TTypesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
@@ -381,7 +377,6 @@ begin
 end;
 
 { TPyDelphiFmxObject }
-
 class function TPyDelphiFmxObject.DelphiObjectClass: TClass;
 begin
   Result := TFmxObject;
@@ -400,14 +395,12 @@ end;
 
 class procedure TPyDelphiFmxObject.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('Parent', @TPyDelphiFmxObject.Get_Parent, @TPyDelphiFmxObject.Set_Parent,
         'Returns/Sets the Control Visibility', nil);
 end;
 
 class procedure TPyDelphiFmxObject.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 procedure TPyDelphiFmxObject.SetDelphiObject(const Value: TFmxObject);
@@ -431,7 +424,6 @@ begin
 end;
 
 { TPyDelphiPosition }
-
 constructor TPyDelphiPosition.CreateWith(APythonType: TPythonType; args, kwds:
     PPyObject);
 var
@@ -474,7 +466,6 @@ end;
 
 class procedure TPyDelphiPosition.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('X', @TPyDelphiPosition.Get_X, @TPyDelphiPosition.Set_X,
       'Provides access to the X coordinate of a control inside its parent', nil);
@@ -487,7 +478,6 @@ end;
 
 class procedure TPyDelphiPosition.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 procedure TPyDelphiPosition.SetDelphiObject(const Value: TPosition);
@@ -539,7 +529,6 @@ begin
 end;
 
 { TPyDelphiSizeF }
-
 function TPyDelphiSizeF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiSizeF;
@@ -623,6 +612,7 @@ begin
     else
       Result := -1;
 end;
+
 function TPyDelphiSizeF.Set_Width(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -637,8 +627,8 @@ begin
     else
       Result := -1;
 end;
-{ TPyDelphiCustomPopupMenu }
 
+{ TPyDelphiCustomPopupMenu }
 class function TPyDelphiCustomPopupMenu.DelphiObjectClass: TClass;
 begin
   Result := TCustomPopupMenu;
@@ -656,7 +646,6 @@ begin
 end;
 
 { TPyDelphiBounds }
-
 constructor TPyDelphiBounds.CreateWith(APythonType: TPythonType; args, kwds:
     PPyObject);
 var
@@ -687,7 +676,6 @@ end;
 
 class procedure TPyDelphiBounds.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('Rect', @TPyDelphiBounds.Get_Rect, @TPyDelphiBounds.Set_Rect,
         'Provides access to the rect of a control', nil);
@@ -715,7 +703,6 @@ begin
 end;
 
 { TPyDelphiControlSize }
-
 constructor TPyDelphiControlSize.CreateWith(APythonType: TPythonType; args,
     kwds: PPyObject);
 var
@@ -746,7 +733,6 @@ end;
 
 class procedure TPyDelphiControlSize.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('Size', @TPyDelphiControlSize.Get_SizeF, @TPyDelphiControlSize.Set_SizeF,
         'Provides access to the size of a control', nil);
@@ -757,7 +743,6 @@ procedure TPyDelphiControlSize.SetDelphiObject(const Value: TControlSize);
 begin
   inherited DelphiObject := Value;
 end;
-
 function TPyDelphiControlSize.Set_SizeF(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -774,7 +759,6 @@ begin
 end;
 
 { TPyDelphiRectF }
-
 function TPyDelphiRectF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiRectF;
@@ -923,5 +907,4 @@ end;
 
 initialization
   RegisteredUnits.Add(TTypesRegistration.Create);
-
 end.

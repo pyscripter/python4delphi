@@ -6,7 +6,7 @@ interface
 uses
   PythonEngine, WrapDelphi, Vcl.Themes, Vcl.Styles;
 
-type
+  type
   TPyDelphiStyleInfo = class(TPyObject)
   private
     FValue: TStyleInfo;
@@ -25,13 +25,10 @@ type
     function Set_Version(AValue: PPyObject; AContext: Pointer) : Integer; cdecl;
   public
     constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
-
     function Compare(AObj: PPyObject) : Integer; override;
     function Repr: PPyObject; override;
-
     class procedure RegisterGetSets(APythonType: TPythonType ); override;
     class procedure SetupType(APythonType: TPythonType ); override;
-
     property Value: TStyleInfo read fValue write fValue;
   end;
 
@@ -42,7 +39,6 @@ type
   public
     constructor Create( APythonType : TPythonType ); override;
     constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
-
     class function DelphiObjectClass : TClass; override;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
     // Properties
@@ -61,11 +57,9 @@ type
     function IsValidStyle_Wrapper(AArgs: PPyObject): PPyObject; cdecl;
   public
     constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
-
     class function DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     class procedure RegisterMethods(PythonType: TPythonType); override;
-
     property DelphiObject: TStyleManager read GetDelphiObject write SetDelphiObject;
   end;
 
@@ -75,15 +69,13 @@ type
   public
     class function ExpectedContainerClass: TClass; override;
     class function Name: string; override;
-
     function GetItem(AIndex: Integer): PPyObject; override;
     function GetSize: Integer; override;
-
     property Container : TStyleManager read GetContainer;
   end;
 
-  { Helper functions }
-  function WrapStyleInfo(APyDelphiWrapper: TPyDelphiWrapper; [ref] AStyleInfo: TStyleInfo): PPyObject;
+{ Helper functions }
+function WrapStyleInfo(APyDelphiWrapper: TPyDelphiWrapper; [ref] AStyleInfo: TStyleInfo): PPyObject;
 
 implementation
 
@@ -91,7 +83,6 @@ uses
   System.SysUtils, Vcl.Controls, MethodCallBack;
 
 { Global Functions }
-
 function StyleServices_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
 var
   LPyObj: PPyObject;
@@ -117,7 +108,6 @@ begin
 end;
 
 { Helper functions }
-
 function WrapStyleInfo(APyDelphiWrapper: TPyDelphiWrapper; [ref] AStyleInfo: TStyleInfo) : PPyObject;
 var
   LType: TPythonType;
@@ -137,8 +127,7 @@ type
     procedure DefineFunctions(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
-{ TVclThemesRegistration }
-
+  { TVclThemesRegistration }
 procedure TVclThemesRegistration.DefineFunctions(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
@@ -169,7 +158,6 @@ begin
 end;
 
 { TPyDelphiStyleManager }
-
 constructor TPyDelphiStyleManager.CreateWith(APythonType: TPythonType; args,
     kwds: PPyObject);
 begin
@@ -241,7 +229,6 @@ end;
 
 class procedure TPyDelphiStyleManager.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('StyleNames', @TPyDelphiStyleManager.Get_StyleNames, nil,
         'Provides access to the VCL style names.', nil);
@@ -252,7 +239,6 @@ end;
 
 class procedure TPyDelphiStyleManager.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('LoadFromFile', @TPyDelphiStyleManager.LoadFromFileName_Wrapper,
     'TStyleManager.LoadFromFile()'#10 +
     'Loads a VCL style from a file');
@@ -267,7 +253,6 @@ begin
 end;
 
 { TStyleManagerStyleNamesAccess }
-
 class function TStyleManagerStyleNamesAccess.ExpectedContainerClass: TClass;
 begin
   Result := TStyleManager;
@@ -294,7 +279,6 @@ begin
 end;
 
 { TPyDelphiStyleInfo }
-
 constructor TPyDelphiStyleInfo.CreateWith(APythonType: TPythonType; args, kwds:
     PPyObject);
 var
@@ -322,7 +306,6 @@ begin
   if IsDelphiObject(AObj) and (PythonToDelphi(AObj) is TPyDelphiStyleInfo) then
   begin
     LOther := TPyDelphiStyleInfo(PythonToDelphi(AObj));
-
     Result := Ord(
       (LOther.Value.Name = Value.Name)
       and (LOther.Value.Author = Value.Author)
@@ -449,7 +432,6 @@ end;
 
 class procedure TPyDelphiStyleInfo.RegisterGetSets(APythonType: TPythonType);
 begin
-  inherited;
   with APythonType do
   begin
     AddGetSet('Name', @TPyDelphiStyleInfo.Get_Name, @TPyDelphiStyleInfo.Set_Name,
@@ -477,7 +459,6 @@ begin
 end;
 
 { TPyDelphiStyleServices }
-
 constructor TPyDelphiCustomStyleServices.Create(APythonType: TPythonType);
 begin
   inherited;
@@ -509,10 +490,8 @@ end;
 class procedure TPyDelphiCustomStyleServices.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 initialization
   RegisteredUnits.Add(TVclThemesRegistration.Create());
-
 end.

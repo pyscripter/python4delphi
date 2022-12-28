@@ -92,14 +92,12 @@ end;
 
 class procedure TPyDelphiOpenDialog.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('FileName', @TPyDelphiOpenDialog.Get_filename,
     nil, '', nil);
 end;
 
 class procedure TPyDelphiOpenDialog.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Execute', @TPyDelphiOpenDialog.Execute_Wrapper,
     'TOpenDialog.Execute()'#10 +
     'Displays the dialog');

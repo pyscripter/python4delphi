@@ -391,7 +391,6 @@ end;
 class procedure TPyDelphiPersistent.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Assign', @TPyDelphiPersistent.Assign_Wrapper,
     'TPersistent.Assign(persistent)'#10 +
     'Assigns to this object the values of another TPersistent object');
@@ -584,7 +583,6 @@ end;
 
 class procedure TPyDelphiCollection.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Count', @TPyDelphiCollection.Get_Count, nil,
@@ -599,7 +597,6 @@ end;
 class procedure TPyDelphiCollection.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Insert', @TPyDelphiCollection.Insert_Wrapper,
     'TCollection.Insert(Index)'#10 +
     'Inserts a new collection item to the collection at the Index position');
@@ -998,7 +995,6 @@ end;
 class procedure TPyDelphiComponent.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('ComponentCount', @TPyDelphiComponent.Get_ComponentCount, nil,
@@ -1013,7 +1009,6 @@ end;
 class procedure TPyDelphiComponent.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('GetParentComponent', @TPyDelphiComponent.GetParentComponent_Wrapper,
     'TComponent.GetParentComponent()'#10 +
     'Returns the parent of a component.');
@@ -1462,7 +1457,6 @@ end;
 
 class procedure TPyDelphiStrings.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Capacity', @TPyDelphiStrings.Get_Capacity, @TPyDelphiStrings.Set_Capacity,
@@ -1476,7 +1470,6 @@ end;
 
 class procedure TPyDelphiStrings.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Add', @TPyDelphiStrings.Add_Wrapper,
     'TStrings.Add(s)'#10 +
     'Adds a string to the TStrings object and returns the index position');
@@ -1573,7 +1566,6 @@ end;
 class procedure TPyDelphiBasicAction.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('ActionComponent', @TPyDelphiBasicAction.Get_ActionComponent, @TPyDelphiBasicAction.Set_ActionComponent,
@@ -1584,7 +1576,6 @@ end;
 class procedure TPyDelphiBasicAction.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Execute', @TPyDelphiBasicAction.Execute_Wrapper,
     'TBasicAction.Execute()'#10 +
     'Generates an OnExecute event.');

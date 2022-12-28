@@ -1492,6 +1492,8 @@ type
     PyMapping_HasKeyString:function (ob:PPyObject;key:PAnsiChar):integer; cdecl;
     PyMapping_Length:function (ob:PPyObject):NativeInt; cdecl;
     PyMapping_SetItemString:function (ob:PPyObject; key:PAnsiChar; value:PPyObject):integer; cdecl;
+    PyMapping_Keys:function(mp: PPyObject):PPyObject; cdecl;
+    PyMapping_Values:function(mp: PPyObject):PPyObject; cdecl;
     PyMethod_Function:function (ob:PPyObject):PPyObject; cdecl;
     PyMethod_New:function (ob1,ob2,ob3:PPyObject):PPyObject; cdecl;
     PyMethod_Self:function (ob:PPyObject):PPyObject; cdecl;
@@ -1917,7 +1919,7 @@ type
     function   ArrayToPyDict( const items : array of const) : PPyObject;
     function   StringsToPyList( strings : TStrings ) : PPyObject;
     function   StringsToPyTuple( strings : TStrings ) : PPyObject;
-    procedure  PyListToStrings( list : PPyObject; strings : TStrings );
+    procedure PyListToStrings(list: PPyObject; Strings: TStrings; ClearStrings: Boolean = True);
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
     function   ReturnNone : PPyObject;
     function   ReturnTrue : PPyObject;
@@ -3687,6 +3689,8 @@ begin
   PyMapping_HasKeyString    := Import('PyMapping_HasKeyString');
   PyMapping_Length          := Import('PyMapping_Length');
   PyMapping_SetItemString   := Import('PyMapping_SetItemString');
+  PyMapping_Keys            := Import('PyMapping_Keys');
+  PyMapping_Values          := Import('PyMapping_Values');
   PyMethod_Function         := Import('PyMethod_Function');
   PyMethod_New              := Import('PyMethod_New');
   PyMethod_Self             := Import('PyMethod_Self');
@@ -6013,15 +6017,17 @@ begin
       PyUnicodeFromString(strings.Strings[i]));
 end;
 
-procedure TPythonEngine.PyListToStrings( list : PPyObject; strings : TStrings );
+procedure TPythonEngine.PyListToStrings(list: PPyObject; Strings: TStrings;
+    ClearStrings: Boolean = True);
 var
   i : Integer;
 begin
   if not PyList_Check(list) then
     raise EPythonError.Create('the python object is not a list');
-  strings.Clear;
+  if ClearStrings then
+    Strings.Clear;
   for i := 0 to PyList_Size( list ) - 1 do
-    strings.Add( PyObjectAsString( PyList_GetItem( list, i ) ) );
+    Strings.Add( PyObjectAsString( PyList_GetItem( list, i ) ) );
 end;
 
 procedure TPythonEngine.PyTupleToStrings( tuple: PPyObject; strings : TStrings );
@@ -6279,7 +6285,7 @@ begin
   Result := PyImport_AddModule(PAnsiChar(ExecModule));
 end;
 
-function TPythonEngine.PyTimeStruct_Check( obj : PPyObject ) : Boolean;
+function TPythonEngine.PyTimeStruct_Check(obj : PPyObject): Boolean;
 begin
   Result := Assigned(FTimeStruct) and (Pointer(obj^.ob_type) = FTimeStruct);
 end;

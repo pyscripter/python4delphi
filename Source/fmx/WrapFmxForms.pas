@@ -248,7 +248,6 @@ end;
 
 class procedure TPyDelphiApplication.RegisterMethods(APythonType: TPythonType);
 begin
-  inherited;
   with APythonType do begin
     AddMethod('Initialize', @TPyDelphiApplication.Initialize_Wrapper,
       'TApplication.Initialize()'#10 +
@@ -449,7 +448,6 @@ end;
 class procedure TPyDelphiCommonCustomForm.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('LoadProps', @TPyDelphiCustomForm.LoadProps_Wrapper,
     'TCommonCustomForm.LoadProps()'#10 +
     'Load properties from a .pydfm file');
