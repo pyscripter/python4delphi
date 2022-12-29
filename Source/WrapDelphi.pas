@@ -538,6 +538,7 @@ Type
     // Exposed Getters
     function Get_ClassName(Acontext : Pointer) : PPyObject; cdecl;
     function Get_Owned(Acontext : Pointer) : PPyObject; cdecl;
+    function Set_Owned(AValue: PPyObject; AContext: Pointer): Integer;
     function Get_Bound(Acontext : Pointer) : PPyObject; cdecl;
     // implementation of interface IFreeNotificationSubscriber
     procedure Notify(ADeletedObject : TObject);
@@ -2496,7 +2497,7 @@ begin
         'Returns the TObject.ClassName', nil);
       AddGetSet('__bound__', @TPyDelphiObject.Get_Bound, nil,
         'Returns True if the wrapper is still bound to the Delphi instance.', nil);
-      AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, nil,
+      AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, @TPyDelphiObject.Set_Owned,
         'Returns True if the wrapper owns the Delphi instance.', nil);
     end;
 end;
@@ -2741,6 +2742,21 @@ begin
     if _ContainerAccessClass.SupportsIndexOf then
       PythonType.Services.Sequence := PythonType.Services.Sequence + [ssContains];
   end;
+end;
+
+function TPyDelphiObject.Set_Owned(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  _value : Boolean;
+begin
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, '__owned__', _value) then
+  begin
+    Owned := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
 end;
 
 function TPyDelphiObject.SqAssItem(idx: NativeInt; obj: PPyObject): integer;
