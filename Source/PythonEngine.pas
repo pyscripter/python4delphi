@@ -5129,7 +5129,7 @@ procedure TPythonEngine.RaiseError;
       if Assigned(tmp) and PyUnicode_Check(tmp) then
         s_value := PyUnicodeAsString(tmp);
       Py_XDECREF(tmp);
-      if MajorVersion >= 10 then
+      if (MajorVersion > 3) or (MinorVersion >= 10) then
       begin
       // Get the end offset of the error
         tmp := PyObject_GetAttrString(err_value, 'end_offset' );
