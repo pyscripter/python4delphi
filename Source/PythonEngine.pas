@@ -116,7 +116,7 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
     (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
@@ -126,11 +126,12 @@ const
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013),
-    (DllName: 'python311.dll'; RegVersion: '3.11'; APIVersion: 1013)
+    (DllName: 'python311.dll'; RegVersion: '3.11'; APIVersion: 1013),
+    (DllName: 'python312.dll'; RegVersion: '3.12'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3m.so'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4m.so'; RegVersion: '3.4'; APIVersion: 1013),
@@ -140,11 +141,12 @@ const
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
-    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013)
+    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
+    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..9] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
     (
     (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
     (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
@@ -154,16 +156,18 @@ const
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013),
-    (DllName: 'libpython3.11.dylib'; RegVersion: '3.11'; APIVersion: 1013)
+    (DllName: 'libpython3.11.dylib'; RegVersion: '3.11'; APIVersion: 1013),
+    (DllName: 'libpython3.12.dylib'; RegVersion: '3.12'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[6..9] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[6..10] of TPythonVersionProp =
     (
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
-    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013)
+    (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
+    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013)
     );
 {$ENDIF}
 
@@ -1274,7 +1278,6 @@ type
     procedure AfterLoad; override;
     function  GetQuitMessage : string; override;
     procedure CheckPython;
-    function  GetUnicodeTypeSuffix : string;
 
   public
     // define Python flags. See file pyDebug.h
@@ -1607,7 +1610,7 @@ type
     PyUnicode_DecodeUTF16:function (const s:PAnsiChar; size: NativeInt; const errors: PAnsiChar; byteoder: PInteger):PPyObject; cdecl;
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
-    PyUnicode_GetSize:function (unicode:PPyObject):NativeInt; cdecl;
+    PyUnicode_GetLength:function (unicode:PPyObject):NativeInt; cdecl;
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
@@ -3464,28 +3467,8 @@ begin
     raise Exception.Create('Python is not properly initialized' );
 end;
 
-function  TPythonInterface.GetUnicodeTypeSuffix : string;
-begin
-  if (fMajorVersion > 3) or ((fMajorVersion = 3) and (fMinorVersion >= 3)) then
-    Result := ''
-  else if APIVersion >= 1011 then
-    Result :=
-      {$IF DEFINED(MSWINDOWS) or DEFINED(DARWIN) or DEFINED(SOLARIS)}
-        'UCS2'
-      {$ELSE}
-        'UCS4'
-      {$IFEND}
-  else
-    Result := '';
-end;
-
 procedure TPythonInterface.MapDll;
-Var
-  UnicodeSuffix : string;
-
 begin
-  UnicodeSuffix := GetUnicodeTypeSuffix;
-
   Py_DebugFlag               := Import('Py_DebugFlag');
   Py_VerboseFlag             := Import('Py_VerboseFlag');
   Py_InteractiveFlag         := Import('Py_InteractiveFlag');
@@ -3796,18 +3779,18 @@ begin
   PyType_GenericAlloc         := Import('PyType_GenericAlloc');
   PyType_GenericNew           := Import('PyType_GenericNew');
   PyType_Ready                := Import('PyType_Ready');
-  PyUnicode_FromWideChar      := Import(AnsiString(Format('PyUnicode%s_FromWideChar',[UnicodeSuffix])));
-  PyUnicode_FromString        := Import(AnsiString(Format('PyUnicode%s_FromString',[UnicodeSuffix])));
-  PyUnicode_FromStringAndSize := Import(AnsiString(Format('PyUnicode%s_FromStringAndSize',[UnicodeSuffix])));
-  PyUnicode_FromKindAndData   := Import(AnsiString(Format('PyUnicode%s_FromKindAndData',[UnicodeSuffix])));
-  PyUnicode_AsWideChar        := Import(AnsiString(Format('PyUnicode%s_AsWideChar',[UnicodeSuffix])));
-  PyUnicode_AsUTF8            := Import(AnsiString(Format('PyUnicode%s_AsUTF8',[UnicodeSuffix])));
-  PyUnicode_AsUTF8AndSize     := Import(AnsiString(Format('PyUnicode%s_AsUTF8AndSize',[UnicodeSuffix])));
-  PyUnicode_Decode            := Import(AnsiString(Format('PyUnicode%s_Decode',[UnicodeSuffix])));
-  PyUnicode_DecodeUTF16       := Import(AnsiString(Format('PyUnicode%s_DecodeUTF16',[UnicodeSuffix])));
-  PyUnicode_AsEncodedString   := Import(AnsiString(Format('PyUnicode%s_AsEncodedString',[UnicodeSuffix])));
-  PyUnicode_FromOrdinal       := Import(AnsiString(Format('PyUnicode%s_FromOrdinal',[UnicodeSuffix])));
-  PyUnicode_GetSize           := Import(AnsiString(Format('PyUnicode%s_GetSize',[UnicodeSuffix])));
+  PyUnicode_FromWideChar      := Import('PyUnicode_FromWideChar');
+  PyUnicode_FromString        := Import('PyUnicode_FromString');
+  PyUnicode_FromStringAndSize := Import('PyUnicode_FromStringAndSize');
+  PyUnicode_FromKindAndData   := Import('PyUnicode_FromKindAndData');
+  PyUnicode_AsWideChar        := Import('PyUnicode_AsWideChar');
+  PyUnicode_AsUTF8            := Import('PyUnicode_AsUTF8');
+  PyUnicode_AsUTF8AndSize     := Import('PyUnicode_AsUTF8AndSize');
+  PyUnicode_Decode            := Import('PyUnicode_Decode');
+  PyUnicode_DecodeUTF16       := Import('PyUnicode_DecodeUTF16');
+  PyUnicode_AsEncodedString   := Import('PyUnicode_AsEncodedString');
+  PyUnicode_FromOrdinal       := Import('PyUnicode_FromOrdinal');
+  PyUnicode_GetLength         := Import('PyUnicode_GetLength');
   PyWeakref_GetObject         := Import('PyWeakref_GetObject');
   PyWeakref_NewProxy          := Import('PyWeakref_NewProxy');
   PyWeakref_NewRef            := Import('PyWeakref_NewRef');
@@ -6055,35 +6038,24 @@ begin
     raise EPythonError.CreateFmt(SPyConvertionError, ['PyBytesAsAnsiString', 'Bytes']);
 end;
 
-function TPythonEngine.PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
+function TPythonEngine.PyUnicodeAsString(obj : PPyObject): UnicodeString;
 var
-  _size : Integer;
-{$IFDEF POSIX}
-  _ucs4Str : UCS4String;
-{$ENDIF}
+  Buffer: PAnsiChar;
+  Size: NativeInt;
+  NewSize: Cardinal;
 begin
   if PyUnicode_Check(obj) then
   begin
-    _size := PyUnicode_GetSize(obj);
-    if _size > 0 then
-    begin
-{$IFDEF POSIX}
-      // Note that Linux uses UCS4 strings, whereas it declares using UCS2 strings!!!
-      SetLength(_ucs4Str, _size+1);
-      if PyUnicode_AsWideChar(obj, @_ucs4Str[0], _size) <> _size then
-        raise EPythonError.Create('Could not copy the whole Unicode string into its buffer');
-      Result := UCS4StringToWideString(_ucs4Str);
-      // remove trailing zeros
-      while (Length(Result) > 0) and (Result[Length(Result)] = #0) do
-        Delete(Result, Length(Result), 1);
-{$ELSE}
-      SetLength(Result, _size);
-      if PyUnicode_AsWideChar(obj, @Result[1], _size) <> _size then
-        raise EPythonError.Create('Could not copy the whole Unicode string into its buffer');
-{$ENDIF}
-    end
-    else
-      Result := '';
+    // Size does not include the final #0
+    Buffer := PyUnicode_AsUTF8AndSize(obj, @Size);
+    SetLength(Result, Size);
+    if (Size = 0) or (Buffer = nil) then
+      Exit;
+
+    // The second argument is the size of the destination (Result) including #0
+    NewSize := Utf8ToUnicode(PChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
+    // NewSize includes #0
+    SetLength(Result, NewSize - 1);
   end
   else
     raise EPythonError.CreateFmt(SPyConvertionError, ['PyUnicodeAsString', 'Unicode']);
