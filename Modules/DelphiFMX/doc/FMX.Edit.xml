@@ -1,0 +1,1907 @@
+<?xml version="1.0" ?><namespace name="FMX.Edit" platform="Win32">
+  <const name="MM_EDIT_SELSTART_CHANGED" type="Integer" file="FMX.Edit.pas" line="21">
+    <value>
+      $1701
+    </value>
+  </const>
+  <const name="MM_EDIT_SELLENGTH_CHANGED" type="Integer" file="FMX.Edit.pas" line="22">
+    <value>
+      $1702
+    </value>
+  </const>
+  <const name="MM_EDIT_READONLY_CHANGED" type="Integer" file="FMX.Edit.pas" line="23">
+    <value>
+      $1703
+    </value>
+  </const>
+  <const name="MM_EDIT_MAXLENGTH_CHANGED" type="Integer" file="FMX.Edit.pas" line="24">
+    <value>
+      $1704
+    </value>
+  </const>
+  <const name="MM_EDIT_ISPASSWORD_CHANGED" type="Integer" file="FMX.Edit.pas" line="25">
+    <value>
+      $1705
+    </value>
+  </const>
+  <const name="MM_EDIT_IMEMODE_CHANGED" type="Integer" file="FMX.Edit.pas" line="26">
+    <value>
+      $1706
+    </value>
+  </const>
+  <const name="MM_EDIT_KEYBOARDTYPE_CHANGED" type="Integer" file="FMX.Edit.pas" line="27">
+    <value>
+      $1707
+    </value>
+  </const>
+  <const name="MM_EDIT_RETURNKEYTYPE_CHANGED" type="Integer" file="FMX.Edit.pas" line="28">
+    <value>
+      $1708
+    </value>
+  </const>
+  <const name="MM_EDIT_KILLFOCUSBYRETURN_CHANGED" type="Integer" file="FMX.Edit.pas" line="29">
+    <value>
+      $1709
+    </value>
+  </const>
+  <const name="MM_EDIT_CHECKSPELLING_CHANGED" type="Integer" file="FMX.Edit.pas" line="30">
+    <value>
+      $170A
+    </value>
+  </const>
+  <const name="MM_EDIT_PROMPTTEXT_CHANGED" type="Integer" file="FMX.Edit.pas" line="31">
+    <value>
+      $170B
+    </value>
+  </const>
+  <const name="MM_EDIT_CARETPOSITION_CHANGED" type="Integer" file="FMX.Edit.pas" line="32">
+    <value>
+      $170F
+    </value>
+  </const>
+  <const name="MM_EDIT_CARETCHANGED" type="Integer" file="FMX.Edit.pas" line="33">
+    <value>
+      $1710
+    </value>
+  </const>
+  <const name="MM_EDIT_TYPING_CHANGED" type="Integer" file="FMX.Edit.pas" line="34">
+    <value>
+      $1711
+    </value>
+  </const>
+  <const name="MM_EDIT_TEXT_SETTINGS_CHANGED" type="Integer" file="FMX.Edit.pas" line="35">
+    <value>
+      $1712
+    </value>
+  </const>
+  <const name="MM_EDIT_TEXT_CHANGED" type="Integer" file="FMX.Edit.pas" line="36">
+    <value>
+      $1713
+    </value>
+  </const>
+  <const name="MM_EDIT_EDITBUTTONS_CHANGED" type="Integer" file="FMX.Edit.pas" line="37">
+    <value>
+      $1715
+    </value>
+  </const>
+  <const name="MM_EDIT_TEXT_CHANGING" type="Integer" file="FMX.Edit.pas" line="38">
+    <value>
+      $1716
+    </value>
+  </const>
+  <const name="MM_EDIT_CHARCASE_CHANGED" type="Integer" file="FMX.Edit.pas" line="39">
+    <value>
+      $1717
+    </value>
+  </const>
+  <const name="MM_EDIT_FILTERCHAR_CHANGED" type="Integer" file="FMX.Edit.pas" line="40">
+    <value>
+      $1718
+    </value>
+  </const>
+  <const name="MM_EDIT_GET_CARET_POSITION_BY_POINT" type="Integer" file="FMX.Edit.pas" line="41">
+    <value>
+      $1719
+    </value>
+  </const>
+  <const name="MM_EDIT_USER" type="Integer" file="FMX.Edit.pas" line="42">
+    <value>
+      $171A
+    </value>
+  </const>
+  <const name="PM_EDIT_REALIGN_BUTTONS_CONTAINER" type="Integer" file="FMX.Edit.pas" line="43">
+    <value>
+      $1001
+    </value>
+  </const>
+  <const name="PM_EDIT_GET_TEXT_CONTENT_RECT" type="Integer" file="FMX.Edit.pas" line="44">
+    <value>
+      $1002
+    </value>
+  </const>
+  <const name="PM_EDIT_USER" type="Integer" file="FMX.Edit.pas" line="45">
+    <value>
+      $1003
+    </value>
+  </const>
+  <class name="TCustomEditModel" file="FMX.Edit.pas" line="51">
+    
+    <members>
+      <const name="DefaultSelectionColor" visibility="public" type="Integer" file="FMX.Edit.pas" line="51">
+        <value>
+          $802A8ADF
+        </value>
+      </const>
+      <const name="DefaultHorzAlign" visibility="public" type="TTextAlign" file="FMX.Edit.pas" line="54">
+        <value>
+          Leading
+        </value>
+      </const>
+      <const name="DefaultFontColor" visibility="public" type="Integer" file="FMX.Edit.pas" line="51">
+        <value>
+          $FF000000
+        </value>
+      </const>
+      <const name="DefaultInputSupport" visibility="public" type="Boolean" file="FMX.Edit.pas" line="51">
+        <value>
+          True
+        </value>
+      </const>
+      <const name="DefaultCharCase" visibility="public" type="TEditCharCase" file="FMX.Edit.pas" line="57">
+        <value>
+          ecNormal
+        </value>
+      </const>
+      <struct name="TGetCaretPositionInfo" visibility="public" alias="FMX.Edit.TGetCaretPositionInfo" size="12" file="FMX.Edit.pas" line="60">
+        <field name="HitPoint" type="TPointF" visibility="public" size="8" offset="0" file="FMX.Edit.pas" line="61"/>
+        <field name="CaretPosition" type="Integer" visibility="public" size="4" offset="8" file="FMX.Edit.pas" line="62"/>
+      </struct>
+      <field name="FChanged" type="Boolean" visibility="private" size="1" offset="24" file="FMX.Edit.pas" line="65"/>
+      <field name="FText" type="string" visibility="private" size="4" offset="28" file="FMX.Edit.pas" line="66"/>
+      <field name="FSelStart" type="Integer" visibility="private" size="4" offset="32" file="FMX.Edit.pas" line="67"/>
+      <field name="FSelLength" type="Integer" visibility="private" size="4" offset="36" file="FMX.Edit.pas" line="68"/>
+      <field name="FReadOnly" type="Boolean" visibility="private" size="1" offset="40" file="FMX.Edit.pas" line="69"/>
+      <field name="FMaxLength" type="Integer" visibility="private" size="4" offset="44" file="FMX.Edit.pas" line="70"/>
+      <field name="FPassword" type="Boolean" visibility="private" size="1" offset="48" file="FMX.Edit.pas" line="71"/>
+      <field name="FKeyboardType" type="TVirtualKeyboardType" visibility="private" size="4" offset="52" file="FMX.Edit.pas" line="72"/>
+      <field name="FReturnKeyType" type="TReturnKeyType" visibility="private" size="4" offset="56" file="FMX.Edit.pas" line="73"/>
+      <field name="FImeMode" type="TImeMode" visibility="private" size="4" offset="60" file="FMX.Edit.pas" line="74"/>
+      <field name="FKillFocusByReturn" type="Boolean" visibility="private" size="1" offset="64" file="FMX.Edit.pas" line="75"/>
+      <field name="FCheckSpelling" type="Boolean" visibility="private" size="1" offset="65" file="FMX.Edit.pas" line="76"/>
+      <field name="FTextPrompt" type="string" visibility="private" size="4" offset="68" file="FMX.Edit.pas" line="77"/>
+      <field name="FCaretPosition" type="Integer" visibility="private" size="4" offset="72" file="FMX.Edit.pas" line="78"/>
+      <field name="FCaret" type="TCustomCaret" visibility="private" size="4" offset="76" file="FMX.Edit.pas" line="79"/>
+      <field name="FTyping" type="Boolean" visibility="private" size="1" offset="80" file="FMX.Edit.pas" line="80"/>
+      <field name="FFilterChar" type="string" visibility="private" size="4" offset="84" file="FMX.Edit.pas" line="81"/>
+      <field name="FInputSupport" type="Boolean" visibility="private" size="1" offset="88" file="FMX.Edit.pas" line="82"/>
+      <field name="FTextSettingsInfo" type="TTextSettingsInfo" visibility="private" size="4" offset="92" file="FMX.Edit.pas" line="83"/>
+      <field name="FSelectionFill" type="TBrush" visibility="private" size="4" offset="96" file="FMX.Edit.pas" line="84"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="104" file="FMX.Edit.pas" line="85"/>
+      <field name="FOnChangeTracking" type="TNotifyEvent" visibility="private" size="8" offset="112" file="FMX.Edit.pas" line="86"/>
+      <field name="FOnTyping" type="TNotifyEvent" visibility="private" size="8" offset="120" file="FMX.Edit.pas" line="87"/>
+      <field name="FOnValidating" type="TValidateTextEvent" visibility="private" size="8" offset="128" file="FMX.Edit.pas" line="88"/>
+      <field name="FOnValidate" type="TValidateTextEvent" visibility="private" size="8" offset="136" file="FMX.Edit.pas" line="89"/>
+      <field name="FValidating" type="Boolean" visibility="private" size="1" offset="144" file="FMX.Edit.pas" line="90"/>
+      <field name="FCharCase" type="TEditCharCase" visibility="private" size="1" offset="145" file="FMX.Edit.pas" line="91"/>
+      <procedure name="SetSelStart" visibility="private" file="FMX.Edit.pas" line="92">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetSelLength" visibility="private" file="FMX.Edit.pas" line="93">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetMaxLength" visibility="private" file="FMX.Edit.pas" line="94">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetReadOnly" visibility="private" file="FMX.Edit.pas" line="95">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetPassword" visibility="private" file="FMX.Edit.pas" line="96">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetImeMode" visibility="private" file="FMX.Edit.pas" line="97">
+        <parameters>
+          <parameter name="Value" type="TImeMode" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetKeyboardType" visibility="private" file="FMX.Edit.pas" line="98">
+        <parameters>
+          <parameter name="Value" type="TVirtualKeyboardType" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetReturnKeyType" visibility="private" file="FMX.Edit.pas" line="99">
+        <parameters>
+          <parameter name="Value" type="TReturnKeyType" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetKillFocusByReturn" visibility="private" file="FMX.Edit.pas" line="100">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCheckSpelling" visibility="private" file="FMX.Edit.pas" line="101">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTextPrompt" visibility="private" file="FMX.Edit.pas" line="102">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCaretPosition" visibility="private" file="FMX.Edit.pas" line="103">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCaret" visibility="private" file="FMX.Edit.pas" line="104">
+        <parameters>
+          <parameter name="Value" type="TCustomCaret" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTyping" visibility="private" file="FMX.Edit.pas" line="105">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetText" visibility="private" file="FMX.Edit.pas" line="109">
+        <devnotes>
+           <remarks>
+             Invokes sequence: DoFiltering -&gt; DoTruncating -&gt; DoValidating
+           </remarks>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetSelectionFill" visibility="private" file="FMX.Edit.pas" line="110">
+        <parameters>
+          <parameter name="Value" type="TBrush" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetFilterChar" visibility="private" file="FMX.Edit.pas" line="111">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCharCase" visibility="private" file="FMX.Edit.pas" line="112">
+        <parameters>
+          <parameter name="Value" type="TEditCharCase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="DoFiltering" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="115">
+        <devnotes>
+          <summary>Initial text filtering before calling <c>DoTruncating</c></summary>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="DoTruncating" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="117">
+        <devnotes>
+          <summary>Maximum available text length filtering before calling <c>DoValidating</c></summary>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="DoValidating" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="119">
+        <devnotes>
+          <summary>Validate inputing text. Calling before OnChangeTracking</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="DoValidate" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="120">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="DoChangeTracking" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="121">
+      </procedure>
+      <procedure name="DoChange" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="122">
+      </procedure>
+      <procedure name="ResultTextSettingsChanged" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="123">
+      </procedure>
+      <function name="GetTextSettingsClass" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="124">
+        <parameters>
+          <retval type="TTextSettingsInfo.TCustomTextSettingsClass"/>
+        </parameters>
+      </function>
+      <property name="Validating" visibility="protected" read="FValidating" type="Boolean" file="FMX.Edit.pas" line="128">
+        <devnotes>
+           <summary>
+             This property indicates that the control is in validate value mode. See DoValidate, Change
+           </summary>
+        </devnotes>
+      </property>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="130">
+        <parameters>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Edit.pas" line="131">
+        <parameters>
+        </parameters>
+      </destructor>
+      <function name="HasSelection" visibility="public" file="FMX.Edit.pas" line="132">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="SelectedText" visibility="public" file="FMX.Edit.pas" line="133">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="Change" visibility="public" file="FMX.Edit.pas" line="134">
+      </procedure>
+      <procedure name="SetTextWithoutValidation" visibility="public" file="FMX.Edit.pas" line="136">
+        <devnotes>
+          <summary>Set text in model without text validation and sending notification to presenter</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCaretPositionByPoint" visibility="public" file="FMX.Edit.pas" line="139">
+        <devnotes>
+           <summary>Returns caret position by specified hittest point.</summary>
+           <remarks>Works only for <c>TEdit.ControlType=Styled</c>.</remarks>
+        </devnotes>
+        <parameters>
+          <parameter name="AHitPoint" type="TPointF" paramflags="const"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <property name="CaretPosition" visibility="public" read="FCaretPosition" write="SetCaretPosition" type="Integer" file="FMX.Edit.pas" line="141"/>
+      <property name="Caret" visibility="public" read="FCaret" write="SetCaret" type="TCustomCaret" file="FMX.Edit.pas" line="142"/>
+      <property name="CheckSpelling" visibility="public" read="FCheckSpelling" write="SetCheckSpelling" type="Boolean" file="FMX.Edit.pas" line="143"/>
+      <property name="FilterChar" visibility="public" read="FFilterChar" write="SetFilterChar" type="string" default="0" file="FMX.Edit.pas" line="144"/>
+      <property name="ReadOnly" visibility="public" read="FReadOnly" write="SetReadOnly" type="Boolean" file="FMX.Edit.pas" line="146">
+        <devnotes>
+          <summary>Text control is in read-only mode</summary>
+        </devnotes>
+      </property>
+      <property name="ImeMode" visibility="public" read="FImeMode" write="SetImeMode" type="TImeMode" file="FMX.Edit.pas" line="147"/>
+      <property name="InputSupport" visibility="public" read="FInputSupport" write="FInputSupport" type="Boolean" file="FMX.Edit.pas" line="148"/>
+      <property name="KeyboardType" visibility="public" read="FKeyboardType" write="SetKeyboardType" type="TVirtualKeyboardType" file="FMX.Edit.pas" line="149"/>
+      <property name="KillFocusByReturn" visibility="public" read="FKillFocusByReturn" write="SetKillFocusByReturn" type="Boolean" file="FMX.Edit.pas" line="150"/>
+      <property name="MaxLength" visibility="public" read="FMaxLength" write="SetMaxLength" type="Integer" file="FMX.Edit.pas" line="151"/>
+      <property name="Password" visibility="public" read="FPassword" write="SetPassword" type="Boolean" file="FMX.Edit.pas" line="152"/>
+      <property name="ReturnKeyType" visibility="public" read="FReturnKeyType" write="SetReturnKeyType" type="TReturnKeyType" file="FMX.Edit.pas" line="153"/>
+      <property name="SelectionFill" visibility="public" read="FSelectionFill" write="SetSelectionFill" type="TBrush" file="FMX.Edit.pas" line="154"/>
+      <property name="SelStart" visibility="public" read="FSelStart" write="SetSelStart" type="Integer" file="FMX.Edit.pas" line="155"/>
+      <property name="SelLength" visibility="public" read="FSelLength" write="SetSelLength" type="Integer" file="FMX.Edit.pas" line="156"/>
+      <property name="Text" visibility="public" read="FText" write="SetText" type="string" default="0" file="FMX.Edit.pas" line="157"/>
+      <property name="TextSettingsInfo" visibility="public" read="FTextSettingsInfo" type="TTextSettingsInfo" file="FMX.Edit.pas" line="158"/>
+      <property name="TextPrompt" visibility="public" read="FTextPrompt" write="SetTextPrompt" type="string" default="0" file="FMX.Edit.pas" line="159"/>
+      <property name="Typing" visibility="public" read="FTyping" write="SetTyping" type="Boolean" file="FMX.Edit.pas" line="160"/>
+      <property name="CharCase" visibility="public" read="FCharCase" write="SetCharCase" type="TEditCharCase" file="FMX.Edit.pas" line="162">
+        <devnotes>
+          <summary>Defines character case for text in component</summary>
+        </devnotes>
+      </property>
+      <event name="OnChange" visibility="public" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Edit.pas" line="163"/>
+      <event name="OnChangeTracking" visibility="public" read="FOnChangeTracking" write="FOnChangeTracking" type="TNotifyEvent" file="FMX.Edit.pas" line="164"/>
+      <event name="OnTyping" visibility="public" read="FOnTyping" write="FOnTyping" type="TNotifyEvent" file="FMX.Edit.pas" line="165"/>
+      <event name="OnValidating" visibility="public" read="FOnValidating" write="FOnValidating" type="TValidateTextEvent" file="FMX.Edit.pas" line="166"/>
+      <event name="OnValidate" visibility="public" read="FOnValidate" write="FOnValidate" type="TValidateTextEvent" file="FMX.Edit.pas" line="167"/>
+    </members>
+  </class>
+  <class name="TContentEdit" file="FMX.Edit.pas" line="172">
+    
+    <members>
+      <function name="GetEdit" visibility="private" file="FMX.Edit.pas" line="174">
+        <parameters>
+          <retval type="TCustomEdit"/>
+        </parameters>
+      </function>
+      <procedure name="DoRemoveObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="176">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="177">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoInsertObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="178">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="180">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <property name="Edit" visibility="public" read="GetEdit" type="TCustomEdit" file="FMX.Edit.pas" line="181"/>
+    </members>
+  </class>
+  <class name="TCustomEdit" file="FMX.Edit.pas" line="184">
+    
+    <interfaces>
+      <implements name="ICaret"/>
+      <implements name="IReadOnly"/>
+      <implements name="ITextSettings"/>
+      <implements name="IItemsContainer"/>
+      <implements name="IVirtualKeyboardControl"/>
+      <implements name="ITextActions"/>
+    </interfaces>
+    <members>
+      <field name="FButtonsContent" type="TContentEdit" visibility="private" size="4" offset="992" file="FMX.Edit.pas" line="187"/>
+      <field name="FSavedReadOnly" type="Boolean" visibility="private" size="1" offset="996" file="FMX.Edit.pas" line="188"/>
+      <field name="FSavedMaxLength" type="Integer" visibility="private" size="4" offset="1000" file="FMX.Edit.pas" line="189"/>
+      <field name="FSavedTextAlign" type="TTextAlign" visibility="private" size="4" offset="1004" file="FMX.Edit.pas" line="190"/>
+      <function name="GetOriginCaretPosition" visibility="private" file="FMX.Edit.pas" line="191">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetSelText" visibility="private" file="FMX.Edit.pas" line="192">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetSelLength" visibility="private" file="FMX.Edit.pas" line="193">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetSelLength" visibility="private" file="FMX.Edit.pas" line="194">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetSelStart" visibility="private" file="FMX.Edit.pas" line="195">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetSelStart" visibility="private" file="FMX.Edit.pas" line="196">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetCaretPosition" visibility="private" file="FMX.Edit.pas" line="197">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCaretPosition" visibility="private" file="FMX.Edit.pas" line="198">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetCaret" visibility="private" file="FMX.Edit.pas" line="199">
+        <parameters>
+          <parameter name="Value" type="TCustomCaret" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCaret" visibility="private" file="FMX.Edit.pas" line="200">
+        <parameters>
+          <retval type="TCustomCaret"/>
+        </parameters>
+      </function>
+      <procedure name="SetPromptText" visibility="private" file="FMX.Edit.pas" line="201">
+        <parameters>
+          <parameter name="Prompt" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetPromptText" visibility="private" file="FMX.Edit.pas" line="202">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnChange" visibility="private" file="FMX.Edit.pas" line="203">
+        <parameters>
+          <parameter name="Value" type="TNotifyEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetOnChange" visibility="private" file="FMX.Edit.pas" line="204">
+        <parameters>
+          <retval type="TNotifyEvent"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnChangeTracking" visibility="private" file="FMX.Edit.pas" line="205">
+        <parameters>
+          <parameter name="Value" type="TNotifyEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetOnChangeTracking" visibility="private" file="FMX.Edit.pas" line="206">
+        <parameters>
+          <retval type="TNotifyEvent"/>
+        </parameters>
+      </function>
+      <procedure name="SetMaxLength" visibility="private" file="FMX.Edit.pas" line="207">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetMaxLength" visibility="private" file="FMX.Edit.pas" line="208">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetPassword" visibility="private" file="FMX.Edit.pas" line="209">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetPassword" visibility="private" file="FMX.Edit.pas" line="210">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnTyping" visibility="private" file="FMX.Edit.pas" line="211">
+        <parameters>
+          <parameter name="Value" type="TNotifyEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetOnTyping" visibility="private" file="FMX.Edit.pas" line="212">
+        <parameters>
+          <retval type="TNotifyEvent"/>
+        </parameters>
+      </function>
+      <procedure name="SetKillFocusByReturn" visibility="private" file="FMX.Edit.pas" line="213">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetKillFocusByReturn" visibility="private" file="FMX.Edit.pas" line="214">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetCheckSpelling" visibility="private" file="FMX.Edit.pas" line="215">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCheckSpelling" visibility="private" file="FMX.Edit.pas" line="216">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetSelectionFill" visibility="private" file="FMX.Edit.pas" line="217">
+        <parameters>
+          <retval type="TBrush"/>
+        </parameters>
+      </function>
+      <function name="GetCharCase" visibility="private" file="FMX.Edit.pas" line="218">
+        <parameters>
+          <retval type="TEditCharCase"/>
+        </parameters>
+      </function>
+      <procedure name="SetCharCase" visibility="private" file="FMX.Edit.pas" line="219">
+        <parameters>
+          <parameter name="Value" type="TEditCharCase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetDefaultTextSettings" visibility="private" file="FMX.Edit.pas" line="221">
+        <parameters>
+          <retval type="TTextSettings">
+            <devnotes>
+               <summary>
+               This class combines some of properties that relate to the text
+               </summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <function name="GetTextSettings" visibility="private" file="FMX.Edit.pas" line="222">
+        <parameters>
+          <retval type="TTextSettings">
+            <devnotes>
+               <summary>
+               This class combines some of properties that relate to the text
+               </summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <function name="GetResultingTextSettings" visibility="private" file="FMX.Edit.pas" line="223">
+        <parameters>
+          <retval type="TTextSettings">
+            <devnotes>
+               <summary>
+               This class combines some of properties that relate to the text
+               </summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <function name="GetStyledSettings" visibility="private" file="FMX.Edit.pas" line="224">
+        <parameters>
+          <retval type="TStyledSettings"/>
+        </parameters>
+      </function>
+      <procedure name="SetTextAlign" visibility="private" file="FMX.Edit.pas" line="225">
+        <parameters>
+          <parameter name="Value" type="TTextAlign" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetTextAlign" visibility="private" file="FMX.Edit.pas" line="226">
+        <parameters>
+          <retval type="TTextAlign"/>
+        </parameters>
+      </function>
+      <procedure name="SetVertTextAlign" visibility="private" file="FMX.Edit.pas" line="227">
+        <parameters>
+          <parameter name="Value" type="TTextAlign" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetVertTextAlign" visibility="private" file="FMX.Edit.pas" line="228">
+        <parameters>
+          <retval type="TTextAlign"/>
+        </parameters>
+      </function>
+      <procedure name="SetFont" visibility="private" file="FMX.Edit.pas" line="229">
+        <parameters>
+          <parameter name="Value" type="TFont" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetFont" visibility="private" file="FMX.Edit.pas" line="230">
+        <parameters>
+          <retval type="TFont"/>
+        </parameters>
+      </function>
+      <procedure name="SetFontColor" visibility="private" file="FMX.Edit.pas" line="231">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetFontColor" visibility="private" file="FMX.Edit.pas" line="232">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <function name="GetTyping" visibility="private" file="FMX.Edit.pas" line="233">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetTyping" visibility="private" file="FMX.Edit.pas" line="234">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetFilterChar" visibility="private" file="FMX.Edit.pas" line="235">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetFilterChar" visibility="private" file="FMX.Edit.pas" line="236">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetInputSupport" visibility="private" file="FMX.Edit.pas" line="237">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetModel" visibility="private" procflags="overload" file="FMX.Edit.pas" line="238">
+        <parameters>
+          <retval type="TCustomEditModel"/>
+        </parameters>
+      </function>
+      <function name="GetTextContentRect" visibility="private" file="FMX.Edit.pas" line="239">
+        <parameters>
+          <retval type="TRectF"/>
+        </parameters>
+      </function>
+      <function name="GetOnValidate" visibility="private" file="FMX.Edit.pas" line="240">
+        <parameters>
+          <retval type="TValidateTextEvent"/>
+        </parameters>
+      </function>
+      <function name="GetOnValidating" visibility="private" file="FMX.Edit.pas" line="241">
+        <parameters>
+          <retval type="TValidateTextEvent"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnValidate" visibility="private" file="FMX.Edit.pas" line="242">
+        <parameters>
+          <parameter name="Value" type="TValidateTextEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetOnValidating" visibility="private" file="FMX.Edit.pas" line="243">
+        <parameters>
+          <parameter name="Value" type="TValidateTextEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadReadOnly" visibility="private" file="FMX.Edit.pas" line="244">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetReadOnly" visibility="private" file="FMX.Edit.pas" line="246">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetReadOnly" visibility="private" file="FMX.Edit.pas" line="247">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="ShowCaret" visibility="private" file="FMX.Edit.pas" line="250">
+      </procedure>
+      <procedure name="HideCaret" visibility="private" file="FMX.Edit.pas" line="251">
+      </procedure>
+      <field name="FClipboardSvc" type="IFMXClipboardService" visibility="protected" size="4" offset="1008" file="FMX.Edit.pas" line="253"/>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.Edit.pas" line="254">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Data property.
+FMX.Edit.TCustomEdit.GetData inherits from FMX.Types.TFmxObject.GetData. All content below this line refers to FMX.Types.TFmxObject.GetData.
+Protected getter implementation for the Data property.
+</summary></devnotes></function>
+      <procedure name="SetData" visibility="protected" procflags="override" file="FMX.Edit.pas" line="255">
+        <parameters>
+          <parameter name="Value" type="TValue" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Data property.
+FMX.Edit.TCustomEdit.SetData inherits from FMX.Types.TFmxObject.SetData. All content below this line refers to FMX.Types.TFmxObject.SetData.
+Protected setter implementation for the Data property.
+</summary></devnotes></procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.Edit.pas" line="256">
+      <devnotes><summary>
+Initializes the control after the form file has been read into memory and loads its presentation.
+FMX.Edit.TCustomEdit.Loaded inherits from FMX.Controls.Presentation.TPresentedControl.Loaded. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Loaded.
+Initializes the control after the form file has been read into memory and loads its presentation.
+For details, see TControl.Loaded.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+FMX.Controls.TControl.Loaded
+
+</summary></devnotes></procedure>
+      <function name="GetText" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="257">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Text property.
+</summary></devnotes></function>
+      <procedure name="SetText" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="258">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Text property.
+</summary></devnotes></procedure>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="259">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Adds a child object to the edit control.
+If AObject is a TEditButton, it is added to the buttons associated with the edit control.
+</summary></devnotes></procedure>
+      <procedure name="DoInsertObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="260">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Adds a child object at the specified index.
+If the AObject is a TEditButton, it is inserted into the TCustomEdit.ButtonsContent at the specified Index.
+</summary></devnotes></procedure>
+      <procedure name="DoRemoveObject" visibility="protected" procflags="override" file="FMX.Edit.pas" line="261">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="GetImeMode" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="262">
+        <parameters>
+          <retval type="TImeMode"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the ImeMode property.
+</summary></devnotes></function>
+      <procedure name="SetImeMode" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="263">
+        <parameters>
+          <parameter name="Value" type="TImeMode" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the ImeMode property.
+</summary></devnotes></procedure>
+      <procedure name="SetInputSupport" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="264">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the value of the InputSupport property.
+</summary></devnotes></procedure>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.Edit.pas" line="265">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+FMX.Edit.TCustomEdit.DefineProperties inherits from System.Classes.TComponent.DefineProperties. All content below this line refers to System.Classes.TComponent.DefineProperties.
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+TComponent overrides the DefineProperties method defined in TPersistent to define &quot;fake&quot; Top and Left properties. These are defined so that components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is virtual; descendent classes can override it. When overriding DefineProperties, be aware that the Ancestor property of Filer might be set, and that this property can determine whether or not it is appropriate to write properties.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly.
+</summary></devnotes></procedure>
+      <function name="GetDefaultSize" visibility="protected" procflags="override" file="FMX.Edit.pas" line="266">
+        <parameters>
+          <retval type="TSizeF"/>
+        </parameters>
+      <devnotes><summary>
+Gets the default size of the control.
+Returns a TSizeF with the default values of Width and Height.
+</summary></devnotes></function>
+      <procedure name="Resize" visibility="protected" procflags="override" file="FMX.Edit.pas" line="267">
+      <devnotes><summary>
+OnResize event dispatcher. 
+FMX.Edit.TCustomEdit.Resize inherits from FMX.Controls.TControl.Resize. All content below this line refers to FMX.Controls.TControl.Resize.
+OnResize event dispatcher. 
+A control calls Resize when the dimensions of the control change.
+Derived classes can override the protected Resize method to implement specific responses to control resizing.
+</summary></devnotes></procedure>
+      <procedure name="RealignButtonsContainer" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="268">
+      <devnotes><summary>
+Realigns the edit buttons container within the edit control.
+</summary></devnotes></procedure>
+      <function name="CanObserve" visibility="protected" procflags="override" file="FMX.Edit.pas" line="270">
+        <parameters>
+          <parameter name="ID" type="Integer" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+For internal use only.
+Do not use this member. It is for internal use only.
+
+
+</summary></devnotes></function>
+      <procedure name="ObserverAdded" visibility="protected" procflags="override" file="FMX.Edit.pas" line="271">
+        <parameters>
+          <parameter name="ID" type="Integer" paramflags="const"/>
+          <parameter name="Observer" type="IObserver" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+For internal use only.
+Do not use this member. It is for internal use only.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ObserverToggle" visibility="protected" file="FMX.Edit.pas" line="272">
+        <parameters>
+          <parameter name="AObserver" type="IObserver" paramflags="const"/>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+For internal use only.
+Do not use this member. It is for internal use only.
+
+
+</summary></devnotes></procedure>
+      <procedure name="SetTextSettings" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="274">
+        <parameters>
+          <parameter name="Value" type="TTextSettings" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets a new value for the text settings in the TextSettingsInfo property of the TCustomEditModel.
+</summary></devnotes></procedure>
+      <procedure name="SetStyledSettings" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="275">
+        <parameters>
+          <parameter name="Value" type="TStyledSettings" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Setter method for the StyledSettings property.
+</summary></devnotes></procedure>
+      <function name="StyledSettingsStored" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="276">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Indicates whether the set of styled text representation properties stored in StyledSettings differs from the default set for this control.
+StyledSettingsStored returns True when the set of styled text representation properties stored in 
+StyledSettings differs from the default set of styled text representation properties for this control.
+</summary></devnotes></function>
+      <procedure name="SetKeyboardType" visibility="protected" file="FMX.Edit.pas" line="278">
+        <parameters>
+          <parameter name="Value" type="TVirtualKeyboardType"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the KeyboardType property.
+</summary></devnotes></procedure>
+      <function name="GetKeyboardType" visibility="protected" file="FMX.Edit.pas" line="279">
+        <parameters>
+          <retval type="TVirtualKeyboardType"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the KeyboardType property.
+</summary></devnotes></function>
+      <procedure name="SetReturnKeyType" visibility="protected" file="FMX.Edit.pas" line="280">
+        <parameters>
+          <parameter name="Value" type="TReturnKeyType"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="GetReturnKeyType" visibility="protected" file="FMX.Edit.pas" line="281">
+        <parameters>
+          <retval type="TReturnKeyType"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <property name="InputSupport" visibility="protected" read="GetInputSupport" write="SetInputSupport" type="Boolean" file="FMX.Edit.pas" line="283"><devnotes><summary>
+Specifies whether the edit control accepts any sort of input from the user.
+If InputSupport is False, no interaction with the control is provided, including editing, selection and focus.
+</summary></devnotes></property>
+      <function name="GetItemsCount" visibility="protected" file="FMX.Edit.pas" line="285">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      <devnotes><summary>
+Returns the number of TEditButton objects associated with the edit control.
+</summary></devnotes></function>
+      <function name="GetItem" visibility="protected" file="FMX.Edit.pas" line="286">
+        <parameters>
+          <parameter name="AIndex" type="Integer" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Returns the edit button with the specified index.
+GetItem returns the TEditButton associated with the edit control, at the position specified by AIndex.
+</summary></devnotes></function>
+      <procedure name="ButtonsChanged" visibility="protected" procflags="virtual" file="FMX.Edit.pas" line="287">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="DefineModelClass" visibility="protected" procflags="override" file="FMX.Edit.pas" line="289">
+        <parameters>
+          <retval type="TDataModelClass">
+            <devnotes>
+               <summary>Class reference of TDataModel.</summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Returns a class reference to a data model of this presented control.
+FMX.Edit.TCustomEdit.DefineModelClass inherits from FMX.Controls.Presentation.TPresentedControl.DefineModelClass. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefineModelClass.
+Returns a class reference to a data model of this presented control.
+Returns a class reference to a data model class that the constructor of this presented control uses to create a data model for the control.
+By default DefineModelClass returns TDataModel. Descendant classes reimplement DefineModelClass to determine the data model class that a descendant presented control uses for its data model.
+
+ See Also
+FMX.Controls.Model.TDataModelClass
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Presentation.Style.TStyledPresentation.DefineModelClass
+Class References
+
+</summary></devnotes></function>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="290">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Returns the name of the default presentation proxy that your presented control uses.
+FMX.Edit.TCustomEdit.DefinePresentationName inherits from FMX.Controls.Presentation.TPresentedControl.DefinePresentationName. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefinePresentationName.
+Returns the name of the default presentation proxy that your presented control uses.
+You can handle OnPresentationNameChoosing to specify a presentation proxy name to use instead of the name that DefinePresentationName returns.
+DefinePresentationName  calls TPresentationProxyFactory.GeneratePresentationName and returns a generated  presentation proxy name based on the class name of the presented control and the control type (Styled or Platform) of the presentation layer. For example:
+
+
+
+Class name
+
+Control type
+
+Result
+
+
+TMyPresentedControl
+
+Styled
+
+&quot;MyPresentedControl-Styled&quot;
+
+
+TMyPresentedControl
+
+Platform
+
+&quot;MyPresentedControl-Platform&quot;
+
+ See Also
+System.TObject.ClassName
+FMX.Controls.Presentation.TPresentedControl.ControlType
+FMX.Presentation.Factory.TPresentationProxyFactory.Register
+FMX.Controls.Presentation.TPresentationProxy
+FMX.Controls.Presentation.TPresentedControl.OnPresentationNameChoosing
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+
+</summary></devnotes></function>
+      <property name="ControlType" visibility="public" read="GetControlType" write="SetControlType" type="TControlType" default="0" hoisted="true" file="FMX.Edit.pas" line="292"/>
+      <property name="Model" visibility="public" read="GetModel" type="TCustomEditModel" file="FMX.Edit.pas" line="293"><devnotes><summary>
+The data model representing the data used by the presentation of the current control.
+FMX.Edit.TCustomEdit.Model inherits from FMX.Controls.Presentation.TPresentedControl.Model. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Model.
+The data model representing the data used by the presentation of the current control.
+The constructor of your presented control creates a data model for your presented control. The class of the data model is the class that DefineModelClass returns.
+
+ See Also
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Presentation
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+
+</summary></devnotes></property>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="295">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates a new instance of TPresentedControl.
+FMX.Edit.TCustomEdit.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Edit.pas" line="296">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys this instance of TPresentedControl.
+FMX.Edit.TCustomEdit.Destroy inherits from FMX.Controls.Presentation.TPresentedControl.Destroy. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Destroy.
+Destroys this instance of TPresentedControl.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.Create
+
+</summary></devnotes></destructor>
+      <procedure name="DeleteSelection" visibility="public" file="FMX.Edit.pas" line="298">
+      <devnotes><summary>
+Removes the selected text from the edit control.
+Use DeleteSelection to delete the selected text from the edit control. If no text is selected, DeleteSelection does nothing. If all the text is selected, DeleteSelection clears all the text.
+</summary></devnotes></procedure>
+      <procedure name="CopyToClipboard" visibility="public" file="FMX.Edit.pas" line="299">
+      <devnotes><summary>
+Copies the selected text in the edit control to the Clipboard, in plain text format.
+Use CopyToClipboard to replace the contents of the Clipboard with the selected text. CopyToClipboard does not clear the Clipboard if no text is selected. If no text is selected, CopyToClipboard does nothing.
+</summary></devnotes></procedure>
+      <procedure name="CutToClipboard" visibility="public" file="FMX.Edit.pas" line="300">
+      <devnotes><summary>
+Copies the selected text to the Clipboard, in plain text format, and then deletes the selection.
+Use CutToClipboard to replace the contents of the Clipboard with the selected text while clearing the selected text. If no text is selected, CutToClipboard does nothing.
+</summary></devnotes></procedure>
+      <procedure name="PasteFromClipboard" visibility="public" file="FMX.Edit.pas" line="301">
+      <devnotes><summary>
+Pastes the plain text contents of the Clipboard text into the edit control.
+Use PasteFromClipboard to paste the plain text contents held by the Clipboard into the edit control. If the Clipboard does not have a plain text content, PasteFromClipboard does nothing. PasteFromClipboard does not clear the contents of this edit control.
+</summary></devnotes></procedure>
+      <procedure name="SelectAll" visibility="public" file="FMX.Edit.pas" line="302">
+      <devnotes><summary>
+Selects all the characters of the displayed Text at once.
+Equivalent to the CTRL+A key combination on Windows, or Command+A on OS X.
+SelectAll does not change the current CaretPosition.
+</summary></devnotes></procedure>
+      <procedure name="SelectWord" visibility="public" file="FMX.Edit.pas" line="303">
+      <devnotes><summary>
+SelectWord assigns to the FMX.Edit.TCustomEdit.SelLength property the length of the first word found if this exists. 
+If several words exist in the text, the procedure SelectWord checks if the cursor position is the start position of a word. If not, it searches for the closest word from the left of cursor position.
+
+</summary></devnotes></procedure>
+      <procedure name="ResetSelection" visibility="public" file="FMX.Edit.pas" line="304">
+      <devnotes><summary>
+Resets the selection from an edit box.
+ResetSelection sets the CaretPosition property with the start position of the selection and resets the value of the SelLength property to 0. If no text is selected, the ResetSelection property does nothing.
+</summary></devnotes></procedure>
+      <procedure name="GoToTextEnd" visibility="public" file="FMX.Edit.pas" line="305">
+      <devnotes><summary>
+Moves the cursor to the end of the text in the edit control.
+</summary></devnotes></procedure>
+      <procedure name="GoToTextBegin" visibility="public" file="FMX.Edit.pas" line="306">
+      <devnotes><summary>
+Moves the cursor to the beginning of the text in the edit control.
+</summary></devnotes></procedure>
+      <procedure name="Replace" visibility="public" file="FMX.Edit.pas" line="307">
+        <parameters>
+          <parameter name="AStartPos" type="Integer" paramflags="const"/>
+          <parameter name="ALength" type="Integer" paramflags="const"/>
+          <parameter name="AStr" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="HasSelection" visibility="public" file="FMX.Edit.pas" line="308">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns true if any selection exists in the edit box, false otherwise.
+Use HasSelection in order to check if any part of the text is selected.
+</summary></devnotes></function>
+      <property name="ButtonsContent" visibility="public" read="FButtonsContent" type="TContentEdit" file="FMX.Edit.pas" line="309"><devnotes><summary>
+Returns the control that contains the edit buttons associated with the edit control.
+</summary></devnotes></property>
+      <property name="Caret" visibility="public" read="GetCaret" write="SetCaret" type="TCustomCaret" file="FMX.Edit.pas" line="310"><devnotes><summary>
+Represents the caret of the control.
+Caret is of type TCaret.
+</summary></devnotes></property>
+      <property name="CaretPosition" visibility="public" read="GetCaretPosition" write="SetCaretPosition" type="Integer" file="FMX.Edit.pas" line="311"><devnotes><summary>
+Provides access to the caret position in this edit control.
+Use CaretPosition to determine the position of the cursor in the edit control.
+CaretPosition indicates the horizontal character coordinate of the cursor, indexed from zero.
+Modify the value of the CaretPosition property to change the position of the cursor within the edit control. For the cursor to be visible, the edit control must have focus.
+For example, if CaretPosition is set to 4, then the cursor is at the fifth character. If the length of text in the edit control is shorter than 5, the cursor moves to the end of the string. 
+</summary></devnotes></property>
+      <property name="TextContentRect" visibility="public" read="GetTextContentRect" type="TRectF" file="FMX.Edit.pas" line="312"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="CheckSpelling" visibility="public" read="GetCheckSpelling" write="SetCheckSpelling" type="Boolean" default="0" file="FMX.Edit.pas" line="313"><devnotes><summary>
+Defines whether the spell-checking feature of the edit control is on or off.
+This property enables spell checking on the TEdit component. When set to True a red squiggly line appears underlining the words misspelled.  
+The spell checking is performed by an operating system service. It is only supported on iOS and OS X.
+</summary></devnotes></property>
+      <property name="DefaultTextSettings" visibility="public" read="GetDefaultTextSettings" type="TTextSettings" file="FMX.Edit.pas" line="314"><devnotes><summary>
+Stores a TTextSettings type object keeping the default values of the text representation properties.
+DefaultTextSettings is initialized in Create with the following values: 
+
+Font.Size := 11 ;          // depends on the platform     
+Font.Family = 'Tahoma';    // depends on the platform
+Font.Style := [] ;
+FontColor := TAlphaColorRec.Black;
+TextAlign := TTextAlign.Leading;
+VertTextAlign := TTextAlign.Center;
+
+The ApplyStyle method might load from a style the values of the following 
+DefaultTextSettings properties: FontColor, Font, 
+TextAlign, and VertTextAlign.
+</summary></devnotes></property>
+      <property name="Font" visibility="public" read="GetFont" write="SetFont" type="TFont" file="FMX.Edit.pas" line="315"><devnotes><summary>
+Specifies the font to use when rendering the text.
+Set Font to specify the font to use when rendering the text. To change to a new font, specify a new TFont object. To modify a font, change the value of the Family, Size, or Style of the TFont object.
+</summary></devnotes></property>
+      <property name="FontColor" visibility="public" read="GetFontColor" write="SetFontColor" type="TAlphaColor" default="-16777216" file="FMX.Edit.pas" line="316"><devnotes><summary>
+Specifies the color of the text in the edit control.
+</summary></devnotes></property>
+      <property name="FilterChar" visibility="public" read="GetFilterChar" write="SetFilterChar" type="string" default="0" file="FMX.Edit.pas" line="317"><devnotes><summary>
+Specifies which characters are allowed to be typed into this edit control.
+The FilterChar property specifies a string containing individual characters that are allowed to be typed into this edit control.
+For instance, if you set FilterChar to '123abc', then only the a, b, and c letters and the 1, 2, and 3 numerals are allowed to be typed into this edit control. All other characters are ignored. However, note that the uppercase version of a, b, and c are not allowed by this filter string. If you want to add uppercase variants, then FilterChar should be set to '123abcABC'.
+To allow for all characters, set FilterChar to an empty string ('').
+</summary></devnotes></property>
+      <property name="ImeMode" visibility="public" read="GetImeMode" write="SetImeMode" type="TImeMode" default="0" file="FMX.Edit.pas" line="318"><devnotes><summary>
+For internal use only.
+Do not use this member. It is for internal use only.
+</summary></devnotes></property>
+      <property name="KeyboardType" visibility="public" read="GetKeyboardType" write="SetKeyboardType" type="TVirtualKeyboardType" default="0" file="FMX.Edit.pas" line="319"><devnotes><summary>
+Determines the type of the virtual keyboard.
+Set KeyboardType to determine the type of virtual keyboard this edit is to use. Possible values for the KeyboardType property are Alphabet, Default, EmailAddress, NamePhonePad, and so on (values are selectable in the Object Inspector and are described in FMX.Types.TVirtualKeyboardType). 
+Keyboard types are illustrated in the Mobile Tutorial: Using the Web Browser Component (iOS and Android).
+
+Note: On Android, the Alphabet keyboard type has no word completion or word suggestions. The keyboard looks the same as the Default keyboard, but without suggestions.
+
+</summary></devnotes></property>
+      <property name="KillFocusByReturn" visibility="public" read="GetKillFocusByReturn" write="SetKillFocusByReturn" type="Boolean" default="0" file="FMX.Edit.pas" line="320"><devnotes><summary>
+Specifies whether to hide the virtual keyboard by clicking the Return key.
+When KillFocusByReturn is True, clicking the Return key hides the virtual keyboard.
+</summary></devnotes></property>
+      <property name="MaxLength" visibility="public" read="GetMaxLength" write="SetMaxLength" type="Integer" default="0" file="FMX.Edit.pas" line="321"><devnotes><summary>
+Specifies the maximum length of the text entered in this edit control.
+Set the MaxLength property in order to limit the maximum length of the text held by this edit control. For instance, if you want to be able to input strings of maximum 5 characters, set MaxLength to 5.
+Note that setting MaxLength to a value lower than the length of the actual display text does not affect the display. It only limits the number of characters while typing.
+</summary></devnotes></property>
+      <property name="Password" visibility="public" read="GetPassword" write="SetPassword" type="Boolean" default="0" file="FMX.Edit.pas" line="322"><devnotes><summary>
+Specifies whether this edit control shows its characters or not.
+Set the Password property to True to make this edit control hide its characters for password-like input. Set Password to False to make this edit control show all its characters.
+</summary></devnotes></property>
+      <property name="ReadOnly" visibility="public" read="GetReadOnly" write="SetReadOnly" type="Boolean" default="0" file="FMX.Edit.pas" line="323"><devnotes><summary>
+Determines whether you can change the text of this edit control.
+To prevent the contents of the edit control from being edited, set the ReadOnly property to True. Set ReadOnly to False to allow the contents of the edit control to be edited.
+Setting ReadOnly to True ensures that the text is not altered, while still allowing you to select text. The selected text can then be manipulated by the application, or copied to the Clipboard.
+</summary></devnotes></property>
+      <property name="ReturnKeyType" visibility="public" read="GetReturnKeyType" write="SetReturnKeyType" type="TReturnKeyType" default="0" file="FMX.Edit.pas" line="324"><devnotes><summary>
+Indicates the type of action that the edit control performs when you are editing the text of the control and you press the return key on the virtual keyboard. The run-time platform uses this value to determine the type of return button that it displays on the virtual keyboard for the edit control.
+The value of ReturnKeyType does not affect the actual action that the edit control performs when you press the return key. To define that action, use the OnKeyUp event.
+
+Platform Support
+This property only has effect on Android and iOS.
+
+
+</summary></devnotes></property>
+      <property name="ResultingTextSettings" visibility="public" read="GetResultingTextSettings" type="TTextSettings" file="FMX.Edit.pas" line="325"><devnotes><summary>
+Keeps final values of text representation properties. These values are really used to draw texts in a control. 
+ResultingTextSettings keeps a TTextSettings object that manages the final values of the text representation properties. These values are really used to draw texts in a control. 
+To obtain values stored in ResultingTextSettings, a control uses the StyledSettings property. For example, if StyledSettings contains the TStyledSetting.Family value, then the TFont.Family value is taken from the DefaultTextSettings. (That is the font family name defined in the loaded style is used. The font family name defined by the programmer in the Object Editor is ignored.) Oppositely, if StyledSettings does not contain TStyledSetting.Family, then the font family name defined by the programmer in the Object Editor is used and the font family name defined in the loaded style is ignored.
+The TTextSettings class define properties keeping values of the FontColor, TextAlign, VertTextAlign, Trimming,  WordWrap, and Font (TFont.Family, TFont.Size, TFont.Style) elements defining visual parameters of a text representation.
+RecalculateTextSettings updates the ResultingTextSettings.
+</summary></devnotes></property>
+      <property name="SelectionFill" visibility="public" read="GetSelectionFill" type="TBrush" file="FMX.Edit.pas" line="326"><devnotes><summary>
+Specifies the color and pattern used to fill the font of the selected text or to stroke the outline of it.
+Read the SelectionFill property to get a TBrush object with the color and pattern used to fill the font of selected text displayed, or to stroke the outline of it.
+</summary></devnotes></property>
+      <property name="SelStart" visibility="public" read="GetSelStart" write="SetSelStart" type="Integer" file="FMX.Edit.pas" line="327"><devnotes><summary>
+Specifies the position of the first selected character in the text.
+Read SelStart to determine the position of the first selected character, where 0 indicates the first character. If there is no selected text, SelStart indicates the position of the cursor. Set SelStart to remove the current selection and to position the cursor just before the indicated character.
+To select a particular range of the text, first set SelStart to position the cursor, and then set SelLength to extend the selection.
+</summary></devnotes></property>
+      <property name="SelLength" visibility="public" read="GetSelLength" write="SetSelLength" type="Integer" file="FMX.Edit.pas" line="328"><devnotes><summary>
+Specifies the number of characters that are selected.
+Read SelLength to determine the length, in bytes, of the selected text. This is the same as the number of characters, unless you are using a multibyte character set. Set SelLength to change the selection to consist of the first SelLength bytes starting at SelStart.
+
+Tip: Setting SelLength to a value greater than the number of characters from SelStart to the end of the text results in the selection of all characters from SelStart to the end of the text. Reading SelLength immediately after setting it to a value greater than the number of available characters returns the number of characters actually selected, not the value that was just set.</summary></devnotes></property>
+      <property name="SelText" visibility="public" read="GetSelText" type="string" default="0" file="FMX.Edit.pas" line="329"><devnotes><summary>
+Specifies the selected portion of the edit control's text.
+Read SelText to determine the value of the selected text. Set SelText to replace the selected text with a new string. If there is no selection, but the edit control has focus, set SelText to insert a new string into the text, at the cursor.
+</summary></devnotes></property>
+      <property name="StyledSettings" visibility="public" read="GetStyledSettings" write="SetStyledSettings" stored="StyledSettingsStored" type="TStyledSettings" file="FMX.Edit.pas" line="330"><devnotes><summary>
+Defines the set of styled text representation properties whose values are loaded from the current style and cannot be changed manually. 
+Text representation properties are used as parameters for drawing texts in controls.
+The StyledSettings property is used in FMX controls such as TButton, TSpeedButton, TCheckBox, and others.
+Styles, for example Metropolis UI styles, define the default values of the text representation properties like font name, font size, word-wrapping, and others.
+The TTextSettings class define properties keeping values of the FontColor, TextAlign, VertTextAlign, Trimming,  WordWrap, and Font (TFont.Family, TFont.Size, TFont.Style) elements defining visual parameters of a text representation.
+StyledSettings can contain the Family, Size, Style, FontColor, and 
+Other values defined in TStyledSetting. The &quot;Relation between TStyledSetting constants and TTextSettings properties&quot; table shows which of the  TStyledSetting constants control the handling of these TTextSettings text representation properties.
+Keep in mind that the values of all styled text representation properties listed in the StyledSettings are taken from a style and cannot be changed manually. For example, if you set a new value of the FontColor property of a TTextControl control, then the real updating of the font color takes place only if the StyledSettings property of this control does not contain TStyledSetting.FontColor. For more details, see the example in Setting Text Parameters in FireMonkey.
+To switch OFF a font property for a control, select the control in the Form Designer. In the Object Inspector, expand the StyledSettings property. Clear the check mark before the property. For example, the following figure shows a TButton control with Size turned OFF (for Button1) and ON (for Button2):
+
+With StyledSettings you can also use the DefaultStyledSettings constant that defines the values of the styled properties that are taken from a style by default.
+Remember that the HorzAlign and VertAlign text representation properties stored in the TextSettings property of a control correspond to the TextAlign and 
+VertTextAlign properties of the control.
+</summary></devnotes></property>
+      <property name="Text" visibility="public" read="GetText" write="SetText" type="string" default="0" file="FMX.Edit.pas" line="331"><devnotes><summary>
+Contains the text displayed by this edit control.
+Use the Text property to read the text of this edit control or to specify a new string to be displayed.
+</summary></devnotes></property>
+      <property name="TextAlign" visibility="public" read="GetTextAlign" write="SetTextAlign" type="TTextAlign" default="1" file="FMX.Edit.pas" line="332"><devnotes><summary>
+Specifies how the text will be displayed in terms of horizontal alignment.
+The TextAlign property specifies how this edit control  displays the text in terms of horizontal alignment. TextAlign can have one of the following, defined in TTextAlign, values:
+
+Center (default) aligns the text at the middle of the edit control.
+Leading aligns the text at the leftmost position inside the edit control.
+Trailing aligns the text at the rightmost position inside the edit control.
+When you use text representation properties stored in ITextSettings.TextSettings, remember that TextAlign corresponds to HorzAlign.
+</summary></devnotes></property>
+      <property name="TextSettings" visibility="public" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" file="FMX.Edit.pas" line="333"><devnotes><summary>
+Keeps the values of styled text representation properties that are set in the Object Inspector or programmatically.
+TextSettings references a TTextSettings type object that handles values of styled text representation properties that are set in the Object Inspector or programmatically. TextSettings references a TTextSettings type object, which handles  styled text representation properties to be used for drawing texts in this control. 
+TTextSettings type objects provide all styled text representation properties and methods to manage them.
+The styled text representation properties are 
+FontColor, TextAlign,
+VertTextAlign,
+Trimming, WordWrap, and Font (TFont.Family, TFont.Size, and TFont.Style).
+TTextSettings objects provide both styled text representation properties, whose values are loaded from a style (specified in StyledSettings), so all other styled text representation properties, whose values can be set manually, and methods to manage these text representation properties. The text representation properties identified in StyledSettings are loaded from the style and cannot be set manually. 
+Remember that the HorzAlign and VertAlign text representation properties stored in the TextSettings property of a control correspond to the TextAlign and 
+VertTextAlign properties of the control.
+</summary></devnotes></property>
+      <property name="TextPrompt" visibility="public" read="GetPromptText" write="SetPromptText" type="string" default="0" file="FMX.Edit.pas" line="334"><devnotes><summary>
+A hint or message to be displayed when the Text property is empty.
+Use TextPrompt to cue the user about the kind of entry that is expected in the text field. The TextPrompt is grayed (like a watermark), cannot be scrolled at run time, and is cleared from the entry field as soon as the user begins to type into the edit field.
+The following image contains a design-time preview of setting the TextPrompt property:
+
+</summary></devnotes></property>
+      <property name="Typing" visibility="public" read="GetTyping" write="SetTyping" type="Boolean" default="0" file="FMX.Edit.pas" line="335"><devnotes><summary>
+Specifies whether the user is typing something in this edit control.
+The Typing property is True if the user is typing something into this edit control, False otherwise.
+When any printable character is typed, the Typing property is set to True. A printable character is any character that is not a control character.
+When the ENTER key is pressed, the Typing property is set to False.
+</summary></devnotes></property>
+      <property name="VertTextAlign" visibility="public" read="GetVertTextAlign" write="SetVertTextAlign" type="TTextAlign" default="0" file="FMX.Edit.pas" line="336"><devnotes><summary>
+Specifies how the text will be displayed in terms of vertical alignment.
+The VertTextAlign property specifies how the TCustomEdit control displays the text in terms of vertical alignment. VertTextAlign can have one of the following values (defined in TTextAlign):
+
+Center (default)--aligns the text on a vertical axis, at the middle of the TCustomEdit object.
+Leading--aligns the text on a vertical axis, at the topmost position inside the TCustomEdit object.
+Trailing--aligns the text on a vertical axis, at the bottommost position inside the TCustomEdit object.
+When you use text representation properties stored in ITextSettings.TextSettings, remember that VertTextAlign corresponds to VertAlign.
+</summary></devnotes></property>
+      <property name="CharCase" visibility="public" read="GetCharCase" write="SetCharCase" type="TEditCharCase" file="FMX.Edit.pas" line="338">
+        <devnotes><summary>
+It defines whether to implement the UPPER or lower case conversion to the memo's text.
+
+
+</summary></devnotes>
+      </property>
+      <event name="OnChange" visibility="public" read="GetOnChange" write="SetOnChange" type="TNotifyEvent" file="FMX.Edit.pas" line="339"><devnotes><summary>
+Occurs when the text for the edit control may have changed.
+Write an OnChange event handler to take specific action whenever the text for the edit control may have changed. The Text property of the edit control will already have been updated to reflect any changes.
+
+Tip: OnChange does not occur after individual characters have been typed, but only after the user presses the ENTER key or the focus leaves the control. An event that responds to individual character changes is OnChangeTracking.</summary></devnotes></event>
+      <event name="OnChangeTracking" visibility="public" read="GetOnChangeTracking" write="SetOnChangeTracking" type="TNotifyEvent" file="FMX.Edit.pas" line="340"><devnotes><summary>
+Occurs when typing individual characters into the edit control.
+Write an OnChangeTracking event handler to take specific action whenever you set the text for the edit control or type individual characters in it. The Text property of the edit control will already have been updated to reflect any changes. This event provides the first opportunity to respond to modifications the user brought to the text of the edit control.
+
+Tip: There is also an OnChange event that does not occur after individual characters have been typed, but only after the user presses the ENTER key or the focus leaves the control. For responding to individual character changes, use only the OnChangeTracking event.</summary></devnotes></event>
+      <event name="OnTyping" visibility="public" read="GetOnTyping" write="SetOnTyping" type="TNotifyEvent" file="FMX.Edit.pas" line="341"><devnotes><summary>
+Occurs when you are typing into this edit control.
+Write an OnTyping event handler to take specific action whenever you type into this edit control. While you type in characters, the Typing property is also set to True.
+</summary></devnotes></event>
+      <event name="OnValidating" visibility="public" read="GetOnValidating" write="SetOnValidating" type="TValidateTextEvent" file="FMX.Edit.pas" line="342"><devnotes><summary>
+Occurs when you are entering symbols or when focus shifts away from this edit control.
+Write an OnValidating event handler to immediately validate any edits while the user is entering information into the edit control. The OnValidating event handler can verify the supplied text and, if it is not acceptable, return an error or warning message.
+
+Example
+To clarify, consider the following scenario: an application provides a text edit box designed to enter an email address. If the user enters the blank  character or the &quot;@.&quot; substring, the OnValidating event handler displays the exclamation icon next to the edit control. This icon informs the user that the current symbols are not acceptable for the email address.
+
+
+Note:  Initially, the exclamation icon is invisible. The OnValidating event handler sets the TImage.Visible property to True, if an input error occurs.
+
+
+
+For this scenario, you can implement the following OnValidating event handlers:
+
+
+Delphi:
+
+procedure TForm1.Edit1Validating(Sender: TObject; var Text: string);
+begin
+  Image1.Visible := Text.Contains(' ') or Text.Contains('@.');
+end;
+
+
+
+C++Builder: 
+
+void __fastcall TForm1::Edit1Validating(TObject *Sender, UnicodeString &amp;Text) {
+	Image1-&gt;Visible = ContainsStr(Text, &quot; &quot;) || ContainsStr(Text, &quot;@.&quot;);
+}
+
+
+
+Note:  To process the user's input, these code snippets use: 
+
+For C++Builder: the System.StrUtils.ContainsStr routine.
+For Delphi: the System.SysUtils.TStringHelper.Contains methode.
+</summary></devnotes></event>
+      <event name="OnValidate" visibility="public" read="GetOnValidate" write="SetOnValidate" type="TValidateTextEvent" file="FMX.Edit.pas" line="343"><devnotes><summary>
+Occurs after the user presses the ENTER key or the focus leaves the control. 
+
+Write an OnValidate event handler to validate any edits the user enters in the edit control before the text has changed. 
+The OnValidate event handler can verify the supplied text and, if it is not acceptable, return an error or warning message.
+
+Code Snippets
+To clarify, consider the following scenario: an application provides a text edit box designed to enter a user email address from the mycompany.com domain, such as John.Doe@mycompany.com. If the user enters a text that does not end with the &quot;mydomain.com&quot; substring, the application displays an error message in the edit control.
+In this scenario, you can implement the following OnValidate event handlers:
+
+
+Delphi:
+
+procedure TForm1.Edit1Validate(Sender: TObject; var Text: string);
+begin
+  if not EndsText('mycompany.com', Text) then
+      Text := 'Invalid email!'
+end;
+
+
+
+C++Builder: 
+
+void __fastcall TForm1::Edit1Validate(TObject *Sender, UnicodeString &amp;Text)
+{
+	if (!EndsText(&quot;mycompany.com&quot;, Text))  {     Text = &quot;Invalid email!&quot;;
+
+	}
+}
+
+
+
+Note:  These code snippets use the System.StrUtils.EndsText routine.
+
+</summary></devnotes></event>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Edit.pas" line="345"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Edit.pas" line="346"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="347"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Edit.pas" line="348"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="349"/>
+    </members>
+  <devnotes><summary>
+TCustomEdit is the base class from which all FireMonkey edit boxes and memo controls are derived.
+TCustomEdit encapsulates the behavior common to all components for editing text by introducing methods and properties that provide:
+
+Basic text editing functions such as selecting text, modifying selected text, and case conversions.
+Ability to respond to changes in the contents of the text.
+Access control of the text for making it read-only or introducing a password character to hide the actual value.
+When not in focus, TCustomEdit does not draw a selection rectangle even though the user has selected the text. You can verify whether the text is selected by using the SelText property.
+Do not create instances of TCustomEdit. Use TCustomEdit as a base class when declaring control objects that permit the user to enter or modify text. Properties and methods of TCustomEdit provide basic behavior that descendant classes inherit, as well as behavior that components can override to customize their behavior.
+</summary></devnotes></class>
+  <interface name="IEditControl" GUID="{4C7EE0A7-06EC-4515-B843-B608FB984468}" ancestor="IInterface" file="FMX.Edit.pas" line="354">
+    <function name="BoundsRect" visibility="public" procflags="abstract virtual" file="FMX.Edit.pas" line="356">
+      <parameters>
+        <retval type="TRectF"/>
+      </parameters>
+    </function>
+    <function name="GetControl" visibility="public" procflags="abstract virtual" file="FMX.Edit.pas" line="357">
+      <parameters>
+        <retval type="TControl"/>
+      </parameters>
+    </function>
+  </interface>
+  <class name="TEditButton" file="FMX.Edit.pas" line="360">
+    
+    <interfaces>
+      <implements name="IEditControl"/>
+    </interfaces>
+    <members>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="362">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="363">
+        <parameters>
+          <parameter name="NewName" type="TComponentName" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetDefaultSize" visibility="protected" procflags="override" file="FMX.Edit.pas" line="364">
+        <parameters>
+          <retval type="TSizeF"/>
+        </parameters>
+      </function>
+      <function name="GetControl" visibility="protected" file="FMX.Edit.pas" line="367">
+        <parameters>
+          <retval type="TControl"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="369">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <function name="GetEdit" visibility="public" file="FMX.Edit.pas" line="370">
+        <parameters>
+          <retval type="TCustomEdit"/>
+        </parameters>
+      </function>
+      <property name="Action" visibility="published" read="GetAction" write="SetAction" type="TBasicAction" hoisted="true" file="FMX.Edit.pas" line="372"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Edit.pas" line="373"/>
+      <property name="AutoTranslate" visibility="published" read="FAutoTranslate" write="FAutoTranslate" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="374"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="375"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="376"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="377"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="378"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Edit.pas" line="379"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="380"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Edit.pas" line="381"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="382"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="383"/>
+      <property name="TextSettings" visibility="published" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.Edit.pas" line="384"/>
+      <property name="Font" visibility="published" read="GetFont" write="SetFont" type="TFont" hoisted="true" file="FMX.Edit.pas" line="385"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="386"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Edit.pas" line="387"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="388"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Edit.pas" line="389"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="390"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="391"/>
+      <property name="IsPressed" visibility="published" read="FIsPressed" write="SetIsPressed" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="392"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="393"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="394"/>
+      <property name="ModalResult" visibility="published" read="FModalResult" write="FModalResult" type="TModalResult" default="0" hoisted="true" file="FMX.Edit.pas" line="395"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Edit.pas" line="396"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="397"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Edit.pas" line="398"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="399"/>
+      <property name="RepeatClick" visibility="published" read="FRepeat" write="FRepeat" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="400"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Edit.pas" line="401"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="402"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="403"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Edit.pas" line="404"/>
+      <property name="StaysPressed" visibility="published" read="FStaysPressed" write="SetStaysPressed" stored="IsPressedStored" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="405"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="406"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Edit.pas" line="407"/>
+      <property name="Text" visibility="published" read="GetText" write="SetText" stored="TextStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="408"/>
+      <property name="TextAlign" visibility="published" read="GetTextAlign" write="SetTextAlign" type="TTextAlign" default="0" hoisted="true" file="FMX.Edit.pas" line="409"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="410"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="411"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="412"/>
+      <property name="WordWrap" visibility="published" read="GetWordWrap" write="SetWordWrap" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="413"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="414"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Edit.pas" line="415"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="417"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Edit.pas" line="418"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="419"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Edit.pas" line="420"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Edit.pas" line="421"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="422"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="423"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="424"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Edit.pas" line="425"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="426"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="427"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="428"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="429"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="430"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Edit.pas" line="431"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="432"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Edit.pas" line="433"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="434"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="435"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="436"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="437"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="438"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="439"/>
+    </members>
+  </class>
+  <class name="TClearEditButton" file="FMX.Edit.pas" line="444">
+    
+    <members>
+      <procedure name="Click" visibility="protected" procflags="override" file="FMX.Edit.pas" line="446">
+      </procedure>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="447">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="449">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+    </members>
+  </class>
+  <class name="TPasswordEditButton" file="FMX.Edit.pas" line="454">
+    
+    <members>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="456">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="458">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <procedure name="MouseDown" visibility="public" procflags="override" file="FMX.Edit.pas" line="459">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      </procedure>
+      <procedure name="MouseUp" visibility="public" procflags="override" file="FMX.Edit.pas" line="460">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      </procedure>
+    </members>
+  </class>
+  <class name="TSearchEditButton" file="FMX.Edit.pas" line="465">
+    
+    <members>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="467">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="469">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+    </members>
+  </class>
+  <class name="TEllipsesEditButton" file="FMX.Edit.pas" line="474">
+    
+    <members>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="476">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="478">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+    </members>
+  </class>
+  <class name="TDropDownEditButton" file="FMX.Edit.pas" line="483">
+    
+    <members>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="485">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="487">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+    </members>
+  </class>
+  <class name="TSpinEditButton" file="FMX.Edit.pas" line="492">
+    
+    <interfaces>
+      <implements name="IEditControl"/>
+    </interfaces>
+    <members>
+      <field name="FRepeatClick" type="Boolean" visibility="private" size="1" offset="944" file="FMX.Edit.pas" line="494"/>
+      <field name="FUpButton" type="TCustomButton" visibility="private" size="4" offset="948" file="FMX.Edit.pas" line="496"/>
+      <field name="FDownButton" type="TCustomButton" visibility="private" size="4" offset="952" file="FMX.Edit.pas" line="497"/>
+      <field name="FOnUpClick" type="TNotifyEvent" visibility="private" size="8" offset="960" file="FMX.Edit.pas" line="499"/>
+      <field name="FOnDownClick" type="TNotifyEvent" visibility="private" size="8" offset="968" file="FMX.Edit.pas" line="500"/>
+      <procedure name="SetRepeatClick" visibility="private" file="FMX.Edit.pas" line="501">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.Edit.pas" line="504">
+      </procedure>
+      <procedure name="FreeStyle" visibility="protected" procflags="override" file="FMX.Edit.pas" line="505">
+      </procedure>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="506">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetDefaultSize" visibility="protected" procflags="override" file="FMX.Edit.pas" line="507">
+        <parameters>
+          <retval type="TSizeF"/>
+        </parameters>
+      </function>
+      <procedure name="DoUpButtonClick" visibility="protected" file="FMX.Edit.pas" line="509">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoDownButtonClick" visibility="protected" file="FMX.Edit.pas" line="510">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="GetControl" visibility="protected" file="FMX.Edit.pas" line="513">
+        <parameters>
+          <retval type="TControl"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="515">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Edit.pas" line="517"/>
+      <property name="AutoTranslate" visibility="published" read="FAutoTranslate" write="FAutoTranslate" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="518"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="519"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="520"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="521"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="522"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Edit.pas" line="523"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="524"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Edit.pas" line="525"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="526"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="527"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="528"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Edit.pas" line="529"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="530"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Edit.pas" line="531"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="532"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="533"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="534"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="535"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Edit.pas" line="536"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="537"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Edit.pas" line="538"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="539"/>
+      <property name="RepeatClick" visibility="published" read="FRepeatClick" write="SetRepeatClick" type="Boolean" default="0" file="FMX.Edit.pas" line="540"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Edit.pas" line="541"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="542"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="543"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Edit.pas" line="544"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="545"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Edit.pas" line="546"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="547"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="548"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="549"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="550"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Edit.pas" line="551"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="553"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Edit.pas" line="554"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="555"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Edit.pas" line="556"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Edit.pas" line="557"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="558"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="559"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="560"/>
+      <event name="OnDownClick" visibility="published" read="FOnDownClick" write="FOnDownClick" type="TNotifyEvent" file="FMX.Edit.pas" line="561"/>
+      <event name="OnUpClick" visibility="published" read="FOnUpClick" write="FOnUpClick" type="TNotifyEvent" file="FMX.Edit.pas" line="562"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Edit.pas" line="563"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="564"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="565"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="566"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="567"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="568"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Edit.pas" line="569"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="570"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Edit.pas" line="571"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="572"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="573"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="574"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="575"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="576"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="577"/>
+    </members>
+  </class>
+  <class name="TEdit" file="FMX.Edit.pas" line="582">
+    
+    <members>
+      <property name="Action" visibility="public" read="GetAction" write="SetAction" type="TBasicAction" hoisted="true" file="FMX.Edit.pas" line="584"/>
+      <property name="ControlType" visibility="published" read="GetControlType" write="SetControlType" type="TControlType" default="0" hoisted="true" file="FMX.Edit.pas" line="586"/>
+      <event name="OnPresentationNameChoosing" visibility="published" read="FOnPresenterNameChoosing" write="FOnPresenterNameChoosing" type="TPresenterNameChoosingEvent" hoisted="true" file="FMX.Edit.pas" line="587"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="-4" hoisted="true" file="FMX.Edit.pas" line="589"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="590"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="591"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="592"/>
+      <property name="KeyboardType" visibility="published" read="GetKeyboardType" write="SetKeyboardType" type="TVirtualKeyboardType" default="0" hoisted="true" file="FMX.Edit.pas" line="593"/>
+      <property name="ReturnKeyType" visibility="published" read="GetReturnKeyType" write="SetReturnKeyType" type="TReturnKeyType" default="0" hoisted="true" file="FMX.Edit.pas" line="594"/>
+      <property name="Password" visibility="published" read="GetPassword" write="SetPassword" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="595"/>
+      <property name="ReadOnly" visibility="published" read="GetReadOnly" write="SetReadOnly" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="596"/>
+      <property name="MaxLength" visibility="published" read="GetMaxLength" write="SetMaxLength" type="Integer" default="0" hoisted="true" file="FMX.Edit.pas" line="600">
+        <devnotes>
+          <summary>Maxmimum length of text that can be input in the edit field.</summary>
+          <remarks>On Android due to platform limitations text is truncated only after pressing ENTER key or after losing
+          focus.</remarks>
+        </devnotes>
+      </property>
+      <property name="FilterChar" visibility="published" read="GetFilterChar" write="SetFilterChar" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="605">
+        <devnotes>
+          <summary>Defines characters which can be input in the edit field. All characters not in FilterChar will be
+          ignored. Empty FilterChar value means no filtering.</summary>
+          <remarks>On Android due to platform limitations text is filtered only after pressing ENTER key or after control
+          losing focus.</remarks>
+        </devnotes>
+      </property>
+      <property name="Text" visibility="published" read="GetText" write="SetText" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="606"/>
+      <property name="TextSettings" visibility="published" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.Edit.pas" line="607"/>
+      <property name="ImeMode" visibility="published" read="GetImeMode" write="SetImeMode" type="TImeMode" default="0" hoisted="true" file="FMX.Edit.pas" line="608"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="609"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="610"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Edit.pas" line="611"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="612"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="613"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Edit.pas" line="614"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="615"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="616"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="617"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="618"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="619"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Edit.pas" line="620"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="621"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Edit.pas" line="622"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="623"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Edit.pas" line="624"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="625"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Edit.pas" line="626"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Edit.pas" line="627"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="628"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Edit.pas" line="629"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Edit.pas" line="630"/>
+      <property name="TextPrompt" visibility="published" read="GetPromptText" write="SetPromptText" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="631"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Edit.pas" line="632"/>
+      <property name="StyledSettings" visibility="published" read="GetStyledSettings" write="SetStyledSettings" stored="StyledSettingsStored" type="TStyledSettings" hoisted="true" file="FMX.Edit.pas" line="633"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Edit.pas" line="634"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="635"/>
+      <property name="Caret" visibility="published" read="GetCaret" write="SetCaret" type="TCustomCaret" hoisted="true" file="FMX.Edit.pas" line="636"/>
+      <property name="KillFocusByReturn" visibility="published" read="GetKillFocusByReturn" write="SetKillFocusByReturn" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="637"/>
+      <property name="CheckSpelling" visibility="published" read="GetCheckSpelling" write="SetCheckSpelling" type="Boolean" default="0" hoisted="true" file="FMX.Edit.pas" line="638"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Edit.pas" line="639"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Edit.pas" line="640"/>
+      <property name="CharCase" visibility="published" read="GetCharCase" write="SetCharCase" type="TEditCharCase" default="0" hoisted="true" file="FMX.Edit.pas" line="641"/>
+      <event name="OnChange" visibility="published" read="GetOnChange" write="SetOnChange" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="643"/>
+      <event name="OnChangeTracking" visibility="published" read="GetOnChangeTracking" write="SetOnChangeTracking" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="644"/>
+      <event name="OnTyping" visibility="published" read="GetOnTyping" write="SetOnTyping" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="645"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="646"/>
+      <event name="OnValidating" visibility="published" read="GetOnValidating" write="SetOnValidating" type="TValidateTextEvent" hoisted="true" file="FMX.Edit.pas" line="647"/>
+      <event name="OnValidate" visibility="published" read="GetOnValidate" write="SetOnValidate" type="TValidateTextEvent" hoisted="true" file="FMX.Edit.pas" line="648"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Edit.pas" line="649"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="650"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Edit.pas" line="651"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Edit.pas" line="652"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="653"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="654"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Edit.pas" line="655"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Edit.pas" line="656"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="657"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="658"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="659"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="660"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="661"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Edit.pas" line="662"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Edit.pas" line="663"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Edit.pas" line="664"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="665"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="666"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="667"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Edit.pas" line="668"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="669"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Edit.pas" line="670"/>
+    </members>
+  <devnotes><summary>
+General-purpose FireMonkey edit box.
+TEdit extends the functionality of TCustomEdit by publishing a set of properties to the Object Inspector so you can customize the look and feel of this edit box.
+For using TEdit in a Metro application, see 
+Creating Metropolis UI Edit Buttons with Embedded Glyphs.
+When not in focus, TEdit does not draw a selection rectangle even though the user has selected the text. You can verify whether the text is selected by using the SelText property.
+
+Note: For a multiline edit control, use FMX.Memo.TMemo.</summary></devnotes></class>
+  <class name="TClearingEdit" file="FMX.Edit.pas" line="675" symflags="deprecated">
+    
+    <members>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="677" symflags="deprecated">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Edit.pas" line="678" symflags="deprecated">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Edit.pas" line="680" symflags="deprecated">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+    </members>
+  </class>
+</namespace>

@@ -1,0 +1,1908 @@
+<?xml version="1.0" ?><namespace name="FMX.TabControl" platform="Win32">
+  <classref name="TTabItemClass" ref="TTabItem" file="FMX.TabControl.pas" line="24"/>
+  <enum name="TTabTransition" file="FMX.TabControl.pas" line="26">
+    <element value="0" name="None" file="FMX.TabControl.pas" line="26"/>
+    <element value="1" name="Slide" file="FMX.TabControl.pas" line="26"/>
+  </enum>
+  <enum name="TTabTransitionDirection" file="FMX.TabControl.pas" line="27">
+    <element value="0" name="Normal" file="FMX.TabControl.pas" line="27"/>
+    <element value="1" name="Reversed" file="FMX.TabControl.pas" line="27"/>
+  </enum>
+  <class name="TTabControlAction" file="FMX.TabControl.pas" line="29">
+    
+    <members>
+      <field name="FTabControl" type="TTabControl" visibility="private" size="4" offset="184" file="FMX.TabControl.pas" line="31">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FTransition" type="TTabTransition" visibility="private" size="1" offset="188" file="FMX.TabControl.pas" line="32"/>
+      <field name="FDirection" type="TTabTransitionDirection" visibility="private" size="1" offset="189" file="FMX.TabControl.pas" line="33"/>
+      <procedure name="SetTabControl" visibility="private" file="FMX.TabControl.pas" line="34">
+        <parameters>
+          <parameter name="Value" type="TTabControl" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="FindVisibleTab" visibility="protected" file="FMX.TabControl.pas" line="36">
+        <parameters>
+          <parameter name="LeftToRight" type="Boolean"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="37">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      </procedure>
+      <property name="TabControl" visibility="protected" read="FTabControl" write="SetTabControl" type="TTabControl" file="FMX.TabControl.pas" line="38"/>
+      <property name="Transition" visibility="protected" read="FTransition" write="FTransition" type="TTabTransition" default="1" file="FMX.TabControl.pas" line="39"/>
+      <property name="Direction" visibility="protected" read="FDirection" write="FDirection" type="TTabTransitionDirection" default="0" file="FMX.TabControl.pas" line="40"/>
+      <constructor name="Create" visibility="public" file="FMX.TabControl.pas" line="42">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <function name="GetEnsuingTabIndex" visibility="public" procflags="virtual" file="FMX.TabControl.pas" line="43">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="HandlesTarget" visibility="public" procflags="override" file="FMX.TabControl.pas" line="44">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="ExecuteTarget" visibility="public" procflags="override" file="FMX.TabControl.pas" line="45">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="Update" visibility="public" procflags="override" file="FMX.TabControl.pas" line="46">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+    </members>
+  </class>
+  <class name="TChangeTabAction" file="FMX.TabControl.pas" line="49">
+    
+    <members>
+      <field name="FTab" type="TTabItem" visibility="private" size="4" offset="192" file="FMX.TabControl.pas" line="51">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <procedure name="SetTab" visibility="private" file="FMX.TabControl.pas" line="52">
+        <parameters>
+          <parameter name="Value" type="TTabItem" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="UpdateTabControl" visibility="private" file="FMX.TabControl.pas" line="53">
+      </procedure>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="55">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      </procedure>
+      <function name="GetEnsuingTabIndex" visibility="public" procflags="override" file="FMX.TabControl.pas" line="57">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="CustomTextChanged" visibility="public" procflags="override" file="FMX.TabControl.pas" line="58">
+      </procedure>
+      <procedure name="ExecuteTarget" visibility="public" procflags="override" file="FMX.TabControl.pas" line="59">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="Update" visibility="public" procflags="override" file="FMX.TabControl.pas" line="60">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="CustomText" visibility="published" read="FCustomText" write="SetCustomText" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="62"/>
+      <property name="Tab" visibility="published" read="FTab" write="SetTab" type="TTabItem" file="FMX.TabControl.pas" line="63"/>
+      <property name="Direction" visibility="published" read="FDirection" write="FDirection" type="TTabTransitionDirection" default="0" hoisted="true" file="FMX.TabControl.pas" line="64"/>
+      <property name="Transition" visibility="published" read="FTransition" write="FTransition" type="TTabTransition" default="1" hoisted="true" file="FMX.TabControl.pas" line="65"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" type="THelpContext" default="0" hoisted="true" file="FMX.TabControl.pas" line="66"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="67"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="SetHelpType" type="THelpType" default="0" hoisted="true" file="FMX.TabControl.pas" line="68"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="69"/>
+      <property name="ShortCut" visibility="published" read="FShortCut" write="SetShortCut" type="TShortCut" default="0" hoisted="true" file="FMX.TabControl.pas" line="70"/>
+      <property name="SecondaryShortCuts" visibility="published" read="GetSecondaryShortCuts" write="SetSecondaryShortCuts" stored="IsSecondaryShortCutsStored" type="TCustomShortCutList" hoisted="true" file="FMX.TabControl.pas" line="71"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="72"/>
+      <event name="OnUpdate" visibility="published" read="FOnUpdate" write="FOnUpdate" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="73"/>
+    </members>
+  </class>
+  <class name="TNextTabAction" file="FMX.TabControl.pas" line="76">
+    
+    <members>
+      <function name="GetEnsuingTabIndex" visibility="public" procflags="override" file="FMX.TabControl.pas" line="78">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="CustomTextChanged" visibility="public" procflags="override" file="FMX.TabControl.pas" line="79">
+      </procedure>
+      <property name="TabControl" visibility="published" read="FTabControl" write="SetTabControl" type="TTabControl" hoisted="true" file="FMX.TabControl.pas" line="81"/>
+      <property name="CustomText" visibility="published" read="FCustomText" write="SetCustomText" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="82"/>
+      <property name="Direction" visibility="published" read="FDirection" write="FDirection" type="TTabTransitionDirection" default="0" hoisted="true" file="FMX.TabControl.pas" line="83"/>
+      <property name="Transition" visibility="published" read="FTransition" write="FTransition" type="TTabTransition" default="1" hoisted="true" file="FMX.TabControl.pas" line="84"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" type="THelpContext" default="0" hoisted="true" file="FMX.TabControl.pas" line="85"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="86"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="SetHelpType" type="THelpType" default="0" hoisted="true" file="FMX.TabControl.pas" line="87"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="88"/>
+      <property name="ShortCut" visibility="published" read="FShortCut" write="SetShortCut" type="TShortCut" default="0" hoisted="true" file="FMX.TabControl.pas" line="89"/>
+      <property name="SecondaryShortCuts" visibility="published" read="GetSecondaryShortCuts" write="SetSecondaryShortCuts" stored="IsSecondaryShortCutsStored" type="TCustomShortCutList" hoisted="true" file="FMX.TabControl.pas" line="90"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="91"/>
+      <event name="OnUpdate" visibility="published" read="FOnUpdate" write="FOnUpdate" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="92"/>
+    </members>
+  </class>
+  <class name="TPreviousTabAction" file="FMX.TabControl.pas" line="95">
+    
+    <members>
+      <function name="GetEnsuingTabIndex" visibility="public" procflags="override" file="FMX.TabControl.pas" line="97">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="CustomTextChanged" visibility="public" procflags="override" file="FMX.TabControl.pas" line="98">
+      </procedure>
+      <property name="TabControl" visibility="published" read="FTabControl" write="SetTabControl" type="TTabControl" hoisted="true" file="FMX.TabControl.pas" line="100"/>
+      <property name="CustomText" visibility="published" read="FCustomText" write="SetCustomText" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="101"/>
+      <property name="Direction" visibility="published" read="FDirection" write="FDirection" type="TTabTransitionDirection" default="0" hoisted="true" file="FMX.TabControl.pas" line="102"/>
+      <property name="Transition" visibility="published" read="FTransition" write="FTransition" type="TTabTransition" default="1" hoisted="true" file="FMX.TabControl.pas" line="103"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" type="THelpContext" default="0" hoisted="true" file="FMX.TabControl.pas" line="104"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="105"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="SetHelpType" type="THelpType" default="0" hoisted="true" file="FMX.TabControl.pas" line="106"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="107"/>
+      <property name="ShortCut" visibility="published" read="FShortCut" write="SetShortCut" type="TShortCut" default="0" hoisted="true" file="FMX.TabControl.pas" line="108"/>
+      <property name="SecondaryShortCuts" visibility="published" read="GetSecondaryShortCuts" write="SetSecondaryShortCuts" stored="IsSecondaryShortCutsStored" type="TCustomShortCutList" hoisted="true" file="FMX.TabControl.pas" line="109"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="110"/>
+      <event name="OnUpdate" visibility="published" read="FOnUpdate" write="FOnUpdate" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="111"/>
+    </members>
+  </class>
+  <class name="TTabItem" file="FMX.TabControl.pas" line="116">
+    
+    <interfaces>
+      <implements name="IGlyph"/>
+    </interfaces>
+    <members>
+      <const name="DotStyleName" visibility="public" type="string" file="FMX.TabControl.pas" line="142">
+        <value>
+          tabdotstyle
+        </value>
+      </const>
+      <const name="DotSize" visibility="public" type="Integer" file="FMX.TabControl.pas" line="119">
+        <value>
+          $8
+        </value>
+      </const>
+      <struct name="TTabItemInfo" visibility="public" alias="FMX.TabControl.TTabItemInfo" size="24" file="FMX.TabControl.pas" line="122">
+        <field name="LayoutControlSize" type="TSizeF" visibility="public" size="8" offset="0" file="FMX.TabControl.pas" line="125">
+          <devnotes>
+             <summary> The size of the style element <c>layoutstyle</c>. If it is not present then <c>-1</c>, <c>-1</c>
+             </summary>
+          </devnotes>
+        </field>
+        <field name="Size" type="TSizeF" visibility="public" size="8" offset="8" file="FMX.TabControl.pas" line="127">
+          <devnotes>
+             <summary> The autocalculated size of the tab title </summary>
+          </devnotes>
+        </field>
+        <field name="ExplicitSize" type="TSizeF" visibility="public" size="8" offset="16" file="FMX.TabControl.pas" line="129">
+          <devnotes>
+             <summary> Size which was set manually when <c>AutoSize</c> was <c>False</c></summary>
+          </devnotes>
+        </field>
+      </struct>
+      <enum name="TPaintPart" visibility="public" alias="FMX.TabControl.TPaintPart" file="FMX.TabControl.pas" line="131">
+        <element value="0" name="All" file="FMX.TabControl.pas" line="131"/>
+        <element value="1" name="ResourceControl" file="FMX.TabControl.pas" line="131"/>
+        <element value="2" name="Children" file="FMX.TabControl.pas" line="131"/>
+        <element value="3" name="Nothing" file="FMX.TabControl.pas" line="131"/>
+      </enum>
+      <enum name="TSizeState" visibility="private" alias="FMX.TabControl.TSizeState" file="FMX.TabControl.pas" line="133">
+        <element value="0" name="Invalid" file="FMX.TabControl.pas" line="133"/>
+        <element value="1" name="Calculating" file="FMX.TabControl.pas" line="133"/>
+        <element value="2" name="Calculated" file="FMX.TabControl.pas" line="133"/>
+      </enum>
+      <field name="FSizeState" type="TTabItem.TSizeState" visibility="class private" size="1" offset="992" file="FMX.TabControl.pas" line="135"/>
+      <field name="FInfo" type="TTabItem.TTabItemInfo" visibility="class private" size="24" offset="996" file="FMX.TabControl.pas" line="136"/>
+      <field name="FContent" type="TContent" visibility="class private" size="4" offset="1020" file="FMX.TabControl.pas" line="137"/>
+      <field name="FTabControl" type="TTabControl" visibility="private" size="4" offset="1024" file="FMX.TabControl.pas" line="139"/>
+      <field name="FLeftOffset" type="Single" visibility="private" size="4" offset="1028" file="FMX.TabControl.pas" line="140"/>
+      <field name="FRightOffset" type="Single" visibility="private" size="4" offset="1032" file="FMX.TabControl.pas" line="141"/>
+      <field name="FAutoSize" type="Boolean" visibility="private" size="1" offset="1036" file="FMX.TabControl.pas" line="142"/>
+      <field name="FOriginalGlyphSize" type="TSizeF" visibility="private" size="8" offset="1040" file="FMX.TabControl.pas" line="143"/>
+      <field name="FOriginalIconSize" type="TSizeF" visibility="private" size="8" offset="1048" file="FMX.TabControl.pas" line="144"/>
+      <field name="FIsSelected" type="Boolean" visibility="private" size="1" offset="1056" file="FMX.TabControl.pas" line="145"/>
+      <field name="FCustomIcon" type="TFixedMultiResBitmap" visibility="private" size="4" offset="1060" file="FMX.TabControl.pas" line="146"/>
+      <field name="FItemStyle" type="TControl" visibility="private" size="4" offset="1064" file="FMX.TabControl.pas" line="147"/>
+      <field name="FIconObject" type="IMultiResBitmapObject" visibility="private" size="4" offset="1068" file="FMX.TabControl.pas" line="148"/>
+      <field name="FIconControl" type="TControl" visibility="private" size="4" offset="1072" file="FMX.TabControl.pas" line="149"/>
+      <field name="FLayoutControl" type="TControl" visibility="private" size="4" offset="1076" file="FMX.TabControl.pas" line="150"/>
+      <field name="FOldLayoutWidth" type="Single" visibility="private" size="4" offset="1080" file="FMX.TabControl.pas" line="151"/>
+      <field name="FOldIconControlVisible" type="Boolean" visibility="private" size="1" offset="1084" file="FMX.TabControl.pas" line="152"/>
+      <field name="FCanTouchClick" type="Boolean" visibility="private" size="1" offset="1085" file="FMX.TabControl.pas" line="153"/>
+      <field name="FBeginPanPosition" type="TPointF" visibility="private" size="8" offset="1088" file="FMX.TabControl.pas" line="154"/>
+      <field name="FGlyph" type="TGlyph" visibility="private" size="4" offset="1096" file="FMX.TabControl.pas" line="155"/>
+      <field name="FImageLink" type="TGlyphImageLink" visibility="private" size="4" offset="1100" file="FMX.TabControl.pas" line="156"/>
+      <field name="FShowAsDot" type="Boolean" visibility="private" size="1" offset="1104" file="FMX.TabControl.pas" line="157"/>
+      <field name="FCustomStyleLookup" type="string" visibility="private" size="4" offset="1108" file="FMX.TabControl.pas" line="158"/>
+      <field name="FPaintPart" type="TTabItem.TPaintPart" visibility="private" size="1" offset="1112" file="FMX.TabControl.pas" line="159"/>
+      <function name="GetInfo" visibility="private" file="FMX.TabControl.pas" line="160">
+        <parameters>
+          <retval type="TTabItem.TTabItemInfo"/>
+        </parameters>
+      </function>
+      <procedure name="SetAutoSize" visibility="private" file="FMX.TabControl.pas" line="161">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetIsSelected" visibility="private" file="FMX.TabControl.pas" line="162">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCustomIcon" visibility="private" file="FMX.TabControl.pas" line="163">
+        <parameters>
+          <parameter name="Value" type="TFixedMultiResBitmap" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImages" visibility="private" file="FMX.TabControl.pas" line="164">
+        <parameters>
+          <retval type="TCustomImageList"/>
+        </parameters>
+      </function>
+      <procedure name="SetImages" visibility="private" file="FMX.TabControl.pas" line="165">
+        <parameters>
+          <parameter name="Value" type="TCustomImageList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImageIndex" visibility="private" file="FMX.TabControl.pas" line="167">
+        <parameters>
+          <retval type="TImageIndex"/>
+        </parameters>
+      </function>
+      <procedure name="SetImageIndex" visibility="private" file="FMX.TabControl.pas" line="168">
+        <parameters>
+          <parameter name="Value" type="TImageIndex" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImageList" visibility="private" procflags="inline" file="FMX.TabControl.pas" line="169">
+        <parameters>
+          <retval type="TBaseImageList"/>
+        </parameters>
+      </function>
+      <procedure name="SetImageList" visibility="private" file="FMX.TabControl.pas" line="170">
+        <parameters>
+          <parameter name="Value" type="TBaseImageList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="UpdateIcon" visibility="private" file="FMX.TabControl.pas" line="173">
+      </procedure>
+      <procedure name="SetSelectedInternal" visibility="private" file="FMX.TabControl.pas" line="174">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="UpdateLayoutControl" visibility="private" file="FMX.TabControl.pas" line="175">
+      </procedure>
+      <procedure name="SetShowAsDot" visibility="private" file="FMX.TabControl.pas" line="176">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetStyleLookup" visibility="private" file="FMX.TabControl.pas" line="177">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetStyleLookup" visibility="private" file="FMX.TabControl.pas" line="178">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadExplicitSizeCx" visibility="private" file="FMX.TabControl.pas" line="179">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadExplicitSizeCy" visibility="private" file="FMX.TabControl.pas" line="180">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="WriteExplicitSizeCx" visibility="private" file="FMX.TabControl.pas" line="181">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      </procedure>
+      <procedure name="WriteExplicitSizeCy" visibility="private" file="FMX.TabControl.pas" line="182">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      </procedure>
+      <function name="TouchEnabled" visibility="private" file="FMX.TabControl.pas" line="183">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="TouchClick" visibility="private" file="FMX.TabControl.pas" line="184">
+      </procedure>
+      <procedure name="UpdatePaintPart" visibility="private" file="FMX.TabControl.pas" line="185">
+      </procedure>
+      <procedure name="SetPaintPart" visibility="private" file="FMX.TabControl.pas" line="186">
+        <parameters>
+          <parameter name="Value" type="TTabItem.TPaintPart" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="CalcSize" visibility="protected" file="FMX.TabControl.pas" line="188">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="InvalidateSize" visibility="protected" file="FMX.TabControl.pas" line="192">
+        <devnotes><summary>
+Changes the size state from Calculated to Invalid so that the size is re-calculated later.
+InvalidateSize returns False if the call is performed at the moment of calculation. That is, when the size state is Calculating.
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="RealignTabs" visibility="protected" file="FMX.TabControl.pas" line="195">
+        <devnotes><summary>
+Calls TTabControl.RealignTabs.
+RealignTabs returns False if the call to TTabControl.RealignTabs is not executed. For example, in the case of recursive calls. 
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="196">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the DefaultStyleLookupName property.
+FMX.TabControl.TTabItem.GetDefaultStyleLookupName inherits from FMX.Controls.TStyledControl.GetDefaultStyleLookupName. All content below this line refers to FMX.Controls.TStyledControl.GetDefaultStyleLookupName.
+Protected getter implementation for the DefaultStyleLookupName property.
+When you Create a styled FireMonkey component by extending an existing component, override this method, if you want your component to inherit styles from the parent component. See Step 2 - Implement a Property to Specify the Format: Inheriting Styles of the Parent Component for more information and example code.
+</summary></devnotes></function>
+      <procedure name="ChangeOrder" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="197">
+      <devnotes><summary>
+
+
+Notification method called after the creation order is changed.
+FMX.TabControl.TTabItem.ChangeOrder inherits from FMX.Types.TFmxObject.ChangeOrder. All content below this line refers to FMX.Types.TFmxObject.ChangeOrder.
+Notification method called after the creation order is changed. ChangeOrder is a virtual method to be implemented in subclasses to allow for changing the creation order of this FMX object.
+</summary></devnotes></procedure>
+      <property name="Info" visibility="protected" read="GetInfo" type="TTabItem.TTabItemInfo" file="FMX.TabControl.pas" line="200">
+        <devnotes><summary>
+Holds information about the size of the tab title.
+The CalcSize method initializes the Info property.
+</summary></devnotes>
+      </property>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="201">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Adds the AObject object to the Children list of children attached to this parent object (self).
+FMX.TabControl.TTabItem.DoAddObject inherits from FMX.Types.TFmxObject.DoAddObject. All content below this line refers to FMX.Types.TFmxObject.DoAddObject.
+Adds the AObject object to the Children list of children attached to this parent object (self).
+DoAddObject adds the object provided in the AObject parameter to the list of children stored in the Children property of this object (self). DoAddObject changes the parent of AObject to this object (self) and sets the root of AObject to the Root object of this object (self).
+Descendant classes, like TCommonCustomForm and TControl, additionally handle tab stop lists keeping ordered lists of objects to which the user can tab. If such descendant class supports the ITabStopController interface and AObject is an object of a class supporting the IControl interface, then DoAddObject of this descendant adds AObject to the TabList tab stop lists of the (self) object. 
+DoAddObject is internally called from AddObject.
+</summary></devnotes></procedure>
+      <procedure name="DoChanged" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="202">
+      <devnotes><summary>
+Updates the representation of the text on the control.
+FMX.TabControl.TTabItem.DoChanged inherits from FMX.Controls.TTextControl.DoChanged. All content below this line refers to FMX.Controls.TTextControl.DoChanged.
+Updates the representation of the text on the control.
+DoChanged is called internally from the Change methods.
+Do not call DoChanged explicitly; call the Change  method. 
+</summary></devnotes></procedure>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="203">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+
+
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+FMX.TabControl.TTabItem.DefineProperties inherits from System.Classes.TComponent.DefineProperties. All content below this line refers to System.Classes.TComponent.DefineProperties.
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+TComponent overrides the DefineProperties method defined in TPersistent to define &quot;fake&quot; Top and Left properties. These are defined so that components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is virtual; descendent classes can override it. When overriding DefineProperties, be aware that the Ancestor property of Filer might be set, and that this property can determine whether or not it is appropriate to write properties.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly.
+</summary></devnotes></procedure>
+      <procedure name="SetText" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="204">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Text property.
+FMX.TabControl.TTabItem.SetText inherits from FMX.Controls.TTextControl.SetText. All content below this line refers to FMX.Controls.TTextControl.SetText.
+Protected setter implementation for the Text property.
+In descendants, override SetText to allow for further functionality when setting the text using the Text property.
+Do not use SetText directly in applications. Use the Text property instead.
+</summary></devnotes></procedure>
+      <function name="FindTextObject" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="205">
+        <parameters>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Retrieves the resource object linked to the style of the current TTextControl object.
+FMX.TabControl.TTabItem.FindTextObject inherits from FMX.Controls.TTextControl.FindTextObject. All content below this line refers to FMX.Controls.TTextControl.FindTextObject.
+Retrieves the resource object linked to the style of the current TTextControl object.
+In the current implementation, FindTextObject retrieves the resource object linked to the 'text' style.
+</summary></devnotes></function>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="206">
+      <devnotes><summary>
+
+
+Customizes styles in complex objects.
+FMX.TabControl.TTabItem.ApplyStyle inherits from FMX.Controls.TStyledControl.ApplyStyle. All content below this line refers to FMX.Controls.TStyledControl.ApplyStyle.
+Customizes styles in complex objects.
+TStyledControl descendants override it to apply styles in concordance with their primitive components.      
+Do not call ApplyStyle explicitly in an application. It is called by the ApplyStyleLookup method when object styles are updated.
+For an example of an ApplyStyle implementation, see &quot;TCalloutPanel:Style Contracts&quot; in FireMonkey Component Design.
+</summary></devnotes></procedure>
+      <procedure name="FreeStyle" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="207">
+      <devnotes><summary>
+Frees the style of TStyledControl.
+FMX.TabControl.TTabItem.FreeStyle inherits from FMX.Controls.TTextControl.FreeStyle. All content below this line refers to FMX.Controls.TTextControl.FreeStyle.
+Frees the style of TStyledControl.
+FreeStyle frees some TTextControl-specific style resources like TextObject and TextSettings, then calls the inherited TStyledControl.FreeStyle.
+</summary></devnotes></procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="208">
+      <devnotes><summary>
+
+
+Initializes the component after the form file has been read into memory.
+FMX.TabControl.TTabItem.Loaded inherits from FMX.Controls.TControl.Loaded. All content below this line refers to FMX.Controls.TControl.Loaded.
+Initializes the component after the form file has been read into memory. 
+Loaded inherits TComponent.Loaded, realigns the children, if any, and updates the tab list.
+For details, see TComponent.Loaded.
+</summary></devnotes></procedure>
+      <procedure name="MouseDown" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="209">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseDown event dispatcher. 
+FMX.TabControl.TTabItem.MouseDown inherits from FMX.Controls.TControl.MouseDown. All content below this line refers to FMX.Controls.TControl.MouseDown.
+OnMouseDown event dispatcher. 
+A control calls MouseDown in response to any of mouse-down messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X, and Y parameters, respectively:
+
+Button determines which mouse button is pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the user pressed the mouse button.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control. If Button is mbLeft, MouseDown sets PressedPosition as a TPointF(X,Y).
+Override the protected MouseDown method to provide other responses when a mouse button is down while the cursor is over the control.
+
+</summary></devnotes></procedure>
+      <procedure name="MouseClick" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="210">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+Calls Click and starts the animation by calling StartTriggerAnimation.
+FMX.TabControl.TTabItem.MouseClick inherits from FMX.Controls.TControl.MouseClick. All content below this line refers to FMX.Controls.TControl.MouseClick.
+Calls Click and starts the animation by calling StartTriggerAnimation.
+MouseClick receives the following parameters: 
+
+Button determines which mouse button was previously pressed: left, right, or middle.
+Shift indicates which shift keys -- SHIFT, CTRL, ALT, and CMD (only for Mac) -- were down when the pressed mouse button is released.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+ See Also
+FMX.Controls.TControl.Click
+FMX.Controls.TControl.OnClick
+FMX.Controls.TControl.OnMouseLeave
+FMX.Controls.TControl.OnMouseEnter
+FMX.Controls.TControl.OnMouseMove
+FMX.Controls.TControl.OnMouseDown
+FMX.Controls.TControl.OnMouseWheel
+System.Classes.TShiftState
+System.UITypes.TMouseButton
+FMX.Ani.TAnimator.StartTriggerAnimation
+
+</summary></devnotes></procedure>
+      <procedure name="DblClick" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="211">
+      <devnotes><summary>
+Responds to user double-clicks.
+FMX.TabControl.TTabItem.DblClick inherits from FMX.Controls.TControl.DblClick. All content below this line refers to FMX.Controls.TControl.DblClick.
+Responds to user double-clicks.
+DblClick is an event handler for the OnDblClick event. It is automatically called when the left mouse button is pressed and released twice, consecutively, with the pointer over the control.
+Call DblClick in applications to simulate a mouse OnDblClick event.  
+</summary></devnotes></procedure>
+      <procedure name="MouseUp" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="212">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseUp event dispatcher. 
+FMX.TabControl.TTabItem.MouseUp inherits from FMX.Controls.TControl.MouseUp. All content below this line refers to FMX.Controls.TControl.MouseUp.
+OnMouseUp event dispatcher. 
+A control calls MouseUp in response to any of mouse-up messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X and Y parameters, respectively: 
+
+Button determines which mouse button was previously pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the pressed mouse button is released.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseUp method to provide other responses when the mouse button previously pressed is released while the cursor is over the control.
+</summary></devnotes></procedure>
+      <procedure name="KeyDown" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="213">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="var"/>
+          <parameter name="KeyChar" type="Char" paramflags="var"/>
+          <parameter name="Shift" type="TShiftState"/>
+        </parameters>
+      <devnotes><summary>
+Provides a response when a key is pressed down while the control has the keyboard focus. 
+FMX.TabControl.TTabItem.KeyDown inherits from FMX.Controls.TControl.KeyDown. All content below this line refers to FMX.Controls.TControl.KeyDown.
+Provides a response when a key is pressed down while the control has the keyboard focus. 
+If the pressed key is the Applications key (Key = vkApps), then KeyDown shows the context menu of the control. Otherwise, KeyDown calls the OnKeyDown event handler if one is assigned. 
+TCommonCustomForm and descendant of TControl classes--like TCustomGrid--call KeyDown from their methods handling key pressing. They decode the message parameters into the key code, character code, and shift state. They pass them into the called KeyDown method in the Key, KeyChar, and Shift parameters, respectively:  
+
+
+
+Parameters
+
+Descriptions
+
+
+
+Key
+
+
+
+Is the scan code of the pressed keyboard key or $0.
+If a pressed key combination can be a shortcut, then Key &lt;&gt; 0 is a virtual key and KeyChar = #0. 
+Physical scan codes of the same key can differ under different platforms (Windows or iOS).
+Platform-specific units (for example FMX.Platform.Mac.pas) should translate native scan codes to corresponding Windows codes defined in the UITypes unit.  For example, 
+
+vkReturn = $0D;  {  13 } corresponds to the RETURN keyboard key.
+vkF2     = $71;  { 113 } corresponds to the F2 keyboard key.
+
+
+
+KeyChar
+
+
+
+Is the pressed character (digit) or #0.
+If a pressed key combination can be treated as a printable character or digit, then Key = 0 and KeyChar contains a pressed symbol according to the current keyboard's input language, keyboard mode (CAPS LOCK and NUM LOCK keys), keyboard Shift state, and IME state. Editors can use this symbol to add into a text being edited. 
+
+
+
+
+Shift
+
+
+
+Indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the specified key was pressed with the control in focus.
+
+
+If the control has successfully processed the pressed key combination and no additional processing is required, then KeyDown assigns Key = 0 and KeyChar = #0.  
+Override the protected KeyDown method to provide other responses when a key is down while the control has keyboard input focus.
+See TCommonCustomForm.KeyDown for more information about parameters.
+</summary></devnotes></procedure>
+      <procedure name="ImagesChanged" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="217">
+        <devnotes><summary>
+Should be called when the component needs to redraw the image.
+ImagesChanged should be called
+when you change the Images reference to the TCustomImageList object or 
+the object itself or when you change the ImageIndex property.
+</summary></devnotes>
+      </procedure>
+      <function name="ImageIndexStored" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="220">
+        <devnotes><summary>
+Returns True when the ImageIndex property needs to be stored in the fmx-file.
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="ParentChanged" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="221">
+      <devnotes><summary>
+Executed right after the value of the Parent property changes.
+FMX.TabControl.TTabItem.ParentChanged inherits from FMX.Controls.TControl.ParentChanged. All content below this line refers to FMX.Controls.TControl.ParentChanged.
+Executed right after the value of the Parent property changes.
+The control does not execute ParentChanged if you assign Parent the same value that it already has.
+
+ See Also
+FMX.Controls.TControl.AncestorParentChanged
+FMX.Controls.TControl.ClipChildrenChanged
+FMX.Controls.TControl.EffectEnabledChanged
+FMX.Controls.TControl.EnabledChanged
+FMX.Controls.TControl.HandleSizeChanged
+FMX.Controls.TControl.HitTestChanged
+FMX.Controls.TControl.PaddingChanged
+FMX.Controls.TControl.VisibleChanged
+FMX.Controls.TControl.AncestorVisibleChanged
+FMX.Controls.TControl.ChildrenAlignChanged
+
+</summary></devnotes></procedure>
+      <procedure name="Hide" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="222">
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="Show" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="223">
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="DoSetSize" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="224">
+        <parameters>
+          <parameter name="ASize" type="TControlSize" paramflags="const"/>
+          <parameter name="NewPlatformDefault" type="Boolean" paramflags="const"/>
+          <parameter name="ANewWidth" type="Single"/>
+          <parameter name="ANewHeight" type="Single"/>
+          <parameter name="ALastWidth" type="Single" paramflags="var"/>
+          <parameter name="ALastHeight" type="Single" paramflags="var"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <property name="Align" visibility="protected" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.TabControl.pas" line="226"><devnotes><summary>
+Specifies the alignment options (top, left, client, and so on) of this control. 
+Use Align to automatically set the alignment of the current control. Setting Align to a value different than None can affect the  position, size (height and width), and anchors of the control. By default, Align is set to None.
+Descendants of TControl typically set the visibility and value for the Align property. For example, for TToolBar, Align defaults to TAlignLayout.Top.
+To see the possible values for Align and their visible effects over the control, see FMX.Types.TAlignLayout.  
+Controls that have the Align or Anchors properties set can use a Scale that is different from the default (1,1), so that controls align together even when they have a custom scale. 
+</summary></devnotes></property>
+      <property name="RotationAngle" visibility="protected" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.TabControl.pas" line="227"><devnotes><summary>
+Specifies the amount (in degrees) by which the control is rotated from the x-axis. 
+Positive angles correspond to clockwise rotation. For counterclockwise rotation, use negative values.
+To set the rotation center, use RotationCenter.
+</summary></devnotes></property>
+      <property name="RotationCenter" visibility="protected" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="228"><devnotes><summary>
+Specifies the position of the pivot point of the control.
+The coordinates of the rotation center take values in the range from 0 through 1. The point with the coordinates (0,0) corresponds to the upper-left corner of the control, the point with the coordinates (1,1) corresponds to the lower-right corner of the control. The default center of rotation is (0.5, 0.5).
+Values outside of [0,0] and [1,1] can be clipped in some descendant classes.
+To set the rotation angle, use RotationAngle.
+</summary></devnotes></property>
+      <property name="Position" visibility="protected" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="229"><devnotes><summary>
+Aligns the component to the position points of other components (Bounds points).
+Specifies the upper-left corner of the current control, relative to its parent. 
+The Position can be affected by the Padding of its parent and the Margins of the control. 
+</summary></devnotes></property>
+      <function name="GetTextSettingsClass" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="230">
+        <parameters>
+          <retval type="TTextSettingsInfo.TCustomTextSettingsClass">
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Returns the class type that instance represents the used text settings.
+FMX.TabControl.TTabItem.GetTextSettingsClass inherits from FMX.Controls.TTextControl.GetTextSettingsClass. All content below this line refers to FMX.Controls.TTextControl.GetTextSettingsClass.
+Returns the class type that instance represents the used text settings.
+GetTextSettingsClass returns the TTextSettingsInfo.TCustomTextSettingsClass (or its descendant)  class reference. An instance of such class provides the DefaultTextSettings,   TextSettings, StyledSettings, ResultingTextSettings, and other properties handling the text representation settings of a control. 
+You can override the method in descendant classes to modify the default behavior.
+Typical implementations of GetTextSettingsClass returns the class declaring properties like the Font, FontColor, HorzAlign, and WordWrap. Some of these properties can be declared as published to be editable in the Object Inspector.
+
+ See Also
+FMX.Controls.TTextSettingsInfo
+FMX.Controls.TTextSettingsInfo.TCustomTextSettingsClass
+FMX.Controls.TTextSettingsInfo.DefaultTextSettings
+FMX.Controls.TTextSettingsInfo.TextSettings
+FMX.Controls.TTextSettingsInfo.StyledSettings
+FMX.Controls.TTextSettingsInfo.ResultingTextSettings
+
+</summary></devnotes></function>
+      <procedure name="CMGesture" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="231">
+        <parameters>
+          <parameter name="EventInfo" type="TGestureEventInfo" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="TriggerAcceleratorKey" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="234">
+        <devnotes><summary>
+Allows the object to perform an action when the accelerator key is pressed.
+FMX.TabControl.TTabItem.TriggerAcceleratorKey inherits from FMX.AcceleratorKey.IAcceleratorKeyReceiver.TriggerAcceleratorKey. All content below this line refers to FMX.AcceleratorKey.IAcceleratorKeyReceiver.TriggerAcceleratorKey.
+Allows the object to perform an action when the accelerator key is pressed.
+Use TriggerAcceleratorKey to trigger an action as a response to the accelerator key. For example, use TriggerAcceleratorKey to set focus to the acceleration key receiver control.
+
+ See Also
+FMX.AcceleratorKey.IAcceleratorKeyReceiver.CanTriggerAcceleratorKey
+
+</summary></devnotes>
+      </procedure>
+      <procedure name="PaintChildren" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="236">
+      <devnotes><summary>
+Renders the child controls.
+FMX.TabControl.TTabItem.PaintChildren inherits from FMX.Controls.TControl.PaintChildren. All content below this line refers to FMX.Controls.TControl.PaintChildren.
+Renders the child controls.
+The PaintChildren method is called automatically in the process of painting of the current control. It renders child controls, if any, on the surface specified by the Canvas property. 
+The effects that are applied to the control are also applied to its children.
+TControl descendants can override PaintChildren to provide specific rendering of the respective controls.
+</summary></devnotes></procedure>
+      <procedure name="Painting" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="237">
+      <devnotes><summary>
+
+
+OnPainting event dispatcher. 
+FMX.TabControl.TTabItem.Painting inherits from FMX.Controls.TControl.Painting. All content below this line refers to FMX.Controls.TControl.Painting.
+OnPainting event dispatcher. 
+Painting defines the drawing area of the control by intersecting Canvas with ClipRect if ClipChildren is True and dispatches the OnPainting event.
+It is always called internally before DoPaint. 
+The Painting method can be overridden by derived controls to establish control-specific rendering conditions. 
+</summary></devnotes></procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="238">
+      <devnotes><summary>
+Renders the control's surface. 
+FMX.TabControl.TTabItem.Paint inherits from FMX.Controls.TControl.Paint. All content below this line refers to FMX.Controls.TControl.Paint.
+Renders the control's surface. 
+The Paint method is called by DoPaint when a control is being painted by the PaintTo method. Before DoPaint, Painting is called. AfterPaint is called immediately after. 
+FireMonkey internally calls Paint to paint the control when the window is being painted. You must not call Paint explicitly.
+The base class TControl implements an empty Paint. The descendants of TControl override Paint to provide specific rendering of the respective controls.
+For example, Paint methods in classes of the FMX.Objects unit draw and fill shapes using the properties defined in these classes. See the descriptions of these classes to find the properties of the respective shapes. 
+</summary></devnotes></procedure>
+      <procedure name="DoPaint" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="239">
+      <devnotes><summary>
+Processes the painting of the control. 
+FMX.TabControl.TTabItem.DoPaint inherits from FMX.Controls.TControl.DoPaint. All content below this line refers to FMX.Controls.TControl.DoPaint.
+Processes the painting of the control. 
+This method is called internally from PaintTo and PaintChildren. DoPaint defines the drawing area by clipping the Canvas to the areas occupied by the control and its children, paints the children and then the control itself. The call to DoPaint is always preceded by a call to Painting and succeeded by a call to AfterPaint.
+</summary></devnotes></procedure>
+      <procedure name="AfterPaint" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="240">
+      <devnotes><summary>
+Restores Canvas properties after the painting process. 
+FMX.TabControl.TTabItem.AfterPaint inherits from FMX.Controls.TControl.AfterPaint. All content below this line refers to FMX.Controls.TControl.AfterPaint.
+Restores Canvas properties after the painting process. 
+As implemented in TControl, AfterPaint does nothing.
+TShape descendants of TControl override AfterPaint to restore Dash and  Thickness to default values.   
+</summary></devnotes></procedure>
+      <property name="PaintPart" visibility="protected" read="FPaintPart" write="SetPaintPart" type="TTabItem.TPaintPart" file="FMX.TabControl.pas" line="243">
+        <devnotes><summary>
+Specifies the part of the page that needs to be painted. 
+The tab control sets the PaintPart property during painting.
+</summary></devnotes>
+      </property>
+      <property name="Content" visibility="protected" read="FContent" type="TContent" file="FMX.TabControl.pas" line="245">
+        <devnotes><summary>
+Contains all the controls that you place on the TabItem.
+</summary></devnotes>
+      </property>
+      <constructor name="Create" visibility="public" file="FMX.TabControl.pas" line="247">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.TabControl.TTabItem.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.TabControl.pas" line="248">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+
+
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.TabControl.TTabItem.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <function name="GetTabList" visibility="public" procflags="override" file="FMX.TabControl.pas" line="249">
+        <parameters>
+          <retval type="ITabList"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <property name="TabControl" visibility="public" read="FTabControl" type="TTabControl" file="FMX.TabControl.pas" line="250"><devnotes><summary>
+Returns a TTabControl object that holds this tab page.
+
+
+Note: You cannot access this TTabControl using the TTabItem.Parent property.
+
+</summary></devnotes></property>
+      <property name="WordWrap" visibility="public" read="GetWordWrap" write="SetWordWrap" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="251"/>
+      <property name="Font" visibility="public" read="GetFont" write="SetFont" type="TFont" hoisted="true" file="FMX.TabControl.pas" line="252"/>
+      <property name="VertTextAlign" visibility="public" read="GetVertTextAlign" write="SetVertTextAlign" type="TTextAlign" default="0" hoisted="true" file="FMX.TabControl.pas" line="253"/>
+      <property name="TextAlign" visibility="public" read="GetTextAlign" write="SetTextAlign" type="TTextAlign" default="0" hoisted="true" file="FMX.TabControl.pas" line="254"/>
+      <property name="Trimming" visibility="public" read="GetTrimming" write="SetTrimming" type="TTextTrimming" default="0" hoisted="true" file="FMX.TabControl.pas" line="255"/>
+      <property name="ShowAsDot" visibility="public" read="FShowAsDot" write="SetShowAsDot" type="Boolean" file="FMX.TabControl.pas" line="259">
+        <devnotes><summary>
+If ShowAsDot is true, then the StyleLookup property has the value tabdotstyle. 
+</summary></devnotes>
+      </property>
+      <property name="Images" visibility="public" read="GetImages" type="TCustomImageList" file="FMX.TabControl.pas" line="261">
+        <devnotes><summary>
+Defines the reference to a TCustomImageList list of images to be used to draw images on the component.
+If the TCustomImageList list is empty, then Images is nil/null.
+Call ImagesChanged when Images is changed.
+</summary></devnotes>
+      </property>
+      <property name="AutoTranslate" visibility="published" read="FAutoTranslate" write="FAutoTranslate" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="264"/>
+      <property name="AutoSize" visibility="published" read="FAutoSize" write="SetAutoSize" type="Boolean" default="1" file="FMX.TabControl.pas" line="265"><devnotes><summary>
+Specifies whether TTabItem header (where the TabItem names appear) is auto-sized based on the length of the Text. 
+Set the AutoSize property to True to automatically resize the tab item header according to the length of the Text.
+Set the AutoSize property to False to lock autoresize of the TTabItem header.
+
+Tip:  The size of the TTabItem header readjusts when the Font property changes.</summary></devnotes></property>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="266"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="267"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="268"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.TabControl.pas" line="269"/>
+      <property name="CustomIcon" visibility="published" read="FCustomIcon" write="SetCustomIcon" type="TFixedMultiResBitmap" file="FMX.TabControl.pas" line="270"><devnotes><summary>
+Specifies custom multi-resolution icons for the tab. This property is of the TFixedMultiResBitmap type. 
+A TFixedMultiResBitmap multi-resolution bitmap represents a collection of TFixedBitmapItem bitmap items displayed at different scales. You can create a multi-resolution bitmap with the MultiResBitmap Editor.
+Mobile applications need to have images of different scales defined for various devices, such as Retina and non-Retina iOS devices.
+</summary></devnotes></property>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.TabControl.pas" line="271"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="272"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="273"/>
+      <property name="TextSettings" visibility="published" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.TabControl.pas" line="274"/>
+      <property name="StyledSettings" visibility="published" read="GetStyledSettings" write="SetStyledSettings" stored="StyledSettingsStored" type="TStyledSettings" hoisted="true" file="FMX.TabControl.pas" line="275"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="276"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.TabControl.pas" line="277"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.TabControl.pas" line="278"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="279"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.TabControl.pas" line="280"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="281"/>
+      <property name="IsSelected" visibility="published" read="FIsSelected" write="SetIsSelected" type="Boolean" file="FMX.TabControl.pas" line="283"><devnotes><summary>
+Property that has the True value when the TTabItem object is selected.
+IsSelected is a property of TTabItem that has the Boolean value True if the tab item is selected. Otherwise, it has the Boolean value False.
+
+
+</summary></devnotes></property>
+      <property name="Index" visibility="published" read="GetIndex" write="SetIndex" stored="False" type="Integer" hoisted="true" file="FMX.TabControl.pas" line="284"/>
+      <property name="ImageIndex" visibility="published" read="GetImageIndex" write="SetImageIndex" stored="ImageIndexStored" type="TImageIndex" file="FMX.TabControl.pas" line="288">
+        <devnotes><summary>
+Defines the zero-based index enumerating images in the Images list of images.
+If you use a non-existing ImageIndex value to access an image in the Images list, then no image is retrieved and no exception is raised. The usual default value is -1. Call ImagesChanged when ImageIndex is changed.
+</summary></devnotes>
+      </property>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="289"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.TabControl.pas" line="290"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="291"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.TabControl.pas" line="292"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="293"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.TabControl.pas" line="294"/>
+      <property name="StyleLookup" visibility="published" read="GetStyleLookup" write="SetStyleLookup" type="string" file="FMX.TabControl.pas" line="297">
+        <devnotes><summary>
+Name of the ressource object, to which the current TStyledControl is linked.
+If ShowAsDot is True, the name of the ressource object is &quot;tabdotstyle&quot; and you cannot overwrite it. To use a custom resource object name, first ensure that the value of ShowAsDot is False.
+For more information, see TStyledControl.StyleLookup.
+
+
+</summary></devnotes>
+      </property>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.TabControl.pas" line="298"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="299"/>
+      <property name="Text" visibility="published" read="GetText" write="SetText" stored="TextStored" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="300"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="301"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="302"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.TabControl.pas" line="303"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="304"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="305"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.TabControl.pas" line="306"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="307"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.TabControl.pas" line="308"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.TabControl.pas" line="309"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="310"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="311"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="312"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.TabControl.pas" line="313"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.TabControl.pas" line="314"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.TabControl.pas" line="315"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.TabControl.pas" line="316"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="317"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="318"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.TabControl.pas" line="319"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.TabControl.pas" line="320"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="321"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="322"/>
+    </members>
+  <devnotes><summary>
+TTabItem is a tab item in a TTabControl component. A TTabControl contains one or more TTabItem objects.
+The Text property can be used to define an accelerator key to the control. 
+</summary></devnotes></class>
+  <enum name="TTabPosition" file="FMX.TabControl.pas" line="327">
+    <element value="0" name="Top" file="FMX.TabControl.pas" line="327"/>
+    <element value="1" name="Bottom" file="FMX.TabControl.pas" line="327"/>
+    <element value="2" name="None" file="FMX.TabControl.pas" line="327"/>
+    <element value="3" name="Dots" file="FMX.TabControl.pas" line="327"/>
+    <element value="4" name="PlatformDefault" file="FMX.TabControl.pas" line="327"/>
+  </enum>
+  <class name="TTabControl" file="FMX.TabControl.pas" line="329">
+    
+    <interfaces>
+      <implements name="IGlyph"/>
+      <implements name="IItemsContainer"/>
+    </interfaces>
+    <members>
+      <enum name="TFindKind" visibility="public" alias="FMX.TabControl.TFindKind" file="FMX.TabControl.pas" line="331">
+        <element value="0" name="Next" file="FMX.TabControl.pas" line="331"/>
+        <element value="1" name="Back" file="FMX.TabControl.pas" line="331"/>
+        <element value="2" name="First" file="FMX.TabControl.pas" line="331"/>
+        <element value="3" name="Last" file="FMX.TabControl.pas" line="331"/>
+        <element value="4" name="Current" file="FMX.TabControl.pas" line="331"/>
+      </enum>
+      <enum name="TTabBarButton" visibility="public" alias="FMX.TabControl.TTabBarButton" file="FMX.TabControl.pas" line="332">
+        <element value="0" name="Left" file="FMX.TabControl.pas" line="332"/>
+        <element value="1" name="Right" file="FMX.TabControl.pas" line="332"/>
+      </enum>
+      <set name="TTabBarButtons" visibility="public" alias="FMX.TabControl.TTabBarButtons" type="TTabControl.TTabBarButton" file="FMX.TabControl.pas" line="333">
+        <element name="Left"/>
+        <element name="Right"/>
+      </set>
+      <array name="TArrayTabBarControls" visibility="public" alias="FMX.TabControl.TArrayTabBarControls" file="FMX.TabControl.pas" line="334">
+        <element type="TControl"/>
+      </array>
+      <const name="DefaultButtons" visibility="public" type="Set" file="FMX.TabControl.pas" line="353">
+        <value>
+          [Left..Right]
+        </value>
+      </const>
+      <field name="ButtonStyleNames" type=":TTabControl.:1" visibility="public" varflags="class" file="FMX.TabControl.pas" line="338">
+        <devnotes>
+          <summary> The styles names which used for the buttons in the header area </summary>
+        </devnotes>
+      </field>
+      <const name="DefaultSlidingDuration" visibility="public" type="Comp" file="FMX.TabControl.pas" line="339">
+        <value>
+          0.3
+        </value>
+      </const>
+      <const name="DefaultSlidingAnimationType" visibility="public" type="TAnimationType" file="FMX.TabControl.pas" line="340">
+        <value>
+          In
+        </value>
+      </const>
+      <const name="DefaultSlidingInterpoation" visibility="public" type="TInterpolationType" file="FMX.TabControl.pas" line="341">
+        <value>
+          Linear
+        </value>
+      </const>
+      <field name="FContent" type="TContent" visibility="private" size="4" offset="944" file="FMX.TabControl.pas" line="343"/>
+      <field name="FNoItemsContent" type="TControl" visibility="private" size="4" offset="948" file="FMX.TabControl.pas" line="344"/>
+      <field name="FTabIndex" type="Integer" visibility="private" size="4" offset="952" file="FMX.TabControl.pas" line="345"/>
+      <field name="FTabHeight" type="Single" visibility="private" size="4" offset="956" file="FMX.TabControl.pas" line="346"/>
+      <field name="FFullSize" type="TBehaviorBoolean" visibility="private" size="1" offset="960" file="FMX.TabControl.pas" line="347"/>
+      <field name="FRealigningTabs" type="Boolean" visibility="private" size="1" offset="961" file="FMX.TabControl.pas" line="348"/>
+      <field name="FTabPosition" type="TTabPosition" visibility="private" size="1" offset="962" file="FMX.TabControl.pas" line="349"/>
+      <field name="FBackground" type="TControl" visibility="private" size="4" offset="964" file="FMX.TabControl.pas" line="350"/>
+      <field name="FScrollBackground" type="TBrushObject" visibility="private" size="4" offset="968" file="FMX.TabControl.pas" line="351"/>
+      <field name="FDefaultFullSize" type="Boolean" visibility="private" size="1" offset="972" file="FMX.TabControl.pas" line="352"/>
+      <field name="FFixedTabHeight" type="Boolean" visibility="private" size="1" offset="973" file="FMX.TabControl.pas" line="353"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="976" file="FMX.TabControl.pas" line="354"/>
+      <field name="FTransitionRunning" type="Boolean" visibility="private" size="1" offset="984" file="FMX.TabControl.pas" line="355"/>
+      <field name="FTransitionTabs" type=":TTabControl.:2" visibility="private" size="4" offset="988" file="FMX.TabControl.pas" line="356"/>
+      <field name="FTransitionFinishedCallback" type="TProc" visibility="private" size="4" offset="992" file="FMX.TabControl.pas" line="357"/>
+      <field name="FTabPositionSet" type="Boolean" visibility="private" size="1" offset="996" file="FMX.TabControl.pas" line="358"/>
+      <field name="FImageLink" type="TGlyphImageLink" visibility="private" size="4" offset="1000" file="FMX.TabControl.pas" line="359"/>
+      <field name="FImages" type="TCustomImageList" visibility="private" size="4" offset="1004" file="FMX.TabControl.pas" line="360">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FTabBarRect" type="TRectF" visibility="private" size="16" offset="1008" file="FMX.TabControl.pas" line="361"/>
+      <field name="FClientRect" type="TRectF" visibility="private" size="16" offset="1024" file="FMX.TabControl.pas" line="362"/>
+      <field name="FTabContentSize" type="TSizeF" visibility="private" size="8" offset="1040" file="FMX.TabControl.pas" line="363"/>
+      <field name="FHasTouchScreen" type="Boolean" visibility="private" size="1" offset="1048" file="FMX.TabControl.pas" line="364"/>
+      <field name="FTabBarControlPanel" type="TControl" visibility="private" size="4" offset="1052" file="FMX.TabControl.pas" line="365"/>
+      <field name="FTabBarButtons" type="TTabControl.TTabBarButtons" visibility="private" size="1" offset="1056" file="FMX.TabControl.pas" line="366"/>
+      <field name="FTabBarControls" type="TTabControl.TArrayTabBarControls" visibility="private" size="8" offset="1060" file="FMX.TabControl.pas" line="367"/>
+      <field name="FAniCalculations" type="TAniCalculations" visibility="private" size="4" offset="1068" file="FMX.TabControl.pas" line="368"/>
+      <field name="FInternalContentPosition" type="Single" visibility="private" size="4" offset="1072" file="FMX.TabControl.pas" line="369"/>
+      <field name="FIndexOfTargetTab" type="Integer" visibility="private" size="4" offset="1076" file="FMX.TabControl.pas" line="370"/>
+      <field name="FStoredTabSize" type="TList&lt;System.Types.TSizeF&gt;" visibility="private" size="4" offset="1080" file="FMX.TabControl.pas" line="371"/>
+      <procedure name="SetTabIndex" visibility="private" file="FMX.TabControl.pas" line="372">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTabHeight" visibility="private" file="FMX.TabControl.pas" line="373">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetFullSize" visibility="private" file="FMX.TabControl.pas" line="374">
+        <parameters>
+          <parameter name="Value" type="TBehaviorBoolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetActiveTab" visibility="private" file="FMX.TabControl.pas" line="375">
+        <parameters>
+          <retval type="TTabItem"/>
+        </parameters>
+      </function>
+      <procedure name="SetActiveTab" visibility="private" file="FMX.TabControl.pas" line="376">
+        <parameters>
+          <parameter name="Value" type="TTabItem" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTabPosition" visibility="private" file="FMX.TabControl.pas" line="377">
+        <parameters>
+          <parameter name="Value" type="TTabPosition" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ApplyTabsStyleLookup" visibility="private" file="FMX.TabControl.pas" line="378">
+      </procedure>
+      <function name="GetImages" visibility="private" file="FMX.TabControl.pas" line="379">
+        <parameters>
+          <retval type="TCustomImageList"/>
+        </parameters>
+      </function>
+      <procedure name="SetImages" visibility="private" file="FMX.TabControl.pas" line="380">
+        <parameters>
+          <parameter name="Value" type="TCustomImageList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImageIndex" visibility="private" file="FMX.TabControl.pas" line="382">
+        <parameters>
+          <retval type="TImageIndex"/>
+        </parameters>
+      </function>
+      <procedure name="SetImageIndex" visibility="private" file="FMX.TabControl.pas" line="383">
+        <parameters>
+          <parameter name="Value" type="TImageIndex" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImageList" visibility="private" procflags="inline" file="FMX.TabControl.pas" line="384">
+        <parameters>
+          <retval type="TBaseImageList"/>
+        </parameters>
+      </function>
+      <procedure name="SetImageList" visibility="private" file="FMX.TabControl.pas" line="385">
+        <parameters>
+          <parameter name="Value" type="TBaseImageList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetItemsCount" visibility="private" file="FMX.TabControl.pas" line="389">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetItem" visibility="private" file="FMX.TabControl.pas" line="390">
+        <parameters>
+          <parameter name="AIndex" type="Integer" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <procedure name="WebBrowserRealign" visibility="private" file="FMX.TabControl.pas" line="391">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="AnimationFinished" visibility="private" file="FMX.TabControl.pas" line="392">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTabBarButtons" visibility="private" file="FMX.TabControl.pas" line="393">
+        <parameters>
+          <parameter name="Value" type="TTabControl.TTabBarButtons" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="TabButtonClick" visibility="private" file="FMX.TabControl.pas" line="394">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTabContentPosition" visibility="private" file="FMX.TabControl.pas" line="395">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetTabContentPosition" visibility="private" file="FMX.TabControl.pas" line="396">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetInternalContentPosition" visibility="private" file="FMX.TabControl.pas" line="397">
+        <parameters>
+          <parameter name="Value" type="Double" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="RoundByScale" visibility="private" file="FMX.TabControl.pas" line="398">
+        <parameters>
+          <parameter name="Value" type="Double" paramflags="const"/>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <function name="TabBarControlsWidth" visibility="private" file="FMX.TabControl.pas" line="399">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="UpdateAnimation" visibility="private" file="FMX.TabControl.pas" line="400">
+        <parameters>
+          <parameter name="DotItems" type="Boolean" paramflags="const"/>
+          <parameter name="ActiveTabLeft" type="Single" paramflags="const"/>
+          <parameter name="ActiveTabRight" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadSizes" visibility="private" file="FMX.TabControl.pas" line="401">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="WriteSizes" visibility="private" file="FMX.TabControl.pas" line="402">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      </procedure>
+      <procedure name="AddOrInsertObject" visibility="private" file="FMX.TabControl.pas" line="403">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+          <parameter name="Index" type="Integer" paramflags="const">
+            <value>
+              $7FFFFFFF
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <function name="IsSpecialObject" visibility="private" file="FMX.TabControl.pas" line="404">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetTabItem" visibility="protected" file="FMX.TabControl.pas" line="406">
+        <parameters>
+          <parameter name="AIndex" type="Integer"/>
+          <retval type="TTabItem"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Tabs property.
+</summary></devnotes></function>
+      <function name="GetTabCount" visibility="protected" file="FMX.TabControl.pas" line="407">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      <devnotes><summary>
+Protected read implementation for the TabCount property.
+</summary></devnotes></function>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="408">
+      <devnotes><summary>
+Customizes styles in complex objects.
+FMX.TabControl.TTabControl.ApplyStyle inherits from FMX.Controls.TStyledControl.ApplyStyle. All content below this line refers to FMX.Controls.TStyledControl.ApplyStyle.
+Customizes styles in complex objects.
+TStyledControl descendants override it to apply styles in concordance with their primitive components.      
+Do not call ApplyStyle explicitly in an application. It is called by the ApplyStyleLookup method when object styles are updated.
+For an example of an ApplyStyle implementation, see &quot;TCalloutPanel:Style Contracts&quot; in FireMonkey Component Design.
+</summary></devnotes></procedure>
+      <procedure name="FreeStyle" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="409">
+      <devnotes><summary>
+Frees the style of TStyledControl.
+FMX.TabControl.TTabControl.FreeStyle inherits from FMX.Controls.TStyledControl.FreeStyle. All content below this line refers to FMX.Controls.TStyledControl.FreeStyle.
+Frees the style of TStyledControl.
+Override it to free additional component-specific style resources.
+</summary></devnotes></procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="410">
+      <devnotes><summary>
+Initializes the component after the form file has been read into memory.
+FMX.TabControl.TTabControl.Loaded inherits from FMX.Controls.TControl.Loaded. All content below this line refers to FMX.Controls.TControl.Loaded.
+Initializes the component after the form file has been read into memory. 
+Loaded inherits TComponent.Loaded, realigns the children, if any, and updates the tab list.
+For details, see TComponent.Loaded.
+</summary></devnotes></procedure>
+      <procedure name="PaintChildren" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="411">
+      <devnotes><summary>
+Renders the child controls.
+FMX.TabControl.TTabControl.PaintChildren inherits from FMX.Controls.TControl.PaintChildren. All content below this line refers to FMX.Controls.TControl.PaintChildren.
+Renders the child controls.
+The PaintChildren method is called automatically in the process of painting of the current control. It renders child controls, if any, on the surface specified by the Canvas property. 
+The effects that are applied to the control are also applied to its children.
+TControl descendants can override PaintChildren to provide specific rendering of the respective controls.
+</summary></devnotes></procedure>
+      <procedure name="RealignTabs" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="412">
+      <devnotes><summary>
+Realigns tabs according to the number of visible tabs, their sizes and offsets.
+</summary></devnotes></procedure>
+      <procedure name="DoRealign" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="413">
+      <devnotes><summary>
+Performs the alignment of a FireMonkey control.
+FMX.TabControl.TTabControl.DoRealign inherits from FMX.Controls.TControl.DoRealign. All content below this line refers to FMX.Controls.TControl.DoRealign.
+Performs the alignment of a FireMonkey control.
+
+ See Also
+FMX.Types.AlignObjects
+
+</summary></devnotes></procedure>
+      <procedure name="ContentAddObject" visibility="protected" file="FMX.TabControl.pas" line="414">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ContentRemoveObject" visibility="protected" file="FMX.TabControl.pas" line="415">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="416">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Adds the AObject object to the Children list of children attached to this parent object (self).
+FMX.TabControl.TTabControl.DoAddObject inherits from FMX.Types.TFmxObject.DoAddObject. All content below this line refers to FMX.Types.TFmxObject.DoAddObject.
+Adds the AObject object to the Children list of children attached to this parent object (self).
+DoAddObject adds the object provided in the AObject parameter to the list of children stored in the Children property of this object (self). DoAddObject changes the parent of AObject to this object (self) and sets the root of AObject to the Root object of this object (self).
+Descendant classes, like TCommonCustomForm and TControl, additionally handle tab stop lists keeping ordered lists of objects to which the user can tab. If such descendant class supports the ITabStopController interface and AObject is an object of a class supporting the IControl interface, then DoAddObject of this descendant adds AObject to the TabList tab stop lists of the (self) object. 
+DoAddObject is internally called from AddObject.
+</summary></devnotes></procedure>
+      <procedure name="DoRemoveObject" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="417">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoInsertObject" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="418">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoChange" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="419">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DialogKey" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="420">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="var"/>
+          <parameter name="Shift" type="TShiftState"/>
+        </parameters>
+      <devnotes><summary>
+Processes a dialog key. 
+FMX.TabControl.TTabControl.DialogKey inherits from FMX.Controls.TControl.DialogKey. All content below this line refers to FMX.Controls.TControl.DialogKey.
+Processes a dialog key. 
+DialogKey is called during the message preprocessing to handle dialog characters. 
+Do not call DialogKey in an application. It is for internal use only.
+DialogKey processes the dialog key messages for each of the control's children.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="421">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+FMX.TabControl.TTabControl.DefineProperties inherits from System.Classes.TComponent.DefineProperties. All content below this line refers to System.Classes.TComponent.DefineProperties.
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+TComponent overrides the DefineProperties method defined in TPersistent to define &quot;fake&quot; Top and Left properties. These are defined so that components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is virtual; descendent classes can override it. When overriding DefineProperties, be aware that the Ancestor property of Filer might be set, and that this property can determine whether or not it is appropriate to write properties.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly.
+</summary></devnotes></procedure>
+      <function name="GetEffectiveTabPosition" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="422">
+        <parameters>
+          <retval type="TTabPosition"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="GetEffectiveFullSize" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="427">
+        <devnotes><summary>
+Used to determine whether the tab buttons take up all the space in the tabs band. 
+If the FullSize property is PlatformDefault, GetEffectiveFullSize returns True if the style element FullSize is found. Otherwise, GetEffectiveFullSize returns the same as the FullSize property.
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="ObjectAtPoint" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="432">
+        <devnotes><summary>
+Tries to find a control using specific coordinates on the screen. 
+First, the search is performed among the additional buttons in the area of titles. Then, the search is performed among the tab titles. After that, the search goes to the general rules set by its ancestor TControl.ObjectAtPoint.
+</summary></devnotes>
+        <parameters>
+          <parameter name="P" type="TPointF"/>
+          <retval type="IControl"/>
+        </parameters>
+      </function>
+      <procedure name="MouseWheel" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="433">
+        <parameters>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="WheelDelta" type="Integer"/>
+          <parameter name="Handled" type="Boolean" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Dispatcher for the OnMouseWheel event. 
+TTabControl calls MouseWheel in response to mouse wheel rotation while the cursor is over the control.
+MouseWheel scrolls between the tab items when there is not enough space to display all tab items.
+See TControl.MouseWheel for further details.
+</summary></devnotes></procedure>
+      <procedure name="Resize" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="434">
+      <devnotes><summary>
+OnResize event dispatcher. 
+FMX.TabControl.TTabControl.Resize inherits from FMX.Controls.TControl.Resize. All content below this line refers to FMX.Controls.TControl.Resize.
+OnResize event dispatcher. 
+A control calls Resize when the dimensions of the control change.
+Derived classes can override the protected Resize method to implement specific responses to control resizing.
+</summary></devnotes></procedure>
+      <procedure name="ImagesChanged" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="438">
+        <devnotes><summary>
+Should be called when the component needs to redraw the image.
+ImagesChanged  should be called when you change the Images reference to the TCustomImageList object or the object itself.
+</summary></devnotes>
+      </procedure>
+      <procedure name="DoUpdateTabBarButtons" visibility="protected" procflags="virtual" file="FMX.TabControl.pas" line="442">
+        <devnotes><summary>
+Called by UpdateTabBarButtons to update the state of the buttons in the area of the tabs titles. 
+You can override this method to change the location and the appearance of the buttons in the area of the tabs titles.
+
+Note: DoUpdateTabBarButtons is called from the UpdateTabBarButtons method; you should not call the DoUpdateTabBarButtons method manually.</summary></devnotes>
+        <parameters>
+          <parameter name="TabBarButtons" type="TTabControl.TTabBarButtons" paramflags="const"/>
+          <parameter name="TabPosition" type="TTabPosition" paramflags="const"/>
+          <parameter name="Content" type="TContent" paramflags="const"/>
+          <parameter name="TabBarControls" type="TTabControl.TArrayTabBarControls" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="EnabledChanged" visibility="protected" procflags="override" file="FMX.TabControl.pas" line="444">
+      <devnotes><summary>
+Executes when the value of the Enabled property changes.
+</summary></devnotes></procedure>
+      <procedure name="PreloadContent" visibility="protected" file="FMX.TabControl.pas" line="446">
+        <devnotes><summary>
+Forces to load all styles, measure sizes, build font-glyphs, etc.
+
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="Control" type="TControl" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DisableDisappear" visibility="protected" file="FMX.TabControl.pas" line="449">
+        <devnotes><summary>
+Disables automatically unloading style, when control is not visible on screen for tree with root AControl.
+
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="AControl" type="TControl" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.TabControl.pas" line="451">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.TabControl.TTabControl.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.TabControl.pas" line="452">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.TabControl.TTabControl.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <procedure name="SetActiveTabWithTransition" visibility="public" file="FMX.TabControl.pas" line="456">
+        <devnotes><summary>
+Sets the focused tab using the specified transition.
+SetActiveTabWithTransition sets the currently active tab to ATab using the specified ATransition and ADirection transition parameters.
+ATransition specifies the type of transition used to switch the tab. When ATransition = Slide, then the tab control uses visual animation for the switching action. It means that moving of contents in the switched tabs is animated.
+ADirection specifies the direction in which the content of the current active tab is replaced with the content of the specified ATab tab. ADirection is considered only when ATransition = Slide. If ADirection = Normal, then the forward left-to-right tab items switching transition animation is used. If ADirection = Reversed, then the backward right-to-left tab items switching transition animation is used. The default is Normal.
+Compare with GotoVisibleTab.
+
+Note: SetActiveTabWithTransition Does not work on Android.</summary></devnotes>
+        <parameters>
+          <parameter name="ATab" type="TTabItem" paramflags="const"/>
+          <parameter name="ATransition" type="TTabTransition" paramflags="const"/>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="SetActiveTabWithTransitionAsync" visibility="public" procflags="overload" file="FMX.TabControl.pas" line="460">
+        <devnotes><summary>
+Changes the currently active tab to a new ATab asynchronously.
+When the animation ends, callback AOnFinish is called.
+
+Note: SetActiveTabWithTransitionAsync is required when working on Android.
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="ATab" type="TTabItem" paramflags="const"/>
+          <parameter name="ATransition" type="TTabTransition" paramflags="const"/>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <parameter name="AOnFinish" type="TProc" paramflags="const">
+            <value>
+              nil
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="SetActiveTabWithTransitionAsync" visibility="public" procflags="overload" file="FMX.TabControl.pas" line="464">
+        <devnotes><summary>
+Changes the currently active tab to a new ATab asynchronously.
+When the animation ends, callback AOnFinish is called.
+
+Note: SetActiveTabWithTransitionAsync is required when working on Android.
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="ATab" type="TTabItem" paramflags="const"/>
+          <parameter name="ATransition" type="TTabTransition" paramflags="const"/>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <parameter name="AOnFinish" type="TNotifyEvent" paramflags="const">
+            <value>
+              nil
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="FinishCurrentTabTransition" visibility="public" file="FMX.TabControl.pas" line="467">
+        <devnotes><summary>
+Finishes current tabs transition.
+
+
+</summary></devnotes>
+      </procedure>
+      <function name="FindVisibleTab" visibility="public" procflags="overload" file="FMX.TabControl.pas" line="469">
+        <parameters>
+          <parameter name="Index" type="Integer" paramflags="var"/>
+          <parameter name="FindKind" type="TTabControl.TFindKind" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns the first visible tab from the current tab.
+Use the FindVisibleTab method to get the first visible tab of type FindKind.
+The first overloaded method calculates the index of the found tab in the Index parameter. Index represents:
+
+At input, the index of the tab where the search begins.
+At output, if the returned value is True, the index of the found tab; otherwise, the old value.
+The second overloaded method returns the index of the found tab. Searching starts with the current tab. If the tab is found, it return its index, otherwise it returns -1.
+</summary></devnotes></function>
+      <function name="FindVisibleTab" visibility="public" procflags="overload" file="FMX.TabControl.pas" line="470">
+        <parameters>
+          <parameter name="FindKind" type="TTabControl.TFindKind" paramflags="const"/>
+          <retval type="Integer"/>
+        </parameters>
+      <devnotes><summary>
+Returns the first visible tab from the current tab.
+Use the FindVisibleTab method to get the first visible tab of type FindKind.
+The first overloaded method calculates the index of the found tab in the Index parameter. Index represents:
+
+At input, the index of the tab where the search begins.
+At output, if the returned value is True, the index of the found tab; otherwise, the old value.
+The second overloaded method returns the index of the found tab. Searching starts with the current tab. If the tab is found, it return its index, otherwise it returns -1.
+</summary></devnotes></function>
+      <procedure name="GoToActiveTab" visibility="public" file="FMX.TabControl.pas" line="473">
+        <devnotes><summary>
+Moves the title area of the tabs so that the active tab is visible.
+The movement of the tabs is asynchronous.
+</summary></devnotes>
+      </procedure>
+      <function name="GotoVisibleTab" visibility="public" file="FMX.TabControl.pas" line="474">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="ATransition" type="TTabTransition">
+            <value>
+              Slide
+            </value>
+          </parameter>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the focused tab using the specified transition. Animation of the switch transition depends on mutual positions of the current focused tab and the specified tab.
+GotoVisibleTab switches the active tab to the tab specified by the Index parameter if possible (the tab with the specified Index exists and it is visible). GotoVisibleTab switches the active tab using the switch transition specified by the ATransition and ADirection parameters and taking into account mutual positions of the current active tab and the tab specified by Index.
+ATransition specifies the type of transition used to switch the tab. When ATransition = Slide, then the tab control uses visual animation for the switching action. That is, moving of contents in the switched tabs is animated. The default ATransition is Slide.  
+ADirection specifies the direction in which the content of the current active tab is replaced with the content of the specified Index tab. ADirection is taken into account only when ATransition = Slide. GotoVisibleTab animates switching transitions of tabs taking into account mutual positions of the current active tab and the tab specified by Index:
+
+When ADirection = Normal. If the destination tab is left of the current active tab (lower Index), then the forward left-to-right switching transition animation of tab items is used. If the tab to display is to the right of the active tab (upper Index), then the backward right-to-left switching transition animation of tab items is used.
+When ADirection = Reversed, then the switching transitions uses the opposite animation directions to the described above.
+The default ADirection is Normal.
+In difference to SetActiveTabWithTransition, the 
+GotoVisibleTab method animates the switch transition depending on mutual positions of the current focused tab and the specified Index tab.
+GotoVisibleTab returns True in case of success and False otherwise.
+</summary></devnotes></function>
+      <function name="Next" visibility="public" file="FMX.TabControl.pas" line="476">
+        <parameters>
+          <parameter name="ATransition" type="TTabTransition">
+            <value>
+              Slide
+            </value>
+          </parameter>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Moves the active tab to the next tab.
+Use the Next method to move over to the following tab, if it exists.
+ATransition specifies the type of transition used to switch the tab.
+ADirection specifies the direction in which the content of the tab is replaced with the content of the next tab.
+</summary></devnotes></function>
+      <function name="Previous" visibility="public" file="FMX.TabControl.pas" line="478">
+        <parameters>
+          <parameter name="ATransition" type="TTabTransition">
+            <value>
+              Slide
+            </value>
+          </parameter>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Moves the active tab to the previous tab.
+Use the Previous method to move over to the previous tab, if it exists.
+ATransition specifies the type of transition used to switch the tab.
+ADirection specifies the direction in which the content of the tab is replaced with the content of the previous tab.
+</summary></devnotes></function>
+      <function name="First" visibility="public" file="FMX.TabControl.pas" line="480">
+        <parameters>
+          <parameter name="ATransition" type="TTabTransition">
+            <value>
+              Slide
+            </value>
+          </parameter>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Moves to the first visible tab in the tab control.
+Use the First method to set the active tab to the first visible tab in the tab control.
+ATransition specifies the type of transition used to switch the tab.
+ADirection specifies the direction in which the content of the tab is replaced with the content of the first tab.
+</summary></devnotes></function>
+      <function name="Last" visibility="public" file="FMX.TabControl.pas" line="482">
+        <parameters>
+          <parameter name="ATransition" type="TTabTransition">
+            <value>
+              Slide
+            </value>
+          </parameter>
+          <parameter name="ADirection" type="TTabTransitionDirection" paramflags="const">
+            <value>
+              Normal
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Moves to the last visible tab in the tab control.
+Use the Last method to set the active tab to the last visible tab in the tab control.
+ATransition specifies the type of transition used to switch the tab.
+ADirection specifies the direction in which the content of the tab is replaced with the content of the last tab.
+</summary></devnotes></function>
+      <function name="Delete" visibility="public" file="FMX.TabControl.pas" line="484">
+        <parameters>
+          <parameter name="Index" type="Integer" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Deletes a tab from the tab control.
+Use the Delete method to delete the tab specified by AIndex from the tab control.
+</summary></devnotes></function>
+      <function name="Add" visibility="public" file="FMX.TabControl.pas" line="485">
+        <parameters>
+          <parameter name="TabClass" type="TTabItemClass" paramflags="const">
+            <value>
+              nil
+            </value>
+          </parameter>
+          <retval type="TTabItem"/>
+        </parameters>
+      <devnotes><summary>
+Adds a new tab to the tab control.
+Use the Add method to create a new tab object and add it to the tab control. The type of the tab object is specified by the TabClass parameter.
+If TabClass is nil, the created tab object will have the default type TTabItem.
+</summary></devnotes></function>
+      <function name="Insert" visibility="public" file="FMX.TabControl.pas" line="486">
+        <parameters>
+          <parameter name="Index" type="Integer" paramflags="const"/>
+          <parameter name="TabClass" type="TTabItemClass" paramflags="const">
+            <value>
+              nil
+            </value>
+          </parameter>
+          <retval type="TTabItem"/>
+        </parameters>
+      <devnotes><summary>
+Inserts a new tab on the specified position.
+Use the Insert method to create a new tab object and insert it on the position specified by Index. 
+The type of the tab object is specified by the TabClass parameter. If TabClass is nil, the created tab object will have the default type TTabItem.
+The Index parameter is 0-based.
+</summary></devnotes></function>
+      <function name="HasActiveTab" visibility="public" file="FMX.TabControl.pas" line="487">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Determines whether there is an active tab in the tab control.
+HasActiveTab returns True if one of the tabs in the tab control is selected and False otherwise.
+The tab control has an active tab if TabIndex is between 0 and TabCount-1.
+</summary></devnotes></function>
+      <function name="GetTabList" visibility="public" procflags="override" file="FMX.TabControl.pas" line="488">
+        <parameters>
+          <retval type="ITabList"/>
+        </parameters>
+      <devnotes><summary>
+Returns the list of tabs contained in this tab control.
+</summary></devnotes></function>
+      <procedure name="UpdateTabBarButtons" visibility="public" file="FMX.TabControl.pas" line="491">
+        <devnotes><summary>
+Updates the state of the buttons in the area of the tab titles. 
+UpdateTabBarButtons calls the DoUpdateTabBarButtons method.
+</summary></devnotes>
+      </procedure>
+      <property name="TabCount" visibility="public" read="GetTabCount" type="Integer" file="FMX.TabControl.pas" line="492"><devnotes><summary>
+Specifies the number of tabs that are present on this tab control component.
+Read the TabCount property to obtain the number of tab items that this tab control component has. If there are no tabs present, reading the TabCount property obtains 0.
+</summary></devnotes></property>
+      <property name="Tabs[AIndex]" visibility="public" read="GetTabItem" type="TTabItem" file="FMX.TabControl.pas" line="493"/>
+      <property name="AniCalculations" visibility="public" read="FAniCalculations" type="TAniCalculations" file="FMX.TabControl.pas" line="495">
+        <devnotes><summary>
+Represents the settings for the inertial scrolling that controls the movement in the title area of the tabs.
+</summary></devnotes>
+      </property>
+      <property name="TabBarRect" visibility="public" read="FTabBarRect" type="TRectF" file="FMX.TabControl.pas" line="497">
+        <devnotes><summary>
+The coordinates of the rectangle where all the tab titles are placed. 
+</summary></devnotes>
+      </property>
+      <property name="TabContentSize" visibility="public" read="FTabContentSize" type="TSizeF" file="FMX.TabControl.pas" line="499">
+        <devnotes><summary>
+The size of the area that contains all the tab titles. 
+</summary></devnotes>
+      </property>
+      <property name="TabContentPosition" visibility="public" read="GetTabContentPosition" write="SetTabContentPosition" type="Single" default="0" file="FMX.TabControl.pas" line="501">
+        <devnotes><summary>
+Offset of the area of the tab headers. 
+</summary></devnotes>
+      </property>
+      <property name="TransitionRunning" visibility="public" read="FTransitionRunning" type="Boolean" file="FMX.TabControl.pas" line="503"><devnotes><summary>
+Determines whether the transition between tabs is currently running.
+TransitionRunning returns True if the transition between tabs is currently running and False otherwise.
+</summary></devnotes></property>
+      <property name="EffectiveTabPosition" visibility="public" read="GetEffectiveTabPosition" type="TTabPosition" file="FMX.TabControl.pas" line="504"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="EffectiveFullSize" visibility="public" read="GetEffectiveFullSize" type="Boolean" file="FMX.TabControl.pas" line="507">
+        <devnotes><summary>
+Indicates whether the tab buttons take up all the space in the tabs band. 
+See its getter method GetEffectiveFullSize for further details.
+</summary></devnotes>
+      </property>
+      <property name="HasTouchScreen" visibility="public" read="FHasTouchScreen" type="Boolean" file="FMX.TabControl.pas" line="509">
+        <devnotes><summary>
+Indicates whether the device the application runs on has a touch screen. 
+When HasTouchScreen is True the device where the application runs on has a touch screen.
+</summary></devnotes>
+      </property>
+      <property name="TabBarButtons" visibility="public" read="FTabBarButtons" write="SetTabBarButtons" type="TTabControl.TTabBarButtons" default="3" file="FMX.TabControl.pas" line="513">
+        <devnotes><summary>
+Specifies the buttons to be displayed in the field names of the tabs. 
+The set of buttons displayed depends on various factors: the availability of the touch screen, the location of the headers, and the number of tabs.
+</summary></devnotes>
+      </property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.TabControl.pas" line="515"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.TabControl.pas" line="516"/>
+      <property name="ActiveTab" visibility="published" read="GetActiveTab" write="SetActiveTab" stored="False" type="TTabItem" file="FMX.TabControl.pas" line="517"><devnotes><summary>
+Specifies the currently active tab.
+ActiveTab sets or gets the currently active (focused) tab item on the current tab control. 
+</summary></devnotes></property>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="518"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="519"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.TabControl.pas" line="520"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.TabControl.pas" line="521"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="522"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="523"/>
+      <property name="FullSize" visibility="published" read="FFullSize" write="SetFullSize" type="TBehaviorBoolean" default="2" file="FMX.TabControl.pas" line="524"><devnotes><summary>
+Specifies whether the tab buttons occupy all the space in the tabs band.
+Set the FullSize property to True in order for the clickable tab buttons to take up all the space in the tabs band. For instance, if you have a tab control component of a fairly large width and only two tabs, then setting FullSize to True will make the two tab buttons span over the entire width of the tab control.
+Set FullSize to False to let Delphi automatically adjust the way the tab buttons occupy the space.
+
+</summary></devnotes></property>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.TabControl.pas" line="525"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.TabControl.pas" line="526"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.TabControl.pas" line="527"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="528"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.TabControl.pas" line="529"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="530"/>
+      <property name="Images" visibility="published" read="GetImages" write="SetImages" type="TCustomImageList" file="FMX.TabControl.pas" line="532">
+        <devnotes><summary>
+Defines the reference to a TCustomImageList list of images to be used to draw images on the component.
+If the TCustomImageList list is empty, then Images is nil/null.
+Call ImagesChanged when Images is changed.
+</summary></devnotes>
+      </property>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="533"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.TabControl.pas" line="534"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="535"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.TabControl.pas" line="536"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="537"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.TabControl.pas" line="538"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="539"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.TabControl.pas" line="540"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.TabControl.pas" line="541"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.TabControl.pas" line="542"/>
+      <property name="TabHeight" visibility="published" read="FTabHeight" write="SetTabHeight" type="Single" default="0" file="FMX.TabControl.pas" line="543"><devnotes><summary>
+Specifies the height, in pixels, of the clickable tabs' captions.
+Use the TabHeight property to specify the height, in pixels, of the band that holds all the clickable tab buttons that correspond to individual tabs of this tab control component.
+</summary></devnotes></property>
+      <property name="TabIndex" visibility="published" read="FTabIndex" write="SetTabIndex" type="Integer" default="-1" file="FMX.TabControl.pas" line="544"><devnotes><summary>
+Specifies the index of the active tab.
+Use the TabIndex property to set or get the index of the tab that is active (focused) on this tab control component. A value of 0 indicates that the first tab is active, while a value of -1 indicates that none of the tabs is active, or there are none present.
+</summary></devnotes></property>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.TabControl.pas" line="545"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="546"/>
+      <property name="TabPosition" visibility="published" read="FTabPosition" write="SetTabPosition" stored="True" type="TTabPosition" file="FMX.TabControl.pas" line="547"><devnotes><summary>
+Specifies the position of the tabs on this TTabControl component.
+The default value of the TTabPosition property is PlatformDefault. 
+Refer to the TTabPosition help topic for the description of the possible tab positions.
+</summary></devnotes></property>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.TabControl.pas" line="548"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.TabControl.pas" line="549"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.TabControl.pas" line="550"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="551"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.TabControl.pas" line="552"><devnotes><summary>
+Occurs immediately after changing the active tab on this tab control component.
+Write an OnChange event handler to provide additional functionality when changing the active tab of this tab control component.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.TabControl.pas" line="553"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="554"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.TabControl.pas" line="555"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.TabControl.pas" line="556"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="557"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="558"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="559"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.TabControl.pas" line="560"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.TabControl.pas" line="561"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.TabControl.pas" line="562"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.TabControl.pas" line="563"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="564"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="565"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.TabControl.pas" line="566"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.TabControl.pas" line="567"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="568"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.TabControl.pas" line="569"/>
+    </members>
+  <devnotes><summary>
+TTabControl is a tab set that has the appearance of notebook dividers.
+Use TTabControl to add a control with multiple tab settings to a FireMonkey form. When the current tab changes, the tab control must directly update its contents to reflect the change, in an OnChange event handler.
+Disabling a TTabControl object disables all tabs at once. To enable or disable specific tabs, you can programmatically use the Tabs property as in the following code snippet where the tab with the index of 1 is rendered as disabled:
+
+  TabControl1.Tabs[1].Enabled := False;
+
+Use TTabControl to create rich graphical interfaces with great functionality, such as options and configurations for a specific application.
+
+Code Examples
+FMX.ControlsDemo Sample
+FMX.MusicPlayer Sample
+FMX.TabSlideTransition Sample</summary></devnotes></class>
+</namespace>

@@ -1,0 +1,1883 @@
+<?xml version="1.0" ?><namespace name="FMX.Colors" platform="Win32">
+  <const name="ColorPickSize" type="Integer" file="FMX.Colors.pas" line="21">
+    <value>
+      $A
+    </value>
+  </const>
+  <class name="THueTrackBar" file="FMX.Colors.pas" line="27">
+    
+    <members>
+      <function name="IsValueStored" visibility="private" file="FMX.Colors.pas" line="29">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="FillBitmap" visibility="protected" procflags="override" file="FMX.Colors.pas" line="31">
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="33">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <property name="Value" visibility="published" read="GetValue" write="SetValue" stored="IsValueStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="35"/>
+    </members>
+  </class>
+  <class name="TAlphaTrackBar" file="FMX.Colors.pas" line="40">
+    
+    <members>
+      <function name="IsValueStored" visibility="private" file="FMX.Colors.pas" line="42">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="FillBitmap" visibility="protected" procflags="override" file="FMX.Colors.pas" line="44">
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="46">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <property name="Value" visibility="published" read="GetValue" write="SetValue" stored="IsValueStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="48"/>
+    </members>
+  </class>
+  <class name="TBWTrackBar" file="FMX.Colors.pas" line="53">
+    
+    <members>
+      <function name="IsValueStored" visibility="private" file="FMX.Colors.pas" line="55">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="FillBitmap" visibility="protected" procflags="override" file="FMX.Colors.pas" line="57">
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="59">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <property name="Value" visibility="published" read="GetValue" write="SetValue" stored="IsValueStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="61"/>
+    </members>
+  </class>
+  <class name="TColorBox" file="FMX.Colors.pas" line="66">
+    
+    <members>
+      <field name="FColor" type="TAlphaColor" visibility="private" size="4" offset="904" file="FMX.Colors.pas" line="68"/>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="69">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.Colors.pas" line="71">
+      <devnotes><summary>
+Renders the control's surface. 
+FMX.Colors.TColorBox.Paint inherits from FMX.Controls.TControl.Paint. All content below this line refers to FMX.Controls.TControl.Paint.
+Renders the control's surface. 
+The Paint method is called by DoPaint when a control is being painted by the PaintTo method. Before DoPaint, Painting is called. AfterPaint is called immediately after. 
+FireMonkey internally calls Paint to paint the control when the window is being painted. You must not call Paint explicitly.
+The base class TControl implements an empty Paint. The descendants of TControl override Paint to provide specific rendering of the respective controls.
+For example, Paint methods in classes of the FMX.Objects unit draw and fill shapes using the properties defined in these classes. See the descriptions of these classes to find the properties of the respective shapes. 
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="73">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TColorBox.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="75"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="76"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="77"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="78"/>
+      <property name="Color" visibility="published" read="FColor" write="SetColor" type="TAlphaColor" file="FMX.Colors.pas" line="79"><devnotes><summary>
+Specifies the alpha color displayed by this color box.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="80"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="81"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="82"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="83"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="84"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="85"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="86"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="87"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="88"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="89"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="90"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="91"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="92"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="93"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="94"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="95"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="96"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="97"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="98"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="99"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="100"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="101"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="102"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="103"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="105"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="106"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="107"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="108"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="109"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="111"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="112"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="114"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="115"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="116"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="118"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="119"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="120"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="121"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="122"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="123"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="124"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="125"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="127"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="128"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="129"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="130"/>
+    </members>
+  <devnotes><summary>
+Represents a rectangular-shaped color indicator.
+A TColorBox is a visual component represented as a rectangular-shaped optical indicator whose color can be changed programmatically by means of the Color property, or by attaching it to one of the following color selector components:
+
+TColorPanel
+TColorQuad
+
+</summary></devnotes></class>
+  <class name="TColorQuad" file="FMX.Colors.pas" line="135">
+    
+    <members>
+      <field name="FColorBox" type="TColorBox" visibility="private" size="4" offset="904" file="FMX.Colors.pas" line="137"/>
+      <field name="FColorBitmap" type="TBitmap" visibility="private" size="4" offset="908" file="FMX.Colors.pas" line="138"/>
+      <field name="FHue" type="Single" visibility="private" size="4" offset="912" file="FMX.Colors.pas" line="139"/>
+      <field name="FSat" type="Single" visibility="private" size="4" offset="916" file="FMX.Colors.pas" line="140"/>
+      <field name="FLum" type="Single" visibility="private" size="4" offset="920" file="FMX.Colors.pas" line="141"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="928" file="FMX.Colors.pas" line="142"/>
+      <field name="FAlpha" type="Single" visibility="private" size="4" offset="936" file="FMX.Colors.pas" line="143"/>
+      <field name="FPendingChanges" type="Boolean" visibility="private" size="1" offset="940" file="FMX.Colors.pas" line="144"/>
+      <procedure name="SetHue" visibility="private" file="FMX.Colors.pas" line="145">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetLum" visibility="private" file="FMX.Colors.pas" line="146">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetSat" visibility="private" file="FMX.Colors.pas" line="147">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetAlpha" visibility="private" file="FMX.Colors.pas" line="148">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetColorBox" visibility="private" file="FMX.Colors.pas" line="149">
+        <parameters>
+          <parameter name="Value" type="TColorBox" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="PreviewColor" visibility="private" file="FMX.Colors.pas" line="150">
+        <parameters>
+          <parameter name="ValHue" type="Single" paramflags="const"/>
+          <parameter name="ValLum" type="Single" paramflags="const"/>
+          <parameter name="ValSat" type="Single" paramflags="const"/>
+          <parameter name="ValAlpha" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="151">
+        <parameters>
+          <parameter name="ValHue" type="Single" paramflags="const"/>
+          <parameter name="ValLum" type="Single" paramflags="const"/>
+          <parameter name="ValSat" type="Single" paramflags="const"/>
+          <parameter name="ValAlpha" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetIsTracking" visibility="private" file="FMX.Colors.pas" line="152">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="MouseMove" visibility="protected" procflags="override" file="FMX.Colors.pas" line="154">
+        <parameters>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseMove event dispatcher. 
+FMX.Colors.TColorQuad.MouseMove inherits from FMX.Controls.TControl.MouseMove. All content below this line refers to FMX.Controls.TControl.MouseMove.
+OnMouseMove event dispatcher. 
+As the mouse cursor moves across a control, this method is called repeatedly. Each time it is called with the new coordinates that reflect the continuous path of the mouse cursor across the screen real estate covered by the control's visual representation:
+
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the mouse cursor is over the control.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseMove method to provide other responses when the mouse cursor moves over the control.
+</summary></devnotes></procedure>
+      <procedure name="MouseUp" visibility="protected" procflags="override" file="FMX.Colors.pas" line="155">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseUp event dispatcher. 
+FMX.Colors.TColorQuad.MouseUp inherits from FMX.Controls.TControl.MouseUp. All content below this line refers to FMX.Controls.TControl.MouseUp.
+OnMouseUp event dispatcher. 
+A control calls MouseUp in response to any of mouse-up messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X and Y parameters, respectively: 
+
+Button determines which mouse button was previously pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the pressed mouse button is released.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseUp method to provide other responses when the mouse button previously pressed is released while the cursor is over the control.
+</summary></devnotes></procedure>
+      <function name="DoGetUpdateRect" visibility="protected" procflags="override" file="FMX.Colors.pas" line="156">
+        <parameters>
+          <retval type="TRectF"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.Colors.pas" line="157">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Forwards notification messages to all owned components.
+FMX.Colors.TColorQuad.Notification inherits from System.Classes.TComponent.Notification. All content below this line refers to System.Classes.TComponent.Notification.
+Forwards notification messages to all owned components.
+Do not call the Notification method in an application. Notification is called automatically when the component specified by AComponent is about to be inserted or removed, as specified by Operation. By default, components pass along the notification to their owned components, if any.
+A component can, if needed, act on the notification that a component is being inserted or removed. For example, if a component has object fields or properties that contain references to other components, it can check the notifications of component removals and invalidate those references as needed.
+
+Note: Notification is not called for components that are freed implicitly (because their Owner is freed).</summary></devnotes></procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.Colors.pas" line="158">
+      <devnotes><summary>
+Renders the control's surface. 
+FMX.Colors.TColorQuad.Paint inherits from FMX.Controls.TControl.Paint. All content below this line refers to FMX.Controls.TControl.Paint.
+Renders the control's surface. 
+The Paint method is called by DoPaint when a control is being painted by the PaintTo method. Before DoPaint, Painting is called. AfterPaint is called immediately after. 
+FireMonkey internally calls Paint to paint the control when the window is being painted. You must not call Paint explicitly.
+The base class TControl implements an empty Paint. The descendants of TControl override Paint to provide specific rendering of the respective controls.
+For example, Paint methods in classes of the FMX.Objects unit draw and fill shapes using the properties defined in these classes. See the descriptions of these classes to find the properties of the respective shapes. 
+</summary></devnotes></procedure>
+      <function name="PointInObjectLocal" visibility="public" procflags="override" file="FMX.Colors.pas" line="160">
+        <parameters>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Checks whether the point specified by local coordinates belongs to the control area.
+FMX.Colors.TColorQuad.PointInObjectLocal inherits from FMX.Controls.TControl.PointInObjectLocal. All content below this line refers to FMX.Controls.TControl.PointInObjectLocal.
+Checks whether the point specified by local coordinates belongs to the control area.
+PointInObjectLocal returns True if the specified point belongs to the control area, and False otherwise. 
+The X and Y are the local coordinates of the point to be checked (compare with PointInObject):
+
+X is the X coordinate.
+Y is the Y coordinate.
+The local coordinates of the upper-left corner of the control rectangle are (0,0), and the local coordinates of the lower-right corner are (Width, Height). 
+The points of the control boundary specified by BoundsRect belong to the control and PointInObjectLocal returns True for them.
+If a control supports the Touch property, the control area can be optionally inflated on the values specified by the TouchTargetExpansion property. TouchTargetExpansion keeps four optional parameters representing the expansion for the four sides of the control in pixels (Bottom, Left, Right, and Top). 
+The dclasses can change the 'control area' definition. For example:
+
+The FMX.Objects.TSelection class extends the 'control area' definition relative to BoundsRect. FMX.Objects.TSelection.PointInObjectLocal also returns True if the point belongs to any of small rectangles of the four grip controls used to manage the selection shape. The rectangles of the grip controls are rectangles surrounding the four corners of the TSelection rectangle. The Width and Height of these rectangles are equal to 2 * GripSize. For example, the grip control's rectangle of the upper-right corner UR_Corner of TSelection is defined by the following corners:
+(UR_Corner.Top - GripSize, UR_Corner.Right - GripSize)--upper-left corner of the grip.
+(UR_Corner.Top + GripSize, UR_Corner.Right + GripSize)--lower-right corner of the grip.
+FMX.Objects.TSelectionPoint.PointInObjectLocal returns True if the specified point belongs to the rectangle of the grip control corresponding to the TSelectionPoint object, and False otherwise.</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="161">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TColorQuad.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="162">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TColorQuad.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <property name="Alpha" visibility="published" read="FAlpha" write="SetAlpha" type="Single" default="0" file="FMX.Colors.pas" line="164"><devnotes><summary>
+Specifies the alpha channel (transparency) to apply to the selected color.
+Change the Alpha property to a value in the range from 0 through 1 to set the alpha channel (transparency) for the selected color.
+</summary></devnotes></property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="165"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="166"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="167"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="168"/>
+      <property name="ColorBox" visibility="published" read="FColorBox" write="SetColorBox" type="TColorBox" file="FMX.Colors.pas" line="169"><devnotes><summary>
+Specifies the color box attached to this color quad component.
+A color box is a visual component represented as a rectangular-shaped optical indicator that changes color according to the color selected in this color quad component.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="170"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="171"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="172"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="173"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="174"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="175"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="176"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="177"/>
+      <property name="Hue" visibility="published" read="FHue" write="SetHue" type="Single" default="0" file="FMX.Colors.pas" line="178"><devnotes><summary>
+Specifies the hue of the selected color, in HSL color coordinates.
+Set or read Hue in conjunction with Sat and Lum in order to change or obtain the color selected in this color quad component.
+</summary></devnotes></property>
+      <property name="Lum" visibility="published" read="FLum" write="SetLum" type="Single" default="0" file="FMX.Colors.pas" line="179"><devnotes><summary>
+Specifies the luminance of the selected color, in HSL color coordinates.
+Set or read Lum in conjunction with Hue and Sat in order to change or obtain the color selected in this color quad component.
+</summary></devnotes></property>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="180"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="181"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="182"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="183"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="184"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="185"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="186"/>
+      <property name="Sat" visibility="published" read="FSat" write="SetSat" type="Single" default="0" file="FMX.Colors.pas" line="187"><devnotes><summary>
+Specifies the saturation of the selected color, in HSL color coordinates.
+Set or read Sat in conjunction with Hue and Lum in order to change or obtain the color selected in this color quad component.
+</summary></devnotes></property>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="188"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="189"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="190"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="191"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="192"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="193"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="194"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="195"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="196"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Colors.pas" line="197"><devnotes><summary>
+Occurs immediately after changing the color on this color quad component.
+Write an OnChange event handler to provide additional functionality when changing the color of this color quad component.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="199"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="200"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="201"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="202"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="203"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="205"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="206"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="208"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="209"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="210"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="212"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="213"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="214"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="215"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="216"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="217"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="218"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="219"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="221"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="222"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="223"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="224"/>
+    </members>
+  <devnotes><summary>
+Represents a three-color gradient color selector.
+A TColorQuad component is a color selector that displays a color spectrum drawn as a three-color gradient (black, white, and a specified color) that lets you fine-tune your color selection. TColorQuad can be attached to a TColorPicker component.
+
+</summary></devnotes></class>
+  <class name="TColorPicker" file="FMX.Colors.pas" line="229">
+    
+    <members>
+      <field name="FHueBitmap" type="TBitmap" visibility="private" size="4" offset="904" file="FMX.Colors.pas" line="231"/>
+      <field name="FHue" type="Single" visibility="private" size="4" offset="908" file="FMX.Colors.pas" line="232"/>
+      <field name="FColorQuad" type="TColorQuad" visibility="private" size="4" offset="912" file="FMX.Colors.pas" line="233"/>
+      <procedure name="SetHue" visibility="private" file="FMX.Colors.pas" line="234">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetColor" visibility="private" file="FMX.Colors.pas" line="235">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="236">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="MouseMove" visibility="protected" procflags="override" file="FMX.Colors.pas" line="238">
+        <parameters>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseMove event dispatcher. 
+FMX.Colors.TColorPicker.MouseMove inherits from FMX.Controls.TControl.MouseMove. All content below this line refers to FMX.Controls.TControl.MouseMove.
+OnMouseMove event dispatcher. 
+As the mouse cursor moves across a control, this method is called repeatedly. Each time it is called with the new coordinates that reflect the continuous path of the mouse cursor across the screen real estate covered by the control's visual representation:
+
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the mouse cursor is over the control.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseMove method to provide other responses when the mouse cursor moves over the control.
+</summary></devnotes></procedure>
+      <procedure name="MouseUp" visibility="protected" procflags="override" file="FMX.Colors.pas" line="239">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseUp event dispatcher. 
+FMX.Colors.TColorPicker.MouseUp inherits from FMX.Controls.TControl.MouseUp. All content below this line refers to FMX.Controls.TControl.MouseUp.
+OnMouseUp event dispatcher. 
+A control calls MouseUp in response to any of mouse-up messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X and Y parameters, respectively: 
+
+Button determines which mouse button was previously pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the pressed mouse button is released.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseUp method to provide other responses when the mouse button previously pressed is released while the cursor is over the control.
+</summary></devnotes></procedure>
+      <function name="GetAbsoluteRect" visibility="protected" procflags="override" file="FMX.Colors.pas" line="240">
+        <parameters>
+          <retval type="TRectF"/>
+        </parameters>
+      <devnotes><summary>
+Getter function for the AbsoluteRect property.
+FMX.Colors.TColorPicker.GetAbsoluteRect inherits from FMX.Controls.TControl.GetAbsoluteRect. All content below this line refers to FMX.Controls.TControl.GetAbsoluteRect.
+Getter function for the AbsoluteRect property.
+</summary></devnotes></function>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.Colors.pas" line="241">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Forwards notification messages to all owned components.
+FMX.Colors.TColorPicker.Notification inherits from System.Classes.TComponent.Notification. All content below this line refers to System.Classes.TComponent.Notification.
+Forwards notification messages to all owned components.
+Do not call the Notification method in an application. Notification is called automatically when the component specified by AComponent is about to be inserted or removed, as specified by Operation. By default, components pass along the notification to their owned components, if any.
+A component can, if needed, act on the notification that a component is being inserted or removed. For example, if a component has object fields or properties that contain references to other components, it can check the notifications of component removals and invalidate those references as needed.
+
+Note: Notification is not called for components that are freed implicitly (because their Owner is freed).</summary></devnotes></procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.Colors.pas" line="242">
+      <devnotes><summary>
+Renders the control's surface. 
+FMX.Colors.TColorPicker.Paint inherits from FMX.Controls.TControl.Paint. All content below this line refers to FMX.Controls.TControl.Paint.
+Renders the control's surface. 
+The Paint method is called by DoPaint when a control is being painted by the PaintTo method. Before DoPaint, Painting is called. AfterPaint is called immediately after. 
+FireMonkey internally calls Paint to paint the control when the window is being painted. You must not call Paint explicitly.
+The base class TControl implements an empty Paint. The descendants of TControl override Paint to provide specific rendering of the respective controls.
+For example, Paint methods in classes of the FMX.Objects unit draw and fill shapes using the properties defined in these classes. See the descriptions of these classes to find the properties of the respective shapes. 
+</summary></devnotes></procedure>
+      <function name="PointInObjectLocal" visibility="public" procflags="override" file="FMX.Colors.pas" line="244">
+        <parameters>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Checks whether the point specified by local coordinates belongs to the control area.
+FMX.Colors.TColorPicker.PointInObjectLocal inherits from FMX.Controls.TControl.PointInObjectLocal. All content below this line refers to FMX.Controls.TControl.PointInObjectLocal.
+Checks whether the point specified by local coordinates belongs to the control area.
+PointInObjectLocal returns True if the specified point belongs to the control area, and False otherwise. 
+The X and Y are the local coordinates of the point to be checked (compare with PointInObject):
+
+X is the X coordinate.
+Y is the Y coordinate.
+The local coordinates of the upper-left corner of the control rectangle are (0,0), and the local coordinates of the lower-right corner are (Width, Height). 
+The points of the control boundary specified by BoundsRect belong to the control and PointInObjectLocal returns True for them.
+If a control supports the Touch property, the control area can be optionally inflated on the values specified by the TouchTargetExpansion property. TouchTargetExpansion keeps four optional parameters representing the expansion for the four sides of the control in pixels (Bottom, Left, Right, and Top). 
+The dclasses can change the 'control area' definition. For example:
+
+The FMX.Objects.TSelection class extends the 'control area' definition relative to BoundsRect. FMX.Objects.TSelection.PointInObjectLocal also returns True if the point belongs to any of small rectangles of the four grip controls used to manage the selection shape. The rectangles of the grip controls are rectangles surrounding the four corners of the TSelection rectangle. The Width and Height of these rectangles are equal to 2 * GripSize. For example, the grip control's rectangle of the upper-right corner UR_Corner of TSelection is defined by the following corners:
+(UR_Corner.Top - GripSize, UR_Corner.Right - GripSize)--upper-left corner of the grip.
+(UR_Corner.Top + GripSize, UR_Corner.Right + GripSize)--lower-right corner of the grip.
+FMX.Objects.TSelectionPoint.PointInObjectLocal returns True if the specified point belongs to the rectangle of the grip control corresponding to the TSelectionPoint object, and False otherwise.</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="245">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TColorPicker.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="246">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TColorPicker.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <property name="Color" visibility="public" read="GetColor" write="SetColor" type="TAlphaColor" file="FMX.Colors.pas" line="247"><devnotes><summary>
+Specifies the alpha color selected in this color picker.
+Color changes in respect to the variation of the Hue property. Programmatically set Hue to a specific value, or visually move the hue selector of this color picker, at run time, to obtain the color in the Color property.
+</summary></devnotes></property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="249"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="250"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="251"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="252"/>
+      <property name="ColorQuad" visibility="published" read="FColorQuad" write="FColorQuad" type="TColorQuad" file="FMX.Colors.pas" line="253"><devnotes><summary>
+Specifies the TColorQuad component that is attached to this color picker.
+Specify a TColorQuad component that is attached to this TColorPicker. In this way, every time you change the Color in this color picker, the color quad component automatically updates to the color selected in the color picker, further allowing you to tweak the saturation and luminance.
+
+In the picture above, a 0.5 alpha channel TColorBox component was also attached to the TColorQuad for a complete color selection application.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="254"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="255"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="256"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="257"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="258"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="259"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="260"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="261"/>
+      <property name="Hue" visibility="published" read="FHue" write="SetHue" type="Single" default="0" file="FMX.Colors.pas" line="262"><devnotes><summary>
+Specifies the color, by hue, from this color picker.
+Hue variates from 0 to 1 and spans the entire color spectrum drawn on this color picker. Programmatically set Hue to a specific value, or visually move the hue selector of this color picker, at run time, to obtain the color in the Color property.
+</summary></devnotes></property>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="263"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="264"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="265"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="266"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="267"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="268"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="269"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="270"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="271"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="272"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="273"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="274"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="275"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="276"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="277"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="278"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="280"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="281"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="282"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="283"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="284"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="286"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="287"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="289"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="290"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="291"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="293"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="294"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="295"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="296"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="297"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="298"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="299"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="300"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="302"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="303"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="304"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="305"/>
+    </members>
+  <devnotes><summary>
+Represents a color selector that displays the entire color spectrum.
+A TColorPicker component is a color selector that displays a color spectrum and lets you pick any color by moving a dot-style selector. TColorPicker can be attached to a TColorQuad component.
+
+
+
+Note: The TColorPicker (Delphi) example describes how to implement a color picker as shown in the image.
+See Also
+FMX.Colors.THueTrackBar
+FMX.Colors.TColorQuad
+TColorPicker (Delphi)
+
+
+</summary></devnotes></class>
+  <class name="TGradientEdit" file="FMX.Colors.pas" line="310">
+    
+    <members>
+      <field name="FBitmap" type="TBitmap" visibility="private" size="4" offset="904" file="FMX.Colors.pas" line="312"/>
+      <field name="FGradient" type="TGradient" visibility="private" size="4" offset="908" file="FMX.Colors.pas" line="313"/>
+      <field name="FCurrentPoint" type="Integer" visibility="private" size="4" offset="912" file="FMX.Colors.pas" line="314"/>
+      <field name="FCurrentPointInvisible" type="Boolean" visibility="private" size="1" offset="916" file="FMX.Colors.pas" line="315"/>
+      <field name="FMoving" type="Boolean" visibility="private" size="1" offset="917" file="FMX.Colors.pas" line="316"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="920" file="FMX.Colors.pas" line="317"/>
+      <field name="FOnSelectPoint" type="TNotifyEvent" visibility="private" size="8" offset="928" file="FMX.Colors.pas" line="318"/>
+      <field name="FColorPicker" type="TColorPicker" visibility="private" size="4" offset="936" file="FMX.Colors.pas" line="319"/>
+      <procedure name="SetGradient" visibility="private" file="FMX.Colors.pas" line="320">
+        <parameters>
+          <parameter name="Value" type="TGradient" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetPointRect" visibility="private" file="FMX.Colors.pas" line="321">
+        <parameters>
+          <parameter name="Point" type="Integer" paramflags="const"/>
+          <retval type="TRectF"/>
+        </parameters>
+      </function>
+      <procedure name="DoChanged" visibility="private" file="FMX.Colors.pas" line="322">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCurrentPoint" visibility="private" file="FMX.Colors.pas" line="323">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetColorPicker" visibility="private" file="FMX.Colors.pas" line="324">
+        <parameters>
+          <parameter name="Value" type="TColorPicker" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="MouseDown" visibility="protected" procflags="override" file="FMX.Colors.pas" line="326">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseDown event dispatcher. 
+FMX.Colors.TGradientEdit.MouseDown inherits from FMX.Controls.TControl.MouseDown. All content below this line refers to FMX.Controls.TControl.MouseDown.
+OnMouseDown event dispatcher. 
+A control calls MouseDown in response to any of mouse-down messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X, and Y parameters, respectively:
+
+Button determines which mouse button is pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the user pressed the mouse button.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control. If Button is mbLeft, MouseDown sets PressedPosition as a TPointF(X,Y).
+Override the protected MouseDown method to provide other responses when a mouse button is down while the cursor is over the control.
+
+</summary></devnotes></procedure>
+      <procedure name="MouseMove" visibility="protected" procflags="override" file="FMX.Colors.pas" line="327">
+        <parameters>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseMove event dispatcher. 
+FMX.Colors.TGradientEdit.MouseMove inherits from FMX.Controls.TControl.MouseMove. All content below this line refers to FMX.Controls.TControl.MouseMove.
+OnMouseMove event dispatcher. 
+As the mouse cursor moves across a control, this method is called repeatedly. Each time it is called with the new coordinates that reflect the continuous path of the mouse cursor across the screen real estate covered by the control's visual representation:
+
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the mouse cursor is over the control.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseMove method to provide other responses when the mouse cursor moves over the control.
+</summary></devnotes></procedure>
+      <procedure name="MouseUp" visibility="protected" procflags="override" file="FMX.Colors.pas" line="328">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseUp event dispatcher. 
+FMX.Colors.TGradientEdit.MouseUp inherits from FMX.Controls.TControl.MouseUp. All content below this line refers to FMX.Controls.TControl.MouseUp.
+OnMouseUp event dispatcher. 
+A control calls MouseUp in response to any of mouse-up messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X and Y parameters, respectively: 
+
+Button determines which mouse button was previously pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the pressed mouse button is released.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control.
+Override the protected MouseUp method to provide other responses when the mouse button previously pressed is released while the cursor is over the control.
+</summary></devnotes></procedure>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.Colors.pas" line="329">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Forwards notification messages to all owned components.
+FMX.Colors.TGradientEdit.Notification inherits from System.Classes.TComponent.Notification. All content below this line refers to System.Classes.TComponent.Notification.
+Forwards notification messages to all owned components.
+Do not call the Notification method in an application. Notification is called automatically when the component specified by AComponent is about to be inserted or removed, as specified by Operation. By default, components pass along the notification to their owned components, if any.
+A component can, if needed, act on the notification that a component is being inserted or removed. For example, if a component has object fields or properties that contain references to other components, it can check the notifications of component removals and invalidate those references as needed.
+
+Note: Notification is not called for components that are freed implicitly (because their Owner is freed).</summary></devnotes></procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.Colors.pas" line="330">
+      <devnotes><summary>
+Renders the control's surface. 
+FMX.Colors.TGradientEdit.Paint inherits from FMX.Controls.TControl.Paint. All content below this line refers to FMX.Controls.TControl.Paint.
+Renders the control's surface. 
+The Paint method is called by DoPaint when a control is being painted by the PaintTo method. Before DoPaint, Painting is called. AfterPaint is called immediately after. 
+FireMonkey internally calls Paint to paint the control when the window is being painted. You must not call Paint explicitly.
+The base class TControl implements an empty Paint. The descendants of TControl override Paint to provide specific rendering of the respective controls.
+For example, Paint methods in classes of the FMX.Objects unit draw and fill shapes using the properties defined in these classes. See the descriptions of these classes to find the properties of the respective shapes. 
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="332">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TGradientEdit.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="333">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TGradientEdit.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <procedure name="UpdateGradient" visibility="public" file="FMX.Colors.pas" line="334">
+      <devnotes><summary>
+Executes each time the selected color changes in order to update the gradient.
+</summary></devnotes></procedure>
+      <property name="Gradient" visibility="public" read="FGradient" write="SetGradient" type="TGradient" file="FMX.Colors.pas" line="335"><devnotes><summary>
+Specifies the color gradient this gradient edit component will use.
+Set or get the Gradient property to a TGradient type in order to specify a new gradient pattern.
+</summary></devnotes></property>
+      <property name="CurrentPoint" visibility="public" read="FCurrentPoint" write="SetCurrentPoint" type="Integer" file="FMX.Colors.pas" line="336"><devnotes><summary>
+Specifies the location of the selector point over the spanning of the component, which is a gradient color selector.
+When the CurrentPoint property changes, an OnSelectPoint event also occurs.
+</summary></devnotes></property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="338"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="339"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="340"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="341"/>
+      <property name="ColorPicker" visibility="published" read="FColorPicker" write="SetColorPicker" type="TColorPicker" file="FMX.Colors.pas" line="342"><devnotes><summary>
+Specifies the color picker attached to this gradient editor component.
+A color picker is a visual component represented as a rectangular-shaped optical indicator that permits you to select a color from the color spectrum.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="343"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="344"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="345"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="346"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="347"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="348"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="349"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="350"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="351"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="352"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="353"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="354"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="355"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="356"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="357"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="358"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="359"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="360"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="361"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="362"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="363"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="364"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="365"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="366"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Colors.pas" line="368"><devnotes><summary>
+Occurs immediately after changing the color on this component, which is a gradient color selector.
+Write an OnChange event handler to provide additional functionality when changing the color of this component, which is a gradient color selector.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="370"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="371"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="372"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="373"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="374"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="376"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="377"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="379"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="380"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="381"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="383"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="384"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="385"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="386"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="387"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="388"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="389"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="390"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="392"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="393"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="394"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="395"/>
+      <event name="OnSelectPoint" visibility="published" read="FOnSelectPoint" write="FOnSelectPoint" type="TNotifyEvent" file="FMX.Colors.pas" line="396"><devnotes><summary>
+Occurs immediately after clicking over the surface of this gradient color selector.
+Write an OnSelectPoint event handler to provide additional functionality when clicking over the surface of this gradient color selector component. OnSelectPoint also occurs when setting the value of the CurrentPoint property.
+</summary></devnotes></event>
+    </members>
+  <devnotes><summary>
+Represents a gradient editor component.
+A TGradientEdit component is a gradient editor that can be used to create new gradient patterns.
+
+</summary></devnotes></class>
+  <class name="TColorPanel" file="FMX.Colors.pas" line="401">
+    
+    <members>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="904" file="FMX.Colors.pas" line="403"/>
+      <field name="FColorQuad" type="TColorQuad" visibility="private" size="4" offset="912" file="FMX.Colors.pas" line="404"/>
+      <field name="FAlphaTrack" type="TAlphaTrackBar" visibility="private" size="4" offset="916" file="FMX.Colors.pas" line="405"/>
+      <field name="FHueTrack" type="THueTrackBar" visibility="private" size="4" offset="920" file="FMX.Colors.pas" line="406"/>
+      <field name="FColorBox" type="TColorBox" visibility="private" size="4" offset="924" file="FMX.Colors.pas" line="407"/>
+      <field name="FUseAlpha" type="Boolean" visibility="private" size="1" offset="928" file="FMX.Colors.pas" line="408"/>
+      <field name="FOwnerObserves" type="Boolean" visibility="private" size="1" offset="929" file="FMX.Colors.pas" line="409"/>
+      <function name="GetColor" visibility="private" file="FMX.Colors.pas" line="410">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="411">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetColorBox" visibility="private" file="FMX.Colors.pas" line="412">
+        <parameters>
+          <parameter name="Value" type="TColorBox" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetUseAlpha" visibility="private" file="FMX.Colors.pas" line="413">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetObservers" visibility="protected" procflags="override" file="FMX.Colors.pas" line="415">
+        <parameters>
+          <retval type="TObservers"/>
+        </parameters>
+      <devnotes><summary>
+Getter of Observers.
+FMX.Colors.TColorPanel.GetObservers inherits from System.Classes.TComponent.GetObservers. All content below this line refers to System.Classes.TComponent.GetObservers.
+Getter of Observers.
+
+
+</summary></devnotes></function>
+      <function name="CanObserve" visibility="protected" procflags="override" file="FMX.Colors.pas" line="416">
+        <parameters>
+          <parameter name="ID" type="Integer" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="417">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Data property.
+FMX.Colors.TColorPanel.GetData inherits from FMX.Types.TFmxObject.GetData. All content below this line refers to FMX.Types.TFmxObject.GetData.
+Protected getter implementation for the Data property.
+</summary></devnotes></function>
+      <procedure name="DoAlphaChange" visibility="protected" file="FMX.Colors.pas" line="418">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Executes every time the alpha channel track bar changes its value.
+</summary></devnotes></procedure>
+      <procedure name="DoHueChange" visibility="protected" file="FMX.Colors.pas" line="419">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Executes every time the hue track bar changes its value.
+</summary></devnotes></procedure>
+      <procedure name="DoQuadChange" visibility="protected" file="FMX.Colors.pas" line="420">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Executes every time the color selected by this color panel changes.
+</summary></devnotes></procedure>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.Colors.pas" line="421">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Forwards notification messages to all owned components.
+FMX.Colors.TColorPanel.Notification inherits from System.Classes.TComponent.Notification. All content below this line refers to System.Classes.TComponent.Notification.
+Forwards notification messages to all owned components.
+Do not call the Notification method in an application. Notification is called automatically when the component specified by AComponent is about to be inserted or removed, as specified by Operation. By default, components pass along the notification to their owned components, if any.
+A component can, if needed, act on the notification that a component is being inserted or removed. For example, if a component has object fields or properties that contain references to other components, it can check the notifications of component removals and invalidate those references as needed.
+
+Note: Notification is not called for components that are freed implicitly (because their Owner is freed).</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="423">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TColorPanel.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="424">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TColorPanel.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <procedure name="OwnerObserves" visibility="public" file="FMX.Colors.pas" line="425">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="427"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="428"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="429"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="430"/>
+      <property name="Color" visibility="published" read="GetColor" write="SetColor" type="TAlphaColor" file="FMX.Colors.pas" line="431"><devnotes><summary>
+Specifies the alpha color selected by this color panel.
+</summary></devnotes></property>
+      <property name="ColorBox" visibility="published" read="FColorBox" write="SetColorBox" type="TColorBox" file="FMX.Colors.pas" line="432"><devnotes><summary>
+Specifies the color box attached to this color panel component.
+A color box is a visual component represented as a rectangular-shaped optical indicator that changes color according to the color selected in this color panel component.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="433"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="434"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="435"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="436"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="437"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="438"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="439"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="440"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="441"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="442"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="443"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="444"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="445"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="446"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="447"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="448"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="449"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="450"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="451"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="452"/>
+      <property name="UseAlpha" visibility="published" read="FUseAlpha" write="SetUseAlpha" type="Boolean" default="1" file="FMX.Colors.pas" line="453"><devnotes><summary>
+Specifies whether this color panel component will display the alpha channel track bar.
+Set the UseAlpha property to True to make this color panel component display the alpha channel (transparency) track bar. Set UseAlpha to False to use solid non-alpha colors.
+The default value for the UseAlpha property is True.
+</summary></devnotes></property>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="454"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="455"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="456"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="457"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Colors.pas" line="459"><devnotes><summary>
+Occurs immediately after changing the color of this color panel component.
+Write an OnChange event handler to provide additional functionality when changing the color of this color panel component.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="461"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="462"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="463"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="464"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="465"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="467"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="468"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="470"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="471"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="472"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="474"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="475"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="476"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="477"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="478"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="479"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="480"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="481"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="483"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="484"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="485"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="486"/>
+    </members>
+  <devnotes><summary>
+Represents a color selector component complete with alpha channel selection.
+A TColorPanel component is a color selector that displays a color spectrum represented as a THueTrackBar, an alpha channel track bar selector, and a color quad. These make the TColorPanel component a great color selector.
+A similar color selector can be found in the drop-down mode of the TComboColorBox component.
+
+</summary></devnotes></class>
+  <class name="TComboColorBox" file="FMX.Colors.pas" line="491">
+    
+    <members>
+      <field name="FPopup" type="TPopup" visibility="private" size="4" offset="944" file="FMX.Colors.pas" line="493"/>
+      <field name="FColorPanel" type="TColorPanel" visibility="private" size="4" offset="948" file="FMX.Colors.pas" line="494"/>
+      <field name="FColorBox" type="TColorBox" visibility="private" size="4" offset="952" file="FMX.Colors.pas" line="495"/>
+      <field name="FColorText" type="TEdit" visibility="private" size="4" offset="956" file="FMX.Colors.pas" line="496"/>
+      <field name="FPlacement" type="TPlacement" visibility="private" size="1" offset="960" file="FMX.Colors.pas" line="497"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="968" file="FMX.Colors.pas" line="498"/>
+      <function name="GetValue" visibility="private" file="FMX.Colors.pas" line="499">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <procedure name="SetValue" visibility="private" file="FMX.Colors.pas" line="500">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetUseAlpha" visibility="private" file="FMX.Colors.pas" line="501">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetUseAlpha" visibility="private" file="FMX.Colors.pas" line="502">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="CalcSize" visibility="private" file="FMX.Colors.pas" line="503">
+      </procedure>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="505">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Data property.
+FMX.Colors.TComboColorBox.GetData inherits from FMX.Types.TFmxObject.GetData. All content below this line refers to FMX.Types.TFmxObject.GetData.
+Protected getter implementation for the Data property.
+</summary></devnotes></function>
+      <procedure name="SetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="506">
+        <parameters>
+          <parameter name="Value" type="TValue" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Data property.
+FMX.Colors.TComboColorBox.SetData inherits from FMX.Types.TFmxObject.SetData. All content below this line refers to FMX.Types.TFmxObject.SetData.
+Protected setter implementation for the Data property.
+</summary></devnotes></procedure>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.Colors.pas" line="507">
+      <devnotes><summary>
+Customizes styles in complex objects.
+FMX.Colors.TComboColorBox.ApplyStyle inherits from FMX.Controls.TStyledControl.ApplyStyle. All content below this line refers to FMX.Controls.TStyledControl.ApplyStyle.
+Customizes styles in complex objects.
+TStyledControl descendants override it to apply styles in concordance with their primitive components.      
+Do not call ApplyStyle explicitly in an application. It is called by the ApplyStyleLookup method when object styles are updated.
+For an example of an ApplyStyle implementation, see &quot;TCalloutPanel:Style Contracts&quot; in FireMonkey Component Design.
+</summary></devnotes></procedure>
+      <function name="CanObserve" visibility="protected" procflags="override" file="FMX.Colors.pas" line="508">
+        <parameters>
+          <parameter name="ID" type="Integer" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Colors.pas" line="509">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the DefaultStyleLookupName property.
+FMX.Colors.TComboColorBox.GetDefaultStyleLookupName inherits from FMX.Controls.TStyledControl.GetDefaultStyleLookupName. All content below this line refers to FMX.Controls.TStyledControl.GetDefaultStyleLookupName.
+Protected getter implementation for the DefaultStyleLookupName property.
+When you Create a styled FireMonkey component by extending an existing component, override this method, if you want your component to inherit styles from the parent component. See Step 2 - Implement a Property to Specify the Format: Inheriting Styles of the Parent Component for more information and example code.
+</summary></devnotes></function>
+      <procedure name="DoContentPaint" visibility="protected" file="FMX.Colors.pas" line="510">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+          <parameter name="Canvas" type="TCanvas"/>
+          <parameter name="ARect" type="TRectF" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Executes each time the OnPaint event appears.
+</summary></devnotes></procedure>
+      <procedure name="MouseDown" visibility="protected" procflags="override" file="FMX.Colors.pas" line="511">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      <devnotes><summary>
+OnMouseDown event dispatcher. 
+FMX.Colors.TComboColorBox.MouseDown inherits from FMX.Controls.TControl.MouseDown. All content below this line refers to FMX.Controls.TControl.MouseDown.
+OnMouseDown event dispatcher. 
+A control calls MouseDown in response to any of mouse-down messages, decoding the message parameters into the shift-key state and position, which it passes in the Shift, X, and Y parameters, respectively:
+
+Button determines which mouse button is pressed: left, right, or middle.
+Shift indicates which shift keys--SHIFT, CTRL, ALT, and CMD (only for Mac)--were down when the user pressed the mouse button.
+X and Y are the pixel coordinates of the mouse pointer within the client area of the control. If Button is mbLeft, MouseDown sets PressedPosition as a TPointF(X,Y).
+Override the protected MouseDown method to provide other responses when a mouse button is down while the cursor is over the control.
+
+</summary></devnotes></procedure>
+      <procedure name="ParentChanged" visibility="protected" procflags="override" file="FMX.Colors.pas" line="512">
+      <devnotes><summary>
+Executed right after the value of the Parent property changes.
+FMX.Colors.TComboColorBox.ParentChanged inherits from FMX.Controls.TControl.ParentChanged. All content below this line refers to FMX.Controls.TControl.ParentChanged.
+Executed right after the value of the Parent property changes.
+The control does not execute ParentChanged if you assign Parent the same value that it already has.
+
+ See Also
+FMX.Controls.TControl.AncestorParentChanged
+FMX.Controls.TControl.ClipChildrenChanged
+FMX.Controls.TControl.EffectEnabledChanged
+FMX.Controls.TControl.EnabledChanged
+FMX.Controls.TControl.HandleSizeChanged
+FMX.Controls.TControl.HitTestChanged
+FMX.Controls.TControl.PaddingChanged
+FMX.Controls.TControl.VisibleChanged
+FMX.Controls.TControl.AncestorVisibleChanged
+FMX.Controls.TControl.ChildrenAlignChanged
+
+</summary></devnotes></procedure>
+      <procedure name="DoColorChange" visibility="protected" procflags="virtual" file="FMX.Colors.pas" line="513">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Executes each time the OnChange event appears.
+</summary></devnotes></procedure>
+      <procedure name="DoTextChange" visibility="protected" procflags="virtual" file="FMX.Colors.pas" line="514">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Executes each time the OnChange event appears.
+</summary></devnotes></procedure>
+      <procedure name="DoValidating" visibility="protected" procflags="virtual" file="FMX.Colors.pas" line="516">
+        <devnotes><summary>
+The DoValidating method validates the Text input string.
+The method tries to modify the Text input string to match a color name in case the input string is not exactly the name of a color.
+
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+          <parameter name="Text" type="string" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="518">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TComboColorBox.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="519">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TComboColorBox.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <procedure name="DropDown" visibility="public" file="FMX.Colors.pas" line="520">
+      <devnotes><summary>
+Makes this combo color box expand its color selection display.
+Call DropDown in applications to make this combo color box expand its contents, allowing you to select a new color from the drop-down list.
+</summary></devnotes></procedure>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="522"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="523"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="524"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="525"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="526"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="527"/>
+      <property name="Color" visibility="published" read="GetValue" write="SetValue" type="TAlphaColor" file="FMX.Colors.pas" line="528"><devnotes><summary>
+Specifies the color selected by this combo color box component.
+Set or get the Color property in order to specify or obtain the alpha color selected by this combo color box component.
+</summary></devnotes></property>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="529"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="530"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="531"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="532"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="533"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="534"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="535"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Colors.pas" line="536"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="537"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Colors.pas" line="538"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="539"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="540"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="541"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="542"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="543"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="544"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="545"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="546"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="547"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="548"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="549"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="550"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="551"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="552"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="553"/>
+      <property name="UseAlpha" visibility="published" read="GetUseAlpha" write="SetUseAlpha" type="Boolean" default="1" file="FMX.Colors.pas" line="554"><devnotes><summary>
+Specifies whether this combo color box component will display the alpha channel track bar when in drop-down mode.
+Set the UseAlpha property to True to make this combo color box display the alpha channel (transparency) track bar, when it is in drop-down mode. Set UseAlpha to False to use solid non-alpha colors.
+</summary></devnotes></property>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="555"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="556"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="557"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="558"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="560"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Colors.pas" line="561"><devnotes><summary>
+Occurs immediately after changing the color selected by this combo color box.
+Write an OnChange event handler to provide additional functionality when changing the color specified by this combo color box.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="563"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="564"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="565"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="566"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="567"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="569"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="570"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="572"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="573"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="574"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="576"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="577"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="578"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="579"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="580"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="581"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="582"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="583"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="585"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="586"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="587"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="588"/>
+    </members>
+  <devnotes><summary>
+Represents a combo box that allows you to select an alpha color from a color spectrum.
+A TComboColorBox behaves like a standard TComboBox, with the difference that, while in drop-down mode, it displays a color spectrum represented as a THueTrackBar, an alpha channel track bar, a color quad, a HEX color value edit box, and a color box. These make the TComboColorBox a great color selector.
+
+</summary></devnotes></class>
+  <class name="TColorButton" file="FMX.Colors.pas" line="593">
+    
+    <members>
+      <field name="FFill" type="TShape" visibility="private" size="4" offset="1104" file="FMX.Colors.pas" line="595"/>
+      <field name="FColor" type="TAlphaColor" visibility="private" size="4" offset="1108" file="FMX.Colors.pas" line="596"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="1112" file="FMX.Colors.pas" line="597"/>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="598">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.Colors.pas" line="600">
+      <devnotes><summary>
+
+
+
+
+Customizes styles in complex objects.
+FMX.Colors.TColorButton.ApplyStyle inherits from FMX.Controls.TStyledControl.ApplyStyle. All content below this line refers to FMX.Controls.TStyledControl.ApplyStyle.
+Customizes styles in complex objects.
+TStyledControl descendants override it to apply styles in concordance with their primitive components.      
+Do not call ApplyStyle explicitly in an application. It is called by the ApplyStyleLookup method when object styles are updated.
+For an example of an ApplyStyle implementation, see &quot;TCalloutPanel:Style Contracts&quot; in FireMonkey Component Design.
+</summary></devnotes></procedure>
+      <procedure name="FreeStyle" visibility="protected" procflags="override" file="FMX.Colors.pas" line="601">
+      <devnotes><summary>
+
+
+
+
+Frees the style of TStyledControl.
+FMX.Colors.TColorButton.FreeStyle inherits from FMX.Controls.TStyledControl.FreeStyle. All content below this line refers to FMX.Controls.TStyledControl.FreeStyle.
+Frees the style of TStyledControl.
+Override it to free additional component-specific style resources.
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="603">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Creates a new instance of TPresentedControl.
+FMX.Colors.TColorButton.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="604">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Destroys this instance of TPresentedControl.
+FMX.Colors.TColorButton.Destroy inherits from FMX.Controls.Presentation.TPresentedControl.Destroy. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Destroy.
+Destroys this instance of TPresentedControl.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.Create
+
+</summary></devnotes></destructor>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="606"/>
+      <property name="AutoTranslate" visibility="published" read="FAutoTranslate" write="FAutoTranslate" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="607"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="608"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="609"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="610"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="611"/>
+      <property name="Color" visibility="published" read="FColor" write="SetColor" type="TAlphaColor" file="FMX.Colors.pas" line="612"><devnotes><summary>
+Specifies the color this button will display. The Color property is of type TAlphaColor.
+</summary></devnotes></property>
+      <property name="ControlType" visibility="published" read="GetControlType" write="SetControlType" type="TControlType" default="0" hoisted="true" file="FMX.Colors.pas" line="613"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="614"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="615"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="616"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="617"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="618"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="619"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="620"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Colors.pas" line="621"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="622"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Colors.pas" line="623"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="624"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="625"/>
+      <property name="StaysPressed" visibility="published" read="FStaysPressed" write="SetStaysPressed" stored="IsPressedStored" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="627"/>
+      <property name="IsPressed" visibility="published" read="FIsPressed" write="SetIsPressed" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="628"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="629"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="630"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="631"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="632"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="633"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="634"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="635"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="636"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="637"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="638"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="639"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="640"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="641"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="642"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="643"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="644"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="645"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="647"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="FMX.Colors.pas" line="648"><devnotes><summary>
+Occurs when the Color of TColorButton is changed.
+The OnChange event occurs when the button Color property is changed.
+</summary></devnotes></event>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="650"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="651"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="652"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="653"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="654"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="656"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="657"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="659"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="660"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="661"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="663"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="664"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="665"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="666"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="667"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="668"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="669"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="670"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="672"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="673"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="674"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="675"/>
+    </members>
+  <devnotes><summary>
+Represents a standard button that displays a color instead of a standard caption.
+A TColorButton behaves like a standard TButton. It can even have a modal result, just like typical standard buttons. The only difference between a standard button and a TColorButton is that the latter does not display a standard text caption, but a color in a rectangle that fills almost completely the surface of the button.
+
+</summary></devnotes></class>
+  <class name="TColorListBox" file="FMX.Colors.pas" line="680">
+    
+    <members>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="682">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetColor" visibility="private" file="FMX.Colors.pas" line="683">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <procedure name="DoItemApplyStyleLookup" visibility="private" file="FMX.Colors.pas" line="684">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="686">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Gets the text of the selected item.
+FMX.Colors.TColorListBox.GetData inherits from FMX.ListBox.TCustomListBox.GetData. All content below this line refers to FMX.ListBox.TCustomListBox.GetData.
+Gets the text of the selected item.
+GetData returns the text of the item that is selected in the list box or an empty string, if no item is selected.
+</summary></devnotes></function>
+      <procedure name="SetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="687">
+        <parameters>
+          <parameter name="Value" type="TValue" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the text of the selected item.
+FMX.Colors.TColorListBox.SetData inherits from FMX.ListBox.TCustomListBox.SetData. All content below this line refers to FMX.ListBox.TCustomListBox.SetData.
+Sets the text of the selected item.
+If no item is selected, nothing happens.
+</summary></devnotes></procedure>
+      <procedure name="RebuildList" visibility="protected" file="FMX.Colors.pas" line="688">
+      <devnotes><summary>
+Clears the actual items in the color list box, then rebuilds the list with the color items.
+</summary></devnotes></procedure>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Colors.pas" line="689">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the DefaultStyleLookupName property.
+FMX.Colors.TColorListBox.GetDefaultStyleLookupName inherits from FMX.Controls.TStyledControl.GetDefaultStyleLookupName. All content below this line refers to FMX.Controls.TStyledControl.GetDefaultStyleLookupName.
+Protected getter implementation for the DefaultStyleLookupName property.
+When you Create a styled FireMonkey component by extending an existing component, override this method, if you want your component to inherit styles from the parent component. See Step 2 - Implement a Property to Specify the Format: Inheriting Styles of the Parent Component for more information and example code.
+</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="691">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TColorListBox.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Colors.pas" line="692">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Disposes of the component and its owned components.
+Disposes of the component and its owned components.
+FMX.Colors.TColorListBox.Destroy inherits from System.Classes.TComponent.Destroy. All content below this line refers to System.Classes.TComponent.Destroy.
+Disposes of the component and its owned components.
+Do not call Destroy directly. Call Free instead. Free verifies that the component is not nil, and only then calls Destroy.
+Never explicitly free a component in one of its own event handlers, nor free a component from the event handler of a component that it owns or contains.
+To destroy a form, call its Release method. Release waits for all the form's event handlers and the event handlers of the form's components to finish executing before destroying the form.
+
+Note: A form owns all the controls and nonvisual components that are placed on it in design mode. When it is freed, all of these components are automatically freed as well. By default, all forms are owned by the global Application object. When an application terminates, it frees the global Application object, which frees all forms. For objects that are not components, and for components created with a nil owner, be sure to call Free after finishing with the object; otherwise the memory allocated for the object will be lost until the application terminates.</summary></devnotes></destructor>
+      <property name="Color" visibility="published" read="GetColor" write="SetColor" type="TAlphaColor" default="0" file="FMX.Colors.pas" line="694"><devnotes><summary>
+Specifies the alpha color that is currently selected from the list.
+</summary></devnotes></property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="695"/>
+      <property name="AllowDrag" visibility="published" read="FAllowDrag" write="SetAllowDrag" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="696"/>
+      <property name="AlternatingRowBackground" visibility="published" read="FAlternatingRowBackground" write="SetAlternatingRowBackground" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="697"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="698"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="699"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="700"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="701"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="702"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="703"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="704"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="705"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="706"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="707"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="708"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="709"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="710"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="711"/>
+      <property name="ItemIndex" visibility="published" read="GetItemIndex" write="SetItemIndex" type="Integer" default="-1" hoisted="true" file="FMX.Colors.pas" line="712"/>
+      <property name="ItemHeight" visibility="published" read="FItemHeight" write="SetItemHeight" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="713"/>
+      <property name="ItemWidth" visibility="published" read="FItemWidth" write="SetItemWidth" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="714"/>
+      <property name="DefaultItemStyles" visibility="published" read="FDefaultStyles" write="FDefaultStyles" type="TListBoxItemStyleDefaults" hoisted="true" file="FMX.Colors.pas" line="715"/>
+      <property name="GroupingKind" visibility="published" read="FGroupingKind" write="SetGroupingKind" type="TListGroupingKind" default="0" hoisted="true" file="FMX.Colors.pas" line="716"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="717"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="718"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="719"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="720"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="721"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="722"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="723"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="724"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="725"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="726"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="727"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="728"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="729"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="730"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="731"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="732"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="735"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="736"/>
+      <event name="OnDragChange" visibility="published" read="FOnDragChange" write="FOnDragChange" type="TOnListBoxDragChange" hoisted="true" file="FMX.Colors.pas" line="738"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="739"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="740"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="741"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="742"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="743"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="745"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="746"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="748"/>
+      <event name="OnItemClick" visibility="published" read="FOnItemClick" write="FOnItemClick" type="TCustomListBox.TItemClickEvent" hoisted="true" file="FMX.Colors.pas" line="749"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="751"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="752"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="753"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="754"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="755"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="756"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="757"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="758"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="760"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="761"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="762"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="763"/>
+    </members>
+  <devnotes><summary>
+Represents a combo box that allows you to select an alpha color from a color spectrum.
+A TColorListBox behaves like a standard TListBox, but instead of standard text items, it displays a list of colors under the form of small colored squares, along with the color names.
+The TColorComboBox component also displays this kind of list when in drop-down mode.
+
+</summary></devnotes></class>
+  <class name="TCustomColorComboBox" file="FMX.Colors.pas" line="768">
+    
+    <members>
+      <procedure name="SetColor" visibility="private" file="FMX.Colors.pas" line="770">
+        <parameters>
+          <parameter name="Value" type="TAlphaColor" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetColor" visibility="private" file="FMX.Colors.pas" line="771">
+        <parameters>
+          <retval type="TAlphaColor"/>
+        </parameters>
+      </function>
+      <procedure name="DoItemApplyStyleLookup" visibility="private" file="FMX.Colors.pas" line="772">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadItemsStrings" visibility="private" file="FMX.Colors.pas" line="773">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="775">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the Data property.
+FMX.Colors.TCustomColorComboBox.GetData inherits from FMX.Types.TFmxObject.GetData. All content below this line refers to FMX.Types.TFmxObject.GetData.
+Protected getter implementation for the Data property.
+</summary></devnotes></function>
+      <procedure name="SetData" visibility="protected" procflags="override" file="FMX.Colors.pas" line="776">
+        <parameters>
+          <parameter name="Value" type="TValue" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Data property.
+FMX.Colors.TCustomColorComboBox.SetData inherits from FMX.Types.TFmxObject.SetData. All content below this line refers to FMX.Types.TFmxObject.SetData.
+Protected setter implementation for the Data property.
+</summary></devnotes></procedure>
+      <procedure name="RebuildList" visibility="protected" file="FMX.Colors.pas" line="777">
+      <devnotes><summary>
+Clears the items in the color list box, then rebuilds the list with the color items.
+</summary></devnotes></procedure>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.Colors.pas" line="778">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+
+
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+FMX.Colors.TCustomColorComboBox.DefineProperties inherits from System.Classes.TComponent.DefineProperties. All content below this line refers to System.Classes.TComponent.DefineProperties.
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+TComponent overrides the DefineProperties method defined in TPersistent to define &quot;fake&quot; Top and Left properties. These are defined so that components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is virtual; descendent classes can override it. When overriding DefineProperties, be aware that the Ancestor property of Filer might be set, and that this property can determine whether or not it is appropriate to write properties.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly.
+</summary></devnotes></procedure>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="FMX.Colors.pas" line="779">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Protected getter implementation for the DefaultStyleLookupName property.
+FMX.Colors.TCustomColorComboBox.GetDefaultStyleLookupName inherits from FMX.Controls.TStyledControl.GetDefaultStyleLookupName. All content below this line refers to FMX.Controls.TStyledControl.GetDefaultStyleLookupName.
+Protected getter implementation for the DefaultStyleLookupName property.
+When you Create a styled FireMonkey component by extending an existing component, override this method, if you want your component to inherit styles from the parent component. See Step 2 - Implement a Property to Specify the Format: Inheriting Styles of the Parent Component for more information and example code.
+</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.Colors.pas" line="781">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Allocates memory and constructs a safely initialized instance of a component.
+Allocates memory and constructs a safely initialized instance of a component.
+FMX.Colors.TCustomColorComboBox.Create inherits from System.Classes.TComponent.Create. All content below this line refers to System.Classes.TComponent.Create.
+Allocates memory and constructs a safely initialized instance of a component.
+All objects have a Create method that constructs the object. TComponent redefines Create so that, for components, Create also:
+
+Establishes the relationship of a component and its Owner, as indicated by the AOwner parameter.
+Sets the ComponentStyle property to csInheritable, meaning that the component can be inherited by a descendent form type.
+It is not necessary to explicitly create components added in the Form Designer. These components are created automatically when the application is run, and they are destroyed when the application is closed.
+For components created programmatically, that is, not created in the Form Designer, call Create and pass in an owner component as the AOwner parameter. The owner disposes of the component when it is destroyed. If the component is not owned, then use Free when it needs to be destroyed.
+
+Tip:  When passing in Self as the Owner parameter, consider what Self references. If a component creates another component in one of its methods, then Self refers to the first component and not the component being created, which is then owned by the first component.
+Note:  The TComponent constructor is virtual in part to allow polymorphic instantiation of class references. This is critical to the streaming system and to the Form Designer. Do not forget to use the override directive when declaring a new component's Create constructor.</summary></devnotes></constructor>
+      <property name="DropDownKind" visibility="published" read="FDropDownKind" write="FDropDownKind" type="TDropDownKind" hoisted="true" file="FMX.Colors.pas" line="783"/>
+      <property name="Color" visibility="published" read="GetColor" write="SetColor" type="TAlphaColor" file="FMX.Colors.pas" line="784"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+    </members>
+  <devnotes><summary>
+A TCustomComboBox is the base class for combo box components.
+FMX.Colors.TCustomColorComboBox inherits from FMX.ListBox.TCustomComboBox. All content below this line refers to FMX.ListBox.TCustomComboBox.
+A TCustomComboBox is the base class for combo box components.
+Inherit from TCustomComboBox to create a control that represents a specialized combo box.
+</summary></devnotes></class>
+  <class name="TColorComboBox" file="FMX.Colors.pas" line="787">
+    
+    <members>
+      <property name="PlacementRectangle" visibility="public" read="GetPlacementRectangle" write="SetPlacementRectangle" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="789"/>
+      <property name="Color" visibility="published" read="GetColor" write="SetColor" type="TAlphaColor" hoisted="true" file="FMX.Colors.pas" line="791"/>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.Colors.pas" line="793"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.Colors.pas" line="794"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="795"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="796"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="797"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="798"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.Colors.pas" line="799"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="800"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.Colors.pas" line="801"/>
+      <property name="DropDownCount" visibility="published" read="FDropDownCount" write="FDropDownCount" type="Integer" default="8" hoisted="true" file="FMX.Colors.pas" line="802"/>
+      <property name="DropDownKind" visibility="published" read="FDropDownKind" write="FDropDownKind" type="TDropDownKind" hoisted="true" file="FMX.Colors.pas" line="803"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="804"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="805"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.Colors.pas" line="806"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="807"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.Colors.pas" line="808"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="809"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.Colors.pas" line="810"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="811"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="812"/>
+      <property name="ItemIndex" visibility="published" read="GetItemIndex" write="SetItemIndex" type="Integer" default="-1" hoisted="true" file="FMX.Colors.pas" line="813"/>
+      <property name="ItemWidth" visibility="published" read="FItemWidth" write="SetItemWidth" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="814"/>
+      <property name="ItemHeight" visibility="published" read="GetItemHeight" write="SetItemHeight" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="815"/>
+      <property name="ListBoxResource" visibility="published" read="GetListBoxResource" write="SetListBoxResource" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="816"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="817"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.Colors.pas" line="818"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="819"/>
+      <property name="Placement" visibility="published" read="GetPlacement" write="SetPlacement" type="TPlacement" default="0" hoisted="true" file="FMX.Colors.pas" line="820"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.Colors.pas" line="821"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="822"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.Colors.pas" line="823"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="824"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.Colors.pas" line="825"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.Colors.pas" line="826"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.Colors.pas" line="827"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.Colors.pas" line="828"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="829"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.Colors.pas" line="830"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="831"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.Colors.pas" line="832"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.Colors.pas" line="833"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.Colors.pas" line="834"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="836"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="837"/>
+      <event name="OnClosePopup" visibility="published" read="FOnClosePopup" write="FOnClosePopup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="838"/>
+      <event name="OnPopup" visibility="published" read="FOnPopup" write="FOnPopup" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="839"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.Colors.pas" line="840"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="841"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.Colors.pas" line="842"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.Colors.pas" line="843"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="844"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="845"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.Colors.pas" line="846"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.Colors.pas" line="847"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="848"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="849"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="850"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="851"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="852"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.Colors.pas" line="853"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.Colors.pas" line="854"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.Colors.pas" line="855"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="856"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="857"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="858"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.Colors.pas" line="859"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="860"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.Colors.pas" line="861"/>
+    </members>
+  <devnotes><summary>
+Represents a combo box that allows you to select a color from a color palette.
+A TColorComboBox behaves like a standard TComboBox, with the difference that, when in drop-down mode, it displays a list of colors from the standard Delphi palette that you can select. The colors appear in the drop-down list as small colored squares, along with their names.
+
+
+Note: The number of colors in the color palette is more than can be concurrently shown in the TListBoxItem list box. You can use the scroll bar to scroll the items shown in the list box. Notice that on Windows the scroll bar is shown by default. However, on OS X the scroll bar is not shown by default. On OS X, the scroll bar appears when you try to scroll colors using the mouse wheel. To enforce the scroll bar to be shown by default,  you can use the code like following:
+ColorComboBox1.ListBox.AniCalculations.AutoShowing := false;</summary></devnotes></class>
+  <procedure name="MakeChessBoardBrush" visibility="public" file="FMX.Colors.pas" line="875">
+    <parameters>
+      <parameter name="ABrushBitmap" type="TBrushBitmap"/>
+      <parameter name="AChessStep" type="Single" paramflags="const"/>
+    </parameters>
+  </procedure>
+</namespace>

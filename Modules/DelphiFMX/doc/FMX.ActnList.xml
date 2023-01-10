@@ -1,0 +1,1396 @@
+<?xml version="1.0" ?><namespace name="FMX.ActnList" platform="Win32">
+  <interface name="IActionClient" GUID="{4CAAFEEE-73ED-4C4B-8413-8BF1C3FFD777}" ancestor="IInterface" file="FMX.ActnList.pas" line="24">
+    <devnotes>
+       <summary>Interface used by the framework to access an action in a
+       class.</summary>
+    </devnotes>
+    <function name="GetRoot" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="29">
+      <devnotes>
+         <summary> The root component. This is usually a form on which the control which supports this interface is placed.
+         This function is used by framework</summary>
+         <returns> Instance of component that supports IRoot interface </returns>
+      </devnotes>
+      <parameters>
+        <retval type="TComponent"/>
+      </parameters>
+    </function>
+    <function name="GetActionClient" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="34">
+      <devnotes>
+         <summary> This method is used by the framework to determine that an instance of object which supports this
+         interface is used when working with actions. See also <b>InitiateAction</b>. If returns <c>False</c> then the
+         instance will be ignored</summary>
+         <returns> The value set using the method <b>SetActionClient</b> </returns>
+      </devnotes>
+      <parameters>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+    <procedure name="SetActionClient" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="36">
+      <devnotes>
+         <summary> This method sets value that the <b>GetActionClient</b> function returns </summary>
+      </devnotes>
+      <parameters>
+        <parameter name="Value" type="Boolean" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="GetAction" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="37">
+      <parameters>
+        <retval type="TBasicAction"/>
+      </parameters>
+    </function>
+    <procedure name="SetAction" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="38">
+      <parameters>
+        <parameter name="Value" type="TBasicAction" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="GetIndex" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="41">
+      <devnotes>
+         <summary> When the framework performs periodical execution of <b>InitiateAction</b>, it invokes the controls in
+         order defined by this index</summary>
+      </devnotes>
+      <parameters>
+        <retval type="Integer"/>
+      </parameters>
+    </function>
+    <procedure name="InitiateAction" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="44">
+      <devnotes>
+         <summary> Calls the action link's <b>Update</b> method if the instance is associated with an action link
+         </summary>
+      </devnotes>
+    </procedure>
+    <property name="Action" visibility="public" read="GetAction" write="SetAction" type="TBasicAction" file="FMX.ActnList.pas" line="46">
+      <devnotes>
+         <summary> Action associated with this instance </summary>
+      </devnotes>
+    </property>
+  </interface>
+  <interface name="IIsChecked" GUID="{DE946EB7-0A6F-4458-AEB0-C911122630D0}" ancestor="IInterface" file="FMX.ActnList.pas" line="51">
+    <devnotes>
+       <summary>The IIsChecked interface provides access to the IsChecked
+       property for controls that can be checked.</summary>
+    </devnotes>
+    <function name="GetIsChecked" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="53">
+      <parameters>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+    <procedure name="SetIsChecked" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="54">
+      <parameters>
+        <parameter name="Value" type="Boolean" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="IsCheckedStored" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="58">
+      <devnotes>
+         <summary> Determines whether the <b>IsChecked</b> property needs to be stored in the fmx-file </summary>
+         <returns> <c>True</c> if <b>IsChecked</b> property needs to be stored, usually if it contains non default value
+         </returns>
+      </devnotes>
+      <parameters>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+    <property name="IsChecked" visibility="public" read="GetIsChecked" write="SetIsChecked" type="Boolean" file="FMX.ActnList.pas" line="60">
+      <devnotes>
+         <summary> <c>True</c> if the control is in the ON state </summary>
+      </devnotes>
+    </property>
+  </interface>
+  <interface name="IGroupName" GUID="{F5C14792-67AB-41F2-99C1-90C7F94102EE}" ancestor="IIsChecked" file="FMX.ActnList.pas" line="66">
+    <devnotes>
+       <summary>The IGroupName interface provides access to the GroupName
+       property for controls that need to provide exclusive checking inside a
+       group.</summary>
+    </devnotes>
+    <function name="GetGroupName" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="68">
+      <parameters>
+        <retval type="string"/>
+      </parameters>
+    </function>
+    <procedure name="SetGroupName" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="69">
+      <parameters>
+        <parameter name="Value" type="string" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="GroupNameStored" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="73">
+      <devnotes>
+         <summary> <c>True</c> if <b>GroupName</b> property should be stored</summary>
+         <returns> <c>True</c> if <b>GroupName</b> property needs to be stored, usually if it contains non default
+         (<c>''</c>, <c>'0'</c>, <c>'-1'</c>) value </returns>
+      </devnotes>
+      <parameters>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+    <property name="GroupName" visibility="public" read="GetGroupName" write="SetGroupName" type="string" default="0" file="FMX.ActnList.pas" line="75">
+      <devnotes>
+         <summary> Name of the control group </summary>
+      </devnotes>
+    </property>
+  </interface>
+  <interface name="IKeyShortcut" GUID="{1AE6E932-9291-4BCD-93D1-DDD2A3E09394}" ancestor="IInterface" file="FMX.ActnList.pas" line="80">
+    <devnotes>
+       <summary>Interface used to access the Shortcut property of some
+       classes.</summary>
+    </devnotes>
+    <function name="GetShortcut" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="82">
+      <parameters>
+        <retval type="TShortCut"/>
+      </parameters>
+    </function>
+    <procedure name="SetShortcut" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="83">
+      <parameters>
+        <parameter name="Value" type="TShortCut" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <property name="Shortcut" visibility="public" read="GetShortcut" write="SetShortcut" type="TShortCut" file="FMX.ActnList.pas" line="85">
+      <devnotes>
+         <summary> The combination of hot keys that the class should handle </summary>
+      </devnotes>
+    </property>
+  </interface>
+  <interface name="ICaption" GUID="{3D039C9C-8888-466F-A344-E7026EEE2C07}" ancestor="IInterface" file="FMX.ActnList.pas" line="90">
+    <devnotes>
+       <summary>If an object supports the ICaption interface, when the text of
+       the object changes, the Text must also be changed.</summary>
+    </devnotes>
+    <function name="GetText" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="92">
+      <parameters>
+        <retval type="string"/>
+      </parameters>
+    </function>
+    <procedure name="SetText" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="93">
+      <parameters>
+        <parameter name="Value" type="string" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="TextStored" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="95">
+      <devnotes>
+         <summary> If this function returns true, the text should be save in the fmx-file. </summary>
+      </devnotes>
+      <parameters>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+    <property name="Text" visibility="public" read="GetText" write="SetText" type="string" default="0" file="FMX.ActnList.pas" line="97">
+      <devnotes>
+         <summary> This property is used to changed the display text. </summary>
+      </devnotes>
+    </property>
+  </interface>
+  <interface name="IGlyph" GUID="{62BDCA4F-820A-4058-B57A-FE8931DB3CCC}" ancestor="IInterface" file="FMX.ActnList.pas" line="102">
+    <devnotes>
+       <summary>Declares basic methods and properties used to manage lists of
+       images.</summary>
+    </devnotes>
+    <function name="GetImageIndex" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="104">
+      <parameters>
+        <retval type="TImageIndex"/>
+      </parameters>
+    </function>
+    <procedure name="SetImageIndex" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="105">
+      <parameters>
+        <parameter name="Value" type="TImageIndex" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <function name="GetImages" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="106">
+      <parameters>
+        <retval type="TBaseImageList"/>
+      </parameters>
+    </function>
+    <procedure name="SetImages" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="107">
+      <parameters>
+        <parameter name="Value" type="TBaseImageList" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <procedure name="ImagesChanged" visibility="public" procflags="abstract virtual" file="FMX.ActnList.pas" line="110">
+      <devnotes>
+        <summary> Should be called when you change an instance or reference to instance of <b>TBaseImageList</b> or the
+         <b>ImageIndex</b> property</summary>
+      </devnotes>
+    </procedure>
+    <property name="ImageIndex" visibility="public" read="GetImageIndex" write="SetImageIndex" type="TImageIndex" file="FMX.ActnList.pas" line="113">
+      <devnotes>
+        <summary> Zero based index of an image. The default is <c>-1</c></summary>
+        <remarks> If non-existing index is specified, an image is not drawn and no exception is raised</remarks>
+      </devnotes>
+    </property>
+    <property name="Images" visibility="public" read="GetImages" write="SetImages" type="TBaseImageList" file="FMX.ActnList.pas" line="115">
+      <devnotes>
+        <summary> The list of images. Can be <c>nil</c></summary>
+      </devnotes>
+    </property>
+  </interface>
+  <class name="TCustomActionList" file="FMX.ActnList.pas" line="118">
+    
+    <members>
+      <field name="FImageLink" type="TImageLink" visibility="private" size="4" offset="112" file="FMX.ActnList.pas" line="120"/>
+      <procedure name="SetImages" visibility="private" file="FMX.ActnList.pas" line="121">
+        <parameters>
+          <parameter name="Value" type="TBaseImageList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetImages" visibility="private" file="FMX.ActnList.pas" line="122">
+        <parameters>
+          <retval type="TBaseImageList"/>
+        </parameters>
+      </function>
+      <procedure name="ImagesChanged" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="126">
+        <devnotes><summary>
+Should be called when the component needs to redraw the image.
+ImagesChanged  should be called when you change the Images reference to the TCustomImageList object or the object itself.
+</summary></devnotes>
+      </procedure>
+      <destructor name="Destroy" visibility="public" file="FMX.ActnList.pas" line="128">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys an instance of TContainedActionList.
+FMX.ActnList.TCustomActionList.Destroy inherits from System.Actions.TContainedActionList.Destroy. All content below this line refers to System.Actions.TContainedActionList.Destroy.
+Destroys an instance of TContainedActionList.
+This destructor is inherited from TComponent, see TComponent.Destroy for more information.
+
+ See Also
+System.Actions.TContainedActionList.Create
+System.Classes.TComponent.Destroy
+
+</summary></devnotes></destructor>
+      <function name="DialogKey" visibility="public" procflags="virtual" file="FMX.ActnList.pas" line="129">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="const"/>
+          <parameter name="Shift" type="TShiftState" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Evaluates an input key combination to determine whether it is a shortcut for one of the actions in the list.
+Typically, your applications do not need to call DialogKey explicitly. When the form's KeyDown method does not evaluate a shortcut key by some other means (such as an event handler), it calls DialogKey for every associated action list until it finds an action that can handle the shortcut.
+The action list's DialogKey method, in turn, checks the specified keystroke against the ShortCut property and SecondaryShortCuts properties of each action in the list. If it finds a match, it tells the action to handle the shortcut, and then returns True. If DialogKey cannot find an action to handle the shortcut, it returns False.
+DialogKey has the following parameters: 
+
+
+
+Parameter
+
+Description
+
+
+Key
+
+Is the key code for the potential shortcut key.
+
+
+Shift
+
+Specifies the state of the Shift, Alt, and Ctrl keys that may be combined with Key.
+</summary></devnotes></function>
+      <property name="Images" visibility="public" read="GetImages" write="SetImages" type="TBaseImageList" file="FMX.ActnList.pas" line="131">
+        <devnotes><summary>
+Defines the reference to a TCustomImageList list of images to be used to draw images on the component.
+If the TCustomImageList list is empty, then Images is nil/null.
+Call ImagesChanged when Images is changed.
+</summary></devnotes>
+      </property>
+    </members>
+  <devnotes><summary>
+The base class for list of actions, without the published properties.
+FMX.ActnList.TCustomActionList inherits from System.Actions.TContainedActionList. All content below this line refers to System.Actions.TContainedActionList.
+The base class for list of actions, without the published properties.
+Implement TContainedActionList to work with common properties for all GUI application frameworks.
+Actions lists the actions maintained by the action list.
+The ActionCount property returns the number of actions in the list.
+OnStateChange sends a notification when the State changes.
+</summary></devnotes></class>
+  <class name="TActionList" file="FMX.ActnList.pas" line="134">
+    
+    <members>
+      <property name="Name" visibility="published" read="FName" write="SetName" stored="False" type="TComponentName" default="0" hoisted="true" file="FMX.ActnList.pas" line="136"/>
+      <property name="Images" visibility="published" read="GetImages" write="SetImages" type="TBaseImageList" hoisted="true" file="FMX.ActnList.pas" line="137"/>
+      <property name="State" visibility="published" read="FState" write="SetState" type="TActionListState" default="0" hoisted="true" file="FMX.ActnList.pas" line="138"/>
+      <event name="OnChange" visibility="published" read="FOnChange" write="FOnChange" type="TNotifyEvent" hoisted="true" file="FMX.ActnList.pas" line="139"/>
+      <event name="OnExecute" visibility="published" read="FOnExecute" write="FOnExecute" type="TActionEvent" hoisted="true" file="FMX.ActnList.pas" line="140"/>
+      <event name="OnStateChange" visibility="published" read="FOnStateChange" write="FOnStateChange" type="TNotifyEvent" hoisted="true" file="FMX.ActnList.pas" line="141"/>
+      <event name="OnUpdate" visibility="published" read="FOnUpdate" write="FOnUpdate" type="TActionEvent" hoisted="true" file="FMX.ActnList.pas" line="142"/>
+    </members>
+  <devnotes><summary>
+Maintains a list of actions that can be used by components such as controls, menu items, and tool buttons.
+Use Action lists to centralize the responses to user actions. Action list components maintain a list of actions that are available to the client controls in an application. You can add action list components to your form from the Standard page of the component palette. 
+TActionList lets you set up actions using the Action List editor. Double-click the action list to display the Action List editor, from which you can add, delete, and rearrange actions.
+TActionList extends the TCustomActionList class redeclaring the public
+Name, State, OnChange, OnExecute,
+OnStateChange, and OnUpdate properties and events with the published visibility; therefore, these properties and events  can be managed in the Object Inspector at design time. 
+
+Code Examples
+FMX.ActionsDemo Sample
+FMX.PhotoEditorDemo Sample</summary></devnotes></class>
+  <class name="TActionLink" file="FMX.ActnList.pas" line="145">
+    
+    <members>
+      <field name="FClient" type="TObject" visibility="private" size="4" offset="24" file="FMX.ActnList.pas" line="147">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FIsViewActionClient" type="Boolean" visibility="private" size="1" offset="28" file="FMX.ActnList.pas" line="148"/>
+      <field name="FImages" type="TBaseImageList" visibility="private" size="4" offset="32" file="FMX.ActnList.pas" line="149">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FGlyph" type="IGlyph" visibility="private" size="4" offset="36" file="FMX.ActnList.pas" line="150"/>
+      <field name="FCaption" type="ICaption" visibility="private" size="4" offset="40" file="FMX.ActnList.pas" line="151"/>
+      <field name="FChecked" type="IIsChecked" visibility="private" size="4" offset="44" file="FMX.ActnList.pas" line="152"/>
+      <field name="FGroupName" type="IGroupName" visibility="private" size="4" offset="48" file="FMX.ActnList.pas" line="153"/>
+      <procedure name="UpdateImages" visibility="private" file="FMX.ActnList.pas" line="154">
+        <parameters>
+          <parameter name="AImageListLinked" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="AssignClient" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="156">
+        <parameters>
+          <parameter name="AClient" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetAction" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="157">
+        <parameters>
+          <parameter name="Value" type="TBasicAction"/>
+        </parameters>
+      </procedure>
+      <function name="IsCaptionLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="158">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsCheckedLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="159">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsEnabledLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="160">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsGroupIndexLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="161">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsOnExecuteLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="162">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsShortCutLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="163">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsVisibleLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="164">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsImageIndexLinked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="165">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetCaption" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="166">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetChecked" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="167">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetGroupIndex" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="168">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetImageIndex" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="169">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="Change" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="170">
+      </procedure>
+      <property name="Glyph" visibility="protected" read="FGlyph" type="IGlyph" file="FMX.ActnList.pas" line="173">
+        <devnotes>
+           <summary> Reference to <b>IGlyph</b> interface of <b>Client</b>. <c>Nil</c> if <b>Client</b> is undefined or
+           does not support this interface </summary>
+        </devnotes>
+      </property>
+      <function name="IsViewActionClient" visibility="public" file="FMX.ActnList.pas" line="175">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="Client" visibility="public" read="FClient" type="TObject" file="FMX.ActnList.pas" line="176"/>
+      <property name="Images" visibility="public" read="FImages" type="TBaseImageList" file="FMX.ActnList.pas" line="178">
+        <devnotes>
+          <summary> The list of images. Can be <c>nil</c></summary>
+        </devnotes>
+      </property>
+      <property name="CaptionLinked" visibility="public" read="IsCaptionLinked" type="Boolean" file="FMX.ActnList.pas" line="179"/>
+      <property name="HintLinked" visibility="public" type="Boolean" file="FMX.ActnList.pas" line="181">
+        <devnotes>
+           <summary> Same as <b>IsHintLinked</b> </summary>
+        </devnotes>
+      </property>
+      <property name="CheckedLinked" visibility="public" read="IsCheckedLinked" type="Boolean" file="FMX.ActnList.pas" line="182"/>
+      <property name="EnabledLinked" visibility="public" read="IsEnabledLinked" type="Boolean" file="FMX.ActnList.pas" line="183"/>
+      <property name="GroupIndexLinked" visibility="public" read="IsGroupIndexLinked" type="Boolean" file="FMX.ActnList.pas" line="184"/>
+      <property name="ShortCutLinked" visibility="public" read="IsShortCutLinked" type="Boolean" file="FMX.ActnList.pas" line="185"/>
+      <property name="VisibleLinked" visibility="public" read="IsVisibleLinked" type="Boolean" file="FMX.ActnList.pas" line="186"/>
+      <property name="OnExecuteLinked" visibility="public" read="IsOnExecuteLinked" type="Boolean" file="FMX.ActnList.pas" line="187"/>
+    </members>
+  </class>
+  <classref name="TActionLinkClass" ref="TActionLink" file="FMX.ActnList.pas" line="190"/>
+  <class name="TShortCutList" file="FMX.ActnList.pas" line="192">
+    
+    <members>
+      <function name="Add" visibility="public" procflags="override" file="FMX.ActnList.pas" line="194">
+        <parameters>
+          <parameter name="S" type="string" paramflags="const"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+    </members>
+  </class>
+  <class name="TCustomAction" file="FMX.ActnList.pas" line="197">
+    
+    <members>
+      <field name="FShortCutPressed" type="Boolean" visibility="private" size="1" offset="160" file="FMX.ActnList.pas" line="199"/>
+      <field name="FTarget" type="TComponent" visibility="private" size="4" offset="164" file="FMX.ActnList.pas" line="200">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FUnsupportedArchitectures" type="TArchitectures" visibility="private" size="1" offset="168" file="FMX.ActnList.pas" line="201"/>
+      <field name="FUnsupportedPlatforms" type="TPlatforms" visibility="private" size="1" offset="169" file="FMX.ActnList.pas" line="202"/>
+      <field name="FOldVisible" type="Boolean" visibility="private" size="1" offset="170" file="FMX.ActnList.pas" line="203"/>
+      <field name="FOldEnabled" type="Boolean" visibility="private" size="1" offset="171" file="FMX.ActnList.pas" line="204"/>
+      <field name="FSupported" type="Boolean" visibility="private" size="1" offset="172" file="FMX.ActnList.pas" line="205"/>
+      <field name="FCustomText" type="string" visibility="private" size="4" offset="176" file="FMX.ActnList.pas" line="206"/>
+      <field name="FSupportedChecked" type="Boolean" visibility="private" size="1" offset="180" file="FMX.ActnList.pas" line="207"/>
+      <field name="FHideIfUnsupportedInterface" type="Boolean" visibility="private" size="1" offset="181" file="FMX.ActnList.pas" line="208"/>
+      <function name="GetText" visibility="private" procflags="inline" file="FMX.ActnList.pas" line="209">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetText" visibility="private" procflags="inline" file="FMX.ActnList.pas" line="210">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCustomActionList" visibility="private" file="FMX.ActnList.pas" line="211">
+        <parameters>
+          <retval type="TCustomActionList"/>
+        </parameters>
+      </function>
+      <procedure name="SetCustomActionList" visibility="private" file="FMX.ActnList.pas" line="212">
+        <parameters>
+          <parameter name="Value" type="TCustomActionList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReaderCaptionProc" visibility="private" file="FMX.ActnList.pas" line="213">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="WriterCaptionProc" visibility="private" file="FMX.ActnList.pas" line="214">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReaderImageIndexProc" visibility="private" file="FMX.ActnList.pas" line="215">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="WriterImageIndexProc" visibility="private" file="FMX.ActnList.pas" line="216">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetUnsupportedArchitectures" visibility="private" file="FMX.ActnList.pas" line="217">
+        <parameters>
+          <parameter name="Value" type="TArchitectures" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetUnsupportedPlatforms" visibility="private" file="FMX.ActnList.pas" line="218">
+        <parameters>
+          <parameter name="Value" type="TPlatforms" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCustomText" visibility="private" file="FMX.ActnList.pas" line="219">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHideIfUnsupportedInterface" visibility="private" file="FMX.ActnList.pas" line="220">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="UpdateSupported" visibility="protected" file="FMX.ActnList.pas" line="222">
+      <devnotes><summary>
+UpdateSupported is called when the Supported property can be changed. 
+UpdateSupported is called from Update or when the value of the 
+UnsupportedArchitectures or UnsupportedPlatforms property has changed.
+UpdateSupported analyzes whether the action can be supported under the current CPU architecture and OS platform with the current settings of the UnsupportedArchitectures, UnsupportedPlatforms, HideIfUnsupportedInterface, and IsSupportedInterface properties. If Supported is estimated False, then UpdateSupported sets Visible and Enabled to False, otherwise UpdateSupported restores the values of Visible and Enabled to the values that were stored before the last time when Supported became False.
+</summary></devnotes></procedure>
+      <function name="IsSupportedInterface" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="223">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns True if this action can be realized on the current platform.
+As implemented in TCustomAction, IsSupportedInterface always returns True. 
+IsSupportedInterface is virtual and can be overridden in descendent classes.
+</summary></devnotes></function>
+      <function name="CreateShortCutList" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="224">
+        <parameters>
+          <retval type="TCustomShortCutList"/>
+        </parameters>
+      <devnotes><summary>
+Creates the TShortCutList object for the action.
+CreateShortCutList creates an empty FireMonkey shortcut list object for the current action. 
+Notice that implementations of shortcuts are FireMonkey or VCL framework-specific. 
+</summary></devnotes></function>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="225">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+Implements a method for storing an action object's unpublished data on a stream such as a form file.
+By default, writing an object to a stream writes the values of all its published properties, and reading the object in reads those values and assigns them to the object's properties. Objects can also specify methods that read and write data other than published properties by overriding the DefineProperties method:
+
+TCustomAction overrides the DefineProperties method, defined in TComponent, to define storing of the Caption and ImageIndex properties.
+The System.Classes.TComponent.DefineProperties method, defined in TComponent, defines methods to store the &quot;fake&quot; Top and Left properties. These are defined so that action components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly. 
+</summary></devnotes></procedure>
+      <procedure name="SetTarget" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="226">
+        <parameters>
+          <parameter name="Value" type="TComponent" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the value of the Target property.
+The protected SetTarget method is provided so that descendant classes will be able to set the value of the Target property.
+</summary></devnotes></procedure>
+      <procedure name="SetEnabled" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="227">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the Enabled property of the action to the specified Value and propagates this Value to all clients of the action.
+FMX.ActnList.TCustomAction.SetEnabled inherits from System.Actions.TContainedAction.SetEnabled. All content below this line refers to System.Actions.TContainedAction.SetEnabled.
+Sets the Enabled property of the action to the specified Value and propagates this Value to all clients of the action.
+The behavior of SetEnabled depends upon the State of the ActionList action list:
+
+If the value of State is asSuspended, then SetEnabled sets to the specified Value only the Enabled property of the action.
+If the value of State is asSuspendedEnabled, then SetEnabled sets to True the Enabled property of the action and of all clients of the action.
+Otherwise, SetEnabled sets to the specified Value the Enabled property of the action and propagates this Value to all clients of the action.</summary></devnotes></procedure>
+      <procedure name="SetVisible" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="228">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the new Value of the Visible property for the action and action's clients.
+FMX.ActnList.TCustomAction.SetVisible inherits from System.Actions.TContainedAction.SetVisible. All content below this line refers to System.Actions.TContainedAction.SetVisible.
+Sets the new Value of the Visible property for the action and action's clients.
+SetVisible always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="229">
+      <devnotes><summary>
+Initializes the component after the form file has been read into memory.
+FMX.ActnList.TCustomAction.Loaded inherits from System.Classes.TComponent.Loaded. All content below this line refers to System.Classes.TComponent.Loaded.
+Initializes the component after the form file has been read into memory.
+Do not call the protected Loaded method. The streaming system calls this method after it loads the component's form from a stream.
+When the streaming system loads a form or data module from its form file, it first constructs the form component by calling its constructor, then reads its property values from the form file. After reading all the property values for all the components, the streaming system calls the Loaded methods of each component in the order the components were created. This gives the components a chance to initialize any data that depends on the values of other components or other parts of itself.
+
+Note:  All references to sibling components are resolved by the time Loaded is called. Loaded is the first place that sibling pointers can be used after being streamed in.
+As implemented in TComponent, Loaded clears the csLoading flag in the ComponentState property, indicating that the component is no longer loading.
+
+Warning: Loaded may be called multiple times on inherited forms. It is called every time a level of inheritance is streamed in. Do not allocate memory in an overridden Loaded method without first checking that the memory has not been allocated in a previous call.</summary></devnotes></procedure>
+      <procedure name="CustomTextChanged" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="230">
+      <devnotes><summary>
+Introduces an interface for a function that is called when the CustomText property for the action changes.
+As implemented in TCustomAction, CustomTextChanged does nothing. 
+Descendant classes can override CustomTextChanged to provide business functionality.
+The announced purpose of this method is to update the Text property when the CustomText property is changed.  
+</summary></devnotes></procedure>
+      <property name="CustomText" visibility="protected" read="FCustomText" write="SetCustomText" type="string" default="0" file="FMX.ActnList.pas" line="231"><devnotes><summary>
+CustomText is a user text.
+Some actions can, by default, automatically set the Text property. For example, in the TFileExit standard action, the Text property has the Quit &lt;Application.Title&gt; value. To set your own value, set the value of the Text property to the value of the CustomText property.
+</summary></devnotes></property>
+      <constructor name="Create" visibility="public" file="FMX.ActnList.pas" line="233">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Instantiates and initializes a FireMonkey TCustomAction object.
+Applications do not need to call the constructor directly. Actions are created automatically when you add them to an action list component using New Action in the Action List editor at design time.
+If you want to create an action at run time, assign a TActionList component to its ActionList property after calling Create.
+AOwner is the component that is responsible for freeing the action. It becomes the value of the Owner property.
+Create calls an inherited System.Actions.TContainedAction.Create constructor and then initializes the Supported property with True .
+</summary></devnotes></constructor>
+      <function name="Execute" visibility="public" procflags="override" file="FMX.ActnList.pas" line="234">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Responds when a client control &quot;fires&quot;.
+Execute is called automatically when a client control &quot;fires&quot; (for example, when the user clicks a button or selects a menu item).
+Execute first ensures that the action is updated. Then Execute calls the inherited System.Classes.TBasicAction.Execute method. System.Classes.TBasicAction.Execute calls the OnExecute event handler, if one is assigned. Execute returns True if an event handler is called and the action is Enabled. Otherwise, Execute returns False.
+</summary></devnotes></function>
+      <function name="Update" visibility="public" procflags="override" file="FMX.ActnList.pas" line="235">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Provides an opportunity to execute centralized code when an application is idle.
+FMX.ActnList.TCustomAction.Update inherits from System.Classes.TBasicAction.Update. All content below this line refers to System.Classes.TBasicAction.Update.
+Provides an opportunity to execute centralized code when an application is idle.
+Update triggers the OnUpdate event handler. Update returns True if an event handler was found, False otherwise. When the application is idle, the OnUpdate event occurs for every action. This provides an opportunity for applications to execute centralized code for enabling and disabling, checking and unchecking, and so on.
+</summary></devnotes></function>
+      <function name="IsDialogKey" visibility="public" file="FMX.ActnList.pas" line="236">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="const"/>
+          <parameter name="Shift" type="TShiftState" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Checks whether the specified keyboard key corresponds to one of the action's shortcuts.
+IsDialogKey returns True if the keyboard key specified by the combination of Key and Shift corresponds to one of the action's shortcuts. Here:
+
+Key is a keyboard scan code. You can find constants for keyboard scan codes in the Constants section of the System.UITypes unit. These are vkXXXX constants (vkEscape, vkReturn, vkF1, and others).
+Shift specifies the combination of the ALT, CTRL, SHIFT, and CMD (only Mac) keys.
+The action's shortcuts are listed in the ShortCut and SecondaryShortCuts properties.</summary></devnotes></function>
+      <property name="Text" visibility="public" read="GetText" write="SetText" type="string" default="0" file="FMX.ActnList.pas" line="237"><devnotes><summary>
+Represents the caption of the action.
+Text holds the string that is used in the same way as the Caption of the action, when it is set. The value of Text is propagated to the action's clients.
+Text is the same as Caption. You can use both Text and Caption, but descendant classes should only use the published property Text, so that the Object Inspector displays only the Text property, as in most FireMonkey components. 
+In the Text property you can define an accelerator key.  On Windows platforms, an accelerator key is shown as an underlined letter.  To specify an accelerator key, precede an &lt;accelerator_letter&gt; with an ampersand &amp; character.  The letter after the ampersand appears underlined. For example, to set the S character as an accelerator key for a Save action, type &amp;Save.  On Windows platforms, accelerator keys enable the user to activate actions pressing Alt+&lt;accelerator_letter&gt; key combination.  To show a single ampersand &amp; character in a Text property specify doubled ampersand &amp;&amp; characters.  Notice that &amp; and _ are seen and can be used only under Windows.
+</summary></devnotes></property>
+      <property name="Caption" visibility="public" read="FCaption" write="SetCaption" stored="False" type="string" default="0" hoisted="true" file="FMX.ActnList.pas" line="238"/>
+      <property name="ActionList" visibility="public" read="GetCustomActionList" write="SetCustomActionList" type="TCustomActionList" file="FMX.ActnList.pas" line="239"><devnotes><summary>
+Holds the action list to which the action belongs.
+FMX.ActnList.TCustomAction.ActionList inherits from System.Actions.TContainedAction.ActionList. All content below this line refers to System.Actions.TContainedAction.ActionList.
+Holds the action list to which the action belongs.
+</summary></devnotes></property>
+      <property name="HideIfUnsupportedInterface" visibility="public" read="FHideIfUnsupportedInterface" write="SetHideIfUnsupportedInterface" type="Boolean" file="FMX.ActnList.pas" line="240"><devnotes><summary>
+Defines whether the UnSupported action can be visible and accessible. 
+If HideIfUnsupportedInterface is True, then the 
+IsSupportedInterface function is used for retrieving the value of the Supported property. In this case, if IsSupportedInterface returns False, then this action is always inaccessible and invisible. 
+If HideIfUnsupportedInterface is False, then this action can be visible or invisible depending on other properties. In this case, descendant classes or application objects should call IsSupportedInterface to retrieve the visibility and accessibility of the action.
+</summary></devnotes></property>
+      <property name="ShortCutPressed" visibility="public" read="FShortCutPressed" write="FShortCutPressed" type="Boolean" file="FMX.ActnList.pas" line="241"><devnotes><summary>
+Specifies that the action is fired by pressing a keyboard key, not by clicking with the mouse.
+ShortCutPressed is a read-only property. When ShortCutPressed is True, it specifies that the action is fired by pressing a keyboard key, and not by clicking a control with the mouse.
+
+
+</summary></devnotes></property>
+      <property name="Target" visibility="public" read="FTarget" write="SetTarget" type="TComponent" file="FMX.ActnList.pas" line="242"><devnotes><summary>
+Defines the component for which the action is executed.
+Target is a read-only property. Target defines the component for which the action is executed. It can be nil. In the case where several controls can be called with one shortcut, Target corresponds to the first matched control.
+</summary></devnotes></property>
+      <property name="UnsupportedArchitectures" visibility="public" read="FUnsupportedArchitectures" write="SetUnsupportedArchitectures" type="TArchitectures" default="0" file="FMX.ActnList.pas" line="243"><devnotes><summary>
+Defines the set of unsupported CPU architectures.
+The TArchitecture type defines the arIntelX86 and arIntelX64 constants that identify the processor architectures Intel x86 and Intel x64.
+Use UnsupportedArchitectures to identify sets of unsupported processor architectures. 
+</summary></devnotes></property>
+      <property name="UnsupportedPlatforms" visibility="public" read="FUnsupportedPlatforms" write="SetUnsupportedPlatforms" type="TPlatforms" default="0" file="FMX.ActnList.pas" line="245"><devnotes><summary>
+Defines the set of unsupported OS platforms.
+The TPlatform type defines the pfWindows, pfMacOS, pfiOS, pfAndroid,  and pfLinux constants that identify the Windows, Mac OS, Android, and other platforms.
+Use UnsupportedPlatforms to identify sets of unsupported OS platforms. 
+</summary></devnotes></property>
+      <property name="Supported" visibility="public" read="FSupported" type="Boolean" file="FMX.ActnList.pas" line="246"><devnotes><summary>
+Defines whether the action can work on the current platform and CPU architecture. 
+Supported is a read-only property. Supported defines whether the action can work on the current platform and CPU architecture. The value of this property is defined by the UnsupportedArchitectures  and UnsupportedPlatforms  properties and also by the IsSupportedInterface function. If Supported is False, then this action is always inaccessible and invisible.
+</summary></devnotes></property>
+    </members>
+  <devnotes><summary>
+TCustomAction is a base class for FireMonkey actions intended to be used with menu items and controls.
+TCustomAction introduces support for the properties, events, and methods of menu items and controls that are clients of actions.
+Most properties and events introduced in TCustomAction are public; therefore, use TCustomAction as a base class when deriving your own actions that publish specific subset of properties of associated controls. 
+Actions centralize responses to user commands (user actions). An action is associated with the user interface elements (components) in an application that uses this action. Actions provide an easy way to synchronize values of properties of an action and of associated components (clients), for example, the enabled state and caption of an action and of an associated speed button and a menu item, and handle the response when the user clicks these components. Each component, which is called the client, has its properties dynamically updated by the associated action and forwards user commands to the action for a response.
+The Text property can be used to set an accelerator key to the action. Notice that &amp; and _ are seen and can be used only for Windows.
+At design time, you can work in the Action List editor with actions contained in an action list. The action list is a container for actions, organized into categories (File, Edit, and others).
+Public properties and events of a component and control that are supported in TCustomAction, either directly or through an ancestor, are the following:
+
+Properties: Caption, Checked, Enabled, HelpType, HelpContext, HelpKeyword, Hint, ImageIndex, ShortCut, Visible.
+Events: OnHint, OnUpdate, OnExecute.
+TCustomAction is the base class for TAction and TCustomViewAction.
+TCustomAction acts as the base class for several predefined action classes. For predefined actions that augment the behavior of TCustomAction, see the action classes in the FMX.StdActns unit.
+
+Code Examples
+FMX.ActionsDemo Sample
+FMX.KeyboardToolbar Sample
+FMX.ScrollableForm Sample</summary></devnotes></class>
+  <type name="TOnCreateComponent" file="FMX.ActnList.pas" line="251" procflags="closure">
+  </type>
+  <type name="TOnBeforeShow" file="FMX.ActnList.pas" line="252" procflags="closure">
+  </type>
+  <class name="TCustomViewAction" file="FMX.ActnList.pas" line="254">
+    
+    <members>
+      <field name="FComponent" type="TComponent" visibility="private" size="4" offset="184" file="FMX.ActnList.pas" line="256">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FOnCreateComponent" type="TOnCreateComponent" visibility="private" size="8" offset="192" file="FMX.ActnList.pas" line="257"/>
+      <field name="FOnAfterShow" type="TNotifyEvent" visibility="private" size="8" offset="200" file="FMX.ActnList.pas" line="258"/>
+      <field name="FOnBeforeShow" type="TOnBeforeShow" visibility="private" size="8" offset="208" file="FMX.ActnList.pas" line="259"/>
+      <procedure name="Notification" visibility="protected" procflags="override" file="FMX.ActnList.pas" line="261">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+Responds when components are created or destroyed.
+FMX.ActnList.TCustomViewAction.Notification inherits from System.Classes.TBasicAction.Notification. All content below this line refers to System.Classes.TBasicAction.Notification.
+Responds when components are created or destroyed.
+Do not call the Notification method in an application. Notification is called automatically when the component specified by AComponent is about to be inserted or removed, as specified by Operation. 
+TBasicAction overrides the System.Classes.TComponent.Notification method. Notification checks whether the component specified by AComponent is the same as the component stored in the ActionComponent property and whether it is about to be freed. If so, Notification sets the ActionComponent property to nil (Delphi) or NULL (C++).
+</summary></devnotes></procedure>
+      <procedure name="DoCreateComponent" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="262">
+        <parameters>
+          <parameter name="NewComponent" type="TComponent" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoBeforeShow" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="263">
+        <parameters>
+          <parameter name="CanShow" type="Boolean" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoAfterShow" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="264">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="ComponentText" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="265">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="ComponentChanged" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="266">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="SetComponent" visibility="protected" procflags="virtual" file="FMX.ActnList.pas" line="267">
+        <parameters>
+          <parameter name="Value" type="TComponent" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Setter for the Component property.
+
+
+</summary></devnotes></procedure>
+      <event name="OnCreateComponent" visibility="protected" read="FOnCreateComponent" write="FOnCreateComponent" type="TOnCreateComponent" file="FMX.ActnList.pas" line="268"><devnotes><summary>
+Is fired when the target component is created.
+Event handlers of the TOnCreateComponent type have the following parameters: 
+
+
+
+Parameter
+
+Description
+
+
+Sender
+
+Is the instance of the action that fired the event.
+
+
+NewComponent
+
+Returns the created component.
+
+Only a component object of the TFmxObject type can be created in the event handler of this event. If the created component is not a descendant of TFmxObject, then an exception is raised and a new object is destroyed.
+</summary></devnotes></event>
+      <event name="OnBeforeShow" visibility="protected" read="FOnBeforeShow" write="FOnBeforeShow" type="TOnBeforeShow" file="FMX.ActnList.pas" line="269"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnAfterShow" visibility="protected" read="FOnAfterShow" write="FOnAfterShow" type="TNotifyEvent" file="FMX.ActnList.pas" line="270"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <function name="HandlesTarget" visibility="public" procflags="override" file="FMX.ActnList.pas" line="272">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Introduces an interface for verifying that the type and state of a target component or control are appropriate for the action.
+FMX.ActnList.TCustomViewAction.HandlesTarget inherits from System.Classes.TBasicAction.HandlesTarget. All content below this line refers to System.Classes.TBasicAction.HandlesTarget.
+Introduces an interface for verifying that the type and state of a target component or control are appropriate for the action.
+HandlesTarget does nothing in TBasicAction. HandlesTarget was introduced in TBasicAction so that descendants can override it to check the type and state of a target. HandlesTarget can verify any information about a target that is relevant for the action. HandlesTarget returns True if the target meets the specified criteria, False otherwise.
+</summary></devnotes></function>
+      <property name="Component" visibility="public" read="FComponent" write="SetComponent" type="TComponent" file="FMX.ActnList.pas" line="273"><devnotes><summary>
+Keeps a component that executes an action and whose image becomes visible during the action execution.
+</summary></devnotes></property>
+    </members>
+  <devnotes><summary>
+A base class for actions that show a specified component when executed.
+Descendants of TCustomViewAction can be associated with a component that is made visible when the action executes.
+TCustomViewAction extends TCustomAction declaring the component that the action shows when it executes.
+TObjectViewAction extends the TCustomViewAction class that defines the FmxObject property and keeps the component value that should be the TFmxObject type object in this case. 
+Descendants of TObjectViewAction are associated with the TFmxObject type component that is made visible when the action executes.  
+TVirtualKeyboard and TViewAction are standard actions that descend from TObjectViewAction.
+Contrary to ordinary actions (like TAction, TControlAction, TCustomValueRangeAction, and so on) TCustomViewAction (and its descendants) does not distribute changes in values of Caption, Enabled, Checked, GroupIndex, ShortCut, Visible, and OnExecute properties to the respective properties of clients linked with action links. 
+</summary></devnotes></class>
+  <class name="TAction" file="FMX.ActnList.pas" line="280">
+    
+    <ancestor name="TCustomAction" namespace="FMX.ActnList">
+      <methodref name="GetText" visibility="private" procflags="inline"/>
+      <methodref name="SetText" visibility="private" procflags="inline"/>
+      <methodref name="GetCustomActionList" visibility="private"/>
+      <methodref name="SetCustomActionList" visibility="private"/>
+      <methodref name="ReaderCaptionProc" visibility="private"/>
+      <methodref name="WriterCaptionProc" visibility="private"/>
+      <methodref name="ReaderImageIndexProc" visibility="private"/>
+      <methodref name="WriterImageIndexProc" visibility="private"/>
+      <methodref name="SetUnsupportedArchitectures" visibility="private"/>
+      <methodref name="SetUnsupportedPlatforms" visibility="private"/>
+      <methodref name="SetCustomText" visibility="private"/>
+      <methodref name="SetHideIfUnsupportedInterface" visibility="private"/>
+      <methodref name="UpdateSupported" visibility="protected"/>
+      <methodref name="IsSupportedInterface" visibility="protected" procflags="virtual"/>
+      <methodref name="CreateShortCutList" visibility="protected" procflags="override"/>
+      <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+      <methodref name="SetTarget" visibility="protected" procflags="virtual"/>
+      <methodref name="SetEnabled" visibility="protected" procflags="override"/>
+      <methodref name="SetVisible" visibility="protected" procflags="override"/>
+      <methodref name="Loaded" visibility="protected" procflags="override"/>
+      <methodref name="CustomTextChanged" visibility="protected" procflags="virtual"/>
+      <propertyref name="CustomText" visibility="protected"/>
+      <methodref name="Create" visibility="public" procflags="constructor override"/>
+      <methodref name="Execute" visibility="public" procflags="override"/>
+      <methodref name="Update" visibility="public" procflags="override"/>
+      <methodref name="IsDialogKey" visibility="public"/>
+      <propertyref name="Text" visibility="public"/>
+      <propertyref name="Caption" visibility="public"/>
+      <propertyref name="ActionList" visibility="public"/>
+      <propertyref name="HideIfUnsupportedInterface" visibility="public"/>
+      <propertyref name="ShortCutPressed" visibility="public"/>
+      <propertyref name="Target" visibility="public"/>
+      <propertyref name="UnsupportedArchitectures" visibility="public"/>
+      <propertyref name="UnsupportedPlatforms" visibility="public"/>
+      <propertyref name="Supported" visibility="public"/>
+      <ancestor name="TContainedAction" namespace="System.Actions">
+        <methodref name="GetIndex" visibility="private">
+        </methodref>
+        <methodref name="SetIndex" visibility="private">
+        </methodref>
+        <methodref name="SetCategory" visibility="private">
+        </methodref>
+        <methodref name="GetSecondaryShortCuts" visibility="private">
+        </methodref>
+        <methodref name="SetSecondaryShortCuts" visibility="private">
+        </methodref>
+        <methodref name="IsSecondaryShortCutsStored" visibility="private">
+        </methodref>
+        <methodref name="SetActionList" visibility="private">
+        </methodref>
+        <methodref name="ReadState" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="SecondaryShortCutsCreated" visibility="protected">
+        </methodref>
+        <methodref name="CreateShortCutList" visibility="protected" procflags="virtual">
+        </methodref>
+        <propertyref name="SavedEnabledState" visibility="protected">
+        </propertyref>
+        <methodref name="AssignTo" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="HandleShortCut" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetAutoCheck" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetCaption" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetName" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="SetChecked" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetEnabled" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetGroupIndex" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetHelpContext" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetHelpKeyword" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetHelpType" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetHint" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetVisible" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetShortCut" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetImageIndex" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetStatusAction" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="Create" visibility="public" procflags="constructor override">
+        </methodref>
+        <methodref name="Destroy" visibility="public" procflags="destructor override">
+        </methodref>
+        <methodref name="GetParentComponent" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="HasParent" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="SetParentComponent" visibility="public" procflags="override">
+        </methodref>
+        <propertyref name="ActionList" visibility="public">
+        </propertyref>
+        <methodref name="Suspended" visibility="public" procflags="override">
+        </methodref>
+        <propertyref name="Index" visibility="public">
+        </propertyref>
+        <propertyref name="DisableIfNoHandler" visibility="public">
+        </propertyref>
+        <propertyref name="AutoCheck" visibility="public">
+        </propertyref>
+        <propertyref name="Caption" visibility="public">
+        </propertyref>
+        <propertyref name="Checked" visibility="public">
+        </propertyref>
+        <propertyref name="Enabled" visibility="public">
+        </propertyref>
+        <propertyref name="GroupIndex" visibility="public">
+        </propertyref>
+        <propertyref name="HelpContext" visibility="public">
+        </propertyref>
+        <propertyref name="HelpKeyword" visibility="public">
+        </propertyref>
+        <propertyref name="HelpType" visibility="public">
+        </propertyref>
+        <propertyref name="Hint" visibility="public">
+        </propertyref>
+        <propertyref name="Visible" visibility="public">
+        </propertyref>
+        <propertyref name="ShortCut" visibility="public">
+        </propertyref>
+        <propertyref name="SecondaryShortCuts" visibility="public">
+        </propertyref>
+        <propertyref name="ImageIndex" visibility="public">
+        </propertyref>
+        <methodref name="DoHint" visibility="public" procflags="dynamic">
+        </methodref>
+        <eventref name="OnHint" visibility="public">
+        </eventref>
+        <propertyref name="StatusAction" visibility="public">
+        </propertyref>
+        <propertyref name="Category" visibility="published">
+        </propertyref>
+        <ancestor name="TBasicAction" namespace="System.Classes">
+          <methodref name="GetClientCount" visibility="private">
+          </methodref>
+          <methodref name="GetClient" visibility="private">
+          </methodref>
+          <methodref name="SetActionComponent" visibility="private">
+          </methodref>
+          <methodref name="Change" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetOnExecute" visibility="protected" procflags="virtual">
+          </methodref>
+          <eventref name="OnChange" visibility="protected">
+          </eventref>
+          <methodref name="Notification" visibility="protected" procflags="override">
+          </methodref>
+          <propertyref name="ClientCount" visibility="protected">
+          </propertyref>
+          <propertyref name="Clients" visibility="protected">
+          </propertyref>
+          <methodref name="RegisterChanges" visibility="protected">
+          </methodref>
+          <methodref name="UnRegisterChanges" visibility="protected">
+          </methodref>
+          <methodref name="Create" visibility="public" procflags="constructor override">
+          </methodref>
+          <methodref name="Destroy" visibility="public" procflags="destructor override">
+          </methodref>
+          <methodref name="Suspended" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="HandlesTarget" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="UpdateTarget" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="ExecuteTarget" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="Execute" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="Update" visibility="public" procflags="virtual">
+          </methodref>
+          <propertyref name="ActionComponent" visibility="public">
+          </propertyref>
+          <eventref name="OnExecute" visibility="public">
+          </eventref>
+          <eventref name="OnUpdate" visibility="public">
+          </eventref>
+          <ancestor name="TComponent" namespace="System.Classes">
+            <interfaces>
+              <implements name="IInterfaceComponentReference"/>
+              <implements name="IInterface"/>
+            </interfaces>
+            <methodref name="GetComObject" visibility="private">
+            </methodref>
+            <methodref name="GetComponent" visibility="private">
+            </methodref>
+            <methodref name="GetComponentCount" visibility="private">
+            </methodref>
+            <methodref name="GetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="Insert" visibility="private">
+            </methodref>
+            <methodref name="ReadLeft" visibility="private">
+            </methodref>
+            <methodref name="ReadTop" visibility="private">
+            </methodref>
+            <methodref name="Remove" visibility="private">
+            </methodref>
+            <methodref name="RemoveNotification" visibility="private">
+            </methodref>
+            <methodref name="SetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="SetReference" visibility="private">
+            </methodref>
+            <methodref name="WriteLeft" visibility="private">
+            </methodref>
+            <methodref name="WriteTop" visibility="private">
+            </methodref>
+            <methodref name="IntfGetComponent" visibility="private">
+            </methodref>
+            <methodref name="DoGetDeltaStreams" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaStream" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaState" visibility="private">
+            </methodref>
+            <methodref name="FindSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="AddSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="RemoveSortedComponent" visibility="private" procflags="inline">
+            </methodref>
+            <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+            </methodref>
+            <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ChangeName" visibility="protected">
+            </methodref>
+            <methodref name="DefineProperties" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="GetChildren" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildOwner" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildParent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetOwner" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="Loaded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="Notification" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ReadState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="CanObserve" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ObserverAdded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetObservers" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetAncestor" visibility="protected">
+            </methodref>
+            <methodref name="SetDesigning" visibility="protected">
+            </methodref>
+            <methodref name="SetInline" visibility="protected">
+            </methodref>
+            <methodref name="SetDesignInstance" visibility="protected">
+            </methodref>
+            <methodref name="SetName" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetChildOrder" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="SetParentComponent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updating" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updated" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual">
+            </methodref>
+            <methodref name="ValidateRename" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ValidateContainer" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ValidateInsert" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="WriteState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="RemoveFreeNotifications" visibility="protected">
+            </methodref>
+            <methodref name="QueryInterface" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="_AddRef" visibility="protected">
+            </methodref>
+            <methodref name="_Release" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfoCount" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfo" visibility="protected">
+            </methodref>
+            <methodref name="GetIDsOfNames" visibility="protected">
+            </methodref>
+            <methodref name="Invoke" visibility="protected">
+            </methodref>
+            <eventref name="OnGetDeltaStreams" visibility="protected">
+            </eventref>
+            <methodref name="Create" visibility="public" procflags="constructor virtual">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor override">
+            </methodref>
+            <methodref name="BeforeDestruction" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndFunctionInvoke" visibility="public">
+            </methodref>
+            <methodref name="DestroyComponents" visibility="public">
+            </methodref>
+            <methodref name="Destroying" visibility="public">
+            </methodref>
+            <methodref name="ExecuteAction" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="FindComponent" visibility="public">
+            </methodref>
+            <methodref name="FreeNotification" visibility="public">
+            </methodref>
+            <methodref name="RemoveFreeNotification" visibility="public">
+            </methodref>
+            <methodref name="FreeOnRelease" visibility="public">
+            </methodref>
+            <methodref name="GetEnumerator" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="GetParentComponent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="GetNamePath" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="HasParent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="InsertComponent" visibility="public">
+            </methodref>
+            <methodref name="RemoveComponent" visibility="public">
+            </methodref>
+            <methodref name="SetSubComponent" visibility="public">
+            </methodref>
+            <methodref name="SafeCallException" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="UpdateAction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="IsImplementorOf" visibility="public">
+            </methodref>
+            <methodref name="ReferenceInterface" visibility="public">
+            </methodref>
+            <propertyref name="ComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Components" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentCount" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentIndex" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentState" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentStyle" visibility="public">
+            </propertyref>
+            <propertyref name="DesignInfo" visibility="public">
+            </propertyref>
+            <propertyref name="Owner" visibility="public">
+            </propertyref>
+            <propertyref name="VCLComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Observers" visibility="public">
+            </propertyref>
+            <propertyref name="Name" visibility="published">
+            </propertyref>
+            <propertyref name="Tag" visibility="published">
+            </propertyref>
+            <ancestor name="TPersistent" namespace="System.Classes">
+              <methodref name="AssignError" visibility="private">
+              </methodref>
+              <methodref name="AssignTo" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="DefineProperties" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="GetOwner" visibility="protected" procflags="dynamic">
+              </methodref>
+              <methodref name="Destroy" visibility="public" procflags="destructor override">
+              </methodref>
+              <methodref name="Assign" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="GetNamePath" visibility="public" procflags="dynamic">
+              </methodref>
+              <ancestor name="TObject" namespace="System">
+                <methodref name="Create" visibility="public" procflags="constructor">
+                </methodref>
+                <methodref name="Free" visibility="public">
+                </methodref>
+                <methodref name="DisposeOf" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="InitInstance" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="CleanupInstance" visibility="public">
+                </methodref>
+                <methodref name="ClassType" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="ClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassNameIs" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassParent" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="ClassInfo" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InstanceSize" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InheritsFrom" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="QualifiedClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="GetInterface" visibility="public">
+                </methodref>
+                <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="UnitName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="UnitScope" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="Equals" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="GetHashCode" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="ToString" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="SafeCallException" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Dispatch" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="NewInstance" visibility="public" procflags="class virtual">
+                </methodref>
+                <methodref name="FreeInstance" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+                </methodref>
+                <methodref name="GetDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <propertyref name="Disposed" visibility="protected">
+                </propertyref>
+              </ancestor>
+            </ancestor>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <constructor name="Create" visibility="public" file="FMX.ActnList.pas" line="282">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+      <property name="AutoCheck" visibility="published" read="FAutoCheck" write="SetAutoCheck" type="Boolean" default="0" hoisted="true" file="FMX.ActnList.pas" line="284"/>
+      <property name="Text" visibility="published" read="GetText" write="SetText" type="string" default="0" hoisted="true" file="FMX.ActnList.pas" line="285"/>
+      <property name="Checked" visibility="published" read="FChecked" write="SetChecked" type="Boolean" default="0" hoisted="true" file="FMX.ActnList.pas" line="286"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" type="Boolean" default="1" hoisted="true" file="FMX.ActnList.pas" line="287"/>
+      <property name="GroupIndex" visibility="published" read="FGroupIndex" write="SetGroupIndex" type="Integer" default="0" hoisted="true" file="FMX.ActnList.pas" line="288"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" type="THelpContext" default="0" hoisted="true" file="FMX.ActnList.pas" line="289"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" type="string" default="0" hoisted="true" file="FMX.ActnList.pas" line="290"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="SetHelpType" type="THelpType" default="0" hoisted="true" file="FMX.ActnList.pas" line="291"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" type="string" default="0" hoisted="true" file="FMX.ActnList.pas" line="292"/>
+      <property name="ImageIndex" visibility="published" read="FImageIndex" write="SetImageIndex" type="TImageIndex" default="-1" hoisted="true" file="FMX.ActnList.pas" line="293"/>
+      <property name="ShortCut" visibility="published" read="FShortCut" write="SetShortCut" type="TShortCut" default="0" hoisted="true" file="FMX.ActnList.pas" line="294"/>
+      <property name="SecondaryShortCuts" visibility="published" read="GetSecondaryShortCuts" write="SetSecondaryShortCuts" stored="IsSecondaryShortCutsStored" type="TCustomShortCutList" hoisted="true" file="FMX.ActnList.pas" line="295"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" type="Boolean" default="1" hoisted="true" file="FMX.ActnList.pas" line="296"/>
+      <property name="UnsupportedArchitectures" visibility="published" read="FUnsupportedArchitectures" write="SetUnsupportedArchitectures" type="TArchitectures" default="0" hoisted="true" file="FMX.ActnList.pas" line="297"/>
+      <property name="UnsupportedPlatforms" visibility="published" read="FUnsupportedPlatforms" write="SetUnsupportedPlatforms" type="TPlatforms" default="0" hoisted="true" file="FMX.ActnList.pas" line="298"/>
+      <event name="OnExecute" visibility="published" read="FOnExecute" write="SetOnExecute" type="TNotifyEvent" hoisted="true" file="FMX.ActnList.pas" line="299"/>
+      <event name="OnUpdate" visibility="published" read="FOnUpdate" write="FOnUpdate" type="TNotifyEvent" hoisted="true" file="FMX.ActnList.pas" line="300"/>
+      <event name="OnHint" visibility="published" read="FOnHint" write="FOnHint" type="THintEvent" hoisted="true" file="FMX.ActnList.pas" line="301"/>
+    </members>
+  </class>
+  <function name="TextToShortCut" visibility="public" file="FMX.ActnList.pas" line="311">
+    <parameters>
+      <parameter name="Text" type="string"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+</namespace>
