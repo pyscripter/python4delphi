@@ -584,19 +584,19 @@ Type
     {$IFDEF EXPOSE_MEMBERS}
     class procedure ExposeMethods(const AClass: TClass;
       const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-      const AOnlyDeclaredMethods: boolean = false;
+      const ADeclaredMethodsOnly: boolean = false;
       const AIncludedMethodNames: TArray<string> = [];
       const AExcludedMethodNames: TArray<string> = [];
       const ADefCallback: TExposedMethodDefCallback = nil); virtual;
     class procedure ExposeProperties(const AClass: TClass;
       const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-      const AOnlyDeclaredProperties: boolean = false;
+      const ADeclaredPropertiesOnly: boolean = false;
       const AIncludedPropertyNames: TArray<string> = [];
       const AExcludedPropertyNames: TArray<string> = [];
       const ADefCallback: TExposedPropertyDefCallback = nil); virtual;
     class procedure ExposeFields(const AClass: TClass;
       const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-      const AOnlyDeclaredFields: boolean = false;
+      const ADeclaredFieldsOnly: boolean = false;
       const AIncludedFieldNames: TArray<string> = [];
       const AExcludedFieldNames: TArray<string> = [];
       const ADefCallback: TExposedFieldDefCallback = nil); virtual;
@@ -1104,9 +1104,10 @@ begin
     begin
       if IsDelphiObject(APyObject) then
         LTypeRef := TPyDelphiObject(PythonToDelphi(APyObject)).DelphiObject
-      else if IsDelphiClass(APyObject) then begin
-        LTypeRef := TPyDelphiObjectClass(PythonToPythonType(APyObject).PyObjectClass).DelphiObjectClass
-      end else
+      else if IsDelphiClass(APyObject) then
+        LTypeRef := TPyDelphiObjectClass(
+          PythonToPythonType(APyObject).PyObjectClass).DelphiObjectClass
+      else
         Exit(nil);
 
       Result := RttiCall(
@@ -3294,10 +3295,6 @@ var
   LDocStr: string;
 begin
   inherited;
-  {$IFDEF EXPOSE_MEMBERS}
-  //If not bufferized yet, we ask to bufferize it
-  TPythonDocServer.Instance.Bufferize(DelphiObjectClass.ClassInfo);
-  {$ENDIF EXPOSE_MEMBERS}
   PythonType.TypeName := AnsiString(GetTypeName);
   PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   PythonType.GenerateCreateFunction := False;
@@ -3328,7 +3325,7 @@ end;
 {$IFDEF EXPOSE_MEMBERS}
 class procedure TPyDelphiObject.ExposeMethods(const AClass: TClass;
   const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-  const AOnlyDeclaredMethods: boolean; const AIncludedMethodNames,
+  const ADeclaredMethodsOnly: boolean; const AIncludedMethodNames,
   AExcludedMethodNames: TArray<string>; const ADefCallback: TExposedMethodDefCallback);
 var
   LRttiCtx: TRttiContext;
@@ -3347,7 +3344,7 @@ begin
     LRttiType := LRttiCtx.GetType(AClass);
 
     //Define if we will expose only the declared methods or include all inherited
-    if AOnlyDeclaredMethods then
+    if ADeclaredMethodsOnly then
       LRttiMethods := LRttiType.GetDeclaredMethods()
     else
       LRttiMethods := LRttiType.GetMethods();
@@ -3395,8 +3392,9 @@ begin
         LBuffer[Length(LBuffer) - 1] := LRttiMethod.Name;
 
         //Try to load the method doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(DelphiObjectClass.ClassInfo, LRttiMethod, LDocStr) then
-          LExposedMethod.DocString := AnsiString(LDocStr);
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          DelphiObjectClass.ClassInfo, LRttiMethod, LDocStr) then
+            LExposedMethod.DocString := AnsiString(LDocStr);
 
         //Adds the Python method
         if LRttiMethod.IsStatic then
@@ -3423,7 +3421,7 @@ end;
 
 class procedure TPyDelphiObject.ExposeProperties(const AClass: TClass;
   const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-  const AOnlyDeclaredProperties: boolean; const AIncludedPropertyNames,
+  const ADeclaredPropertiesOnly: boolean; const AIncludedPropertyNames,
   AExcludedPropertyNames: TArray<string>; const ADefCallback: TExposedPropertyDefCallback);
 var
   LRttiCtx: TRttiContext;
@@ -3442,7 +3440,7 @@ begin
     LRttiType := LRttiCtx.GetType(AClass);
 
     //Define if we will expose only the declared properties or include all inherited
-    if AOnlyDeclaredProperties then
+    if ADeclaredPropertiesOnly then
       LRttiProperties := LRttiType.GetDeclaredProperties()
     else
       LRttiProperties := LRttiType.GetProperties();
@@ -3489,8 +3487,9 @@ begin
         LBuffer[Length(LBuffer) - 1] := LRttiProperty.Name;
 
         //Try to load the property doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(DelphiObjectClass.ClassInfo, LRttiProperty, LDocStr) then
-          LExposedProperty.DocString := AnsiString(LDocStr);
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          DelphiObjectClass.ClassInfo, LRttiProperty, LDocStr) then
+            LExposedProperty.DocString := AnsiString(LDocStr);
 
         //Adds the Python attribute
         APythonType.AddGetSet(
@@ -3508,7 +3507,7 @@ end;
 
 class procedure TPyDelphiObject.ExposeFields(const AClass: TClass;
   const APythonType: TPythonType; const APyDelphiWrapper: TPyDelphiWrapper;
-  const AOnlyDeclaredFields: boolean; const AIncludedFieldNames,
+  const ADeclaredFieldsOnly: boolean; const AIncludedFieldNames,
   AExcludedFieldNames: TArray<string>; const ADefCallback: TExposedFieldDefCallback);
 var
   LRttiCtx: TRttiContext;
@@ -3527,7 +3526,7 @@ begin
     LRttiType := LRttiCtx.GetType(AClass);
 
     //Define if we will expose only the declared fields or include all inherited
-    if AOnlyDeclaredFields then
+    if ADeclaredFieldsOnly then
       LRttiFields := LRttiType.GetDeclaredFields()
     else
       LRttiFields := LRttiType.GetFields();
@@ -3574,8 +3573,9 @@ begin
         LBuffer[Length(LBuffer) - 1] := LRttiField.Name;
 
         //Try to load the property doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(DelphiObjectClass.ClassInfo, LRttiField, LDocStr) then
-          LExposedField.DocString := AnsiString(LDocStr);
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          DelphiObjectClass.ClassInfo, LRttiField, LDocStr) then
+            LExposedField.DocString := AnsiString(LDocStr);
 
         //Adds the Python attribute
         APythonType.AddGetSet(
@@ -4249,6 +4249,7 @@ begin
     RegisterFunction(PAnsiChar('Abort'), Abort_Wrapper,
        PAnsiChar('Abort()'#10 +
        'Raises a silent exception.'));
+
     for i := 0 to RegisteredUnits.Count-1 do
       RegisteredUnits[i].DefineFunctions(Self);
   end;
@@ -4608,18 +4609,6 @@ end;
 
 initialization
   _InitRttiPool;
-  {$IFDEF EXPOSE_MEMBERS}
-  TPythonDocServer.Instance.DiscoverAndBufferizeTypes(
-    function(const ARttiType: TRttiType; out ATypeInfo: PTypeInfo): boolean
-    begin
-      Result := ARttiType.IsPublicType
-        and ARttiType.IsInstance
-        and ARttiType.AsInstance.MetaclassType.InheritsFrom(TPyDelphiObject);
-
-        if Result then
-          ATypeInfo := TPyDelphiObjectClass(ARttiType.AsInstance.MetaclassType).DelphiObjectClass.ClassInfo;
-    end);
-  {$ENDIF EXPOSE_MEMBERS}
 finalization
   _RttiContext.Free();
 {$ELSE}

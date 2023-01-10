@@ -8,6 +8,8 @@ uses
   System.TypInfo,
   System.Classes,
   System.SysUtils,
+  System.SyncObjs,
+  System.Threading,
   System.Generics.Collections,
   Xml.xmldom,
   Xml.XMLIntf,
@@ -15,6 +17,111 @@ uses
   Xml.omnixmldom;
 
 type
+  TSymbol = string;
+  TDocScanResult = class;
+
+  {$SCOPEDENUMS ON}
+  TPythonDocSource = (Xml);
+  TPythonDocSymbolType = (Constant, Variable, &Constructor, &Destructor, &Procedure, &Function, Enum, &Set, &Record, &Class);
+  {$SCOPEDENUMS OFF}
+
+  TDiscoverPredicate = reference to function(const ARttiType: TRttiType; out ATypeInfo: PTypeInfo): boolean;
+
+  IPythonDocProvider = interface
+    ['{4763349F-A25B-41E9-8811-2A6BD5933834}']
+    /// <summary>
+    ///   Find the doc of a given symbol.
+    /// </summary>
+    function Find(const ASymbolName: TSymbol;
+      const ASymbolType: TPythonDocSymbolType;
+      const ADeclaringUnitName: string): TDocScanResult;
+  end;
+
+  TPythonDocServer = class
+  private
+    class var FInstance: TPythonDocServer;
+    const DOC_DIR_NAME = 'doc';
+    const DOC_FILE_NAME = 'docs.xml';
+  private
+    FProvider: IPythonDocProvider;
+    constructor Create();
+    class function GetInstance: TPythonDocServer; static;
+    class function GetDocDir(): string; static;
+    class function GetDocFile(): string; static;
+  public
+    class destructor Destroy();
+  public
+    /// <summary>
+    ///   Bufferize all symbols.
+    /// </summary>
+    procedure Bufferize();
+    /// <summary>
+    ///    Clear all symbol info off buffer.
+    /// </summary>
+    procedure ClearBuffer();
+
+    /// <summary>
+    ///    Reads the docs of a symbol.
+    /// </summary>
+    function ReadTypeDocStr(const ASymbolName: TSymbol;
+      const ASymbolType: TPythonDocSymbolType;
+      const ADeclaringUnitName: string; out ADocStr: string): boolean; overload;
+    /// <summary>
+    ///    Reads the docs of a type.
+    /// </summary>
+    function ReadTypeDocStr(const ATypeInfo: PTypeInfo; out ADocStr: string): boolean; overload;
+    /// <summary>
+    ///    Reads the docs of a type.
+    /// </summary>
+    function ReadTypeDocStr<T>(out ADocStr: string): boolean; overload;
+
+    /// <summary>
+    ///    Reads the docs of a member of a type.
+    /// </summary>
+    function ReadMemberDocStr(const AParent: PTypeInfo; const AMember: TRttiMember; out ADocStr: string): boolean; overload;
+    /// <summary>
+    ///    Reads the docs of a member of a type.
+    /// </summary>
+    function ReadMemberDocStr<T>(const AMember: TRttiMember; out ADocStr: string): boolean; overload;
+    /// <summary>
+    ///    Doc provider instance.
+    /// </summary>
+    property Provider: IPythonDocProvider read FProvider write FProvider;
+
+    class property Instance: TPythonDocServer read GetInstance;
+  end;
+
+  TPythonDocXML = class(TInterfacedObject, IPythonDocProvider)
+  private type
+    TDiscoveredDocs = TDocScanResult;
+    TDiscoveredSymbols = TObjectDictionary<string, TDiscoveredDocs>;
+    TDiscoveredFiles = TObjectDictionary<string, TDiscoveredSymbols>;
+  private
+    class var FDiscoveredFiles: TDiscoveredFiles;
+    /// <summary>
+    ///    Create a buffer with all nodes of the XML file.
+    /// </summary>
+    class procedure BufferizeClasses(const AClassNodes: IXMLNode; const ASymbolMap: TDiscoveredSymbols);
+    class procedure BufferizeMembers(const AMemberNodes: IXMLNode; const ADocMap: TDiscoveredDocs);
+  public
+    class constructor Create();
+    class destructor Destroy();
+    /// <summary>
+    ///   Find a symbol in the buffered map
+    /// </summary>
+    function Find(const ASymbolName: TSymbol;
+      const ASymbolType: TPythonDocSymbolType;
+      const ADeclaringUnitName: string): TDocScanResult;
+    /// <summary>
+    ///    Bufferizes the XML doc file.
+    /// </summary>
+    class procedure Bufferize(const AFileName: string);
+    /// <summary>
+    ///    Clear all discovered files with buffered xml from buffer.
+    /// </summary>
+    class procedure ClearBuffer();
+  end;
+
   TDocScanResult = class(TDictionary<string, string>)
   public
     class function ExtractMemberPrefix(const AXmlMember: IXMLNode): string; overload; static; inline;
@@ -22,344 +129,209 @@ type
     class function ExtractMemberPrefix(const ARttiNamedType: TRttiNamedObject): string; overload; static;
     class function BuildMemberIdentifier(const ARttiNamedType: TRttiNamedObject): string; overload; static; inline;
     class function BuildMemberIdentifier(const ATypeInfo: PTypeInfo): string; overload; static; inline;
-  end;
-
-  {$SCOPEDENUMS ON}
-  TPythonDocSource = (Xml);
-  TPythonDocSymbolType = (Constant, Variable, &Procedure, &Function, Enum, &Set, &Record, &Class);
-  {$SCOPEDENUMS OFF}
-
-  /// <summary>
-  ///    Loads the requested documentation from a source.
-  /// </summary>
-  IPythonDocLoader = interface
-    ['{40FDB9F9-2EFC-45E8-8DF4-82D004B79E80}']
-    /// <summary>
-    ///    Loads the symbol documentation from a source.
-    /// </summary>
-    function LoadDoc(const ASymbolName, ADeclaringUnitName: string;
-      const ASymbolType: TPythonDocSymbolType; const AStream: TStream): boolean; overload;
-    /// <summary>
-    ///    Loads the type documentation from a source.
-    /// </summary>
-    function LoadDoc(const ATypeInfo: PTypeInfo; const AStream: TStream): boolean; overload;
-  end;
-
-  /// <summary>
-  ///    Retrieves all documentation from source.
-  /// </summary>
-  IPythonDocScanner = interface
-    ['{19B7790B-E7B6-43F9-B074-34A9049FB55A}']
-    /// <summary>
-    ///    Scans all compatible symbols from a source.
-    /// </summary>
-    function ScanDocs(const ASymbolType: TPythonDocSymbolType; const AStream: TStream): TDocScanResult; overload;
-    /// <summary>
-    ///    Scans all compatible symbols from a source.
-    /// </summary>
-    function ScanDocs(const ATypeInfo: PTypeInfo; const AStream: TStream): TDocScanResult; overload;
-  end;
-
-  TPythonDocXML = class(TInterfacedObject, IPythonDocLoader, IPythonDocScanner)
-  private
-    class var FDefaultDirectory: string;
-  private
-    FDirectory: string;
-
-    function LoadClassDoc(const AClassName: string; const AXmlDocument: IXmlDocument;
-      const AStream: TStream): boolean; overload;
-    function ScanClassDocs(const AStream: TStream;
-      const AXmlDocument: IXmlDocument): TDocScanResult;
-
-    function LoadDoc(const ASymbolName, ADeclaringUnitName: string;
-      const ASymbolType: TPythonDocSymbolType; const AStream: TStream): boolean; overload;
-    function LoadDoc(const ATypeInfo: PTypeInfo; const AStream: TStream): boolean; overload;
-    function ScanDocs(const ASymbolType: TPythonDocSymbolType; const AStream: TStream): TDocScanResult; overload;
-    function ScanDocs(const ATypeInfo: PTypeInfo; const AStream: TStream): TDocScanResult; overload;
-  public
-    constructor Create();
-
-    property Directory: string read FDirectory write FDirectory;
-    class property DefaultDirectory: string read FDefaultDirectory write FDefaultDirectory;
-  end;
-
-  TPythonDocServer = class
-  private type
-    TDiscoverPredicate = reference to function(const ARttiType: TRttiType; out ATypeInfo: PTypeInfo): boolean;
-    TBuffer = TDictionary<PTypeInfo, IAsyncResult>;
-    TPythonDocServerAsyncResult<TResult> = class(TBaseAsyncResult)
-    private
-      FAsyncTask: TFunc<TResult>;
-      FRetVal: TResult;
-    protected
-      procedure Schedule; override;
-      procedure AsyncDispatch; override;
-    public
-      constructor Create(const AContext: TObject;
-        const AAsyncTask: TFunc<TResult>);
-
-      function GetRetVal: TResult;
-    end;
-  private
-    class var
-      FInstance: TPythonDocServer;
-  private
-    FDocSource: TPythonDocSource;
-    FBuffer: TBuffer;
-    constructor Create();    
-    class function GetInstance: TPythonDocServer; static;
-  public
-    destructor Destroy(); override;
-    class destructor Destroy();
-    class function NewInstance(): TObject; override;
-
-    function BeginLoadDoc(const ATypeInfo: PTypeInfo): IAsyncResult; overload;
-    function BeginLoadDoc<T>(): IAsyncResult; overload;
-    function EndLoadDoc(const AAsyncResult: IAsyncResult): TDocScanResult;
-
-    procedure Bufferize(const ATypeInfo: PTypeInfo); overload;
-    procedure Bufferize<T>(); overload;
-    procedure ClearBuffer();
-
-    procedure DiscoverAndBufferizeTypes(APredicate: TDiscoverPredicate);
-
-    function ReadTypeDocStr(const ATypeInfo: PTypeInfo; out ADocStr: string): boolean; overload;
-    function ReadTypeDocStr<T>(out ADocStr: string): boolean; overload;
-
-    function ReadMemberDocStr(const AParent: PTypeInfo; const AMember: TRttiMember; out ADocStr: string): boolean; overload;
-    function ReadMemberDocStr<T>(const AMember: TRttiMember; out ADocStr: string): boolean; overload;
-
-    property DocSource: TPythonDocSource read FDocSource write FDocSource;
-    class property Instance: TPythonDocServer read GetInstance;
+    class function BuildMemberIdentifier(const ASymbolName: string; const ASymbolType: TPythonDocSymbolType): string; overload; static; inline;
   end;
 
 implementation
 
 uses
   System.IOUtils,
-  System.Threading;
+  System.StrUtils;
 
 { TPythonDocXML }
 
-constructor TPythonDocXML.Create;
+class constructor TPythonDocXML.Create;
 begin
-  inherited;
-  FDirectory := FDefaultDirectory;
+  FDiscoveredFiles := TDiscoveredFiles.Create([doOwnsValues]);
 end;
 
-function TPythonDocXML.LoadDoc(const ASymbolName, ADeclaringUnitName: string;
-  const ASymbolType: TPythonDocSymbolType; const AStream: TStream): boolean;
-var
-  LFiles: TArray<string>;
-  LXmlDoc: IXMLDocument;
+class destructor TPythonDocXML.Destroy;
 begin
-  if not TDirectory.Exists(FDirectory) then
-    Exit(false);
-
-  LFiles := TDirectory.GetFiles(FDirectory,
-    ADeclaringUnitName + '.xml',
-    TSearchOption.soAllDirectories);
-
-  if not Assigned(LFiles) then
-    Exit(false);
-
-  LXmlDoc := LoadXMLDocument(LFiles[Low(LFiles)]);
-  LXmlDoc.Active := true;
-
-  case ASymbolType of
-    TPythonDocSymbolType.Constant:
-      Result := false;
-    TPythonDocSymbolType.Variable:
-      Result := false;
-    TPythonDocSymbolType.Procedure:
-      Result := false;
-    TPythonDocSymbolType.Function:
-      Result := false;
-    TPythonDocSymbolType.Enum:
-      Result := false;
-    TPythonDocSymbolType.Set:
-      Result := false;
-    TPythonDocSymbolType.Record:
-      Result := false;
-    TPythonDocSymbolType.Class:
-      Result := LoadClassDoc(ASymbolName, LXmlDoc, AStream);
-    else
-      Result := false;
-  end;
+  FDiscoveredFiles.Free();
 end;
 
-function TPythonDocXML.LoadDoc(const ATypeInfo: PTypeInfo;
-  const AStream: TStream): boolean;
+function TPythonDocXML.Find(const ASymbolName: TSymbol;
+  const ASymbolType: TPythonDocSymbolType;
+  const ADeclaringUnitName: string): TDocScanResult;
 var
-  LRttiCtx: TRttiContext;
-  LRttiType: TRttiType;
+  LSymbols: TDiscoveredSymbols;
 begin
-  LRttiCtx := TRttiContext.Create();
-  try
-    LRttiType := LRttiCtx.GetType(ATypeInfo);
-    case LRttiType.TypeKind of
-      tkClass:
-        Result := LoadDoc(LRttiType.Name, LRttiType.AsInstance.DeclaringUnitName, TPythonDocSymbolType.Class, AStream)
-      else
-        Result := false;
-    end;
-  finally
-    LRttiCtx.Free();
-  end;
-end;
-
-function TPythonDocXML.ScanDocs(const ASymbolType: TPythonDocSymbolType; const AStream: TStream): TDocScanResult;
-var
-  LXmlData: string;
-  LXMLDoc: IXMLDocument;
-begin
-  SetLength(LXmlData, AStream.Size div SizeOf(Char));
-  AStream.Read(LXmlData[Low(LXmlData)], AStream.Size);
-
-  LXMLDoc := LoadXmlData(LXmlData);
-  LXMLDoc.Active := true;
-
-  case ASymbolType of
-    TPythonDocSymbolType.Constant:
-      Result := nil;
-    TPythonDocSymbolType.Variable:
-      Result := nil;
-    TPythonDocSymbolType.Procedure:
-      Result := nil;
-    TPythonDocSymbolType.Function:
-      Result := nil;
-    TPythonDocSymbolType.Enum:
-      Result := nil;
-    TPythonDocSymbolType.Set:
-      Result := nil;
-    TPythonDocSymbolType.Record:
-      Result := nil;
-    TPythonDocSymbolType.Class:
-      Result := ScanClassDocs(AStream, LXMLDoc);
-    else
-      Result := nil;
-  end;
-end;
-
-function TPythonDocXML.ScanDocs(const ATypeInfo: PTypeInfo;
-  const AStream: TStream): TDocScanResult;
-var
-  LRttiCtx: TRttiContext;
-  LRttiType: TRttiType;
-begin
-  LRttiCtx := TRttiContext.Create();
-  try
-    LRttiType := LRttiCtx.GetType(ATypeInfo);
-    case LRttiType.TypeKind of
-      tkClass:
-        Result := ScanDocs(TPythonDocSymbolType.Class, AStream)
-      else
-        Result := nil;
-    end;
-  finally
-    LRttiCtx.Free();
-  end;
-end;
-
-function TPythonDocXML.LoadClassDoc(const AClassName: string;
-  const AXmlDocument: IXmlDocument; const AStream: TStream): boolean;
-var
-  LXmlDOMNodeSelect: IDOMNodeSelect;
-  LXmlDOMNode: IDOMNode;
-  LXmlNode: IXMLNode;
-begin
-  LXmlDOMNodeSelect := (AXmlDocument.DOMDocument.documentElement as IDOMNodeSelect);
-  LXmlDOMNode := LXmlDOMNodeSelect.selectNode(Format('/namespace/class[@name="%s"]', [AClassName]));
-
-  if not Assigned(LXmlDOMNode) then
-    Exit(false);
-
-  LXmlNode := TXMLNode.Create(LXmlDOMNode, nil, (AXmlDocument as IXmlDocumentAccess).DocumentObject) as IXMLNode;
-  AStream.Write(LXmlNode.XML[1], ByteLength(LXmlNode.XML));
-
-  Result := true;
-end;
-
-function TPythonDocXML.ScanClassDocs(const AStream: TStream;
-  const AXmlDocument: IXmlDocument): TDocScanResult;
-var
-  LXmlClass: IXMLNode;
-  LXmlMembers: IXmlNode;
-  LXmlMember: IXmlNode;
-  LXmlDevNotes: IXmlNode;
-  LXmlSummary: IXmlNode;
-begin
-  LXmlClass := AXmlDocument.ChildNodes.FindNode('class');
-  if not Assigned(LXmlClass) then
+  //Do we have the given unit bufferized?
+  if not FDiscoveredFiles.TryGetValue(ADeclaringUnitName, LSymbols) then
     Exit(nil);
 
-  Result := TDocScanResult.Create();
-
-  LXmlDevNotes := LXmlClass.ChildNodes.FindNode('devnotes');
-  if Assigned(LXmlDevNotes) then begin
-    LXmlSummary := LXmlDevNotes.ChildNodes.FindNode('summary');
-    if Assigned(LXmlSummary) then
-      Result.Add(TDocScanResult.BuildMemberIdentifier(LXmlClass), LXmlSummary.Text);
+  case ASymbolType of
+    TPythonDocSymbolType.Class:
+      //Do we have the given symbol bufferized?
+      if LSymbols.ContainsKey(ASymbolName) then
+        Exit(LSymbols[ASymbolName]);
+    //These docs will be enhanced as needed
+    else raise ENotSupportedException.Create('Type doesn''t supports documentation.');
   end;
 
-  LXmlMembers := LXmlClass.ChildNodes.FindNode('members');
-  if not Assigned(LXmlMembers) then
-    Exit();
+  Result := nil;
+end;
 
-  try
-    for var I := 0 to LXmlMembers.ChildNodes.Count - 1 do begin
-      LXmlMember := LXmlMembers.ChildNodes[I];
-      LXmlDevNotes := LXmlMember.ChildNodes.FindNode('devnotes');
-      if Assigned(LXmlDevNotes) then begin
-        LXmlSummary := LXmlDevNotes.ChildNodes.FindNode('summary');
-        if Assigned(LXmlSummary) then
-          if not Result.ContainsKey(LXmlMember.NodeName + '_' + LXmlMember.GetAttribute('name')) then
-            Result.Add(TDocScanResult.BuildMemberIdentifier(LXmlMember), LXmlSummary.Text);
-      end;
+class procedure TPythonDocXML.Bufferize(const AFileName: string);
+var
+  LXMLDoc: IXMLDocument;
+  LXmlDOMNodeSelect: IDOMNodeSelect;
+  LXmlDOMNodes: IDOMNodeList;
+  I: Integer;
+  LSymbols: TDiscoveredSymbols;
+begin
+  //We expect UTF-8 XML files
+  LXMLDoc := LoadXmlDocument(AFileName);
+
+  LXmlDOMNodeSelect := (LXMLDoc.DOMDocument.documentElement as IDOMNodeSelect);
+  if not Assigned(LXmlDOMNodeSelect) then
+    Exit;
+
+  //We currently only support classes
+  LXmlDOMNodes := LXmlDOMNodeSelect.selectNodes('/docs/class');
+  if not Assigned(LXmlDOMNodes) then
+    Exit;
+
+  //Bufferize all classes
+  for I := 0 to Pred(LXmlDOMNodes.Length) do begin
+    //This must be fast
+    if not FDiscoveredFiles.TryGetValue(
+      LXmlDOMNodes.Get_Item(I).attributes.getNamedItem('unit').nodeValue,
+      LSymbols) then
+    begin
+      LSymbols := TDiscoveredSymbols.Create([doOwnsValues]);
+      FDiscoveredFiles.Add(
+        LXmlDOMNodes.Get_Item(I).attributes.getNamedItem('unit').nodeValue,
+        LSymbols);
     end;
+    //Add a class and its members into the buffer
+    BufferizeClasses(TXMLNode.Create(LXmlDOMNodes.Get_Item(I), nil,
+      LXMLDoc as TXMLDocument) as IXMLNode, LSymbols);
+  end;
+end;
+
+class procedure TPythonDocXML.BufferizeClasses(const AClassNodes: IXMLNode;
+  const ASymbolMap: TDiscoveredSymbols);
+var
+  LDiscoveredDocs: TDiscoveredDocs;
+  LXmlDocStr: IXMLNode;
+  LXmlMembers: IXMLNode;
+begin
+  LDiscoveredDocs := TDiscoveredDocs.Create();
+  try
+    //Add a discovered doc map to the class
+    ASymbolMap.Add(AClassNodes.GetAttribute('name'), LDiscoveredDocs);
+
+    //Look for class doc
+    LXmlDocStr := AClassNodes.ChildNodes.FindNode('docstr');
+    if Assigned(LXmlDocStr) then
+      LDiscoveredDocs.Add(
+      TDocScanResult.BuildMemberIdentifier(AClassNodes), LXmlDocStr.Text);
+
+    //Scan class members
+    LXmlMembers := AClassNodes.ChildNodes.FindNode('members');
+    if Assigned(LXmlMembers) then
+      BufferizeMembers(LXmlMembers, LDiscoveredDocs);
   except
-    FreeAndNil(Result);
+    FreeAndNil(LDiscoveredDocs);
     raise;
   end;
 end;
 
-{ TPythonDocServer }
-
-procedure TPythonDocServer.ClearBuffer;
+class procedure TPythonDocXML.BufferizeMembers(const AMemberNodes: IXMLNode;
+  const ADocMap: TDiscoveredDocs);
+var
+  I: Integer;
+  LIdentifier: string;
 begin
-  FBuffer.Clear();
+  for I := 0 to AMemberNodes.ChildNodes.Count - 1 do begin
+    LIdentifier := TDocScanResult.BuildMemberIdentifier(AMemberNodes.ChildNodes[I]);
+    if not ADocMap.ContainsKey(LIdentifier) then
+      ADocMap.Add(LIdentifier, AMemberNodes.ChildNodes[I].ChildNodes.FindNode('docstr').Text)
+    //Concat docstr for overloaded methods. We are considering any duplicates as overloads.
+    else begin
+      ADocMap[LIdentifier] := ADocMap[LIdentifier]
+        + #13#10
+        + AMemberNodes.ChildNodes[I].ChildNodes.FindNode('docstr').Text;
+    end;
+  end;
 end;
+
+class procedure TPythonDocXML.ClearBuffer;
+begin
+  FDiscoveredFiles.Clear();
+end;
+
+{ TPythonDocServer }
 
 constructor TPythonDocServer.Create;
 begin
   inherited;
-  FDocSource := TPythonDocSource.Xml;
-  FBuffer := TBuffer.Create();
+  FProvider := TPythonDocXML.Create();
 end;
 
-destructor TPythonDocServer.Destroy;
+class destructor TPythonDocServer.Destroy;
 begin
-  FBuffer.Free();
+  FInstance.Free();
 end;
 
-class function TPythonDocServer.NewInstance: TObject;
+class function TPythonDocServer.GetInstance: TPythonDocServer;
 begin
   if not Assigned(FInstance) then
-    FInstance := TPythonDocServer(inherited NewInstance());
+    FInstance := TPythonDocServer.Create();
   Result := FInstance;
+end;
+
+class function TPythonDocServer.GetDocDir(): string;
+begin
+  {$IFDEF DEBUG}
+  Result := TPath.Combine(ExtractFilePath(
+    GetModuleName(HInstance)), DOC_DIR_NAME);
+  {$ELSE}
+  Result := TPath.Combine(
+    TDirectory.GetParent(ExcludeTrailingPathDelimiter(
+      ExtractFilePath(GetModuleName(HInstance)))), DOC_DIR_NAME);
+  {$ENDIF}
+end;
+
+class function TPythonDocServer.GetDocFile: string;
+begin
+  Result := TPath.Combine(TPythonDocServer.GetDocDir(), DOC_FILE_NAME);
+end;
+
+procedure TPythonDocServer.Bufferize;
+begin
+  TPythonDocXML.Bufferize(TPythonDocServer.GetDocFile());
+end;
+
+procedure TPythonDocServer.ClearBuffer;
+begin
+  TPythonDocXML.ClearBuffer();
+end;
+
+function TPythonDocServer.ReadTypeDocStr(const ASymbolName: TSymbol;
+  const ASymbolType: TPythonDocSymbolType;
+  const ADeclaringUnitName: string; out ADocStr: string): boolean;
+var
+  LDocs: TDocScanResult;
+begin
+  LDocs := FProvider.Find(ASymbolName, ASymbolType, ADeclaringUnitName);
+  if not Assigned(LDocs) then
+    Exit(false);
+
+  Result := LDocs.TryGetValue(
+    TDocScanResult.BuildMemberIdentifier(ASymbolName, ASymbolType), ADocStr);
 end;
 
 function TPythonDocServer.ReadTypeDocStr(const ATypeInfo: PTypeInfo;
   out ADocStr: string): boolean;
-var
-  LAsyncResult: IAsyncResult;
-  LDocs: TDocScanResult;
 begin
-  Result := false;
-  if FBuffer.TryGetValue(ATypeInfo, LAsyncResult) then begin
-    LDocs := EndLoadDoc(LAsyncResult);
-    if Assigned(LDocs) then
-      Result := LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(ATypeInfo), ADocStr);
+  case ATypeInfo^.Kind of
+    tkClass: Result := ReadTypeDocStr(TSymbol(ATypeInfo^.Name),
+      TPythonDocSymbolType.Class,
+      String(ATypeInfo^.TypeData^.UnitName), ADocStr);
+    //These docs will be enhanced as needed
+    else raise ENotSupportedException.Create('Type doesn''t supports documentation.');
   end;
 end;
 
@@ -371,14 +343,21 @@ end;
 function TPythonDocServer.ReadMemberDocStr(const AParent: PTypeInfo;
   const AMember: TRttiMember; out ADocStr: string): boolean;
 var
-  LAsyncResult: IAsyncResult;
   LDocs: TDocScanResult;
 begin
-  Result := false;
-  if FBuffer.TryGetValue(AParent, LAsyncResult) then begin
-    LDocs := EndLoadDoc(LAsyncResult);
-    if Assigned(LDocs) then
-      Result := LDocs.TryGetValue(TDocScanResult.BuildMemberIdentifier(AMember), ADocStr);
+  case AParent^.Kind of
+    tkClass: begin
+      LDocs := FProvider.Find(TSymbol(AParent^.Name), TPythonDocSymbolType.Class,
+        String(AParent^.TypeData^.UnitName));
+
+      if not Assigned(LDocs) then
+        Exit(false);
+
+      Result := LDocs.TryGetValue(
+        TDocScanResult.BuildMemberIdentifier(AMember), ADocStr);
+    end;
+    //These docs will be enhanced as needed
+    else raise ENotSupportedException.Create('Type doesn''t supports documentation.');
   end;
 end;
 
@@ -386,119 +365,6 @@ function TPythonDocServer.ReadMemberDocStr<T>(const AMember: TRttiMember;
   out ADocStr: string): boolean;
 begin
   Result := ReadMemberDocStr(TypeInfo(T), AMember, ADocStr);
-end;
-
-class destructor TPythonDocServer.Destroy;
-begin
-  FInstance.Free();
-end;
-
-procedure TPythonDocServer.DiscoverAndBufferizeTypes(APredicate: TDiscoverPredicate);
-var
-  LRttiContext: TRttiContext;
-  LRttiPackage: TRttiPackage;
-  LTypeInfo: PTypeInfo;
-begin
-  LRttiContext := TRttiContext.Create();
-  try     
-    for LRttiPackage in LRttiContext.GetPackages() do
-      if (LRttiPackage.Handle = HInstance) then
-        for var LRttiType in LRttiPackage.GetTypes() do
-          if APredicate(LRttiType, LTypeInfo) then
-            Bufferize(LTypeInfo);          
-  finally
-    LRttiContext.Free();
-  end;
-end;
-
-class function TPythonDocServer.GetInstance: TPythonDocServer;
-begin
-  if not Assigned(FInstance) then
-    TPythonDocServer.Create();
-  Result := FInstance;
-end;
-
-function TPythonDocServer.BeginLoadDoc(
-  const ATypeInfo: PTypeInfo): IAsyncResult;
-begin
-  if FBuffer.TryGetValue(ATypeInfo, Result) then
-    Exit;
-
-  case FDocSource of
-    TPythonDocSource.Xml:
-      Result := TPythonDocServerAsyncResult<TDocScanResult>.Create(Self,
-        function(): TDocScanResult
-        var
-          LStream: TStream;
-          LDocLoader: IPythonDocLoader;  
-        begin
-          LStream := TMemoryStream.Create();
-          try
-            LDocLoader := TPythonDocXML.Create();
-             if LDocLoader.LoadDoc(ATypeInfo, LStream) then begin
-              LStream.Position := 0;
-              Result := (LDocLoader as IPythonDocScanner).ScanDocs(ATypeInfo, LStream);
-            end else
-              Result := nil;
-          finally
-            LStream.Free();
-          end;
-        end).Invoke();
-    else
-      Result := nil;
-  end;
-end;
-
-function TPythonDocServer.BeginLoadDoc<T>: IAsyncResult;
-begin
-  Result := BeginLoadDoc(TypeInfo(T));
-end;
-
-procedure TPythonDocServer.Bufferize(const ATypeInfo: PTypeInfo);
-var
-  LAsyncResult: IAsyncResult;
-begin
-  if not FBuffer.ContainsKey(ATypeInfo) then begin
-    LAsyncResult := BeginLoadDoc(ATypeInfo);
-    if Assigned(LAsyncResult) then    
-      FBuffer.Add(ATypeInfo, LAsyncResult);
-  end;
-end;
-
-procedure TPythonDocServer.Bufferize<T>;
-begin
-  Bufferize(TypeInfo(T));
-end;
-
-function TPythonDocServer.EndLoadDoc(
-  const AAsyncResult: IAsyncResult): TDocScanResult;
-begin
-  Result := (AAsyncResult as TPythonDocServerAsyncResult<TDocScanResult>).GetRetVal();
-end;
-
-{ TPythonDocServer.TPythonDocServerAsyncResult<TResult> }
-
-constructor TPythonDocServer.TPythonDocServerAsyncResult<TResult>.Create(
-  const AContext: TObject; const AAsyncTask: TFunc<TResult>);
-begin
-  inherited Create(AContext);
-  FAsyncTask := AAsyncTask;
-end;
-
-procedure TPythonDocServer.TPythonDocServerAsyncResult<TResult>.AsyncDispatch;
-begin
-  FRetVal := FAsyncTask();
-end;
-
-function TPythonDocServer.TPythonDocServerAsyncResult<TResult>.GetRetVal: TResult;
-begin
-  WaitForCompletion;
-  Result := FRetVal;
-end;
-
-procedure TPythonDocServer.TPythonDocServerAsyncResult<TResult>.Schedule;
-begin
-  TTask.Run(DoAsyncDispatch);
 end;
 
 { TDocScanResult }
@@ -556,14 +422,35 @@ begin
     Result := 'property';
 end;
 
+class function TDocScanResult.BuildMemberIdentifier(const ASymbolName: string;
+  const ASymbolType: TPythonDocSymbolType): string;
+begin
+  case ASymbolType of
+    TPythonDocSymbolType.Constant:
+      Result := 'const_' + ASymbolName;
+    TPythonDocSymbolType.Variable:
+      Result := 'var_' + ASymbolName;
+    TPythonDocSymbolType.Constructor:
+      Result := 'constructor_' + ASymbolName;
+    TPythonDocSymbolType.Destructor:
+      Result := 'destructor_' + ASymbolName;
+    TPythonDocSymbolType.Procedure:
+      Result := 'procedure_' + ASymbolName;
+    TPythonDocSymbolType.Function:
+      Result := 'function_';
+    TPythonDocSymbolType.Enum:
+      Result := 'enum_' + ASymbolName;
+    TPythonDocSymbolType.Set:
+      Result := 'set_' + ASymbolName;
+    TPythonDocSymbolType.Record:
+      Result := 'record_' + ASymbolName;
+    TPythonDocSymbolType.Class:
+      Result := 'class_' + ASymbolName;
+  end;
+end;
+
 initialization
   DefaultDomVendor := sOmniXmlVendor;
-  
-  {$IFDEF DEBUG}
-  TPythonDocXML.DefaultDirectory := TPath.Combine(ExtractFilePath(GetModuleName(HInstance)), 'docs');
-  {$ELSE}
-  TPythonDocXML.DefaultDirectory := TPath.Combine(TDirectory.GetParent(ExcludeTrailingPathDelimiter(
-    ExtractFilePath(GetModuleName(HInstance)))), 'docs');
-  {$ENDIF} 
-   
+  TPythonDocServer.Instance.Bufferize();
+
 end.
