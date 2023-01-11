@@ -1013,8 +1013,11 @@ implementation
 Uses
   Math,
   StrUtils,
-  RTLConsts,
-  PythonDocs;
+  RTLConsts
+  {$IFDEF EXPOSE_MEMBERS}
+  , PythonDocs
+  {$ENDIF EXPOSE_MEMBERS}
+  ;
 
 resourcestring
   rs_ErrCheckIndex = '%s "%d" out of range';
