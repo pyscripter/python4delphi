@@ -6608,7 +6608,7 @@ end;
 function TMethodsContainer.AddStaticMethodWithKeywords(AMethodName: PAnsiChar;
   AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
 begin
-  Result := AddClassMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
   Result^.ml_flags := Result^.ml_flags or METH_STATIC;
 end;
 
