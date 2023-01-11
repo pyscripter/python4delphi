@@ -1,3 +1,4 @@
+{$I Definition.Inc}
 unit PythonDocs;
 
 interface
