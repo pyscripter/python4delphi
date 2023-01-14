@@ -1,4 +1,5 @@
 package Python;
+
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -48,6 +49,7 @@ contains
   WrapDelphiWindows in '..\..\..\Source\WrapDelphiWindows.pas',
   WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas',
   WrapActions in '..\..\..\Source\WrapActions.pas',
-  WrapDelphiDataBind in '..\..\..\Source\WrapDelphiDataBind.pas';
+  WrapDelphiDataBind in '..\..\..\Source\WrapDelphiDataBind.pas',
+  PythonDocs in '..\..\..\Source\PythonDocs.pas';
 
 end.

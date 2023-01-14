@@ -176,6 +176,8 @@ const
 
   METH_VARARGS  = $0001;
   METH_KEYWORDS = $0002;
+  METH_CLASS    = $0010;
+  METH_STATIC   = $0020;
 
   // Masks for the co_flags field of PyCodeObject
   CO_OPTIMIZED   = $0001;
@@ -224,6 +226,7 @@ type
   WCharTString = UnicodeString;
 {$ENDIF}
 
+  Py_ssize_t = NativeInt;
 
   const
 {
@@ -934,6 +937,27 @@ type
   end;
   PPyDateTime_DateTime = ^PyDateTime_DateTime;
 
+  //bytearrayobject.h
+
+  //typedef struct {
+  //  PyObject_VAR_HEAD
+  //  Py_ssize_t ob_alloc;   /* How many bytes allocated in ob_bytes */
+  //  char *ob_bytes;        /* Physical backing buffer */
+  //  char *ob_start;        /* Logical start inside ob_bytes */
+  //  Py_ssize_t ob_exports; /* How many buffer exports */
+  //} PyByteArrayObject;
+
+  PyByteArrayObject = {$IFDEF CPUX86}packed{$ENDIF} record
+    // Start of PyObject_VAR_HEAD
+    // Start of the Head of an object
+    ob_base: PyObject;
+    ob_size: Py_ssize_t;
+    // End of the Head of an object
+    ob_bytes: PAnsiChar;
+    ob_start: PAnsiChar;
+    ob_exports: Py_ssize_t;
+  end;
+
 //#######################################################
 //##                                                   ##
 //##         GIL state                                 ##
@@ -1356,6 +1380,7 @@ type
     PyRange_Type: PPyTypeObject;
     PySlice_Type: PPyTypeObject;
     PyBytes_Type: PPyTypeObject;
+    PyByteArray_Type: PPyTypeObject;
     PyTuple_Type: PPyTypeObject;
     PyBaseObject_Type: PPyTypeObject;
     PyCallIter_Type: PPyTypeObject;
@@ -1435,6 +1460,7 @@ type
     PyRun_SimpleString:   function( str: PAnsiChar): Integer; cdecl;
     PyBytes_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
     PyBytes_AsStringAndSize: function( ob: PPyObject; var buffer: PAnsiChar; var size: NativeInt): integer; cdecl;
+    PyByteArray_AsString: function(ob: PPyObject): PAnsiChar; cdecl;
     PySys_SetArgv:        procedure( argc: Integer; argv: PPWCharT); cdecl;
 
     PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
@@ -1581,6 +1607,11 @@ type
     PyBytes_Size:function (ob:PPyObject):NativeInt; cdecl;
     PyBytes_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
     PyBytes_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
+    PyByteArray_Concat: procedure(var ob1: PPyObject; ob2: PPyObject); cdecl;
+    PyByteArray_Resize: procedure(var ob1: PPyObject; len: Py_ssize_t); cdecl;
+    PyByteArray_FromObject: function(ob:PPyObject): PPyObject; cdecl;
+    PyByteArray_FromStringAndSize: function(s: PAnsiChar; i: Py_ssize_t): PPyObject; cdecl;
+    PyByteArray_Size: function(ob: PPyObject): Py_ssize_t; cdecl;
     PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
     PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
     PySys_SetPath:procedure(path:PAnsiChar); cdecl;
@@ -1708,6 +1739,8 @@ type
 
   function PyBytes_Check( obj : PPyObject ) : Boolean;
   function PyBytes_CheckExact( obj : PPyObject ) : Boolean;
+  function PyByteArray_Check(obj: PPyObject): Boolean;
+  function PyByteArray_CheckExact(obj: PPyObject): Boolean;
   function PyFloat_Check( obj : PPyObject ) : Boolean;
   function PyFloat_CheckExact( obj : PPyObject ) : Boolean;
   function PyLong_Check( obj : PPyObject ) : Boolean;
@@ -2105,6 +2138,12 @@ type
       function  AddMethodWithKeywords( AMethodName  : PAnsiChar;
                                        AMethod  : PyCFunctionWithKW;
                                        ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddClassMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddStaticMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
       function  AddDelphiMethod( AMethodName  : PAnsiChar;
                                  ADelphiMethod: TDelphiMethod;
                                  ADocString : PAnsiChar ) : PPyMethodDef;
@@ -2358,12 +2397,16 @@ type
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
 }
   // The base class of all new Python types
+  TPyObjectClass = class of TPyObject;
   TPyObject = class
   private
     function  Get_ob_refcnt: NativeInt;
     function  Get_ob_type: PPyTypeObject;
     procedure Set_ob_refcnt(const Value: NativeInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
+  protected
+    class function GetTypeName(): string; virtual; abstract;
+    class function GetTypeBase(): TPyObjectClass; virtual; abstract;
   public
     PythonType     : TPythonType;
     IsSubtype      : Boolean;
@@ -2371,7 +2414,8 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); virtual;
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); virtual;
+    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); overload; virtual;
+    constructor CreateWith( APythonType : TPythonType; args, kwds : PPyObject ); overload; virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -2463,7 +2507,6 @@ type
     class procedure RegisterGetSets( APythonType : TPythonType ); virtual;
     class procedure SetupType( APythonType : TPythonType ); virtual;
   end;
-  TPyObjectClass = class of TPyObject;
 
   TBasicServices     = set of (bsGetAttr, bsSetAttr,
                                bsRepr, bsCompare, bsHash,
@@ -2756,6 +2799,9 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
+function  PythonToPythonType(const AObj: PPyObject): TPythonType;
+function  DelphiToPythonType(const AClass: TClass): TPythonType;
+function  IsDelphiClass(const AObj: PPyObject): Boolean;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure FreeSubtypeInst(ob:PPyObject); cdecl;
@@ -3558,6 +3604,7 @@ begin
   PyRange_Type               := Import('PyRange_Type');
   PySlice_Type               := Import('PySlice_Type');
   PyBytes_Type               := Import('PyBytes_Type');
+  PyByteArray_Type           := Import('PyByteArray_Type');
   PyTuple_Type               := Import('PyTuple_Type');
   PyUnicode_Type             := Import('PyUnicode_Type');
   PyBaseObject_Type          := Import('PyBaseObject_Type');
@@ -3775,6 +3822,12 @@ begin
   PyBytes_DecodeEscape        := Import('PyBytes_DecodeEscape');
   PyBytes_Repr                := Import('PyBytes_Repr');
   _PyBytes_Resize             := Import('_PyBytes_Resize');
+  PyByteArray_AsString        := Import('PyByteArray_AsString');
+  PyByteArray_Concat          := Import('PyByteArray_Concat');
+  PyByteArray_Resize          := Import('PyByteArray_Resize');
+  PyByteArray_FromObject      := Import('PyByteArray_FromObject');
+  PyByteArray_FromStringAndSize := Import('PyByteArray_FromStringAndSize');
+  PyByteArray_Size            := Import('PyByteArray_Size');
   PySys_GetObject             := Import('PySys_GetObject');
   PySys_SetObject             := Import('PySys_SetObject');
   PySys_SetPath               := Import('PySys_SetPath');
@@ -3906,6 +3959,16 @@ begin
     op := nil;
     Py_DECREF(_py_tmp);
   end;
+end;
+
+function TPythonInterface.PyByteArray_Check(obj: PPyObject): Boolean;
+begin
+  Result := PyObject_TypeCheck(obj, PyByteArray_Type);
+end;
+
+function TPythonInterface.PyByteArray_CheckExact(obj: PPyObject): Boolean;
+begin
+  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyByteArray_Type));
 end;
 
 function TPythonInterface.PyBytes_Check( obj : PPyObject ) : Boolean;
@@ -6586,6 +6649,20 @@ begin
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
 end;
 
+function TMethodsContainer.AddStaticMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_STATIC;
+end;
+
+function TMethodsContainer.AddClassMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_CLASS;
+end;
+
 function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
                                              ADelphiMethod: TDelphiMethod;
                                              ADocString : PAnsiChar ) : PPyMethodDef;
@@ -7397,6 +7474,12 @@ begin
   Create( APythonType );
 end;
 
+constructor TPyObject.CreateWith(APythonType: TPythonType; args,
+  kwds: PPyObject);
+begin
+  CreateWith(APythonType, args);
+end;
+
 destructor TPyObject.Destroy;
 begin
   if Assigned(PythonType) then
@@ -7867,6 +7950,19 @@ end;
 //////////////////////////////
 //  TPythonType
 
+function PythonToPythonType(const AObj: PPyObject): TPythonType;
+begin
+  if IsDelphiClass(AObj) then
+    Result := TPythonType(GetPythonEngine.FindPythonType(PPyTypeObject(AObj)^.tp_name))
+  else
+    Result := nil;
+end;
+
+function  DelphiToPythonType(const AClass: TClass): TPythonType;
+begin
+  Result := TPythonType(GetPythonEngine.FindPythonType(AnsiString(Copy(AClass.ClassName, 2, MaxInt))));
+end;
+
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 begin
   if IsDelphiObject( obj ) then
@@ -8122,7 +8218,7 @@ begin
     obj.ob_type := aType;
     obj.IsSubtype := aType <> @FType;
     obj.PythonAlloc := True;
-    obj.CreateWith(Self, args);
+    obj.CreateWith(Self, args, kwds);
     if Engine.PyErr_Occurred <> nil then
     begin
       Engine.Py_DECREF(Result);
@@ -8550,6 +8646,10 @@ begin
 end;
 
 procedure TPythonType.Initialize;
+{$IFDEF EXPOSE_MEMBERS}
+var
+  LBasePythonType: TPythonType;
+{$ENDIF EXPOSE_MEMBERS}
 begin
   CheckEngine;
   with Engine, FType do
@@ -8558,6 +8658,14 @@ begin
       ob_refcnt := 1;
       tp_name   := PAnsiChar(FTypeName);
       tp_flags  := TypeFlagsAsInt;
+      {$IFDEF EXPOSE_MEMBERS}
+      if (TPFlag.tpTypeSubclass in TypeFlags) then begin
+        LBasePythonType := Engine.FindPythonType(
+          AnsiString(PyObjectClass.GetTypeBase().GetTypeName()));
+        if Assigned(LBasePythonType) then
+          tp_base := LBasePythonType.TheTypePtr;
+      end;
+      {$ENDIF EXPOSE_MEMBERS}
     end;
   if Assigned(FModule) then
     begin
@@ -8603,7 +8711,7 @@ begin
   CheckEngine;
   with Engine do
     begin
-      obj := PyObjectClass.CreateWith( Self, args );
+      obj := PyObjectClass.CreateWith( Self, args, nil );
       obj.ob_type := @FType;
       if PyErr_Occurred <> nil then
       begin
@@ -9306,6 +9414,21 @@ begin
         Break;
       end;
       t := t^.tp_base;
+    end;
+  end;
+end;
+
+function IsDelphiClass(const AObj: PPyObject): boolean;
+var
+  LPyTypeObject : PPyTypeObject;
+begin
+  Result := False;
+  if Assigned(AObj) then
+  begin
+    if GetPythonEngine.PyClass_Check(AObj) then
+    begin
+      LPyTypeObject := GetPythonEngine.TypeByName(AnsiString(PPyTypeObject(AObj)^.tp_name));
+      Result := Assigned(LPyTypeObject);
     end;
   end;
 end;
