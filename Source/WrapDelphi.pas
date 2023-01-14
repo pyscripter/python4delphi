@@ -3338,7 +3338,7 @@ var
   LRttiElectedMethods: TArray<TRttiMethod>;
   LBuffer: TArray<string>;
   LExposedMethod: TExposedMethodImplementation;
-  LExposeMethod: boolean;
+  LClass: TClass;
   LDocStr: string;
 begin
   SetLength(LBuffer, 0);
@@ -3380,42 +3380,44 @@ begin
         LRttiMethod.IsClassMethod, LRttiMethod.IsStatic);
 
       //Give the client code an option to change any def
-      LExposeMethod := true;
-      if Assigned(ADefCallback) then
-        LExposeMethod := ADefCallback(LRttiMethod.Name, LExposedMethod);
-
-      //If client code disagrees, we remove the exposed method
-      if not LExposeMethod then
+      if Assigned(ADefCallback) and not ADefCallback(LRttiMethod.Name, LExposedMethod) then begin
+        //If client code disagrees, we remove the exposed method
         FreeAndNil(LExposedMethod);
-
-      //Only register the method to the Python side if we really want to
-      if Assigned(LExposedMethod) then begin
-        //Feed the buffer
-        SetLength(LBuffer, Length(LBuffer) + 1);
-        LBuffer[Length(LBuffer) - 1] := LRttiMethod.Name;
-
-        //Try to load the method doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(
-          DelphiObjectClass.ClassInfo, LRttiMethod, LDocStr) then
-            LExposedMethod.DocString := AnsiString(LDocStr);
-
-        //Adds the Python method
-        if LRttiMethod.IsStatic then
-          APythonType.AddStaticMethodWithKeywords(
-            PAnsiChar(LExposedMethod.Name),
-            LExposedMethod.VirtualMethodImplementation(),
-            PAnsiChar(LExposedMethod.DocString))
-        else if LRttiMethod.IsClassMethod then
-          APythonType.AddClassMethodWithKeywords(
-            PAnsiChar(LExposedMethod.Name),
-            LExposedMethod.VirtualMethodImplementation(),
-            PAnsiChar(LExposedMethod.DocString))
-        else
-          APythonType.AddMethodWithKeywords(
-            PAnsiChar(LExposedMethod.Name),
-            LExposedMethod.VirtualMethodImplementation(),
-            PAnsiChar(LExposedMethod.DocString));
+        //Only register the method at the Python side if we really want to.
+        //In this case, we won't.
+        Continue;
       end;
+
+      //Feed the buffer
+      SetLength(LBuffer, Length(LBuffer) + 1);
+      LBuffer[Length(LBuffer) - 1] := LRttiMethod.Name;
+
+      //Try to load the method doc string from doc server
+      LClass := DelphiObjectClass;
+      LDocStr := String.Empty;
+      while Assigned(LClass) and LDocStr.IsEmpty() do begin
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          LClass.ClassInfo, LRttiMethod, LDocStr) then
+            LExposedMethod.DocString := AnsiString(LDocStr);
+        LClass := LClass.ClassParent;
+      end;
+
+      //Adds the Python method
+      if LRttiMethod.IsStatic then
+        APythonType.AddStaticMethodWithKeywords(
+          PAnsiChar(LExposedMethod.Name),
+          LExposedMethod.VirtualMethodImplementation(),
+          PAnsiChar(LExposedMethod.DocString))
+      else if LRttiMethod.IsClassMethod then
+        APythonType.AddClassMethodWithKeywords(
+          PAnsiChar(LExposedMethod.Name),
+          LExposedMethod.VirtualMethodImplementation(),
+          PAnsiChar(LExposedMethod.DocString))
+      else
+        APythonType.AddMethodWithKeywords(
+          PAnsiChar(LExposedMethod.Name),
+          LExposedMethod.VirtualMethodImplementation(),
+          PAnsiChar(LExposedMethod.DocString));
     end;
   finally
     LRttiCtx.Free;
@@ -3434,7 +3436,7 @@ var
   LRttiElectedProperties: TArray<TRttiProperty>;
   LBuffer: TArray<string>;
   LExposedProperty: TExposedPropertyImplementation;
-  LExposeProperty: boolean;
+  LClass: TClass;
   LDocStr: string;
 begin
   SetLength(LBuffer, 0);
@@ -3475,33 +3477,35 @@ begin
         APythonType, LRttiProperty.Name, APyDelphiWrapper, APythonType, LRttiType);
 
       //Give the client code an option to change any def
-      LExposeProperty := true;
-      if Assigned(ADefCallback) then
-        LExposeProperty := ADefCallback(LRttiProperty.Name, LExposedProperty);
-
-      //If client code disagrees, we remove the exposed property
-      if not LExposeProperty then
+      if Assigned(ADefCallback) and not ADefCallback(LRttiProperty.Name, LExposedProperty) then begin
+        //If client code disagrees, we remove the exposed property
         FreeAndNil(LExposedProperty);
-
-      //Only register the property to the Python side if we really want to
-      if Assigned(LExposedProperty) then begin
-        //Feed the buffer
-        SetLength(LBuffer, Length(LBuffer) + 1);
-        LBuffer[Length(LBuffer) - 1] := LRttiProperty.Name;
-
-        //Try to load the property doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(
-          DelphiObjectClass.ClassInfo, LRttiProperty, LDocStr) then
-            LExposedProperty.DocString := AnsiString(LDocStr);
-
-        //Adds the Python attribute
-        APythonType.AddGetSet(
-          PAnsiChar(LExposedProperty.Name),
-          LExposedProperty.VirtualGetImplementation(),
-          LExposedProperty.VirtualSetImplementation(),
-          PAnsiChar(LExposedProperty.DocString),
-          nil);
+        //Only register the property to the Python side if we really want to.
+        //In this case, we won't.
+        Continue;
       end;
+
+      //Feed the buffer
+      SetLength(LBuffer, Length(LBuffer) + 1);
+      LBuffer[Length(LBuffer) - 1] := LRttiProperty.Name;
+
+      //Try to load the property doc string from doc server
+      LClass := DelphiObjectClass;
+      LDocStr := String.Empty;
+      while Assigned(LClass) and LDocStr.IsEmpty() do begin
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          LClass.ClassInfo, LRttiProperty, LDocStr) then
+            LExposedProperty.DocString := AnsiString(LDocStr);
+        LClass := LClass.ClassParent;
+      end;
+
+      //Adds the Python attribute
+      APythonType.AddGetSet(
+        PAnsiChar(LExposedProperty.Name),
+        LExposedProperty.VirtualGetImplementation(),
+        LExposedProperty.VirtualSetImplementation(),
+        PAnsiChar(LExposedProperty.DocString),
+        nil);
     end;
   finally
     LRttiCtx.Free;
@@ -3520,7 +3524,7 @@ var
   LRttiElectedFields: TArray<TRttiField>;
   LBuffer: TArray<string>;
   LExposedField: TExposedFieldImplementation;
-  LExposeField: boolean;
+  LClass: TClass;
   LDocStr: string;
 begin
   SetLength(LBuffer, 0);
@@ -3561,33 +3565,35 @@ begin
         APythonType, LRttiField.Name, APyDelphiWrapper, APythonType, LRttiType);
 
       //Give the client code an option to change any def
-      LExposeField := true;
-      if Assigned(ADefCallback) then
-        LExposeField := ADefCallback(LRttiField.Name, LExposedField);
-
-      //If client code disagrees, we remove the exposed field
-      if not LExposeField then
+      if Assigned(ADefCallback) and not ADefCallback(LRttiField.Name, LExposedField) then begin
+        //If client code disagrees, we remove the exposed field
         FreeAndNil(LExposedField);
-
-      //Only register the field to the Python side if we really want to
-      if Assigned(LExposedField) then begin
-        //Feed the buffer
-        SetLength(LBuffer, Length(LBuffer) + 1);
-        LBuffer[Length(LBuffer) - 1] := LRttiField.Name;
-
-        //Try to load the property doc string from doc server
-        if TPythonDocServer.Instance.ReadMemberDocStr(
-          DelphiObjectClass.ClassInfo, LRttiField, LDocStr) then
-            LExposedField.DocString := AnsiString(LDocStr);
-
-        //Adds the Python attribute
-        APythonType.AddGetSet(
-          PAnsiChar(LExposedField.Name),
-          LExposedField.VirtualGetImplementation(),
-          LExposedField.VirtualSetImplementation(),
-          PAnsiChar(LExposedField.DocString),
-          nil);
+        //Only register the field to the Python side if we really want to.
+        //In this case, we won't.
+        Continue;
       end;
+
+      //Feed the buffer
+      SetLength(LBuffer, Length(LBuffer) + 1);
+      LBuffer[Length(LBuffer) - 1] := LRttiField.Name;
+
+      //Try to load the property doc string from doc server
+      LClass := DelphiObjectClass;
+      LDocStr := String.Empty;
+      while Assigned(LClass) and LDocStr.IsEmpty() do begin
+        if TPythonDocServer.Instance.ReadMemberDocStr(
+          LClass.ClassInfo, LRttiField, LDocStr) then
+            LExposedField.DocString := AnsiString(LDocStr);
+        LClass.ClassParent;
+      end;
+
+      //Adds the Python attribute
+      APythonType.AddGetSet(
+        PAnsiChar(LExposedField.Name),
+        LExposedField.VirtualGetImplementation(),
+        LExposedField.VirtualSetImplementation(),
+        PAnsiChar(LExposedField.DocString),
+        nil);
     end;
   finally
     LRttiCtx.Free;
