@@ -23,7 +23,7 @@ type
     function Set_X(AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_Y(AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
   public
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     function  Compare( obj: PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
@@ -55,7 +55,7 @@ type
   public
     PyDelphiWrapper : TPyDelphiWrapper;
 
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     function  Compare( obj: PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
@@ -77,7 +77,7 @@ type
     function Set_CX(AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_CY(AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
   public
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     function  Compare( obj: PPyObject) : Integer; override;
     function  Repr : PPyObject; override;
@@ -235,8 +235,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiPoint.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiPoint.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   x, y : Integer;
 begin
@@ -340,8 +340,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiRect.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiRect.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 begin
   inherited;
   APythonType.Engine.PyArg_ParseTuple( args, 'iiii:Create',@fValue.Left, @fValue.Top, @fValue.Right, @fValue.Bottom );
@@ -528,8 +528,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiSize.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiSize.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   cx, cy : Integer;
 begin

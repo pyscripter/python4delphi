@@ -127,6 +127,8 @@ type
     procedure TestPassVariantArray;
     [Test]
     procedure TestClassRefParam;
+    [Test]
+    procedure TestInheritance;
   end;
 
 implementation
@@ -205,7 +207,7 @@ begin
   Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
   DelphiModule.SetVar('rtti_interface', Py);
   PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Collection, Strings');
+  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Persistent, Collection, Strings');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
   Rtti_Interface := MainModule.rtti_interface;
@@ -275,6 +277,17 @@ begin
   Assert.IsTrue(VarIsPythonList(List));
   Assert.AreEqual(1000, Integer(len(List)));
   Assert.AreEqual(Int64(999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999))));
+end;
+
+procedure TTestWrapDelphi.TestInheritance;
+var
+  Py_Strings, Py_Persistent, Py_Object: PPyObject;
+begin
+  Py_Strings := ExtractPythonObjectFrom(MainModule.Strings);
+  Py_Persistent := ExtractPythonObjectFrom(MainModule.Persistent);
+  Py_Object := ExtractPythonObjectFrom(MainModule.Object);
+  Assert.AreEqual(PythonEngine.PyObject_IsSubclass(Py_Strings, Py_Persistent), 1);
+  Assert.AreEqual(PythonEngine.PyObject_IsSubclass(Py_Strings, Py_Object), 1);
 end;
 
 procedure TTestWrapDelphi.TestInterface;

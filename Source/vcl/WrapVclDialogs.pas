@@ -148,14 +148,12 @@ end;
 
 class procedure TPyDelphiOpenDialog.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('FileName', @TPyDelphiOpenDialog.Get_filename,
     nil, '', nil);
 end;
 
 class procedure TPyDelphiOpenDialog.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Execute', @TPyDelphiOpenDialog.Execute_Wrapper,
     'TOpenDialog.Execute()'#10 +
     'Displays the dialog');
@@ -199,7 +197,6 @@ end;
 class procedure TPyDelphiFileOpenDialog.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('FileName', @TPyDelphiFileOpenDialog.Get_filename,
     nil, '', nil);
 end;
@@ -207,7 +204,6 @@ end;
 class procedure TPyDelphiFileOpenDialog.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Execute', @TPyDelphiFileOpenDialog.Execute_Wrapper,
     'TFileOpenDialog.Execute()'#10 +
     'Displays the dialog');

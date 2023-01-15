@@ -541,8 +541,7 @@ Type
     function HasContainerAccessClass : Boolean;
     procedure SubscribeToFreeNotification; virtual;
     procedure UnSubscribeToFreeNotification; virtual;
-    class function GetTypeName : string; override;
-    class function GetTypeBase(): TPyObjectClass; override;
+    class function GetTypeName : string; virtual;
     // Exposed Methods
     function Free_Wrapper(args : PPyObject) : PPyObject; cdecl;
     function InheritsFrom_Wrapper(args : PPyObject) : PPyObject; cdecl;
@@ -553,6 +552,7 @@ Type
     // Exposed Getters
     function Get_ClassName(Acontext : Pointer) : PPyObject; cdecl;
     function Get_Owned(Acontext : Pointer) : PPyObject; cdecl;
+    function Set_Owned(AValue: PPyObject; AContext: Pointer): Integer;
     function Get_Bound(Acontext : Pointer) : PPyObject; cdecl;
     // implementation of interface IFreeNotificationSubscriber
     procedure Notify(ADeletedObject : TObject);
@@ -2932,8 +2932,27 @@ end;
 
 function TPyDelphiObject.Dir_Wrapper(args: PPyObject): PPyObject;
 var
-  i : Integer;
   SL : TStringList;
+  PyEngine: TPythonEngine;
+
+  procedure AddItemsFromDict(PyObj: PPyObject);
+  var
+    PyDict: PPyObject;
+    PyList: PPyObject;
+  begin
+    if PyEngine.PyObject_HasAttrString(PyObj, '__dict__') = 1 then
+    begin
+      PyDict := PyEngine.PyObject_GetAttrString(PyObj, '__dict__');
+      PyList := PyEngine.PyMapping_Keys(PyDict);
+      if Assigned(PyList) then
+        PyEngine.PyListToStrings(PyList, SL, False);
+      PyEngine.Py_XDECREF(PyList);
+      PyEngine.Py_XDECREF(PyDict);
+    end;
+  end;
+
+var
+  PyType: PPyTypeObject;
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;
@@ -2946,12 +2965,16 @@ begin
   SL := TStringList.Create;
   SL.Sorted := True;
   SL.Duplicates := dupIgnore;
+  PyEngine := GetPythonEngine;
   try
-    // Add methods
-    for i := 0 to PythonType.MethodCount - 1 do
-      SL.Add(string(AnsiString(PythonType.Methods[i].ml_name)));
-    for i := 0 to PythonType.GetSetCount - 1 do
-      SL.Add(string(AnsiString(PythonType.GetSet[i].name)));
+    AddItemsFromDict(GetSelf);
+    PyType := PythonType.TheTypePtr;
+    while PyType <> nil do
+    begin
+      AddItemsFromDict(PPyObject(PyType));
+      PyType := PyType.tp_base;
+    end;
+
 {$IFDEF EXTENDED_RTTI}
     Context := TRttiContext.Create();
     try
@@ -2974,11 +2997,6 @@ begin
   finally
     SL.Free;
   end;
-end;
-
-class function TPyDelphiObject.GetTypeBase: TPyObjectClass;
-begin
-  Result := TPyObjectClass(Self.ClassParent);
 end;
 
 class function TPyDelphiObject.GetTypeName : string;
@@ -3057,7 +3075,7 @@ begin
         'Returns the TObject.ClassName', nil);
       AddGetSet('__bound__', @TPyDelphiObject.Get_Bound, nil,
         'Returns True if the wrapper is still bound to the Delphi instance.', nil);
-      AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, nil,
+      AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, @TPyDelphiObject.Set_Owned,
         'Returns True if the wrapper owns the Delphi instance.', nil);
     end;
 
@@ -3315,9 +3333,7 @@ begin
   end;
 
   {$IFDEF EXPOSE_MEMBERS}
-  PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpfBaseType];
-  if Assigned(GetTypeBase()) and GetTypeBase().InheritsFrom(TPyDelphiObject) then
-    PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpTypeSubclass];
+  PythonType.TypeFlags := PythonType.TypeFlags + [TPFlag.tpTypeSubclass];
 
   //Try to load the class doc string from doc server
   if TPythonDocServer.Instance.ReadTypeDocStr(DelphiObjectClass.ClassInfo, LDocStr) then
@@ -3600,6 +3616,21 @@ begin
   end;
 end;
 {$ENDIF EXPOSE_MEMBERS}
+
+function TPyDelphiObject.Set_Owned(AValue: PPyObject;
+  AContext: Pointer): Integer;
+var
+  _value : Boolean;
+begin
+  Adjust(@Self);
+  if CheckBoolAttribute(AValue, '__owned__', _value) then
+  begin
+    Owned := _value;
+    Result := 0;
+  end
+  else
+    Result := -1;
+end;
 
 function TPyDelphiObject.SqAssItem(idx: NativeInt; obj: PPyObject): integer;
 begin
@@ -4431,8 +4462,9 @@ end;
 
 procedure TPyDelphiWrapper.RegisterDelphiWrapper(
   AWrapperClass: TPyDelphiObjectClass);
-Var
+var
   RegisteredClass : TRegisteredClass;
+  Index: Integer;
 begin
   Assert(Assigned(AWrapperClass));
 
@@ -4442,6 +4474,15 @@ begin
   RegisteredClass.PythonType.Engine := Engine;
   RegisteredClass.PythonType.Module := fModule;
   RegisteredClass.PythonType.PyObjectClass := AWrapperClass;
+  // Find nearest registered parent class and set it as base
+  for Index := fClassRegister.Count - 1 downto 0 do
+    with TRegisteredClass(fClassRegister[Index]) do
+      if RegisteredClass.DelphiClass.InheritsFrom(DelphiClass) then
+      begin
+        RegisteredClass.PythonType.BaseType := PythonType;
+        Break;
+      end;
+
   fClassRegister.Add(RegisteredClass);
   if AWrapperClass.DelphiObjectClass.InheritsFrom(TPersistent) then
     Classes.RegisterClass(TPersistentClass(AWrapperClass.DelphiObjectClass));

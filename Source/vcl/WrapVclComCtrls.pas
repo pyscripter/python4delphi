@@ -408,7 +408,6 @@ end;
 class procedure TPyDelphiPageControl.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('ActivePage', @TPyDelphiPageControl.Get_ActivePage, @TPyDelphiPageControl.Set_ActivePage,
         'Specifies the page currently displayed by the page control.', nil);
   PythonType.AddGetSet('ActivePageIndex', @TPyDelphiPageControl.Get_ActivePageIndex, @TPyDelphiPageControl.Set_ActivePageIndex,
@@ -430,7 +429,6 @@ end;
 class procedure TPyDelphiPageControl.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   {$IFNDEF FPC}
   PythonType.AddMethod('IndexOfTabAt', @TPyDelphiPageControl.IndexOfTabAt_Wrapper,
     'TPageControl.IndexOfTabAt()'#10 +
@@ -834,7 +832,6 @@ end;
 
 class procedure TPyDelphiToolbar.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
   begin
     AddGetSet('ButtonCount', @TPyDelphiToolbar.Get_ButtonCount, nil,

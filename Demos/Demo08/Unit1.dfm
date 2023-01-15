@@ -13,8 +13,6 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0

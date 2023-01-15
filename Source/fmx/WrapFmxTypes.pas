@@ -22,7 +22,7 @@ type
     function Set_X(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Y(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; Args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     function Compare(obj: PPyObject): Integer; override;
     function Repr: PPyObject; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -41,7 +41,7 @@ type
     function Set_Width(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Height(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     function Compare(obj: PPyObject): Integer; override;
     function Repr: PPyObject; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -64,7 +64,7 @@ type
     function Set_Left(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Right(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     function Compare(obj: PPyObject): Integer; override;
     function Repr: PPyObject; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -103,7 +103,7 @@ type
     function Set_Y(AValue: PPyObject; AContext: Pointer): integer; cdecl;
     function Set_Point(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     class function DelphiObjectClass: TClass; override;
     class procedure RegisterMethods(PythonType: TPythonType); override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
@@ -128,7 +128,7 @@ type
     function Get_Rect(Acontext: Pointer): PPyObject; cdecl;
     function Set_Rect(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     class function DelphiObjectClass: TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     property DelphiObject: TBounds read GetDelphiObject write SetDelphiObject;
@@ -142,7 +142,7 @@ type
     function Get_SizeF(Acontext: Pointer): PPyObject; cdecl;
     function Set_SizeF(AValue: PPyObject; AContext: Pointer): integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     class function DelphiObjectClass: TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     property DelphiObject: TControlSize read GetDelphiObject write SetDelphiObject;
@@ -165,13 +165,11 @@ type
   function CheckPointFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TPointF): Boolean;
   function CheckSizeFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TSizeF): Boolean;
   function CheckRectFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TRectF): Boolean;
-
 implementation
-
 uses
   System.Math, System.SysUtils;
 
- { Register the wrappers, the globals and the constants }
+{ Register the wrappers, the globals and the constants }
 type
   TTypesRegistration = class(TRegisteredUnit)
   public
@@ -181,7 +179,6 @@ type
   end;
 
 { TPyDelphiPointF }
-
 function TPyDelphiPointF.Compare(obj: PPyObject): Integer;
 var
   _other : TPyDelphiPointF;
@@ -197,8 +194,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiPointF.CreateWith(APythonType: TPythonType;
-  Args: PPyObject);
+constructor TPyDelphiPointF.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   x, y : single;
 begin
@@ -280,7 +277,6 @@ begin
 end;
 
 { TTypesRegistration }
-
 procedure TTypesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
 begin
   inherited;
@@ -392,7 +388,6 @@ begin
 end;
 
 { TPyDelphiFmxObject }
-
 class function TPyDelphiFmxObject.DelphiObjectClass: TClass;
 begin
   Result := TFmxObject;
@@ -411,14 +406,12 @@ end;
 
 class procedure TPyDelphiFmxObject.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('Parent', @TPyDelphiFmxObject.Get_Parent, @TPyDelphiFmxObject.Set_Parent,
         'Returns/Sets the Control Visibility', nil);
 end;
 
 class procedure TPyDelphiFmxObject.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 procedure TPyDelphiFmxObject.SetDelphiObject(const Value: TFmxObject);
@@ -442,9 +435,8 @@ begin
 end;
 
 { TPyDelphiPosition }
-
-constructor TPyDelphiPosition.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiPosition.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   LPPosition: PPyObject;
   LPointF: TPointF;
@@ -485,7 +477,6 @@ end;
 
 class procedure TPyDelphiPosition.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('X', @TPyDelphiPosition.Get_X, @TPyDelphiPosition.Set_X,
       'Provides access to the X coordinate of a control inside its parent', nil);
@@ -498,7 +489,6 @@ end;
 
 class procedure TPyDelphiPosition.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 procedure TPyDelphiPosition.SetDelphiObject(const Value: TPosition);
@@ -550,7 +540,6 @@ begin
 end;
 
 { TPyDelphiSizeF }
-
 function TPyDelphiSizeF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiSizeF;
@@ -566,8 +555,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiSizeF.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiSizeF.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   LWidth, LHeight : single;
 begin
@@ -634,6 +623,7 @@ begin
     else
       Result := -1;
 end;
+
 function TPyDelphiSizeF.Set_Width(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -648,8 +638,8 @@ begin
     else
       Result := -1;
 end;
-{ TPyDelphiCustomPopupMenu }
 
+{ TPyDelphiCustomPopupMenu }
 class function TPyDelphiCustomPopupMenu.DelphiObjectClass: TClass;
 begin
   Result := TCustomPopupMenu;
@@ -667,9 +657,8 @@ begin
 end;
 
 { TPyDelphiBounds }
-
-constructor TPyDelphiBounds.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiBounds.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   LPBounds: PPyObject;
   LRectF: TRectF;
@@ -698,7 +687,6 @@ end;
 
 class procedure TPyDelphiBounds.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('Rect', @TPyDelphiBounds.Get_Rect, @TPyDelphiBounds.Set_Rect,
         'Provides access to the rect of a control', nil);
@@ -726,9 +714,8 @@ begin
 end;
 
 { TPyDelphiControlSize }
-
-constructor TPyDelphiControlSize.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiControlSize.CreateWith(APythonType: TPythonType; args,
+    kwds: PPyObject);
 var
   LPControlSize: PPyObject;
   LSizeF: TSizeF;
@@ -757,7 +744,6 @@ end;
 
 class procedure TPyDelphiControlSize.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do begin
     AddGetSet('Size', @TPyDelphiControlSize.Get_SizeF, @TPyDelphiControlSize.Set_SizeF,
         'Provides access to the size of a control', nil);
@@ -768,7 +754,6 @@ procedure TPyDelphiControlSize.SetDelphiObject(const Value: TControlSize);
 begin
   inherited DelphiObject := Value;
 end;
-
 function TPyDelphiControlSize.Set_SizeF(AValue: PPyObject;
   AContext: Pointer): integer;
 var
@@ -785,7 +770,6 @@ begin
 end;
 
 { TPyDelphiRectF }
-
 function TPyDelphiRectF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiRectF;
@@ -802,8 +786,8 @@ begin
     Result := 1;
 end;
 
-constructor TPyDelphiRectF.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+constructor TPyDelphiRectF.CreateWith(APythonType: TPythonType; args, kwds:
+    PPyObject);
 var
   LLeft, LTop, LRight, LBottom : single;
 begin
@@ -951,5 +935,4 @@ end;
 
 initialization
   RegisteredUnits.Add(TTypesRegistration.Create);
-
 end.

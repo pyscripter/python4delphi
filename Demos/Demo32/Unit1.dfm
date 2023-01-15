@@ -13,9 +13,7 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
   Visible = True
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -24,7 +22,6 @@ object Form1: TForm1
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 584
   end
   object Memo1: TMemo
     Left = 0
@@ -106,7 +103,18 @@ object Form1: TForm1
       'if p == spam.Point(2, 5):'
       '  print ("Equal")'
       'else:'
-      '  print ("Not equal")')
+      '  print ("Not equal")'
+      ''
+      
+        'print ("--------------------------------------------------------' +
+        '----------")'
+      'print("== create with keyword arguments ==")'
+      'p = spam.Point(x=20, y=30)'
+      'print("Point(x=20, y=30) = ", p)'
+      'p = spam.Point(y=30, x=20)'
+      'print("Point(y=30, x=20) = ", p)'
+      'p = spam.Point(20, y=30)'
+      'print("Point(20, y=30) = ",p)')
     ParentFont = False
     ScrollBars = ssBoth
     TabOrder = 0
