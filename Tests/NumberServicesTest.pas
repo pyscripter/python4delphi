@@ -22,7 +22,7 @@ type
     FRandomInteger: TRandomInteger;
 
   public
-    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
 
     // Basic services
     function Repr: PPyObject; override;
@@ -272,7 +272,7 @@ end;
 
 { PyTRandomInteger }
 
-constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args, kwds:
+constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args:
     PPyObject);
 var
   val1: PPyObject;

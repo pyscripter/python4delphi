@@ -2363,6 +2363,7 @@ type
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
 }
   // The base class of all new Python types
+  TPyObjectClass = class of TPyObject;
   TPyObject = class
   private
     function  Get_ob_refcnt: NativeInt;
@@ -2375,9 +2376,9 @@ type
     PythonAlloc    : Boolean;
 
     // Constructors & Destructors
-    constructor Create( APythonType : TPythonType ); virtual;
-    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
-        virtual;
+    constructor Create(APythonType: TPythonType); virtual;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); overload; virtual;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); overload; virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -2469,7 +2470,6 @@ type
     class procedure RegisterGetSets( APythonType : TPythonType ); virtual;
     class procedure SetupType( APythonType : TPythonType ); virtual;
   end;
-  TPyObjectClass = class of TPyObject;
 
   TBasicServices     = set of (bsGetAttr, bsSetAttr,
                                bsRepr, bsCompare, bsHash,
@@ -2680,7 +2680,7 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
     destructor  Destroy; override;
 
     // Type services
@@ -7385,7 +7385,7 @@ end;
 //  TPyObject
 
 // Constructors & Destructors
-constructor TPyObject.Create( APythonType : TPythonType );
+constructor TPyObject.Create(APythonType: TPythonType);
 begin
   inherited Create;
   if Assigned(APythonType) then
@@ -7400,10 +7400,15 @@ begin
   end;
 end;
 
-constructor TPyObject.CreateWith(APythonType: TPythonType; args, kwds:
-    PPyObject);
+constructor TPyObject.CreateWith(APythonType: TPythonType; args: PPyObject);
 begin
-  Create( APythonType );
+  Create(APythonType);
+end;
+
+constructor TPyObject.CreateWith(APythonType: TPythonType; args,
+  kwds: PPyObject);
+begin
+  CreateWith(APythonType, args);
 end;
 
 destructor TPyObject.Destroy;
@@ -8649,7 +8654,7 @@ begin
       meth := CreateMethod;
       FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
       FCreateFuncDef.ml_meth  := GetOfObjectCallBack(TCallBack(meth), 3, DEFAULT_CALLBACK_TYPE);
-      FCreateFuncDef.ml_flags := METH_KEYWORDS;
+      FCreateFuncDef.ml_flags := METH_VARARGS or METH_KEYWORDS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil);
       Engine.Py_INCREF(FCreateFunc);
@@ -8888,7 +8893,7 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyVar.Create will be automatically be called.
 
-constructor TPyVar.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
+constructor TPyVar.CreateWith(APythonType: TPythonType; args: PPyObject);
 begin
   inherited;
   with GetPythonEngine do

@@ -31,15 +31,11 @@
 (* confidential or legal reasons, everyone is free to derive a component  *)
 (* or to generate a diff file to my or other original sources.            *)
 (**************************************************************************)
-
 unit NumberServicesTest;
-
 interface
-
 uses
   DUnitX.TestFramework,
   PythonEngine;
-
 type
   TRandomInteger = class(TObject)
   strict private
@@ -50,17 +46,13 @@ type
     constructor Create;
     property Value: Integer read FValue write SetValue;
   end;
-
   PyTRandomInteger = class(TPyObject)
   private
     FRandomInteger: TRandomInteger;
-
   public
-    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
-
+    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
     // Basic services
     function Repr: PPyObject; override;
-
     // Number services
     function NbAdd(obj: PPyObject): PPyObject; override; // 0
     function NbSubtract(obj: PPyObject): PPyObject; override; // 1
@@ -88,7 +80,6 @@ type
   public
     destructor Destroy; override;
   end;
-
   [TestFixture]
   TTestNumberServices = class(TObject)
   private
@@ -101,10 +92,8 @@ type
   public
     [SetupFixture]
     procedure SetupFixture;
-
     [TearDownFixture]
     procedure TearDownFixture;
-
     [Test]
     procedure TestAdd; // 0
     [Test]
@@ -148,17 +137,13 @@ type
     [Test]
     procedure TestBool; // 26
   end;
-
 var PrintResults: Boolean = False;
-
 implementation
-
 uses
   System.Variants,
   System.SysUtils,
   System.Math,
   PythonLoad;
-
 procedure AddPythonType(var PythonType: TPythonType;
                         Name: string;
                         TypeName: AnsiString;
@@ -181,11 +166,9 @@ begin
     PythonType.TypeName := TypeName;
     PythonType.PyObjectClass := PyObjectClass;
     PythonType.GenerateCreateFunction := False;
-
     PythonType.Initialize;
   end;
 end;
-
   function GetVal(AModule : PPyObject; AVarName : AnsiString) : PPyObject;
   begin
     with GetPythonEngine do
@@ -197,7 +180,6 @@ end;
         Py_XDecRef(Result); // keep a borrowed reference.
     end
   end;
-
 procedure TTestNumberServices.SetupFixture;
 var
   Py : PPyObject;
@@ -208,13 +190,11 @@ begin
   PythonEngine.Name := 'PythonEngine';
   TPythonLoad.Configure(PythonEngine);
   PythonEngine.LoadDll;
-
   // python module
   FPythonModule := TPythonModule.Create(GetPythonEngine);
   FPythonModule.Engine := GetPythonEngine;
   FPythonModule.ModuleName := 'testing123';
   FPythonModule.Initialize;
-
   PythonType_TRndInt := nil;
   AddPythonType(PythonType_TRndInt, 'PythonType_RndInt', 'TRandomInteger',
     GetPythonEngine, FPythonModule, PyTRandomInteger,
@@ -240,19 +220,15 @@ begin
       nsFloorDivide,
       nsMatrixMultiply,
       nsBool ]);
-
   // import our module
   GetPythonEngine.Run_CommandAsString('import ' + FPythonModule.ModuleName, single_input);
-
   pdvc := TPythonDelphiVar.Create(nil);
   pdvc.Engine := GetPythonEngine;
   pdvc.Module := '__main__';
   pdvc.VarName := 'c';
   pdvc.Initialize;
-
   GetPythonEngine.Run_CommandAsString('aa = testing123.TRandomInteger()', single_input);
   GetPythonEngine.Run_CommandAsString('bb = testing123.TRandomInteger()', single_input);
-
   py := GetVal(GetPythonEngine.GetMainModule, 'aa');
   valpy := PythonToDelphi(py);
   val := valpy as PyTRandomInteger;
@@ -260,7 +236,6 @@ begin
   begin
     pdvainteger := val.FRandomInteger.Value;
   end;
-
   py := GetVal(GetPythonEngine.GetMainModule, 'bb');
   valpy := PythonToDelphi(py);
   val := valpy as PyTRandomInteger;
@@ -269,9 +244,7 @@ begin
     pdvbinteger := val.FRandomInteger.Value;
   end;
 end;
-
 { PyTRandomInteger }
-
 function PythonToTRandomInteger(obj: PPyObject): TRandomInteger;
 begin
   if obj = GetPythonEngine.Py_None then
@@ -279,7 +252,6 @@ begin
   else
     Result := TRandomInteger(PyTRandomInteger(PythonToDelphi(obj)).FRandomInteger);
 end;
-
 function PyTRandomInteger.Repr: PPyObject;
 var
   info: string;
@@ -287,21 +259,17 @@ begin
   with GetPythonEngine do
   begin
     info := 'NIL';
-
     // regular
     if Assigned(FRandomInteger) then
     begin
       info := IntToStr(FRandomInteger.Value);
     end;
-
     Result := VariantAsPyObject(info);
   end;
 end;
 
-
 { PyTRandomInteger }
-
-constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args, kwds:
+constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args:
     PPyObject);
 var
   val1: PPyObject;
@@ -310,10 +278,8 @@ begin
   begin
     try
       inherited;
-
       // create object
       FRandomInteger := TRandomInteger.Create;
-
       // try to parse the parameter
       val1 := nil;
       if Assigned(args) then
@@ -326,37 +292,30 @@ begin
     end;
   end;
 end;
-
 function PyTRandomInteger.NbAdd(obj: PPyObject): PPyObject; // 0
 begin
   Result := PerformArithmeticOp(obj, '+');
 end;
-
 function PyTRandomInteger.NbSubtract(obj: PPyObject): PPyObject; // 1
 begin
   Result := PerformArithmeticOp(obj, '-');
 end;
-
 function PyTRandomInteger.NbMultiply(obj: PPyObject): PPyObject; // 2
 begin
   Result := PerformArithmeticOp(obj, '*');
 end;
-
 function PyTRandomInteger.NbRemainder(obj: PPyObject): PPyObject; // 4
 begin
   Result := PerformArithmeticOp(obj, '%');
 end;
-
 function PyTRandomInteger.NbDivmod(obj: PPyObject): PPyObject; // 5
 begin
   Result := PerformArithmeticOp(obj, 'divmod');
 end;
-
 function PyTRandomInteger.NbPower(ob1, ob2: PPyObject): PPyObject; // 6
 begin
   Result := PerformArithmeticOp(ob1, '^');
 end;
-
 function  PyTRandomInteger.NbNegative: PPyObject; // 7
 var
   arg1: Integer;
@@ -367,7 +326,6 @@ begin
     Result := VariantAsPyObject(-arg1);
   end
 end;
-
 function PyTRandomInteger.NbPositive: PPyObject; // 8
 var
   arg1: Integer;
@@ -378,13 +336,11 @@ begin
     Result := VariantAsPyObject(+arg1);
   end
 end;
-
 destructor PyTRandomInteger.Destroy;
 begin
   FRandomInteger.Free;
   inherited;
 end;
-
 function PyTRandomInteger.NbAbsolute: PPyObject; // 9
 begin
   with GetPythonEngine do
@@ -392,7 +348,6 @@ begin
     Result := VariantAsPyObject(Abs(FRandomInteger.Value));
   end;
 end;
-
 function PyTRandomInteger.NbInvert: PPyObject; // 11
 begin
   with GetPythonEngine do
@@ -400,32 +355,26 @@ begin
     Result := VariantAsPyObject(1-(FRandomInteger.Value+1));
   end;
 end;
-
 function PyTRandomInteger.NbLShift(obj: PPyObject): PPyObject; // 12
 begin
   Result := PerformArithmeticOp(obj, '<<');
 end;
-
 function PyTRandomInteger.NbRShift(obj: PPyObject): PPyObject; // 13
 begin
   Result := PerformArithmeticOp(obj, '>>');
 end;
-
 function PyTRandomInteger.NbAnd(obj: PPyObject): PPyObject; // 14
 begin
   Result := PerformArithmeticOp(obj, 'and');
 end;
-
 function PyTRandomInteger.NbXor(obj: PPyObject): PPyObject; // 15
 begin
   Result := PerformArithmeticOp(obj, 'xor');
 end;
-
 function PyTRandomInteger.NbOr(obj: PPyObject): PPyObject; // 16
 begin
   Result := PerformArithmeticOp(obj, 'or');
 end;
-
 function PyTRandomInteger.NbInt: PPyObject; // 18
 begin
   with GetPythonEngine do
@@ -433,7 +382,6 @@ begin
     Result := VariantAsPyObject(FRandomInteger.Value);
   end;
 end;
-
 function PyTRandomInteger.NbFloat: PPyObject; // 20
 begin
   with GetPythonEngine do
@@ -441,22 +389,18 @@ begin
     Result := VariantAsPyObject(Single(FRandomInteger.Value));
   end;
 end;
-
 function PyTRandomInteger.nbFloorDivide(obj: PPyObject): PPyObject; // 23
 begin
   Result := PerformArithmeticOp(obj, 'floordivide');
 end;
-
 function PyTRandomInteger.NbTrueDivide(obj: PPyObject) : PPyObject; // 24
 begin
   Result := PerformArithmeticOp(obj, '/');
 end;
-
 function PyTRandomInteger.NbMatrixMultiply(obj: PPyObject): PPyObject; // 25
 begin
   Result := PerformArithmeticOp(obj, '@');
 end;
-
 
 function PyTRandomInteger.NbBool: Integer; // 26
 begin
@@ -465,7 +409,6 @@ begin
     Result := IfThen(FRandomInteger.Value=0, Ord(False), Ord(True));
   end;
 end;
-
 
 function PyTRandomInteger.PerformArithmeticOp(obj: PPyObject; op: string): PPyObject;
 var
@@ -500,32 +443,26 @@ begin
             VarArrayPut(VarArray, arg1 mod arg2, [1]);
             Result := VariantAsPyObject(VarArray);
           end
-
           else if op='>>' then
           begin
             Result := VariantAsPyObject(arg1 shr arg2);
           end
-
           else if op='<<' then
           begin
             Result := VariantAsPyObject(arg1 shl arg2);
           end
-
           else if op='and' then
           begin
             Result := VariantAsPyObject(arg1 and arg2);
           end
-
           else if op='xor' then
           begin
             Result := VariantAsPyObject(arg1 xor arg2);
           end
-
           else if op='or' then
           begin
             Result := VariantAsPyObject(arg1 or arg2);
           end
-
           else if op='floordivide' then
           begin
             Result := VariantAsPyObject(arg1 div arg2);
@@ -537,26 +474,21 @@ begin
       Result := nil;
   end;
 end;
-
 { TRandomInteger }
-
 constructor TRandomInteger.Create;
 begin
   inherited;
   FValue := 1+Random(100); // Result interval [1, 101] so safe to test division
 end;
-
 procedure TRandomInteger.SetValue(const Value: Integer);
 begin
   FValue := Value;
 end;
-
 procedure TTestNumberServices.TearDownFixture;
 begin
   PythonEngine.Free;
   pdvc.Free;
 end;
-
 // nsAdd
 procedure TTestNumberServices.TestAdd; // 0
 var
@@ -564,11 +496,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa+bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger+pdvbinteger);
 end;
-
 // nsSubtract
 procedure TTestNumberServices.TestSubtract; // 1
 var
@@ -576,11 +506,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa-bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger-pdvbinteger);
 end;
-
 // nsMultiply
 procedure TTestNumberServices.TestMultiply; // 2
 var
@@ -588,11 +516,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa*bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger*pdvbinteger);
 end;
-
 // nsRemainder
 procedure TTestNumberServices.TestRemainder; // 4
 var
@@ -600,11 +526,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa%bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger mod pdvbinteger);
 end;
-
 // nsDivmod
 procedure TTestNumberServices.TestDivMod; // 5
 var
@@ -613,15 +537,12 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=divmod(aa,bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   VarArr := pdvc.Value;
   res0 := VarArr[0];
   res1 := VarArr[1];
-
   Assert.AreEqual(res0, pdvainteger div pdvbinteger);
   Assert.AreEqual(res1, pdvainteger mod pdvbinteger);
 end;
-
 // nsPower
 procedure TTestNumberServices.TestPower; // 6
 var
@@ -629,12 +550,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=float(aa**bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvdouble := pdvc.Value;
   Assert.AreEqual(Double(pdvdouble), {Round}(System.Math.Power(Double(pdvainteger), Double(pdvbinteger))));
-
 end;
-
 // nsNegative
 procedure TTestNumberServices.TestNegative; // 7
 var
@@ -642,11 +560,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(-aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, -pdvainteger);
 end;
-
 // nsPositive
 procedure TTestNumberServices.TestPositive; // 8
 var
@@ -654,11 +570,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=int(+aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, +pdvainteger);
 end;
-
 // nsAbsolute
 procedure TTestNumberServices.TestAbsolute; // 9
 var
@@ -666,11 +580,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=abs(-aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, +pdvainteger);
 end;
-
 // nsInvert
 procedure TTestNumberServices.TestInvert; // 11
 var
@@ -678,11 +590,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=~aa', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, 1-(pdvainteger+1));
 end;
-
 // nsLShift
 procedure TTestNumberServices.TestLShift; // 12
 var
@@ -690,11 +600,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa<<bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger shl pdvbinteger);
 end;
-
 // nsRShift
 procedure TTestNumberServices.TestRShift; // 13
 var
@@ -702,11 +610,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa>>bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger shr pdvbinteger);
 end;
-
 // nsAnd
 procedure TTestNumberServices.TestAnd; // 14
 var
@@ -714,11 +620,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa&bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger and pdvbinteger);
 end;
-
 // nsXor
 procedure TTestNumberServices.TestXor; // 15
 var
@@ -726,11 +630,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa^bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger xor pdvbinteger);
 end;
-
 // nsOr
 procedure TTestNumberServices.TestOr; // 16
 var
@@ -738,11 +640,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa|bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger or pdvbinteger);
 end;
-
 // nsInt
 procedure TTestNumberServices.TestInt; // 18
 var
@@ -750,11 +650,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=int(aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger);
 end;
-
 // nsFloat
 procedure TTestNumberServices.TestFloat; // 20
 var
@@ -762,11 +660,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=float(aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvsingle := pdvc.Value;
   Assert.AreEqual(pdvsingle, single(pdvainteger));
 end;
-
 // nsFloorDivide
 procedure TTestNumberServices.TestFloorDivide; // 23
 var
@@ -774,11 +670,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa//bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger div pdvbinteger);
 end;
-
 // nsTrueDivide
 procedure TTestNumberServices.TestTrueDivide; // 24
 var
@@ -786,11 +680,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa/bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, pdvainteger div pdvbinteger);
 end;
-
 // nsMatrixMultiply
 procedure TTestNumberServices.TestMatrixMultiply; // 25
 var
@@ -798,11 +690,9 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value=(aa @ bb)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger, not (pdvainteger * pdvbinteger)); // not really a matrix mult, but who cares!
 end;
-
 // nsBool
 procedure TTestNumberServices.TestBool; // 26
 var
@@ -810,13 +700,10 @@ var
 begin
   GetPythonEngine.Run_CommandAsString('c.Value= bool(aa)', single_input);
   if PrintResults then GetPythonEngine.Run_CommandAsString('print(c)', single_input);
-
   pdvinteger := pdvc.Value;
   Assert.AreEqual(pdvinteger=0, pdvainteger=0)
 end;
-
 initialization
   TDUnitX.RegisterTestFixture(TTestNumberServices);
   ReportMemoryLeaksOnShutdown := True;
-
 end.

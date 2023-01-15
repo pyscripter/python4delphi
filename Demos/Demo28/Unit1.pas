@@ -18,7 +18,7 @@ type
   public
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -46,7 +46,7 @@ type
     procedure SetStringList(const Value: TPyStringList);
   public
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -145,8 +145,7 @@ begin
   fStrings := TStringList.Create;
 end;
 
-constructor TPyStringList.CreateWith(PythonType: TPythonType; args, kwds:
-    PPyObject);
+constructor TPyStringList.CreateWith(PythonType: TPythonType; args: PPyObject);
 var
   i : Integer;
 begin
@@ -170,12 +169,15 @@ function TPyStringList.Iter: PPyObject;
 var
 //  _iter : TPyStringListIterator;
   _args : PPyObject;
+  _kwrds: PPyObject;
 begin
   _args := GetPythonEngine.MakePyTuple([Self.GetSelf]);
+  _kwrds := GetPythonEngine.PyDict_New;
   try
-    Result := Form1.ptStringListIterator.CreateInstanceWith(_args);
+    Result := Form1.ptStringListIterator.CreateInstanceWith(_args, _kwrds);
   finally
     GetPythonEngine.Py_DECREF(_args);
+    GetPythonEngine.Py_DECREF(_kwrds);
   end;
   {_iter := Form1.ptStringListIterator.CreateInstance as TPyStringListIterator;
   _iter.StringList := Self;
@@ -239,8 +241,7 @@ begin
   inherited;
 end;
 
-constructor TPyStringListIterator.CreateWith(PythonType: TPythonType; args,
-    kwds: PPyObject);
+constructor TPyStringListIterator.CreateWith(PythonType: TPythonType; args: PPyObject);
 var
   _obj : PPyObject;
   _stringList : TPyStringList;
