@@ -13,25 +13,22 @@ object Form1: TForm1
   Font.Name = 'MS Sans Serif'
   Font.Pitch = fpVariable
   Font.Style = []
-  OldCreateOrder = True
   Visible = True
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
     Top = 169
-    Width = 721
+    Width = 715
     Height = 3
     Cursor = crVSplit
     Align = alTop
-    ExplicitWidth = 677
   end
   object Memo1: TMemo
     Left = 0
     Top = 172
-    Width = 721
-    Height = 395
+    Width = 715
+    Height = 378
     Align = alClient
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
@@ -42,8 +39,8 @@ object Form1: TForm1
     Lines.Strings = (
       
         'from spam import DelphiVersion, MainForm, DVar, CreateComponent,' +
-        ' Application, Screen, mrOk, Form, Button, CheckBox, OpenDialog, ' +
-        'caFree'
+        ' Application, Screen, mrOk, Component, Form, Button, CheckBox, O' +
+        'penDialog, caFree'
       
         'from spam import Point, Monitor, DrawGrid, gdSelected, clBlue, s' +
         'sCtrl, PageControl, TabSheet'
@@ -493,6 +490,9 @@ object Form1: TForm1
         '          self.assertTrue(MainForm.Caption == '#39'From TTestRTTIAcc' +
         'ess.ObjectField'#39')'
       ''
+      '    def testInheritance(self):'
+      '         self.assertTrue(issubclass(Form, Component))'
+      '         self.assertTrue(issubclass(Button, Component))'
       ''
       'if __name__ == '#39'__main__'#39':'
       '    try:'
@@ -506,8 +506,8 @@ object Form1: TForm1
   end
   object Panel1: TPanel
     Left = 0
-    Top = 567
-    Width = 721
+    Top = 550
+    Width = 715
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
@@ -525,7 +525,7 @@ object Form1: TForm1
   object Memo2: TMemo
     Left = 0
     Top = 0
-    Width = 721
+    Width = 715
     Height = 169
     Align = alTop
     Font.Charset = DEFAULT_CHARSET

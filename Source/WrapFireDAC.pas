@@ -570,7 +570,6 @@ end;
 
 class procedure TPyDBField.RegisterMethods( PythonType : TPythonType );
 begin
-  inherited;
   with PythonType do begin
     AddMethod(AnsiString('Clear'), @TPyDBField.Do_Clear,
               AnsiString('DBField.Clear() -> None') );
@@ -836,7 +835,6 @@ end;
 
 class procedure TPyDBDataset.RegisterGetSets( PythonType : TPythonType );
 begin
- inherited;
  PythonType.AddGetSet(PAnsiChar('RowsCount'), @TPyDBDataset.Get_RowsCount, nil,
        PAnsiChar('Returns the count of contained dataset rows'), nil);
  PythonType.AddGetSet(PAnsiChar('Rows'), @TPyDBDataset.Get_Rows, nil,
@@ -845,7 +843,6 @@ end;
 
 class procedure TPyDBDataset.RegisterMethods( PythonType : TPythonType );
 begin
- inherited;
  with PythonType do begin
    AddMethod(AnsiString('Fields'),        @TPyDBDataset.Do_Fields,
              AnsiString('DBDataset.Fields( index : Integer ) -> TField') );
@@ -1341,7 +1338,6 @@ end;
 
 class procedure TPyDBTable.RegisterMethods( PythonType : TPythonType );
 begin
-  inherited;
   with PythonType do begin
     AddMethod(AnsiString('Open'), @TPyDBTable.Do_Open,
               AnsiString('FDTable.Open() -> None') );
@@ -1925,7 +1921,6 @@ end;
 
 class procedure TPyDBQuery.RegisterMethods( PythonType : TPythonType );
 begin
-  inherited;
   with PythonType do begin
     AddMethod(AnsiString('Open'), @TPyDBQuery.Do_Open,
               AnsiString('FDQuery.Open() -> None') );

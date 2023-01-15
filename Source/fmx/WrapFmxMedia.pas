@@ -247,13 +247,11 @@ end;
 class procedure TPyDelphiCameraComponent.RegisterGetSets
   (PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 class procedure TPyDelphiCameraComponent.RegisterMethods
   (PythonType: TPythonType);
 begin
-  inherited;
 end;
 
 function TPyDelphiCameraComponent.GetDelphiObject: TCameraComponent;

@@ -35,7 +35,7 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith( PythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
 
     // Type services
     ////////////////
@@ -84,7 +84,7 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyPoint.Create will be automatically be called.
 
-constructor TPyPoint.CreateWith( PythonType : TPythonType; args : PPyObject );
+constructor TPyPoint.CreateWith(PythonType: TPythonType; args, kwds: PPyObject);
 begin
   inherited;
   with GetPythonEngine do

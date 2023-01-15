@@ -485,7 +485,6 @@ end;
 
 class procedure TPyDelphiGraphic.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Empty', @TPyDelphiGraphic.Get_Empty, nil,
@@ -507,7 +506,6 @@ end;
 
 class procedure TPyDelphiGraphic.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('LoadFromFile', @TPyDelphiGraphic.LoadFromFile_Wrapper,
     'TGraphic.LoadFromFile()'#10 +
     '');
@@ -889,7 +887,6 @@ end;
 
 class procedure TPyDelphiBitmap.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Canvas', @TPyDelphiBitmap.Get_Canvas, nil,
@@ -919,7 +916,6 @@ end;
 
 class procedure TPyDelphiBitmap.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   {$IFNDEF FPC}
   PythonType.AddMethod('Dormant', @TPyDelphiBitmap.Dormant_Wrapper,
     'TBitmap.Dormant()'#10 +
@@ -1767,7 +1763,6 @@ end;
 
 class procedure TPyDelphiCanvas.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('HandleAllocated', @TPyDelphiCanvas.Get_HandleAllocated, nil,
@@ -1797,7 +1792,6 @@ end;
 
 class procedure TPyDelphiCanvas.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Arc', @TPyDelphiCanvas.Arc_Wrapper,
     'TCanvas.Arc()'#10 +
     '');
@@ -2218,7 +2212,6 @@ end;
 
 class procedure TPyDelphiMetaFile.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('CreatedBy', @TPyDelphiMetaFile.Get_CreatedBy, nil,
@@ -2242,7 +2235,6 @@ end;
 
 class procedure TPyDelphiMetaFile.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Clear', @TPyDelphiMetaFile.Clear_Wrapper,
     'TMetaFile.Clear()'#10 +
     '');
@@ -2373,7 +2365,6 @@ end;
 
 class procedure TPyDelphiIcon.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Handle', @TPyDelphiIcon.Get_Handle, @TPyDelphiIcon.Set_Handle,
@@ -2385,7 +2376,6 @@ end;
 
 class procedure TPyDelphiIcon.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('ReleaseHandle', @TPyDelphiIcon.ReleaseHandle_Wrapper,
     'TIcon.ReleaseHandle()'#10 +
     '');
@@ -2494,7 +2484,6 @@ end;
 
 class procedure TPyDelphiPicture.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   with PythonType do
     begin
       AddGetSet('Bitmap', @TPyDelphiPicture.Get_Bitmap, @TPyDelphiPicture.Set_Bitmap,
@@ -2516,7 +2505,6 @@ end;
 
 class procedure TPyDelphiPicture.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('LoadFromFile', @TPyDelphiPicture.LoadFromFile_Wrapper,
     'TPicture.LoadFromFile()'#10 +
     '');

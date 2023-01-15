@@ -59,7 +59,7 @@ type
   TPyPoint = class(TPyDelphiPersistent)
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith( PythonType : TPythonType; args : PPyObject ); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     // Basic services
     function  Repr : PPyObject; override;
 
@@ -106,12 +106,18 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyPoint.Create will be automatically be called.
 
-constructor TPyPoint.CreateWith( PythonType : TPythonType; args : PPyObject );
+constructor TPyPoint.CreateWith(PythonType: TPythonType; args, kwds: PPyObject);
+var
+  KeyArray: array of AnsiString;
+  KeyPointerArray: array of PAnsiChar;
 begin
   inherited;
+  KeyArray := ['x', 'y'];
+  KeyPointerArray := [PAnsiChar(KeyArray[0]), PAnsiChar(KeyArray[1]), nil];
   with GetPythonEngine, DelphiObject as TPoint do
     begin
-      if PyArg_ParseTuple( args, 'ii:CreatePoint',@fx, @fy ) = 0 then
+      if PyArg_ParseTupleAndKeywords(args, kwds, 'ii:CreatePoint',
+        @KeyPointerArray[0], @fx, @fy) = 0 then
         Exit;
     end;
 end;

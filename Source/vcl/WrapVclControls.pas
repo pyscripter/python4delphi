@@ -295,14 +295,12 @@ end;
 
 class procedure TPyDelphiControl.RegisterGetSets(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('Parent', @TPyDelphiControl.Get_Parent, @TPyDelphiControl.Set_Parent,
         'Returns/Sets the Control Parent', nil);
 end;
 
 class procedure TPyDelphiControl.RegisterMethods(PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('Show', @TPyDelphiControl.Show_Wrapper,
     'TControl.Show()'#10 +
     'Shows the wrapped Control');
@@ -589,7 +587,6 @@ end;
 class procedure TPyDelphiWinControl.RegisterGetSets(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddGetSet('ControlCount', @TPyDelphiWinControl.Get_ControlCount, nil,
         'Returns the count of contained controls', nil);
   PythonType.AddGetSet('Controls', @TPyDelphiWinControl.Get_Controls, nil,
@@ -609,7 +606,6 @@ end;
 class procedure TPyDelphiWinControl.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('CanFocus', @TPyDelphiWinControl.CanFocus_Wrapper,
     'TWinControl.CanFocus()'#10 +
     'Indicates whether a control can receive focus. ');

@@ -122,7 +122,14 @@ type
 implementation
 
 uses
-  System.Types, System.IOUtils, System.Rtti, System.Messaging;
+  {$IFDEF OSX}
+  Macapi.AppKit,
+  FMX.Platform.Mac,
+  {$ENDIF OSX}
+  System.Types,
+  System.IOUtils,
+  System.Rtti,
+  System.Messaging;
 
 {$IFDEF OSX}
 var
@@ -225,10 +232,17 @@ begin
 end;
 
 function TPyDelphiApplication.Initialize_Wrapper(AArgs: PPyObject): PPyObject;
+{$IFDEF OSX}
+var
+  App: NSApplication;
+{$ENDIF OSX}
 begin
   Application.Initialize();
   {$IFDEF OSX}
-  //The application initialization routine in macOS requires
+  // #397
+  App := TNSApplication.Wrap(TNSApplication.OCClass.sharedApplication);
+   if App.ActivationPolicy > 0 then
+     App.setActivationPolicy(0);
   //the main form standard creation way,
   //due to MainMenu creation and others.
   Application.CreateForm(TInternalMainForm, gDelphiMainForm);
@@ -248,7 +262,6 @@ end;
 
 class procedure TPyDelphiApplication.RegisterMethods(APythonType: TPythonType);
 begin
-  inherited;
   with APythonType do begin
     AddMethod('Initialize', @TPyDelphiApplication.Initialize_Wrapper,
       'TApplication.Initialize()'#10 +
@@ -449,7 +462,6 @@ end;
 class procedure TPyDelphiCommonCustomForm.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('LoadProps', @TPyDelphiCustomForm.LoadProps_Wrapper,
     'TCommonCustomForm.LoadProps()'#10 +
     'Load properties from a .pydfm file');
