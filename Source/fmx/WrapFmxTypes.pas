@@ -148,6 +148,16 @@ type
     property DelphiObject: TControlSize read GetDelphiObject write SetDelphiObject;
   end;
 
+  TPyDelphiTimer = class (TPyDelphiComponent)
+  private
+    function  GetDelphiObject: TTimer;
+    procedure SetDelphiObject(const Value: TTimer);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TTimer read GetDelphiObject write SetDelphiObject;
+  end;
+
   {Helper functions}
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
   function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
@@ -289,6 +299,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimer);
 end;
 
 { Helper functions }
@@ -903,6 +914,23 @@ begin
     end
     else
       Result := -1;
+end;
+
+{ TPyDelphiTimer }
+
+class function TPyDelphiTimer.DelphiObjectClass: TClass;
+begin
+  Result := TTimer;
+end;
+
+function TPyDelphiTimer.GetDelphiObject: TTimer;
+begin
+  Result := TTimer(inherited DelphiObject);
+end;
+
+procedure TPyDelphiTimer.SetDelphiObject(const Value: TTimer);
+begin
+  inherited DelphiObject := Value;
 end;
 
 initialization
