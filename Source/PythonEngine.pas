@@ -179,6 +179,8 @@ const
 
   METH_VARARGS  = $0001;
   METH_KEYWORDS = $0002;
+  METH_CLASS    = $0010;
+  METH_STATIC   = $0020;
 
   // Masks for the co_flags field of PyCodeObject
   CO_OPTIMIZED   = $0001;
@@ -2110,6 +2112,12 @@ type
       function  AddMethodWithKeywords( AMethodName  : PAnsiChar;
                                        AMethod  : PyCFunctionWithKW;
                                        ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddClassMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
+      function  AddStaticMethodWithKeywords( AMethodName  : PAnsiChar;
+                                       AMethod  : PyCFunctionWithKW;
+                                       ADocString : PAnsiChar ) : PPyMethodDef;
       function  AddDelphiMethod( AMethodName  : PAnsiChar;
                                  ADelphiMethod: TDelphiMethod;
                                  ADocString : PAnsiChar ) : PPyMethodDef;
@@ -2363,7 +2371,6 @@ type
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
 }
   // The base class of all new Python types
-  TPyObjectClass = class of TPyObject;
   TPyObject = class
   private
     function  Get_ob_refcnt: NativeInt;
@@ -2470,6 +2477,7 @@ type
     class procedure RegisterGetSets( APythonType : TPythonType ); virtual;
     class procedure SetupType( APythonType : TPythonType ); virtual;
   end;
+  TPyObjectClass = class of TPyObject;
 
   TBasicServices     = set of (bsGetAttr, bsSetAttr,
                                bsRepr, bsCompare, bsHash,
@@ -6592,6 +6600,20 @@ begin
                        PyCFunction(AMethod),
                        ADocString );
   Result^.ml_flags := Result^.ml_flags or METH_KEYWORDS;
+end;
+
+function TMethodsContainer.AddStaticMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_STATIC;
+end;
+
+function TMethodsContainer.AddClassMethodWithKeywords(AMethodName: PAnsiChar;
+  AMethod: PyCFunctionWithKW; ADocString: PAnsiChar): PPyMethodDef;
+begin
+  Result := AddMethodWithKeywords(AMethodName, AMethod, ADocString);
+  Result^.ml_flags := Result^.ml_flags or METH_CLASS;
 end;
 
 function  TMethodsContainer.AddDelphiMethod( AMethodName  : PAnsiChar;
