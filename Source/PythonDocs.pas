@@ -181,6 +181,9 @@ var
   I: Integer;
   LSymbols: TDiscoveredSymbols;
 begin
+  if not TFile.Exists(AFileName) then
+    Exit;
+
   //We expect UTF-8 XML files
   LXMLDoc := LoadXmlDocument(AFileName);
 
