@@ -1283,12 +1283,14 @@ begin
   end;
 end;
 
-class function TExposedGetSetImplementation.Get_Wrapper(const AObj: PPyObject; const AContext : Pointer): PPyObject; cdecl;
+class function TExposedGetSetImplementation.Get_Wrapper(const AObj: PPyObject;
+  const AContext : Pointer): PPyObject; cdecl;
 begin
   Result := nil;
 end;
 
-class function TExposedGetSetImplementation.Set_Wrapper(const AObj, AValue: PPyObject; const AContext: Pointer): integer; cdecl;
+class function TExposedGetSetImplementation.Set_Wrapper(const AObj,
+  AValue: PPyObject; const AContext: Pointer): integer; cdecl;
 begin
   Result := 0;
 end;
