@@ -4326,7 +4326,7 @@ begin
   GlobalVars := nil;
   Destroying;
   Finalize;
-  FreeAndNil(FClients);
+  FClients.Free;
   FInitScript.Free;
   FTraceback.Free;
   inherited;
@@ -4634,26 +4634,22 @@ begin
   Result := TEngineClient( FClients.Items[idx] );
 end;
 
-procedure TPythonEngine.Notification( AComponent: TComponent;
-                                      Operation: TOperation);
+procedure TPythonEngine.Notification(AComponent: TComponent;
+  Operation: TOperation);
 var
   i : Integer;
 begin
   inherited;
-  if Operation = opRemove then
-    begin
-      if AComponent = IO then
-        IO := nil
-      else if Assigned(FClients) then
+  if (Operation = opRemove) and (AComponent <> Self) then
+    if AComponent = IO then
+      IO := nil
+    else
+      for i := 0 to ClientCount - 1 do
+        if Clients[i] = AComponent then
         begin
-          for i := 0 to ClientCount - 1 do
-            if Clients[i] = AComponent then
-              begin
-                RemoveClient( Clients[i] );
-                Break;
-              end;
+          RemoveClient(Clients[i]);
+          Break;
         end;
-    end;
 end;
 
 procedure TPythonEngine.CheckRegistry;
