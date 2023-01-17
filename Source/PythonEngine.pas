@@ -2032,8 +2032,6 @@ type
 
       procedure SetEngine( val : TPythonEngine ); virtual;
       procedure Loaded; override;
-      procedure Notification( AComponent: TComponent;
-                              Operation: TOperation); override;
       procedure ModuleReady(Sender : TObject); virtual;
     public
       // Constructors & destructors
@@ -4616,24 +4614,10 @@ end;
 
 procedure TPythonEngine.Notification( AComponent: TComponent;
                                       Operation: TOperation);
-var
-  i : Integer;
 begin
   inherited;
-  if Operation = opRemove then
-    begin
-      if AComponent = IO then
-        IO := nil
-      else
-        begin
-          for i := 0 to ClientCount - 1 do
-            if Clients[i] = AComponent then
-              begin
-                RemoveClient( Clients[i] );
-                Break;
-              end;
-        end;
-    end;
+  if (Operation = opRemove) and (AComponent = IO) then
+    IO := nil
 end;
 
 procedure TPythonEngine.CheckRegistry;
@@ -6408,14 +6392,6 @@ begin
   inherited;
   if Assigned( FOnCreate ) then
     FOnCreate( Self );
-end;
-
-procedure TEngineClient.Notification( AComponent: TComponent; Operation: TOperation);
-begin
-  inherited;
-  if Operation = opRemove then
-    if AComponent = FEngine then
-      FEngine := nil;
 end;
 
 procedure  TEngineClient.Initialize;
