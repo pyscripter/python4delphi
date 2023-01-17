@@ -2415,9 +2415,9 @@ type
     PythonAlloc    : Boolean;
 
     // Constructors & Destructors
-    constructor Create( APythonType : TPythonType ); virtual;
-    constructor CreateWith( APythonType : TPythonType; args : PPyObject ); overload; virtual;
-    constructor CreateWith( APythonType : TPythonType; args, kwds : PPyObject ); overload; virtual;
+    constructor Create(APythonType: TPythonType); virtual;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); overload; virtual;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); overload; virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -2720,7 +2720,7 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
     destructor  Destroy; override;
 
     // Type services
@@ -3076,7 +3076,9 @@ begin
 
   if (DLLPath = '') and not FInExtensionModule then begin
     {$IFDEF MSWINDOWS}
-    IsPythonVersionRegistered(RegVersion, Result, AllUserInstall);
+    if IsPythonVersionRegistered(RegVersion, Result, AllUserInstall) and (Self is TPythonEngine) then
+      // https://github.com/python/cpython/issues/100171
+      TPythonEngine(Self).SetPythonHome(Result);
     {$ENDIF}
     {$IFDEF DARWIN}
     Result := '/Library/Frameworks/Python.framework/Versions/' + RegVersion + '/lib/';
@@ -4526,7 +4528,6 @@ procedure TPythonEngine.Initialize;
 
 var
   i : Integer;
-  WorkAround: AnsiString;
 begin
   if Assigned(gPythonEngine) then
     raise Exception.Create('There is already one instance of TPythonEngine running' );
@@ -4564,24 +4565,6 @@ begin
     with Clients[i] do
       if not Initialized then
         Initialize;
-
-  // WorkAround for https://github.com/python/cpython/issues/100171
-  if (MajorVersion = 3) and (MinorVersion >= 11) then
-  begin
-    WorkAround :=
-      'import sys'#13#10 + //0
-      'if sys.version_info > (3,11,0):'#13#10 + //1
-      '    import os'#13#10 + //2
-      ''#13#10 + //3
-      '    dllpath = os.path.join(sys.base_prefix, ''DLLs'')'#13#10 + //4
-      '    if dllpath not in sys.path:'#13#10 + //5
-      '        sys.path.insert(3, dllpath)'#13#10 + //6
-      ''#13#10 + //7
-      '    del dllpath'#13#10 + //8
-      '    del os'#13#10 + //9
-      'del sys'#13#10; //10
-    ExecString(WorkAround);
-  end;
 
   if InitScript.Count > 0 then
     ExecStrings(InitScript);
@@ -7472,7 +7455,7 @@ end;
 //  TPyObject
 
 // Constructors & Destructors
-constructor TPyObject.Create( APythonType : TPythonType );
+constructor TPyObject.Create(APythonType: TPythonType);
 begin
   inherited Create;
   if Assigned(APythonType) then
@@ -7487,9 +7470,9 @@ begin
   end;
 end;
 
-constructor TPyObject.CreateWith( APythonType : TPythonType; args : PPyObject );
+constructor TPyObject.CreateWith(APythonType: TPythonType; args: PPyObject);
 begin
-  Create( APythonType );
+  Create(APythonType);
 end;
 
 constructor TPyObject.CreateWith(APythonType: TPythonType; args,
@@ -8066,7 +8049,7 @@ begin
     end;
 end;
 
-function  TPythonType.CreateMethod( pSelf, args, kwds : PPyObject ) : PPyObject;
+function TPythonType.CreateMethod(pSelf, args, kwds: PPyObject): PPyObject;
 begin
   Result := CreateInstanceWith(args, kwds);
 end;
@@ -8754,7 +8737,7 @@ begin
       meth := CreateMethod;
       FCreateFuncDef.ml_name  := PAnsiChar(FCreateFuncName);
       FCreateFuncDef.ml_meth  := GetOfObjectCallBack(TCallBack(meth), 3, DEFAULT_CALLBACK_TYPE);
-      FCreateFuncDef.ml_flags := METH_KEYWORDS;
+      FCreateFuncDef.ml_flags := METH_VARARGS or METH_KEYWORDS;
       FCreateFuncDef.ml_doc   := PAnsiChar(FCreateFuncDoc);
       FCreateFunc := Engine.PyCFunction_NewEx(@FCreateFuncDef, nil, nil);
       Engine.Py_INCREF(FCreateFunc);
@@ -8993,7 +8976,7 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyVar.Create will be automatically be called.
 
-constructor TPyVar.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
+constructor TPyVar.CreateWith(APythonType: TPythonType; args: PPyObject);
 begin
   inherited;
   with GetPythonEngine do

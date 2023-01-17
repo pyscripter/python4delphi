@@ -123,13 +123,14 @@ begin
     if Is_venv then begin
       TPythonEngine(PythonEngine).VenvPythonExe := PythonExecutable;
       TPythonEngine(PythonEngine).SetPythonHome(DLLPath);
-    end else if not IsRegistered or Is_conda then
+    end else
       {
-         Not sure why but PythonHome needs to be set even for
-         registered conda distributions
-         Note also that for conda distributions to work properly,
+         Note that for conda distributions to work properly,
          you need to add Format('%s;%0:s\Library\bin;', [Version.InstallPath]
          to your Windows path if it is not there already.
+
+         Following the advice in https://github.com/python/cpython/issues/100171
+         SetPythonHome is called even for registered versions
       }
       TPythonEngine(PythonEngine).SetPythonHome(InstallPath);
   end;
