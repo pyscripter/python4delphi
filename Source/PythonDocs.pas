@@ -100,6 +100,10 @@ type
   private
     class var FDiscoveredFiles: TDiscoveredFiles;
     /// <summary>
+    ///    Creates a XML document instance with the necessary settings.
+    /// </summary>
+    class function CreateXmlDoc(const AFileName: string): IXMLDocument;
+    /// <summary>
     ///    Create a buffer with all nodes of the XML file.
     /// </summary>
     class procedure BufferizeClasses(const AClassNodes: IXMLNode; const ASymbolMap: TDiscoveredSymbols);
@@ -173,6 +177,23 @@ begin
   Result := nil;
 end;
 
+class function TPythonDocXML.CreateXmlDoc(const AFileName: string): IXMLDocument;
+var
+  LXMLDocument: TXMLDocument;
+begin
+  LXMLDocument := TXMLDocument.Create(nil);
+  try
+    LXMLDocument.DOMVendor := GetDOMVendor(sOmniXmlVendor);
+    LXMLDocument.FileName := AFileName;
+    LXMLDocument.Active := true;
+  except
+    LXMLDocument.Free();
+    raise;
+  end;
+
+  Result := LXMLDocument;
+end;
+
 class procedure TPythonDocXML.Bufferize(const AFileName: string);
 var
   LXMLDoc: IXMLDocument;
@@ -184,8 +205,7 @@ begin
   if not TFile.Exists(AFileName) then
     Exit;
 
-  //We expect UTF-8 XML files
-  LXMLDoc := LoadXmlDocument(AFileName);
+  LXMLDoc := CreateXmlDoc(AFileName);
 
   LXmlDOMNodeSelect := (LXMLDoc.DOMDocument.documentElement as IDOMNodeSelect);
   if not Assigned(LXmlDOMNodeSelect) then
@@ -454,7 +474,6 @@ begin
 end;
 
 initialization
-  DefaultDomVendor := sOmniXmlVendor;
   TPythonDocServer.Instance.Bufferize();
 
 end.
