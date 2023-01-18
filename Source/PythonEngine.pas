@@ -2032,8 +2032,6 @@ type
 
       procedure SetEngine( val : TPythonEngine ); virtual;
       procedure Loaded; override;
-      procedure Notification( AComponent: TComponent;
-                              Operation: TOperation); override;
       procedure ModuleReady(Sender : TObject); virtual;
     public
       // Constructors & destructors
@@ -2344,7 +2342,8 @@ type
       procedure DefineDocString;
       procedure Initialize; override;
       procedure InitializeForNewInterpreter;
-      procedure AddClient( client : TEngineClient );
+      procedure AddClient(Client : TEngineClient);
+      procedure RemoveClient(Client : TEngineClient);
       function  ErrorByName( const AName : AnsiString ) : TError;
       procedure RaiseError( const error, msg : AnsiString );
       procedure RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
@@ -4323,11 +4322,15 @@ begin
 end;
 
 destructor TPythonEngine.Destroy;
+var
+  I: Integer;
 begin
   LocalVars := nil;
   GlobalVars := nil;
   Destroying;
   Finalize;
+  for I := 0 to ClientCount - 1 do
+    Clients[I].ClearEngine;
   FClients.Free;
   FInitScript.Free;
   FTraceback.Free;
@@ -4337,7 +4340,6 @@ end;
 procedure TPythonEngine.Finalize;
 var
   i: integer;
-  canDetachClients : Boolean;
 begin
   // switch off redirection when the component is destroying,
   // because the form or datamodule is beeing closed, and
@@ -4371,21 +4373,6 @@ begin
       end;
     except
     end;
-  end;
-  // Detach our clients, when engine is being destroyed or one of its clients.
-  canDetachClients := csDestroying in ComponentState;
-  if not canDetachClients then
-    for i := 0 to ClientCount - 1 do
-      if csDestroying in Clients[i].ComponentState then
-      begin
-        canDetachClients := True;
-        Break;
-      end;
-  if canDetachClients then
-  begin
-    for i := 0 to ClientCount - 1 do
-      Clients[i].ClearEngine;
-    FClients.Clear;
   end;
   // Free our reference
   gPythonEngine               := nil;
@@ -4617,22 +4604,12 @@ begin
   Result := TEngineClient( FClients.Items[idx] );
 end;
 
-procedure TPythonEngine.Notification(AComponent: TComponent;
-  Operation: TOperation);
-var
-  i : Integer;
+procedure TPythonEngine.Notification( AComponent: TComponent;
+                                      Operation: TOperation);
 begin
   inherited;
-  if (Operation = opRemove) and (AComponent <> Self) then
-    if AComponent = IO then
-      IO := nil
-    else
-      for i := 0 to ClientCount - 1 do
-        if Clients[i] = AComponent then
-        begin
-          RemoveClient(Clients[i]);
-          Break;
-        end;
+  if (Operation = opRemove) and (AComponent = IO) then
+    IO := nil
 end;
 
 procedure TPythonEngine.CheckRegistry;
@@ -5402,7 +5379,7 @@ begin
   // is not predictable and may cause some memory crashes !
   if (csDesigning in ComponentState) then
     FClients.Remove( client )
-  else if (Initialized) then begin
+  else if Initialized then begin
     FClients.Remove( client );
     if (ClientCount = 0) then
       Finalize;
@@ -6409,14 +6386,6 @@ begin
     FOnCreate( Self );
 end;
 
-procedure TEngineClient.Notification( AComponent: TComponent; Operation: TOperation);
-begin
-  inherited;
-  if Operation = opRemove then
-    if AComponent = FEngine then
-      FEngine := nil;
-end;
-
 procedure  TEngineClient.Initialize;
 begin
   if FInitialized then
@@ -7305,9 +7274,10 @@ begin
   end;
 end;
 
-procedure TPythonModule.AddClient( client : TEngineClient );
+procedure TPythonModule.AddClient(Client : TEngineClient);
 begin
-  FClients.Add( client );
+  if FClients.IndexOf(Client) < 0 then
+    FClients.Add(Client);
 end;
 
 function TPythonModule.ErrorByName( const AName : AnsiString ) : TError;
@@ -7336,6 +7306,12 @@ end;
 procedure TPythonModule.RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
 begin
   ErrorByName( error ).RaiseErrorObj( msg, obj );
+end;
+
+procedure TPythonModule.RemoveClient(Client: TEngineClient);
+begin
+  // Remove does not raise an exception if not found
+  FClients.Remove(Client);
 end;
 
 procedure TPythonModule.BuildErrors;
@@ -8020,13 +7996,21 @@ procedure TPythonType.SetModule( val : TPythonModule );
 begin
   if val <> FModule then
     begin
+      if Assigned(FModule) then
+      begin
+        FModule.RemoveFreeNotification(Self);
+        FModule.RemoveClient(Self);
+      end;
       FModule := val;
       if Assigned(val) then
+      begin
+        val.FreeNotification(Self);
         if Initialized and not (csLoading in ComponentState) then
           if val.Initialized then
             AddTypeVar
           else
             val.AddClient(Self);
+      end;
     end;
 end;
 
@@ -8644,6 +8628,7 @@ destructor  TPythonType.Destroy;
 begin
   if gVarType = Self then
     gVarType := nil;
+  Module := nil;
   FDocString.Free;
   FServices.Free;
   inherited;

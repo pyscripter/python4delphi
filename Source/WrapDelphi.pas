@@ -4381,6 +4381,7 @@ begin
   FreeAndNil(fClassRegister);
   FreeAndNil(fHelperClassRegister);
   FreeAndNil(fEventHandlerList);
+  Module := nil;
 
   //No need to free PythonType objects since they are owned;
   inherited;
@@ -4537,7 +4538,10 @@ Var
 begin
   if Value <> FModule then begin
     if Assigned(FModule) then
+    begin
       FModule.RemoveFreeNotification(Self);
+      FModule.RemoveClient(Self);
+    end;
     FModule := Value;
     if Assigned(FModule) then
       FModule.FreeNotification(Self);
