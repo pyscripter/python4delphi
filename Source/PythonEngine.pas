@@ -2342,7 +2342,8 @@ type
       procedure DefineDocString;
       procedure Initialize; override;
       procedure InitializeForNewInterpreter;
-      procedure AddClient( client : TEngineClient );
+      procedure AddClient(Client : TEngineClient);
+      procedure RemoveClient(Client : TEngineClient);
       function  ErrorByName( const AName : AnsiString ) : TError;
       procedure RaiseError( const error, msg : AnsiString );
       procedure RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
@@ -5387,7 +5388,7 @@ begin
   // is not predictable and may cause some memory crashes !
   if (csDesigning in ComponentState) then
     FClients.Remove( client )
-  else if (Initialized) then begin
+  else if Initialized then begin
     FClients.Remove( client );
     if (ClientCount = 0) then
       Finalize;
@@ -7282,9 +7283,10 @@ begin
   end;
 end;
 
-procedure TPythonModule.AddClient( client : TEngineClient );
+procedure TPythonModule.AddClient(Client : TEngineClient);
 begin
-  FClients.Add( client );
+  if FClients.IndexOf(Client) < 0 then
+    FClients.Add(Client);
 end;
 
 function TPythonModule.ErrorByName( const AName : AnsiString ) : TError;
@@ -7313,6 +7315,12 @@ end;
 procedure TPythonModule.RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
 begin
   ErrorByName( error ).RaiseErrorObj( msg, obj );
+end;
+
+procedure TPythonModule.RemoveClient(Client: TEngineClient);
+begin
+  // Remove does not raise an exception if not found
+  FClients.Remove(Client);
 end;
 
 procedure TPythonModule.BuildErrors;
@@ -7984,13 +7992,21 @@ procedure TPythonType.SetModule( val : TPythonModule );
 begin
   if val <> FModule then
     begin
+      if Assigned(FModule) then
+      begin
+        FModule.RemoveFreeNotification(Self);
+        FModule.RemoveClient(Self);
+      end;
       FModule := val;
       if Assigned(val) then
+      begin
+        val.FreeNotification(Self);
         if Initialized and not (csLoading in ComponentState) then
           if val.Initialized then
             AddTypeVar
           else
             val.AddClient(Self);
+      end;
     end;
 end;
 
@@ -8608,6 +8624,7 @@ destructor  TPythonType.Destroy;
 begin
   if gVarType = Self then
     gVarType := nil;
+  Module := nil;
   FDocString.Free;
   FServices.Free;
   inherited;
