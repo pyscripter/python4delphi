@@ -473,7 +473,4 @@ begin
   end;
 end;
 
-initialization
-  TPythonDocServer.Instance.Bufferize();
-
 end.

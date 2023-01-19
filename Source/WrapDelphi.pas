@@ -4323,6 +4323,11 @@ procedure TPyDelphiWrapper.CreateWrappers;
 var
   i : Integer;
 begin
+  {$IFDEF EXPOSE_MEMBERS}
+  //Bufferize the doc strings from XML
+  TPythonDocServer.Instance.Bufferize();
+  {$ENDIF EXPOSE_MEMBERS}
+
   // Helper Types
 {$IFNDEF FPC}
   fDelphiMethodType := RegisterHelperType(TPyDelphiMethodObject);
