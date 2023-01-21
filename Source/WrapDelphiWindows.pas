@@ -4,10 +4,14 @@ unit WrapDelphiWindows;
 
 interface
 
+{$IFDEF MSWINDOWS}
 uses
   Windows, Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses;
+{$ENDIF MSWINDOWS}
 
 implementation
+
+{$IFDEF MSWINDOWS}
 
 {$IFDEF DELPHI11_OR_HIGHER}
 uses
@@ -187,11 +191,11 @@ end;
 initialization
   RegisteredUnits.Add(TWindowsRegistration.Create);
 
-  {$IFDEF MSWINDOWS}
-    {$IFDEF DELPHI11_OR_HIGHER}
-    SetHighDpiAware();
-    {$ENDIF DELPHI11_OR_HIGHER}
-  {$ENDIF MSWINDOWS}
+  {$IFDEF DELPHI11_OR_HIGHER}
+  SetHighDpiAware();
+  {$ENDIF DELPHI11_OR_HIGHER}
+
+{$ENDIF MSWINDOWS}
 
 end.
 
