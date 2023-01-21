@@ -3931,7 +3931,6 @@ var
   Index : integer;
 begin
   CheckEngine;
-  // We cast the python object to the right delphi type
   if not Assigned(AClass) then
     Result := Engine.ReturnNone
   else begin
@@ -3947,7 +3946,7 @@ begin
       if Index >= 0 then break;
       DelphiClass := DelphiClass.ClassParent;
     end;
-    Assert(Index >= 0, 'Internal Error in PyDelphiWrapper.Wrap'); // shouldn't happen
+    Assert(Index >= 0, 'Internal Error in PyDelphiWrapper.WrapClass'); // shouldn't happen
 
     Result := PPyObject(TRegisteredClass(fClassRegister[Index]).PythonType.TheTypePtr);
     Engine.Py_XINCREF(Result);
