@@ -33,6 +33,7 @@ uses
   WrapFmxMenus,
   WrapFmxStyles,
   WrapFmxMemo,
-  WrapFmxColors;
+  WrapFmxColors,
+  WrapFmxDateTime;
 
 end.
