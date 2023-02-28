@@ -3315,7 +3315,9 @@ end;
 class procedure TPyDelphiObject.SetupType(PythonType: TPythonType);
 var
   _ContainerAccessClass : TContainerAccessClass;
+  {$IFDEF EXPOSE_MEMBERS}
   LDocStr: string;
+  {$ENDIF EXPOSE_MEMBERS}
 begin
   inherited;
   PythonType.TypeName := AnsiString(GetTypeName);
