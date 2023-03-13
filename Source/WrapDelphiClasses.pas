@@ -5,7 +5,8 @@ unit WrapDelphiClasses;
 interface
 
 uses
-  Classes, SysUtils, PythonEngine, WrapDelphi;
+  Classes, SysUtils, PythonEngine, WrapDelphi
+  {$IFDEF FPC}, bufstream{$ENDIF};
 
 type
   {
@@ -366,6 +367,7 @@ implementation
 
 uses
   TypInfo {$IFNDEF FPC}, System.Rtti{$ENDIF};
+
 
 {$IFNDEF FPC}
 type
@@ -2223,7 +2225,12 @@ begin
       DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LBufferSize);
   end else if (LArgCount = 3) then begin
     if (APythonType.Engine.PyArg_ParseTupleAndKeywords(args, kwds, 'sHI|i:Create', @LKwArgs2[0], @LFileName, @LMode, @LRights, @LBufferSize) <> 0) then
-      DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights, LBufferSize);
+    {$IFDEF FPC}
+    DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights);
+    DelphiObject.Size:= LBufferSize;
+    {$ELSE}
+    DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights, LBufferSize);
+    {$ENDIF}
   end;
 
   //Maybe it was created on the next attempt...
@@ -2385,14 +2392,22 @@ begin
     {$ELSE}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Iss:Create', @LHandle, @LResName, @LResType) <> 0 then
     {$ENDIF}
+    {$IFDEF FPC}
+      DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PChar(String(LResType)))
+    {$ELSE}
       DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PWideChar(String(LResType)))
+    {$ENDIF}
     else
     {$IFDEF CPUX64}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Kis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ELSE}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ENDIF}
+    {$IFDEF FPC}
+      DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PChar(String(LResType)));
+    {$ELSE}
       DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PWideChar(String(LResType)));
+    {$ENDIF}
   except
     on E: Exception do
       with GetPythonEngine do

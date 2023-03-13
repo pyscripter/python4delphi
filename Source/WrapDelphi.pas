@@ -2571,6 +2571,9 @@ var
 
 var
   PyType: PPyTypeObject;
+	${IFDEF FPC}
+  i: longint;
+	${ENDIF}
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;

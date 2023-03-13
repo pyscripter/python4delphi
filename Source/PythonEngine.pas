@@ -6066,7 +6066,11 @@ begin
       Exit;
 
     // The second argument is the size of the destination (Result) including #0
+		${IFDEF FPC}
+    NewSize := Utf8ToUnicode(PUnicodeChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
+		${ELSE}
     NewSize := Utf8ToUnicode(PChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
+		${ENDIF}
     // NewSize includes #0
     SetLength(Result, NewSize - 1);
   end
