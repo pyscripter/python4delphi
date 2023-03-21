@@ -2573,6 +2573,8 @@ var
   PyType: PPyTypeObject;
   {$IFDEF FPC}
   i: longint;
+  {$ELSE}
+  i: integer;
   {$ENDIF}
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;

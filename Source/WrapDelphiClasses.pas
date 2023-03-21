@@ -2392,22 +2392,14 @@ begin
     {$ELSE}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Iss:Create', @LHandle, @LResName, @LResType) <> 0 then
     {$ENDIF}
-    {$IFDEF FPC}
-      DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PChar(String(LResType)))
-    {$ELSE}
-      DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PWideChar(String(LResType)))
-    {$ENDIF}
+    DelphiObject := TResourceStreamClass(DelphiObjectClass).Create(LHandle, String(LResName), PChar(String(LResType)))
     else
     {$IFDEF CPUX64}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Kis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ELSE}
     if APythonType.Engine.PyArg_ParseTuple(args, 'Iis:Create', @LHandle, @LResId, @LResType) <> 0 then
     {$ENDIF}
-    {$IFDEF FPC}
-      DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PChar(String(LResType)));
-    {$ELSE}
-      DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PWideChar(String(LResType)));
-    {$ENDIF}
+    DelphiObject := TResourceStreamClass(DelphiObjectClass).CreateFromID(LHandle, LResId, PChar(String(LResType)));
   except
     on E: Exception do
       with GetPythonEngine do
