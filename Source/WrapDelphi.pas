@@ -2571,12 +2571,14 @@ var
 
 var
   PyType: PPyTypeObject;
+
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;
 {$ELSE}
   _PropList: PPropList;
   _propCount : Integer;
+  i: Integer;
 {$ENDIF}
 begin
   Adjust(@Self);

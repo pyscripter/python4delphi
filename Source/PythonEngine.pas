@@ -6066,7 +6066,8 @@ begin
       Exit;
 
     // The second argument is the size of the destination (Result) including #0
-    NewSize := Utf8ToUnicode(PChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
+    NewSize := Utf8ToUnicode(PWideChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
+
     // NewSize includes #0
     SetLength(Result, NewSize - 1);
   end
