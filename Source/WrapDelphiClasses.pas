@@ -368,7 +368,6 @@ implementation
 uses
   TypInfo {$IFNDEF FPC}, System.Rtti{$ENDIF};
 
-
 {$IFNDEF FPC}
 type
   TPyReader = class(TReader)
@@ -2222,14 +2221,23 @@ begin
   LArgCount := APythonType.Engine.PyTuple_Size(args);
   if (LArgCount = 2) then begin
     if (APythonType.Engine.PyArg_ParseTupleAndKeywords(args, kwds, 'sH|i:Create', @LKwArgs1[0], @LFileName, @LMode, @LBufferSize) <> 0) then
+    {$IFDEF FPC}
+    begin
+      DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode);
+      DelphiObject.Size:= LBufferSize;
+    end;
+    {$ELSE}
       DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LBufferSize);
+    {$ENDIF}
   end else if (LArgCount = 3) then begin
     if (APythonType.Engine.PyArg_ParseTupleAndKeywords(args, kwds, 'sHI|i:Create', @LKwArgs2[0], @LFileName, @LMode, @LRights, @LBufferSize) <> 0) then
     {$IFDEF FPC}
-    DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights);
-    DelphiObject.Size:= LBufferSize;
+    begin
+      DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights);
+      DelphiObject.Size:= LBufferSize;
+    end;
     {$ELSE}
-    DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights, LBufferSize);
+      DelphiObject := TBufferedFileStreamClass(DelphiObjectClass).Create(String(LFileName), LMode, LRights, LBufferSize);
     {$ENDIF}
   end;
 
