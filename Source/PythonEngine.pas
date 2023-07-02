@@ -1956,8 +1956,9 @@ type
     function   ArrayToPyDict( const items : array of const) : PPyObject;
     function   StringsToPyList( strings : TStrings ) : PPyObject;
     function   StringsToPyTuple( strings : TStrings ) : PPyObject;
-    procedure PyListToStrings(list: PPyObject; Strings: TStrings; ClearStrings: Boolean = True);
+    procedure  PyListToStrings(list: PPyObject; Strings: TStrings; ClearStrings: Boolean = True);
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
+    function   GetSequenceItem( sequence : PPyObject; idx : Integer ) : Variant;
     function   ReturnNone : PPyObject;
     function   ReturnTrue : PPyObject;
     function   ReturnFalse : PPyObject;
@@ -4785,6 +4786,19 @@ begin
 {$ENDIF}
 end;
 
+function TPythonEngine.GetSequenceItem(sequence: PPyObject;
+  idx: Integer): Variant;
+  var
+    val : PPyObject;
+  begin
+    val := PySequence_GetItem( sequence, idx );
+    try
+      Result := PyObjectAsVariant( val );
+    finally
+      Py_XDecRef( val );
+    end;
+end;
+
 function  TPythonEngine.GetProgramName: UnicodeString;
 begin
 {$IFDEF POSIX}
@@ -5740,18 +5754,6 @@ function TPythonEngine.PyObjectAsVariant( obj : PPyObject ) : Variant;
         except
         end;
       end;
-  end;
-
-  function GetSequenceItem( sequence : PPyObject; idx : Integer ) : Variant;
-  var
-    val : PPyObject;
-  begin
-    val := PySequence_GetItem( sequence, idx );
-    try
-      Result := PyObjectAsVariant( val );
-    finally
-      Py_XDecRef( val );
-    end;
   end;
 
 var
