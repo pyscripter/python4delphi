@@ -2043,8 +2043,11 @@ begin
 
   try
     if ParentRtti is TRttiInstanceType then
-      if meth.IsClassMethod then
-        Addr := TValue.From(TObject(ParentAddress).ClassType)
+      if meth.IsClassMethod or meth.IsStatic then
+        if AParentAddrIsClass then
+          Addr := TValue.From(TClass(ParentAddress))
+        else
+          Addr := TValue.From(TObject(ParentAddress).ClassType)
       else
         Addr := TValue.From(TObject(ParentAddress))
     else if ParentRtti is TRttiInterfaceType then
@@ -2571,7 +2574,6 @@ var
 
 var
   PyType: PPyTypeObject;
-
 {$IFDEF EXTENDED_RTTI}
   Context: TRttiContext;
   RttiType: TRTTIType;
@@ -2688,7 +2690,6 @@ end;
 class procedure TPyDelphiObject.RegisterGetSets(PythonType: TPythonType);
 begin
   inherited;
-
   // then register TObject + custom getters/setters.
   with PythonType do
     begin
@@ -4022,4 +4023,3 @@ finalization
 {$ENDIF}
   FreeAndNil(gRegisteredUnits);
 end.
-

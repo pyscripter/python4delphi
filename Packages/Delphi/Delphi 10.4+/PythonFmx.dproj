@@ -158,6 +158,7 @@
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxStdCtrls.pas"/>
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxStyles.pas"/>
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxTypes.pas"/>
+        <DCCReference Include="..\..\..\Source\fmx\WrapFmxDateTime.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, PythonEngine, WrapDelphi, WrapDelphiClasses, WrapVclControls,
-  Windows, ExtCtrls;
+  Windows, ExtCtrls, TypInfo, Rtti;
 
 type
   TPyDelphiShape = class (TPyDelphiGraphicControl)
@@ -169,6 +169,37 @@ type
   end;
   {$ENDIF FPC}
 
+  TSysLinkEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; const Link: string; LinkType: TSysLinkType);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TPyDelphiCustomLinkLabel = class (TPyDelphiWinControl)
+  private
+    function  GetDelphiObject: TCustomLinkLabel;
+    procedure SetDelphiObject(const Value: TCustomLinkLabel);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TCustomLinkLabel read GetDelphiObject write SetDelphiObject;
+  end;
+
+  TPyDelphiLinkLabel = class (TPyDelphiCustomLinkLabel)
+  private
+    function  GetDelphiObject: TLinkLabel;
+    procedure SetDelphiObject(const Value: TLinkLabel);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: TLinkLabel read GetDelphiObject write SetDelphiObject;
+  end;
+
+  function SysLinkTypeToPython(const ASysLinkType: TSysLinkType): PPyObject;
+
 implementation
 
 { Register the wrappers, the globals and the constants }
@@ -216,8 +247,18 @@ begin
   {$IFNDEF FPC}
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiColorBox);
   {$ENDIF FPC}
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomLinkLabel);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiLinkLabel);
+
+  // Event handlers
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TSysLinkEventHandler);
 end;
 
+function SysLinkTypeToPython(const ASysLinkType: TSysLinkType): PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(
+    TRttiEnumerationType.GetName<TSysLinkType>(ASysLinkType));
+end;
 
 { TPyDelphiShape }
 
@@ -493,6 +534,83 @@ begin
 end;
 {$ENDIF FPC}
 
+{ TSysLinkEventHandler }
+
+constructor TSysLinkEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TSysLinkEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TSysLinkEventHandler.DoEvent(Sender: TObject; const Link: string;
+  LinkType: TSysLinkType);
+var
+  LPyTuple, LPySender, LPyLink, LPyLinkType, PyResult: PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPySender := PyDelphiWrapper.Wrap(Sender);
+      LPyLink := PyUnicodeFromString(Link);
+      LPyLinkType := SysLinkTypeToPython(LinkType);
+      LPyTuple := PyTuple_New(3);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPySender);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyLink);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyLinkType);
+      try
+        PyResult := PyObject_CallObject(Callable, LPyTuple);
+        Py_XDECREF(PyResult);
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TSysLinkEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TSysLinkEvent);
+end;
+
+{ TPyDelphiCustomLinkLabel }
+
+class function TPyDelphiCustomLinkLabel.DelphiObjectClass: TClass;
+begin
+  Result := TCustomLinkLabel;
+end;
+
+function TPyDelphiCustomLinkLabel.GetDelphiObject: TCustomLinkLabel;
+begin
+  Result := TCustomLinkLabel(inherited DelphiObject);
+end;
+
+procedure TPyDelphiCustomLinkLabel.SetDelphiObject(
+  const Value: TCustomLinkLabel);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiLinkLabel }
+
+class function TPyDelphiLinkLabel.DelphiObjectClass: TClass;
+begin
+  Result := TLinkLabel;
+end;
+
+function TPyDelphiLinkLabel.GetDelphiObject: TLinkLabel;
+begin
+  Result := TLinkLabel(inherited DelphiObject);
+end;
+
+procedure TPyDelphiLinkLabel.SetDelphiObject(const Value: TLinkLabel);
+begin
+  inherited DelphiObject := Value;
+end;
 
 initialization
   RegisteredUnits.Add( TExtCtrlsRegistration.Create );

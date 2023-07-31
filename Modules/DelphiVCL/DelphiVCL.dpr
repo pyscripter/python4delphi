@@ -12,12 +12,9 @@ exports
   // So if the project is named DelphiVCL then
   //   the export must be PyInit_DelphiVCL
   PyInit_DelphiVCL;
+
 {$IFDEF MSWINDOWS}
 {$E pyd}
-{$ENDIF}
-{$IFDEF LINUX}
-{$SONAME 'DelphiVCL'}
-
 {$ENDIF}
 
 begin

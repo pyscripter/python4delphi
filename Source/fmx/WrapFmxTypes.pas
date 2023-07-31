@@ -4,7 +4,8 @@ unit WrapFmxTypes;
 interface
 
 uses
-  System.Types, FMX.Types, PythonEngine, WrapDelphi, WrapDelphiClasses;
+  System.Types, FMX.Types, PythonEngine, WrapDelphi, WrapDelphiClasses,
+  System.TypInfo, System.UITypes, System.Classes;
 
 type
   {
@@ -70,6 +71,25 @@ type
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     class procedure SetupType(PythonType: TPythonType); override;
     property Value: TRectF read FValue write FValue;
+  end;
+
+  TPyDelphiTouch = class(TPyObject)
+  private
+    FValue: TTouch;
+    FPyDelphiWrapper: TPyDelphiWrapper;
+  protected
+    // Exposed Getters
+    function Get_Location(AContext: Pointer): PPyObject; cdecl;
+    // Exposed Setters
+    function Set_Location(AValue: PPyObject; AContext: Pointer): integer; cdecl;
+  public
+    constructor Create(APythonType: TPythonType); override;
+    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    function Compare(obj: PPyObject): Integer; override;
+    function Repr: PPyObject; override;
+    class procedure RegisterGetSets(PythonType: TPythonType); override;
+    class procedure SetupType(PythonType: TPythonType); override;
+    property Value : TTouch read FValue write FValue;
   end;
 
   TPyDelphiFmxObject = class(TPyDelphiComponent)
@@ -158,18 +178,100 @@ type
     property DelphiObject: TTimer read GetDelphiObject write SetDelphiObject;
   end;
 
+  TMouseEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Single);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TMouseMoveEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; Shift: TShiftState; X, Y: Single);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TMouseWheelEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; Shift: TShiftState; WheelDelta: Integer; var Handled: Boolean);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TKeyEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; var Key: Word; var KeyChar: WideChar; Shift: TShiftState);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TProcessTickEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; time, deltaTime: Single);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TVirtualKeyboardEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; KeyboardVisible: Boolean; const Bounds : TRect);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TTapEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; const Point: TPointF);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
+  TTouchEventHandler = class(TEventHandler)
+  protected
+    procedure DoEvent(Sender: TObject; const Touches: TTouches; const Action: TTouchAction);
+  public
+    constructor Create(PyDelphiWrapper : TPyDelphiWrapper; Component : TObject;
+      PropertyInfo : PPropInfo; Callable : PPyObject); override;
+    class function GetTypeInfo : PTypeInfo; override;
+  end;
+
   {Helper functions}
+
   function WrapPointF(APyDelphiWrapper: TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
   function WrapSizeF(APyDelphiWrapper: TPyDelphiWrapper; const ASize : TSizeF) : PPyObject;
   function WrapRectF(APyDelphiWrapper: TPyDelphiWrapper; const ARect : TRectF) : PPyObject;
+  function WrapTouch(APyDelphiWrapper: TPyDelphiWrapper; const ATouch: TTouch): PPyObject;
+  function WrapTouches(APyDelphiWrapper: TPyDelphiWrapper; const ATouches: TTouches): PPyObject;
   function CheckPointFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TPointF): Boolean;
   function CheckSizeFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TSizeF): Boolean;
   function CheckRectFAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TRectF): Boolean;
+  function CheckTouchAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TTouch): Boolean;
+
+  function TouchActionToPython(ATouchAction: TTouchAction): PPyObject;
+
 implementation
+
 uses
-  System.Math, System.SysUtils;
+  System.Math, System.SysUtils, System.Rtti,
+  WrapDelphiTypes;
 
 { Register the wrappers, the globals and the constants }
+
 type
   TTypesRegistration = class(TRegisteredUnit)
   public
@@ -178,7 +280,47 @@ type
     procedure DefineVars(APyDelphiWrapper : TPyDelphiWrapper); override;
   end;
 
+{ TTypesRegistration }
+
+procedure TTypesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+end;
+
+function TTypesRegistration.Name: string;
+begin
+  Result := 'FMX Types';
+end;
+
+procedure TTypesRegistration.RegisterWrappers(
+  APyDelphiWrapper: TPyDelphiWrapper);
+begin
+  inherited;
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiRectF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiTouch);
+
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimer);
+
+  //Event handlers
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseMoveEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseWheelEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TProcessTickEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TVirtualKeyboardEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TTapEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TTouchEventHandler);
+end;
+
 { TPyDelphiPointF }
+
 function TPyDelphiPointF.Compare(obj: PPyObject): Integer;
 var
   _other : TPyDelphiPointF;
@@ -276,33 +418,8 @@ begin
       Result := -1;
 end;
 
-{ TTypesRegistration }
-procedure TTypesRegistration.DefineVars(APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-end;
-
-function TTypesRegistration.Name: string;
-begin
-  Result := 'FMX Types';
-end;
-
-procedure TTypesRegistration.RegisterWrappers(
-  APyDelphiWrapper: TPyDelphiWrapper);
-begin
-  inherited;
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiRectF);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimer);
-end;
-
 { Helper functions }
+
 function WrapPointF(APyDelphiWrapper : TPyDelphiWrapper; const APoint : TPointF) : PPyObject;
 var
   _type : TPythonType;
@@ -328,6 +445,37 @@ begin
   LType := APyDelphiWrapper.GetHelperType('RectFType');
   Result := LType.CreateInstance;
   (PythonToDelphi(Result) as TPyDelphiRectF).Value := ARect;
+end;
+
+function WrapTouch(APyDelphiWrapper: TPyDelphiWrapper; const ATouch: TTouch): PPyObject;
+var
+  LType : TPythonType;
+begin
+  LType := APyDelphiWrapper.GetHelperType('TouchType');
+  Result := LType.CreateInstance;
+  (PythonToDelphi(Result) as TPyDelphiTouch).Value := ATouch;
+end;
+
+function WrapTouches(APyDelphiWrapper: TPyDelphiWrapper; const ATouches: TTouches): PPyObject;
+
+  procedure Append(AList : PPyObject; const ATouch : TTouch);
+  var
+    LPyItem : PPyObject;
+  begin
+    with GetPythonEngine do
+    begin
+      LPyItem := WrapTouch(APyDelphiWrapper, ATouch);
+      PyList_Append(AList, LPyItem);
+      Py_XDecRef(LPyItem);
+    end;
+  end;
+
+var
+  LTouch: TTouch;
+begin
+  Result := GetPythonEngine.PyList_New(0);
+  for LTouch in ATouches do
+    Append(Result, LTouch);
 end;
 
 function CheckPointFAttribute(AAttribute : PPyObject; const AAttributeName : string; out AValue : TPointF) : Boolean;
@@ -387,7 +535,33 @@ begin
   end;
 end;
 
+function CheckTouchAttribute(AAttribute: PPyObject; const AAttributeName: string; out AValue: TTouch): Boolean;
+begin
+  with GetPythonEngine do
+  begin
+    if IsDelphiObject(AAttribute) and (PythonToDelphi(AAttribute) is TPyDelphiTouch) then
+    begin
+      AValue := TPyDelphiTouch(PythonToDelphi(AAttribute)).Value;
+      Result := True;
+    end
+    else
+    begin
+      Result := False;
+      with GetPythonEngine do
+        PyErr_SetString (PyExc_AttributeError^,
+          PAnsiChar(AnsiString(Format('%s receives only Touch objects', [AAttributeName]))));
+    end;
+  end;
+end;
+
+function TouchActionToPython(ATouchAction: TTouchAction): PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(
+    TRttiEnumerationType.GetName<TTouchAction>(ATouchAction));
+end;
+
 { TPyDelphiFmxObject }
+
 class function TPyDelphiFmxObject.DelphiObjectClass: TClass;
 begin
   Result := TFmxObject;
@@ -407,7 +581,7 @@ end;
 class procedure TPyDelphiFmxObject.RegisterGetSets(PythonType: TPythonType);
 begin
   PythonType.AddGetSet('Parent', @TPyDelphiFmxObject.Get_Parent, @TPyDelphiFmxObject.Set_Parent,
-        'Returns/Sets the Control Visibility', nil);
+    'Returns/Sets the Control Visibility', nil);
 end;
 
 class procedure TPyDelphiFmxObject.RegisterMethods(PythonType: TPythonType);
@@ -540,6 +714,7 @@ begin
 end;
 
 { TPyDelphiSizeF }
+
 function TPyDelphiSizeF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiSizeF;
@@ -640,6 +815,7 @@ begin
 end;
 
 { TPyDelphiCustomPopupMenu }
+
 class function TPyDelphiCustomPopupMenu.DelphiObjectClass: TClass;
 begin
   Result := TCustomPopupMenu;
@@ -657,6 +833,7 @@ begin
 end;
 
 { TPyDelphiBounds }
+
 constructor TPyDelphiBounds.CreateWith(APythonType: TPythonType; args:
     PPyObject);
 var
@@ -714,6 +891,7 @@ begin
 end;
 
 { TPyDelphiControlSize }
+
 constructor TPyDelphiControlSize.CreateWith(APythonType: TPythonType; args:
     PPyObject);
 var
@@ -770,6 +948,7 @@ begin
 end;
 
 { TPyDelphiRectF }
+
 function TPyDelphiRectF.Compare(obj: PPyObject): Integer;
 var
   LOther : TPyDelphiRectF;
@@ -916,6 +1095,92 @@ begin
       Result := -1;
 end;
 
+{ TPyDelphiTouch }
+
+function TPyDelphiTouch.Compare(obj: PPyObject): Integer;
+var
+  LOther : TPyDelphiTouch;
+begin
+  if IsDelphiObject(obj) and (PythonToDelphi(obj) is TPyDelphiPointF) then
+  begin
+    LOther := TPyDelphiTouch(PythonToDelphi(obj));
+    Result := CompareValue(Value.Location.X, LOther.Value.Location.X);
+    if Result = 0 then
+      Result := CompareValue(Value.Location.Y, LOther.Value.Location.Y);
+  end
+  else
+    Result := 1;
+end;
+
+constructor TPyDelphiTouch.Create(APythonType: TPythonType);
+begin
+  inherited;
+  if Assigned(PythonType) and (PythonType.Owner is TPyDelphiWrapper) then
+    FPyDelphiWrapper := TPyDelphiWrapper(PythonType.Owner);
+end;
+
+constructor TPyDelphiTouch.CreateWith(APythonType: TPythonType;
+  args: PPyObject);
+var
+  LPointF : TPointF;
+  LPyPointF : PPyObject;
+begin
+  inherited;
+  with GetPythonEngine do
+    if PyArg_ParseTuple(args, 'O:Create', @LPyPointF) <> 0 then
+      if CheckPointFAttribute(LPyPointF, 'pointf', LPointF) then begin
+        FValue.Location := LPointF
+      end;
+end;
+
+function TPyDelphiTouch.Get_Location(AContext: Pointer): PPyObject;
+begin
+  Adjust(@Self);
+  Result := WrapPointF(FPyDelphiWrapper, Value.Location);
+end;
+
+class procedure TPyDelphiTouch.RegisterGetSets(PythonType: TPythonType);
+begin
+  inherited;
+  with PythonType do
+    begin
+      AddGetSet('Location', @TPyDelphiTouch.Get_Location, @TPyDelphiTouch.Set_Location,
+        'Provides access to the location of a touch', nil);
+    end;
+end;
+
+function TPyDelphiTouch.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(Format('<Touch.Location (%f, %f)>',
+    [Value.Location.X, Value.Location.Y]));
+end;
+
+class procedure TPyDelphiTouch.SetupType(PythonType: TPythonType);
+begin
+  inherited;
+  PythonType.TypeName := 'Touch';
+  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
+  PythonType.TypeFlags := PythonType.TypeFlags + [tpfBaseType];
+  PythonType.GenerateCreateFunction := False;
+  PythonType.DocString.Text := 'wrapper for Delphi FMX TTouch type';
+  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+end;
+
+function TPyDelphiTouch.Set_Location(AValue: PPyObject;
+  AContext: Pointer): integer;
+var
+  LValue: TPointF;
+begin
+  if CheckPointFAttribute(AValue, 'Location', LValue) then
+    with GetPythonEngine do begin
+      Adjust(@Self);
+      FValue.Location := LValue;
+      Result := 0;
+    end
+    else
+      Result := -1;
+end;
+
 { TPyDelphiTimer }
 
 class function TPyDelphiTimer.DelphiObjectClass: TClass;
@@ -933,6 +1198,407 @@ begin
   inherited DelphiObject := Value;
 end;
 
+{ TMouseEventHandler }
+
+constructor TMouseEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TMouseEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TMouseEventHandler.DoEvent(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Single);
+var
+  LPyObject, LPyTuple, LPyButton, LPyX, LPyY, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyButton := MouseButtonToPython(Button);
+      LPyX := PyFloat_FromDouble(X);
+      LPyY := PyFloat_FromDouble(Y);
+      LPyTuple := PyTuple_New(5);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyButton);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, ShiftToPython(Shift));
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, LPyX);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 4, LPyY);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TMouseEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TMouseEvent);
+end;
+
+{ TMouseMoveEventHandler }
+
+constructor TMouseMoveEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TMouseMoveEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TMouseMoveEventHandler.DoEvent(Sender: TObject; Shift: TShiftState; X,
+  Y: Single);
+var
+  LPyObject, LPyTuple, LPyX, LPyY, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyX := PyFloat_FromDouble(X);
+      LPyY := PyFloat_FromDouble(Y);
+      LPyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, ShiftToPython(Shift));
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyX);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, LPyY);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TMouseMoveEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TMouseMoveEvent);
+end;
+
+{ TMouseWheelEventHandler }
+
+constructor TMouseWheelEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TMouseWheelEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TMouseWheelEventHandler.DoEvent(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; var Handled: Boolean);
+var
+  LPyObject, LPyTuple, LPyShift, LPyWheelDelta, LPyHandled, LPyResult: PPyObject;
+  LVarParam: TPyDelphiVarParameter;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyShift := ShiftToPython(Shift);
+      LPyWheelDelta := PyLong_FromLong(WheelDelta);
+      LPyHandled := CreateVarParam(PyDelphiWrapper, Handled);
+      LVarParam := PythonToDelphi(LPyHandled) as TPyDelphiVarParameter;
+      LPyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyShift);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyWheelDelta);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, LPyHandled);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          if LVarParam.Value = Py_None then
+            Handled := false
+          else if PyBool_Check(LVarParam.Value) then
+            Handled := Boolean(PyLong_AsLong(LVarParam.Value));
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TMouseWheelEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TMouseWheelEvent);
+end;
+
+{ TKeyEventHandler }
+
+constructor TKeyEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TKeyEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TKeyEventHandler.DoEvent(Sender: TObject; var Key: Word;
+  var KeyChar: WideChar; Shift: TShiftState);
+var
+  LPyObject, LPyTuple, LPyKey, LPyKeyChar, LPyShift, LPyResult: PPyObject;
+  LKeyVarParam: TPyDelphiVarParameter;
+  LKeyCharVarParam: TPyDelphiVarParameter;
+  LKeyChar: string;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyKey := CreateVarParam(PyDelphiWrapper, Key);
+      LPyKeyChar := CreateVarParam(PyDelphiWrapper, KeyChar);
+      LPyShift := ShiftToPython(Shift);
+      LKeyVarParam := PythonToDelphi(LPyKey) as TPyDelphiVarParameter;
+      LKeyCharVarParam := PythonToDelphi(LPyKeyChar) as TPyDelphiVarParameter;
+      LPyTuple := PyTuple_New(4);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyKey);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyKeyChar);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 3, LPyShift);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+          //Key var arg
+          if LKeyVarParam.Value = Py_None then
+            Key := 0
+          else if PyLong_Check(LKeyVarParam.Value) then
+            Key := Word(PyLong_AsLong(LKeyVarParam.Value));
+
+          //KeyChar var arg
+          if LKeyCharVarParam.Value = Py_None then
+            LKeyChar := #0
+          else if PyUnicode_Check(LKeyCharVarParam.Value) then
+          begin
+            LKeyChar := PyUnicodeAsString(LKeyCharVarParam.Value);
+            if Length(LKeyChar) > 0 then
+              KeyChar := LKeyChar[1];
+          end;
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TKeyEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TKeyEvent);
+end;
+
+{ TProcessTickEventHandler }
+
+constructor TProcessTickEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TProcessTickEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TProcessTickEventHandler.DoEvent(Sender: TObject; time,
+  deltaTime: Single);
+var
+  LPyObject, LPyTuple, LPyTime, LPyDeltaTime, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyTime := PyFloat_FromDouble(time);
+      LPyDeltaTime := PyFloat_FromDouble(deltaTime);
+      LPyTuple := PyTuple_New(3);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyTime);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyDeltaTime);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TProcessTickEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TProcessTickEvent);
+end;
+
+{ TVirtualKeyboardEventHandler }
+
+constructor TVirtualKeyboardEventHandler.Create(
+  PyDelphiWrapper: TPyDelphiWrapper; Component: TObject;
+  PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TVirtualKeyboardEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TVirtualKeyboardEventHandler.DoEvent(Sender: TObject;
+  KeyboardVisible: Boolean; const Bounds: TRect);
+var
+  LPyObject, LPyTuple, LPyKeyboardVisible, LPyBounds, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyKeyboardVisible := PyBool_FromLong(Ord(KeyboardVisible));
+      LPyBounds := WrapRect(PyDelphiWrapper, Bounds);
+      LPyTuple := PyTuple_New(3);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyKeyboardVisible);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyBounds);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TVirtualKeyboardEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TVirtualKeyboardEvent);
+end;
+
+{ TTapEventHandler }
+
+constructor TTapEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TTapEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TTapEventHandler.DoEvent(Sender: TObject; const Point: TPointF);
+var
+  LPyObject, LPyTuple, LPyPoint, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyPoint := WrapPointF(PyDelphiWrapper, Point);
+      LPyTuple := PyTuple_New(2);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyPoint);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TTapEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TTapEvent);
+end;
+
+{ TTouchEventHandler }
+
+constructor TTouchEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
+var
+  LMethod : TMethod;
+begin
+  inherited;
+  LMethod.Code := @TTouchEventHandler.DoEvent;
+  LMethod.Data := Self;
+  SetMethodProp(Component, PropertyInfo, LMethod);
+end;
+
+procedure TTouchEventHandler.DoEvent(Sender: TObject; const Touches: TTouches;
+  const Action: TTouchAction);
+var
+  LPyObject, LPyTuple, LPyTouches, LPyTouchAction, LPyResult : PPyObject;
+begin
+  Assert(Assigned(PyDelphiWrapper));
+  if Assigned(Callable) and PythonOK then
+    with GetPythonEngine do begin
+      LPyObject := PyDelphiWrapper.Wrap(Sender);
+      LPyTouches := WrapTouches(PyDelphiWrapper, Touches);
+      LPyTouchAction := TouchActionToPython(Action);
+      LPyTuple := PyTuple_New(3);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 0, LPyObject);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 1, LPyTouches);
+      GetPythonEngine.PyTuple_SetItem(LPyTuple, 2, LPyTouchAction);
+      try
+        LPyResult := PyObject_CallObject(Callable, LPyTuple);
+        if Assigned(LPyResult) then
+        begin
+          Py_DECREF(LPyResult);
+        end;
+      finally
+        Py_DECREF(LPyTuple);
+      end;
+      CheckError;
+    end;
+end;
+
+class function TTouchEventHandler.GetTypeInfo: PTypeInfo;
+begin
+  Result := System.TypeInfo(TTouchEvent);
+end;
+
 initialization
   RegisteredUnits.Add(TTypesRegistration.Create);
+
 end.

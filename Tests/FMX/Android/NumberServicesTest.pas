@@ -85,7 +85,7 @@ type
   private
     PythonType_TRndInt: TPythonType;
     FPythonModule : TPythonModule;
-    PythonEngine : TPythonEngine;
+    FPythonEngine : TPythonEngine;
     pdvainteger: integer;
     pdvbinteger: integer;
     pdvc : TPythonDelphiVar;
@@ -186,10 +186,10 @@ var
   valpy: TPyObject;
   val: PyTRandomInteger;
 begin
-  PythonEngine := TPythonEngine.Create(nil);
-  PythonEngine.Name := 'PythonEngine';
-  TPythonLoad.Configure(PythonEngine);
-  PythonEngine.LoadDll;
+  FPythonEngine := TPythonEngine.Create(nil);
+  FPythonEngine.Name := 'PythonEngine';
+  TPythonLoad.Configure(FPythonEngine);
+  FPythonEngine.LoadDll;
   // python module
   FPythonModule := TPythonModule.Create(GetPythonEngine);
   FPythonModule.Engine := GetPythonEngine;
@@ -486,7 +486,7 @@ begin
 end;
 procedure TTestNumberServices.TearDownFixture;
 begin
-  PythonEngine.Free;
+  FPythonEngine.Free;
   pdvc.Free;
 end;
 // nsAdd

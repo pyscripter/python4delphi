@@ -5,7 +5,7 @@ unit WrapFmxEdit;
 interface
 
 uses
-	FMX.Edit, FMX.SearchBox, FMX.ComboEdit, FMX.EditBox, FMX.SpinBox,
+	FMX.Edit, FMX.SearchBox, FMX.ComboEdit, FMX.EditBox, FMX.SpinBox, FMX.NumberBox,
   PythonEngine, WrapFmxTypes, WrapFmxControls;
 
 
@@ -98,6 +98,17 @@ type
 			write SetDelphiObject;
 	end;
 
+  TPyDelphiNumberBox = class(TPyDelphiCustomEditBox)
+	private
+		function GetDelphiObject: TNumberBox;
+		procedure SetDelphiObject(const Value: TNumberBox);
+	public
+		class function DelphiObjectClass: TClass; override;
+		// Properties
+		property DelphiObject: TNumberBox read GetDelphiObject
+			write SetDelphiObject;
+	end;
+
 implementation
 
 uses
@@ -136,6 +147,7 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiComboEdit);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomEditBox);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiSpinBox);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiNumberBox);
 end;
 
 { TPyDelphiCustomEdit }
@@ -271,6 +283,23 @@ begin
 end;
 
 procedure TPyDelphiSpinBox.SetDelphiObject(const Value: TSpinBox);
+begin
+	inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiNumberBox }
+
+class function TPyDelphiNumberBox.DelphiObjectClass: TClass;
+begin
+	Result := TNumberBox;
+end;
+
+function TPyDelphiNumberBox.GetDelphiObject: TNumberBox;
+begin
+	Result := TNumberBox(inherited DelphiObject);
+end;
+
+procedure TPyDelphiNumberBox.SetDelphiObject(const Value: TNumberBox);
 begin
 	inherited DelphiObject := Value;
 end;

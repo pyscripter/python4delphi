@@ -1237,7 +1237,8 @@ type
 
     procedure LoadPythonInfoFromModule;
     function GetPythonModuleFromProcess(): NativeUInt;
-    function HasHostSymbols(): boolean;
+    // Check for Python symbols in the current loaded library (FDLLHandle)
+    function HasPythonSymbolsInLibrary(): boolean;
     procedure LoadFromHostSymbols();
     //Loading strategies
     function TryLoadFromHostSymbols(): boolean;
@@ -1612,6 +1613,7 @@ type
     PyBytes_Size:function (ob:PPyObject):NativeInt; cdecl;
     PyBytes_DecodeEscape:function(s:PAnsiChar; len:NativeInt; errors:PAnsiChar; unicode:NativeInt; recode_encoding:PAnsiChar):PPyObject; cdecl;
     PyBytes_Repr:function(ob:PPyObject; smartquotes:integer):PPyObject; cdecl;
+    PyBytes_FromObject: function(ob:PPyObject): PPyObject; cdecl;
     PyByteArray_Concat: procedure(var ob1: PPyObject; ob2: PPyObject); cdecl;
     PyByteArray_Resize: procedure(var ob1: PPyObject; len: Py_ssize_t); cdecl;
     PyByteArray_FromObject: function(ob:PPyObject): PPyObject; cdecl;
@@ -1987,6 +1989,7 @@ type
     function PyUnicodeAsString( obj : PPyObject ) : UnicodeString;
     function PyUnicodeAsUTF8String( obj : PPyObject ) : RawByteString;
     function PyBytesAsAnsiString( obj : PPyObject ) : AnsiString;
+    function PyByteArrayAsAnsiString( obj : PPyObject ) : AnsiString;
 
     // Public Properties
     property ClientCount : Integer read GetClientCount;
@@ -3093,16 +3096,10 @@ function TDynamicDll.GetPythonModuleFromProcess(): NativeUInt;
 {$IFNDEF FPC}
 
 function HasSymbols(const AModule: NativeUInt): boolean;
-  var
-    LPy_GetBuildInfo: function : PAnsiChar; cdecl;
-    LPy_IsInitialized: function: integer; cdecl;
   begin
     FDLLHandle := AModule;
     try
-      LPy_GetBuildInfo := Import('Py_GetBuildInfo', false);
-      LPy_IsInitialized := Import('Py_IsInitialized', false);
-      Result := Assigned(LPy_GetBuildInfo) and Assigned(LPy_GetBuildInfo())
-        and Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
+      Result := HasPythonSymbolsInLibrary();
     finally
       FDLLHandle := 0;
     end;
@@ -3308,10 +3305,16 @@ end;
 function TDynamicDll.TryLoadFromHostSymbols: boolean;
 begin
   //We want to look in for host symbols at first
+  {$IFNDEF FPC}
+  FDLLHandle := LoadLibrary('');
+  {$ELSE}
   FDLLHandle := 0;
-  Result := HasHostSymbols();
+  {$ENDIF}
+  Result := HasPythonSymbolsInLibrary();
   if Result then
-    LoadFromHostSymbols();
+    LoadFromHostSymbols()
+  else
+    FDLLHandle := 0;
 end;
 
 procedure TDynamicDll.LoadFromHostSymbols;
@@ -3412,12 +3415,15 @@ begin
   Result := Format( 'Dll %s could not be loaded. We must quit.', [DllName]);
 end;
 
-function TDynamicDll.HasHostSymbols: boolean;
+function TDynamicDll.HasPythonSymbolsInLibrary: boolean;
 var
+  LPy_GetBuildInfo: function: PAnsiChar; cdecl;
   LPy_IsInitialized: function: integer; cdecl;
 begin
+  LPy_GetBuildInfo := Import('Py_GetBuildInfo', false);
   LPy_IsInitialized := Import('Py_IsInitialized', false);
-  Result := Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
+  Result := Assigned(LPy_GetBuildInfo) and Assigned(LPy_GetBuildInfo())
+    and Assigned(LPy_IsInitialized) and (LPy_IsInitialized() <> 0);
 end;
 
 procedure TDynamicDll.Quit;
@@ -3808,6 +3814,7 @@ begin
   PyBytes_DecodeEscape        := Import('PyBytes_DecodeEscape');
   PyBytes_Repr                := Import('PyBytes_Repr');
   _PyBytes_Resize             := Import('_PyBytes_Resize');
+  PyBytes_FromObject          := Import('PyBytes_FromObject');
   PyByteArray_AsString        := Import('PyByteArray_AsString');
   PyByteArray_Concat          := Import('PyByteArray_Concat');
   PyByteArray_Resize          := Import('PyByteArray_Resize');
@@ -6037,6 +6044,21 @@ begin
   strings.Clear;
   for i := 0 to PyTuple_Size( tuple ) - 1 do
     strings.Add( PyObjectAsString( PyTuple_GetItem( tuple, i ) ) );
+end;
+
+function TPythonEngine.PyByteArrayAsAnsiString(obj: PPyObject): AnsiString;
+var
+  LBuffer: PAnsiChar;
+  LSize: Py_ssize_t;
+begin
+  if PyByteArray_Check(obj) then
+  begin
+    LSize := PyByteArray_Size(obj);
+    LBuffer := PyByteArray_AsString(obj);
+    SetString(Result, LBuffer, LSize);
+  end
+  else
+    raise EPythonError.CreateFmt(SPyConvertionError, ['PyByteArrayAsAnsiString', 'ByteArray']);
 end;
 
 function TPythonEngine.PyBytesAsAnsiString(obj: PPyObject): AnsiString;

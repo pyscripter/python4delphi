@@ -1927,7 +1927,7 @@ class procedure TPyDelphiStream.RegisterMethods(PythonType: TPythonType);
 begin
   inherited;
   PythonType.AddMethod('ReadBytes', @TPyDelphiStream.ReadBytes_Wrapper,
-    'TPyDelphiStream.ReadBytes()' + #10 + 'Read content as bytearray.');
+    'TPyDelphiStream.ReadBytes()' + #10 + 'Read content as bytes.');
   PythonType.AddMethod('ReadInt', @TPyDelphiStream.ReadInt_Wrapper,
     'TPyDelphiStream.ReadInt()' + #10 + 'Read content as integer.');
   PythonType.AddMethod('ReadString', @TPyDelphiStream.ReadString_Wrapper,
@@ -1936,7 +1936,7 @@ begin
     'TPyDelphiStream.ReadFloat()' + #10 + 'Read content as float.');
 
   PythonType.AddMethod('WriteBytes', @TPyDelphiStream.WriteBytes_Wrapper,
-    'TPyDelphiStream.WriteBytes()' + #10 + 'Write content as bytearray.');
+    'TPyDelphiStream.WriteBytes()' + #10 + 'Write content as bytes.');
   PythonType.AddMethod('WriteInt', @TPyDelphiStream.WriteInt_Wrapper,
     'TPyDelphiStream.WriteInt()' + #10 + 'Write content as integer.');
   PythonType.AddMethod('WriteString', @TPyDelphiStream.WriteString_Wrapper,
@@ -1978,7 +1978,7 @@ begin
         Py_XDecRef(LItem);
       end;
       //The content
-      LItem := PyByteArray_FromObject(LBytes);
+      LItem := PyBytes_FromObject(LBytes);
       Py_XDecRef(LBytes);
       PyList_Append(Result, LItem);
       Py_XDecRef(LItem);
@@ -2060,9 +2060,9 @@ begin
   Adjust(@Self);
   Result := nil;
   with GetPythonEngine() do begin
-    if PyArg_ParseTuple(AArgs, 'Yi:Create', @LValue, @LCount) <> 0 then
-      if PyByteArray_Check(LValue) then begin
-        LBuffer := TEncoding.Default.GetBytes(String(PyByteArray_AsString(LValue)));
+    if PyArg_ParseTuple(AArgs, 'Si:Create', @LValue, @LCount) <> 0 then
+      if PyBytes_Check(LValue) then begin
+        LBuffer := TEncoding.Default.GetBytes(String(PyBytesAsAnsiString(LValue)));
         Result := PyLong_FromLong(DelphiObject.Write(LBuffer, LCount));
       end;
   end;
@@ -2315,13 +2315,13 @@ begin
       if APythonType.Engine.PyByteArray_Check(LBytes) then begin
         DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(
           TEncoding.Default.GetBytes(
-            String(APythonType.Engine.PyByteArray_AsString(LBytes))));
+            String(APythonType.Engine.PyByteArrayAsAnsiString(LBytes))));
       end;
     end else if APythonType.Engine.PyArg_ParseTuple(args, 'S:Create', @LBytes) <> 0 then begin
       if APythonType.Engine.PyBytes_Check(LBytes) then begin
         DelphiObject := TBytesStreamClass(DelphiObjectClass).Create(
           TEncoding.Default.GetBytes(
-            String(APythonType.Engine.PyBytes_AsString(LBytes))));
+            String(APythonType.Engine.PyBytesAsAnsiString(LBytes))));
       end;
     end;
 

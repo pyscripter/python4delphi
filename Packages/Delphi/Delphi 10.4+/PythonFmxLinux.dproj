@@ -6,7 +6,7 @@
         <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>128</TargetedPlatforms>
         <AppType>Package</AppType>
-        <FrameworkType>None</FrameworkType>
+        <FrameworkType>FMX</FrameworkType>
         <ProjectVersion>19.5</ProjectVersion>
         <Platform Condition="'$(Platform)'==''">Linux64</Platform>
     </PropertyGroup>
@@ -168,6 +168,7 @@
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxStdCtrls.pas"/>
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxStyles.pas"/>
         <DCCReference Include="..\..\..\Source\fmx\WrapFmxTypes.pas"/>
+        <DCCReference Include="..\..\..\Source\fmx\WrapFmxDateTime.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
