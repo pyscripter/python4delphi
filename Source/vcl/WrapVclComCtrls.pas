@@ -351,6 +351,7 @@ end;
 
 function TPyDelphiPageControl.Get_ActivePage(AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   Result := Wrap(DelphiObject.ActivePage);
 end;
 
@@ -364,6 +365,7 @@ end;
 {$IFNDEF FPC}
 function TPyDelphiPageControl.Get_Canvas(AContext: Pointer): PPyObject;
 begin
+  Adjust(@Self);
   Result := Wrap(DelphiObject.Canvas);
 end;
 {$ENDIF FPC}
