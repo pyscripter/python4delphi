@@ -4941,10 +4941,14 @@ begin
     Code := Py_CompileString(PAnsiChar(CleanString(command)),
       PAnsiChar(EncodeString(FileName)), mode);
     if Code = nil then
-      CheckError(False);
-    Result := PyEval_EvalCode(Code, _globals, _locals );
-    if Result = nil then
-      CheckError(False);
+      CheckError(False)
+    else
+    begin
+      Result := PyEval_EvalCode(Code, _globals, _locals );
+      Py_DECREF(Code);
+      if Result = nil then
+        CheckError(False);
+    end;
   except
     if PyErr_Occurred <> nil then
       CheckError(False)
