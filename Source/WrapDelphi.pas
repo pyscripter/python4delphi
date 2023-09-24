@@ -587,6 +587,21 @@ Type
   end;
   TPyDelphiObjectClass = class of TPyDelphiObject;
 
+
+  { Generic wrapper for pascal classes
+    Can be used from unit wrappers as follows:
+      APyDelphiWrapper.RegisterDelphiWrapper(TPyClassWrapper<TMyClass>);
+    or at runtime (e.g. inside the FormCreate handler:
+      PyDelphiWrapper1.RegisterDelphiWrapper(TPyClassWrapper<TMyClass>).Initialize;}
+    TPyClassWrapper<T: class> = class(TPyDelphiObject)
+    function GetDelphiObject: T;
+    procedure SetDelphiObject(const Value: T);
+  public
+    class function  DelphiObjectClass : TClass; override;
+    // Properties
+    property DelphiObject: T read GetDelphiObject write SetDelphiObject;
+  end;
+
   { This class will simply hold a Python object in its Value property.
     This is required for Delphi var parameters because Python  won't let you
     replace a parameter value with another one, so, we will provide a container
@@ -842,7 +857,7 @@ Type
     procedure Finalize; override;
     procedure DefineVar(const AName : string; const AValue : Variant); overload;
     procedure DefineVar(const AName : string; AValue : TObject); overload;
-    procedure RegisterDelphiWrapper(AWrapperClass : TPyDelphiObjectClass);
+    function RegisterDelphiWrapper(AWrapperClass : TPyDelphiObjectClass): TPythonType;
     function  RegisterHelperType(APyObjectClass : TPyObjectClass) : TPythonType;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : PyCFunction; ADocString : PAnsiChar ): PPyMethodDef; overload;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : TDelphiMethod; ADocString : PAnsiChar ): PPyMethodDef; overload;
@@ -3144,6 +3159,25 @@ begin
 end;
 {$ENDIF}
 
+{ TPyClassWrapper<T> }
+
+class function TPyClassWrapper<T>.DelphiObjectClass: TClass;
+begin
+  Result := T;
+end;
+
+function TPyClassWrapper<T>.GetDelphiObject: T;
+begin
+  Result := T(inherited DelphiObject)
+end;
+
+procedure TPyClassWrapper<T>.SetDelphiObject(const Value: T);
+begin
+  inherited DelphiObject := Value;
+end;
+
+{ TPyDelphiMethodObject }
+
 function TPyDelphiMethodObject.Repr: PPyObject;
 begin
   with GetPythonEngine do
@@ -3790,8 +3824,8 @@ begin
         fEventHandlerList.Delete(i);
 end;
 
-procedure TPyDelphiWrapper.RegisterDelphiWrapper(
-  AWrapperClass: TPyDelphiObjectClass);
+function TPyDelphiWrapper.RegisterDelphiWrapper(
+  AWrapperClass: TPyDelphiObjectClass): TPythonType;
 var
   RegisteredClass : TRegisteredClass;
   Index: Integer;
@@ -3814,6 +3848,8 @@ begin
       end;
 
   fClassRegister.Add(RegisteredClass);
+  Result := RegisteredClass.PythonType;
+
   if AWrapperClass.DelphiObjectClass.InheritsFrom(TPersistent) then
     Classes.RegisterClass(TPersistentClass(AWrapperClass.DelphiObjectClass));
 end;
