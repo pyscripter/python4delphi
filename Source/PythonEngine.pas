@@ -8632,6 +8632,8 @@ begin
         Module.AddClient( Self );
     end;
   InitServices;
+  if Engine.PyType_Ready(TheTypePtr) <> 0 then
+    Engine.CheckError;
   inherited;
 end;
 
