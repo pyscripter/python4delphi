@@ -3264,8 +3264,9 @@ begin
         Continue;
 
       // Skip methods decleared in NearestAncestorClass and its ancestors
-      if (NearestAncestorClass <> nil) and ((AClass = NearestAncestorClass) or
-        not (AClass.InheritsFrom(NearestAncestorClass)))
+      LClass := (LRttiMethod.Parent as TRttiInstanceType).MetaclassType;
+      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
+        not (LClass.InheritsFrom(NearestAncestorClass)))
       then
         Continue;
 
