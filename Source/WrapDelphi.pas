@@ -3249,8 +3249,10 @@ begin
       if (Ord(LRttiMethod.Visibility) < Ord(TMemberVisibility.mvProtected)) then
         Continue;
 
-      // Ingnore destructors and operator overloads
-      if LRttiMethod.MethodKind in [mkDestructor, mkClassDestructor, mkOperatorOverload] then
+      // Ingnore constructors, destructors and operator overloads
+      if LRttiMethod.MethodKind in [mkConstructor, mkDestructor,
+        mkClassConstructor, mkClassDestructor, mkOperatorOverload]
+      then
         Continue;
 
       // Ignore excluded methods
