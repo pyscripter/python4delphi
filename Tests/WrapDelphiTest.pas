@@ -61,6 +61,11 @@ type
     function SetStringField(const Value: string): string; overload;
     procedure PassVariantArray(const Value: Variant);
     function ClassRefParam(ClassRef: TPersistentClass): string;
+    class function DoubleString(S: string): string;
+    class function Square(I: Integer): Integer; static;
+  end;
+
+  TTestSubclass = class(TTestRttiAccess)
   end;
 
   TTestInterfaceImpl = class(TInterfacedObject, ITestInterface)
@@ -129,6 +134,10 @@ type
     procedure TestClassRefParam;
     [Test]
     procedure TestInheritance;
+    [Test]
+    procedure TestClassMethods;
+    [Test]
+    procedure TestStaticMethods;
   end;
 
 implementation
@@ -190,6 +199,11 @@ begin
   PyDelphiWrapper.Module := DelphiModule;
 
   PythonEngine.LoadDll;
+
+  //  Register TTestRTTIAccess and TTestSubclass and initialize
+  PyDelphiWrapper.RegisterDelphiWrapper(TPyClassWrapper<TTestRTTIAccess>).Initialize;
+  PyDelphiWrapper.RegisterDelphiWrapper(TPyClassWrapper<TTestSubclass>).Initialize;
+
   //  Then wrap the an instance our TTestRTTIAccess
   //  It will allow us to to test access to public fields and methods as well
   //  public (as well as published) properties.
@@ -207,7 +221,7 @@ begin
   Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
   DelphiModule.SetVar('rtti_interface', Py);
   PythonEngine.Py_DecRef(Py);
-  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Persistent, Collection, Strings');
+  PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Persistent, Collection, Strings, TestRttiAccess, TestSubclass');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
   Rtti_Interface := MainModule.rtti_interface;
@@ -222,6 +236,16 @@ begin
   PyDelphiWrapper.Free;
   DelphiModule.Free;
   TestRttiAccess.Free;
+end;
+
+procedure TTestWrapDelphi.TestClassMethods;
+begin
+   // calling from a class
+   Assert.AreEqual<string>(MainModule.TestRttiAccess.DoubleString('A'), 'AA');
+   // calling from an instance
+   Assert.AreEqual<string>(Rtti_Var.DoubleString('A'), 'AA');
+   // calling from a subclass
+   Assert.AreEqual<string>(MainModule.TestSubclass.DoubleString('B'), 'BB');
 end;
 
 procedure TTestWrapDelphi.TestClassRefParam;
@@ -420,6 +444,16 @@ begin
   Assert.AreEqual<double>(TestRttiAccess.DoubleField, 1.234);
 end;
 
+procedure TTestWrapDelphi.TestStaticMethods;
+begin
+   // calling from a class
+   Assert.AreEqual<Integer>(MainModule.TestRttiAccess.Square(2), 4);
+   // calling from an instance
+   Assert.AreEqual<Integer>(Rtti_Var.Square(4), 16);
+   // calling from a subclass
+   Assert.AreEqual<Integer>(MainModule.TestSubclass.Square(5), 25);
+end;
+
 procedure TTestWrapDelphi.TestStringField;
 begin
   TestRttiAccess.StringField := 'Hi';
@@ -463,6 +497,11 @@ begin
   Result := StringField;
 end;
 
+class function TTestRttiAccess.Square(I: Integer): Integer;
+begin
+  Result := I * I;
+end;
+
 function TTestRttiAccess.SetStringField(var Value: Integer): string;
 begin
   StringField := IntToStr(Value);
@@ -472,6 +511,11 @@ end;
 function TTestRttiAccess.ClassRefParam(ClassRef: TPersistentClass): string;
 begin
   Result := ClassRef.ClassName;
+end;
+
+class function TTestRttiAccess.DoubleString(S: string): string;
+begin
+  Result := S + S;
 end;
 
 function TTestRttiAccess.GetData: TObject;

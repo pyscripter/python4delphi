@@ -1902,7 +1902,8 @@ type
     procedure  AddClient( client : TEngineClient );
     procedure  RemoveClient( client : TEngineClient );
     function   FindClient( const aName : string ) : TEngineClient;
-    function   FindPythonType( const TypeName : AnsiString ) : TPythonType;
+    function   FindPythonType(const TypeName : AnsiString): TPythonType; overload;
+    function   FindPythonType(PyType: PPyTypeObject): TPythonType; overload;
     function   TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
     function   ModuleByName( const aModuleName : AnsiString ) : PPyObject;
     function   MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
@@ -2362,6 +2363,20 @@ type
         - When turning a Delphi instance into a Python object pointer, GetSelf will offset
           Self from B to A.
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
+
+        Further Notes:
+        - PyObject instances are not created directly, but via their python type
+          See TPythonType.CreateInstance and TPythonType.NewSubtypeInst (tp_new
+          slot).  In the second case TPy_Object.NewInstance is not called and
+          the size of the memory is determined by the tp_basicsize slot.
+        - Their memory can be allocated either by pascal or python. PythonAlloc
+          keeps track of how the PyObject memory was allocated.
+        - PyObject instances are not destroyed directly, but by PyObjectDestructor
+          when their reference count goes down to zero  (tp_dealloc slot)
+        - The value of PythonAlloc determines how the memory is freed
+          using either PyObject_Free (tp_free slot) or in the overwritten
+          FreeInstance.
+        - This class is heart of the P4D library.  Pure magic!!
 }
   // The base class of all new Python types
   TPyObject = class
@@ -2767,7 +2782,6 @@ function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
-procedure FreeSubtypeInst(ob:PPyObject); cdecl;
 procedure Register;
 function  PyType_HasFeature(AType : PPyTypeObject; AFlag : Integer) : Boolean;
 function  SysVersionFromDLLName(const DLLFileName : string): string;
@@ -6139,6 +6153,19 @@ begin
     end;
 end;
 
+function TPythonEngine.FindPythonType(PyType: PPyTypeObject): TPythonType;
+var
+  I : Integer;
+begin
+  Result := nil;
+  for I := 0 to ClientCount - 1 do
+    if (Clients[I] is TPythonType) and (TPythonType(Clients[I]).TheTypePtr = PyType) then
+    begin
+      Result := TPythonType(Clients[I]);
+      Break;
+    end;
+end;
+
 function TPythonEngine.FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
 var
   module,func: PPyObject;
@@ -8178,6 +8205,9 @@ function  TPythonType.NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObje
 var
   obj : TPyObject;
 begin
+  // Allocate memory in the python heap for both the pascal and the python
+  // PyObject (see tp_basicsize in SetPyObjectClass)
+  // nitems = 0 because PyType_GenericAlloc adds +1
   Result := aType^.tp_alloc(aType, 0);
   if Assigned(Result) then
   begin
@@ -8191,20 +8221,10 @@ begin
     begin
       Engine.Py_DECREF(Result);
       Result := nil;
+      obj.Free;
     end;
   end;
 end;
-
-function  TPythonType_AllocSubtypeInst( pSelf: PPyTypeObject; nitems : NativeInt) : PPyObject; cdecl;
-begin
-  Result := GetPythonEngine.PyType_GenericAlloc(pSelf, nitems);
-end;
-
-procedure FreeSubtypeInst(ob:PPyObject);
-begin
-  GetPythonEngine.PyObject_Free(ob);
-end;
-
 
 // Number services
 
@@ -8484,9 +8504,9 @@ begin
       if tpfBaseType in TypeFlags then
       begin
         tp_init             := TPythonType_InitSubtype;
-        tp_alloc            := TPythonType_AllocSubtypeInst;
+        tp_alloc            := FEngine.PyType_GenericAlloc;
         tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
-        tp_free             := FreeSubtypeInst;
+        tp_free             := FEngine.PyObject_Free;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
         tp_getset           := GetSetData;
