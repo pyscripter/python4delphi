@@ -49,6 +49,7 @@ type
     ObjectField: TObject;
     RecordField: TTestRecord;
     InterfaceField: ITestInterface;
+    ClassRef: TClass;
     function GetData: TObject;
     procedure BuyFruits(AFruits: TFruits);
     procedure SellFruits(const AFruits: TFruitDynArray);
@@ -61,6 +62,7 @@ type
     function SetStringField(const Value: string): string; overload;
     procedure PassVariantArray(const Value: Variant);
     function ClassRefParam(ClassRef: TPersistentClass): string;
+    class var ClassField: string;
     class function DoubleString(S: string): string;
     class function Square(I: Integer): Integer; static;
   end;
@@ -132,6 +134,8 @@ type
     procedure TestPassVariantArray;
     [Test]
     procedure TestClassRefParam;
+    [Test]
+    procedure TestClassRefField;
     [Test]
     procedure TestInheritance;
     [Test]
@@ -246,6 +250,12 @@ begin
    Assert.AreEqual<string>(Rtti_Var.DoubleString('A'), 'AA');
    // calling from a subclass
    Assert.AreEqual<string>(MainModule.TestSubclass.DoubleString('B'), 'BB');
+end;
+
+procedure TTestWrapDelphi.TestClassRefField;
+begin
+  Rtti_Var.ClassRef := MainModule.TestRttiAccess;
+  Assert.AreEqual(TestRttiAccess.ClassRef, TTestRttiAccess);
 end;
 
 procedure TTestWrapDelphi.TestClassRefParam;
