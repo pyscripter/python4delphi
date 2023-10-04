@@ -3623,12 +3623,7 @@ begin
         Continue;
 
       // Skip if the type cannot be handled
-      if not (LRttiField.FieldType.TypeKind  in
-        [tkInteger, tkChar, tkFloat, tkString, tkWChar, tkLString, tkWString,
-        tkUString, tkInt64, tkVariant, tkEnumeration, tkSet, tkArray,
-        tkDynArray, tkClass, tkClassRef,
-        tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}])
-      then
+      if LRttiField.FieldType.TypeKind  in [tkUnknown, tkMethod, tkProcedure] then
         Continue;
 
       AddedFields := AddedFields + [LRttiField.Name];
@@ -3705,13 +3700,8 @@ begin
       if not LRttiProperty.IsReadable then
         Continue;
 
-      // Skip if the type cannot be handled (as with fields + tkMethod)
-      if not (LRttiProperty.PropertyType.TypeKind  in
-        [tkInteger, tkChar, tkFloat, tkString, tkWChar, tkLString, tkWString,
-        tkUString, tkInt64, tkVariant, tkEnumeration, tkSet, tkArray,
-        tkDynArray, tkClass, tkClassRef, tkMethod,
-        tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}])
-      then
+      // Skip if the type cannot be handled (as with fields - tkMethod)
+      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkProcedure] then
         Continue;
 
       AddedProperties := AddedProperties + [LRttiProperty.Name];
