@@ -1290,15 +1290,11 @@ var
   LOutMsg: string;
 begin
   Result := nil;
-  if not ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
-  begin
-    InvalidArguments(FRttiMember.Name, LOutMsg);
-    Exit;
-  end;
-
+  if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
   // TODO:  Optimize out the property/field lookup, by passing FRttiMember
   // directly to a GetRttiAttr/SetRtti overload
   Result := GetRttiAttr(Obj, FParentRtti, FRttiMember.Name, FPyDelphiWrapper, LOutMsg);
+
   if not Assigned(Result) then
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
@@ -1311,13 +1307,9 @@ var
   LOutMsg: string;
 begin
   Result := -1;
-  if not ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
-  begin
-    InvalidArguments(FRttiMember.Name, LOutMsg);
-    Exit;
-  end;
-
-  if SetRttiAttr(Obj, FParentRtti, FRttiMember.Name, AValue, FPyDelphiWrapper, LOutMsg) then
+  if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) and
+    SetRttiAttr(Obj, FParentRtti, FRttiMember.Name, AValue, FPyDelphiWrapper, LOutMsg)
+  then
     Result := 0;
 
   if Result <> 0 then
