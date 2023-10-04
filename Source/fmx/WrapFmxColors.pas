@@ -11,6 +11,8 @@
 (*  LICENCE and Copyright: MIT (see project home)                         *)
 (**************************************************************************)
 
+{$I ..\Definition.Inc}
+
 unit WrapFmxColors;
 
 interface

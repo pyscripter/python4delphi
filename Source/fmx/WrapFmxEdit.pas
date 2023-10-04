@@ -21,7 +21,6 @@ uses
 	FMX.Edit, FMX.SearchBox, FMX.ComboEdit, FMX.EditBox, FMX.SpinBox, FMX.NumberBox,
   PythonEngine, WrapFmxTypes, WrapFmxControls;
 
-
 type
   TPyDelphiCustomEdit = class(TPyDelphiPresentedControl)
 	private

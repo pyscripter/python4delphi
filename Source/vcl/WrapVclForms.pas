@@ -1414,7 +1414,7 @@ begin
     AddGetSet('Handle', @TPyDelphiMonitor.Get_Handle, nil,
               'Indicates the Windows handle for the monitor.', nil);
     AddGetSet('MonitorNum', @TPyDelphiMonitor.Get_MonitorNum, nil,
-              'Specifies the index of the monitor in the global screen object’s Monitors list.', nil);
+              'Specifies the index of the monitor in the global screen object''s Monitors list.', nil);
     AddGetSet('Left', @TPyDelphiMonitor.Get_Left, nil,
               'Indicates the logical position of the left edge of the monitor.', nil);
     AddGetSet('Height', @TPyDelphiMonitor.Get_Height, nil,

@@ -177,6 +177,7 @@
         <DCCReference Include="..\..\..\Source\WrapFireDAC.pas"/>
         <DCCReference Include="..\..\..\Source\WrapActions.pas"/>
         <DCCReference Include="..\..\..\Source\WrapDelphiDataBind.pas"/>
+        <DCCReference Include="..\..\..\Source\WrapDelphiImageList.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

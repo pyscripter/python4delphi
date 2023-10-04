@@ -59,6 +59,7 @@ contains
   WrapFmxStdCtrls in '..\..\..\Source\fmx\WrapFmxStdCtrls.pas',
   WrapFmxStyles in '..\..\..\Source\fmx\WrapFmxStyles.pas',
   WrapFmxTypes in '..\..\..\Source\fmx\WrapFmxTypes.pas',
-  WrapFmxDateTime in '..\..\..\Source\fmx\WrapFmxDateTime.pas';
+  WrapFmxDateTime in '..\..\..\Source\fmx\WrapFmxDateTime.pas',
+  WrapFmxImgList in '..\..\..\Source\fmx\WrapFmxImgList.pas';
 
 end.

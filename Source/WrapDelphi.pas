@@ -656,9 +656,10 @@ Type
   { Base class for exposing Records and Interfaces when Extended RTTI is available }
   TPyRttiObject = class (TPyObject)
   private
-     fAddr: Pointer;
-     fRttiType: TRttiStructuredType;
-     function GetValue: TValue; virtual; abstract;
+    fCopy: TValue;
+    fAddr: Pointer;
+    fRttiType: TRttiStructuredType;
+    function GetValue: TValue; virtual; abstract;
   protected
     // Exposed Methods
     function SetProps(args, keywords : PPyObject) : PPyObject; cdecl;
@@ -667,10 +668,11 @@ Type
     PyDelphiWrapper : TPyDelphiWrapper;
     constructor Create( APythonType : TPythonType ); override;
     procedure SetAddrAndType(Address: Pointer; Typ: TRttiStructuredType);
+    procedure SetValueAndType(const AValue: TValue;
+      const ACopy: Boolean = false);
 
     function  GetAttrO( key: PPyObject) : PPyObject; override;
     function  SetAttrO( key, value: PPyObject) : Integer; override;
-    function  Repr : PPyObject; override;
     property Addr: Pointer read fAddr;
     property RttiType: TRttiStructuredType read fRttiType;
     property Value: TValue read GetValue;
@@ -683,6 +685,7 @@ Type
   private
     function GetValue: TValue; override;
   public
+    function Repr : PPyObject; override;
     class procedure SetupType( PythonType : TPythonType ); override;
   end;
 
@@ -690,6 +693,7 @@ Type
   private
     function GetValue: TValue; override;
   public
+    function Repr : PPyObject; override;
     class procedure SetupType( PythonType : TPythonType ); override;
   end;
   {$ENDIF}
@@ -884,6 +888,7 @@ Type
     procedure Finalize; override;
     procedure DefineVar(const AName : string; const AValue : Variant); overload;
     procedure DefineVar(const AName : string; AValue : TObject); overload;
+    procedure DefineVar(const AName : string; AValue : TClass); overload;
     function RegisterDelphiWrapper(AWrapperClass : TPyDelphiObjectClass): TPythonType;
     function  RegisterHelperType(APyObjectClass : TPyObjectClass) : TPythonType;
     function  RegisterFunction(AFuncName : PAnsiChar; AFunc : PyCFunction; ADocString : PAnsiChar ): PPyMethodDef; overload;
@@ -894,11 +899,16 @@ Type
     function WrapClass(AClass: TClass): PPyObject;
     {$IFDEF EXTENDED_RTTI}
     //  Function that provides a Python object wrapping a record
-    function WrapRecord(Address: Pointer; Typ: TRttiStructuredType): PPyObject;
+    function WrapRecord(Address: Pointer; Typ: TRttiStructuredType): PPyObject; overload;
+    function WrapRecord(const AValue: TValue; const ACopy: Boolean = false): PPyObject; overload;
     //  Function that provides a Python object wrapping an interface
     //  Note the the interface must be compiled in {$M+} mode and have a guid
     //  Usage: WrapInterface(TValue.From(YourInterfaceReference))
-    function WrapInterface(const IValue: TValue): PPyObject;
+    //  Warning: WrapInterface represents a weak (uncounted) reference!
+    //           Use ACopy = True to retrieve a normal counted reference
+    //           that will keep the interface alive as long as python has a
+    //           reference to it.
+    function WrapInterface(const IValue: TValue; const ACopy: Boolean = False): PPyObject;
     {$ENDIF}
     // properties
     property EventHandlers : TEventHandlers read fEventHandlerList;
@@ -980,6 +990,7 @@ Type
   function  CheckEnum(const AEnumName : string; AValue, AMinValue, AMaxValue : Integer) : Boolean;
   function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; const AValue : Variant) : PPyObject; overload;
   function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper; AObject: TObject) : PPyObject; overload;
+  function  CreateVarParam(PyDelphiWrapper: TPyDelphiWrapper; AClass: TClass): PPyObject; overload;
   function  SetToPython(ATypeInfo: PTypeInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(APropInfo: PPropInfo; AValue : Integer) : PPyObject; overload;
   function  SetToPython(AInstance: TObject; APropInfo: PPropInfo) : PPyObject; overload;
@@ -1264,7 +1275,7 @@ begin
       tkArray, tkDynArray:
         Result := DynArrayToPython(Value);
       tkClass, tkMethod,
-      tkRecord, tkInterface,
+      tkRecord, tkInterface, {$IFDEF MANAGED_RECORD} tkMRecord,{$ENDIF}
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrValueToPython;
     else
@@ -1330,7 +1341,7 @@ begin
           Result := True;
         end;
       tkClass, tkMethod, tkArray,
-      tkRecord, tkInterface,
+      tkRecord, tkInterface,{$IFDEF MANAGED_RECORD} tkMRecord,{$ENDIF}
       tkClassRef, tkPointer, tkProcedure:
         ErrMsg := rs_ErrPythonToValue;
     else
@@ -1623,6 +1634,16 @@ begin
   tmp := PyDelphiWrapper.Wrap(AObject);
   (PythonToDelphi(Result) as TPyDelphiVarParameter).Value := tmp;
   GetPythonEngine.Py_DECREF(tmp);
+end;
+
+function CreateVarParam(PyDelphiWrapper: TPyDelphiWrapper; AClass: TClass): PPyObject; overload;
+var
+  LTmp: PPyObject;
+begin
+  Result := PyDelphiWrapper.VarParamType.CreateInstance;
+  LTmp := PyDelphiWrapper.WrapClass(AClass);
+  (PythonToDelphi(Result) as TPyDelphiVarParameter).Value := LTmp;
+  GetPythonEngine.Py_DECREF(LTmp);
 end;
 
 function SupportsFreeNotification(AObject : TObject) : Boolean;
@@ -2242,6 +2263,22 @@ function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
                 Break
               end
             end
+            else if Param.ParamType.TypeKind = tkInterface then
+            begin
+              if not ValidateInterfaceProperty(PyValue, Param.ParamType as TRttiInterfaceType, Args[Index], ErrMsg) then
+              begin
+                Result := nil;
+                Break
+              end
+            end
+            else if Param.ParamType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
+            begin
+              if not ValidateRecordProperty(PyValue, Param.ParamType.Handle, Args[Index], ErrMsg) then
+              begin
+                Result := nil;
+                Break
+              end
+            end
             else if (Param.ParamType.TypeKind = tkDynArray) and PythonType.Engine.PyList_Check(PyValue) then
             begin
               if ParamAsDynArray(PyValue, Param, Args[Index]) then
@@ -2312,6 +2349,10 @@ begin
       Result := DelphiWrapper.Wrap(ret.AsObject)
     else if ret.Kind = tkClassRef then
       Result := DelphiWrapper.WrapClass(ret.AsClass)
+    else if ret.Kind = tkInterface then
+      Result := DelphiWrapper.WrapInterface(ret, True)
+    else if ret.Kind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
+      Result := DelphiWrapper.WrapRecord(ret, True)
     else begin
       Result := SimpleValueToPython(ret, ErrMsg);
       if Result = nil then
@@ -2365,8 +2406,15 @@ begin
         case Prop.PropertyType.TypeKind of
           tkClass:
             Result := PyDelphiWrapper.Wrap(Prop.GetValue(ParentAddr).AsObject);
+          tkClassRef:
+            Result := PyDelphiWrapper.WrapClass(Prop.GetValue(ParentAddr).AsClass);
           tkInterface:
-            Result := PyDelphiWrapper.WrapInterface(Prop.GetValue(ParentAddr));
+            // Must be a copy, otherwise reference counting fails and the returned
+            // interface might be freed while python is holding a reference to it
+            Result := PyDelphiWrapper.WrapInterface(Prop.GetValue(ParentAddr), True);
+          tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}:
+            // Must be a copy, property getters are not allowed to leak access to underlying storage
+            Result := PyDelphiWrapper.WrapRecord(Prop.GetValue(ParentAddr), True);
           tkMethod:
             if (ParentType is TRttiInstanceType) and (Prop is TRttiInstanceProperty) then
               Result := PyDelphiWrapper.fEventHandlerList.GetCallable(TObject(ParentAddr),
@@ -2388,12 +2436,18 @@ begin
           case Field.FieldType.TypeKind of
             tkClass:
               Result := PyDelphiWrapper.Wrap(Field.GetValue(ParentAddr).AsObject);  // Returns None if Field is nil
+            tkClassRef:
+              Result := PyDelphiWrapper.WrapClass(Field.GetValue(ParentAddr).AsClass);  // Returns None if Field is nil
             tkInterface:
-              Result := PyDelphiWrapper.WrapInterface(Field.GetValue(ParentAddr));
+              Result := PyDelphiWrapper.WrapInterface(Field.GetValue(ParentAddr), True);
             tkRecord:
               if Field.FieldType is TRttiStructuredType then
-                //Result := PyDelphiWrapper.WrapRecord(Pointer(PPByte(ParentAddr)^ + Field.Offset),  TRttiStructuredType(Field.FieldType));
-                Result := PyDelphiWrapper.WrapRecord(PByte(ParentAddr) + Field.Offset,  TRttiStructuredType(Field.FieldType));
+                //Potentially dangerous as the returned value, which is a pointer into the object,
+                //could be stored on the python side, then the object freed, and the stored pointer later
+                //used to access no longer allocated memory
+                //But I can't see any good alternative if Python should be able to write directly into
+                //fields of a record that's part of an object.
+                Result := PyDelphiWrapper.WrapRecord(PByte(ParentAddr) + Field.Offset, TRttiStructuredType(Field.FieldType));
           else
             Result := SimpleValueToPython(Field.GetValue(ParentAddr), ErrMsg)
           end;
@@ -2418,6 +2472,7 @@ var
   Field: TRttiField;
   V: TValue;
   Obj: TObject;
+  Cls: TClass;
   ValueOut: TValue;
 begin
   Result := False;
@@ -2438,12 +2493,20 @@ begin
             Prop.SetValue(ParentAddr, Obj);
             Result := True;
           end;
+        tkClassRef:
+          if ValidateClassRef(Value,
+            (Prop.PropertyType as TRttiClassRefType).MetaclassType,
+            Cls, ErrMsg) then
+          begin
+            Prop.SetValue(ParentAddr, Cls);
+            Result := True;
+          end;
         tkInterface:
           if ValidateInterfaceProperty(Value, Prop.PropertyType as TRttiInterfaceType, ValueOut, ErrMsg) then begin
             Prop.SetValue(ParentAddr, ValueOut);
             Result := True;
           end;
-        tkRecord:
+        tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}:
           if ValidateRecordProperty(Value, Prop.PropertyType.Handle, ValueOut, ErrMsg) then begin
             Prop.SetValue(ParentAddr, ValueOut);
             Result := True;
@@ -2483,12 +2546,20 @@ begin
               Field.SetValue(ParentAddr, Obj);
               Result := True;
             end;
+          tkClassRef:
+            if ValidateClassRef(Value,
+              (Field.FieldType as TRttiClassRefType).MetaclassType,
+              Cls, ErrMsg) then
+            begin
+              Field.SetValue(ParentAddr, Cls);
+              Result := True;
+            end;
           tkInterface:
             if ValidateInterfaceProperty(Value, Field.FieldType as TRttiInterfaceType, ValueOut, ErrMsg) then begin
               Field.SetValue(ParentAddr, ValueOut);
               Result := True;
             end;
-          tkRecord:
+          tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}:
             if ValidateRecordProperty(Value, Field.FieldType.Handle, ValueOut, ErrMsg) then begin
               Field.SetValue(ParentAddr, ValueOut);
               Result := True;
@@ -2569,13 +2640,6 @@ begin
     'Returns the list of all methods, fields and properties of this instance.');
 end;
 
-function TPyRttiObject.Repr: PPyObject;
-begin
-  Result := GetPythonEngine.PyUnicodeFromString(
-   Format('<Delphi record of type %s at %x>',
-   [RttiType.Name, NativeInt(Self)]) )
-end;
-
 function TPyRttiObject.SetAttrO(key, value: PPyObject): Integer;
 var
    KeyName: string;
@@ -2621,11 +2685,51 @@ begin
   fRttiType := Typ;
 end;
 
+procedure TPyRttiObject.SetValueAndType(const AValue: TValue;
+  const ACopy: Boolean);
+var
+  LRttiCtx: TRttiContext;
+  LRttiType: TRttiStructuredType;
+begin
+  LRttiCtx := TRttiContext.Create();
+  try
+    LRttiType := LRttiCtx.GetType(AValue.TypeInfo) as TRttiStructuredType;
+  finally
+    LRttiCtx.Free();
+  end;
+
+  if ACopy then
+  begin
+    FCopy := AValue;
+    if LRttiType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}] then
+      SetAddrAndType(FCopy.GetReferenceToRawData(), LRttiType)
+    else if LRttiType.TypeKind = tkInterface then
+      SetAddrAndType(Pointer(FCopy.GetReferenceToRawData()^), LRttiType)
+  end
+  else
+  begin
+    if LRttiType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}] then
+      SetAddrAndType(AValue.GetReferenceToRawData(), LRttiType)
+    else if LRttiType.TypeKind = tkInterface then
+      SetAddrAndType(Pointer(AValue.GetReferenceToRawData()^), LRttiType)
+  end;
+end;
+
 { TPyPascalRecord }
 
 function TPyPascalRecord.GetValue: TValue;
 begin
-   TValue.Make(fAddr, RttiType.Handle, Result);
+  if FCopy.IsEmpty then
+    TValue.Make(fAddr, RttiType.Handle, Result)
+  else
+    Result := FCopy;
+end;
+
+function TPyPascalRecord.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(
+   Format('<Pascal record of type %s at %x>',
+   [RttiType.Name, NativeInt(fAddr)]) )
 end;
 
 class procedure TPyPascalRecord.SetupType(PythonType: TPythonType);
@@ -2639,7 +2743,17 @@ end;
 
 function TPyPascalInterface.GetValue: TValue;
 begin
-   TValue.Make(@fAddr, RttiType.Handle, Result);
+  if FCopy.IsEmpty then
+    TValue.Make(@fAddr, RttiType.Handle, Result)
+  else
+    Result := FCopy;
+end;
+
+function TPyPascalInterface.Repr: PPyObject;
+begin
+  Result := GetPythonEngine.PyUnicodeFromString(
+   Format('<Pascal interface of type %s at %x>',
+   [RttiType.Name, NativeInt(fAddr)]) )
 end;
 
 class procedure TPyPascalInterface.SetupType(PythonType: TPythonType);
@@ -4100,6 +4214,16 @@ begin
   Engine.Py_DECREF(_obj);
 end;
 
+procedure TPyDelphiWrapper.DefineVar(const AName: string; AValue: TClass);
+var
+  LObj: PPyObject;
+begin
+  Assert(Assigned(Module));
+  LObj := WrapClass(AValue);
+  Module.SetVar(AnsiString(AName), LObj);
+  Engine.Py_DECREF(LObj);
+end;
+
 destructor TPyDelphiWrapper.Destroy;
 begin
   if Initialized then Finalize;
@@ -4378,28 +4502,53 @@ begin
   end;
 end;
 
-function TPyDelphiWrapper.WrapInterface(const IValue: TValue): PPyObject;
+function TPyDelphiWrapper.WrapRecord(const AValue: TValue; const ACopy: Boolean): PPyObject;
 var
-  PythonType: TPythonType;
-  Address: Pointer;
-  Typ: TRttiStructuredType;
+  LPythonType: TPythonType;
 begin
-  CheckEngine;
-  if IValue.IsEmpty then begin
+  CheckEngine();
+
+  if AValue.IsEmpty then begin
     Result := Engine.ReturnNone;
     Exit;
   end;
-  PythonType := GetHelperType('PascalInterfaceType');
-  if not Assigned(PythonType) or (IValue.Kind <> tkInterface) then
+
+  LPythonType := GetHelperType('PascalRecordType');
+  if not Assigned(LPythonType) or not (AValue.Kind in [tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}]) then
   begin
     Result := Engine.ReturnNone;
     Exit;
   end;
-  Result := PythonType.CreateInstance;
-  Typ := TRttiContext.Create.GetType(IValue.TypeInfo) as TRttiStructuredType;
-  Address := Pointer(IValue.GetReferenceToRawData^);
+
+  Result := LPythonType.CreateInstance();
+  with PythonToDelphi(Result) as TPyPascalRecord do begin
+    SetValueAndType(AValue, ACopy);
+    PyDelphiWrapper := Self;
+  end;
+end;
+
+function TPyDelphiWrapper.WrapInterface(const IValue: TValue;
+  const ACopy: Boolean = False): PPyObject;
+var
+  LPythonType: TPythonType;
+begin
+  CheckEngine;
+
+  if IValue.IsEmpty then begin
+    Result := Engine.ReturnNone;
+    Exit;
+  end;
+
+  LPythonType := GetHelperType('PascalInterfaceType');
+  if not Assigned(LPythonType) or (IValue.Kind <> tkInterface) then
+  begin
+    Result := Engine.ReturnNone;
+    Exit;
+  end;
+
+  Result := LPythonType.CreateInstance;
   with PythonToDelphi(Result) as TPyPascalInterface do begin
-    SetAddrAndType(Address, Typ);
+    SetValueAndType(IValue, ACopy);
     PyDelphiWrapper := Self;
   end;
 end;

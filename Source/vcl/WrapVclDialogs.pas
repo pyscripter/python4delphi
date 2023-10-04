@@ -77,13 +77,13 @@ uses
 { Global Functions }
 function ShowMessage_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
 var
-  LMsg: PAnsiChar;
+  LPyMsg: PPyObject;
 begin
   with GetPythonEngine do
   begin
-    if PyArg_ParseTuple(args, 's:ShowMessage', @LMsg) <> 0 then
+    if PyArg_ParseTuple(args, 'O:ShowMessage', @LPyMsg) <> 0 then
     begin
-      ShowMessage(string(LMsg));
+      ShowMessage(PyObjectAsString(LPyMsg));
       Result := GetPythonEngine.ReturnNone;
     end else
       Result := nil;

@@ -55,6 +55,7 @@ contains
   WrapVclStdCtrls in '..\..\..\Source\vcl\WrapVclStdCtrls.pas',
   WrapVclWinXCtrls in '..\..\..\Source\vcl\WrapVclWinXCtrls.pas',
   WrapVclThemes in '..\..\..\Source\vcl\WrapVclThemes.pas',
-  WrapVclMedia in '..\..\..\Source\vcl\WrapVclMedia.pas';
+  WrapVclMedia in '..\..\..\Source\vcl\WrapVclMedia.pas',
+  WrapVclImgList in '..\..\..\Source\vcl\WrapVclImgList.pas';
 
 end.

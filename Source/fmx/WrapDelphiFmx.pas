@@ -28,6 +28,7 @@ uses
   WrapFmxDataBind,
   {$ENDIF LINUX}
   WrapFmxTypes,
+  WrapFmxImgList,
   WrapFmxControls,
   WrapFmxStdCtrls,
   WrapFmxEdit,

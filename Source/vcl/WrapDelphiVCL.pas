@@ -28,6 +28,7 @@ uses
   WrapDelphiWindows,
   WrapDelphiDataBind,
   WrapActions,
+  WrapVclImgList,
   WrapVclControls,
   WrapVclGraphics,
   WrapVclForms,

@@ -118,6 +118,7 @@
         <DCCReference Include="..\..\..\Source\vcl\WrapVclWinXCtrls.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\WrapVclThemes.pas"/>
         <DCCReference Include="..\..\..\Source\vcl\WrapVclMedia.pas"/>
+        <DCCReference Include="..\..\..\Source\vcl\WrapVclImgList.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

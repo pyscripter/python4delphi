@@ -21,7 +21,6 @@ uses
   FMX.Dialogs, FMX.DialogService,
   WrapDelphi, WrapFmxTypes, PythonEngine;
 
-
 type
   TPyDelphiOpenDialog = class(TPyDelphiFmxObject)
   private
