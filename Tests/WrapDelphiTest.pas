@@ -41,6 +41,12 @@ type
   private
     FFruit: TFruit;
     FFruits: TFruits;
+    TempI: Integer;
+    TempS: string;
+    function GetIndexed2(S1, S2: string): string;
+    procedure SetIndexed2(S1, S2: string; const Value: string);
+    function GetIndexed(I: Integer): Integer;
+    procedure SetIndexed(I: Integer; const Value: Integer);
   public
     FruitField :TFruit;
     FruitsField: TFruits;
@@ -62,6 +68,8 @@ type
     function SetStringField(const Value: string): string; overload;
     procedure PassVariantArray(const Value: Variant);
     function ClassRefParam(ClassRef: TPersistentClass): string;
+    property Indexed[I: Integer]: Integer read GetIndexed write SetIndexed;
+    property Indexed2[S1, S2: string]: string read GetIndexed2 write SetIndexed2;
     class var ClassField: string;
     class function DoubleString(S: string): string;
     class function Square(I: Integer): Integer; static;
@@ -142,6 +150,8 @@ type
     procedure TestClassMethods;
     [Test]
     procedure TestStaticMethods;
+    [Test]
+    procedure TestIndexedProperties;
   end;
 
 implementation
@@ -311,6 +321,14 @@ begin
   Assert.IsTrue(VarIsPythonList(List));
   Assert.AreEqual(1000, Integer(len(List)));
   Assert.AreEqual(Int64(999), Int64(PythonEngine.PyObjectAsVariant(PythonEngine.PyList_GetItem(ExtractPythonObjectFrom(List), 999))));
+end;
+
+procedure TTestWrapDelphi.TestIndexedProperties;
+begin
+  PythonEngine.ExecString('rtti_var.Indexed[2] = 4');
+  Assert.AreEqual<Integer>(VarPythonEval('rtti_var.Indexed[2]'), 6);
+  PythonEngine.ExecString('rtti_var.Indexed2["A", "B"] = "C"');
+  Assert.AreEqual<string>(VarPythonEval('rtti_var.Indexed2["A", "B"]'), 'A,B: C');
 end;
 
 procedure TTestWrapDelphi.TestInheritance;
@@ -501,6 +519,16 @@ begin
   Assert.AreEqual('test', TestRttiAccess.StringField);
 end;
 
+procedure TTestRttiAccess.SetIndexed(I: Integer; const Value: Integer);
+begin
+  TempI := I + Value;
+end;
+
+procedure TTestRttiAccess.SetIndexed2(S1, S2: string; const Value: string);
+begin
+  TempS := Format('%s,%s: %s', [S1, S2, Value]);
+end;
+
 function TTestRttiAccess.SetStringField(const Value: string): string;
 begin
   StringField := Value;
@@ -540,6 +568,16 @@ begin
   SetLength(Result, 1000000);
   for I := 0 to Length(Result) - 1 do
     Result[I] := I;
+end;
+
+function TTestRttiAccess.GetIndexed(I: Integer): Integer;
+begin
+  Result := TempI;
+end;
+
+function TTestRttiAccess.GetIndexed2(S1, S2: string): string;
+begin
+  Result := TempS;
 end;
 
 function TTestRttiAccess.GetStaticArray: TStaticArray;
