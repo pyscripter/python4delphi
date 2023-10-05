@@ -1037,9 +1037,8 @@ var
   gRegisteredUnits : TRegisteredUnits;
 
 {$IFDEF EXTENDED_RTTI}
-function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
-  DelphiWrapper: TPyDelphiWrapper; MethName: string;
-  ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
+function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
+  MethName: string; ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
   AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
 
 function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
@@ -1237,7 +1236,6 @@ begin
 
   Result := RttiCall(
     ParentAddress,
-    FPythonType,
     FPyDelphiWrapper,
     string(FName),
     FParentRtti,
@@ -2594,9 +2592,8 @@ begin
       SL.Add(RttiField.Name);
 end;
 
-function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
-  DelphiWrapper: TPyDelphiWrapper; MethName: string;
-  ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
+function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
+  MethName: string; ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
   AParentAddrIsClass: Boolean): PPyObject;
 
   { TODO: Handle methods with var parameters
@@ -2640,7 +2637,7 @@ begin
   // Ignore keyword arguments ob2
   // ob1 is a tuple with zero or more elements
 
-  ArgCount := PythonType.Engine.PyTuple_Size(ob1);
+  ArgCount := DelphiWrapper.Engine.PyTuple_Size(ob1);
   SetLength(Args, ArgCount);
 
   meth := FindMethod(MethName, ParentRtti, ob1, Args);
@@ -2667,7 +2664,7 @@ begin
 
     Result := RetValueToPython(ReturnValue, DelphiWrapper, ErrMsg);
     if Result = nil then
-      with PythonType.Engine do
+      with DelphiWrapper.Engine do
         PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
           Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
   except
@@ -4188,7 +4185,7 @@ end;
 {$IFDEF EXTENDED_RTTI}
 function TPyDelphiMethodObject.Call(ob1, ob2: PPyObject): PPyObject;
 begin
-  Result := RttiCall(ParentAddress, PythonType, fDelphiWrapper, MethName, ParentRtti, ob1, ob2);
+  Result := RttiCall(ParentAddress, fDelphiWrapper, MethName, ParentRtti, ob1, ob2);
 end;
 
 {$ELSE)}
