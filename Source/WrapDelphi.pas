@@ -1063,12 +1063,14 @@ resourcestring
   rs_IncompatibleClasses = 'Incompatible classes';
   rs_IncompatibleRecords = 'Incompatible record types';
   rs_IncompatibleInterfaces = 'Incompatible interfaces';
+  rs_IncompatiblePythonType = 'Incompatible python value type';
   rs_NotPublished = 'Event handling is available only for published properties';
   rs_ExpectedObject = 'Expected a Pascal object';
   rs_ExpectedRecord = 'Expected a Pascal record';
   rs_ExpectedClass = 'Expected a Pascal class';
   rs_ExpectedNil = 'In static methods Self should be nil';
   rs_ExpectedInterface = 'Expected a Pascal interface';
+  rs_ExpectedSequence = 'Expected a python sequence';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
   rs_ErrEventNoSuport = 'Class %s does not support events because it must '+
@@ -1089,7 +1091,11 @@ var
 function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
   DelphiWrapper: TPyDelphiWrapper; MethName: string;
   ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
-  AParentAddrIsClass: boolean = false): PPyObject; forward;
+  AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
+
+function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
+  DelphiWrapper: TPyDelphiWrapper; Method: TRttiMethod;
+  ob1, ob2: PPyObject; AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
 
 function GetRttiAttr(ParentAddr: Pointer; ParentType: TRttiStructuredType;
   const AttrName: string; PyDelphiWrapper: TPyDelphiWrapper;
@@ -1596,6 +1602,128 @@ begin
   end
   else
     ErrMsg := rs_ExpectedClass;
+end;
+
+function ValidateDynArray(PyValue: PPyObject; const RttiParam: TRttiParameter; out ParamValue: TValue; out ErrMsg: string): Boolean;
+var
+  Arr: array of TValue;
+  I: Integer;
+  elType: PPTypeInfo;
+  V: Variant;
+  Num: Int64;
+  PyEngine: TPythonEngine;
+begin
+  Result := False;
+  PyEngine := GetPythonEngine;
+
+  if not PyEngine.PySequence_Check(PyValue) = 0 then
+  begin
+    ErrMsg := rs_ExpectedSequence;
+    Exit;
+  end;
+
+  if (RttiParam.ParamType = nil) or (RttiParam.ParamType.Handle = nil) or (GetTypeData(RttiParam.ParamType.Handle) = nil) then
+    Exit;
+  elType := GetTypeData(RttiParam.ParamType.Handle).elType;
+  if elType = nil then
+    elType := GetTypeData(RttiParam.ParamType.Handle).elType2;
+  if elType = nil then
+    Exit;
+
+  try
+    SetLength(Arr, PyEngine.PySequence_Length(PyValue));
+    for I := 0 to PyEngine.PySequence_Length(PyValue) - 1 do
+    begin
+      V := PyEngine.GetSequenceItem(PyValue, i);
+      if elType^.Kind = tkEnumeration then
+      begin
+        Num := TValue.FromVariant(V).Cast(TypeInfo(Int64)).AsInt64;
+        Arr[i] := TValue.FromOrdinal(elType^, Num);
+      end
+      else
+        Arr[i] := TValue.FromVariant(V).Cast(elType^);
+    end;
+    ParamValue := TValue.FromArray(RttiParam.ParamType.Handle, Arr);
+    Result := True;
+  except
+    ErrMsg := rs_IncompatiblePythonType;
+  end;
+end;
+
+function PyArgToValue(PyArg : PPyObject; Param: TRttiParameter; out Arg: TValue): Boolean;
+var
+  ErrMsg: string;
+  Obj: TObject;
+  ClassRef: TClass;
+begin
+  Result := False;
+  if (Param.ParamType = nil) or
+    (Param.Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> [])
+  then
+    Exit
+  else if Param.ParamType.TypeKind = tkClass then
+  begin
+    Result := ValidateClassProperty(PyArg, Param.ParamType.Handle, Obj, ErrMsg);
+    if Result then
+      Arg := Obj;
+  end
+  else if (Param.ParamType.TypeKind = tkClassRef) then
+  begin
+    Result := ValidateClassRef(PyArg,
+      (Param.ParamType as TRttiClassRefType).MetaclassType, ClassRef, ErrMsg);
+    if Result then
+      Arg := ClassRef;
+  end
+  else if Param.ParamType.TypeKind = tkInterface then
+    Result :=  ValidateInterfaceProperty(PyArg,
+      Param.ParamType as TRttiInterfaceType, Arg, ErrMsg)
+  else if Param.ParamType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
+    Result := ValidateRecordProperty(PyArg, Param.ParamType.Handle, Arg, ErrMsg)
+  else if Param.ParamType.TypeKind = tkDynArray then
+    Result := ValidateDynArray(PyArg, Param, Arg, ErrMsg)
+  else
+    Result := SimplePythonToValue(PyArg, Param.ParamType.Handle,
+      Arg, ErrMsg);
+end;
+
+function PyArgsToValues(PyArgs: PPyObject; Method: TRttiMethod; out Args: array of TValue): Boolean;
+var
+  Index: Integer;
+  PyArg : PPyObject;
+  Param: TRttiParameter;
+  Engine: TPythonEngine;
+  Params : TArray<TRttiParameter>;
+begin
+  Params := Method.GetParameters;
+  if Length(Args) <> Length(Params) then
+    Exit(False);
+
+  Engine := GetPythonEngine;
+  for Index := 0 to Length(Params) - 1 do
+  begin
+    Param := Params[Index];
+    PyArg := Engine.PyTuple_GetItem(PyArgs, Index);
+    if not PyArgToValue(PyArg, Param, Args[Index]) then
+      Exit(False);
+  end;
+  Result := True;
+end;
+
+function RetValueToPython(const RetValue: TValue;
+   DelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject;
+begin
+  if RetValue.IsEmpty then
+    Result := GetPythonEngine.ReturnNone
+  else if RetValue.Kind = tkClass then
+    Result := DelphiWrapper.Wrap(RetValue.AsObject)
+  else if RetValue.Kind = tkClassRef then
+    Result := DelphiWrapper.WrapClass(RetValue.AsClass)
+  else if RetValue.Kind = tkInterface then
+    Result := DelphiWrapper.WrapInterface(RetValue, True)
+  else if RetValue.Kind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
+    Result := DelphiWrapper.WrapRecord(RetValue, True)
+  else
+    Result := SimpleValueToPython(RetValue, ErrMsg);
 end;
 {$ENDIF}
 
@@ -2298,7 +2426,7 @@ end;
 function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
   DelphiWrapper: TPyDelphiWrapper; MethName: string;
   ParentRtti: TRttiStructuredType; ob1, ob2: PPyObject;
-  AParentAddrIsClass: boolean): PPyObject;
+  AParentAddrIsClass: Boolean): PPyObject;
 
   { TODO: Handle methods with var parameters
     procedures/functions with var parameters should return a tuple
@@ -2311,151 +2439,28 @@ function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
       use in python:
       res, param = objref.Test(param) }
 
-  function ParamAsDynArray(PyValue: PPyObject; const RttiParam: TRttiParameter; out ParamValue: TValue): Boolean;
-  var
-    Arr: array of TValue;
-    I: Integer;
-    elType: PPTypeInfo;
-    V: Variant;
-    Num: Int64;
-  begin
-    Result := False;
-    if (RttiParam.ParamType = nil) or (RttiParam.ParamType.Handle = nil) or (GetTypeData(RttiParam.ParamType.Handle) = nil) then
-      Exit;
-    elType := GetTypeData(RttiParam.ParamType.Handle).elType;
-    if elType = nil then
-      elType := GetTypeData(RttiParam.ParamType.Handle).elType2;
-    if elType = nil then
-      Exit;
-
-    SetLength(Arr, PythonType.Engine.PyList_Size(PyValue));
-    for I := 0 to PythonType.Engine.PyList_Size(PyValue) - 1 do
-    begin
-      V := PythonType.Engine.PyObjectAsVariant(PythonType.Engine.PyList_GetItem(PyValue, i));
-      if elType^.Kind = tkEnumeration then
-      begin
-        Num := TValue.FromVariant(V).Cast(TypeInfo(Int64)).AsInt64;
-        Arr[i] := TValue.FromOrdinal(elType^, Num);
-      end
-      else
-        Arr[i] := TValue.FromVariant(V).Cast(elType^);
-    end;
-    ParamValue := TValue.FromArray(RttiParam.ParamType.Handle, Arr);
-    Result := True;
-  end;
-
   function FindMethod(const MethName:string; RttiType : TRttiType;
     PyArgs: PPyObject; var Args: array of TValue):TRttiMethod;
   // Deals with overloaded methods
   // Constructs the Arg Array
   // PyArgs is a Python tuple
-  Var
+  var
     Method: TRttiMethod;
-    Index: Integer;
-    ErrMsg: string;
-    Obj: TObject;
-    ClassRef: TClass;
-    PyValue : PPyObject;
-    Param: TRttiParameter;
-    Params : TArray<TRttiParameter>;
-    SearchContinue: Boolean;
   begin
     Result := nil;
     for Method in RttiType.GetMethods do
-      if SameText(Method.Name, MethName) then
+      if SameText(Method.Name, MethName) and PyArgsToValues(PyArgs, Method, Args) then
       begin
-        Params := Method.GetParameters;
-        if Length(Args) = Length(Params) then
-        begin
-          Result := Method;
-          SearchContinue := False;
-          for Index := 0 to Length(Params) - 1 do
-          begin
-            Param := Params[Index];
-            if (Param.ParamType = nil) or
-              (Param.Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> []) then
-            begin
-              Result := nil;
-              SearchContinue := True;
-              Break;
-            end;
-
-            PyValue := PythonType.Engine.PyTuple_GetItem(PyArgs, Index);
-            if Param.ParamType = nil then
-            begin
-              Result := nil;
-              Break
-            end
-            else if Param.ParamType.TypeKind = tkClass then
-            begin
-              if ValidateClassProperty(PyValue, Param.ParamType.Handle, Obj, ErrMsg)
-              then
-                Args[Index] := Obj
-              else begin
-                Result := nil;
-                Break
-              end
-            end
-            else if (Param.ParamType.TypeKind = tkClassRef) then
-            begin
-              if ValidateClassRef(PyValue,
-                (Param.ParamType as TRttiClassRefType).MetaclassType,
-                ClassRef, ErrMsg)
-              then
-                Args[Index] := ClassRef
-              else begin
-                Result := nil;
-                Break
-              end
-            end
-            else if Param.ParamType.TypeKind = tkInterface then
-            begin
-              if not ValidateInterfaceProperty(PyValue, Param.ParamType as TRttiInterfaceType, Args[Index], ErrMsg) then
-              begin
-                Result := nil;
-                Break
-              end
-            end
-            else if Param.ParamType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
-            begin
-              if not ValidateRecordProperty(PyValue, Param.ParamType.Handle, Args[Index], ErrMsg) then
-              begin
-                Result := nil;
-                Break
-              end
-            end
-            else if (Param.ParamType.TypeKind = tkDynArray) and PythonType.Engine.PyList_Check(PyValue) then
-            begin
-              if ParamAsDynArray(PyValue, Param, Args[Index]) then
-                Continue; //to avoid last check
-            end
-            else begin
-              if not SimplePythonToValue(PyValue, Param.ParamType.Handle,
-                Args[Index], ErrMsg) then
-              begin
-                Result := nil;
-                Break
-              end;
-            end;
-
-            if (Param.ParamType <> nil) and not Args[Index].IsType(Param.ParamType.Handle) then
-            begin
-              Result :=nil;
-              Break;
-            end;
-          end; // for params
-
-          if not SearchContinue then
-            Break;
-        end;
-     end;
+        Result := Method;
+        Break;
+      end;
   end;
 
 Var
   Args: array of TValue;
   ArgCount: Integer;
   meth: TRttiMethod;
-  ret: TValue;
+  ReturnValue: TValue;
   ErrMsg : string;
   Addr: TValue;
 
@@ -2487,28 +2492,69 @@ begin
        TValue.Make(@ParentAddress, ParentRtti.Handle, Addr)
     else
       Addr := TValue.From(ParentAddress);
-    ret := meth.Invoke(Addr, Args);
-    if ret.IsEmpty then
-      Result := GetPythonEngine.ReturnNone
-    else if ret.Kind = tkClass then
-      Result := DelphiWrapper.Wrap(ret.AsObject)
-    else if ret.Kind = tkClassRef then
-      Result := DelphiWrapper.WrapClass(ret.AsClass)
-    else if ret.Kind = tkInterface then
-      Result := DelphiWrapper.WrapInterface(ret, True)
-    else if ret.Kind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
-      Result := DelphiWrapper.WrapRecord(ret, True)
-    else begin
-      Result := SimpleValueToPython(ret, ErrMsg);
-      if Result = nil then
-        with PythonType.Engine do
-          PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-            Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
-    end;
+    ReturnValue := meth.Invoke(Addr, Args);
+
+    Result := RetValueToPython(ReturnValue, DelphiWrapper, ErrMsg);
+    if Result = nil then
+      with PythonType.Engine do
+        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
+          Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
   except
     on E: Exception do begin
       Result := nil;
       InvalidArguments(MethName, E.Message);
+    end;
+  end;
+end;
+
+function RttiCall(ParentAddress: pointer; PythonType: TPythonType;
+  DelphiWrapper: TPyDelphiWrapper; Method: TRttiMethod;
+  ob1, ob2: PPyObject; AParentAddrIsClass: Boolean = false): PPyObject;
+var
+  ArgCount: Integer;
+  Args: array of TValue;
+  Addr: TValue;
+  ReturnValue: TValue;
+  ErrMsg : string;
+begin
+ Result := nil;
+  // Ignore keyword arguments ob2
+  // ob1 is a tuple with zero or more elements
+
+  ArgCount := PythonType.Engine.PyTuple_Size(ob1);
+  SetLength(Args, ArgCount);
+
+  if not PyArgsToValues(ob1, Method, Args) then
+  begin
+    InvalidArguments(Method.Name, rs_IncompatibleArguments);
+    Exit;
+  end;
+
+  try
+    if Method.Parent is TRttiInstanceType then
+      if Method.IsClassMethod or Method.IsStatic then
+        if AParentAddrIsClass then
+          Addr := TValue.From(TClass(ParentAddress))
+        else
+          Addr := TValue.From(TObject(ParentAddress).ClassType)
+      else
+        Addr := TValue.From(TObject(ParentAddress))
+    else if Method.Parent is TRttiInterfaceType then
+       TValue.Make(@ParentAddress, Method.Parent.Handle, Addr)
+    else
+      Addr := TValue.From(ParentAddress);
+
+    ReturnValue := Method.Invoke(Addr, Args);
+
+    Result := RetValueToPython(ReturnValue, DelphiWrapper, ErrMsg);
+    if Result = nil then
+      with PythonType.Engine do
+        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
+          Format(rs_ErrInvalidRet, [Method.Name, ErrMsg])));
+  except
+    on E: Exception do begin
+      Result := nil;
+      InvalidArguments(Method.Name, E.Message);
     end;
   end;
 end;
