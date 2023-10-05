@@ -2372,6 +2372,7 @@ procedure TTVCreateNodeClassEventHandler.DoEvent(Sender: TCustomTreeView;
 var
   LPyObject, LPyTuple, LPyResult, LPyNodeClass: PPyObject;
   LVarParam: TPyDelphiVarParameter;
+  ErrMsg: string;
   LClass: TClass;
 begin
   Assert(Assigned(PyDelphiWrapper));
@@ -2388,8 +2389,11 @@ begin
         if Assigned(LPyResult) then begin
           Py_DECREF(LPyResult);
 
-          LClass := TPyDelphiObjectClass(
-            PythonToPythonType(LVarParam.Value).PyObjectClass).DelphiObjectClass;
+          if not ValidateClassRef(LVarParam.Value, TTreeNode, LClass, ErrMsg) then
+          begin
+            InvalidArguments('OnCreateNode', ErrMsg);
+            Exit;
+          end;
 
           NodeClass := TTreeNodeClass(LClass);
         end;
@@ -3647,6 +3651,7 @@ var
   LPyObject, LPyTuple, LPyResult, LPyItemClass: PPyObject;
   LVarParam: TPyDelphiVarParameter;
   LClass: TClass;
+  ErrMsg: string;
 begin
   Assert(Assigned(PyDelphiWrapper));
   if Assigned(Callable) and PythonOK() then
@@ -3662,8 +3667,11 @@ begin
         if Assigned(LPyResult) then begin
           Py_DECREF(LPyResult);
 
-          LClass := TPyDelphiObjectClass(
-            PythonToPythonType(LVarParam.Value).PyObjectClass).DelphiObjectClass;
+          if not ValidateClassRef(LVarParam.Value, TListItem, LClass, ErrMsg) then
+          begin
+            InvalidArguments('OnCreateItem', ErrMsg);
+            Exit;
+          end;
 
           ItemClass := TListItemClass(LClass);
         end;

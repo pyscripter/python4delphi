@@ -1031,6 +1031,9 @@ Type
   procedure RaiseNotifyEvent(PyDelphiWrapper : TPyDelphiWrapper; ACallable : PPyObject; Sender: TObject);
   {Sets mulptiple properties of PyObject from keywords argument}
   function SetProperties(PyObject: PPyObject; keywords: PPyObject): PPyObject;
+  function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
+    out ClassRef: TClass; out ErrMsg: string): Boolean;
+  procedure InvalidArguments(const MethName, ErrMsg : string);
 
 implementation
 
@@ -1105,19 +1108,8 @@ function SetRttiAttr(const ParentAddr: Pointer;  ParentType: TRttiStructuredType
   const AttrName: string; Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
   out ErrMsg: string): Boolean; forward;
 
-  function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
-    out ClassRef: TClass; out ErrMsg: string): Boolean; forward;
-
 function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
   out Obj: TObject; out ErrMsg: string): Boolean; forward;
-
-procedure InvalidArguments(const MethName, ErrMsg : string);
-begin
-  with GetPythonEngine do
-    PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-      Format(rs_ErrInvalidArgs,
-      [MethName, ErrMsg])));
-end;
 
 { TAbstractExposedMember }
 
@@ -1373,6 +1365,59 @@ end;
 
 { Helper functions }
 
+procedure InvalidArguments(const MethName, ErrMsg : string);
+begin
+  with GetPythonEngine do
+    PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
+      Format(rs_ErrInvalidArgs,
+      [MethName, ErrMsg])));
+end;
+
+function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
+  out ClassRef: TClass; out ErrMsg: string): Boolean;
+var
+  LTypeName: AnsiString;
+  LPythonType: TPythonType;
+begin
+  ClassRef := nil;
+  if (PyValue = GetPythonEngine.Py_None) then begin
+     Result := True;
+     Exit;
+  end;
+
+  Result := False;
+  // Is PyValue a Python type?
+  if PyValue^.ob_type^.tp_name = 'type' then
+    LTypeName := PPyTypeObject(PyValue).tp_name
+  else
+  begin
+    ErrMsg := rs_ExpectedClass;
+    Exit;
+  end;
+
+  LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue));
+  if not Assigned(LPythonType) then
+    // Try once more with the base type to catter for pascal classes
+    // subclassed in Python
+    LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue).tp_base);
+
+  if Assigned(LPythonType) then
+  begin
+    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
+    begin
+      ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
+      if ClassRef.InheritsFrom(RefClass) then
+        Result := True
+      else
+        ErrMsg := rs_IncompatibleClasses;
+    end
+    else
+      ErrMsg := rs_ExpectedClass;
+  end
+  else
+    ErrMsg := rs_ExpectedClass;
+end;
+
 {$IFDEF EXTENDED_RTTI}
 function DynArrayToPython(const Value: TValue): PPyObject;
 var
@@ -1557,51 +1602,6 @@ begin
   end
   else
     ErrMsg := rs_ExpectedInterface;
-end;
-
-function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
-  out ClassRef: TClass; out ErrMsg: string): Boolean;
-var
-  LTypeName: AnsiString;
-  LPythonType: TPythonType;
-begin
-  ClassRef := nil;
-  if (PyValue = GetPythonEngine.Py_None) then begin
-     Result := True;
-     Exit;
-  end;
-
-  Result := False;
-  // Is PyValue a Python type?
-  if PyValue^.ob_type^.tp_name = 'type' then
-    LTypeName := PPyTypeObject(PyValue).tp_name
-  else
-  begin
-    ErrMsg := rs_ExpectedClass;
-    Exit;
-  end;
-
-  LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue));
-  if not Assigned(LPythonType) then
-    // Try once more with the base type to catter for pascal classes
-    // subclassed in Python
-    LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue).tp_base);
-
-  if Assigned(LPythonType) then
-  begin
-    if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
-    begin
-      ClassRef := TPyDelphiObjectClass(LPythonType.PyObjectClass).DelphiObjectClass;
-      if ClassRef.InheritsFrom(RefClass) then
-        Result := True
-      else
-        ErrMsg := rs_IncompatibleClasses;
-    end
-    else
-      ErrMsg := rs_ExpectedClass;
-  end
-  else
-    ErrMsg := rs_ExpectedClass;
 end;
 
 function ValidateDynArray(PyValue: PPyObject; const RttiParam: TRttiParameter; out ParamValue: TValue; out ErrMsg: string): Boolean;
