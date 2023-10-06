@@ -576,6 +576,7 @@ Type
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
     class procedure SetupType( PythonType : TPythonType ); override;
     {$IFDEF EXTENDED_RTTI}
+    class function ExcludedExposedMembers: TArray<string>; virtual;
     class procedure ExposeMethods(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
       AExcludedMethodNames: TArray<string> = []);
@@ -3702,17 +3703,22 @@ begin
     PythonType.DocString.Text := LDocStr;
 
   ExposeMethods(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper,  ['Free', 'CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3']);
+    PyWrapper,  ExcludedExposedMembers);
   ExposeFields(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, []);
+    PyWrapper, ExcludedExposedMembers);
   ExposeProperties(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, []);
+    PyWrapper, ExcludedExposedMembers);
   ExposeIndexedProperties(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, []);
+    PyWrapper, ExcludedExposedMembers);
   {$ENDIF EXTENDED_RTTI}
 end;
 
 {$IFDEF EXTENDED_RTTI}
+class function TPyDelphiObject.ExcludedExposedMembers: TArray<string>;
+begin
+  Result := ['Free', 'CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3'];
+end;
+
 class procedure TPyDelphiObject.ExposeMethods(AClass: TClass;
   NearestAncestorClass: TClass; APythonType: TPythonType;
   APyDelphiWrapper: TPyDelphiWrapper; AExcludedMethodNames: TArray<string>);
