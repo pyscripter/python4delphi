@@ -2819,9 +2819,10 @@ var
 begin
   Result := False;
 
-  Prop := ParentType.GetProperty(AttrName);
-  if Prop <> nil then
-    try
+  try
+    Prop := ParentType.GetProperty(AttrName);
+    if Prop <> nil then
+    begin
       if Ord(Prop.Visibility) < Ord(mvPublic) then
         ErrMsg := rs_NoAccess
       else if not Prop.IsWritable then
@@ -2841,17 +2842,12 @@ begin
         Prop.SetValue(ParentAddr, AttrValue);
         Result := True;
       end;
-    except
-      on E: Exception do begin
-        Result := False;
-        ErrMsg := E.Message;
-      end;
     end
-  else
-  begin
-    Field := ParentType.GetField(AttrName);
-    if Field <> nil then
-      try
+    else
+    begin
+      Field := ParentType.GetField(AttrName);
+      if Field <> nil then
+      begin
         if Ord(Field.Visibility) < Ord(mvPublic) then
           ErrMsg := rs_NoAccess
         else if Field.FieldType = nil then
@@ -2861,12 +2857,15 @@ begin
           Field.SetValue(ParentAddr, AttrValue);
           Result := True;
         end;
-      except
-        on E: Exception do begin
-          Result := False;
-          ErrMsg := E.Message;
-        end;
       end
+      else
+        ErrMsg := rs_UnknownAttribute;
+    end;
+  except
+    on E: Exception do begin
+      Result := False;
+      ErrMsg := E.Message;
+    end;
   end;
 end;
 
