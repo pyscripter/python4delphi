@@ -1116,9 +1116,10 @@ type
   TPyIndexedProperty = class(TPyObject)
   private
     FPyObj: PPyObject;
-    FPyDelphiWrapper: TPyDelphiWrapper;
+    FPyWrapper: TPyDelphiWrapper;
     FProperty: TRttiIndexedProperty;
   public
+    destructor Destroy; override;
     procedure Setup(PyObj: PPyObject; Wrapper: TPyDelphiWrapper; Prop: TRttiIndexedProperty);
     class procedure SetupType(PythonType: TPythonType); override;
     // Mapping services
@@ -1412,10 +1413,18 @@ end;
 
 { TPyIndexedProperty }
 
+destructor TPyIndexedProperty.Destroy;
+begin
+  if Assigned(FPyWrapper) then
+    FPyWrapper.Engine.Py_XDECREF(FPyObj);
+  inherited;
+end;
+
 procedure TPyIndexedProperty.Setup(PyObj: PPyObject; Wrapper: TPyDelphiWrapper; Prop: TRttiIndexedProperty);
 begin
   FPyObj:= PyObj;
-  FPyDelphiWrapper := Wrapper;
+  Wrapper.Engine.Py_XINCREF(FPyObj);
+  FPyWrapper := Wrapper;
   FProperty := Prop;
 end;
 
@@ -1445,16 +1454,16 @@ begin
   end;
 
   // obj is a tuple only if we have more than one arguments
-  if FPyDelphiWrapper.Engine.PyTuple_Check(obj) then
+  if FPyWrapper.Engine.PyTuple_Check(obj) then
     PyArgs := obj
   else
-    PyArgs := FPyDelphiWrapper.Engine.MakePyTuple([obj]);
+    PyArgs := FPyWrapper.Engine.MakePyTuple([obj]);
 
-  Result := RttiCall(PascalObject, FPyDelphiWrapper, FProperty.ReadMethod,
+  Result := RttiCall(PascalObject, FPyWrapper, FProperty.ReadMethod,
     PyArgs, nil);
 
-  if not FPyDelphiWrapper.Engine.PyTuple_Check(obj) then
-    FPyDelphiWrapper.Engine.Py_DECREF(PyArgs); // release created tuple
+  if not FPyWrapper.Engine.PyTuple_Check(obj) then
+    FPyWrapper.Engine.Py_DECREF(PyArgs); // release created tuple
 end;
 
 function TPyIndexedProperty.MpAssSubscript(obj1, obj2: PPyObject) : Integer;
@@ -1468,7 +1477,7 @@ var
 begin
   Result := -1; // Signals failure
 
-  Engine := FPyDelphiWrapper.Engine;
+  Engine := FPyWrapper.Engine;
   if not FProperty.IsWritable then
   begin
     with Engine do
@@ -1499,7 +1508,7 @@ begin
   else
     PyArgs := Engine.MakePyTuple([obj1, obj2]);
 
-  TempPy := RttiCall(PascalObject, FPyDelphiWrapper, FProperty.WriteMethod,
+  TempPy := RttiCall(PascalObject, FPyWrapper, FProperty.WriteMethod,
     PyArgs, nil);
 
   Engine.Py_DECREF(PyArgs);  // release created tuple
