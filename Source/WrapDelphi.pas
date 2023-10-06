@@ -1436,7 +1436,6 @@ begin
   PythonType.GenerateCreateFunction := False;
   PythonType.DocString.Text := 'Indexed property wrapper';
   PythonType.Services.Basic := [bsRepr, bsStr];
-  if True then
 
   PythonType.Services.Mapping := [msSubscript, msAssSubscript]
 end;
