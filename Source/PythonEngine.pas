@@ -140,6 +140,7 @@ const
   METH_KEYWORDS = $0002;
   METH_CLASS    = $0010;
   METH_STATIC   = $0020;
+  METH_COEXIST  = $0040;
 
   // Masks for the co_flags field of PyCodeObject
   CO_OPTIMIZED   = $0001;
@@ -7986,10 +7987,10 @@ begin
       if Assigned(val) then
         begin
           FType.tp_basicsize := val.InstanceSize + Sizeof(PyObject);
-          val.SetupType( Self );
           val.RegisterMethods( Self );
           val.RegisterMembers( Self );
           val.RegisterGetSets( Self );
+          val.SetupType( Self );
         end;
     end;
 end;
