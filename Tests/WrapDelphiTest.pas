@@ -225,16 +225,12 @@ begin
   //  is destroyed, so we need to set its Owned property to True;
   TestRttiAccess := TTestRTTIAccess.Create;
   TestRttiAccess.InterfaceField := TTestInterfaceImpl.Create;
-  Py := PyDelphiWrapper.Wrap(TestRttiAccess, TObjectOwnership.soReference);
-  DelphiModule.SetVar('rtti_var', Py);
-  PythonEngine.Py_DecRef(Py);
+  PyDelphiWrapper.DefineVar('rtti_var', TestRttiAccess, TObjectOwnership.soReference);
   Py := PyDelphiWrapper.WrapRecord(@Rec, TRttiContext.Create.GetType(TypeInfo(TTestRecord)) as TRttiStructuredType);
   DelphiModule.SetVar('rtti_rec', Py);
   PythonEngine.Py_DecRef(Py);
   FTestInterface := TTestInterfaceImpl.Create;
-  Py := PyDelphiWrapper.WrapInterface(TValue.From(FTestInterface));
-  DelphiModule.SetVar('rtti_interface', Py);
-  PythonEngine.Py_DecRef(Py);
+  PyDelphiWrapper.DefineVar('rtti_interface', TValue.From(FTestInterface));
   PythonEngine.ExecString('from delphi import rtti_var, rtti_rec, rtti_interface, Object, Persistent, Collection, Strings, TestRttiAccess, TestSubclass');
   Rtti_Var := MainModule.rtti_var;
   Rtti_Rec := MainModule.rtti_rec;
