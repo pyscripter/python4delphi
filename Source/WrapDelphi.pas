@@ -894,7 +894,7 @@ Type
     procedure Initialize; override;
     procedure Finalize; override;
     procedure DefineVar(const AName : string; const AValue : Variant); overload;
-    procedure DefineVar(const AName : string; AValue : TObject); overload;
+    procedure DefineVar(const AName : string; AValue : TObject; AOwnership: TObjectOwnership = soReference); overload;
     procedure DefineVar(const AName : string; AValue : TClass); overload;
     function RegisterDelphiWrapper(AWrapperClass : TPyDelphiObjectClass): TPythonType;
     function  RegisterHelperType(APyObjectClass : TPyObjectClass) : TPythonType;
@@ -907,7 +907,7 @@ Type
     {$IFDEF EXTENDED_RTTI}
     //  Function that provides a Python object wrapping a record
     function WrapRecord(Address: Pointer; Typ: TRttiStructuredType): PPyObject; overload;
-    function WrapRecord(const AValue: TValue; const ACopy: Boolean = false): PPyObject; overload;
+    function WrapRecord(const AValue: TValue; ACopy: Boolean = false): PPyObject; overload;
     //  Function that provides a Python object wrapping an interface
     //  Note the the interface must be compiled in {$M+} mode and have a guid
     //  Usage: WrapInterface(TValue.From(YourInterfaceReference))
@@ -915,7 +915,7 @@ Type
     //           Use ACopy = True to retrieve a normal counted reference
     //           that will keep the interface alive as long as python has a
     //           reference to it.
-    function WrapInterface(const IValue: TValue; const ACopy: Boolean = False): PPyObject;
+    function WrapInterface(const IValue: TValue; ACopy: Boolean = False): PPyObject;
     {$ENDIF}
     // properties
     property EventHandlers : TEventHandlers read fEventHandlerList;
@@ -931,7 +931,7 @@ Type
   end;
 
 {$IFDEF EXTENDED_RTTI}
-  // Documentation hook inerface
+  // Documentation hook interface
   // Implement to customize the creation of docstrings for exposed class members
   IDocServer = interface
     ['{4AF0D319-47E9-4F0A-9C71-97B8CBB559FF}']
@@ -2534,6 +2534,9 @@ end;
 constructor TPyDelphiObject.Create(APythonType: TPythonType);
 begin
   inherited;
+  // PyObjects created by python should be owned by python.
+  // PyObjects created by wrapping pascal object be default are not
+  Owned := True;
   if Assigned(APythonType) and (APythonType.Owner is TPyDelphiWrapper) then
     PyDelphiWrapper := TPyDelphiWrapper(APythonType.Owner);
 end;
@@ -4731,12 +4734,13 @@ begin
   Engine.Py_DECREF(_obj);
 end;
 
-procedure TPyDelphiWrapper.DefineVar(const AName: string; AValue: TObject);
+procedure TPyDelphiWrapper.DefineVar(const AName: string; AValue: TObject;
+  AOwnership: TObjectOwnership);
 var
   _obj : PPyObject;
 begin
   Assert(Assigned(Module));
-  _obj := Wrap(AValue);
+  _obj := Wrap(AValue, AOwnership);
   Module.SetVar(AnsiString(AName), _obj);
   Engine.Py_DECREF(_obj);
 end;
@@ -5029,7 +5033,7 @@ begin
   end;
 end;
 
-function TPyDelphiWrapper.WrapRecord(const AValue: TValue; const ACopy: Boolean): PPyObject;
+function TPyDelphiWrapper.WrapRecord(const AValue: TValue; ACopy: Boolean): PPyObject;
 var
   LPythonType: TPythonType;
 begin
@@ -5055,7 +5059,7 @@ begin
 end;
 
 function TPyDelphiWrapper.WrapInterface(const IValue: TValue;
-  const ACopy: Boolean = False): PPyObject;
+  ACopy: Boolean = False): PPyObject;
 var
   LPythonType: TPythonType;
 begin
