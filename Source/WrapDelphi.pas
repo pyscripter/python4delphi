@@ -3268,7 +3268,7 @@ end;
 
 class function TPyDelphiObject.GetTypeName : string;
 begin
-  Result := Copy(DelphiObjectClass.ClassName, 2, MaxInt);
+  Result := Copy(DelphiObjectClass.ClassName, 2);
 end;
 
 function TPyDelphiObject.HasContainerAccessClass: Boolean;
@@ -3353,11 +3353,9 @@ begin
   PythonType.AddMethod('Free', @TPyDelphiObject.Free_Wrapper,
     'TObject.Free()'#10 +
     'Frees the Wrapped Delphi Object');
-  {$IFNDEF EXTENDED_RTTI}
   PythonType.AddMethod('InheritsFrom', @TPyDelphiObject.InheritsFrom_Wrapper,
     'TObject.InheritsFrom(ClassName)'#10 +
     'Returns True if Delphi Object is or inherits from ClassName');
-  {$ENDIF EXTENDED_RTTI}
   PythonType.AddMethod('ToTuple', @TPyDelphiObject.ToTuple_Wrapper,
     'TStrings.ToTuple()'#10 +
     'If the object is a container (TStrings, TComponent...), it returns the content of the sequence as a Python tuple object.');
@@ -3627,8 +3625,17 @@ end;
 
 {$IFDEF EXTENDED_RTTI}
 class function TPyDelphiObject.ExcludedExposedMembers: TArray<string>;
+var
+  I, MethodCount: Integer;
 begin
-  Result := ['Free', 'CPP_ABI_1', 'CPP_ABI_2', 'CPP_ABI_3'];
+  MethodCount := PythonType.MethodCount;
+  SetLength(Result, MethodCount + PythonType.GetSetCount);
+
+  for I := 0 to MethodCount - 1 do
+    Result[I] := string(PythonType.Methods[I].ml_name);
+
+  for I := 0 to PythonType.GetSetCount - 1 do
+    Result[MethodCount + I] := string(PythonType.GetSet[I].name);
 end;
 
 class procedure TPyDelphiObject.ExposeMethods(AClass: TClass;
@@ -3658,12 +3665,10 @@ begin
       then
         Continue;
 
-      // Ignore excluded methods
-      if MatchStr(LRttiMethod.Name, AExcludedMethodNames) then
-        Continue;
-
-      // Ignore duplicate methods
-      if MatchStr(LRttiMethod.Name, AddedMethods) then
+      // Ignore methods with unhandled return type
+      if Assigned(LRttiMethod.ReturnType) and (LRttiMethod.ReturnType.TypeKind
+        in [tkUnknown, tkMethod, tkPointer, tkProcedure])
+      then
         Continue;
 
       // Skip methods declared in NearestAncestorClass and its ancestors
@@ -3671,6 +3676,14 @@ begin
       if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
         not (LClass.InheritsFrom(NearestAncestorClass)))
       then
+        Continue;
+
+      // Ignore excluded methods
+      if MatchStr(LRttiMethod.Name, AExcludedMethodNames) then
+        Continue;
+
+      // Ignore duplicate methods
+      if MatchStr(LRttiMethod.Name, AddedMethods) then
         Continue;
 
       AddedMethods := AddedMethods + [LRttiMethod.Name];
@@ -3738,6 +3751,13 @@ begin
       if (Ord(LRttiField.Visibility) < Ord(TMemberVisibility.mvPublic)) then
         Continue;
 
+      // Skip methods declared in NearestAncestorClass and its ancestors
+      LClass := (LRttiField.Parent as TRttiInstanceType).MetaclassType;
+      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
+        not (LClass.InheritsFrom(NearestAncestorClass)))
+      then
+        Continue;
+
       // Ignore excluded fields
       if MatchStr(LRttiField.Name, AExcludedFieldNames) then
         Continue;
@@ -3746,19 +3766,12 @@ begin
       if MatchStr(LRttiField.Name, AddedFields) then
         Continue;
 
-      // Skip methods declared in NearestAncestorClass and its ancestors
-      LClass := (LRttiField.Parent as TRttiInstanceType).MetaclassType;
-      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
-        not (LClass.InheritsFrom(NearestAncestorClass)))
-      then
-        Continue;
-
       // Skip if the FieldType is missing
       if LRttiField.FieldType = nil then
         Continue;
 
       // Skip if the type cannot be handled
-      if LRttiField.FieldType.TypeKind  in [tkUnknown, tkMethod, tkProcedure] then
+      if LRttiField.FieldType.TypeKind  in [tkUnknown, tkMethod, tkPointer, tkProcedure] then
         Continue;
 
       AddedFields := AddedFields + [LRttiField.Name];
@@ -3812,19 +3825,19 @@ begin
       if (Ord(LRttiProperty.Visibility) < Ord(TMemberVisibility.mvPublic)) then
         Continue;
 
+      // Skip methods declared in NearestAncestorClass and its ancestors
+      LClass := (LRttiProperty.Parent as TRttiInstanceType).MetaclassType;
+      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
+        not (LClass.InheritsFrom(NearestAncestorClass)))
+      then
+        Continue;
+
       // Ignore excluded properties
       if MatchStr(LRttiProperty.Name, AExcludedPropertyNames) then
         Continue;
 
       // Ignore duplicate properties
       if MatchStr(LRttiProperty.Name, AddedProperties) then
-        Continue;
-
-      // Skip methods declared in NearestAncestorClass and its ancestors
-      LClass := (LRttiProperty.Parent as TRttiInstanceType).MetaclassType;
-      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
-        not (LClass.InheritsFrom(NearestAncestorClass)))
-      then
         Continue;
 
       // Skip if the PropertyType is missing
@@ -3836,7 +3849,7 @@ begin
         Continue;
 
       // Skip if the type cannot be handled (as with fields - tkMethod)
-      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkProcedure] then
+      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkPointer, tkProcedure] then
         Continue;
 
       AddedProperties := AddedProperties + [LRttiProperty.Name];
@@ -3894,19 +3907,19 @@ begin
       if (Ord(LRttiProperty.Visibility) < Ord(TMemberVisibility.mvPublic)) then
         Continue;
 
+      // Skip methods declared in NearestAncestorClass and its ancestors
+      LClass := (LRttiProperty.Parent as TRttiInstanceType).MetaclassType;
+      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
+        not (LClass.InheritsFrom(NearestAncestorClass)))
+      then
+        Continue;
+
       // Ignore excluded properties
       if MatchStr(LRttiProperty.Name, AExcludedPropertyNames) then
         Continue;
 
       // Ignore duplicate properties
       if MatchStr(LRttiProperty.Name, AddedProperties) then
-        Continue;
-
-      // Skip methods declared in NearestAncestorClass and its ancestors
-      LClass := (LRttiProperty.Parent as TRttiInstanceType).MetaclassType;
-      if (NearestAncestorClass <> nil) and ((LClass = NearestAncestorClass) or
-        not (LClass.InheritsFrom(NearestAncestorClass)))
-      then
         Continue;
 
       // Skip if the PropertyType is missing
@@ -3918,7 +3931,7 @@ begin
         Continue;
 
       // Skip if the type cannot be handled (as with fields - tkMethod)
-      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkProcedure] then
+      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkPointer, tkProcedure] then
         Continue;
 
       AddedProperties := AddedProperties + [LRttiProperty.Name];

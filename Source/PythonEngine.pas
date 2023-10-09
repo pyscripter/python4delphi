@@ -2387,9 +2387,9 @@ type
     procedure Set_ob_refcnt(const Value: NativeInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
   public
-    PythonType     : TPythonType;
-    IsSubtype      : Boolean;
-    PythonAlloc    : Boolean;
+    IsSubtype: Boolean;
+    PythonAlloc: Boolean;
+    class var PythonType: TPythonType;
 
     // Constructors & Destructors
     constructor Create(APythonType: TPythonType); virtual;
@@ -7987,6 +7987,7 @@ begin
       if Assigned(val) then
         begin
           FType.tp_basicsize := val.InstanceSize + Sizeof(PyObject);
+          val.PythonType := Self;
           val.RegisterMethods( Self );
           val.RegisterMembers( Self );
           val.RegisterGetSets( Self );
