@@ -569,6 +569,11 @@ Type
     Owned: Boolean;
 
     constructor Create( APythonType : TPythonType ); override;
+    // CreateWith raises a python TypeError 'Cannot create instances..'
+    // Subclasses that can be instantiated need to overwrite this method and
+    // a) Call the virtual constructor Create
+    // b) Create the pascal object and assign it to DelphiObject
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     function  GetAttrO( key: PPyObject) : PPyObject; override;
@@ -985,6 +990,7 @@ Uses
   MethodCallback;
 
 resourcestring
+  rs_CannotCreate = 'Cannot create instances of class %s';
   rs_ErrCheckIndex = '%s "%d" out of range';
   rs_ErrCheckInt = '%s receives only integer values';
   rs_ErrCheckFloat = '%s receives only float values';
@@ -2540,6 +2546,13 @@ begin
     PyDelphiWrapper := TPyDelphiWrapper(APythonType.Owner);
 end;
 
+constructor TPyDelphiObject.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
+begin
+    with APythonType.Engine do
+      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
+        Format(rs_CannotCreate, [APythonType.TypeName])));
+end;
+
 function TPyDelphiObject.CreateContainerAccess: TContainerAccess;
 var
   _ContainerAccessClass : TContainerAccessClass;
@@ -3899,6 +3912,8 @@ var
   LClass: TClass;
   LDocStr: string;
 begin
+  // TODO: Identify and handle the default property
+
   LRttiCtx := TRttiContext.Create();
   try
     LRttiType := LRttiCtx.GetType(AClass) as TRttiStructuredType;

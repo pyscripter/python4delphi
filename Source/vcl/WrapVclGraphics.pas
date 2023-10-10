@@ -51,7 +51,7 @@ type
     function Set_Transparent( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     function Set_Width( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
@@ -103,7 +103,7 @@ type
     function Set_TransparentColor( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
     function Set_TransparentMode( AValue : PPyObject; AContext : Pointer) : Integer; cdecl;
   public
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
 
     class function  DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
@@ -380,9 +380,9 @@ end;
 { TPyDelphiGraphic }
 
 constructor TPyDelphiGraphic.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+  args, kwds: PPyObject);
 begin
-  inherited;
+  Create(APythonType);
   DelphiObject := TGraphicClass(DelphiObjectClass()).Create();
 end;
 
@@ -720,7 +720,7 @@ end;
 { TPyDelphiBitmap }
 
 constructor TPyDelphiBitmap.CreateWith(APythonType: TPythonType;
-  args: PPyObject);
+  args, kwds: PPyObject);
 var
   LWidth, LHeight : Integer;
 begin

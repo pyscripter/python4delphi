@@ -111,7 +111,7 @@ var
   KeyArray: array of AnsiString;
   KeyPointerArray: array of PAnsiChar;
 begin
-  inherited;
+  Create(PythonType);
   KeyArray := ['x', 'y'];
   KeyPointerArray := [PAnsiChar(KeyArray[0]), PAnsiChar(KeyArray[1]), nil];
   with GetPythonEngine, DelphiObject as TPoint do

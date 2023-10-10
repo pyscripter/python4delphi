@@ -2393,8 +2393,7 @@ type
 
     // Constructors & Destructors
     constructor Create(APythonType: TPythonType); virtual;
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); overload; virtual;
-    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); overload; virtual;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); virtual;
     destructor  Destroy; override;
 
     class function NewInstance: TObject; override;
@@ -2697,7 +2696,7 @@ type
 
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     destructor  Destroy; override;
 
     // Type services
@@ -7462,15 +7461,10 @@ begin
   end;
 end;
 
-constructor TPyObject.CreateWith(APythonType: TPythonType; args: PPyObject);
-begin
-  Create(APythonType);
-end;
-
 constructor TPyObject.CreateWith(APythonType: TPythonType; args,
   kwds: PPyObject);
 begin
-  CreateWith(APythonType, args);
+  Create(APythonType);
 end;
 
 destructor TPyObject.Destroy;
@@ -8960,9 +8954,9 @@ end;
 // the Create constructor first, and because the constructors
 // are virtual, TPyVar.Create will be automatically be called.
 
-constructor TPyVar.CreateWith(APythonType: TPythonType; args: PPyObject);
+constructor TPyVar.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
 begin
-  inherited;
+  Create(APythonType);
   with GetPythonEngine do
     begin
       if PyArg_ParseTuple( args, 'O:CreateVar',@dv_object ) = 0 then

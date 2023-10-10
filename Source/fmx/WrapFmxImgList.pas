@@ -227,7 +227,6 @@ end;
 class procedure TPyDelphiCustomImageList.RegisterMethods(
   PythonType: TPythonType);
 begin
-  inherited;
   PythonType.AddMethod('BitmapItemByName',
     @TPyDelphiCustomImageList.BitmapItemByName_Wrapper,
     'TCustomImageList.BitmapItemByName()'#10 +

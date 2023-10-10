@@ -18,7 +18,7 @@ type
   public
     // Constructors & Destructors
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -46,7 +46,7 @@ type
     procedure SetStringList(const Value: TPyStringList);
   public
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     destructor Destroy; override;
 
     // Basic services
@@ -145,11 +145,11 @@ begin
   fStrings := TStringList.Create;
 end;
 
-constructor TPyStringList.CreateWith(PythonType: TPythonType; args: PPyObject);
+constructor TPyStringList.CreateWith(PythonType: TPythonType; args, kwds: PPyObject);
 var
   i : Integer;
 begin
-  inherited;
+  Create(PythonType);
   with GetPythonEngine do
   begin
     for i := 0 to PyTuple_Size(args)-1 do
@@ -241,12 +241,12 @@ begin
   inherited;
 end;
 
-constructor TPyStringListIterator.CreateWith(PythonType: TPythonType; args: PPyObject);
+constructor TPyStringListIterator.CreateWith(PythonType: TPythonType; args, kwds: PPyObject);
 var
   _obj : PPyObject;
   _stringList : TPyStringList;
 begin
-  inherited;
+  Create(PythonType);
   with GetPythonEngine do
   begin
     if PyArg_ParseTuple( args, 'O:TPyStringListIterator constructor',@_obj ) <> 0 then

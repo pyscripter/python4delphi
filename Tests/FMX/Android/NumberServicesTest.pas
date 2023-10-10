@@ -50,7 +50,7 @@ type
   private
     FRandomInteger: TRandomInteger;
   public
-    constructor CreateWith(PythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(PythonType: TPythonType; args, kwds: PPyObject); override;
     // Basic services
     function Repr: PPyObject; override;
     // Number services
@@ -269,15 +269,15 @@ begin
 end;
 
 { PyTRandomInteger }
-constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args:
-    PPyObject);
+constructor PyTRandomInteger.CreateWith(PythonType: TPythonType; args,
+  kwds: PPyObject);
 var
   val1: PPyObject;
 begin
+  Create(PythonType);
   with GetPythonEngine do
   begin
     try
-      inherited;
       // create object
       FRandomInteger := TRandomInteger.Create;
       // try to parse the parameter

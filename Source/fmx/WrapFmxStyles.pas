@@ -27,7 +27,7 @@ type
     procedure SetDelphiObject(const Value: TStyleStreaming);
   public
     constructor Create( APythonType : TPythonType ); override;
-    constructor CreateWith(APythonType: TPythonType; args: PPyObject); override;
+    constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); override;
     class function DelphiObjectClass : TClass; override;
     class procedure RegisterGetSets(PythonType: TPythonType); override;
     class procedure RegisterMethods(PythonType: TPythonType); override;
@@ -86,9 +86,9 @@ begin
   inherited;
 end;
 
-constructor TPyDelphiStyleStreaming.CreateWith(APythonType: TPythonType; args: PPyObject);
+constructor TPyDelphiStyleStreaming.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
 begin
-  inherited;
+  Create(APythonType);
   DelphiObject := TStyleStreaming.Create();
 end;
 
@@ -116,25 +116,30 @@ procedure TPyDelphiStyleStreaming.SetDelphiObject(const Value: TStyleStreaming);
 begin
   inherited DelphiObject := Value;
 end;
+
 { TPyDelphiStyleManager }
 constructor TPyDelphiStyleManager.Create(APythonType: TPythonType);
 begin
   inherited;
 end;
+
 constructor TPyDelphiStyleManager.CreateWith(APythonType: TPythonType; args,
     kwds: PPyObject);
 begin
-  inherited;
+  Create(APythonType);
   DelphiObject := TStyleManager.Create();
 end;
+
 class function TPyDelphiStyleManager.DelphiObjectClass: TClass;
 begin
   Result := TStyleManager;
 end;
+
 function TPyDelphiStyleManager.GetDelphiObject: TStyleManager;
 begin
   Result := TStyleManager(inherited DelphiObject);
 end;
+
 class procedure TPyDelphiStyleManager.RegisterGetSets(PythonType: TPythonType);
 begin
 end;
