@@ -550,7 +550,7 @@ Type
     // implementation of interface IFreeNotificationSubscriber
     procedure Notify(ADeletedObject : TObject);
     {$IFDEF EXTENDED_RTTI}
-    class function ExcludedExposedMembers: TArray<string>; virtual;
+    class function ExcludedExposedMembers(APythonType: TPythonType): TArray<string>; virtual;
     class procedure ExposeMethods(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
       AExcludedMethodNames: TArray<string> = []);
@@ -587,7 +587,7 @@ Type
     class function  DelphiObjectClass : TClass; virtual;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
     class procedure RegisterGetSets( PythonType : TPythonType ); override;
-    class procedure SetupType( PythonType : TPythonType ); override;
+    class procedure SetupType(APythonType: TPythonType ); override;
     // if the class is a container (TStrings, TComponent, TCollection...),
     // then return the class implementing the access to the contained items.
     class function  GetContainerAccessClass : TContainerAccessClass; virtual;
@@ -3564,7 +3564,7 @@ begin
   Result := SetProperties(GetSelf, keywords);
 end;
 
-class procedure TPyDelphiObject.SetupType(PythonType: TPythonType);
+class procedure TPyDelphiObject.SetupType(APythonType: TPythonType);
 var
   _ContainerAccessClass : TContainerAccessClass;
   PyWrapper: TPyDelphiWrapper;
@@ -3573,34 +3573,35 @@ var
   Index: Integer;
   {$IFDEF EXTENDED_RTTI}
   LDocStr: string;
+  ExcludedMembers: TArray<string>;
   {$ENDIF EXTENDED_RTTI}
 begin
   inherited;
-  PythonType.TypeName := AnsiString(GetTypeName);
-  PythonType.Name := string(PythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
-  PythonType.GenerateCreateFunction := False;
-  PythonType.DocString.Text := 'Wrapper for Delphi ' + DelphiObjectClass.ClassName;
-  PythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+  APythonType.TypeName := AnsiString(GetTypeName);
+  APythonType.Name := string(APythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
+  APythonType.GenerateCreateFunction := False;
+  APythonType.DocString.Text := 'Wrapper for Pascal class ' + DelphiObjectClass.ClassName;
+  APythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
   _ContainerAccessClass := GetContainerAccessClass;
   if Assigned(_ContainerAccessClass) then
   begin
-    PythonType.Services.Basic := PythonType.Services.Basic + [bsIter];
-    PythonType.Services.Sequence := PythonType.Services.Sequence + [ssLength, ssItem];
+    APythonType.Services.Basic := APythonType.Services.Basic + [bsIter];
+    APythonType.Services.Sequence := APythonType.Services.Sequence + [ssLength, ssItem];
     if _ContainerAccessClass.SupportsWrite then
-      PythonType.Services.Sequence := PythonType.Services.Sequence + [ssAssItem];
+      APythonType.Services.Sequence := APythonType.Services.Sequence + [ssAssItem];
     if _ContainerAccessClass.SupportsIndexOf then
-      PythonType.Services.Sequence := PythonType.Services.Sequence + [ssContains];
+      APythonType.Services.Sequence := APythonType.Services.Sequence + [ssContains];
   end;
 
   // Find nearest registered ancestor class and set it as base
-  PyWrapper := PythonType.Owner as TPyDelphiWrapper;
+  PyWrapper := APythonType.Owner as TPyDelphiWrapper;
   NearestAncestorClass := nil;
   for Index := PyWrapper.fClassRegister.Count - 1 downto 0 do
   begin
     RegisteredClass := PyWrapper.fClassRegister[Index] as TRegisteredClass;
     if DelphiObjectClass.InheritsFrom(RegisteredClass.DelphiClass) then
     begin
-      PythonType.BaseType := RegisteredClass.PythonType;
+      APythonType.BaseType := RegisteredClass.PythonType;
       NearestAncestorClass := RegisteredClass.DelphiClass;
       Break;
     end;
@@ -3610,32 +3611,33 @@ begin
   if Assigned(PyDocServer) and PyDocServer.Initialized and
     PyDocServer.ReadTypeDocStr(DelphiObjectClass.ClassInfo, LDocStr)
   then
-    PythonType.DocString.Text := LDocStr;
+    APythonType.DocString.Text := LDocStr;
 
-  ExposeMethods(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper,  ExcludedExposedMembers);
-  ExposeFields(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, ExcludedExposedMembers);
-  ExposeProperties(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, ExcludedExposedMembers);
-  ExposeIndexedProperties(DelphiObjectClass, NearestAncestorClass, PythonType,
-    PyWrapper, ExcludedExposedMembers);
+  ExcludedMembers := ExcludedExposedMembers(APythonType);
+  ExposeMethods(DelphiObjectClass, NearestAncestorClass, APythonType,
+    PyWrapper,  ExcludedMembers);
+  ExposeFields(DelphiObjectClass, NearestAncestorClass, APythonType,
+    PyWrapper, ExcludedMembers);
+  ExposeProperties(DelphiObjectClass, NearestAncestorClass, APythonType,
+    PyWrapper, ExcludedMembers);
+  ExposeIndexedProperties(DelphiObjectClass, NearestAncestorClass, APythonType,
+    PyWrapper, ExcludedMembers);
   {$ENDIF EXTENDED_RTTI}
 end;
 
 {$IFDEF EXTENDED_RTTI}
-class function TPyDelphiObject.ExcludedExposedMembers: TArray<string>;
+class function TPyDelphiObject.ExcludedExposedMembers(APythonType: TPythonType): TArray<string>;
 var
   I, MethodCount: Integer;
 begin
-  MethodCount := PythonType.MethodCount;
-  SetLength(Result, MethodCount + PythonType.GetSetCount);
+  MethodCount := APythonType.MethodCount;
+  SetLength(Result, MethodCount + APythonType.GetSetCount);
 
   for I := 0 to MethodCount - 1 do
-    Result[I] := string(PythonType.Methods[I].ml_name);
+    Result[I] := string(APythonType.Methods[I].ml_name);
 
-  for I := 0 to PythonType.GetSetCount - 1 do
-    Result[MethodCount + I] := string(PythonType.GetSet[I].name);
+  for I := 0 to APythonType.GetSetCount - 1 do
+    Result[MethodCount + I] := string(APythonType.GetSet[I].name);
 end;
 
 class procedure TPyDelphiObject.ExposeMethods(AClass: TClass;
