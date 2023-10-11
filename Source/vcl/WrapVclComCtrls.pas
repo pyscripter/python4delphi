@@ -356,6 +356,7 @@ type
     class function GetTypeInfo: PTypeInfo; override;
   end;
 
+{$IFDEF DELPHI11_OR_HIGHER}
   //TTVCheckStateChangedEvent
   TTVCheckStateChangedEventHandler = class(TEventHandler)
   protected
@@ -378,6 +379,7 @@ type
 
     class function GetTypeInfo: PTypeInfo; override;
   end;
+{$ENDIF}
 
   TPyDelphiTreeNode = class(TPyDelphiPersistent)
   private
@@ -723,7 +725,9 @@ type
     property DelphiObject: TListView read GetDelphiObject write SetDelphiObject;
   end;
 
+{$IFDEF DELPHI11_OR_HIGHER}
   function NodeCheckStateToPython(const ANodeCheckState: TNodeCheckState): PPyObject;
+{$ENDIF}
 
   function CustomDrawTargetToPython(const ACustomDrawTarget: TCustomDrawTarget): PPyObject;
   function CustomDrawStageToPython(const ACustomDrawStage: TCustomDrawStage): PPyObject;
@@ -750,6 +754,7 @@ type
     procedure DefineVars(APyDelphiWrapper: TPyDelphiWrapper); override;
   end;
 
+{$IFDEF DELPHI11_OR_HIGHER}
 function NodeCheckStateToPython(const ANodeCheckState: TNodeCheckState): PPyObject;
 begin
   Result := GetPythonEngine().PyUnicodeFromString(
@@ -757,6 +762,7 @@ begin
       TypeInfo(TNodeCheckState),
       Ord(ANodeCheckState)));
 end;
+{$ENDIF}
 
 function CustomDrawTargetToPython(const ACustomDrawTarget: TCustomDrawTarget): PPyObject;
 begin
@@ -901,8 +907,10 @@ begin
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVAdvancedCustomDrawEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVAdvancedCustomDrawItemEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVCreateNodeClassEventHandler);
+{$IFDEF DELPHI11_OR_HIGHER}
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVCheckStateChangedEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVCheckStateChangingEventHandler);
+{$ENDIF}
 
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVDeletedEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVEditingEventHandler);
@@ -2374,6 +2382,7 @@ begin
     end;
 end;
 
+{$IFDEF DELPHI11_OR_HIGHER}
 { TTVCheckStateChangedEventHandler }
 
 constructor TTVCheckStateChangedEventHandler.Create(
@@ -2469,6 +2478,7 @@ begin
       CheckError();
     end;
 end;
+{$ENDIF}
 
 { TLVDeletedEventHandler }
 
