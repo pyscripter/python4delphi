@@ -69,7 +69,7 @@ type
     procedure PassVariantArray(const Value: Variant);
     function ClassRefParam(ClassRef: TPersistentClass): string;
     property Indexed[I: Integer]: Integer read GetIndexed write SetIndexed;
-    property Indexed2[S1, S2: string]: string read GetIndexed2 write SetIndexed2;
+    property Indexed2[S1, S2: string]: string read GetIndexed2 write SetIndexed2; default;
     class var ClassField: string;
     class function DoubleString(S: string): string;
     class function Square(I: Integer): Integer; static;
@@ -325,6 +325,9 @@ begin
   Assert.AreEqual<Integer>(VarPythonEval('rtti_var.Indexed[2]'), 6);
   PythonEngine.ExecString('rtti_var.Indexed2["A", "B"] = "C"');
   Assert.AreEqual<string>(VarPythonEval('rtti_var.Indexed2["A", "B"]'), 'A,B: C');
+  // default property
+  PythonEngine.ExecString('rtti_var["A", "B"] = "C"');
+  Assert.AreEqual<string>(VarPythonEval('rtti_var["A", "B"]'), 'A,B: C');
 end;
 
 procedure TTestWrapDelphi.TestInheritance;

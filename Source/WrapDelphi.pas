@@ -588,6 +588,11 @@ Type
     function  SqItem( idx : NativeInt ) : PPyObject; override;
     function  SqContains( obj: PPyObject): integer; override;
     function  SqAssItem( idx : NativeInt; obj : PPyObject) : Integer; override;
+    // Mapping services
+    {$IFDEF EXTENDED_RTTI}
+    function MpSubscript(obj: PPyObject) : PPyObject; override;
+    function MpAssSubscript(obj1, obj2: PPyObject) : Integer; override;
+    {$ENDIF EXTENDED_RTTI}
 
     class function  DelphiObjectClass : TClass; virtual;
     class procedure RegisterMethods( PythonType : TPythonType ); override;
@@ -3904,8 +3909,6 @@ var
   LClass: TClass;
   LDocStr: string;
 begin
-  // TODO: Identify and handle the default property
-
   LRttiCtx := TRttiContext.Create();
   try
     LRttiType := LRttiCtx.GetType(AClass) as TRttiStructuredType;
@@ -3965,11 +3968,93 @@ begin
         nil,
         PAnsiChar(LExposedProperty.DocString),
         nil);
+
+      // Store the default property in the type
+      if LRttiProperty.IsDefault and (APythonType.Tag = 0) then
+      begin
+        APythonType.Tag := NativeInt(LRttiProperty);
+        if LRttiProperty.IsWritable then
+          APythonType.Services.Mapping := [msSubscript, msAssSubscript]
+        else
+          APythonType.Services.Mapping := [msSubscript];
+      end;
     end;
   finally
     LRttiCtx.Free;
   end;
 end;
+
+function TPyDelphiObject.MpSubscript(obj: PPyObject) : PPyObject;
+var
+  PyArgs: PPyObject;
+  Prop: TRttiIndexedProperty;
+begin
+  Assert(PythonType.Tag <> 0);
+  Prop := TRttiIndexedProperty(PythonType.Tag);
+
+  // obj is a tuple only if we have more than one arguments
+  if PyDelphiWrapper.Engine.PyTuple_Check(obj) then
+    PyArgs := obj
+  else
+    PyArgs := PyDelphiWrapper.Engine.MakePyTuple([obj]);
+
+  Result := RttiCall(DelphiObject, PyDelphiWrapper, Prop.ReadMethod,
+    PyArgs, nil);
+
+  if not PyDelphiWrapper.Engine.PyTuple_Check(obj) then
+    PyDelphiWrapper.Engine.Py_DECREF(PyArgs); // release created tuple
+end;
+
+function TPyDelphiObject.MpAssSubscript(obj1, obj2: PPyObject) : Integer;
+var
+  Engine: TPythonEngine;
+  Prop: TRttiIndexedProperty;
+  PyArgs: PPyObject;
+  TempPy: PPyObject;
+  Count, Index: Integer;
+begin
+  Result := -1; // Signals failure
+
+  Assert(PythonType.Tag <> 0);
+  Prop := TRttiIndexedProperty(PythonType.Tag);
+
+  Engine := PyDelphiWrapper.Engine;
+  if not Prop.IsWritable then
+  begin
+    with Engine do
+      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(rs_NotWritable));
+    Exit;
+  end;
+
+  // obj is a tuple only if we have more than one arguments
+  if Engine.PyTuple_Check(obj1) then
+  begin
+    Count := Engine.PyTuple_Size(obj1);
+    PyArgs := Engine.PyTuple_New(Count + 1);
+    for Index := 0 to Count - 1 do
+    begin
+      TempPy := Engine.PyTuple_GetItem(obj1, Index);
+      Engine.Py_XINCREF(TempPy);
+      Engine.PyTuple_SetItem(PyArgs, Index, TempPy);
+    end;
+    Engine.Py_XINCREF(obj2);
+    Engine.PyTuple_SetItem(PyArgs, Count, obj2);
+  end
+  else
+    PyArgs := Engine.MakePyTuple([obj1, obj2]);
+
+  TempPy := RttiCall(DelphiObject, PyDelphiWrapper, Prop.WriteMethod,
+    PyArgs, nil);
+
+  Engine.Py_DECREF(PyArgs);  // release created tuple
+
+  if TempPy <> nil then
+  begin
+    Engine.Py_DECREF(TempPy);  //Should be Py_None
+    Result := 0; // Signal success
+  end;
+end;
+
 
 {$ENDIF EXTENDED_RTTI}
 
