@@ -610,7 +610,6 @@ type
     m_free : inquiry;
   end;
 
-
   // object.h
   PyTypeObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:      NativeInt;
@@ -699,6 +698,7 @@ type
     tp_xxx8             : NativeInt;
     tp_xxx9             : NativeInt;
     tp_xxx10            : NativeInt;
+    tp_pythontype       : Pointer; // Introduced for FindPythonType optimization
   end;
 
   // from pystate.h
@@ -1903,8 +1903,7 @@ type
     procedure  AddClient( client : TEngineClient );
     procedure  RemoveClient( client : TEngineClient );
     function   FindClient( const aName : string ) : TEngineClient;
-    function   FindPythonType(const TypeName : AnsiString): TPythonType; overload;
-    function   FindPythonType(PyType: PPyTypeObject): TPythonType; overload;
+    function   FindPythonType(const TypeName : AnsiString): TPythonType;
     function   TypeByName( const aTypeName : AnsiString ) : PPyTypeObject;
     function   ModuleByName( const aModuleName : AnsiString ) : PPyObject;
     function   MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
@@ -2780,6 +2779,7 @@ function  pyio_GetTypesStats(self, args : PPyObject) : PPyObject; cdecl;
 function  GetPythonEngine : TPythonEngine;
 function  PythonOK : Boolean;
 function  PythonToDelphi( obj : PPyObject ) : TPyObject;
+function FindPythonType(PyType: PPyTypeObject): TPythonType;
 function  IsDelphiObject( obj : PPyObject ) : Boolean;
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
 procedure Register;
@@ -6153,19 +6153,6 @@ begin
     end;
 end;
 
-function TPythonEngine.FindPythonType(PyType: PPyTypeObject): TPythonType;
-var
-  I : Integer;
-begin
-  Result := nil;
-  for I := 0 to ClientCount - 1 do
-    if (Clients[I] is TPythonType) and (TPythonType(Clients[I]).TheTypePtr = PyType) then
-    begin
-      Result := TPythonType(Clients[I]);
-      Break;
-    end;
-end;
-
 function TPythonEngine.FindFunction(const ModuleName,FuncName: AnsiString): PPyObject;
 var
   module,func: PPyObject;
@@ -8649,6 +8636,7 @@ begin
   InitServices;
   if Engine.PyType_Ready(TheTypePtr) <> 0 then
     Engine.CheckError;
+  FType.tp_pythontype := Self;  // Store self into FType
   inherited;
 end;
 
@@ -9370,27 +9358,27 @@ begin
             (gPythonEngine.Initialized or gPythonEngine.Finalizing);
 end;
 
-function IsDelphiObject( obj : PPyObject ) : Boolean;
+function FindPythonType(PyType: PPyTypeObject): TPythonType;
 var
-  t : PPyTypeObject;
+  Typ : PPyTypeObject;
 begin
-  Result := False;
+  Result := nil;
   // Here's a simple trick: we compare the object destructor to
   // our special destructor for Delphi objects, or
   // we check if one of the parent types of obj has a Delphi destructor.
-  if Assigned(obj) then
+  Typ := PyType;
+  while Assigned(Typ) do
   begin
-    t := obj^.ob_type;
-    while Assigned(t) do
-    begin
-      if @t^.tp_dealloc = @PyObjectDestructor then
-      begin
-        Result := True;
-        Break;
-      end;
-      t := t^.tp_base;
-    end;
+    if @Typ^.tp_dealloc = @PyObjectDestructor then
+      Exit(Typ.tp_pythontype);
+    Typ := Typ^.tp_base;
   end;
+//var
+end;
+
+function IsDelphiObject( obj : PPyObject ) : Boolean;
+begin
+  Result := Assigned(obj) and (FindPythonType(obj^.ob_type) <> nil);
 end;
 
 procedure Register;

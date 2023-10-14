@@ -1554,31 +1554,23 @@ end;
 function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
   out ClassRef: TClass; out ErrMsg: string): Boolean;
 var
-  LTypeName: AnsiString;
   LPythonType: TPythonType;
 begin
   ClassRef := nil;
   if (PyValue = GetPythonEngine.Py_None) then begin
-     Result := True;
-     Exit;
+    Result := True;
+    Exit;
   end;
 
   Result := False;
   // Is PyValue a Python type?
-  if PyValue^.ob_type^.tp_name = 'type' then
-    LTypeName := PPyTypeObject(PyValue).tp_name
-  else
+  if not GetPythonEngine.PyClass_Check(PyValue) then
   begin
     ErrMsg := rs_ExpectedClass;
     Exit;
   end;
 
-  LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue));
-  if not Assigned(LPythonType) then
-    // Try once more with the base type to catter for pascal classes
-    // subclassed in Python
-    LPythonType := GetPythonEngine.FindPythonType(PPyTypeObject(PyValue).tp_base);
-
+  LPythonType := FindPythonType(PPyTypeObject(PyValue));
   if Assigned(LPythonType) then
   begin
     if Assigned(LPythonType) and LPythonType.PyObjectClass.InheritsFrom(TPyDelphiObject) then
