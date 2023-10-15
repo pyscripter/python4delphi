@@ -3592,6 +3592,7 @@ begin
   APythonType.GenerateCreateFunction := False;
   APythonType.DocString.Text := 'Wrapper for Pascal class ' + DelphiObjectClass.ClassName;
   APythonType.Services.Basic := [bsGetAttrO, bsSetAttrO, bsRepr, bsStr, bsRichCompare];
+  _ContainerAccessClass := GetContainerAccessClass;
   if Assigned(_ContainerAccessClass) then
   begin
     APythonType.Services.Basic := APythonType.Services.Basic + [bsIter];
