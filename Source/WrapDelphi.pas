@@ -1048,7 +1048,7 @@ function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
   AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
 
 function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
-  Method: TRttiMethod; ob1, ob2: PPyObject;
+  Method: TRttiMethod; ob1, ob2: PPyObject; const Args: TArray<TValue>;
   AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
 
 function GetRttiAttr(ParentAddr: Pointer; ParentType: TRttiStructuredType;
@@ -1465,7 +1465,7 @@ begin
     PyArgs := FPyWrapper.Engine.MakePyTuple([obj]);
 
   Result := RttiCall(PascalObject, FPyWrapper, FProperty.ReadMethod,
-    PyArgs, nil);
+    PyArgs, nil, []);
 
   if not FPyWrapper.Engine.PyTuple_Check(obj) then
     FPyWrapper.Engine.Py_DECREF(PyArgs); // release created tuple
@@ -1514,7 +1514,7 @@ begin
     PyArgs := Engine.MakePyTuple([obj1, obj2]);
 
   TempPy := RttiCall(PascalObject, FPyWrapper, FProperty.WriteMethod,
-    PyArgs, nil);
+    PyArgs, nil, []);
 
   Engine.Py_DECREF(PyArgs);  // release created tuple
 
@@ -2628,7 +2628,8 @@ function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
       res, param = objref.Test(param) }
 
   function FindMethod(const MethName:string; RttiType : TRttiType;
-    PyArgs: PPyObject; var Args: array of TValue):TRttiMethod;
+    PyArgs: PPyObject; var Args: array of TValue;
+    out ErrMsg: string):TRttiMethod;
   // Deals with overloaded methods
   // Constructs the Arg Array
   // PyArgs is a Python tuple
@@ -2636,16 +2637,21 @@ function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
     Method: TRttiMethod;
   begin
     Result := nil;
+    ErrMsg := rs_UnknownAttribute;
     for Method in RttiType.GetMethods do
-      if SameText(Method.Name, MethName) and PyArgsToValues(PyArgs, Method, Args) then
-      begin
-        Result := Method;
-        Break;
+      if SameText(Method.Name, MethName) then begin
+        if PyArgsToValues(PyArgs, Method, Args) then
+        begin
+          Result := Method;
+          Break;
+        end
+        else
+          ErrMsg := rs_IncompatibleArguments;
       end;
   end;
 
 var
-  Args: array of TValue;
+  Args: TArray<TValue>;
   ArgCount: Integer;
   meth: TRttiMethod;
   ReturnValue: TValue;
@@ -2654,53 +2660,30 @@ var
 
 begin
   Result := nil;
-  // Ignore keyword arguments ob2
-  // ob1 is a tuple with zero or more elements
 
   ArgCount := DelphiWrapper.Engine.PyTuple_Size(ob1);
   SetLength(Args, ArgCount);
 
-  meth := FindMethod(MethName, ParentRtti, ob1, Args);
+  meth := FindMethod(MethName, ParentRtti, ob1, Args, ErrMsg);
 
   if not Assigned(meth) then begin
-    InvalidArguments(MethName, rs_IncompatibleArguments);
+    InvalidArguments(MethName, ErrMsg);
     Exit;
   end;
 
-  try
-    if ParentRtti is TRttiInstanceType then
-      if meth.IsClassMethod or meth.IsStatic then
-        if AParentAddrIsClass then
-          Addr := TValue.From(TClass(ParentAddress))
-        else
-          Addr := TValue.From(TObject(ParentAddress).ClassType)
-      else
-        Addr := TValue.From(TObject(ParentAddress))
-    else if ParentRtti is TRttiInterfaceType then
-       TValue.Make(@ParentAddress, ParentRtti.Handle, Addr)
-    else
-      Addr := TValue.From(ParentAddress);
-    ReturnValue := meth.Invoke(Addr, Args);
-
-    Result := TValueToPyObject(ReturnValue, DelphiWrapper, ErrMsg);
-    if Result = nil then
-      with DelphiWrapper.Engine do
-        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-          Format(rs_ErrInvalidRet, [MethName, ErrMsg])));
-  except
-    on E: Exception do begin
-      Result := nil;
-      InvalidArguments(MethName, E.Message);
-    end;
-  end;
+  Result := RttiCall(ParentAddress, DelphiWrapper, meth, ob1, ob2, Args,
+    AParentAddrIsClass);
 end;
 
+// This overload can be called either directly or from the overload above.
+// When it is called from above Args are already setup and validated
+// When it is called directly Args = []
 function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
-  Method: TRttiMethod; ob1, ob2: PPyObject;
+  Method: TRttiMethod; ob1, ob2: PPyObject; const Args: TArray<TValue>;
   AParentAddrIsClass: Boolean = false): PPyObject;
 var
   ArgCount: Integer;
-  Args: array of TValue;
+  LArgs: TArray<TValue>;
   Addr: TValue;
   ReturnValue: TValue;
   ErrMsg : string;
@@ -2710,12 +2693,18 @@ begin
   // ob1 is a tuple with zero or more elements
 
   ArgCount := DelphiWrapper.Engine.PyTuple_Size(ob1);
-  SetLength(Args, ArgCount);
-
-  if not PyArgsToValues(ob1, Method, Args) then
+  if Length(Args) = ArgCount then
+    // already validated
+    LArgs := Args
+  else
   begin
-    InvalidArguments(Method.Name, rs_IncompatibleArguments);
-    Exit;
+    SetLength(LArgs, ArgCount);
+
+    if not PyArgsToValues(ob1, Method, LArgs) then
+    begin
+      InvalidArguments(Method.Name, rs_IncompatibleArguments);
+      Exit;
+    end;
   end;
 
   try
@@ -2732,7 +2721,7 @@ begin
     else
       Addr := TValue.From(ParentAddress);
 
-    ReturnValue := Method.Invoke(Addr, Args);
+    ReturnValue := Method.Invoke(Addr, LArgs);
 
     Result := TValueToPyObject(ReturnValue, DelphiWrapper, ErrMsg);
     if Result = nil then
@@ -4000,7 +3989,7 @@ begin
     PyArgs := PyDelphiWrapper.Engine.MakePyTuple([obj]);
 
   Result := RttiCall(DelphiObject, PyDelphiWrapper, Prop.ReadMethod,
-    PyArgs, nil);
+    PyArgs, nil, []);
 
   if not PyDelphiWrapper.Engine.PyTuple_Check(obj) then
     PyDelphiWrapper.Engine.Py_DECREF(PyArgs); // release created tuple
@@ -4045,7 +4034,7 @@ begin
     PyArgs := Engine.MakePyTuple([obj1, obj2]);
 
   TempPy := RttiCall(DelphiObject, PyDelphiWrapper, Prop.WriteMethod,
-    PyArgs, nil);
+    PyArgs, nil, []);
 
   Engine.Py_DECREF(PyArgs);  // release created tuple
 
