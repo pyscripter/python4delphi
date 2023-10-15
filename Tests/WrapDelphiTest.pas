@@ -68,6 +68,9 @@ type
     function SetStringField(const Value: string): string; overload;
     procedure PassVariantArray(const Value: Variant);
     function ClassRefParam(ClassRef: TPersistentClass): string;
+    procedure VarArgsProc1(var I: Integer);
+    function  VarArgsFunc1(var I: Integer): Integer;
+    procedure VarArgsProc2(var I: Integer; var S: string);
     property Indexed[I: Integer]: Integer read GetIndexed write SetIndexed;
     property Indexed2[S1, S2: string]: string read GetIndexed2 write SetIndexed2; default;
     class var ClassField: string;
@@ -152,6 +155,8 @@ type
     procedure TestStaticMethods;
     [Test]
     procedure TestIndexedProperties;
+    [Test]
+    procedure TestVarArgs;
   end;
 
 implementation
@@ -489,6 +494,17 @@ begin
   Assert.AreEqual(TestRttiAccess.StringField, 'P4D');
 end;
 
+procedure TTestWrapDelphi.TestVarArgs;
+begin
+  Assert.AreEqual<Integer>(VarPythonEval('rtti_var.VarArgsProc1(2)'), 4);
+  PythonEngine.ExecString('a, b = rtti_var.VarArgsFunc1(2)');
+  Assert.AreEqual<Integer>(VarPythonEval('a'), 16);
+  Assert.AreEqual<Integer>(VarPythonEval('b'), 4);
+  PythonEngine.ExecString('a, b = rtti_var.VarArgsProc2(2, "A")');
+  Assert.AreEqual<Integer>(VarPythonEval('a'), 4);
+  Assert.AreEqual<string>(VarPythonEval('b'), 'AA');
+end;
+
 procedure TTestWrapDelphi.TestDynArrayParameters;
 {var
   rc: TRttiContext;
@@ -537,6 +553,23 @@ end;
 class function TTestRttiAccess.Square(I: Integer): Integer;
 begin
   Result := I * I;
+end;
+
+function TTestRttiAccess.VarArgsFunc1(var I: Integer): Integer;
+begin
+  I := 2 * I;
+  Result := I * I;
+end;
+
+procedure TTestRttiAccess.VarArgsProc1(var I: Integer);
+begin
+  I := 2 * I;
+end;
+
+procedure TTestRttiAccess.VarArgsProc2(var I: Integer; var S: string);
+begin
+  I := 2 * I;
+  S := S + S;
 end;
 
 function TTestRttiAccess.SetStringField(var Value: Integer): string;
