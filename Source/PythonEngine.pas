@@ -8646,9 +8646,6 @@ begin
     Engine.Py_CLEAR(FCreateFunc);
   FCreateFunc := nil;
 
-  FType.tp_pythontype := nil;
-  Tag := 0; // TPyDelphiObject stores the default indexed property
-
   inherited;
 end;
 
