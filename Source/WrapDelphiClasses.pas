@@ -212,6 +212,9 @@ type
     function Set_Text( AValue : PPyObject; AContext : Pointer) : integer; cdecl;
     // Virtual Methods
     function Assign(ASource : PPyObject) : PPyObject; override;
+    {$IFDEF EXTENDED_RTTI}
+    class function ExcludedExposedMembers(APythonType: TPythonType): TArray<string>; override;
+    {$ENDIF EXTENDED_RTTI}
   public
     function  Repr : PPyObject; override;
     // Mapping services
@@ -1520,6 +1523,15 @@ begin
     Result := nil;
 end;
 
+{$IFDEF EXTENDED_RTTI}
+class function TPyDelphiStrings.ExcludedExposedMembers(APythonType: TPythonType): TArray<string>;
+begin
+  Result := inherited ExcludedExposedMembers(APythonType);
+  // so that TPyDelphiStrings.Assign is called from the inherited Assign
+  Result := Result + ['Assign'];
+end;
+{$ENDIF EXTENDED_RTTI}
+
 class function TPyDelphiStrings.GetContainerAccessClass: TContainerAccessClass;
 begin
   Result := TStringsAccess;
@@ -1689,7 +1701,7 @@ end;
 class procedure TPyDelphiStrings.SetupType(PythonType: TPythonType);
 begin
   inherited;
-  PythonType.Services.Mapping  := PythonType.Services.Mapping  + [msLength, msSubscript];
+  PythonType.Services.Mapping  := {PythonType.Services.Mapping  +} [msLength, msSubscript];
 end;
 
 { TPyDelphiBasicAction }
