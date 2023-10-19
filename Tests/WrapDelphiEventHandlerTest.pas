@@ -16,19 +16,17 @@ type
   private
     FObject: TObject;
     FValue: Double;
+    FOnTest: TNotifyEvent;
     FOnGetObject: TTestGetObjectEvent;
     FOnGetValue: TTestGetValueEvent;
-
     ProcessCalled: Boolean;
-
   public
     procedure Process;
-
   published
+    property OnTest: TNotifyEvent read FOnTest write FOnTest;
     property OnGetObject: TTestGetObjectEvent read FOnGetObject write FOnGetObject;
     property OnGetValue: TTestGetValueEvent read FOnGetValue write FOnGetValue;
   end;
-
 
   [TestFixture]
   TTestWrapDelphiEventHandlers = class(TObject)
@@ -36,14 +34,13 @@ type
     PythonEngine: TPythonEngine;
     DelphiModule: TPythonModule;
     DelphiWrapper: TPyDelphiWrapper;
-
   public
     [SetupFixture]
     procedure SetupFixture;
-
     [TearDownFixture]
     procedure TearDownFixture;
-
+    [Test]
+    procedure TestNotify;
     [Test]
     procedure TestProcessWithValue;
     [Test]
@@ -53,6 +50,9 @@ type
 implementation
 
 uses
+  VarPyth,
+  System.Diagnostics,
+  System.SysUtils,
   TypInfo;
 
 type
@@ -74,13 +74,11 @@ type
   TTestGetObjectEventHandler = class(TEventHandler)
   protected
     procedure DoEvent(Sender: TObject; var Obj: TObject);
-
   public
     constructor Create(PyDelphiWrapper: TPyDelphiWrapper; Component: TObject;
       PropertyInfo: PPropInfo; Callable: PPyObject); override;
     class function GetTypeInfo: PTypeInfo; override;
   end;
-
 
 { TTestRegistration }
 
@@ -95,7 +93,6 @@ begin
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTestGetValueEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTestGetObjectEventHandler);
 end;
-
 
 { TTestGetValueEventHandler }
 
@@ -147,7 +144,6 @@ begin
   Result := System.TypeInfo(TTestGetValueEvent);
 end;
 
-
 { TTestGetObjectEventHandler }
 
 constructor TTestGetObjectEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper; Component: TObject;
@@ -198,21 +194,19 @@ begin
   Result := System.TypeInfo(TTestGetObjectEvent);
 end;
 
-
 { TTest }
-
 procedure TTest.Process;
 begin
   ProcessCalled := True;
+  if Assigned(fOnTest) then
+    fOnTest(Self);
   if Assigned(FOnGetObject) then
     FOnGetObject(Self, FObject);
   if Assigned(FOnGetValue) then
     FOnGetValue(Self, FValue);
 end;
 
-
 { TTestWrapDelphiEventHandlers }
-
 procedure TTestWrapDelphiEventHandlers.SetupFixture;
 begin
   PythonEngine := TPythonEngine.Create(nil);
@@ -225,17 +219,13 @@ begin
   PythonEngine.InitThreads := True;
   PythonEngine.PyFlags := [pfInteractive];
   DelphiModule := TPythonModule.Create(nil);
-
   DelphiModule.Name := 'DelphiModule';
   DelphiModule.Engine := PythonEngine;
   DelphiModule.ModuleName := 'delphi';
-
   DelphiWrapper := TPyDelphiWrapper.Create(nil);
-
   DelphiWrapper.Name := 'PyDelphiWrapper';
   DelphiWrapper.Engine := PythonEngine;
   DelphiWrapper.Module := DelphiModule;
-
   PythonEngine.LoadDll;
 end;
 
@@ -249,13 +239,10 @@ end;
 procedure TTestWrapDelphiEventHandlers.TestProcessWithValue;
 var
   Test: TTest;
-  pyTest: PPyObject;
 begin
   Test := TTest.Create(nil);
   try
-    pyTest := DelphiWrapper.Wrap(Test);
-    DelphiModule.SetVar('test', pyTest);
-    PythonEngine.Py_DECREF(pyTest);
+    DelphiWrapper.DefineVar('test', Test);
     PythonEngine.ExecString(
       'import delphi' + LF +
       '' + LF +
@@ -273,17 +260,44 @@ begin
   end;
 end;
 
+procedure TTestWrapDelphiEventHandlers.TestNotify;
+var
+  Test: TTest;
+begin
+  Test := TTest.Create(nil);
+  try
+    DelphiWrapper.DefineVar('test', Test);
+    PythonEngine.ExecString(
+      'import delphi' + LF +
+      '' + LF +
+      'def MyOnTest(sender):' + LF +
+      '    global on_test_sender' + LF +
+      '    on_test_sender = sender.ClassName' + LF +
+      '' + LF +
+      'delphi.test.OnTest = MyOnTest' + LF +
+      'delphi.test.Process()' + LF +
+      ''
+      );
+    Assert.AreEqual<string>(MainModule.on_test_sender, 'TTest');
+
+    var StopWatch := TStopwatch.StartNew;
+    var Count := 100000;
+    for var I := 0 to Count do
+      Test.Process;
+    StopWatch.Stop;
+    WriteLn(Format('*********** Elaplsed time for %d OnTest event calls: %d', [Count, StopWatch.ElapsedMilliseconds]));
+  finally
+    Test.Free;
+  end;
+end;
 
 procedure TTestWrapDelphiEventHandlers.TestProcessWithObject;
 var
   Test: TTest;
-  pyTest: PPyObject;
 begin
   Test := TTest.Create(nil);
   try
-    pyTest := DelphiWrapper.Wrap(Test);
-    DelphiModule.SetVar('test', pyTest);
-    PythonEngine.Py_DECREF(pyTest);
+    DelphiWrapper.DefineVar('test', Test);
     PythonEngine.ExecString(
       'import delphi' + LF +
       '' + LF +
@@ -296,15 +310,19 @@ begin
       );
     Assert.IsTrue(Test.ProcessCalled);
     Assert.AreSame(Test, Test.FObject);
+
+    var StopWatch := TStopwatch.StartNew;
+    var Count := 100000;
+    for var I := 0 to Count do
+      Test.Process;
+    StopWatch.Stop;
+    WriteLn(Format('*********** Elaplsed time for %d OnGetObject event calls: %d', [Count, StopWatch.ElapsedMilliseconds]));
   finally
     Test.Free;
   end;
 end;
 
 initialization
-
-RegisteredUnits.Add(TTestRegistration.Create);
-
-TDUnitX.RegisterTestFixture(TTestWrapDelphiEventHandlers);
-
+  RegisteredUnits.Add(TTestRegistration.Create);
+  TDUnitX.RegisterTestFixture(TTestWrapDelphiEventHandlers);
 end.

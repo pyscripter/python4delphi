@@ -7,7 +7,7 @@
         <MainSource>P4DTests.dpr</MainSource>
         <Platform Condition="'$(Platform)'==''">Win64</Platform>
         <ProjectGuid>{DEA420F5-972B-4628-A9B1-A789762EC148}</ProjectGuid>
-        <ProjectVersion>19.1</ProjectVersion>
+        <ProjectVersion>19.5</ProjectVersion>
         <TargetedPlatforms>3</TargetedPlatforms>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Base' or '$(Base)'!=''">
@@ -77,7 +77,9 @@
         <DCCReference Include="MethodCallBackTest.pas"/>
         <DCCReference Include="VarPythTest.pas"/>
         <DCCReference Include="WrapDelphiTest.pas"/>
+        <DCCReference Include="WrapDelphiEventHandlerTest.pas"/>
         <DCCReference Include="NumberServicesTest.pas"/>
+        <DCCReference Include="AutoWrapEventHandlerTest.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -100,6 +102,7 @@
                 </Source>
             </Delphi.Personality>
             <Platforms>
+                <Platform value="Linux64">False</Platform>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">True</Platform>
             </Platforms>

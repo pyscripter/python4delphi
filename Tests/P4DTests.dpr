@@ -1,6 +1,3 @@
-// JCL_DEBUG_EXPERT_GENERATEJDBG ON
-// JCL_DEBUG_EXPERT_INSERTJDBG ON
-// JCL_DEBUG_EXPERT_DELETEMAPFILE OFF
 program P4DTests;
 {$IFNDEF TESTINSIGHT}
 {$APPTYPE CONSOLE}
@@ -8,11 +5,11 @@ program P4DTests;
 uses
   {$IFDEF FASTMM4}
   FastMM4,
-  {$ENDIF}
+  {$ENDIF }
   System.SysUtils,
   {$IFDEF TESTINSIGHT}
   TestInsight.DUnitX,
-  {$ENDIF}
+  {$ENDIF }
   DUnitX.Loggers.Console,
   DUnitX.Loggers.Xml.NUnit,
   DUnitX.StackTrace.Jcl,
@@ -21,7 +18,8 @@ uses
   VarPythTest in 'VarPythTest.pas',
   WrapDelphiTest in 'WrapDelphiTest.pas',
   WrapDelphiEventHandlerTest in 'WrapDelphiEventHandlerTest.pas',
-  NumberServicesTest in 'NumberServicesTest.pas';
+  NumberServicesTest in 'NumberServicesTest.pas',
+  AutoWrapEventHandlerTest in 'AutoWrapEventHandlerTest.pas';
 
 var
   runner : ITestRunner;
