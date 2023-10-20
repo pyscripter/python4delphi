@@ -1566,7 +1566,6 @@ var
   RttiProp: TRttiInstanceProperty;
   ErrMsg: string;
   EventHandler: TRttiEventHandler;
-  Index: Integer;
   Method: TMethod;
 begin
   Result := -1;
