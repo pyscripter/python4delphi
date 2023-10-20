@@ -527,7 +527,6 @@ Type
   private
     fDelphiObject: TObject;
     fContainerAccess: TContainerAccess;
-    fEventHandlers: TObjectList;
     function  GetContainerAccess: TContainerAccess;
     procedure SetDelphiObject(const Value: TObject);
   protected
@@ -715,7 +714,7 @@ Type
   end;
   {$ENDIF}
 
-  TEventHandler = class
+  TBaseEventHandler = class
   private
     fComponent: TObject;
   public
@@ -729,10 +728,14 @@ Type
     destructor Destroy; override;
     // Disconnects from the free notification event now
     procedure Unsubscribe;
-    // returns the type info of the supported event
-    class function GetTypeInfo : PTypeInfo; virtual; abstract;
     // properties
     property Component : TObject read fComponent;
+  end;
+
+  TEventHandler = class(TBaseEventHandler)
+  public
+    // returns the type info of the supported event
+    class function GetTypeInfo : PTypeInfo; virtual; abstract;
   end;
   TEventHandlerClass = class of TEventHandler;
 
@@ -742,7 +745,7 @@ Type
     fRegisteredClasses : TClassList;
     fPyDelphiWrapper: TPyDelphiWrapper;
     function GetCount: Integer;
-    function GetItem(AIndex: Integer): TEventHandler;
+    function GetItem(AIndex: Integer): TBaseEventHandler;
     function GetRegisteredClass(AIndex: Integer): TEventHandlerClass;
     function GetRegisteredClassCount: Integer;
   protected
@@ -753,7 +756,7 @@ Type
     constructor Create(APyDelphiWrapper : TPyDelphiWrapper);
     destructor Destroy; override;
 
-    function  Add(AEventHandler : TEventHandler) : Boolean;
+    function  Add(AEventHandler : TBaseEventHandler) : Boolean;
     procedure Clear;
     procedure Delete(AIndex : Integer);
     function  GetCallable(AComponent : TObject; APropInfo : PPropInfo) : PPyObject; overload;
@@ -765,7 +768,7 @@ Type
     function  Unlink(AComponent : TObject; APropInfo : PPropInfo) : Boolean;
 
     property Count : Integer read GetCount;
-    property Items[AIndex : Integer] : TEventHandler read GetItem; default;
+    property Items[AIndex : Integer] : TBaseEventHandler read GetItem; default;
     property PyDelphiWrapper : TPyDelphiWrapper read fPyDelphiWrapper;
   end;
 
@@ -1293,18 +1296,15 @@ type
     property GetterCallback: Pointer read GetGetterCallback;
   end;
 
-  TRttiEventHandler = class
+  TRttiEventHandler = class(TBaseEventHandler)
   private
     FMethodImplementation: TMethodImplementation;
   public
-    DelphiWrapper: TPyDelphiWrapper;
-    PropInfo: PPropInfo;
     MethodType: TRttiMethodType;
-    PyCallable: PPyObject;
     function CodeAddress: Pointer;
-    constructor Create(ADelphiWrapper : TPyDelphiWrapper;
-      APropertyInfo: PPropInfo; ACallable: PPyObject;
-      AMethodType: TRttiMethodType);
+    constructor Create(PyDelphiWrapper: TPyDelphiWrapper; Component: TObject;
+      PropertyInfo: PPropInfo; Callable: PPyObject;
+      AMethodType: TRttiMethodType); reintroduce;
     destructor Destroy; override;
     class procedure ImplCallback(UserData: Pointer; const Args: TArray<TValue>;
     out Result: TValue); static;
@@ -1550,38 +1550,19 @@ end;
 function TExposedEvent.GetterWrapper(AObj: PPyObject; AContext : Pointer): PPyObject;
 var
   Obj: TObject;
-  PyObject: TPyDelphiObject;
   RttiProp: TRttiInstanceProperty;
   LOutMsg: string;
-  EventHandler: TRttiEventHandler;
-  Index: Integer;
 begin
-  Result := nil;
+  RttiProp := FRttiMember as TRttiInstanceProperty;
   if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
-  begin
-    PyObject := PythonToDelphi(AObj) as TPyDelphiObject;
-    RttiProp := FRttiMember as TRttiInstanceProperty;
-    // Search for and Event handler
-    if Assigned(PyObject.fEventHandlers) then
-      for Index := 0 to PyObject.fEventHandlers.Count - 1 do
-      begin
-        EventHandler := PyObject.fEventHandlers[Index] as TRttiEventHandler;
-        if EventHandler.PropInfo = RttiProp.PropInfo then
-        begin
-          Result := EventHandler.PyCallable;
-          FPyDelphiWrapper.Engine.Py_XINCREF(Result);
-        end;
-      end;
-  end;
-
-  if not Assigned(Result) then
+    Result := FPyDelphiWrapper.EventHandlers.GetCallable(Obj, RttiProp.PropInfo)
+  else
     Result := FPyDelphiWrapper.Engine.ReturnNone;
 end;
 
 function TExposedEvent.SetterWrapper(AObj, AValue: PPyObject; AContext: Pointer): Integer;
 var
   Obj: TObject;
-  PyObject: TPyDelphiObject;
   RttiProp: TRttiInstanceProperty;
   ErrMsg: string;
   EventHandler: TRttiEventHandler;
@@ -1595,20 +1576,10 @@ begin
   if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, ErrMsg) then
   begin
     try
-      PyObject := PythonToDelphi(AObj) as TPyDelphiObject;
       RttiProp := FRttiMember as TRttiInstanceProperty;
 
       // Remove handler if it exists
-      if Assigned(PyObject.fEventHandlers) then
-        for Index := 0 to PyObject.fEventHandlers.Count - 1 do
-        begin
-          EventHandler := PyObject.fEventHandlers[Index] as TRttiEventHandler;
-          if EventHandler.PropInfo = RttiProp.PropInfo then
-          begin
-            PyObject.fEventHandlers.Delete(Index);
-            break;
-          end;
-        end;
+      fPyDelphiWrapper.EventHandlers.Unlink(Obj, RttiProp.PropInfo);
 
       if AValue = GetPythonEngine.Py_None then
       begin
@@ -1617,12 +1588,10 @@ begin
       end
       else
       begin
-        EventHandler := TRttiEventHandler.Create(FPyDelphiWrapper,
+        EventHandler := TRttiEventHandler.Create(FPyDelphiWrapper, Obj,
           RttiProp.PropInfo, AValue, RttiProp.PropertyType as TRttiMethodType);
 
-        if not Assigned(PyObject.fEventHandlers) then
-          PyObject.fEventHandlers := TObjectList.Create(True);
-        PyObject.fEventHandlers.Add(EventHandler);
+        FPyDelphiWrapper.EventHandlers.Add(EventHandler);
 
         Method.Code := EventHandler.CodeAddress;
         Method.Data := EventHandler;
@@ -1792,21 +1761,19 @@ begin
 end;
 
 { TRttiEventHandler }
-constructor TRttiEventHandler.Create(ADelphiWrapper : TPyDelphiWrapper;
-  APropertyInfo: PPropInfo; ACallable: PPyObject; AMethodType: TRttiMethodType);
+constructor TRttiEventHandler.Create(PyDelphiWrapper: TPyDelphiWrapper;
+  Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject;
+  AMethodType: TRttiMethodType);
 begin
-  PropInfo := APropertyInfo;
-  DelphiWrapper := ADelphiWrapper;
-  PyCallable := ACallable;
-  GetPythonEngine.Py_INCREF(PyCallable);
+  inherited Create(PyDelphiWrapper, Component, PropertyInfo, Callable);
   MethodType := AMethodType;
   FMethodImplementation := AMethodType.CreateImplementation(nil, ImplCallback);
 end;
 
 destructor TRttiEventHandler.Destroy;
 begin
-  DelphiWrapper.Engine.Py_XDECREF(PyCallable);
   FMethodImplementation.Free;
+  inherited;
 end;
 
 function TRttiEventHandler.CodeAddress: Pointer;
@@ -1834,11 +1801,11 @@ begin
 
   if Length(Args) <> Length(Params) + 1 then  // +1 for Self
   begin
-    InvalidArguments(string(EventHandler.PropInfo.Name), rs_IncompatibleArguments);
+    InvalidArguments(string(EventHandler.PropertyInfo.Name), rs_IncompatibleArguments);
     Exit;
   end;
 
-  Engine := EventHandler.DelphiWrapper.Engine;
+  Engine := EventHandler.PyDelphiWrapper.Engine;
 
   // Set up the python arguments
   PyArgs := Engine.PyTuple_New(Length(Args) - 1);  //Ignore Self
@@ -1846,20 +1813,20 @@ begin
     for Index := 1 to Length(Args) - 1 do
     begin
       if Params[Index - 1].Flags * [TParamFlag.pfVar, TParamFlag.pfOut] <> [] then
-        TempPy := CreateVarParam(EventHandler.DelphiWrapper, Args[Index])
+        TempPy := CreateVarParam(EventHandler.PyDelphiWrapper, Args[Index])
       else
-        TempPy := TValueToPyObject(Args[Index], EventHandler.DelphiWrapper, ErrMsg);
+        TempPy := TValueToPyObject(Args[Index], EventHandler.PyDelphiWrapper, ErrMsg);
       if TempPy <> nil then
         Engine.PyTuple_SetItem(PyArgs, Index - 1, TempPy)
       else
       begin
-        InvalidArguments(string(EventHandler.PropInfo.Name), rs_IncompatibleArguments);
+        InvalidArguments(string(EventHandler.PropertyInfo.Name), rs_IncompatibleArguments);
         Engine.CheckError;  // will raise an Exception
       end;
     end;
 
     // Make the call
-    PyResult := Engine.PyObject_CallObject(EventHandler.PyCallable, PyArgs);
+    PyResult := Engine.PyObject_CallObject(EventHandler.Callable, PyArgs);
 
     // deal with var/out parameters
     for Index := 1 to Length(Args) - 1 do
@@ -1870,7 +1837,7 @@ begin
         if not PyObjectToTValue((PythonToDelphi(TempPy) as TPyDelphiVarParameter).Value,
           Params[Index- 1].ParamType, Args[Index], ErrMsg) then
         begin
-          InvalidArguments(string(EventHandler.PropInfo.Name), rs_IncompatibleArguments);
+          InvalidArguments(string(EventHandler.PropertyInfo.Name), rs_IncompatibleArguments);
           Engine.CheckError;  // will raise an Exception
         end;
       end;
@@ -1879,7 +1846,7 @@ begin
       not PyObjectToTValue(PyResult, EventHandler.MethodType.ReturnType, Result, ErrMsg)
     then
       Engine.PyErr_SetObject(Engine.PyExc_TypeError^, Engine.PyUnicodeFromString(
-        Format(rs_ErrInvalidRet, [string(EventHandler.PropInfo.Name), ErrMsg])));
+        Format(rs_ErrInvalidRet, [string(EventHandler.PropertyInfo.Name), ErrMsg])));
     Engine.Py_XDECREF(PyResult);
   finally
     Engine.Py_XDECREF(PyArgs);
@@ -2951,7 +2918,6 @@ end;
 destructor TPyDelphiObject.Destroy;
 begin
   DelphiObject := nil; // will free the object if owned
-  fEventHandlers.Free;
   fContainerAccess.Free;
   inherited;
 end;
@@ -3949,7 +3915,6 @@ begin
     if Assigned(fDelphiObject)then
     begin
       UnSubscribeToFreeNotification;
-      FreeAndNil(fEventHandlers);
       if Owned then
         fDelphiObject.Free;
     end;
@@ -4831,7 +4796,7 @@ end;
 
 { TEventHandler }
 
-constructor TEventHandler.Create(PyDelphiWrapper : TPyDelphiWrapper;
+constructor TBaseEventHandler.Create(PyDelphiWrapper : TPyDelphiWrapper;
   Component: TObject; PropertyInfo: PPropInfo; Callable: PPyObject);
 var
   _FreeNotification : IFreeNotification;
@@ -4851,7 +4816,7 @@ begin
     (Component as TComponent).FreeNotification(PyDelphiWrapper);
 end;
 
-destructor TEventHandler.Destroy;
+destructor TBaseEventHandler.Destroy;
 var
   Method : TMethod;
 begin
@@ -4874,7 +4839,7 @@ begin
   inherited;
 end;
 
-procedure TEventHandler.Unsubscribe;
+procedure TBaseEventHandler.Unsubscribe;
 var
   _FreeNotification : IFreeNotification;
 begin
@@ -4907,7 +4872,7 @@ end;
 
 { TEventHandlers }
 
-function TEventHandlers.Add(AEventHandler: TEventHandler) : Boolean;
+function TEventHandlers.Add(AEventHandler: TBaseEventHandler) : Boolean;
 begin
   fItems.Add(AEventHandler);
   Result := True;
@@ -4983,9 +4948,9 @@ begin
   Result := fItems.Count;
 end;
 
-function TEventHandlers.GetItem(AIndex: Integer): TEventHandler;
+function TEventHandlers.GetItem(AIndex: Integer): TBaseEventHandler;
 begin
-  Result := TEventHandler(fItems[AIndex]);
+  Result := TBaseEventHandler(fItems[AIndex]);
 end;
 
 function TEventHandlers.GetRegisteredClass(
