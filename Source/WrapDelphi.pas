@@ -1610,16 +1610,24 @@ begin
           end;
         end;
 
-      EventHandler := TRttiEventHandler.Create(FPyDelphiWrapper,
-        RttiProp.PropInfo, AValue, RttiProp.PropertyType as TRttiMethodType);
+      if AValue = GetPythonEngine.Py_None then
+      begin
+        Method.Code := nil;
+        Method.Data := nil;
+      end
+      else
+      begin
+        EventHandler := TRttiEventHandler.Create(FPyDelphiWrapper,
+          RttiProp.PropInfo, AValue, RttiProp.PropertyType as TRttiMethodType);
 
-      Method.Code := EventHandler.CodeAddress;
-      Method.Data := EventHandler;
+        if not Assigned(PyObject.fEventHandlers) then
+          PyObject.fEventHandlers := TObjectList.Create(True);
+        PyObject.fEventHandlers.Add(EventHandler);
+
+        Method.Code := EventHandler.CodeAddress;
+        Method.Data := EventHandler;
+      end;
       SetMethodProp(Obj, RttiProp.PropInfo, Method);
-
-      if not Assigned(PyObject.fEventHandlers) then
-        PyObject.fEventHandlers := TObjectList.Create(True);
-      PyObject.fEventHandlers.Add(EventHandler);
 
       Result := 0;
     except
