@@ -196,15 +196,14 @@ end;
 procedure TControlsRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyledControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTextControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStyleBook);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPopup);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControlAction);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
 end;
 
 { TPyDelphiControl }

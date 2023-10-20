@@ -309,20 +309,7 @@ end;
 procedure TTypesRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiRectF);
-  APyDelphiWrapper.RegisterHelperType(TPyDelphiTouch);
-
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimer);
-
-  //Event handlers
+  // Event handlers
   APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseMoveEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseWheelEventHandler);
@@ -331,6 +318,18 @@ begin
   APyDelphiWrapper.EventHandlers.RegisterHandler(TVirtualKeyboardEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTapEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTouchEventHandler);
+  // Helper types
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiPointF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiSizeF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiRectF);
+  APyDelphiWrapper.RegisterHelperType(TPyDelphiTouch);
+  // Classes
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiFmxObject);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPosition);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomPopupMenu);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiBounds);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControlSize);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTimer);
 end;
 
 { TPyDelphiPointF }

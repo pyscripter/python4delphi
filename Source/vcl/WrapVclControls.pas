@@ -267,7 +267,12 @@ end;
 
 procedure TControlsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyPressEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseMoveEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TContextPopupEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiWinControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomControl);
@@ -275,14 +280,6 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomMultiListControl);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDragImageList);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiImageList);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyPressEventHandler);
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TKeyEventHandler);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseEventHandler);
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TMouseMoveEventHandler);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TContextPopupEventHandler);
 end;
 
 { TPyDelphiControl }

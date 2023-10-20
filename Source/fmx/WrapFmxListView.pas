@@ -118,15 +118,14 @@ end;
 procedure TListViewRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TItemEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAdapterListView);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListViewBase);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPresentedListView);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiAppearanceListView);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListView);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListView);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TItemEventHandler);
 end;
 
 { TPyDelphiAdapterListView }

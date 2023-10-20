@@ -192,7 +192,8 @@ end;
 procedure TFMXMediaRegistration.RegisterWrappers(APyDelphiWrapper
   : TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TSampleBufferReadyEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCameraComponent);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomMediaCodec);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayerControl);
@@ -205,8 +206,6 @@ begin
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayerValue);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayerCurrentTime);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayerVolume);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TSampleBufferReadyEventHandler);
 end;
 
 { TSampleBufferReadyEventHandler }

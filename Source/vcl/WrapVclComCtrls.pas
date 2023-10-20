@@ -874,24 +874,6 @@ end;
 
 procedure TComCtrlsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateTimePicker);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPageControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabSheet);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolButton);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolbar);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomTabControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTabControl);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomStatusBar);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTreeNode);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTreeView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTreeView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListItem);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListView);
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListView);
-
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTabChangingEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVChangingEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVChangedEventHandler);
@@ -911,7 +893,6 @@ begin
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVCheckStateChangedEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTVCheckStateChangingEventHandler);
 {$ENDIF}
-
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVDeletedEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVEditingEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVEditedEventHandler);
@@ -937,6 +918,23 @@ begin
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVSubItemImageEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVInfoTipEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TLVCreateItemClassEventHandler);
+
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDateTimePicker);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiPageControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTabSheet);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTrackBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolButton);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiToolbar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomCustomTabControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTabControl);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomStatusBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStatusBar);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTreeNode);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomTreeView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiTreeView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListItem);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomListView);
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiListView);
 end;
 
 

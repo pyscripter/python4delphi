@@ -76,11 +76,10 @@ end;
 procedure TMediaRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
-  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayer);
-
   APyDelphiWrapper.EventHandlers.RegisterHandler(TEMPNotifyEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TEMPPostNotifyEventHandler);
+
+  APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMediaPlayer);
 end;
 
 { TPyDelphiMediaPlayer }

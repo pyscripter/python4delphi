@@ -91,10 +91,10 @@ end;
 procedure TActionsRegistration.RegisterWrappers(
   APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TActionEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiContainedAction);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiContainedActionList);
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TActionEventHandler);
 end;
 
 { TPyDelphiContainedAction }

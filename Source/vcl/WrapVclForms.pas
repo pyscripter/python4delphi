@@ -423,15 +423,14 @@ end;
 
 procedure TFormsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseQueryEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiForm);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiApplication);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiScreen);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiMonitor);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseQueryEventHandler);
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TCloseEventHandler);
 end;
 
 { TPyDelphiCustomForm }

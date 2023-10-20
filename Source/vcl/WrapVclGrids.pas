@@ -184,14 +184,13 @@ end;
 
 procedure TGridsRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TDrawCellEventHandler);
+  APyDelphiWrapper.EventHandlers.RegisterHandler(TSelectCellEventHandler);
+
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomGrid);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiCustomDrawGrid);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiDrawGrid);
   APyDelphiWrapper.RegisterDelphiWrapper(TPyDelphiStringGrid);
-
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TDrawCellEventHandler);
-  APyDelphiWrapper.EventHandlers.RegisterHandler(TSelectCellEventHandler);
 end;
 
 { Helper functions }

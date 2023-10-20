@@ -89,7 +89,6 @@ end;
 
 procedure TTestRegistration.RegisterWrappers(APyDelphiWrapper: TPyDelphiWrapper);
 begin
-  inherited;
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTestGetValueEventHandler);
   APyDelphiWrapper.EventHandlers.RegisterHandler(TTestGetObjectEventHandler);
 end;
