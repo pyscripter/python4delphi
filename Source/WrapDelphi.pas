@@ -1284,16 +1284,11 @@ type
     function MpAssSubscript(obj1, obj2: PPyObject) : Integer; override;
   end;
 
-  TExposedIndexedProperty = class(TAbstractExposedMember)
-  private
-    FGetterCallback: Pointer;
-    function GetGetterCallback: Pointer;
+  TExposedIndexedProperty = class(TExposedGetSet)
   protected
     function GetDefaultDocString(): string; override;
   public
-    destructor Destroy; override;
-    function GetterWrapper(AObj: PPyObject; AContext : Pointer): PPyObject; cdecl;
-    property GetterCallback: Pointer read GetGetterCallback;
+    function GetterWrapper(AObj: PPyObject; AContext : Pointer): PPyObject; override; cdecl;
   end;
 
   TRttiEventHandler = class(TBaseEventHandler)
@@ -1610,18 +1605,6 @@ begin
 end;
 
 { TExposedIndexedProperty }
-function TExposedIndexedProperty.GetGetterCallback: Pointer;
-var
-  Method: function (AObj: PPyObject; AContext : Pointer): PPyObject of object; cdecl;
-begin
-  if FGetterCallback = nil then
-  begin
-    Method := GetterWrapper;
-    FGetterCallback := GetOfObjectCallBack(TCallBack(Method), 2, DEFAULT_CALLBACK_TYPE);
-  end;
-  Result := FGetterCallback;
-end;
-
 function TExposedIndexedProperty.GetDefaultDocString(): string;
 var
   PropertyType: string;
@@ -1633,13 +1616,7 @@ begin
     FParentRtti.Name, FRttiMember.Name, PropertyType]);
 end;
 
-destructor TExposedIndexedProperty.Destroy;
-begin
-  if FGetterCallback <> nil then
-    DeleteCallback(FGetterCallback);
-end;
-
-function TExposedIndexedProperty.GetterWrapper(AObj: PPyObject; AContext : Pointer): PPyObject; cdecl;
+function TExposedIndexedProperty.GetterWrapper(AObj: PPyObject; AContext : Pointer): PPyObject;
 var
   HelperType: TPythonType;
 begin
