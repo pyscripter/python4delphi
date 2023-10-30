@@ -117,14 +117,17 @@ begin
 
     Thread1 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc1',
                            BubbleSortBox, BubbleSortArray);
+    Thread1.InterpreterConfig := _PyInterpreterConfig_INIT;
     Thread1.OnTerminate := ThreadDone;
 
     Thread2 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc2',
                            SelectionSortBox, SelectionSortArray);
+    Thread2.InterpreterConfig := _PyInterpreterConfig_INIT;
     Thread2.OnTerminate := ThreadDone;
 
     Thread3 := TSortThread.Create( ThreadExecMode, script, SortModule, 'SortFunc3',
                            QuickSortBox, QuickSortArray);
+    Thread3.InterpreterConfig := _PyInterpreterConfig_INIT;
     Thread3.OnTerminate := ThreadDone;
 
   end;
@@ -144,7 +147,7 @@ end;
 
 procedure TThreadSortForm.Start3BtnClick(Sender: TObject);
 begin
-  InitThreads(emNewInterpreter, PythonMemo.Lines);
+  InitThreads(emNewInterpreterOwnGIL, PythonMemo.Lines);
 //PythonEngine1.ExecStrings(PythonMemo.Lines);
 end;
 

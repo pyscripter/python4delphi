@@ -32,3 +32,4 @@ Demo32	Demo08 revisited using WrapDelphi
 Demo33  Using Threads inside Python
 Demo34  Dynamically creating, destroying and recreating PythonEngine.  Uses PythonVersions
 Demo35  Fast access to numpy arrays using the buffer protocol
+Demo36  True thread parallelism using the new emNewInterpreterOwnGIL thread execution mode in Python 12

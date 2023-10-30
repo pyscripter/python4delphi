@@ -10,8 +10,6 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -21,8 +19,6 @@ object Form1: TForm1
     Cursor = crVSplit
     Align = alTop
     ResizeStyle = rsUpdate
-    ExplicitTop = 201
-    ExplicitWidth = 383
   end
   object sePythonCode: TSynEdit
     Left = 0
@@ -43,6 +39,24 @@ object Form1: TForm1
     Gutter.Font.Height = -11
     Gutter.Font.Name = 'Consolas'
     Gutter.Font.Style = []
+    Gutter.Bands = <
+      item
+        Kind = gbkMarks
+        Width = 13
+      end
+      item
+        Kind = gbkLineNumbers
+      end
+      item
+        Kind = gbkFold
+      end
+      item
+        Kind = gbkTrackChanges
+      end
+      item
+        Kind = gbkMargin
+        Width = 3
+      end>
     Highlighter = SynPythonSyn
     Lines.Strings = (
       'from timeit import Timer'
@@ -78,6 +92,7 @@ object Form1: TForm1
       ''
       'if __name__ == '#39'__main__'#39':'
       '    main()')
+    SelectedColor.Alpha = 0.400000005960464500
   end
   object HeaderControl1: THeaderControl
     Left = 0
@@ -177,9 +192,6 @@ object Form1: TForm1
     end
   end
   object SynPythonSyn: TSynPythonSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
     Left = 760
     Top = 32
   end

@@ -956,28 +956,35 @@ type
 
   //bytearrayobject.h
 
-  //typedef struct {
-  //  PyObject_VAR_HEAD
-  //  Py_ssize_t ob_alloc;   /* How many bytes allocated in ob_bytes */
-  //  char *ob_bytes;        /* Physical backing buffer */
-  //  char *ob_start;        /* Logical start inside ob_bytes */
-  //  Py_ssize_t ob_exports; /* How many buffer exports */
-  //} PyByteArrayObject;
-
   PyByteArrayObject = {$IFDEF CPUX86}packed{$ENDIF} record
-    // Start of PyObject_VAR_HEAD
-    // Start of the Head of an object
-    ob_base: PyObject;
-    ob_size: Py_ssize_t;
-    // End of the Head of an object
+    ob_refcnt: NativeInt;
+    ob_type:   PPyTypeObject;
+    ob_alloc: Py_ssize_t;
     ob_bytes: PAnsiChar;
     ob_start: PAnsiChar;
     ob_exports: Py_ssize_t;
   end;
 
+  //initconfig.h
+
+const
+  _PyStatus_TYPE_OK = 0;
+  _PyStatus_TYPE_ERROR = 1;
+  _PyStatus_TYPE_EXIT = 2;
+
+type
+  TPyStatus_Type = Integer;
+
+  PyStatus = {$IFDEF CPUX86}packed{$ENDIF} record
+    _type: TPyStatus_Type;
+    func: PAnsiChar;
+    err_msg: PAnsiChar;
+    exitcode: Integer;
+  end;
+
 //#######################################################
 //##                                                   ##
-//##         GIL state                                 ##
+//##         GIL related                               ##
 //##                                                   ##
 //#######################################################
 const
@@ -986,12 +993,40 @@ const
 type
   PyGILState_STATE = type Integer; // (PyGILState_LOCKED, PyGILState_UNLOCKED);
 
+  // Introduced in Python 12
+const
+  PyInterpreterConfig_DEFAULT_GIL = 0;
+  PyInterpreterConfig_SHARED_GIL = 1;
+  PyInterpreterConfig_OWN_GIL = 2;
+
+  type
+  PPyInterpreterConfig = ^PyInterpreterConfig;
+  PyInterpreterConfig = {$IFDEF CPUX86}packed{$ENDIF} record
+    use_main_obmalloc: Integer;
+    allow_fork: Integer;
+    allow_exec: Integer;
+    allow_threads: Integer;
+    allow_daemon_threads: Integer;
+    check_multi_interp_extensions: Integer;
+    gil: Integer;
+  end;
+
+const
+  _PyInterpreterConfig_INIT: PyInterpreterConfig =
+    ( use_main_obmalloc: 0;
+      allow_fork: 0;
+      allow_exec: 0;
+      allow_threads: 1;
+      allow_daemon_threads: 0;
+      check_multi_interp_extensions: 1;
+      gil: PyInterpreterConfig_OWN_GIL);
+
 //#######################################################
 //##                                                   ##
 //##         New exception classes                     ##
 //##                                                   ##
 //#######################################################
-
+type
   // Components' exceptions
   EDLLLoadError  = class(Exception);
   EDLLImportError = class(Exception)
@@ -1709,6 +1744,7 @@ type
     Py_IsInitialized                : function : integer; cdecl;
     Py_GetProgramFullPath           : function : PAnsiChar; cdecl;
     Py_NewInterpreter               : function : PPyThreadState; cdecl;
+    Py_NewInterpreterFromConfig     : function( tstate: PPyThreadState; config: PPyInterpreterConfig): PyStatus; cdecl;
     Py_EndInterpreter               : procedure( tstate: PPyThreadState); cdecl;
     PyEval_AcquireLock              : procedure; cdecl;
     PyEval_ReleaseLock              : procedure; cdecl;
@@ -2798,7 +2834,7 @@ type
 //##  Thread Object with Python interpreter lock       ##
 //##                                                   ##
 //#######################################################
-  TThreadExecMode = (emNewState, emNewInterpreter);
+  TThreadExecMode = (emNewState, emNewInterpreter, emNewInterpreterOwnGIL);
 
 {$HINTS OFF}
   TPythonThread = class(TThread)
@@ -2813,6 +2849,7 @@ type
   protected
     procedure ExecuteWithPython; virtual; abstract;
   public
+    InterpreterConfig: PyInterpreterConfig;
     class procedure Py_Begin_Allow_Threads;
     class procedure Py_End_Allow_Threads;
     // The following procedures are redundant and only for
@@ -2863,6 +2900,7 @@ function  SysVersionFromDLLName(const DLLFileName : string): string;
 procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersion: integer);
 function PythonVersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
+function PyStatus_Exception(const APyStatus: PyStatus): Boolean;
 
 { Helper functions}
 (*
@@ -3950,6 +3988,8 @@ begin
   Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
   Py_GetBuildInfo          := Import('Py_GetBuildInfo');
   Py_NewInterpreter        := Import('Py_NewInterpreter');
+  if (FMajorVersion > 3) or (FMinorVersion >= 12) then
+    Py_NewInterpreterFromConfig := Import('Py_NewInterpreterFromConfig');
   Py_EndInterpreter        := Import('Py_EndInterpreter');
   PyEval_AcquireLock       := Import('PyEval_AcquireLock');
   PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
@@ -9237,8 +9277,9 @@ end;
 
 procedure TPythonThread.Execute;
 var
-  global_state : PPyThreadState;
-  gilstate : PyGILState_STATE;
+  global_state: PPyThreadState;
+  gilstate: PyGILState_STATE;
+  Status: PyStatus;
 begin
   with GetPythonEngine do
   begin
@@ -9256,7 +9297,12 @@ begin
       gilstate := PyGILState_Ensure();
       global_state := PyThreadState_Get;
       PyThreadState_Swap(nil);
-      fThreadState := Py_NewInterpreter;
+
+      if (fThreadExecMode = emNewInterpreter) or
+        ((FMajorVersion = 3) and (FMinorVersion < 12)) or
+        PyStatus_Exception(Py_NewInterpreterFromConfig(@fThreadState, @InterpreterConfig))
+      then
+        fThreadState := Py_NewInterpreter;
 
       if Assigned( fThreadState) then
       begin
@@ -9703,6 +9749,11 @@ begin
   AMinorVersion := StrToIntDef(Copy(ARegVersion, LSepPos + 1, Length(ARegVersion) - LSepPos), 0);
 
   Result := (AMajorVersion > 0) and (AMinorVersion > 0);
+end;
+
+function PyStatus_Exception(const APyStatus: PyStatus): Boolean;
+begin
+  Result := APyStatus._type <> _PyStatus_TYPE_OK;
 end;
 
 end.
