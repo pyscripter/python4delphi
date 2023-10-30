@@ -16,7 +16,6 @@
 
 unit PythonEngine;
 
-{ TODO -oMMM : implement tp_as_buffer slot }
 { TODO -oMMM : implement Attribute descriptor and subclassing stuff }
 
 {$IFNDEF FPC}
@@ -189,6 +188,7 @@ type
   WCharTString = UnicodeString;
 {$ENDIF}
 
+  PPy_ssize_t = PNativeInt;
   Py_ssize_t = NativeInt;
 
   const
@@ -307,7 +307,7 @@ const
   T_UINT                        = 11;
   T_ULONG                       = 12;
 
-//* Added by Jack: strings contained in the structure */
+//* strings contained in the structure */
   T_STRING_INPLACE= 13;
 
   T_OBJECT_EX                   = 16;{* Like T_OBJECT, but raises AttributeError
@@ -325,6 +325,32 @@ type
                    mtChar, mtByte, mtUByte, mtUShort, mtUInt, mtULong,
                    mtStringInplace, mtObjectEx);
   TPyMemberFlag = (mfDefault, mfReadOnly, mfReadRestricted, mfWriteRestricted, mfRestricted);
+
+// Constants from pybuffer.h
+const
+  PyBUF_MAX_NDIM = 64; // Maximum number of dimensions
+  // Flags for getting buffers. Keep these in sync with inspect.BufferFlags.
+  PyBUF_SIMPLE = 0;
+  PyBUF_WRITABLE = 1;
+
+  PyBUF_FORMAT = $0004;
+  PyBUF_ND = $0008;
+  PyBUF_STRIDES = $0010 or PyBUF_ND;
+  PyBUF_C_CONTIGUOUS = $0020 or PyBUF_STRIDES;
+  PyBUF_F_CONTIGUOUS = $0040 or PyBUF_STRIDES;
+  PyBUF_ANY_CONTIGUOUS = $0080 or PyBUF_STRIDES;
+  PyBUF_INDIRECT = $0100 or PyBUF_STRIDES;
+  PyBUF_CONTIG = PyBUF_ND or PyBUF_WRITABLE;
+  PyBUF_CONTIG_RO = PyBUF_ND;
+  PyBUF_STRIDED = PyBUF_STRIDES or PyBUF_WRITABLE;
+  PyBUF_STRIDED_RO = PyBUF_STRIDES;
+  PyBUF_RECORDS = PyBUF_STRIDES or PyBUF_WRITABLE or PyBUF_FORMAT;
+  PyBUF_RECORDS_RO = PyBUF_STRIDES or PyBUF_FORMAT;
+  PyBUF_FULL = PyBUF_INDIRECT or PyBUF_WRITABLE or PyBUF_FORMAT;
+  PyBUF_FULL_RO = PyBUF_INDIRECT or PyBUF_FORMAT;
+
+  PyBUF_READ =  $100;
+  PyBUF_WRITE = $200;
 
 //#######################################################
 //##                                                   ##
@@ -610,7 +636,35 @@ type
     m_free : inquiry;
   end;
 
+  // pybuffer.h
+
+  PPy_buffer = ^Py_Buffer;
+  Py_buffer = record
+    buf: Pointer;
+    obj: PPyObject;        (* owned reference *)
+    len: Py_ssize_t;
+    itemsize: Py_ssize_t;  (* This is Py_ssize_t so it can be
+                              pointed to by strides in simple case.*)
+    readonly: Integer;
+    ndim: Integer;
+    format: PAnsiChar;
+    shape: PPy_ssize_t ;
+    strides: PPy_ssize_t;
+    suboffsets: PPy_ssize_t;
+    internal: Pointer;
+  end;
+
+  getbufferproc = function(exporter: PPyObject; view: PPy_buffer; flags: Integer): Integer; cdecl;
+  releasebufferproc = procedure(exporter: PPyObject; view: PPy_buffer); cdecl;
+
+  PPyBufferProcs = ^PyBufferProcs;
+  PyBufferProcs = record
+    bf_getbuffer: getbufferproc;
+    bf_releasebuffer: releasebufferproc;
+  end;
+
   // object.h
+
   PyTypeObject = {$IFDEF CPUX86}packed{$ENDIF} record
     ob_refcnt:      NativeInt;
     ob_type:        PPyTypeObject;
@@ -643,7 +697,7 @@ type
     tp_setattro:    setattrofunc;
 
     // Functions to access object as input/output buffer
-    tp_as_buffer:   Pointer; // PPyBufferProcs - not implemented
+    tp_as_buffer:   PPyBufferProcs;
     // Flags to define presence of optional/expanded features
     tp_flags:       C_ULong;
 
@@ -1075,6 +1129,7 @@ Exception\n\
    EPySyntaxWarning = class (EPyWarning);
    EPyRuntimeWarning = class (EPyWarning);
    EPyReferenceError = class (EPyStandardError);
+   EPyBufferError = class (EPyException);
  {$IFDEF MSWINDOWS}
    EPyWindowsError = class (EPyOSError);
  {$ENDIF}
@@ -1326,6 +1381,7 @@ type
     PyExc_UnicodeDecodeError: PPPyObject;
     PyExc_UnicodeEncodeError: PPPyObject;
     PyExc_UnicodeTranslateError: PPPyObject;
+    PyExc_BufferError: PPPyObject;
 
     PyCode_Type: PPyTypeObject;
     PyType_Type: PPyTypeObject;
@@ -1427,8 +1483,20 @@ type
     PySys_SetArgv:        procedure( argc: Integer; argv: PPWCharT); cdecl;
 
     PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
-// Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
-//    PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
+
+    PyBuffer_GetPointer: function(view: PPy_buffer; indices: PPy_ssize_t): Pointer; cdecl;
+    PyBuffer_SizeFromFormat: function(format: PAnsiChar): Py_ssize_t; cdecl; // New in Python 3.9
+    PyBuffer_ToContiguous: function(buf: Pointer; view: PPy_buffer; len: Py_ssize_t; order: AnsiChar): Integer; cdecl;
+    PyBuffer_FromContiguous: function(view: PPy_buffer; buf: Pointer;  len: Py_ssize_t; order: AnsiChar): Integer; cdecl;
+    PyBuffer_IsContiguous: function(view: PPy_buffer; fort: AnsiChar): Integer; cdecl;
+    PyBuffer_FillContiguousStrides: procedure(ndims: Integer; shape: Py_ssize_t;
+       strides: PPy_ssize_t; itemsize: Integer; fort: AnsiChar); cdecl;
+    PyBuffer_FillInfo: function(view: PPy_buffer; o: PPyObject; buf: Pointer;
+      len: Py_ssize_t; readonly: Integer; flags: Integer): Integer; cdecl;
+    PyBuffer_Release: procedure(view: PPy_buffer); cdecl;
+
+    // Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
+    // PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
     PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
     PyEval_GetFrame:function :PPyObject; cdecl;
     PyEval_GetGlobals:function :PPyObject; cdecl;
@@ -1546,6 +1614,9 @@ type
     PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
     PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
     PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
+    PyObject_CheckBuffer: function(obj: PPyObject): Integer; cdecl;
+    PyObject_GetBuffer: function(obj: PPyObject; view: PPy_buffer; flags: Integer): Integer; cdecl;
+    PyObject_CopyData: function (dest: PPyObject; src: PPyObject): Integer; cdecl;
     PySequence_Check:function (ob:PPyObject):integer; cdecl;
     PySequence_Concat:function (ob1,ob2:PPyObject):PPyObject; cdecl;
     PySequence_Count:function (ob1,ob2:PPyObject):integer; cdecl;
@@ -2427,6 +2498,8 @@ type
     function  Iter : PPyObject; virtual;
     function  IterNext : PPyObject; virtual;
     function  Init( args, kwds : PPyObject ) : Integer; virtual;
+    function  GetBuffer(view: PPy_buffer; flags: Integer): Integer; virtual;
+    procedure ReleaseBuffer(view: PPy_buffer); virtual;
 
     // Number services
     function  NbAdd( obj : PPyObject) : PPyObject; virtual;
@@ -2495,7 +2568,8 @@ type
                                // since version 2.1
                                bsRichCompare,
                                // since version 2.2
-                               bsIter, bsIterNext);
+                               bsIter, bsIterNext,
+                               bsBuffer);
   TNumberServices    = set of (nsAdd, nsSubtract, nsMultiply,
                                nsRemainder, nsDivmod,
                                nsPower, nsNegative, nsPositive,
@@ -2571,6 +2645,7 @@ type
       FTypeFlags : TPFlags;
       FCreateFunc : PPyObject;
       FCreateFuncDef : PyMethodDef;
+      FBufferProcs: PyBufferProcs;
       FGenerateCreateFunction: Boolean;
 
       procedure Notification( AComponent: TComponent;
@@ -3550,6 +3625,8 @@ begin
   PyExc_UnicodeDecodeError   := Import('PyExc_UnicodeDecodeError');
   PyExc_UnicodeEncodeError   := Import('PyExc_UnicodeEncodeError');
   PyExc_UnicodeTranslateError:= Import('PyExc_UnicodeTranslateError');
+  PyExc_BufferError          := Import('PyExc_BufferError');
+
   PyType_Type                := Import('PyType_Type');
   PyCFunction_Type           := Import('PyCFunction_Type');
   PyCode_Type                := Import('PyCode_Type');
@@ -3639,7 +3716,17 @@ begin
   PySys_SetArgv             := Import('PySys_SetArgv');
   Py_Exit                   := Import('Py_Exit');
 
-  PyCFunction_NewEx           := Import('PyCFunction_NewEx');
+  PyCFunction_NewEx         := Import('PyCFunction_NewEx');
+
+  PyBuffer_GetPointer       := Import('PyBuffer_GetPointer');
+  PyBuffer_ToContiguous     := Import('PyBuffer_ToContiguous');
+  PyBuffer_FromContiguous   := Import('PyBuffer_FromContiguous');
+  PyBuffer_IsContiguous     := Import('PyBuffer_IsContiguous');
+  PyBuffer_FillContiguousStrides := Import('PyBuffer_FillContiguousStrides');
+  PyBuffer_FillInfo         := Import('PyBuffer_FillInfo');
+  PyBuffer_Release          := Import('PyBuffer_Release');
+  if (FMajorVersion > 3) or (FMinorVersion > 9) then
+    PyBuffer_SizeFromFormat    := Import('PyBuffer_SizeFromFormat');
 
   PyEval_CallObjectWithKeywords:= Import('PyEval_CallObjectWithKeywords');
   PyEval_GetFrame           := Import('PyEval_GetFrame');
@@ -3757,6 +3844,9 @@ begin
   PyObject_GC_Del           := Import('PyObject_GC_Del');
   PyObject_GC_Track         := Import('PyObject_GC_Track');
   PyObject_GC_UnTrack       := Import('PyObject_GC_UnTrack');
+  PyObject_CheckBuffer      := Import('PyObject_CheckBuffer');
+  PyObject_GetBuffer        := Import('PyObject_GetBuffer');
+  PyObject_CopyData         := Import('PyObject_CopyData');
   PySequence_Check           := Import('PySequence_Check');
   PySequence_Concat          := Import('PySequence_Concat');
   PySequence_Count           := Import('PySequence_Count');
@@ -5263,6 +5353,8 @@ begin
         raise Define( EPyValueError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ReferenceError^) <> 0) then
         raise Define( EPyReferenceError.Create(''), s_type, s_value )
+      else if (PyErr_GivenExceptionMatches(err_type, PyExc_BufferError^) <> 0) then
+        raise Define( EPyBufferError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_SystemError^) <> 0) then
         raise Define( EPySystemError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_MemoryError^) <> 0) then
@@ -7589,6 +7681,16 @@ begin
   Result := GetPythonEngine.PyObject_GenericGetAttr(GetSelf, key);
 end;
 
+function TPyObject.GetBuffer(view: PPy_buffer; flags: Integer): Integer;
+// Default implementation that raises an exception
+// Subclass implementing the buffer protocol will need to override this
+begin
+  view^.obj := nil;
+  with GetPythonEngine do
+    PyErr_SetObject(PyExc_BufferError^, PyUnicodeFromString(''));
+  Result := -1;
+end;
+
 function  TPyObject.SetAttrO( key, value: PPyObject) : Integer;
 begin
   Result := GetPythonEngine.PyObject_GenericSetAttr(GetSelf, key, value);
@@ -7882,6 +7984,11 @@ end;
 // Class methods
 class procedure TPyObject.RegisterMethods( APythonType : TPythonType );
 begin
+end;
+
+procedure TPyObject.ReleaseBuffer(view: PPy_buffer);
+begin
+  // Do nothing. Subclasses may provide an implementation.
 end;
 
 class procedure TPyObject.RegisterMembers( APythonType : TPythonType );
@@ -8181,6 +8288,16 @@ end;
 function  TPythonType_InitSubtype( pSelf, args, kwds : PPyObject) : Integer; cdecl;
 begin
   Result := PythonToDelphi(pSelf).Init(args, kwds);
+end;
+
+function TPythonType_GetBuffer(exporter: PPyObject; view: PPy_buffer; flags: Integer): Integer; cdecl;
+begin
+  Result := PythonToDelphi(exporter).GetBuffer(view, flags);
+end;
+
+procedure TPythonType_ReleaseBuffer(exporter: PPyObject; view: PPy_buffer); cdecl;
+begin
+  PythonToDelphi(exporter).ReleaseBuffer(view);
 end;
 
 function  TPythonType.NewSubtypeInst( aType: PPyTypeObject; args, kwds : PPyObject) : PPyObject;
@@ -8483,6 +8600,12 @@ begin
         tp_iter := TPythonType_Iter;
       if bsIterNext in Services.Basic then
         tp_iternext := TPythonType_IterNext;
+      if bsBuffer in Services.Basic then
+      begin
+        FBufferProcs.bf_getbuffer := TPythonType_GetBuffer;
+        FBufferProcs.bf_releasebuffer := TPythonType_ReleaseBuffer;
+        tp_as_buffer := @FBufferProcs;
+      end;
       if tpfBaseType in TypeFlags then
       begin
         tp_init             := TPythonType_InitSubtype;
