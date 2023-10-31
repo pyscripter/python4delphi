@@ -78,7 +78,6 @@ begin
   inherited Create;
   ThreadExecMode := ThreadMode;
   FreeOnTerminate := True;
-  InterpreterConfig := _PyInterpreterConfig_INIT;
 end;
 
 var
@@ -92,7 +91,7 @@ begin
       WriteLn('Classic Subinterpreter:');
       SW := TStopwatch.StartNew;
       for I := 1 to N do
-        TPyThread.Create(emNewState);
+        TPyThread.Create(emNewInterpreter);
       Event.WaitFor;
       Event.Free;
       SW.Stop;

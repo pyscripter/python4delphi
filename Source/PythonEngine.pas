@@ -2861,8 +2861,8 @@ type
     procedure Execute; override;
   protected
     procedure ExecuteWithPython; virtual; abstract;
+    function InterpreterConfig: PyInterpreterConfig; virtual;
   public
-    InterpreterConfig: PyInterpreterConfig;
     class procedure Py_Begin_Allow_Threads;
     class procedure Py_End_Allow_Threads;
     // The following procedures are redundant and only for
@@ -9304,6 +9304,7 @@ procedure TPythonThread.Execute;
 var
   global_state: PPyThreadState;
   gilstate: PyGILState_STATE;
+  Config: PyInterpreterConfig;
 begin
   with GetPythonEngine do
   begin
@@ -9322,9 +9323,12 @@ begin
       global_state := PyThreadState_Get;
       PyThreadState_Swap(nil);
 
+      if (fThreadExecMode = emNewInterpreterOwnGIL) then
+        Config := InterpreterConfig;
+
       if (fThreadExecMode = emNewInterpreter) or
         ((FMajorVersion = 3) and (FMinorVersion < 12)) or
-        PyStatus_Exception(Py_NewInterpreterFromConfig(@fThreadState, @InterpreterConfig))
+        PyStatus_Exception(Py_NewInterpreterFromConfig(@fThreadState, @Config))
       then
         fThreadState := Py_NewInterpreter;
 
@@ -9341,6 +9345,10 @@ begin
   end;
 end;
 
+function TPythonThread.InterpreterConfig: PyInterpreterConfig;
+begin
+  Result := _PyInterpreterConfig_INIT;
+end;
 
 class procedure TPythonThread.Py_Begin_Allow_Threads;
 begin
