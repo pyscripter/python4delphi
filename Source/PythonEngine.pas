@@ -4063,7 +4063,7 @@ end;
 
 function TPythonInterface.PyByteArray_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyByteArray_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyByteArray_Type);
 end;
 
 function TPythonInterface.PyBytes_Check( obj : PPyObject ) : Boolean;
@@ -4073,7 +4073,7 @@ end;
 
 function TPythonInterface.PyBytes_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyBytes_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyBytes_Type);
 end;
 
 function TPythonInterface.PyFloat_Check( obj : PPyObject ) : Boolean;
@@ -4083,7 +4083,7 @@ end;
 
 function TPythonInterface.PyFloat_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyFloat_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyFloat_Type);
 end;
 
 function TPythonInterface.PyLong_Check( obj : PPyObject ) : Boolean;
@@ -4093,7 +4093,7 @@ end;
 
 function TPythonInterface.PyLong_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyLong_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyLong_Type);
 end;
 
 function TPythonInterface.PyTuple_Check( obj : PPyObject ) : Boolean;
@@ -4103,7 +4103,7 @@ end;
 
 function TPythonInterface.PyTuple_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyTuple_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyTuple_Type);
 end;
 
 function TPythonInterface.PyClass_Check( obj : PPyObject ) : Boolean;
@@ -4113,12 +4113,12 @@ end;
 
 function TPythonInterface.PyType_CheckExact( obj : PPyObject ) : Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyType_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyType_Type);
 end;
 
 function TPythonInterface.PyMethod_Check( obj : PPyObject ) : Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyMethod_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyMethod_Type);
 end;
 
 function TPythonInterface.PyList_Check( obj : PPyObject ) : Boolean;
@@ -4128,7 +4128,7 @@ end;
 
 function TPythonInterface.PyList_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyList_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyList_Type);
 end;
 
 function TPythonInterface.PyDict_Check( obj : PPyObject ) : Boolean;
@@ -4138,7 +4138,7 @@ end;
 
 function TPythonInterface.PyDict_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyDict_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyDict_Type);
 end;
 
 function TPythonInterface.PyModule_Check( obj : PPyObject ) : Boolean;
@@ -4148,7 +4148,7 @@ end;
 
 function TPythonInterface.PyModule_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyModule_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyModule_Type);
 end;
 
 function TPythonInterface.PySlice_Check( obj : PPyObject ) : Boolean;
@@ -4159,8 +4159,7 @@ end;
 function TPythonInterface.PyFunction_Check( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned( obj ) and
-    ((obj^.ob_type = PPyTypeObject(PyCFunction_Type)) or
-     (obj^.ob_type = PPyTypeObject(PyFunction_Type)));
+    ((obj^.ob_type = PyCFunction_Type) or (obj^.ob_type = PyFunction_Type));
 end;
 
 function TPythonInterface.PyIter_Check(obj: PPyObject): Boolean;
@@ -4175,7 +4174,7 @@ end;
 
 function TPythonInterface.PyUnicode_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyUnicode_Type));
+  Result := Assigned( obj ) and (obj^.ob_type = PyUnicode_Type);
 end;
 
 function TPythonInterface.PyType_IS_GC(t : PPyTypeObject ) : Boolean;
@@ -4216,10 +4215,12 @@ begin
   Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyEnum_Type));
 end;
 
-function TPythonInterface.PyObject_TypeCheck(obj : PPyObject; t : PPyTypeObject) : Boolean;
+function TPythonInterface.PyObject_TypeCheck(obj: PPyObject; t: PPyTypeObject): Boolean;
 begin
-  Result := Assigned(obj) and (obj^.ob_type = t);
-  if not Result and Assigned(obj) and Assigned(t) then
+  if not Assigned(obj) or not Assigned(t) then Exit(False);
+
+  Result := obj^.ob_type = t;
+  if not Result then
     Result := PyType_IsSubtype(obj^.ob_type, t) = 1;
 end;
 
@@ -4949,7 +4950,7 @@ end;
 
 function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
 begin
-  result := ob^.ob_type = obt;
+  result := Assigned(ob) and (ob^.ob_type = obt);
 end;
 
 function TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
