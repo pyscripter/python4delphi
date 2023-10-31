@@ -138,7 +138,7 @@ type
     [Test]
     procedure TestGetStaticArray;
     [Test]
-    procedure TestMethodWithVarAndOverload;
+    procedure TestMethodWithdOverloads;
     [Test]
     procedure TestFreeReturnedObject;
     [Test]
@@ -528,10 +528,12 @@ begin
   Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
 end;
 
-procedure TTestWrapDelphi.TestMethodWithVarAndOverload;
+procedure TTestWrapDelphi.TestMethodWithdOverloads;
 begin
   Rtti_Var.SetStringField('test');
   Assert.AreEqual('test', TestRttiAccess.StringField);
+  Rtti_Var.SetStringField(123);
+  Assert.AreEqual('123', TestRttiAccess.StringField);
 end;
 
 procedure TTestRttiAccess.SetIndexed(I: Integer; const Value: Integer);
