@@ -3285,7 +3285,6 @@ function SetRttiAttr(const ParentAddr: Pointer;  ParentType: TRttiStructuredType
 var
   Prop: TRttiProperty;
   Field: TRttiField;
-  AttrValue: TValue;
 begin
   Result := False;
 

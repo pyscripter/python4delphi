@@ -1452,6 +1452,8 @@ type
     _PyWeakref_CallableProxyType: PPyTypeObject;
     PyBool_Type: PPyTypeObject;
     PyEnum_Type: PPyTypeObject;
+    PySet_Type: PPyTypeObject;
+    PyFrozenSet_Type: PPyTypeObject;
 
     Py_GetBuildInfo: function : PAnsiChar; cdecl;
     PyImport_ExecCodeModule: function ( const name : AnsiString; codeobject : PPyObject) : PPyObject; cdecl;
@@ -1684,6 +1686,14 @@ type
     PyByteArray_FromObject: function(ob:PPyObject): PPyObject; cdecl;
     PyByteArray_FromStringAndSize: function(s: PAnsiChar; i: Py_ssize_t): PPyObject; cdecl;
     PyByteArray_Size: function(ob: PPyObject): Py_ssize_t; cdecl;
+    PyFrozenSet_New: function(iterable: PPyObject): PPyObject; cdecl;
+    PySet_New: function(iterable: PPyObject): PPyObject; cdecl;
+    PySet_Add: function(aset, key: PPyObject): Integer; cdecl;
+    PySet_Clear: function(aset: PPyObject): Integer; cdecl;
+    PySet_Contains: function(anyset, key: PPyObject): Integer; cdecl;
+    PySet_Discard: function(aset, key: PPyObject): Integer; cdecl;
+    PySet_Pop: function(aset: PPyObject): PPyObject; cdecl;
+    PySet_Size: function(anyset: PPyObject): Py_ssize_t; cdecl;
     PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
     PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
     PySys_SetPath:procedure(path:PAnsiChar); cdecl;
@@ -1841,8 +1851,12 @@ type
   function PyWeakref_CheckProxy( obj : PPyObject ) : Boolean;
   function PyBool_Check( obj : PPyObject ) : Boolean;
   function PyEnum_Check( obj : PPyObject ) : Boolean;
-  function PyObject_TypeCheck(obj:PPyObject; t:PPyTypeObject) : Boolean;
   function Py_InitModule( const md : PyModuleDef) : PPyObject;
+
+  // The following are defined as non-exported inline functions in object.h
+  function Py_Type(ob: PPyObject): PPyTypeObject; inline;
+  function IsType(ob: PPyObject; obt: PPyTypeObject): Boolean; inline;
+  function PyObject_TypeCheck(obj:PPyObject; t:PPyTypeObject) : Boolean; inline;
 
   // Constructors & Destructors
   constructor Create(AOwner: TComponent); override;
@@ -1977,7 +1991,6 @@ type
     // Public methods
     procedure  SetPythonHome(const PythonHome: UnicodeString);
     procedure  SetProgramName(const ProgramName: UnicodeString);
-    function   IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
     function   Run_CommandAsString(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): string;
     function   Run_CommandAsObject(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): PPyObject;
     function   Run_CommandAsObjectWithDict(const command: AnsiString; mode: Integer; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject;
@@ -3699,6 +3712,8 @@ begin
   _PyWeakref_CallableProxyType:=Import('_PyWeakref_CallableProxyType');
   PyBool_Type                := Import('PyBool_Type');
   PyEnum_Type                := Import('PyEnum_Type');
+  PySet_Type                 := Import('PySet_Type');
+  PyFrozenSet_Type           := Import('PyFrozenSet_Type');
 
   PyComplex_FromCComplex    := Import('PyComplex_FromCComplex');
   PyComplex_FromDoubles     := Import('PyComplex_FromDoubles');
@@ -3921,6 +3936,14 @@ begin
   PyByteArray_FromObject      := Import('PyByteArray_FromObject');
   PyByteArray_FromStringAndSize := Import('PyByteArray_FromStringAndSize');
   PyByteArray_Size            := Import('PyByteArray_Size');
+  PyFrozenSet_New             := Import('PyFrozenSet_New');
+  PySet_New                   := Import('PySet_New');
+  PySet_Add                   := Import('PySet_Add');
+  PySet_Clear                 := Import('PySet_Clear');
+  PySet_Contains              := Import('PySet_Contains');
+  PySet_Discard               := Import('PySet_Discard');
+  PySet_Pop                   := Import('PySet_Pop');
+  PySet_Size                  := Import('PySet_Size');
   PySys_GetObject             := Import('PySys_GetObject');
   PySys_SetObject             := Import('PySys_SetObject');
   PySys_SetPath               := Import('PySys_SetPath');
@@ -4083,7 +4106,7 @@ end;
 
 function TPythonInterface.PyFloat_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyFloat_Type);
+  Result := IsType(obj, PyFloat_Type);
 end;
 
 function TPythonInterface.PyLong_Check( obj : PPyObject ) : Boolean;
@@ -4093,7 +4116,7 @@ end;
 
 function TPythonInterface.PyLong_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyLong_Type);
+  Result := IsType(obj, PyLong_Type);
 end;
 
 function TPythonInterface.PyTuple_Check( obj : PPyObject ) : Boolean;
@@ -4103,7 +4126,7 @@ end;
 
 function TPythonInterface.PyTuple_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyTuple_Type);
+  Result := IsType(obj, PyTuple_Type);
 end;
 
 function TPythonInterface.PyClass_Check( obj : PPyObject ) : Boolean;
@@ -4113,7 +4136,7 @@ end;
 
 function TPythonInterface.PyType_CheckExact( obj : PPyObject ) : Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyType_Type);
+  Result := IsType(obj, PyType_Type);
 end;
 
 function TPythonInterface.PyMethod_Check( obj : PPyObject ) : Boolean;
@@ -4128,7 +4151,7 @@ end;
 
 function TPythonInterface.PyList_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyList_Type);
+  Result := IsType(obj, PyList_Type);
 end;
 
 function TPythonInterface.PyDict_Check( obj : PPyObject ) : Boolean;
@@ -4138,7 +4161,7 @@ end;
 
 function TPythonInterface.PyDict_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyDict_Type);
+  Result := IsType(obj, PyDict_Type);
 end;
 
 function TPythonInterface.PyModule_Check( obj : PPyObject ) : Boolean;
@@ -4148,7 +4171,7 @@ end;
 
 function TPythonInterface.PyModule_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyModule_Type);
+  Result := IsType(obj, PyModule_Type);
 end;
 
 function TPythonInterface.PySlice_Check( obj : PPyObject ) : Boolean;
@@ -4174,7 +4197,7 @@ end;
 
 function TPythonInterface.PyUnicode_CheckExact(obj: PPyObject): Boolean;
 begin
-  Result := Assigned( obj ) and (obj^.ob_type = PyUnicode_Type);
+  Result := IsType(obj, PyUnicode_Type);
 end;
 
 function TPythonInterface.PyType_IS_GC(t : PPyTypeObject ) : Boolean;
@@ -4215,13 +4238,19 @@ begin
   Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyEnum_Type));
 end;
 
+function TPythonInterface.Py_Type(ob: PPyObject): PPyTypeObject;
+begin
+  Result := ob^.ob_type;
+end;
+
+function TPythonInterface.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
+begin
+  Result := ob^.ob_type = obt;
+end;
+
 function TPythonInterface.PyObject_TypeCheck(obj: PPyObject; t: PPyTypeObject): Boolean;
 begin
-  if not Assigned(obj) or not Assigned(t) then Exit(False);
-
-  Result := obj^.ob_type = t;
-  if not Result then
-    Result := PyType_IsSubtype(obj^.ob_type, t) = 1;
+  Result := IsType(obj, t) or (PyType_IsSubtype(obj^.ob_type, t) = 1);
 end;
 
 function TPythonInterface.Py_InitModule(const md: PyModuleDef): PPyObject;
@@ -4946,11 +4975,6 @@ begin
 {$ELSE}
   FProgramName := ProgramName;
 {$ENDIF}
-end;
-
-function TPythonEngine.IsType(ob: PPyObject; obt: PPyTypeObject): Boolean;
-begin
-  result := Assigned(ob) and (ob^.ob_type = obt);
 end;
 
 function TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
