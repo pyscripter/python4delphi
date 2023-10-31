@@ -1217,12 +1217,18 @@ function RttiCall(ParentAddress: pointer; DelphiWrapper: TPyDelphiWrapper;
   const  VarParamIndices: TArray<Integer>;
   AParentAddrIsClass: Boolean = false): PPyObject; overload; forward;
 
-function GetRttiAttr(ParentAddr: Pointer; ParentType: TRttiStructuredType;
-  const AttrName: string; PyDelphiWrapper: TPyDelphiWrapper;
-  out ErrMsg: string): PPyObject; forward;
+function GetRttiProperty(ParentAddr: Pointer; Prop: TRttiProperty;
+ PyDelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject; forward;
 
-function SetRttiAttr(const ParentAddr: Pointer;  ParentType: TRttiStructuredType;
-  const AttrName: string; Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+function GetRttiField(ParentAddr: Pointer; Field: TRttiField;
+ PyDelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject; forward;
+
+function SetRttiProperty(const ParentAddr: Pointer;  Prop: TRttiProperty;
+  Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): Boolean; forward;
+
+function SetRttiField(const ParentAddr: Pointer;  Field: TRttiField;
+  Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
   out ErrMsg: string): Boolean; forward;
 
 function ValidateClassProperty(PyValue: PPyObject; TypeInfo: PTypeInfo;
@@ -1504,9 +1510,12 @@ var
 begin
   Result := nil;
   if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
-    // TODO:  Optimize out the property/field lookup, by passing FRttiMember
-    // directly to a GetRttiAttr/SetRtti overload
-    Result := GetRttiAttr(Obj, FParentRtti, FRttiMember.Name, FPyDelphiWrapper, LOutMsg);
+  begin
+    if FRttiMember is TRttiProperty then
+      Result := GetRttiProperty(Obj, TRttiProperty(FRttiMember), FPyDelphiWrapper, LOutMsg)
+    else if FRttiMember is TRttiField then
+      Result := GetRttiField(Obj, TRttiField(FRttiMember), FPyDelphiWrapper, LOutMsg);
+  end;
 
   if not Assigned(Result) then
     with GetPythonEngine do
@@ -1520,10 +1529,15 @@ var
   ErrMsg: string;
 begin
   Result := -1;
-  if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, ErrMsg) and
-    SetRttiAttr(Obj, FParentRtti, FRttiMember.Name, AValue, FPyDelphiWrapper, ErrMsg)
-  then
-    Result := 0;
+  if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, ErrMsg) then
+  begin
+    if ((FRttiMember is TRttiProperty) and SetRttiProperty(Obj,
+      TRttiProperty(FRttiMember), AValue, FPyDelphiWrapper, ErrMsg)) or
+      ((FRttiMember is TRttiField) and SetRttiField(Obj,
+      TRttiField(FRttiMember), AValue, FPyDelphiWrapper, ErrMsg))
+    then
+      Result := 0
+  end;
 
   if Result <> 0 then
     with GetPythonEngine do
@@ -3134,6 +3148,46 @@ begin
   end;
 end;
 
+function GetRttiProperty(ParentAddr: Pointer; Prop: TRttiProperty;
+ PyDelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject;
+begin
+  Result := nil;
+  if Ord(Prop.Visibility) < Ord(mvPublic) then
+    ErrMsg := rs_NoAccess
+  else if not Prop.IsReadable then
+    ErrMsg := rs_NotReadable
+  else if Prop.PropertyType = nil then
+    ErrMsg := rs_ErrNoTypeInfo
+  else if Prop.PropertyType.TypeKind = tkMethod then
+  begin
+    if (Prop is TRttiInstanceProperty) and  (Prop.Visibility = mvPublished) then
+      Result := PyDelphiWrapper.fEventHandlerList.GetCallable(TObject(ParentAddr),
+        TRttiInstanceProperty(Prop).PropInfo);
+  end
+  else
+    Result := TValueToPyObject(Prop.GetValue(ParentAddr), PyDelphiWrapper, ErrMsg);
+end;
+
+function GetRttiField(ParentAddr: Pointer; Field: TRttiField;
+ PyDelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject;
+begin
+  Result := nil;
+  if Ord(Field.Visibility) < Ord(mvPublic) then
+    ErrMsg := rs_NoAccess
+  else if Field.FieldType = nil then
+    ErrMsg := rs_ErrNoTypeInfo
+  else if Field.FieldType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
+    //Potentially dangerous as the returned value, which is a pointer into the object,
+    //could be stored on the python side, then the object freed, and the stored pointer later
+    //used to access no longer allocated memory
+    //But I can't see any good alternative if Python should be able to write directly into
+    //fields of a record that's part of an object.
+    Result := PyDelphiWrapper.WrapRecord(PByte(ParentAddr) + Field.Offset, TRttiStructuredType(Field.FieldType))
+  else
+    Result := TValueToPyObject(Field.GetValue(ParentAddr), PyDelphiWrapper, ErrMsg);
+end;
+
+
 function GetRttiAttr(ParentAddr: Pointer; ParentType: TRttiStructuredType;
   const AttrName: string; PyDelphiWrapper: TPyDelphiWrapper;
   out ErrMsg: string): PPyObject;
@@ -3161,41 +3215,12 @@ begin
     begin
       Prop := ParentType.GetProperty(AttrName);
       if Prop <> nil then
-      begin
-        if Ord(Prop.Visibility) < Ord(mvPublic) then
-          ErrMsg := rs_NoAccess
-        else if not Prop.IsReadable then
-          ErrMsg := rs_NotReadable
-        else if Prop.PropertyType = nil then
-          ErrMsg := rs_ErrNoTypeInfo
-        else if Prop.PropertyType.TypeKind = tkMethod then
-        begin
-          if (ParentType is TRttiInstanceType) and (Prop is TRttiInstanceProperty) then
-            Result := PyDelphiWrapper.fEventHandlerList.GetCallable(TObject(ParentAddr),
-              TRttiInstanceProperty(Prop).PropInfo);
-        end
-        else
-          Result := TValueToPyObject(Prop.GetValue(ParentAddr), PyDelphiWrapper, ErrMsg);
-      end
+        Result := GetRttiProperty(ParentAddr, Prop, PyDelphiWrapper, ErrMsg)
       else
       begin
         Field := ParentType.GetField(AttrName);
         if Field <> nil then
-        begin
-          if Ord(Field.Visibility) < Ord(mvPublic) then
-            ErrMsg := rs_NoAccess
-          else if Field.FieldType = nil then
-            ErrMsg := rs_ErrNoTypeInfo
-          else if Field.FieldType.TypeKind in [tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}] then
-            //Potentially dangerous as the returned value, which is a pointer into the object,
-            //could be stored on the python side, then the object freed, and the stored pointer later
-            //used to access no longer allocated memory
-            //But I can't see any good alternative if Python should be able to write directly into
-            //fields of a record that's part of an object.
-            Result := PyDelphiWrapper.WrapRecord(PByte(ParentAddr) + Field.Offset, TRttiStructuredType(Field.FieldType))
-          else
-            Result := TValueToPyObject(Field.GetValue(ParentAddr), PyDelphiWrapper, ErrMsg);
-        end
+          Result := GetRttiField(ParentAddr, Field, PyDelphiWrapper, ErrMsg)
         else
           ErrMsg := rs_UnknownAttribute;
       end;
@@ -3205,6 +3230,52 @@ begin
       Result := nil;
       ErrMsg := E.Message;
     end;
+  end;
+end;
+
+function SetRttiProperty(const ParentAddr: Pointer;  Prop: TRttiProperty;
+  Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): Boolean;
+var
+  AttrValue: TValue;
+begin
+  Result := False;
+  if Ord(Prop.Visibility) < Ord(mvPublic) then
+    ErrMsg := rs_NoAccess
+  else if not Prop.IsWritable then
+    ErrMsg := rs_NotWritable
+  else if Prop.PropertyType = nil then
+    ErrMsg := rs_ErrNoTypeInfo
+  else if Prop.PropertyType.TypeKind = tkMethod then
+  begin
+    if (Prop is TRttiInstanceProperty) and  (Prop.Visibility = mvPublished) then
+      Result := PyDelphiWrapper.EventHandlers.Link(TObject(ParentAddr),
+        (Prop as TRttiInstanceProperty).PropInfo, Value, ErrMsg)
+    else
+      ErrMsg := rs_NotPublished;
+  end
+  else if PyObjectToTValue(Value, Prop.PropertyType, AttrValue, ErrMsg) then
+  begin
+    Prop.SetValue(ParentAddr, AttrValue);
+    Result := True;
+  end;
+end;
+
+function SetRttiField(const ParentAddr: Pointer;  Field: TRttiField;
+  Value: PPyObject;  PyDelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): Boolean;
+var
+  AttrValue: TValue;
+begin
+  Result := False;
+  if Ord(Field.Visibility) < Ord(mvPublic) then
+    ErrMsg := rs_NoAccess
+  else if Field.FieldType = nil then
+    ErrMsg := rs_ErrNoTypeInfo
+  else if PyObjectToTValue(Value, Field.FieldType, AttrValue, ErrMsg) then
+  begin
+    Field.SetValue(ParentAddr, AttrValue);
+    Result := True;
   end;
 end;
 
@@ -3221,42 +3292,12 @@ begin
   try
     Prop := ParentType.GetProperty(AttrName);
     if Prop <> nil then
-    begin
-      if Ord(Prop.Visibility) < Ord(mvPublic) then
-        ErrMsg := rs_NoAccess
-      else if not Prop.IsWritable then
-        ErrMsg := rs_NotWritable
-      else if Prop.PropertyType = nil then
-        ErrMsg := rs_ErrNoTypeInfo
-      else if Prop.PropertyType.TypeKind = tkMethod then
-      begin
-        if Prop.Visibility = mvPublished then
-          Result := PyDelphiWrapper.EventHandlers.Link(TObject(ParentAddr),
-            (Prop as TRttiInstanceProperty).PropInfo, Value, ErrMsg)
-        else
-          ErrMsg := rs_NotPublished;
-      end
-      else if PyObjectToTValue(Value, Prop.PropertyType, AttrValue, ErrMsg) then
-      begin
-        Prop.SetValue(ParentAddr, AttrValue);
-        Result := True;
-      end;
-    end
+      Result := SetRttiProperty(ParentAddr, Prop, Value, PyDelphiWrapper, ErrMsg)
     else
     begin
       Field := ParentType.GetField(AttrName);
       if Field <> nil then
-      begin
-        if Ord(Field.Visibility) < Ord(mvPublic) then
-          ErrMsg := rs_NoAccess
-        else if Field.FieldType = nil then
-          ErrMsg := rs_ErrNoTypeInfo
-        else if PyObjectToTValue(Value, Field.FieldType, AttrValue, ErrMsg) then
-        begin
-          Field.SetValue(ParentAddr, AttrValue);
-          Result := True;
-        end;
-      end
+        Result := SetRttiField(ParentAddr, Field, Value, PyDelphiWrapper, ErrMsg)
       else
         ErrMsg := rs_UnknownAttribute;
     end;

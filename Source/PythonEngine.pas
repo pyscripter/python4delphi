@@ -9279,7 +9279,6 @@ procedure TPythonThread.Execute;
 var
   global_state: PPyThreadState;
   gilstate: PyGILState_STATE;
-  Status: PyStatus;
 begin
   with GetPythonEngine do
   begin
