@@ -155,13 +155,17 @@ I'm sorry about that. Hope it didn't cause too many problems up to now.
   Assert.AreEqual(0, CodeMemPageCount);
 
   for i:=1 to AllocCount do
+  begin
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
+    Assert.IsTrue(ptr <> nil);
+  end;
 
   // there should still be 1 page allocated
   Assert.AreEqual(1, CodeMemPageCount);
 
   // get one callback more and we should have 2 pages
   ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 5, ctCdecl);
+  Assert.IsTrue(ptr <> nil);
   // getting CodeMemPageCount would crash as the next page pointer was overwritten by the
   // last allocation
   Assert.AreEqual(2, CodeMemPageCount);
@@ -271,7 +275,10 @@ begin
   Assert.AreEqual(0, CodeMemPageCount);
 
   for i:=1 to AllocCount do
+  begin
     ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
+    Assert.IsTrue(ptr <> nil);
+  end;
 
   // there should still be 1 page allocated
   Assert.AreEqual(1, CodeMemPageCount);
@@ -297,6 +304,7 @@ begin
 
   // allocate one more and page count should go up to 2 again
   ptr:=GetCallBack(fTestObj, @TTestObj.ThreeArgCdeclProcedure, 3, ctCdecl);
+  Assert.IsTrue(ptr <> nil);
   Assert.AreEqual(2, CodeMemPageCount);
 end;
 
