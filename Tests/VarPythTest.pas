@@ -36,6 +36,8 @@ type
     procedure TestDates;
     [Test]
     procedure TestObjects;
+    [Test]
+    procedure Keywords;
   end;
 
 implementation
@@ -45,6 +47,14 @@ Uses
   Variants,
   Classes,
   VarPyth;
+
+procedure TTestVarPyth.Keywords;
+var
+  D: Variant;
+begin
+  D := BuiltinModule.dict(a := 1, b := 2);
+  Assert.AreEqual<Integer>(D.GetItem('a'), 1);
+end;
 
 procedure TTestVarPyth.SetupFixture;
 begin
