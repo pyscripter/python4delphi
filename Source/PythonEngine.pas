@@ -2931,8 +2931,18 @@ type
   end;
 
 // Access the PythonEngine with thread safety
+
+// Gets the GIL and releases it automatically when the interface is cleared
 function SafePyEngine: IPyEngineAndGIL;
 
+{$IFNDEF FPC}
+{
+  Executes Python code in a Delphi thread - Wrapper around TPythonThread
+  The TerminateProc is called using TThread.Queue
+}
+procedure ThreadPythonExec(ExecuteProc : TProc; TerminateProc : TProc = nil;
+  WaitToFinish: Boolean = False; ThreadExecMode : TThreadExecMode = emNewState);
+{$ENDIF FPC}
 
 { Helper functions}
 
@@ -9857,6 +9867,77 @@ begin
 end;
 
 
+
+{$IFNDEF FPC}
+
+{ TAnonymousPythonThread }
+
+type
+  TAnonymousPythonThread = class(TPythonThread)
+  private
+    fTerminateProc : TProc;
+    fExecuteProc : TProc;
+    procedure DoTerminate; override;
+  public
+    procedure ExecuteWithPython; override;
+    constructor Create(ExecuteProc : TProc; TerminateProc : TProc = nil;
+      Suspended: Boolean = False; AThreadExecMode : TThreadExecMode = emNewState);
+  end;
+
+constructor TAnonymousPythonThread.Create(ExecuteProc : TProc; TerminateProc : TProc;
+    Suspended: Boolean; AThreadExecMode : TThreadExecMode);
+begin
+  inherited Create(Suspended);
+  fExecuteProc := ExecuteProc;
+  fTerminateProc := TerminateProc;
+  FreeOnTerminate := True;
+  ThreadExecMode := AThreadExecMode;
+end;
+
+procedure TAnonymousPythonThread.ExecuteWithPython;
+begin
+  if Assigned(fExecuteProc) then
+    try
+        fExecuteProc();
+    except
+    end;
+end;
+
+procedure TAnonymousPythonThread.DoTerminate;
+// Use Thread.Queue to run the TerminateProc in the main thread
+// Could use Synchronize instead, but such calls better be avoided
+var
+  TerminateProc: TProc;
+begin
+  TerminateProc := fTerminateProc;  // to keep fTerminateProc alive at destruction
+  if Assigned(TerminateProc) then
+    TThread.Queue(nil, procedure
+    begin
+        TerminateProc();
+    end);
+end;
+
+
+{ InternalThreadPythonExec }
+
+procedure ThreadPythonExec(ExecuteProc : TProc; TerminateProc : TProc;
+  WaitToFinish: Boolean; ThreadExecMode : TThreadExecMode);
+var
+  Thread: TAnonymousPythonThread;
+begin
+  if GetCurrentThreadId <> MainThreadID then
+    raise Exception.Create('ThreadPythonExec should only be called from the main thread');
+  Thread := TAnonymousPythonThread.Create(ExecuteProc, TerminateProc, WaitToFinish, ThreadExecMode);
+  if WaitToFinish then
+  begin
+    Thread.FreeOnTerminate := False;
+    Thread.Start;
+    Thread.WaitFor; // Note that it calls CheckSyncrhonize
+    Thread.Free;
+  end;
+end;
+
+{$ENDIF FPC}
 
 end.
 
