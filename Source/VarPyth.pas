@@ -1271,9 +1271,11 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     LNamedArgStart : Integer;     //arg position of 1st named argument (if any)
     I : integer;
   begin
+    SetLength(fNamedParams, CallDesc^.NamedArgCount);
+    if CallDesc^.NamedArgCount = 0 then
+      Exit;
     LNamePtr := PAnsiChar(@CallDesc^.ArgTypes[CallDesc^.ArgCount]);
     LNamedArgStart := CallDesc^.ArgCount - CallDesc^.NamedArgCount;
-    SetLength(fNamedParams, CallDesc^.NamedArgCount);
     // Skip function Name
     for I := 0 to CallDesc^.NamedArgCount - 1 do begin
       LNamePtr := LNamePtr + Succ(Length(LNamePtr));
@@ -1285,25 +1287,25 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
 Var
   NewCallDesc : TCallDesc;
 begin
-  if CallDesc^.NamedArgCount > 0 then GetNamedParams;
-  try
-    if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then begin
+    if CallDesc^.CallType = CDoMethod then
+      GetNamedParams;  // fNamedParams will be cleared in EvalPython
+    if (CallDesc^.CallType = CPropertyGet) and (CallDesc^.ArgCount = 1) then
+    begin
       NewCallDesc := CallDesc^;
       NewCallDesc.CallType := CDoMethod;
-    {$IFDEF PATCHEDSYSTEMDISPINVOKE}
+      SetLength(fNamedParams, 0);
+      {$IFDEF PATCHEDSYSTEMDISPINVOKE}
       PatchedDispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ELSE PATCHEDSYSTEMDISPINVOKE}
+      {$ELSE PATCHEDSYSTEMDISPINVOKE}
       inherited DispInvoke(Dest, Source, @NewCallDesc, Params);
-    {$ENDIF PATCHEDSYSTEMDISPINVOKE}
-    end else
+      {$ENDIF PATCHEDSYSTEMDISPINVOKE}
+    end
+    else
       {$IFDEF PATCHEDSYSTEMDISPINVOKE}
       PatchedDispInvoke(Dest, Source, CallDesc, Params);
       {$ELSE PATCHEDSYSTEMDISPINVOKE}
       inherited;
       {$ENDIF PATCHEDSYSTEMDISPINVOKE}
-  finally
-    if CallDesc^.NamedArgCount > 0 then SetLength(fNamedParams, 0);
-  end;
 end;
 
 function TPythonVariantType.DoFunction(var Dest: TVarData;
@@ -1519,8 +1521,14 @@ var
   _Args : PPyObject;
   _ArgLen : Integer;
   _KW : PPyObject;
+  LNamedParams : TNamedParamArray;
 begin
   Result := nil;
+
+  // Store global fNamedParams and clear it  ASAP
+  LNamedParams := System.Copy(fNamedParams);
+  SetLength(fNamedParams, 0);
+
   with GetPythonEngine do
   begin
     // extract the associated Python object
@@ -1583,10 +1591,10 @@ begin
             _ArgLen := 0
           else
             _ArgLen := Length(Arguments);
-          if Length(fNamedParams) > 0 then
+          if Length(LNamedParams) > 0 then
           begin
             _KW := PyDict_New;
-            _ArgLen := fNamedParams[0].Index;
+            _ArgLen := LNamedParams[0].Index;
           end
           else
             _KW := nil;
@@ -1595,8 +1603,8 @@ begin
             try
               for i := 0 to _ArgLen-1 do
                 PyTuple_SetItem( _Args, i, ArgAsPythonObject(i) );
-              for i := 0 to Length(fNamedParams)-1 do
-                PyDict_SetItemString(_KW, fNamedParams[i].Name, ArgAsPythonObject(fNamedParams[i].Index));
+              for i := 0 to Length(LNamedParams)-1 do
+                PyDict_SetItemString(_KW, LNamedParams[i].Name, ArgAsPythonObject(LNamedParams[i].Index));
 
               // call the func or method, with or without named parameters (KW)
               Result := PyEval_CallObjectWithKeywords(_obj, _Args, _KW);
