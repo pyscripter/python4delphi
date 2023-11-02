@@ -130,7 +130,7 @@ uses
 type
   TNamedParamDesc = record
     Index : Integer;
-    Name : AnsiString;
+    Name : PAnsiChar;
   end;
   TNamedParamArray = array of TNamedParamDesc;
 
@@ -1278,7 +1278,7 @@ procedure TPythonVariantType.DispInvoke(Dest: PVarData;
     for I := 0 to CallDesc^.NamedArgCount - 1 do begin
       LNamePtr := LNamePtr + Succ(Length(LNamePtr));
       fNamedParams[I].Index := I+LNamedArgStart;
-      fNamedParams[I].Name  := AnsiString(LNamePtr);
+      fNamedParams[I].Name  := LNamePtr;
     end;
   end;
 
@@ -1596,7 +1596,7 @@ begin
               for i := 0 to _ArgLen-1 do
                 PyTuple_SetItem( _Args, i, ArgAsPythonObject(i) );
               for i := 0 to Length(fNamedParams)-1 do
-                PyDict_SetItemString(_KW, PAnsiChar(fNamedParams[i].Name), ArgAsPythonObject(fNamedParams[i].Index));
+                PyDict_SetItemString(_KW, fNamedParams[i].Name, ArgAsPythonObject(fNamedParams[i].Index));
 
               // call the func or method, with or without named parameters (KW)
               if Assigned(_KW) then
