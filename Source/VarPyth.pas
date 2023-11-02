@@ -1599,10 +1599,7 @@ begin
                 PyDict_SetItemString(_KW, fNamedParams[i].Name, ArgAsPythonObject(fNamedParams[i].Index));
 
               // call the func or method, with or without named parameters (KW)
-              if Assigned(_KW) then
-                Result := PyEval_CallObjectWithKeywords(_obj, _Args, _KW)
-              else
-                Result := PyEval_CallObjectWithKeywords(_obj, _Args, nil);
+              Result := PyEval_CallObjectWithKeywords(_obj, _Args, _KW);
               CheckError(True);
             finally
               Py_XDecRef(_Args);
