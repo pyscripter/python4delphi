@@ -1651,7 +1651,6 @@ type
     PyObject_GC_Del:procedure (ob:PPyObject); cdecl;
     PyObject_GC_Track:procedure (ob:PPyObject); cdecl;
     PyObject_GC_UnTrack:procedure (ob:PPyObject); cdecl;
-    PyObject_CheckBuffer: function(obj: PPyObject): Integer; cdecl;
     PyObject_GetBuffer: function(obj: PPyObject; view: PPy_buffer; flags: Integer): Integer; cdecl;
     PyObject_CopyData: function (dest: PPyObject; src: PPyObject): Integer; cdecl;
     PySequence_Check:function (ob:PPyObject):integer; cdecl;
@@ -1846,6 +1845,7 @@ type
   function PyUnicode_CheckExact( obj : PPyObject ) : Boolean;
   function PyType_IS_GC(t : PPyTypeObject ) : Boolean;
   function PyObject_IS_GC( obj : PPyObject ) : Boolean;
+  function PyObject_CheckBuffer(obj: PPyObject): Boolean;
   function PyWeakref_Check( obj : PPyObject ) : Boolean;
   function PyWeakref_CheckRef( obj : PPyObject ) : Boolean;
   function PyWeakref_CheckProxy( obj : PPyObject ) : Boolean;
@@ -3929,7 +3929,6 @@ begin
   PyObject_GC_Del           := Import('PyObject_GC_Del');
   PyObject_GC_Track         := Import('PyObject_GC_Track');
   PyObject_GC_UnTrack       := Import('PyObject_GC_UnTrack');
-  PyObject_CheckBuffer      := Import('PyObject_CheckBuffer');
   PyObject_GetBuffer        := Import('PyObject_GetBuffer');
   PyObject_CopyData         := Import('PyObject_CopyData');
   PySequence_Check           := Import('PySequence_Check');
@@ -4241,6 +4240,12 @@ function TPythonInterface.PyObject_IS_GC( obj : PPyObject ) : Boolean;
 begin
   Result := PyType_IS_GC(obj^.ob_type) and
             (not Assigned(obj^.ob_type^.tp_is_gc) or (obj^.ob_type^.tp_is_gc(obj) = 1));
+end;
+
+function TPythonInterface.PyObject_CheckBuffer(obj: PPyObject): Boolean;
+begin
+  Result := Assigned(obj^.ob_type^.tp_as_buffer) and
+    Assigned(obj^.ob_type^.tp_as_buffer.bf_getbuffer);
 end;
 
 function TPythonInterface.PyWeakref_Check( obj : PPyObject ) : Boolean;
