@@ -8859,10 +8859,10 @@ begin
         Module.AddClient( Self );
     end;
   InitServices;
-  if Engine.PyType_Ready(TheTypePtr) <> 0 then
-    Engine.CheckError;
   FType.tp_pythontype := Self;  // Store self into FType
   inherited;
+  if Engine.PyType_Ready(TheTypePtr) <> 0 then
+    Engine.CheckError;
 end;
 
 procedure TPythonType.Finalize;
