@@ -1,11 +1,9 @@
 unit SortThds;
 
-
-
 interface
 
 uses
-  Classes,
+  Types, Classes,
   Graphics, ExtCtrls,
   PythonEngine;
 
@@ -121,7 +119,7 @@ begin
       FModule.InitializeForNewInterpreter;
     if Assigned(fScript) then
       ExecStrings(fScript);
-    pyfunc :=  FindFunction( ExecModule, fpyfuncname);
+    pyfunc :=  FindFunction( ExecModule, AnsiString(fpyfuncname));
     if Assigned(pyfunc) then
       try
         EvalFunction(pyfunc,[NativeInt(self),0,FSize]);

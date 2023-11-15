@@ -182,11 +182,17 @@ begin
 end;
 
 function TThreadSortForm.SortModule_GetValue( pself, args : PPyObject ) : PPyObject; cdecl;
-var psort,index: integer;
+var
+  psort: NativeInt;
+  index: integer;
 begin
   with GetPythonEngine do
   begin
+    {$IFDEF CPU64BITS}
+    if PyArg_ParseTuple( args, 'Li',@psort, @index) <> 0 then
+    {$ELSE}
     if PyArg_ParseTuple( args, 'ii',@psort, @index) <> 0 then
+    {$ENDIF}
     begin
       Result := PyLong_FromLong(TSortThread(psort)[index]);
     end else
@@ -195,11 +201,17 @@ begin
 end;
 
 function TThreadSortForm.SortModule_Swap( pself, args : PPyObject ) : PPyObject; cdecl;
-var psort,i,j: integer;
+var
+  psort : NativeInt;
+  i,j: integer;
 begin
   with GetPythonEngine do
   begin
+    {$IFDEF CPU64BITS}
+    if PyArg_ParseTuple( args, 'Lii',@psort, @i, @j) <> 0 then
+    {$ELSE}
     if PyArg_ParseTuple( args, 'iii',@psort, @i, @j) <> 0 then
+    {$ENDIF}
     begin
       TSortThread(psort).VisualSwap(i,j);
       Result := ReturnNone;
