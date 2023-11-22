@@ -127,15 +127,17 @@ begin
       if Assigned(FModule) and (ThreadExecMode <> emNewState) then
         FModule.InitializeForNewInterpreter;
       if Assigned(fScript) then
+      try
         ExecStrings(fScript);
+      except
+      end;
       pyfunc :=  FindFunction(ExecModule, utf8encode(fpyfuncname));
       if Assigned(pyfunc) then
         try
           EvalFunction(pyfunc,[NativeInt(self),0,FSize]);
         except
         end;
-
-        Py_DecRef(pyfunc);
+      Py_XDecRef(pyfunc);
     end;
   finally
     running := false;
