@@ -50,6 +50,7 @@ contains
   WrapFireDAC in '..\..\..\Source\WrapFireDAC.pas',
   WrapActions in '..\..\..\Source\WrapActions.pas',
   WrapDelphiDataBind in '..\..\..\Source\WrapDelphiDataBind.pas',
-  WrapDelphiImageList in '..\..\..\Source\WrapDelphiImageList.pas';
+  WrapDelphiImageList in '..\..\..\Source\WrapDelphiImageList.pas',
+  PythonDocs in '..\..\..\Source\PythonDocs.pas';
 
 end.

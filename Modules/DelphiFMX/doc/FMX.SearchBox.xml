@@ -1,0 +1,179 @@
+<?xml version="1.0" ?><namespace name="FMX.SearchBox" platform="Win32">
+  <type name="TFilterEvent" file="FMX.SearchBox.pas" line="23" procflags="closure">
+    <devnotes>
+       <summary>Type of event handler for filtering of string value. If value is filtered by the filter condition,
+       <c>Accept</c> should be True, Otherwise - false</summary>
+    </devnotes>
+  </type>
+  <class name="TSearchBoxModel" file="FMX.SearchBox.pas" line="27">
+    
+    <members>
+      <field name="FSearchResponder" type="ISearchResponder" visibility="private" size="4" offset="152" file="FMX.SearchBox.pas" line="29">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FOnFilter" type="TFilterEvent" visibility="private" size="8" offset="160" file="FMX.SearchBox.pas" line="30"/>
+      <procedure name="DoChangeTracking" visibility="protected" procflags="override" file="FMX.SearchBox.pas" line="32">
+      </procedure>
+      <property name="SearchResponder" visibility="public" read="FSearchResponder" write="FSearchResponder" type="ISearchResponder" file="FMX.SearchBox.pas" line="34"/>
+      <event name="OnFilter" visibility="public" read="FOnFilter" write="FOnFilter" type="TFilterEvent" file="FMX.SearchBox.pas" line="36">
+        <devnotes>
+           <summary>Event handler for setting custom filter on text of <c>TSearchBox</c>.</summary>
+        </devnotes>
+      </event>
+    </members>
+  </class>
+  <class name="TSearchBox" file="FMX.SearchBox.pas" line="39">
+    
+    <interfaces>
+      <implements name="IListBoxHeaderTrait"/>
+    </interfaces>
+    <members>
+      <function name="GetOnFilter" visibility="private" file="FMX.SearchBox.pas" line="41">
+        <parameters>
+          <retval type="TFilterEvent">
+            <devnotes>
+               <summary>Type of event handler for filtering of string value. If value is filtered by the filter condition,
+               <c>Accept</c> should be True, Otherwise - false</summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <procedure name="SetOnFilter" visibility="private" file="FMX.SearchBox.pas" line="42">
+        <parameters>
+          <parameter name="Value" type="TFilterEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetModel" visibility="private" procflags="overload" file="FMX.SearchBox.pas" line="43">
+        <parameters>
+          <retval type="TSearchBoxModel"/>
+        </parameters>
+      </function>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.SearchBox.pas" line="45">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns the name of the default presentation proxy that your presented control uses.
+FMX.SearchBox.TSearchBox.DefinePresentationName inherits from FMX.Controls.Presentation.TPresentedControl.DefinePresentationName. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefinePresentationName.
+Returns the name of the default presentation proxy that your presented control uses.
+You can handle OnPresentationNameChoosing to specify a presentation proxy name to use instead of the name that DefinePresentationName returns.
+DefinePresentationName  calls TPresentationProxyFactory.GeneratePresentationName and returns a generated  presentation proxy name based on the class name of the presented control and the control type (Styled or Platform) of the presentation layer. For example:
+
+
+
+Class name
+
+Control type
+
+Result
+
+
+TMyPresentedControl
+
+Styled
+
+&quot;MyPresentedControl-Styled&quot;
+
+
+TMyPresentedControl
+
+Platform
+
+&quot;MyPresentedControl-Platform&quot;
+
+ See Also
+System.TObject.ClassName
+FMX.Controls.Presentation.TPresentedControl.ControlType
+FMX.Presentation.Factory.TPresentationProxyFactory.Register
+FMX.Controls.Presentation.TPresentationProxy
+FMX.Controls.Presentation.TPresentedControl.OnPresentationNameChoosing
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+
+</summary></devnotes></function>
+      <function name="DefineModelClass" visibility="protected" procflags="override" file="FMX.SearchBox.pas" line="46">
+        <parameters>
+          <retval type="TDataModelClass"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns a class reference to a data model of this presented control.
+FMX.SearchBox.TSearchBox.DefineModelClass inherits from FMX.Controls.Presentation.TPresentedControl.DefineModelClass. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefineModelClass.
+Returns a class reference to a data model of this presented control.
+Returns a class reference to a data model class that the constructor of this presented control uses to create a data model for the control.
+By default DefineModelClass returns TDataModel. Descendant classes reimplement DefineModelClass to determine the data model class that a descendant presented control uses for its data model.
+
+ See Also
+FMX.Controls.Model.TDataModelClass
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Presentation.Style.TStyledPresentation.DefineModelClass
+Class References
+
+</summary></devnotes></function>
+      <procedure name="ParentChanged" visibility="protected" procflags="override" file="FMX.SearchBox.pas" line="47">
+      <devnotes><summary>
+Sends a PM_REFRESH_PARENT message to the presentation layer through its presentation proxy when the parent of this control changes.
+FMX.SearchBox.TSearchBox.ParentChanged inherits from FMX.Controls.Presentation.TPresentedControl.ParentChanged. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.ParentChanged.
+Sends a PM_REFRESH_PARENT message to the presentation layer through its presentation proxy when the parent of this control changes.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.PresentationProxy
+FMX.Presentation.Messages.TMessageSender.SendMessage
+FMX.Controls.TControl.ParentChanged
+FMX.Controls.Presentation.TPresentedControl.AncestorParentChanged
+
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.SearchBox.pas" line="49">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates a new instance of TPresentedControl.
+FMX.SearchBox.TSearchBox.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <property name="Model" visibility="public" read="GetModel" type="TSearchBoxModel" file="FMX.SearchBox.pas" line="50"><devnotes><summary>
+
+
+The data model representing the data used by the presentation of the current control.
+FMX.SearchBox.TSearchBox.Model inherits from FMX.Controls.Presentation.TPresentedControl.Model. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Model.
+The data model representing the data used by the presentation of the current control.
+The constructor of your presented control creates a data model for your presented control. The class of the data model is the class that DefineModelClass returns.
+
+ See Also
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Presentation
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+
+</summary></devnotes></property>
+      <event name="OnFilter" visibility="published" read="GetOnFilter" write="SetOnFilter" type="TFilterEvent" file="FMX.SearchBox.pas" line="53">
+        <devnotes><summary>
+Event handler for setting the custom filter on the text of TSearchBox.
+</summary></devnotes>
+      </event>
+    </members>
+  <devnotes><summary>
+A search edit control.
+TSearchBox is an edit control that provides search capabilities such as filtering the result in the parent.
+</summary></devnotes></class>
+</namespace>

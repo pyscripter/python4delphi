@@ -9,7 +9,7 @@ function PyInit_DelphiFMX: PPyObject; cdecl;
 implementation
 
 uses
-  System.SysUtils, WrapDelphi, WrapDelphiFMX;
+  System.SysUtils, WrapDelphi, WrapDelphiFMX, PythonDocs;
 
 var
   gEngine : TPythonEngine;
@@ -48,8 +48,10 @@ initialization
   gEngine := nil;
   gModule := nil;
   gDelphiWrapper := nil;
+  PyDocServer := TPythonDocServer.Create();
 
 finalization
+  PyDocServer := nil;
   gEngine.Free;
   gModule.Free;
   gDelphiWrapper.Free;

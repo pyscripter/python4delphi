@@ -1,0 +1,234 @@
+<?xml version="1.0" ?><namespace name="FMX.SpinBox" platform="Win32">
+  <const name="MM_SPINBOX_REPEATCLICK_CHANGED" type="Integer" file="FMX.SpinBox.pas" line="21">
+    <value>
+      $1720
+    </value>
+  </const>
+  <const name="MM_SPINBOX_USER" type="Integer" file="FMX.SpinBox.pas" line="22">
+    <value>
+      $1721
+    </value>
+  </const>
+  <class name="TSpinBoxModel" file="FMX.SpinBox.pas" line="28">
+    
+    <members>
+      <const name="DefaultHorzAlign" visibility="public" type="TTextAlign" file="FMX.SpinBox.pas" line="30">
+        <value>
+          Center
+        </value>
+      </const>
+      <const name="DefaultRepeatClick" visibility="public" type="Boolean" file="FMX.SpinBox.pas" line="28">
+        <value>
+          False
+        </value>
+      </const>
+      <field name="FRepeatClick" type="Boolean" visibility="private" size="1" offset="176" file="FMX.SpinBox.pas" line="33"/>
+      <procedure name="SetRepeatClick" visibility="private" file="FMX.SpinBox.pas" line="34">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetTextSettingsClass" visibility="protected" procflags="override" file="FMX.SpinBox.pas" line="36">
+        <parameters>
+          <retval type="TTextSettingsInfo.TCustomTextSettingsClass">
+          </retval>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.SpinBox.pas" line="38">
+        <parameters>
+        </parameters>
+      </constructor>
+      <property name="RepeatClick" visibility="public" read="FRepeatClick" write="SetRepeatClick" type="Boolean" file="FMX.SpinBox.pas" line="40">
+        <devnotes>
+           <summary>Need makes several clicks until the user didn't raise a finger from the screen.</summary>
+        </devnotes>
+      </property>
+    </members>
+  </class>
+  <class name="TSpinBox" file="FMX.SpinBox.pas" line="43">
+    
+    <members>
+      <function name="GetIncrement" visibility="private" procflags="inline" file="FMX.SpinBox.pas" line="45">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetIncrement" visibility="private" procflags="inline" file="FMX.SpinBox.pas" line="46">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetRepeatClick" visibility="private" file="FMX.SpinBox.pas" line="47">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetRepeatClick" visibility="private" file="FMX.SpinBox.pas" line="48">
+        <parameters>
+          <parameter name="Value" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetModel" visibility="private" procflags="overload" file="FMX.SpinBox.pas" line="49">
+        <parameters>
+          <retval type="TSpinBoxModel"/>
+        </parameters>
+      </function>
+      <function name="DefineModelClass" visibility="protected" procflags="override" file="FMX.SpinBox.pas" line="51">
+        <parameters>
+          <retval type="TDataModelClass"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Returns a class reference to a data model of this presented control.
+FMX.SpinBox.TSpinBox.DefineModelClass inherits from FMX.Controls.Presentation.TPresentedControl.DefineModelClass. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefineModelClass.
+Returns a class reference to a data model of this presented control.
+Returns a class reference to a data model class that the constructor of this presented control uses to create a data model for the control.
+By default DefineModelClass returns TDataModel. Descendant classes reimplement DefineModelClass to determine the data model class that a descendant presented control uses for its data model.
+
+ See Also
+FMX.Controls.Model.TDataModelClass
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Presentation.Style.TStyledPresentation.DefineModelClass
+Class References
+
+</summary></devnotes></function>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.SpinBox.pas" line="52">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Returns the name of the default presentation proxy that your presented control uses.
+FMX.SpinBox.TSpinBox.DefinePresentationName inherits from FMX.Controls.Presentation.TPresentedControl.DefinePresentationName. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefinePresentationName.
+Returns the name of the default presentation proxy that your presented control uses.
+You can handle OnPresentationNameChoosing to specify a presentation proxy name to use instead of the name that DefinePresentationName returns.
+DefinePresentationName  calls TPresentationProxyFactory.GeneratePresentationName and returns a generated  presentation proxy name based on the class name of the presented control and the control type (Styled or Platform) of the presentation layer. For example:
+
+
+
+Class name
+
+Control type
+
+Result
+
+
+TMyPresentedControl
+
+Styled
+
+&quot;MyPresentedControl-Styled&quot;
+
+
+TMyPresentedControl
+
+Platform
+
+&quot;MyPresentedControl-Platform&quot;
+
+ See Also
+System.TObject.ClassName
+FMX.Controls.Presentation.TPresentedControl.ControlType
+FMX.Presentation.Factory.TPresentationProxyFactory.Register
+FMX.Controls.Presentation.TPresentationProxy
+FMX.Controls.Presentation.TPresentedControl.OnPresentationNameChoosing
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+
+</summary></devnotes></function>
+      <property name="Model" visibility="protected" read="GetModel" type="TSpinBoxModel" file="FMX.SpinBox.pas" line="54">
+        <devnotes><summary>
+Returns the Model of the TSpinBox with TSpinBoxModel type. 
+</summary></devnotes>
+      </property>
+      <property name="TextAlign" visibility="public" read="GetTextAlign" write="SetTextAlign" type="TTextAlign" default="0" hoisted="true" file="FMX.SpinBox.pas" line="56"/>
+      <property name="Action" visibility="published" read="GetAction" write="SetAction" type="TBasicAction" hoisted="true" file="FMX.SpinBox.pas" line="58"/>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="59"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="60"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.SpinBox.pas" line="61"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="62"/>
+      <property name="Increment" visibility="published" read="GetIncrement" write="SetIncrement" type="Single" file="FMX.SpinBox.pas" line="63"><devnotes><summary>
+Specifies the numerical value that will be used as an increment or decrement factor for this spin box.
+For instance, if you set the Increment value to 5, then pressing the plus (increment) button will increase the display value by 5. Pressing the minus (decrement) button will decrease the display value by 5.
+However, if, for instance, Value is 4, Increment is 5, and Min is 0 and you press the minus (decrement) button, the value will become 0. In a similar manner, if, for instance, Value is 8, Increment is 5, and Max is 10 and you press the plus (increment) button, the value will become 10.
+</summary></devnotes></property>
+      <property name="ReadOnly" visibility="published" read="GetReadOnly" write="SetReadOnly" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="64"/>
+      <property name="RepeatClick" visibility="published" read="GetRepeatClick" write="SetRepeatClick" type="Boolean" default="0" file="FMX.SpinBox.pas" line="66">
+        <devnotes><summary>
+Determines whether the TSpinBox does several clicks when the user keeps the button held down. 
+When RepeatClick is True, the user can hold the button down to do several clicks until the button is released.
+By default the RepeatClick property is set to False.
+</summary></devnotes>
+      </property>
+      <property name="KeyboardType" visibility="published" read="GetKeyboardType" write="SetKeyboardType" type="TVirtualKeyboardType" default="2" hoisted="true" file="FMX.SpinBox.pas" line="67"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.SpinBox.pas" line="68"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.SpinBox.pas" line="69"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.SpinBox.pas" line="70"/>
+      <property name="TextSettings" visibility="published" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.SpinBox.pas" line="71"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="72"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="73"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.SpinBox.pas" line="74"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="75"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="76"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="77"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.SpinBox.pas" line="78"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="79"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.SpinBox.pas" line="80"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.SpinBox.pas" line="81"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.SpinBox.pas" line="82"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.SpinBox.pas" line="83"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.SpinBox.pas" line="84"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.SpinBox.pas" line="85"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.SpinBox.pas" line="86"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.SpinBox.pas" line="87"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.SpinBox.pas" line="88"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.SpinBox.pas" line="89"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.SpinBox.pas" line="90"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.SpinBox.pas" line="91"/>
+      <property name="StyledSettings" visibility="published" read="GetStyledSettings" write="SetStyledSettings" stored="StyledSettingsStored" type="TStyledSettings" hoisted="true" file="FMX.SpinBox.pas" line="92"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.SpinBox.pas" line="93"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="94"/>
+      <property name="Caret" visibility="published" read="GetCaret" write="SetCaret" type="TCustomCaret" hoisted="true" file="FMX.SpinBox.pas" line="95"/>
+      <property name="KillFocusByReturn" visibility="published" read="GetKillFocusByReturn" write="SetKillFocusByReturn" type="Boolean" default="0" hoisted="true" file="FMX.SpinBox.pas" line="96"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.SpinBox.pas" line="97"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.SpinBox.pas" line="98"/>
+      <event name="OnChange" visibility="published" read="GetOnChange" write="SetOnChange" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="100"/>
+      <event name="OnChangeTracking" visibility="published" read="GetOnChangeTracking" write="SetOnChangeTracking" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="101"/>
+      <event name="OnTyping" visibility="published" read="GetOnTyping" write="SetOnTyping" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="102"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="103"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.SpinBox.pas" line="105"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="106"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.SpinBox.pas" line="107"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.SpinBox.pas" line="108"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="109"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.SpinBox.pas" line="111"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.SpinBox.pas" line="112"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.SpinBox.pas" line="114"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="115"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="116"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="117"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="118"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.SpinBox.pas" line="119"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.SpinBox.pas" line="120"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.SpinBox.pas" line="121"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.SpinBox.pas" line="122"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="123"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="124"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.SpinBox.pas" line="125"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.SpinBox.pas" line="126"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="127"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.SpinBox.pas" line="128"/>
+      <event name="OnPresentationNameChoosing" visibility="published" read="FOnPresenterNameChoosing" write="FOnPresenterNameChoosing" type="TPresenterNameChoosingEvent" hoisted="true" file="FMX.SpinBox.pas" line="129"/>
+    </members>
+  <devnotes><summary>
+A special presented edit box equipped with buttons to increment or decrement the displayed numeric value.
+TSpinBox is a special edit box that can display only numerical values and is equipped with the Increase and Decrease buttons for incrementing or decrementing the displayed value. 
+</summary></devnotes></class>
+</namespace>

@@ -1,0 +1,3327 @@
+<?xml version="1.0" ?><namespace name="Vcl.MPlayer" platform="Win32">
+  <const name="btPlay" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btPlay
+    </value>
+  </const>
+  <const name="btPause" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btPause
+    </value>
+  </const>
+  <const name="btStop" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btStop
+    </value>
+  </const>
+  <const name="btNext" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btNext
+    </value>
+  </const>
+  <const name="btPrev" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btPrev
+    </value>
+  </const>
+  <const name="btStep" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btStep
+    </value>
+  </const>
+  <const name="btBack" type="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <value>
+      btBack
+    </value>
+  </const>
+  <const name="btRecord" type="TMPBtnType" file="Vcl.MPlayer.pas" line="22">
+    <value>
+      btRecord
+    </value>
+  </const>
+  <const name="btEject" type="TMPBtnType" file="Vcl.MPlayer.pas" line="22">
+    <value>
+      btEject
+    </value>
+  </const>
+  <const name="mgEnabled" type="TMPGlyph" file="Vcl.MPlayer.pas" line="25">
+    <value>
+      mgEnabled
+    </value>
+  </const>
+  <const name="mgDisabled" type="TMPGlyph" file="Vcl.MPlayer.pas" line="25">
+    <value>
+      mgDisabled
+    </value>
+  </const>
+  <const name="mgColored" type="TMPGlyph" file="Vcl.MPlayer.pas" line="25">
+    <value>
+      mgColored
+    </value>
+  </const>
+  <const name="dtAutoSelect" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtAutoSelect
+    </value>
+  </const>
+  <const name="dtAVIVideo" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtAVIVideo
+    </value>
+  </const>
+  <const name="dtCDAudio" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtCDAudio
+    </value>
+  </const>
+  <const name="dtDAT" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtDAT
+    </value>
+  </const>
+  <const name="dtDigitalVideo" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtDigitalVideo
+    </value>
+  </const>
+  <const name="dtMMMovie" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <value>
+      dtMMMovie
+    </value>
+  </const>
+  <const name="dtOther" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtOther
+    </value>
+  </const>
+  <const name="dtOverlay" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtOverlay
+    </value>
+  </const>
+  <const name="dtScanner" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtScanner
+    </value>
+  </const>
+  <const name="dtSequencer" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtSequencer
+    </value>
+  </const>
+  <const name="dtVCR" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtVCR
+    </value>
+  </const>
+  <const name="dtVideodisc" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtVideodisc
+    </value>
+  </const>
+  <const name="dtWaveAudio" type="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="35">
+    <value>
+      dtWaveAudio
+    </value>
+  </const>
+  <const name="tfMilliseconds" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfMilliseconds
+    </value>
+  </const>
+  <const name="tfHMS" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfHMS
+    </value>
+  </const>
+  <const name="tfMSF" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfMSF
+    </value>
+  </const>
+  <const name="tfFrames" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfFrames
+    </value>
+  </const>
+  <const name="tfSMPTE24" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfSMPTE24
+    </value>
+  </const>
+  <const name="tfSMPTE25" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <value>
+      tfSMPTE25
+    </value>
+  </const>
+  <const name="tfSMPTE30" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="37">
+    <value>
+      tfSMPTE30
+    </value>
+  </const>
+  <const name="tfSMPTE30Drop" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="37">
+    <value>
+      tfSMPTE30Drop
+    </value>
+  </const>
+  <const name="tfBytes" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="37">
+    <value>
+      tfBytes
+    </value>
+  </const>
+  <const name="tfSamples" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="37">
+    <value>
+      tfSamples
+    </value>
+  </const>
+  <const name="tfTMSF" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="37">
+    <value>
+      tfTMSF
+    </value>
+  </const>
+  <const name="mpNotReady" type="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <value>
+      mpNotReady
+    </value>
+  </const>
+  <const name="mpStopped" type="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <value>
+      mpStopped
+    </value>
+  </const>
+  <const name="mpPlaying" type="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <value>
+      mpPlaying
+    </value>
+  </const>
+  <const name="mpRecording" type="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <value>
+      mpRecording
+    </value>
+  </const>
+  <const name="mpSeeking" type="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <value>
+      mpSeeking
+    </value>
+  </const>
+  <const name="mpPaused" type="TMPModes" file="Vcl.MPlayer.pas" line="39">
+    <value>
+      mpPaused
+    </value>
+  </const>
+  <const name="mpOpen" type="TMPModes" file="Vcl.MPlayer.pas" line="39">
+    <value>
+      mpOpen
+    </value>
+  </const>
+  <const name="nvSuccessful" type="TMPNotifyValues" file="Vcl.MPlayer.pas" line="40">
+    <value>
+      nvSuccessful
+    </value>
+  </const>
+  <const name="nvSuperseded" type="TMPNotifyValues" file="Vcl.MPlayer.pas" line="40">
+    <value>
+      nvSuperseded
+    </value>
+  </const>
+  <const name="nvAborted" type="TMPNotifyValues" file="Vcl.MPlayer.pas" line="40">
+    <value>
+      nvAborted
+    </value>
+  </const>
+  <const name="nvFailure" type="TMPNotifyValues" file="Vcl.MPlayer.pas" line="40">
+    <value>
+      nvFailure
+    </value>
+  </const>
+  <const name="mpCanStep" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <value>
+      mpCanStep
+    </value>
+  </const>
+  <const name="mpCanEject" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <value>
+      mpCanEject
+    </value>
+  </const>
+  <const name="mpCanPlay" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <value>
+      mpCanPlay
+    </value>
+  </const>
+  <const name="mpCanRecord" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <value>
+      mpCanRecord
+    </value>
+  </const>
+  <const name="mpUsesWindow" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <value>
+      mpUsesWindow
+    </value>
+  </const>
+  <enum name="TMPBtnType" file="Vcl.MPlayer.pas" line="21">
+    <element value="0" name="btPlay" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="1" name="btPause" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="2" name="btStop" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="3" name="btNext" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="4" name="btPrev" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="5" name="btStep" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="6" name="btBack" file="Vcl.MPlayer.pas" line="21"/>
+    <element value="7" name="btRecord" file="Vcl.MPlayer.pas" line="22"/>
+    <element value="8" name="btEject" file="Vcl.MPlayer.pas" line="22"/>
+  </enum>
+  <set name="TButtonSet" type="TMPBtnType" file="Vcl.MPlayer.pas" line="23">
+    <element name="btPlay"/>
+    <element name="btPause"/>
+    <element name="btStop"/>
+    <element name="btNext"/>
+    <element name="btPrev"/>
+    <element name="btStep"/>
+    <element name="btBack"/>
+    <element name="btRecord"/>
+    <element name="btEject"/>
+  </set>
+  <enum name="TMPGlyph" file="Vcl.MPlayer.pas" line="25">
+    <element value="0" name="mgEnabled" file="Vcl.MPlayer.pas" line="25"/>
+    <element value="1" name="mgDisabled" file="Vcl.MPlayer.pas" line="25"/>
+    <element value="2" name="mgColored" file="Vcl.MPlayer.pas" line="25"/>
+  </enum>
+  <struct name="TMPButton" size="16" file="Vcl.MPlayer.pas" line="26">
+    <field name="Visible" type="Boolean" visibility="public" size="1" offset="0" file="Vcl.MPlayer.pas" line="27"/>
+    <field name="Enabled" type="Boolean" visibility="public" size="1" offset="1" file="Vcl.MPlayer.pas" line="28"/>
+    <field name="Colored" type="Boolean" visibility="public" size="1" offset="2" file="Vcl.MPlayer.pas" line="29"/>
+    <field name="Auto" type="Boolean" visibility="public" size="1" offset="3" file="Vcl.MPlayer.pas" line="30"/>
+    <field name="Bitmaps" visibility="public" size="12" offset="4" file="Vcl.MPlayer.pas" line="31">
+      <array name="Bitmaps" visibility="public" file="Vcl.MPlayer.pas" line="31">
+        <element type="TBitmap"/>
+      </array>
+    </field>
+  </struct>
+  <enum name="TMPDeviceTypes" file="Vcl.MPlayer.pas" line="34">
+    <element value="0" name="dtAutoSelect" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="1" name="dtAVIVideo" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="2" name="dtCDAudio" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="3" name="dtDAT" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="4" name="dtDigitalVideo" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="5" name="dtMMMovie" file="Vcl.MPlayer.pas" line="34"/>
+    <element value="6" name="dtOther" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="7" name="dtOverlay" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="8" name="dtScanner" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="9" name="dtSequencer" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="10" name="dtVCR" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="11" name="dtVideodisc" file="Vcl.MPlayer.pas" line="35"/>
+    <element value="12" name="dtWaveAudio" file="Vcl.MPlayer.pas" line="35"/>
+  </enum>
+  <enum name="TMPTimeFormats" file="Vcl.MPlayer.pas" line="36">
+    <element value="0" name="tfMilliseconds" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="1" name="tfHMS" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="2" name="tfMSF" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="3" name="tfFrames" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="4" name="tfSMPTE24" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="5" name="tfSMPTE25" file="Vcl.MPlayer.pas" line="36"/>
+    <element value="6" name="tfSMPTE30" file="Vcl.MPlayer.pas" line="37"/>
+    <element value="7" name="tfSMPTE30Drop" file="Vcl.MPlayer.pas" line="37"/>
+    <element value="8" name="tfBytes" file="Vcl.MPlayer.pas" line="37"/>
+    <element value="9" name="tfSamples" file="Vcl.MPlayer.pas" line="37"/>
+    <element value="10" name="tfTMSF" file="Vcl.MPlayer.pas" line="37"/>
+  </enum>
+  <enum name="TMPModes" file="Vcl.MPlayer.pas" line="38">
+    <element value="0" name="mpNotReady" file="Vcl.MPlayer.pas" line="38"/>
+    <element value="1" name="mpStopped" file="Vcl.MPlayer.pas" line="38"/>
+    <element value="2" name="mpPlaying" file="Vcl.MPlayer.pas" line="38"/>
+    <element value="3" name="mpRecording" file="Vcl.MPlayer.pas" line="38"/>
+    <element value="4" name="mpSeeking" file="Vcl.MPlayer.pas" line="38"/>
+    <element value="5" name="mpPaused" file="Vcl.MPlayer.pas" line="39"/>
+    <element value="6" name="mpOpen" file="Vcl.MPlayer.pas" line="39"/>
+  </enum>
+  <enum name="TMPNotifyValues" file="Vcl.MPlayer.pas" line="40">
+    <element value="0" name="nvSuccessful" file="Vcl.MPlayer.pas" line="40"/>
+    <element value="1" name="nvSuperseded" file="Vcl.MPlayer.pas" line="40"/>
+    <element value="2" name="nvAborted" file="Vcl.MPlayer.pas" line="40"/>
+    <element value="3" name="nvFailure" file="Vcl.MPlayer.pas" line="40"/>
+  </enum>
+  <enum name="TMPDevCaps" file="Vcl.MPlayer.pas" line="42">
+    <element value="0" name="mpCanStep" file="Vcl.MPlayer.pas" line="42"/>
+    <element value="1" name="mpCanEject" file="Vcl.MPlayer.pas" line="42"/>
+    <element value="2" name="mpCanPlay" file="Vcl.MPlayer.pas" line="42"/>
+    <element value="3" name="mpCanRecord" file="Vcl.MPlayer.pas" line="42"/>
+    <element value="4" name="mpUsesWindow" file="Vcl.MPlayer.pas" line="42"/>
+  </enum>
+  <set name="TMPDevCapsSet" type="TMPDevCaps" file="Vcl.MPlayer.pas" line="43">
+    <element name="mpCanStep"/>
+    <element name="mpCanEject"/>
+    <element name="mpCanPlay"/>
+    <element name="mpCanRecord"/>
+    <element name="mpUsesWindow"/>
+  </set>
+  <type name="EMPNotify" file="Vcl.MPlayer.pas" line="45" procflags="closure">
+  </type>
+  <type name="EMPPostNotify" file="Vcl.MPlayer.pas" line="47" procflags="closure">
+  </type>
+  <class name="EMCIDeviceError" file="Vcl.MPlayer.pas" line="49">
+    <ancestor name="Exception" namespace="System.SysUtils">
+      <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+      </methodref>
+      <methodref name="Destroy@" visibility="class private" procflags="class destructor noself">
+      </methodref>
+      <methodref name="SetInnerException" visibility="protected">
+      </methodref>
+      <methodref name="SetStackInfo" visibility="protected">
+      </methodref>
+      <methodref name="GetStackTrace" visibility="protected">
+      </methodref>
+      <methodref name="RaisingException" visibility="protected" procflags="virtual">
+      </methodref>
+      <methodref name="Create" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateFmt" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateRes" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateRes" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmt" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmt" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateHelp" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateFmtHelp" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateResHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmtHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmtHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="Destroy" visibility="public" procflags="destructor override">
+      </methodref>
+      <methodref name="GetBaseException" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="ToString" visibility="public" procflags="override">
+      </methodref>
+      <propertyref name="BaseException" visibility="public">
+      </propertyref>
+      <propertyref name="HelpContext" visibility="public">
+      </propertyref>
+      <propertyref name="InnerException" visibility="public">
+      </propertyref>
+      <propertyref name="Message" visibility="public">
+      </propertyref>
+      <propertyref name="StackTrace" visibility="public">
+      </propertyref>
+      <propertyref name="StackInfo" visibility="public">
+      </propertyref>
+      <methodref name="RaiseOuterException" visibility="public" procflags="static">
+      </methodref>
+      <methodref name="ThrowOuterException" visibility="public" procflags="static">
+      </methodref>
+      <ancestor name="TObject" namespace="System">
+        <methodref name="Create" visibility="public" procflags="constructor">
+        </methodref>
+        <methodref name="Free" visibility="public">
+        </methodref>
+        <methodref name="DisposeOf" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="InitInstance" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="CleanupInstance" visibility="public">
+        </methodref>
+        <methodref name="ClassType" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="ClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassNameIs" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassParent" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="ClassInfo" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InstanceSize" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InheritsFrom" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="QualifiedClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="GetInterface" visibility="public">
+        </methodref>
+        <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="UnitName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="UnitScope" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="Equals" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="GetHashCode" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="ToString" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="SafeCallException" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Dispatch" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="NewInstance" visibility="public" procflags="class virtual">
+        </methodref>
+        <methodref name="FreeInstance" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+        </methodref>
+        <methodref name="GetDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <propertyref name="Disposed" visibility="protected">
+        </propertyref>
+      </ancestor>
+    </ancestor>
+  </class>
+  <type name="TMediaDevice" type="word" loBound="0" hiBound="65535" file="System.pas" line="12"/>
+  <class name="TMediaPlayer" file="Vcl.MPlayer.pas" line="62">
+    <ancestor name="TCustomControl" namespace="Vcl.Controls">
+      <methodref name="WMPaint" visibility="private" procflags="message">
+      </methodref>
+      <methodref name="Paint" visibility="protected" procflags="virtual">
+      </methodref>
+      <methodref name="PaintWindow" visibility="protected" procflags="override">
+      </methodref>
+      <propertyref name="Canvas" visibility="protected">
+      </propertyref>
+      <methodref name="Create" visibility="public" procflags="constructor override">
+      </methodref>
+      <methodref name="Destroy" visibility="public" procflags="destructor override">
+      </methodref>
+      <ancestor name="TWinControl" namespace="Vcl.Controls">
+        <methodref name="AlignControl" visibility="private">
+        </methodref>
+        <methodref name="CalcConstraints" visibility="private">
+        </methodref>
+        <methodref name="DoPaddingChange" visibility="private">
+        </methodref>
+        <methodref name="GetAlignDisabled" visibility="private">
+        </methodref>
+        <methodref name="GetControl" visibility="private">
+        </methodref>
+        <methodref name="GetControlCount" visibility="private">
+        </methodref>
+        <methodref name="GetDockClientCount" visibility="private">
+        </methodref>
+        <methodref name="GetDockClients" visibility="private">
+        </methodref>
+        <methodref name="GetHandle" visibility="private">
+        </methodref>
+        <methodref name="GetParentBackground" visibility="private" procflags="inline">
+        </methodref>
+        <methodref name="GetTabOrder" visibility="private">
+        </methodref>
+        <methodref name="GetVisibleDockClientCount" visibility="private">
+        </methodref>
+        <methodref name="Insert" visibility="private">
+        </methodref>
+        <methodref name="InvalidateFrame" visibility="private">
+        </methodref>
+        <methodref name="InvokeHelp" visibility="private">
+        </methodref>
+        <methodref name="IsCtl3DStored" visibility="private">
+        </methodref>
+        <methodref name="IsDoubleBufferedStored" visibility="private">
+        </methodref>
+        <methodref name="PrecedingWindow" visibility="private">
+        </methodref>
+        <methodref name="ReadDesignSize" visibility="private">
+        </methodref>
+        <methodref name="ReadPixelsPerInch" visibility="private">
+        </methodref>
+        <methodref name="Remove" visibility="private">
+        </methodref>
+        <methodref name="RemoveFocus" visibility="private">
+        </methodref>
+        <methodref name="SetBevelCut" visibility="private">
+        </methodref>
+        <methodref name="SetBevelEdges" visibility="private">
+        </methodref>
+        <methodref name="SetBevelKind" visibility="private">
+        </methodref>
+        <methodref name="SetBevelWidth" visibility="private">
+        </methodref>
+        <methodref name="SetBorderWidth" visibility="private">
+        </methodref>
+        <methodref name="SetCtl3D" visibility="private">
+        </methodref>
+        <methodref name="SetDockSite" visibility="private">
+        </methodref>
+        <methodref name="SetDoubleBuffered" visibility="private">
+        </methodref>
+        <methodref name="SetPadding" visibility="private">
+        </methodref>
+        <methodref name="SetParentCtl3D" visibility="private">
+        </methodref>
+        <methodref name="SetParentWindow" visibility="private">
+        </methodref>
+        <methodref name="SetTabOrder" visibility="private">
+        </methodref>
+        <methodref name="SetTabStop" visibility="private">
+        </methodref>
+        <methodref name="SetUseDockManager" visibility="private">
+        </methodref>
+        <methodref name="SetZOrderPosition" visibility="private">
+        </methodref>
+        <methodref name="UpdateTabOrder" visibility="private">
+        </methodref>
+        <methodref name="UpdateShowing" visibility="private">
+        </methodref>
+        <methodref name="WriteDesignSize" visibility="private">
+        </methodref>
+        <methodref name="WritePixelsPerInch" visibility="private">
+        </methodref>
+        <methodref name="IsMenuKey" visibility="private">
+        </methodref>
+        <methodref name="GetIsDrawingLocked" visibility="private">
+        </methodref>
+        <methodref name="GetRedrawDisabled" visibility="private">
+        </methodref>
+        <methodref name="WMInputLangChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMInputLangChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMPaint" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMCommand" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMNotify" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSysColorChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMHScroll" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMVScroll" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMCompareItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMDeleteItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMDrawItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMMeasureItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMEraseBkgnd" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMWindowPosChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMWindowPosChanging" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSize" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMMove" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSetCursor" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMKeyDown" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSysKeyDown" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMKeyUp" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSysKeyUp" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMChar" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSysCommand" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMCharToItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMParentNotify" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMVKeyToItem" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMDestroy" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMMouseActivate" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMNCCalcSize" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMNCDestroy" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMNCHitTest" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMNCPaint" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMQueryNewPalette" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMPaletteChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMWinIniChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMFontChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMTimeChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMSetFocus" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMKillFocus" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMIMEStartComp" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMIMEEndComp" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMContextMenu" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMGesture" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMGestureNotify" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMTabletQuerySystemGestureStatus" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMChildKey" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDialogKey" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDialogChar" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMVisibleChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMEnabledChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMColorChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMFontChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMBorderChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMCursorChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMCtl3DChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMParentCtl3DChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMParentDoubleBufferedChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMShowingChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMShowHintChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMEnter" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMExit" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDesignHitTest" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMSysColorChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMSysFontChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMSysFontsAllChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMWinIniChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMFontChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMTimeChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDrag" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMRemoteSessionStatusChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CNKeyDown" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CNKeyUp" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CNChar" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CNSysKeyDown" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CNSysChar" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMRecreateWnd" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMSysCommand" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMInvalidate" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMBiDiModeChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDoubleBufferedChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMTextChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="WMPrintClient" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMTabletOptionsChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMFocusChanged" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMControlListChange" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMControlListChanging" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMDockClient" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMUnDockClient" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="CMFloat" visibility="private" procflags="message">
+        </methodref>
+        <methodref name="InvokeAsyncCalls" visibility="protected">
+        </methodref>
+        <methodref name="UpdateStyleElements" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="AsyncSchedule" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ActionChange" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="AddBiDiModeExStyle" visibility="protected">
+        </methodref>
+        <methodref name="AssignTo" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="AdjustClientRect" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="AdjustSize" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="AlignControls" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="ArrangeControl" visibility="protected">
+        </methodref>
+        <methodref name="CanAutoSize" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="CanResize" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ChangeScale" visibility="protected" procflags="overload override">
+        </methodref>
+        <methodref name="ConstrainedResize" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ControlsAligned" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="CreateDockManager" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="CreateHandle" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="CreateParams" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="CreateWindowHandle" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="CreateWnd" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="CustomAlignInsertBefore" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="CustomAlignPosition" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DefineProperties" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="DestroyHandle" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DestroyWindowHandle" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DestroyWnd" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DoAddDockClient" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DockOver" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DockReplaceDockClient" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DoDockOver" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoEnter" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoExit" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoFlipChildren" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoWritePixelsPerInch" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="DoKeyDown" visibility="protected">
+        </methodref>
+        <methodref name="DoKeyPress" visibility="protected">
+        </methodref>
+        <methodref name="DoKeyUp" visibility="protected">
+        </methodref>
+        <methodref name="DoHandleStyleMessage" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoRemoveDockClient" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="DoUnDock" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="FindNextControl" visibility="protected">
+        </methodref>
+        <methodref name="FixupTabList" visibility="protected">
+        </methodref>
+        <methodref name="GetActionLinkClass" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="GetClientOrigin" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="GetClientRect" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="GetDPIForDesigner" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="GetControlExtents" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="GetDeviceContext" visibility="protected" procflags="overload override">
+        </methodref>
+        <methodref name="GetParentHandle" visibility="protected">
+        </methodref>
+        <methodref name="GetSiteInfo" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="GetTopParentHandle" visibility="protected">
+        </methodref>
+        <methodref name="InvalidateDockHostSite" visibility="protected">
+        </methodref>
+        <methodref name="IsControlMouseMsg" visibility="protected">
+        </methodref>
+        <methodref name="IsControlActivateMsg" visibility="protected">
+        </methodref>
+        <methodref name="IsQualifyingSite" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="KeyDown" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="KeyUp" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="KeyPress" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="MainWndProc" visibility="protected">
+        </methodref>
+        <methodref name="Notification" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="NotifyControls" visibility="protected">
+        </methodref>
+        <methodref name="PaintControls" visibility="protected">
+        </methodref>
+        <methodref name="PaintHandler" visibility="protected">
+        </methodref>
+        <methodref name="PaintWindow" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="PaletteChanged" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ReadState" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="RecreateWnd" visibility="protected">
+        </methodref>
+        <methodref name="ReloadDockedControl" visibility="protected" procflags="dynamic">
+        </methodref>
+        <methodref name="ResetIme" visibility="protected" procflags="overload inline">
+        </methodref>
+        <methodref name="ResetIme" visibility="protected" procflags="overload virtual">
+        </methodref>
+        <methodref name="ResetImeComposition" visibility="protected">
+        </methodref>
+        <methodref name="RequestAlign" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ScaleControlsForDpi" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="GetCurrentPPIScreen" visibility="protected">
+        </methodref>
+        <methodref name="GetPixelsPerInch" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetPixelsPerInch" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="ScaleControls" visibility="protected">
+        </methodref>
+        <methodref name="ScalePadding" visibility="protected">
+        </methodref>
+        <methodref name="SelectFirst" visibility="protected">
+        </methodref>
+        <methodref name="SelectNext" visibility="protected">
+        </methodref>
+        <methodref name="SetChildOrder" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="SetIme" visibility="protected" procflags="overload inline">
+        </methodref>
+        <methodref name="SetIme" visibility="protected" procflags="overload virtual">
+        </methodref>
+        <methodref name="SetImeCompositionWindow" visibility="protected">
+        </methodref>
+        <methodref name="SetParent" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="SetParentBackground" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetParentDoubleBuffered" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="SetZOrder" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="ShowControl" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="UpdateBounds" visibility="protected">
+        </methodref>
+        <methodref name="UpdateControlOriginalParentSize" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="UpdateRecreatingFlag" visibility="protected">
+        </methodref>
+        <methodref name="UpdateTIPStatus" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="UpdateUIState" visibility="protected">
+        </methodref>
+        <methodref name="WndProc" visibility="protected" procflags="override">
+        </methodref>
+        <methodref name="CreateSubClass" visibility="protected">
+        </methodref>
+        <methodref name="RemoveWindowProps" visibility="protected">
+        </methodref>
+        <methodref name="GetAllocatedWindowHandle" visibility="protected" procflags="override">
+        </methodref>
+        <propertyref name="AlignControlList" visibility="protected">
+        </propertyref>
+        <propertyref name="BevelEdges" visibility="protected">
+        </propertyref>
+        <propertyref name="BevelInner" visibility="protected">
+        </propertyref>
+        <propertyref name="BevelOuter" visibility="protected">
+        </propertyref>
+        <propertyref name="BevelKind" visibility="protected">
+        </propertyref>
+        <propertyref name="BevelWidth" visibility="protected">
+        </propertyref>
+        <propertyref name="BorderWidth" visibility="protected">
+        </propertyref>
+        <propertyref name="Ctl3D" visibility="protected">
+        </propertyref>
+        <propertyref name="ImeMode" visibility="protected">
+        </propertyref>
+        <propertyref name="ImeName" visibility="protected">
+        </propertyref>
+        <propertyref name="ParentBackground" visibility="protected">
+        </propertyref>
+        <propertyref name="ParentCtl3D" visibility="protected">
+        </propertyref>
+        <propertyref name="TipMode" visibility="protected">
+        </propertyref>
+        <propertyref name="DefWndProc" visibility="protected">
+        </propertyref>
+        <propertyref name="WindowHandle" visibility="protected">
+        </propertyref>
+        <eventref name="OnAlignInsertBefore" visibility="protected">
+        </eventref>
+        <eventref name="OnAlignPosition" visibility="protected">
+        </eventref>
+        <eventref name="OnDockDrop" visibility="protected">
+        </eventref>
+        <eventref name="OnDockOver" visibility="protected">
+        </eventref>
+        <eventref name="OnEnter" visibility="protected">
+        </eventref>
+        <eventref name="OnExit" visibility="protected">
+        </eventref>
+        <eventref name="OnGetSiteInfo" visibility="protected">
+        </eventref>
+        <eventref name="OnKeyDown" visibility="protected">
+        </eventref>
+        <eventref name="OnKeyPress" visibility="protected">
+        </eventref>
+        <eventref name="OnKeyUp" visibility="protected">
+        </eventref>
+        <eventref name="OnUnDock" visibility="protected">
+        </eventref>
+        <methodref name="Create" visibility="public" procflags="constructor override">
+        </methodref>
+        <methodref name="CreateParented" visibility="public" procflags="constructor">
+        </methodref>
+        <methodref name="CreateParentedControl" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="Destroy" visibility="public" procflags="destructor override">
+        </methodref>
+        <methodref name="ScaleForPPI" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="Broadcast" visibility="public">
+        </methodref>
+        <methodref name="CanFocus" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="ContainsControl" visibility="public">
+        </methodref>
+        <methodref name="ControlAtPos" visibility="public">
+        </methodref>
+        <methodref name="DefaultHandler" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="DisableAlign" visibility="public" procflags="inline">
+        </methodref>
+        <propertyref name="DockClientCount" visibility="public">
+        </propertyref>
+        <propertyref name="DockClients" visibility="public">
+        </propertyref>
+        <methodref name="DockDrop" visibility="public" procflags="dynamic">
+        </methodref>
+        <propertyref name="DockSite" visibility="public">
+        </propertyref>
+        <propertyref name="DockManager" visibility="public">
+        </propertyref>
+        <propertyref name="DoubleBuffered" visibility="public">
+        </propertyref>
+        <methodref name="EnableAlign" visibility="public">
+        </methodref>
+        <methodref name="FindChildControl" visibility="public">
+        </methodref>
+        <methodref name="FlipChildren" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="Focused" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="GetChildren" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="GetTabControlList" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="GetTabOrderList" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="HandleAllocated" visibility="public">
+        </methodref>
+        <methodref name="HandleNeeded" visibility="public">
+        </methodref>
+        <methodref name="InsertControl" visibility="public">
+        </methodref>
+        <methodref name="Invalidate" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="PaintTo" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="PaintTo" visibility="public" procflags="overload">
+        </methodref>
+        <propertyref name="PixelsPerInch" visibility="public">
+        </propertyref>
+        <methodref name="PreProcessMessage" visibility="public" procflags="dynamic">
+        </methodref>
+        <methodref name="RemoveControl" visibility="public">
+        </methodref>
+        <methodref name="Realign" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="Repaint" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="ScaleBy" visibility="public">
+        </methodref>
+        <methodref name="ScrollBy" visibility="public">
+        </methodref>
+        <methodref name="SetBounds" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="SetDesignVisible" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="SetFocus" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Update" visibility="public" procflags="override">
+        </methodref>
+        <methodref name="UpdateControlState" visibility="public">
+        </methodref>
+        <methodref name="LockDrawing" visibility="public">
+        </methodref>
+        <methodref name="UnlockDrawing" visibility="public">
+        </methodref>
+        <propertyref name="AlignDisabled" visibility="public">
+        </propertyref>
+        <propertyref name="MouseInClient" visibility="public">
+        </propertyref>
+        <propertyref name="VisibleDockClientCount" visibility="public">
+        </propertyref>
+        <propertyref name="Brush" visibility="public">
+        </propertyref>
+        <propertyref name="Controls" visibility="public">
+        </propertyref>
+        <propertyref name="ControlCount" visibility="public">
+        </propertyref>
+        <propertyref name="Handle" visibility="public">
+        </propertyref>
+        <propertyref name="Padding" visibility="public">
+        </propertyref>
+        <propertyref name="ParentDoubleBuffered" visibility="public">
+        </propertyref>
+        <propertyref name="ParentWindow" visibility="public">
+        </propertyref>
+        <propertyref name="Showing" visibility="public">
+        </propertyref>
+        <propertyref name="IsDrawingLocked" visibility="public">
+        </propertyref>
+        <propertyref name="RedrawDisabled" visibility="public">
+        </propertyref>
+        <propertyref name="TabOrder" visibility="public">
+        </propertyref>
+        <propertyref name="TabStop" visibility="public">
+        </propertyref>
+        <propertyref name="UseDockManager" visibility="public">
+        </propertyref>
+        <ancestor name="TControl" namespace="Vcl.Controls">
+          <methodref name="GetCustomHint" visibility="private">
+          </methodref>
+          <methodref name="CalcDockSizes" visibility="private">
+          </methodref>
+          <methodref name="CheckNewSize" visibility="private">
+          </methodref>
+          <methodref name="CreateFloatingDockSite" visibility="private">
+          </methodref>
+          <methodref name="DoActionChange" visibility="private">
+          </methodref>
+          <methodref name="DoCanAutoSize" visibility="private">
+          </methodref>
+          <methodref name="DoCanResize" visibility="private">
+          </methodref>
+          <methodref name="DoConstraintsChange" visibility="private">
+          </methodref>
+          <methodref name="DoConstrainedResize" visibility="private">
+          </methodref>
+          <methodref name="DoDragMsg" visibility="private">
+          </methodref>
+          <methodref name="DoMouseActivate" visibility="private">
+          </methodref>
+          <methodref name="DoMouseDown" visibility="private">
+          </methodref>
+          <methodref name="DoMouseUp" visibility="private">
+          </methodref>
+          <methodref name="DoMarginChange" visibility="private">
+          </methodref>
+          <methodref name="FontChanged" visibility="private">
+          </methodref>
+          <methodref name="GetAlignWithMargins" visibility="private" procflags="inline">
+          </methodref>
+          <methodref name="GetBoundsRect" visibility="private">
+          </methodref>
+          <methodref name="GetClientHeight" visibility="private">
+          </methodref>
+          <methodref name="GetClientWidth" visibility="private">
+          </methodref>
+          <methodref name="GetLRDockWidth" visibility="private">
+          </methodref>
+          <methodref name="GetMouseCapture" visibility="private">
+          </methodref>
+          <methodref name="GetTBDockHeight" visibility="private">
+          </methodref>
+          <methodref name="GetUndockWidth" visibility="private">
+          </methodref>
+          <methodref name="GetUndockHeight" visibility="private">
+          </methodref>
+          <methodref name="InvalidateControl" visibility="private">
+          </methodref>
+          <methodref name="IsAnchorsStored" visibility="private">
+          </methodref>
+          <methodref name="IsBiDiModeStored" visibility="private">
+          </methodref>
+          <methodref name="IsCaptionStored" visibility="private">
+          </methodref>
+          <methodref name="IsColorStored" visibility="private">
+          </methodref>
+          <methodref name="IsEnabledStored" visibility="private">
+          </methodref>
+          <methodref name="IsFontStored" visibility="private">
+          </methodref>
+          <methodref name="IsHintStored" visibility="private">
+          </methodref>
+          <methodref name="IsHelpContextStored" visibility="private">
+          </methodref>
+          <methodref name="IsOnClickStored" visibility="private">
+          </methodref>
+          <methodref name="IsShowHintStored" visibility="private">
+          </methodref>
+          <methodref name="IsVisibleStored" visibility="private">
+          </methodref>
+          <methodref name="ReadIsControl" visibility="private">
+          </methodref>
+          <methodref name="ReadExplicitLeft" visibility="private">
+          </methodref>
+          <methodref name="ReadExplicitTop" visibility="private">
+          </methodref>
+          <methodref name="ReadExplicitWidth" visibility="private">
+          </methodref>
+          <methodref name="ReadExplicitHeight" visibility="private">
+          </methodref>
+          <methodref name="SetAlignWithMargins" visibility="private">
+          </methodref>
+          <methodref name="SetAnchors" visibility="private">
+          </methodref>
+          <methodref name="SetAction" visibility="private">
+          </methodref>
+          <methodref name="SetAlign" visibility="private">
+          </methodref>
+          <methodref name="SetBoundsRect" visibility="private">
+          </methodref>
+          <methodref name="SetClientHeight" visibility="private">
+          </methodref>
+          <methodref name="SetClientSize" visibility="private">
+          </methodref>
+          <methodref name="SetClientWidth" visibility="private">
+          </methodref>
+          <methodref name="SetColor" visibility="private">
+          </methodref>
+          <methodref name="SetCursor" visibility="private">
+          </methodref>
+          <methodref name="SetDesktopFont" visibility="private">
+          </methodref>
+          <methodref name="SetFont" visibility="private">
+          </methodref>
+          <methodref name="SetHeight" visibility="private">
+          </methodref>
+          <methodref name="SetHelpContext" visibility="private">
+          </methodref>
+          <methodref name="SetHelpKeyword" visibility="private">
+          </methodref>
+          <methodref name="SetHostDockSite" visibility="private">
+          </methodref>
+          <methodref name="SetLeft" visibility="private">
+          </methodref>
+          <methodref name="SetMouseCapture" visibility="private">
+          </methodref>
+          <methodref name="SetParentColor" visibility="private">
+          </methodref>
+          <methodref name="SetParentFont" visibility="private">
+          </methodref>
+          <methodref name="SetShowHint" visibility="private">
+          </methodref>
+          <methodref name="SetParentShowHint" visibility="private">
+          </methodref>
+          <methodref name="SetParentCustomHint" visibility="private">
+          </methodref>
+          <methodref name="SetPopupMenu" visibility="private">
+          </methodref>
+          <methodref name="SetTop" visibility="private">
+          </methodref>
+          <methodref name="SetVisible" visibility="private">
+          </methodref>
+          <methodref name="SetWidth" visibility="private">
+          </methodref>
+          <methodref name="SetZOrderPosition" visibility="private">
+          </methodref>
+          <methodref name="UpdateAnchorRules" visibility="private">
+          </methodref>
+          <methodref name="WriteIsControl" visibility="private">
+          </methodref>
+          <methodref name="WriteExplicitLeft" visibility="private">
+          </methodref>
+          <methodref name="WriteExplicitTop" visibility="private">
+          </methodref>
+          <methodref name="WriteExplicitWidth" visibility="private">
+          </methodref>
+          <methodref name="WriteExplicitHeight" visibility="private">
+          </methodref>
+          <methodref name="WMLButtonDown" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMNCLButtonDown" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMRButtonDown" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMMButtonDown" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMLButtonDblClk" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMRButtonDblClk" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMMButtonDblClk" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMMouseMove" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMLButtonUp" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMRButtonUp" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMMButtonUp" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMMouseWheel" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMCancelMode" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMWindowPosChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMVisibleChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMEnabledChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMFontChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMColorChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMMouseActivate" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMParentFontChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMSysFontChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMParentColorChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMParentShowHintChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMHintShow" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMHitTest" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMMouseEnter" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMMouseLeave" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMDesignHitTest" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMBiDiModeChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMParentBiDiModeChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMMouseWheel" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMGesture" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="WMContextMenu" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="CMParentTabletOptionsChanged" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="SetConstraints" visibility="private">
+          </methodref>
+          <methodref name="SetMargins" visibility="private">
+          </methodref>
+          <methodref name="SetTouchManager" visibility="private">
+          </methodref>
+          <methodref name="GetText" visibility="private">
+          </methodref>
+          <methodref name="SetText" visibility="private">
+          </methodref>
+          <methodref name="CMFloat" visibility="private" procflags="message">
+          </methodref>
+          <methodref name="GetDesignDpi" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetParentCurrentDpi" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetCurrentPPI" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetDPIForDesigner" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="AsyncSchedule" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="ActionChange" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="AdjustSize" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="AssignTo" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="BeginAutoDrag" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="CanResize" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="CanAutoSize" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="Changed" visibility="protected">
+          </methodref>
+          <methodref name="ChangeScale" visibility="protected" procflags="overload dynamic">
+          </methodref>
+          <methodref name="ChangeScale" visibility="protected" procflags="overload dynamic">
+          </methodref>
+          <methodref name="Click" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="ConstrainedResize" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="CalcCursorPos" visibility="protected">
+          </methodref>
+          <methodref name="CreateTouchManager" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="DblClick" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DefaultDockImage" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DefineProperties" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="DockTrackNoTarget" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoContextPopup" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoEndDock" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoDock" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoStartDock" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoMouseWheel" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoMouseWheelDown" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoMouseWheelUp" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DragCanceled" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DragOver" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoEndDrag" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoStartDrag" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="DoGesture" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="DoGetGestureOptions" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="DrawDragDockImage" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="EraseDragDockImage" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetAction" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetActionLinkClass" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetClientOrigin" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetClientRect" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetDeviceContext" visibility="protected" procflags="overload virtual">
+          </methodref>
+          <methodref name="GetDockEdge" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetEnabled" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetFloating" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetFloatingDockSiteClass" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetPalette" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetPopupMenu" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetDragMode" visibility="protected">
+          </methodref>
+          <methodref name="IsTouchPropertyStored" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="Loaded" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="MouseActivate" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="MouseDown" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="MouseMove" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="MouseUp" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="Notification" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="PositionDockRect" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="PaletteChanged" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="ReadState" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="RequestAlign" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="Resize" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="ScaleConstraints" visibility="protected">
+          </methodref>
+          <methodref name="ScaleMargins" visibility="protected">
+          </methodref>
+          <methodref name="DefaultScalingFlags" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SendCancelMode" visibility="protected">
+          </methodref>
+          <methodref name="SendDockNotification" visibility="protected">
+          </methodref>
+          <methodref name="SetAutoSize" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetDragMode" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetEnabled" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetName" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="SetParent" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetParentBiDiMode" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetBiDiMode" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetStyleElements" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetStyleName" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetZOrder" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="SetCustomHint" visibility="protected">
+          </methodref>
+          <methodref name="UpdateExplicitBounds" visibility="protected">
+          </methodref>
+          <methodref name="UpdateBoundsRect" visibility="protected">
+          </methodref>
+          <methodref name="VisibleChanging" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="WndProc" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="UpdateStyleElements" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="DesignWndProc" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetDragImages" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetAllocatedWindowHandle" visibility="protected" procflags="virtual">
+          </methodref>
+          <propertyref name="ActionLink" visibility="protected">
+          </propertyref>
+          <propertyref name="AutoSize" visibility="protected">
+          </propertyref>
+          <propertyref name="Caption" visibility="protected">
+          </propertyref>
+          <propertyref name="DesktopFont" visibility="protected">
+          </propertyref>
+          <propertyref name="DragKind" visibility="protected">
+          </propertyref>
+          <propertyref name="DragCursor" visibility="protected">
+          </propertyref>
+          <propertyref name="DragMode" visibility="protected">
+          </propertyref>
+          <propertyref name="IsControl" visibility="protected">
+          </propertyref>
+          <propertyref name="MouseCapture" visibility="protected">
+          </propertyref>
+          <propertyref name="ParentBiDiMode" visibility="protected">
+          </propertyref>
+          <propertyref name="ParentColor" visibility="protected">
+          </propertyref>
+          <propertyref name="ParentFont" visibility="protected">
+          </propertyref>
+          <propertyref name="ParentShowHint" visibility="protected">
+          </propertyref>
+          <propertyref name="PopupMenu" visibility="protected">
+          </propertyref>
+          <propertyref name="ScalingFlags" visibility="protected">
+          </propertyref>
+          <propertyref name="Text" visibility="protected">
+          </propertyref>
+          <propertyref name="WheelAccumulator" visibility="protected">
+          </propertyref>
+          <propertyref name="Color" visibility="protected">
+          </propertyref>
+          <propertyref name="Font" visibility="protected">
+          </propertyref>
+          <propertyref name="IScaling" visibility="protected">
+          </propertyref>
+          <propertyref name="WindowText" visibility="protected">
+          </propertyref>
+          <eventref name="OnCanResize" visibility="protected">
+          </eventref>
+          <eventref name="OnClick" visibility="protected">
+          </eventref>
+          <eventref name="OnConstrainedResize" visibility="protected">
+          </eventref>
+          <eventref name="OnContextPopup" visibility="protected">
+          </eventref>
+          <eventref name="OnDblClick" visibility="protected">
+          </eventref>
+          <eventref name="OnDragDrop" visibility="protected">
+          </eventref>
+          <eventref name="OnDragOver" visibility="protected">
+          </eventref>
+          <eventref name="OnEndDock" visibility="protected">
+          </eventref>
+          <eventref name="OnEndDrag" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseActivate" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseDown" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseEnter" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseLeave" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseMove" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseUp" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseWheel" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseWheelDown" visibility="protected">
+          </eventref>
+          <eventref name="OnMouseWheelUp" visibility="protected">
+          </eventref>
+          <eventref name="OnResize" visibility="protected">
+          </eventref>
+          <eventref name="OnStartDock" visibility="protected">
+          </eventref>
+          <eventref name="OnStartDrag" visibility="protected">
+          </eventref>
+          <methodref name="Create" visibility="public" procflags="constructor override">
+          </methodref>
+          <methodref name="Destroy" visibility="public" procflags="destructor override">
+          </methodref>
+          <methodref name="CheckNonMainThreadUsage" visibility="public">
+          </methodref>
+          <methodref name="IsCustomStyleActive" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="IsLightStyleColor" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="ScaleForPPI" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="BeginDrag" visibility="public">
+          </methodref>
+          <methodref name="BringToFront" visibility="public">
+          </methodref>
+          <methodref name="ClientToScreen" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ClientToScreen" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ClientToParent" visibility="public">
+          </methodref>
+          <methodref name="Dock" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="Dragging" visibility="public">
+          </methodref>
+          <methodref name="DragDrop" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="DrawTextBiDiModeFlags" visibility="public">
+          </methodref>
+          <methodref name="DrawTextBiDiModeFlagsReadingOnly" visibility="public">
+          </methodref>
+          <propertyref name="Enabled" visibility="public">
+          </propertyref>
+          <methodref name="EndDrag" visibility="public">
+          </methodref>
+          <methodref name="GetControlsAlignment" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="GetParentComponent" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="HasParent" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="Hide" visibility="public">
+          </methodref>
+          <methodref name="InitiateAction" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="Invalidate" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="MouseWheelHandler" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="IsRightToLeft" visibility="public">
+          </methodref>
+          <methodref name="ManualDock" visibility="public">
+          </methodref>
+          <methodref name="ManualFloat" visibility="public">
+          </methodref>
+          <methodref name="Perform" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="Refresh" visibility="public">
+          </methodref>
+          <methodref name="Repaint" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="ReplaceDockedControl" visibility="public">
+          </methodref>
+          <methodref name="ScreenToClient" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScreenToClient" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ParentToClient" visibility="public">
+          </methodref>
+          <methodref name="SendToBack" visibility="public">
+          </methodref>
+          <methodref name="SetBounds" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="SetDesignVisible" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="SetParentComponent" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="Show" visibility="public">
+          </methodref>
+          <methodref name="Update" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="UseRightToLeftAlignment" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="UseRightToLeftReading" visibility="public">
+          </methodref>
+          <methodref name="UseRightToLeftScrollBar" visibility="public">
+          </methodref>
+          <methodref name="DefaultHandler" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="GetTextBuf" visibility="public">
+          </methodref>
+          <methodref name="GetTextLen" visibility="public">
+          </methodref>
+          <methodref name="Perform" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="Perform" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="SetTextBuf" visibility="public">
+          </methodref>
+          <methodref name="GetSystemMetrics" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="GetStyleName" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="ScaleValue" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScaleValue" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScaleValue" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScaleValue" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScaleValue" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="ScaleRectSize" visibility="public">
+          </methodref>
+          <propertyref name="Action" visibility="public">
+          </propertyref>
+          <propertyref name="Align" visibility="public">
+          </propertyref>
+          <propertyref name="Anchors" visibility="public">
+          </propertyref>
+          <propertyref name="BiDiMode" visibility="public">
+          </propertyref>
+          <propertyref name="BoundsRect" visibility="public">
+          </propertyref>
+          <propertyref name="ClientHeight" visibility="public">
+          </propertyref>
+          <propertyref name="ClientOrigin" visibility="public">
+          </propertyref>
+          <propertyref name="ClientRect" visibility="public">
+          </propertyref>
+          <propertyref name="ClientWidth" visibility="public">
+          </propertyref>
+          <propertyref name="Constraints" visibility="public">
+          </propertyref>
+          <propertyref name="ControlState" visibility="public">
+          </propertyref>
+          <propertyref name="ControlStyle" visibility="public">
+          </propertyref>
+          <propertyref name="CurrentPPI" visibility="public">
+          </propertyref>
+          <propertyref name="DockOrientation" visibility="public">
+          </propertyref>
+          <propertyref name="ExplicitLeft" visibility="public">
+          </propertyref>
+          <propertyref name="ExplicitTop" visibility="public">
+          </propertyref>
+          <propertyref name="ExplicitWidth" visibility="public">
+          </propertyref>
+          <propertyref name="ExplicitHeight" visibility="public">
+          </propertyref>
+          <propertyref name="Floating" visibility="public">
+          </propertyref>
+          <propertyref name="FloatingDockSiteClass" visibility="public">
+          </propertyref>
+          <propertyref name="HostDockSite" visibility="public">
+          </propertyref>
+          <propertyref name="LRDockWidth" visibility="public">
+          </propertyref>
+          <propertyref name="ScaleFactor" visibility="public">
+          </propertyref>
+          <propertyref name="ShowHint" visibility="public">
+          </propertyref>
+          <propertyref name="TBDockHeight" visibility="public">
+          </propertyref>
+          <propertyref name="Touch" visibility="public">
+          </propertyref>
+          <propertyref name="UndockHeight" visibility="public">
+          </propertyref>
+          <propertyref name="UndockWidth" visibility="public">
+          </propertyref>
+          <propertyref name="Visible" visibility="public">
+          </propertyref>
+          <eventref name="WindowProc" visibility="public">
+          </eventref>
+          <propertyref name="Parent" visibility="public">
+          </propertyref>
+          <propertyref name="StyleElements" visibility="public">
+          </propertyref>
+          <propertyref name="StyleName" visibility="public">
+          </propertyref>
+          <eventref name="OnGesture" visibility="public">
+          </eventref>
+          <propertyref name="RaiseOnNonMainThreadUsage" visibility="public">
+          </propertyref>
+          <propertyref name="AlignWithMargins" visibility="published">
+          </propertyref>
+          <propertyref name="Left" visibility="published">
+          </propertyref>
+          <propertyref name="Top" visibility="published">
+          </propertyref>
+          <propertyref name="Width" visibility="published">
+          </propertyref>
+          <propertyref name="Height" visibility="published">
+          </propertyref>
+          <propertyref name="Cursor" visibility="published">
+          </propertyref>
+          <propertyref name="Hint" visibility="published">
+          </propertyref>
+          <propertyref name="HelpType" visibility="published">
+          </propertyref>
+          <propertyref name="HelpKeyword" visibility="published">
+          </propertyref>
+          <propertyref name="HelpContext" visibility="published">
+          </propertyref>
+          <propertyref name="Margins" visibility="published">
+          </propertyref>
+          <propertyref name="CustomHint" visibility="published">
+          </propertyref>
+          <propertyref name="ParentCustomHint" visibility="published">
+          </propertyref>
+          <ancestor name="TComponent" namespace="System.Classes">
+            <interfaces>
+              <implements name="IInterfaceComponentReference"/>
+              <implements name="IInterface"/>
+            </interfaces>
+            <methodref name="GetComObject" visibility="private">
+            </methodref>
+            <methodref name="GetComponent" visibility="private">
+            </methodref>
+            <methodref name="GetComponentCount" visibility="private">
+            </methodref>
+            <methodref name="GetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="Insert" visibility="private">
+            </methodref>
+            <methodref name="ReadLeft" visibility="private">
+            </methodref>
+            <methodref name="ReadTop" visibility="private">
+            </methodref>
+            <methodref name="Remove" visibility="private">
+            </methodref>
+            <methodref name="RemoveNotification" visibility="private">
+            </methodref>
+            <methodref name="SetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="SetReference" visibility="private">
+            </methodref>
+            <methodref name="WriteLeft" visibility="private">
+            </methodref>
+            <methodref name="WriteTop" visibility="private">
+            </methodref>
+            <methodref name="IntfGetComponent" visibility="private">
+            </methodref>
+            <methodref name="DoGetDeltaStreams" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaStream" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaState" visibility="private">
+            </methodref>
+            <methodref name="FindSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="AddSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="RemoveSortedComponent" visibility="private" procflags="inline">
+            </methodref>
+            <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+            </methodref>
+            <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ChangeName" visibility="protected">
+            </methodref>
+            <methodref name="DefineProperties" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="GetChildren" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildOwner" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildParent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetOwner" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="Loaded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="Notification" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ReadState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="CanObserve" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ObserverAdded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetObservers" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetAncestor" visibility="protected">
+            </methodref>
+            <methodref name="SetDesigning" visibility="protected">
+            </methodref>
+            <methodref name="SetInline" visibility="protected">
+            </methodref>
+            <methodref name="SetDesignInstance" visibility="protected">
+            </methodref>
+            <methodref name="SetName" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetChildOrder" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="SetParentComponent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updating" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updated" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual">
+            </methodref>
+            <methodref name="ValidateRename" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ValidateContainer" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ValidateInsert" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="WriteState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="RemoveFreeNotifications" visibility="protected">
+            </methodref>
+            <methodref name="QueryInterface" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="_AddRef" visibility="protected">
+            </methodref>
+            <methodref name="_Release" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfoCount" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfo" visibility="protected">
+            </methodref>
+            <methodref name="GetIDsOfNames" visibility="protected">
+            </methodref>
+            <methodref name="Invoke" visibility="protected">
+            </methodref>
+            <eventref name="OnGetDeltaStreams" visibility="protected">
+            </eventref>
+            <methodref name="Create" visibility="public" procflags="constructor virtual">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor override">
+            </methodref>
+            <methodref name="BeforeDestruction" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndFunctionInvoke" visibility="public">
+            </methodref>
+            <methodref name="DestroyComponents" visibility="public">
+            </methodref>
+            <methodref name="Destroying" visibility="public">
+            </methodref>
+            <methodref name="ExecuteAction" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="FindComponent" visibility="public">
+            </methodref>
+            <methodref name="FreeNotification" visibility="public">
+            </methodref>
+            <methodref name="RemoveFreeNotification" visibility="public">
+            </methodref>
+            <methodref name="FreeOnRelease" visibility="public">
+            </methodref>
+            <methodref name="GetEnumerator" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="GetParentComponent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="GetNamePath" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="HasParent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="InsertComponent" visibility="public">
+            </methodref>
+            <methodref name="RemoveComponent" visibility="public">
+            </methodref>
+            <methodref name="SetSubComponent" visibility="public">
+            </methodref>
+            <methodref name="SafeCallException" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="UpdateAction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="IsImplementorOf" visibility="public">
+            </methodref>
+            <methodref name="ReferenceInterface" visibility="public">
+            </methodref>
+            <propertyref name="ComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Components" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentCount" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentIndex" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentState" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentStyle" visibility="public">
+            </propertyref>
+            <propertyref name="DesignInfo" visibility="public">
+            </propertyref>
+            <propertyref name="Owner" visibility="public">
+            </propertyref>
+            <propertyref name="VCLComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Observers" visibility="public">
+            </propertyref>
+            <propertyref name="Name" visibility="published">
+            </propertyref>
+            <propertyref name="Tag" visibility="published">
+            </propertyref>
+            <ancestor name="TPersistent" namespace="System.Classes">
+              <methodref name="AssignError" visibility="private">
+              </methodref>
+              <methodref name="AssignTo" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="DefineProperties" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="GetOwner" visibility="protected" procflags="dynamic">
+              </methodref>
+              <methodref name="Destroy" visibility="public" procflags="destructor override">
+              </methodref>
+              <methodref name="Assign" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="GetNamePath" visibility="public" procflags="dynamic">
+              </methodref>
+              <ancestor name="TObject" namespace="System">
+                <methodref name="Create" visibility="public" procflags="constructor">
+                </methodref>
+                <methodref name="Free" visibility="public">
+                </methodref>
+                <methodref name="DisposeOf" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="InitInstance" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="CleanupInstance" visibility="public">
+                </methodref>
+                <methodref name="ClassType" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="ClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassNameIs" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassParent" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="ClassInfo" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InstanceSize" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InheritsFrom" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="QualifiedClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="GetInterface" visibility="public">
+                </methodref>
+                <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="UnitName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="UnitScope" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="Equals" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="GetHashCode" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="ToString" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="SafeCallException" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Dispatch" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="NewInstance" visibility="public" procflags="class virtual">
+                </methodref>
+                <methodref name="FreeInstance" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+                </methodref>
+                <methodref name="GetDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <propertyref name="Disposed" visibility="protected">
+                </propertyref>
+              </ancestor>
+            </ancestor>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <field name="Buttons" visibility="private" size="144" offset="696" file="Vcl.MPlayer.pas" line="64">
+        <array name="Buttons" visibility="private" file="Vcl.MPlayer.pas" line="64">
+          <element type="TMPButton"/>
+        </array>
+      </field>
+      <field name="FVisibleButtons" type="TButtonSet" visibility="private" size="2" offset="840" file="Vcl.MPlayer.pas" line="65"/>
+      <field name="FEnabledButtons" type="TButtonSet" visibility="private" size="2" offset="842" file="Vcl.MPlayer.pas" line="66"/>
+      <field name="FColoredButtons" type="TButtonSet" visibility="private" size="2" offset="844" file="Vcl.MPlayer.pas" line="67"/>
+      <field name="FAutoButtons" type="TButtonSet" visibility="private" size="2" offset="846" file="Vcl.MPlayer.pas" line="68"/>
+      <field name="Pressed" type="Boolean" visibility="private" size="1" offset="848" file="Vcl.MPlayer.pas" line="69"/>
+      <field name="Down" type="Boolean" visibility="private" size="1" offset="849" file="Vcl.MPlayer.pas" line="70"/>
+      <field name="CurrentButton" type="TMPBtnType" visibility="private" size="1" offset="850" file="Vcl.MPlayer.pas" line="71"/>
+      <field name="CurrentRect" type="TRect" visibility="private" size="16" offset="852" file="Vcl.MPlayer.pas" line="72"/>
+      <field name="ButtonWidth" type="Integer" visibility="private" size="4" offset="868" file="Vcl.MPlayer.pas" line="73"/>
+      <field name="MinBtnSize" type="TPoint" visibility="private" size="8" offset="872" file="Vcl.MPlayer.pas" line="74"/>
+      <field name="FOnClick" type="EMPNotify" visibility="private" size="8" offset="880" file="Vcl.MPlayer.pas" line="75"/>
+      <field name="FOnPostClick" type="EMPPostNotify" visibility="private" size="8" offset="888" file="Vcl.MPlayer.pas" line="76"/>
+      <field name="FOnNotify" type="TNotifyEvent" visibility="private" size="8" offset="896" file="Vcl.MPlayer.pas" line="77"/>
+      <field name="FocusedButton" type="TMPBtnType" visibility="private" size="1" offset="904" file="Vcl.MPlayer.pas" line="78"/>
+      <field name="MCIOpened" type="Boolean" visibility="private" size="1" offset="905" file="Vcl.MPlayer.pas" line="79"/>
+      <field name="FCapabilities" type="TMPDevCapsSet" visibility="private" size="1" offset="906" file="Vcl.MPlayer.pas" line="80"/>
+      <field name="FCanPlay" type="Boolean" visibility="private" size="1" offset="907" file="Vcl.MPlayer.pas" line="81"/>
+      <field name="FCanStep" type="Boolean" visibility="private" size="1" offset="908" file="Vcl.MPlayer.pas" line="82"/>
+      <field name="FCanEject" type="Boolean" visibility="private" size="1" offset="909" file="Vcl.MPlayer.pas" line="83"/>
+      <field name="FCanRecord" type="Boolean" visibility="private" size="1" offset="910" file="Vcl.MPlayer.pas" line="84"/>
+      <field name="FHasVideo" type="Boolean" visibility="private" size="1" offset="911" file="Vcl.MPlayer.pas" line="85"/>
+      <field name="FFlags" type="Integer" visibility="private" size="4" offset="912" file="Vcl.MPlayer.pas" line="86"/>
+      <field name="FWait" type="Boolean" visibility="private" size="1" offset="916" file="Vcl.MPlayer.pas" line="87"/>
+      <field name="FNotify" type="Boolean" visibility="private" size="1" offset="917" file="Vcl.MPlayer.pas" line="88"/>
+      <field name="FUseWait" type="Boolean" visibility="private" size="1" offset="918" file="Vcl.MPlayer.pas" line="89"/>
+      <field name="FUseNotify" type="Boolean" visibility="private" size="1" offset="919" file="Vcl.MPlayer.pas" line="90"/>
+      <field name="FUseFrom" type="Boolean" visibility="private" size="1" offset="920" file="Vcl.MPlayer.pas" line="91"/>
+      <field name="FUseTo" type="Boolean" visibility="private" size="1" offset="921" file="Vcl.MPlayer.pas" line="92"/>
+      <field name="FDeviceID" type="Word" visibility="private" size="2" offset="922" file="Vcl.MPlayer.pas" line="93"/>
+      <field name="FDeviceType" type="TMPDeviceTypes" visibility="private" size="1" offset="924" file="Vcl.MPlayer.pas" line="94"/>
+      <field name="FTo" type="Integer" visibility="private" size="4" offset="928" file="Vcl.MPlayer.pas" line="95"/>
+      <field name="FFrom" type="Integer" visibility="private" size="4" offset="932" file="Vcl.MPlayer.pas" line="96"/>
+      <field name="FFrames" type="Integer" visibility="private" size="4" offset="936" file="Vcl.MPlayer.pas" line="97"/>
+      <field name="FError" type="Integer" visibility="private" size="4" offset="940" file="Vcl.MPlayer.pas" line="98"/>
+      <field name="FNotifyValue" type="TMPNotifyValues" visibility="private" size="1" offset="944" file="Vcl.MPlayer.pas" line="99"/>
+      <field name="FDisplay" type="TWinControl" visibility="private" size="4" offset="948" file="Vcl.MPlayer.pas" line="100"/>
+      <field name="FDWidth" type="Integer" visibility="private" size="4" offset="952" file="Vcl.MPlayer.pas" line="101"/>
+      <field name="FDHeight" type="Integer" visibility="private" size="4" offset="956" file="Vcl.MPlayer.pas" line="102"/>
+      <field name="FElementName" type="string" visibility="private" size="4" offset="960" file="Vcl.MPlayer.pas" line="103"/>
+      <field name="FAutoEnable" type="Boolean" visibility="private" size="1" offset="964" file="Vcl.MPlayer.pas" line="104"/>
+      <field name="FAutoOpen" type="Boolean" visibility="private" size="1" offset="965" file="Vcl.MPlayer.pas" line="105"/>
+      <field name="FAutoRewind" type="Boolean" visibility="private" size="1" offset="966" file="Vcl.MPlayer.pas" line="106"/>
+      <field name="FShareable" type="Boolean" visibility="private" size="1" offset="967" file="Vcl.MPlayer.pas" line="107"/>
+      <procedure name="LoadBitmaps" visibility="private" file="Vcl.MPlayer.pas" line="108">
+      </procedure>
+      <procedure name="DestroyBitmaps" visibility="private" file="Vcl.MPlayer.pas" line="109">
+      </procedure>
+      <procedure name="SetEnabledButtons" visibility="private" file="Vcl.MPlayer.pas" line="110">
+        <parameters>
+          <parameter name="Value" type="TButtonSet"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetColored" visibility="private" file="Vcl.MPlayer.pas" line="111">
+        <parameters>
+          <parameter name="Value" type="TButtonSet"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetVisible" visibility="private" file="Vcl.MPlayer.pas" line="112">
+        <parameters>
+          <parameter name="Value" type="TButtonSet"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetAutoEnable" visibility="private" file="Vcl.MPlayer.pas" line="113">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="DrawAutoButtons" visibility="private" file="Vcl.MPlayer.pas" line="114">
+      </procedure>
+      <procedure name="DoMouseDown" visibility="private" file="Vcl.MPlayer.pas" line="115">
+        <parameters>
+          <parameter name="XPos" type="Integer"/>
+          <parameter name="YPos" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMLButtonDown" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="116">
+        <parameters>
+          <parameter name="Message" type="TWMMouse" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMLButtonDblClk" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="117">
+        <parameters>
+          <parameter name="Message" type="TWMMouse" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMMouseMove" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="118">
+        <parameters>
+          <parameter name="Message" type="TWMMouse" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMLButtonUp" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="119">
+        <parameters>
+          <parameter name="Message" type="TWMMouse" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMSetFocus" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="120">
+        <parameters>
+          <parameter name="Message" type="TWMSetFocus" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMKillFocus" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="121">
+        <parameters>
+          <parameter name="Message" type="TWMKillFocus" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMGetDlgCode" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="122">
+        <parameters>
+          <parameter name="Message" type="TWMNoParams" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="WMSize" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="123">
+        <parameters>
+          <parameter name="Message" type="TWMSize" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="CMEnabledChanged" visibility="private" procflags="message" file="Vcl.MPlayer.pas" line="124">
+        <parameters>
+          <parameter name="Message" type="TMessage" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <function name="VisibleButtonCount" visibility="private" file="Vcl.MPlayer.pas" line="125">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="Adjust" visibility="private" file="Vcl.MPlayer.pas" line="126">
+      </procedure>
+      <procedure name="DoClick" visibility="private" file="Vcl.MPlayer.pas" line="127">
+        <parameters>
+          <parameter name="Button" type="TMPBtnType"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoPostClick" visibility="private" file="Vcl.MPlayer.pas" line="128">
+        <parameters>
+          <parameter name="Button" type="TMPBtnType"/>
+        </parameters>
+      </procedure>
+      <procedure name="DrawButton" visibility="private" file="Vcl.MPlayer.pas" line="129">
+        <parameters>
+          <parameter name="Btn" type="TMPBtnType"/>
+          <parameter name="X" type="Integer"/>
+          <parameter name="DPI" type="Integer">
+            <value>
+              $0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="CheckIfOpen" visibility="private" file="Vcl.MPlayer.pas" line="130">
+      </procedure>
+      <procedure name="SetPosition" visibility="private" file="Vcl.MPlayer.pas" line="131">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetDeviceType" visibility="private" file="Vcl.MPlayer.pas" line="132">
+        <parameters>
+          <parameter name="Value" type="TMPDeviceTypes"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetWait" visibility="private" file="Vcl.MPlayer.pas" line="133">
+        <parameters>
+          <parameter name="Flag" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetNotify" visibility="private" file="Vcl.MPlayer.pas" line="134">
+        <parameters>
+          <parameter name="Flag" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetFrom" visibility="private" file="Vcl.MPlayer.pas" line="135">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTo" visibility="private" file="Vcl.MPlayer.pas" line="136">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTimeFormat" visibility="private" file="Vcl.MPlayer.pas" line="137">
+        <parameters>
+          <parameter name="Value" type="TMPTimeFormats"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetDisplay" visibility="private" file="Vcl.MPlayer.pas" line="138">
+        <parameters>
+          <parameter name="Value" type="TWinControl"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetOrigDisplay" visibility="private" file="Vcl.MPlayer.pas" line="139">
+      </procedure>
+      <procedure name="SetDisplayRect" visibility="private" file="Vcl.MPlayer.pas" line="140">
+        <parameters>
+          <parameter name="Value" type="TRect"/>
+        </parameters>
+      </procedure>
+      <function name="GetDisplayRect" visibility="private" file="Vcl.MPlayer.pas" line="141">
+        <parameters>
+          <retval type="TRect"/>
+        </parameters>
+      </function>
+      <procedure name="GetDeviceCaps" visibility="private" file="Vcl.MPlayer.pas" line="142">
+      </procedure>
+      <function name="GetDeviceID" visibility="private" file="Vcl.MPlayer.pas" line="143">
+        <parameters>
+          <retval type="Word"/>
+        </parameters>
+      </function>
+      <function name="GetFileName" visibility="private" file="Vcl.MPlayer.pas" line="144">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetStart" visibility="private" file="Vcl.MPlayer.pas" line="145">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetLength" visibility="private" file="Vcl.MPlayer.pas" line="146">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetMode" visibility="private" file="Vcl.MPlayer.pas" line="147">
+        <parameters>
+          <retval type="TMPModes"/>
+        </parameters>
+      </function>
+      <function name="GetTracks" visibility="private" file="Vcl.MPlayer.pas" line="148">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetPosition" visibility="private" file="Vcl.MPlayer.pas" line="149">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetErrorMessage" visibility="private" file="Vcl.MPlayer.pas" line="150">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetTimeFormat" visibility="private" file="Vcl.MPlayer.pas" line="151">
+        <parameters>
+          <retval type="TMPTimeFormats"/>
+        </parameters>
+      </function>
+      <function name="GetTrackLength" visibility="private" file="Vcl.MPlayer.pas" line="152">
+        <parameters>
+          <parameter name="TrackNum" type="Integer"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetTrackPosition" visibility="private" file="Vcl.MPlayer.pas" line="153">
+        <parameters>
+          <parameter name="TrackNum" type="Integer"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetFileName" visibility="private" file="Vcl.MPlayer.pas" line="154">
+        <parameters>
+          <parameter name="Value" type="string"/>
+        </parameters>
+      </procedure>
+      <procedure name="KeyDown" visibility="protected" procflags="override" file="Vcl.MPlayer.pas" line="156">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="var"/>
+          <parameter name="Shift" type="TShiftState"/>
+        </parameters>
+      <devnotes><summary>
+Provides responses when the user types arrow keys or the space bar.
+KeyDown overrides the inherited method to implement the media player's response to certain keystrokes. It changes the current button when the user types the left or right arrow keys. When the user presses the space bar, KeyDown simulates a click on the current button.
+</summary></devnotes></procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="Vcl.MPlayer.pas" line="157">
+      <devnotes><summary>
+Initializes the media player after it is loaded from a stream.
+Loaded provides an opportunity for a component to initialize itself after all its parts have loaded from a stream. TMediaPlayer overrides the inherited method to implement the AutoOpen property.
+</summary></devnotes></procedure>
+      <procedure name="AutoButtonSet" visibility="protected" procflags="dynamic" file="Vcl.MPlayer.pas" line="158">
+        <parameters>
+          <parameter name="Btn" type="TMPBtnType"/>
+        </parameters>
+      <devnotes><summary>
+Enables or Disables the media player's buttons.
+AutoButtonSet implements the automatic enabling and disabling of the media player's buttons when the AutoEnable property is true. The Btn parameter indicates which of the media player's buttons the user pressed.
+</summary></devnotes></procedure>
+      <procedure name="Notification" visibility="protected" procflags="override" file="Vcl.MPlayer.pas" line="159">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+Responds when components are about to be inserted or removed.
+By default, components pass along the notification to their owned components, if any. Notification calls the inherited Notification and then, if the Display window is deleted at runtime, it sets the video display back to original window.
+</summary></devnotes></procedure>
+      <procedure name="Paint" visibility="protected" procflags="override" file="Vcl.MPlayer.pas" line="160">
+      <devnotes><summary>
+Renders the image of the media player.
+When the media player component receives a WM_PAINT message, like other custom controls, it responds by initializing the control's canvas and calling Paint. Paint draws the frame and all visible buttons.
+When creating a descendant media player class, Paint can be overridden to draw the image of the corresponding media player object.
+</summary></devnotes></procedure>
+      <procedure name="MMNotify" visibility="protected" procflags="message" file="Vcl.MPlayer.pas" line="161">
+        <parameters>
+          <parameter name="Message" type="TMessage" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Responds to a notification that the MCI device has completed an operation.
+MMNotify responds to a notification message from Windows that a multimedia command completed by updating button states if the AutoEnable property is true, setting internal flags to reflect the outcome of the command, then calling the DoNotify method to trigger the OnNotify event and any other special responses.
+</summary></devnotes></procedure>
+      <procedure name="Click" visibility="protected" procflags="dynamic" file="Vcl.MPlayer.pas" line="162">
+        <parameters>
+          <parameter name="Button" type="TMPBtnType"/>
+          <parameter name="DoDefault" type="Boolean" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Generates an OnClick event.
+Click for media-player components is the implementation method for the OnClick event. By default, Click does nothing other than call any event handler attached to the media player's OnClick event. Click can be overridden in descendant classes to customize responses to clicks.
+</summary></devnotes></procedure>
+      <procedure name="PostClick" visibility="protected" procflags="dynamic" file="Vcl.MPlayer.pas" line="163">
+        <parameters>
+          <parameter name="Button" type="TMPBtnType"/>
+        </parameters>
+      <devnotes><summary>
+Determines the action that takes place when an OnPostClick event occurs.
+PostClick is the implementation method for the OnPostClick event. By default, PostClick does nothing other than call any event handler attached to the media player's OnPostClick event. PostClick can be overridden in descendant types to customize responses to clicks.
+</summary></devnotes></procedure>
+      <procedure name="DoNotify" visibility="protected" procflags="dynamic" file="Vcl.MPlayer.pas" line="164">
+      <devnotes><summary>
+Generates an OnNotify event.
+DoNotify is the implementation method for a media-player component's OnNotify event. The media player's MMNotify method calls DoNotify after correcting the enabling and disabling of buttons and setting internal flags from the values passed in the notification message parameters.
+By default, DoNotify does nothing except call any event handler attached to the media player's OnNotify event. DoNotify can be overridden to provide other responses in addition to the inherited event-handler call.
+</summary></devnotes></procedure>
+      <procedure name="Updated" visibility="protected" procflags="override" file="Vcl.MPlayer.pas" line="165">
+      <devnotes><summary>
+Signals that the media player has finished updating.
+Updated calls the inherited Updated before it modifies the layout of the media player buttons and forces a repaint.
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="Vcl.MPlayer.pas" line="167">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates a media player object.
+Call Create to instantiate a media player at runtime. For media players created at design time, Create is called automatically.
+Create allocates memory for a media player and calls the inherited Create. Then it loads the bitmaps for the media player's buttons and initializes its properties, setting AutoEnable, AutoRewind, Colored, Enabled, and Visible to true, AutoOpen to false, and DeviceType to dtAutoSelect.
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="Vcl.MPlayer.pas" line="168">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys an instance of the media player.
+Do not call Destroy directly in an application. Call Free instead. Free checks that the TMediaPlayer reference is not nil before it calls Destroy.
+Destroy first verifies that no device is open, then destroys the bitmaps used for the media player's buttons and calls the inherited Destroy.
+</summary></devnotes></destructor>
+      <procedure name="Open" visibility="public" file="Vcl.MPlayer.pas" line="169">
+      <devnotes><summary>
+Opens a multimedia device.
+Use Open to open a multimedia device. The multimedia device type must be specified in the DeviceType property before a device can be opened.
+Upon completion, Open stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Open method is completed. The Notify property determines whether Open generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Close" visibility="public" file="Vcl.MPlayer.pas" line="170">
+      <devnotes><summary>
+Closes the open multimedia device.
+Upon completion, Close stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Close method is completed. The Notify property determines whether Close generates an OnNotify event.
+Close is called automatically when the application is terminated.
+</summary></devnotes></procedure>
+      <procedure name="Play" visibility="public" file="Vcl.MPlayer.pas" line="171">
+      <devnotes><summary>
+Plays the media loaded in the open multimedia device.
+Play is called when the Play button on the media player control is clicked at runtime.
+Upon completion, Play stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Play method has completed. The Notify property determines whether Play generates an OnNotify event.
+If the StartPos property is set, playing starts at the position specified in StartPos. Otherwise, playing starts at the current position, specified in the Position property. Similarly, if the EndPos property is set, playing stops at the position specified in EndPos. Otherwise, playing stops at the end of the medium.
+Whether the medium (specified in the Position property) is rewound before playing starts depends on the AutoRewind property.
+</summary></devnotes></procedure>
+      <procedure name="Stop" visibility="public" file="Vcl.MPlayer.pas" line="172">
+      <devnotes><summary>
+Halts playing or recording.
+Stop is called when the Stop button on the media player control is clicked at runtime.
+Upon completion, Stop stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Stop method has completed. The Notify property determines whether Stop generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Pause" visibility="public" file="Vcl.MPlayer.pas" line="173">
+      <devnotes><summary>
+Toggles the open multimedia device on or off.
+If the device is already paused when Pause is called, the device resumes playing or recording by calling the Resume method. Pause is called when the Pause button on the media player control is clicked at runtime.
+Upon completion, Pause stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Pause method has completed. The Notify property determines whether Pause generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Step" visibility="public" file="Vcl.MPlayer.pas" line="174">
+      <devnotes><summary>
+Moves forward a number of frames (determined by the Frames property) in the currently loaded medium.
+Step is called when the Step button on the media player control is clicked at runtime.
+Upon completion, Step stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Step method has completed. The Notify property determines whether Step generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Back" visibility="public" file="Vcl.MPlayer.pas" line="175">
+      <devnotes><summary>
+Steps backward a number of frames (determined by the value of the Frames property) in the currently loaded medium.
+Back is called when the Back button on the media player control is clicked at runtime.
+Upon completion, Back stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Back method has been completed. The Notify property determines whether Back generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Previous" visibility="public" file="Vcl.MPlayer.pas" line="176">
+      <devnotes><summary>
+Sets the current position to the beginning of the previous track if the position was at the beginning of a track when Previous was called.
+If the position is at the first track or somewhere other than the beginning of a track when Previous was called, Previous sets the current position to the beginning of the current track. If the device doesn't use tracks, Previous sets the current position to the beginning of the medium, which is specified in the Start property. Previous is called when the Previous button on the media player control is clicked at runtime.
+Upon completion, Previous stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Previous method has completed. The Notify property determines whether Previous generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Next" visibility="public" file="Vcl.MPlayer.pas" line="177">
+      <devnotes><summary>
+Moves to the beginning of the next track of the currently loaded medium.
+If the current position is at the last track when Next is called, Next makes the current position the beginning of the last track. If the multimedia device doesn't use tracks, Next goes to the end of the medium. Next is called when the Next button on the media player control is clicked at runtime.
+Upon completion, Next stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Next method has completed. The Notify property determines whether Next generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="StartRecording" visibility="public" file="Vcl.MPlayer.pas" line="178">
+      <devnotes><summary>
+Begins recording from the current Position or from the position specified in StartPos.
+StartRecording is called when the Record button on the media player control is clicked at runtime.
+Upon completion, StartRecording stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the StartRecording method has completed. The Notify property determines whether StartRecording generates an OnNotify event.
+By default, the Notify property becomes true, and the Wait property becomes false upon completion of the StartRecording method. However, if these properties have been set to specific values prior to calling StartRecording, they remain unchanged.
+</summary></devnotes></procedure>
+      <procedure name="Eject" visibility="public" file="Vcl.MPlayer.pas" line="179">
+      <devnotes><summary>
+Releases the loaded medium from the open multimedia device.
+Eject is called when the Eject button on the media player control is clicked at runtime. It ejects the loaded medium from the open multimedia device.
+Upon completion, Eject stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Eject method has been completed. The Notify property determines whether Eject generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Save" visibility="public" file="Vcl.MPlayer.pas" line="180">
+      <devnotes><summary>
+Saves the currently loaded medium to the file specified in the FileName property.
+Save is ignored for devices that don't use media stored in files (videodiscs, for example).
+Upon completion, Save stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Save method has completed. The Notify property determines whether Save generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="PauseOnly" visibility="public" file="Vcl.MPlayer.pas" line="181">
+      <devnotes><summary>
+Pauses the open multimedia device.
+If the device is already paused when PauseOnly is called, the device will remain paused.
+Upon completion, PauseOnly stores a numerical error code in the Error property and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the PauseOnly method has completed. The Notify property determines whether PauseOnly generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Resume" visibility="public" file="Vcl.MPlayer.pas" line="182">
+      <devnotes><summary>
+Resumes playing or recording the currently paused multimedia device.
+Resume is called when the Pause button on the media player control is clicked at runtime, when the device is paused.
+Upon completion, Resume stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Resume method has completed. The Notify property determines whether Resume generates an OnNotify event.
+</summary></devnotes></procedure>
+      <procedure name="Rewind" visibility="public" file="Vcl.MPlayer.pas" line="183">
+      <devnotes><summary>
+Sets the current position to the beginning of the the medium, which is stored in the Start property.
+Upon completion, Rewind stores a numerical error code in the Error property, and the corresponding error message in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before the Rewind method has completed. The Notify property determines whether Rewind generates an OnNotify event.
+</summary></devnotes></procedure>
+      <property name="TrackLength[TrackNum]" visibility="public" read="GetTrackLength" type="Integer" file="Vcl.MPlayer.pas" line="184"/>
+      <property name="TrackPosition[TrackNum]" visibility="public" read="GetTrackPosition" type="Integer" file="Vcl.MPlayer.pas" line="185"/>
+      <property name="Capabilities" visibility="public" read="FCapabilities" type="TMPDevCapsSet" file="Vcl.MPlayer.pas" line="186"><devnotes><summary>
+Determines the capabilities of the open multimedia device.
+The various capabilities specified in Capabilities are determined when the device is opened with the Open method.
+
+Note:  Currently, there is no way to check whether a device can step forward or backward. Capabilities includes mpCanStep only if the device type (specified in the DeviceType property) is Animation, AVI Video, Digital Video, Overlay, or VCR.</summary></devnotes></property>
+      <property name="Error" visibility="public" read="FError" type="Integer" file="Vcl.MPlayer.pas" line="187"><devnotes><summary>
+Specifies the MCI error code returned by the media control method.
+Error specifies the MCI error code returned by the most recent media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, StartRecording, Resume, Rewind, Step, or Stop). The ErrorMessage property describes the Error.
+The error code returned by media control methods are the same error code returned by the mciSendCommand function. The message describing the error code is stored in the ErrorMessage property.
+The value of Error is zero if the most recent media control method didn't cause an error. If a method results in an error, a value other than zero is stored in Error. If the error occurs during the opening of the device, an EMCIDeviceError exception occurs.
+</summary></devnotes></property>
+      <property name="ErrorMessage" visibility="public" read="GetErrorMessage" type="string" default="0" file="Vcl.MPlayer.pas" line="188"><devnotes><summary>
+Describes the error code stored in the Error property.
+ErrorMessage specifies the error message that describes the error code returned from the most recent media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, StartRecording, Resume, Rewind, Step, or Stop). 
+The error code described by the message is stored in the Error property.
+</summary></devnotes></property>
+      <property name="Start" visibility="public" read="GetStart" type="Integer" file="Vcl.MPlayer.pas" line="189"><devnotes><summary>
+Specifies the starting position within the currently loaded medium.
+Start is the beginning of the medium for devices that don't use tracks, or the beginning of the first track for devices that use tracks. Start is defined when a multimedia device is opened with the Open method. Start is specified according to the current time format, which is stored in the TimeFormat property. Start is read-only at runtime and is unavailable at design time.
+</summary></devnotes></property>
+      <property name="Length" visibility="public" read="GetLength" type="Integer" file="Vcl.MPlayer.pas" line="190"><devnotes><summary>
+Specifies the length of the medium in the open multimedia device.
+Length is specified using the current time format, which is specified by the TimeFormat property.
+</summary></devnotes></property>
+      <property name="Tracks" visibility="public" read="GetTracks" type="Integer" file="Vcl.MPlayer.pas" line="191"><devnotes><summary>
+Specifies the number of playable tracks on the open multimedia device.
+Tracks indicates how many of playable tracks are available on the open multimedia device.
+Tracks is undefined for devices that don't use tracks.
+</summary></devnotes></property>
+      <property name="Frames" visibility="public" read="FFrames" write="FFrames" type="Integer" file="Vcl.MPlayer.pas" line="192"><devnotes><summary>
+Specifies the number of frames moved forward or backward.
+Frames specifies the number of frames the Step method steps forward or the Back method steps backward. Frames defaults to ten percent of the length of the currently loaded medium, which is specified by the Length property.
+The definition of a frame varies by multimedia device. For display media, a frame is one still image.
+</summary></devnotes></property>
+      <property name="Mode" visibility="public" read="GetMode" type="TMPModes" file="Vcl.MPlayer.pas" line="193"><devnotes><summary>
+Indicates the state of the currently open multimedia device.
+Mode specifies the current state or mode of the currently open multimedia device.
+The TMPModes type defines the modes for a multimedia device used with a TMediaPlayer.
+</summary></devnotes></property>
+      <property name="Position" visibility="public" read="GetPosition" write="SetPosition" type="Integer" file="Vcl.MPlayer.pas" line="194"><devnotes><summary>
+Specifies the current position within the currently loaded medium.
+The value of Position is specified according to the current time format, which is specified in the TimeFormat property.
+Position defaults to the beginning of the medium. If the medium supports multiple tracks, Position defaults to the beginning of the first track.
+</summary></devnotes></property>
+      <property name="Wait" visibility="public" read="FWait" write="SetWait" type="Boolean" file="Vcl.MPlayer.pas" line="195"><devnotes><summary>
+Determines whether a media control method returns control to the application only after it has been completed.
+Wait determines whether a media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, StartRecording, Resume, Rewind, Step, or Stop) returns control to the application only after it has been completed.
+Wait is unavailable at design time.
+If Wait is true, the media player component waits until the next media control method has completed before returning control to the application. If Wait is false, the application won't wait for the next media control method to finish before continuing.
+Wait affects only the next media control method called after setting Wait. Wait must be reset to affect any subsequent call to a media control method.
+By default, Play and StartRecording function as if Wait is false. Wait must be set to true before calling Play or StartRecording to prevent control from returning to the application before playing or recording has finished. By default, all other media control methods function as if Wait is true.
+
+Note: Wait is usually set to false only if the next media control is expected to take a long time, so that the application can execute other code before the media control method has completed. If Wait is set to false, you should set Notify to true so the application is notified when the media control method completes.</summary></devnotes></property>
+      <property name="Notify" visibility="public" read="FNotify" write="SetNotify" type="Boolean" file="Vcl.MPlayer.pas" line="196"><devnotes><summary>
+Determines whether an OnNotify event is generated.
+Notify determines whether the next call to a media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, StartRecording, Resume, Rewind, Step, or Stop) generates an OnNotify event when the method has completed.
+If Notify is true, the next media control method generates OnNotify event upon completion and stores the notification message in the NotifyValue property. If Notify is false, the method does not generate an OnNotify event and NotifyValue remains unchanged.
+Notify affects only the next call to a media control method. After an OnNotify event, Notify must be reset to affect any subsequent media control methods.
+By default, Play and StartRecording function as if Notify is true. Set Notify to false before calling Play or StartRecording to prevent an OnNotify event from being generated when playing or recording has finished. By default, all other media control methods function as if Notify is false.
+
+Tip:  Set Notify to true if the next media control is expected to take a long time, so the application is notified when the media control method has completed. If Notify is set to true, it is recommended to set Wait to false so that control returns to the application before the media control method is finished.
+Note:  When trying to resume a device that doesn't support Resume, the device is resumed as if the Play method was called. If Notify was assigned true before calling Resume (or any other media control method), Notify doesn't affect the call to Resume. Resume does not generate an OnNotify event upon completion, and NotifyValue remains unchanged.</summary></devnotes></property>
+      <property name="NotifyValue" visibility="public" read="FNotifyValue" type="TMPNotifyValues" file="Vcl.MPlayer.pas" line="197"><devnotes><summary>
+Indicates the result of the last media control method that requested a notification.
+NotifyValue reports the result of the last media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, StartRecording, Resume, Rewind, Step, or Stop) that requested a notification.
+To request notification, set Notify to true before calling a media control method.
+</summary></devnotes></property>
+      <property name="StartPos" visibility="public" read="FFrom" write="SetFrom" type="Integer" file="Vcl.MPlayer.pas" line="198"><devnotes><summary>
+Specifies the position within the currently loaded medium from which to begin playing or recording.
+StartPos is specified using the current time format, which is specified in the TimeFormat property.
+The StartPos property affects only the next Play or StartRecording method called after setting StartPos. Reset must be set to StartPos to affect any subsequent calls to Play or StartRecording.
+StartPos does not affect the current position of the medium (specified in the Position property) until the next Play or StartRecording method is called.
+</summary></devnotes></property>
+      <property name="EndPos" visibility="public" read="FTo" write="SetTo" type="Integer" file="Vcl.MPlayer.pas" line="199"><devnotes><summary>
+Specifies the position within the currently loaded medium at which to stop playing or recording.
+EndPos is specified using the current time format, which is specified in the TimeFormat property.
+The EndPos property affects only the next Play or StartRecording method called after setting EndPos. Reset EndPos to affect any subsequent calls to Play or StartRecording.
+</summary></devnotes></property>
+      <property name="DeviceID" visibility="public" read="GetDeviceID" type="Word" file="Vcl.MPlayer.pas" line="200"><devnotes><summary>
+Specifies the device ID for the currently open multimedia device.
+The value of DeviceID is determined when a device is opened with the Open method. If no device is open, DeviceID is 0.
+</summary></devnotes></property>
+      <property name="TimeFormat" visibility="public" read="GetTimeFormat" write="SetTimeFormat" type="TMPTimeFormats" file="Vcl.MPlayer.pas" line="201"><devnotes><summary>
+Determines the format used to specify position information.
+TimeFormat determines how the StartPos, Length, Position, Start, and EndPos properties are interpreted. For example, if Position is 180 and TimeFormat is tfMilliseconds, the current position is 180 milliseconds into the medium. If Position is 180 and TimeFormat is tfMSF, the current position is 180 minutes into the medium.
+Not all formats are supported by every device. When trying to set an unsupported format, the assignment is ignored.
+The current timing information is always passed in a 4-byte integer. In some formats, the timing information returned is not really one integer, but single bytes of information packed in the long integer.
+</summary></devnotes></property>
+      <property name="DisplayRect" visibility="public" read="GetDisplayRect" write="SetDisplayRect" type="TRect" file="Vcl.MPlayer.pas" line="202"><devnotes><summary>
+Specifies a rectangular area in the control specified by the Display property that is used to display output from a multimedia device.
+To display output in a specific rectangle area on a form assign a TRect record to DisplayRect. The Rect function can be used to create a TRect record.
+Media that use a rectangle to display output usually perform best if the default DisplayRect size is used. To set DisplayRect to the default size, position the rectangle in the upper left corner and use 0, 0 for the lower right corner.
+DisplayRect is ignored if Display is nil (Delphi) or NULL (C++).
+Examples of multimedia devices that use a window to display output are Animation, AVI Video, Digital Video, Overlay, and VCR.
+
+Note: DisplayRect can be set only after the media device is opened.</summary></devnotes></property>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlign" default="0" hoisted="true" file="Vcl.MPlayer.pas" line="204"/>
+      <property name="ColoredButtons" visibility="published" read="FColoredButtons" write="SetColored" type="TButtonSet" default="511" file="Vcl.MPlayer.pas" line="205"><devnotes><summary>
+Determines which buttons on the media player control have color.
+ColoredButtons controls which buttons on the media player are colored.
+If a button is not colored with ColoredButtons, it appears in black-and-white when visible. All media player control buttons are colored by default.
+</summary></devnotes></property>
+      <property name="Enabled" visibility="published" read="GetEnabled" write="SetEnabled" stored="IsEnabledStored" type="Boolean" default="1" hoisted="true" file="Vcl.MPlayer.pas" line="208"/>
+      <property name="EnabledButtons" visibility="published" read="FEnabledButtons" write="SetEnabledButtons" type="TButtonSet" default="511" file="Vcl.MPlayer.pas" line="209"><devnotes><summary>
+Determines which buttons on the media player are usable.
+EnabledButtons controls which buttons on the media player are enabled and usable.
+An enabled button is colored and usable. A disabled button is dimmed and not usable. If a button is not enabled with EnabledButtons, it is disabled. By default, all buttons are enabled.
+If the AutoEnable property is true, AutoEnable supersedes EnabledButtons. The buttons automatically enabled or disabled by the media player override any buttons enabled or disabled with the EnabledButtons property.
+</summary></devnotes></property>
+      <property name="VisibleButtons" visibility="published" read="FVisibleButtons" write="SetVisible" type="TButtonSet" default="511" file="Vcl.MPlayer.pas" line="212"><devnotes><summary>
+Indicates which of the buttons on the media player are visible.
+VisibleButtons determines which buttons on the media player that are visible. If a button is not made visible with VisibleButtons, it does not appear on the media player control. By default, all buttons are visible when a media player component is added to a form.
+</summary></devnotes></property>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" default="3" hoisted="true" file="Vcl.MPlayer.pas" line="215"/>
+      <property name="AutoEnable" visibility="published" read="FAutoEnable" write="SetAutoEnable" type="Boolean" default="1" file="Vcl.MPlayer.pas" line="216"><devnotes><summary>
+Determines whether the media player automatically enables and disables individual buttons in the component.
+Use AutoEnable to automatically enable or disable the control buttons on the media player. If AutoEnable is true, the media player automatically enables or disables its control buttons. The media player determines which buttons to enable or disable by the current mode specified in the Mode property, and the current multimedia device type specified in the DeviceType property.
+AutoEnable overrides the EnabledButtons property. The buttons enabled or disabled automatically by the media player supersede any buttons enabled or disabled with EnabledButtons.
+If AutoEnable is false, the media player does not enable or disable buttons. The buttons must enabled or disabled with the EnabledButtons property.
+The following table shows whether buttons are automatically enabled or disabled for each device mode:
+
+
+
+
+
+Button
+
+Play
+
+Record
+
+Pause
+
+Stop
+
+Not Open
+
+
+
+Back
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Eject
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Next
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Pause
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+Disabled
+
+
+
+
+Play
+
+
+
+Disabled
+
+
+
+Disabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Prev
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Record
+
+
+
+Disabled
+
+
+
+Disabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Step
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+
+Stop
+
+
+
+Enabled
+
+
+
+Enabled
+
+
+
+Disabled
+
+
+
+Disabled
+
+
+
+Disabled
+
+
+
+
+</summary></devnotes></property>
+      <property name="AutoOpen" visibility="published" read="FAutoOpen" write="FAutoOpen" type="Boolean" default="0" file="Vcl.MPlayer.pas" line="217"><devnotes><summary>
+Determines if the media player is opened automatically when the application is run.
+Use AutoOpen to have the media player automatically open at runtime.
+If AutoOpen is true, the media player attempts to open the multimedia device specified by the DeviceType property (or FileName if DeviceType is dtAutoSelect) when the form containing the media player component is created at runtime. 
+If AutoOpen is false, the device must be opened with a call to the Open method.
+If an error occurs when opening the device, an exception of type EMCIDeviceError exception is raised that contains the error message. Upon completion, a numerical error code is stored in the Error property, and the corresponding error message is stored in the ErrorMessage property.
+The Wait property determines whether control is returned to the application before opening the multimedia device. The Notify property determines whether opening the device generates an OnNotify event.
+</summary></devnotes></property>
+      <property name="AutoRewind" visibility="published" read="FAutoRewind" write="FAutoRewind" type="Boolean" default="1" file="Vcl.MPlayer.pas" line="218"><devnotes><summary>
+Determines if the media player control rewinds before playing or recording.
+If AutoRewind is true and the current position is at the end of the medium, Play or StartRecording moves the current position to the beginning of the medium before playing or recording. If AutoRewind is false, the user must click the Prev button or write code to call Previous to move to the beginning.
+If values have been assigned to StartPos or EndPos or if the multimedia device uses tracks, AutoRewind has no effect on playing or recording. When calling Play or StartRecording, the current position remains at the end of the medium.
+</summary></devnotes></property>
+      <property name="Constraints" visibility="published" read="FConstraints" write="SetConstraints" type="TSizeConstraints" hoisted="true" file="Vcl.MPlayer.pas" line="219"/>
+      <property name="DeviceType" visibility="published" read="FDeviceType" write="SetDeviceType" type="TMPDeviceTypes" default="0" file="Vcl.MPlayer.pas" line="220"><devnotes><summary>
+Specifies a multimedia device type to open with the media player.
+DeviceType specifies a multimedia device type to open with the Open method. The default is dtAutoSelect.
+If DeviceType is dtAutoSelect, the device type is determined by the file extension specified in the FileName property. If no device type is associated with the extension, the correct device type must be explicitly specified by setting DeviceType to a value other than dtAutoSelect.
+A multimedia device is typically associated with an appropriate file name extension when the device is installed. Associations are specified in the registry or SYSTEM.INI file. See the documentation for the specific device for instructions about how to associate file name extensions with the device.
+</summary></devnotes></property>
+      <property name="DoubleBuffered" visibility="published" read="FDoubleBuffered" write="SetDoubleBuffered" stored="IsDoubleBufferedStored" type="Boolean" hoisted="true" file="Vcl.MPlayer.pas" line="221"/>
+      <property name="Display" visibility="published" read="FDisplay" write="SetDisplay" type="TWinControl" file="Vcl.MPlayer.pas" line="222"><devnotes><summary>
+Specifies the display window for a multimedia device that uses a window for output.
+To use Display, assign the name of a windowed control such as a form or panel to Display to display output in that control.
+The default value of Display is nil (Delphi) or NULL (C++), meaning that the device creates its own window to display output. Also, by freeing the control assigned to Display after the device has been opened, video output will be in its own default window.
+Examples of multimedia devices that use a window to display output are Animation, AVI Video, Digital Video, Overlay, and VCR.
+</summary></devnotes></property>
+      <property name="FileName" visibility="published" read="GetFileName" write="SetFileName" type="string" default="0" file="Vcl.MPlayer.pas" line="223"><devnotes><summary>
+Specifies the opened or saved media file.
+FileName specifies the media file to be opened by the Open method, or the file to save by the Save method.
+At design time, use a file open dialog box to specify the FileName property by clicking the ellipsis button (...) in the Object Inspector.
+</summary></devnotes></property>
+      <property name="Shareable" visibility="published" read="FShareable" write="FShareable" type="Boolean" default="0" file="Vcl.MPlayer.pas" line="224"><devnotes><summary>
+Determines whether more than one application can share a multimedia device.
+If Shareable is false, no other components or applications can access the device. If Shareable is true, more than one component or application can access the device. Shareable defaults to false.
+Be sure to set Shareable before opening a device.
+Some devices are not shareable. If Shareable is set to true for a device that isn't shareable, the Open method fails and the error code is returned to the Error property.
+</summary></devnotes></property>
+      <property name="StyleName" visibility="published" read="FStyleName" write="SetStyleName" type="string" default="0" hoisted="true" file="Vcl.MPlayer.pas" line="225"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="IsVisibleStored" type="Boolean" default="1" hoisted="true" file="Vcl.MPlayer.pas" line="226"/>
+      <property name="ParentDoubleBuffered" visibility="published" read="FParentDoubleBuffered" write="SetParentDoubleBuffered" type="Boolean" default="1" hoisted="true" file="Vcl.MPlayer.pas" line="227"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="Vcl.MPlayer.pas" line="228"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="Vcl.MPlayer.pas" line="229"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" type="TPopupMenu" hoisted="true" file="Vcl.MPlayer.pas" line="230"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="Vcl.MPlayer.pas" line="231"/>
+      <property name="TabStop" visibility="published" read="FTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="Vcl.MPlayer.pas" line="232"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="FOnClick" type="EMPNotify" file="Vcl.MPlayer.pas" line="233"><devnotes><summary>
+Occurs when the user presses and releases the mouse button while the mouse pointer is over one of the control buttons, or when the user presses Spacebar while the media player control has focus.
+When the media player control has focus and the Spacebar is pressed, the user can use the Left Arrow or Right Arrow keys to select which control button to click.
+The EMPNotify type is a method pointer that is called when an OnClick event for a TMediaPlayer components occurs. The Button argument can be one of the following values: btBack, btEject, btNext, btPause, btPlay, btPrev, btRecord, btStep, or btStop.
+The default value of the event handler's DoDefault argument is true. If DoDefault is true, the media player control calls the method that corresponds to the clicked button. For example, if the user clicks the Play button (btPlay), the Play method is called.
+If DoDefault is false, the user must write code that executes when a media player control button is clicked in the OnClick event handler. The following table lists the default methods corresponding to the media player control buttons:
+
+
+
+
+
+Control button
+
+Button value
+
+Method called
+
+
+
+Play
+
+
+
+btPlay
+
+
+
+Play
+
+
+
+
+Record
+
+
+
+btRecord
+
+
+
+StartRecording
+
+
+
+
+Stop
+
+
+
+btStop
+
+
+
+Stop
+
+
+
+
+Next
+
+
+
+btNext
+
+
+
+Next
+
+
+
+
+Prev
+
+
+
+btPrev
+
+
+
+Previous
+
+
+
+
+Step
+
+
+
+btStep
+
+
+
+Step
+
+
+
+
+Back
+
+
+
+btBack
+
+
+
+Back
+
+
+
+
+Pause
+
+
+
+btPause
+
+
+
+Pause
+
+
+
+
+Eject
+
+
+
+btEject
+
+
+
+Eject
+
+
+
+
+</summary></devnotes></event>
+      <event name="OnContextPopup" visibility="published" read="FOnContextPopup" write="FOnContextPopup" type="TContextPopupEvent" hoisted="true" file="Vcl.MPlayer.pas" line="234"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="Vcl.MPlayer.pas" line="235"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="Vcl.MPlayer.pas" line="236"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="Vcl.MPlayer.pas" line="237"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="Vcl.MPlayer.pas" line="238"/>
+      <event name="OnPostClick" visibility="published" read="FOnPostClick" write="FOnPostClick" type="EMPPostNotify" file="Vcl.MPlayer.pas" line="239"><devnotes><summary>
+Occurs after the OnClick event handler is called.
+OnPostClick is generated after the code of the OnClick event handler has been called. If Wait is true when the media player was clicked, OnPostClick won't be called until the completion of the OnClick code. If Wait is false, control can return to the application before completion of the OnClick code; therefore, the OnPostClick event may occur before the actions initiated by the OnClick event have completed.
+For example, if the user clicks the Play button and the DoDefault parameter of the OnClick event handler for the media player is true, the media is played. If the media is long enough, it will still be playing when the OnPostClick event is generated if Wait is true. If Wait is false, however, OnPostClick won't occur until the media has finished playing.
+</summary></devnotes></event>
+      <event name="OnNotify" visibility="published" read="FOnNotify" write="FOnNotify" type="TNotifyEvent" file="Vcl.MPlayer.pas" line="240"><devnotes><summary>
+Occurs upon the completion of a media control method.
+OnNotify occurs upon the completion of a media control method (Back, Close, Eject, Next, Open, Pause, PauseOnly, Play, Previous, Resume, Rewind, StartRecording, Step, or Stop) when the Notify property is set to true before the call to the media control method. After an OnNotify event, the Notify property must be reset to true for the next OnNotify event to occur.
+</summary></devnotes></event>
+    </members>
+  <devnotes><summary>
+TMediaPlayer controls devices that provide a Media Control Interface (MCI) driver.
+The TMediaPlayer component includes a set of buttons (Play, Stop, Eject, and so on) that control a multimedia device such as a CD-ROM drive, MIDI sequencer, or VCR. A multimedia device may be hardware or software.
+The media player component contains of multiple buttons. These buttons can be clicked with the mouse, but are not separate objects or button components.
+
+
+
+
+
+Button
+
+Value
+
+Action
+
+
+
+Play
+
+
+
+btPlay
+
+
+
+Plays the media player
+
+
+
+
+Pause
+
+
+
+btPause
+
+
+
+Pauses playing or recording. If already paused when clicked, resumes playing or recording.
+
+
+
+
+Stop
+
+
+
+btStop
+
+
+
+Stops playing or recording
+
+
+
+
+Next
+
+
+
+btNext
+
+
+
+Skips to the next track, or to the end if the medium doesn't use tracks
+
+
+
+
+Prev
+
+
+
+btPrev
+
+
+
+Skips to the previous track, or to the beginning if the medium doesn't use tracks
+
+
+
+
+Step
+
+
+
+btStep
+
+
+
+Moves forward a number of frames
+
+
+
+
+Back
+
+
+
+btBack
+
+
+
+Moves backward a number of frames
+
+
+
+
+Record
+
+
+
+btRecord
+
+
+
+Starts recording
+
+
+
+
+Eject
+
+
+
+btEject
+
+
+
+Ejects the medium
+
+
+
+
+The multimedia device is played, paused, stopped, and so on when the user clicks the corresponding button on the TMediaPlayer component. The device can also be controlled by the control methods that correspond to the buttons (Play, Pause, Stop, Next, Previous, Step, Back, StartRecording, and Eject).
+The type of multimedia device (such as dtWaveAudio or dtVideodisc) is specified by the DeviceType property. If the device stores its media in a file, the name of the media file is specified by the FileName property. If DeviceType is dtAutoSelect, the media player attempts to determine the type of device from the extension of the file specified by FileName.
+To have the media player attempt to open the device specified by DeviceType automatically when the media player component is created at runtime, set the AutoOpen property to true.
+</summary></devnotes></class>
+</namespace>

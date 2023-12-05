@@ -1,5 +1,8 @@
+{$IFDEF ANDROID}
+program DelphiFMX;
+{$ELSE}
 library DelphiFMX;
-
+{$ENDIF ANDROID}
 uses
   System.StartUpCopy,
   SysUtils,
@@ -10,9 +13,7 @@ uses
   FMX.Context.Metal,
   {$ENDIF OSX}
   uMain in 'uMain.pas';
-
 {$I ..\..\Source\Definition.Inc}
-
 exports
   // This must match the pattern "PyInit_[ProjectName]"
 	// So if the project is named DelphiFMX then
@@ -26,10 +27,8 @@ exports
 {$SONAME 'DelphiFMX'}
 {$ENDIF}
 {$WARN SYMBOL_PLATFORM ON}
-
 begin
   {$IFDEF OSX}
   GlobalUseMetal := TCustomContextMetal.IsMetalSupported();
   {$ENDIF OSX}
 end.
-

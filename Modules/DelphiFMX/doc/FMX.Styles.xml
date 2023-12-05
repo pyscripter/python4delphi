@@ -1,0 +1,601 @@
+<?xml version="1.0" ?><namespace name="FMX.Styles" platform="Win32">
+  <array name="TStyleSignature" low="0" high="12" file="FMX.Styles.pas" line="20">
+    <element type="Byte"/>
+  </array>
+  <const name="FireMonkeyStyleSign" type="TStyleSignature" visibility="public" file="FMX.Styles.pas" line="24"/>
+  <const name="FireMonkey25StyleSign" type="TStyleSignature" visibility="public" file="FMX.Styles.pas" line="29"/>
+  <class name="EStyleException" file="FMX.Styles.pas" line="35">
+    
+  </class>
+  <enum name="TStyleFormat" file="FMX.Styles.pas" line="37">
+    <element value="0" name="Indexed" file="FMX.Styles.pas" line="37"/>
+    <element value="1" name="Binary" file="FMX.Styles.pas" line="37"/>
+    <element value="2" name="Text" file="FMX.Styles.pas" line="37"/>
+  </enum>
+  <class name="TStyleDescription" file="FMX.Styles.pas" line="39">
+    
+    <members>
+      <enum name="TProperty" visibility="private" alias="FMX.Styles.TProperty" file="FMX.Styles.pas" line="41">
+        <element value="0" name="Author" file="FMX.Styles.pas" line="41"/>
+        <element value="1" name="AuthorEMail" file="FMX.Styles.pas" line="41"/>
+        <element value="2" name="PlatformTarget" file="FMX.Styles.pas" line="41"/>
+        <element value="3" name="MobilePlatform" file="FMX.Styles.pas" line="41"/>
+        <element value="4" name="Title" file="FMX.Styles.pas" line="41"/>
+        <element value="5" name="Version" file="FMX.Styles.pas" line="41"/>
+      </enum>
+      <field name="Properties" type=":TStyleDescription.:1" visibility="private" varflags="class" file="FMX.Styles.pas" line="44">
+        <devnotes>
+           <summary>List of published properties used in streaming</summary>
+        </devnotes>
+      </field>
+      <field name="PlatformTargets" type=":TStyleDescription.:2" visibility="public" varflags="class" file="FMX.Styles.pas" line="48">
+        <devnotes>
+           <summary>Target's names that used in style file</summary>
+        </devnotes>
+      </field>
+      <field name="PlatformNames" type=":TStyleDescription.:3" visibility="public" varflags="class" file="FMX.Styles.pas" line="50">
+        <devnotes>
+           <summary>Platform's names that used at framework</summary>
+        </devnotes>
+      </field>
+      <field name="FAuthor" type="string" visibility="private" size="4" offset="128" file="FMX.Styles.pas" line="52"/>
+      <field name="FVersion" type="string" visibility="private" size="4" offset="132" file="FMX.Styles.pas" line="53"/>
+      <field name="FTitle" type="string" visibility="private" size="4" offset="136" file="FMX.Styles.pas" line="54"/>
+      <field name="FAuthorEMail" type="string" visibility="private" size="4" offset="140" file="FMX.Styles.pas" line="55"/>
+      <field name="FPlatformTarget" type="string" visibility="private" size="4" offset="144" file="FMX.Styles.pas" line="56"/>
+      <field name="FMobilePlatform" type="Boolean" visibility="private" size="1" offset="148" file="FMX.Styles.pas" line="57"/>
+      <field name="FAuthorURL" type="string" visibility="private" size="4" offset="152" file="FMX.Styles.pas" line="58"/>
+      <function name="TryLoadFromStream" visibility="private" procflags="class" file="FMX.Styles.pas" line="59">
+        <parameters>
+          <parameter name="Stream" type="TStream" paramflags="const"/>
+          <parameter name="StyleDescription" type="TStyleDescription" paramflags="var"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.Styles.pas" line="61">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      </procedure>
+      <function name="Equals" visibility="public" procflags="override" file="FMX.Styles.pas" line="63">
+        <parameters>
+          <parameter name="Obj" type="TObject"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="SupportsPlatform" visibility="public" file="FMX.Styles.pas" line="65">
+        <devnotes>
+           <summary>Allows to check style for fitting for specified Platform</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="APlatform" type="TOSPlatform" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="Author" visibility="published" read="FAuthor" write="FAuthor" type="string" default="0" file="FMX.Styles.pas" line="67"/>
+      <property name="AuthorEMail" visibility="published" read="FAuthorEMail" write="FAuthorEMail" type="string" default="0" file="FMX.Styles.pas" line="68"/>
+      <property name="AuthorURL" visibility="published" read="FAuthorURL" write="FAuthorURL" type="string" default="0" file="FMX.Styles.pas" line="69"/>
+      <property name="PlatformTarget" visibility="published" read="FPlatformTarget" write="FPlatformTarget" type="string" default="0" file="FMX.Styles.pas" line="70"/>
+      <property name="MobilePlatform" visibility="published" read="FMobilePlatform" write="FMobilePlatform" type="Boolean" file="FMX.Styles.pas" line="71"/>
+      <property name="Title" visibility="published" read="FTitle" write="FTitle" type="string" default="0" file="FMX.Styles.pas" line="72"/>
+      <property name="Version" visibility="published" read="FVersion" write="FVersion" type="string" default="0" file="FMX.Styles.pas" line="73"/>
+    </members>
+  </class>
+  <class name="TStyleTag" file="FMX.Styles.pas" line="76">
+    
+    <members>
+      <property name="Tag" visibility="published" read="FTag" write="FTag" type="NativeInt" default="0" hoisted="true" file="FMX.Styles.pas" line="78"/>
+      <property name="TagFloat" visibility="published" read="FTagFloat" write="FTagFloat" type="Single" default="0" hoisted="true" file="FMX.Styles.pas" line="79"/>
+      <property name="TagString" visibility="published" read="FTagString" write="FTagString" type="string" default="0" hoisted="true" file="FMX.Styles.pas" line="80"/>
+    </members>
+  </class>
+  <interface name="IBinaryStyleContainer" GUID="{76589FDB-7430-4F7A-A993-44AB1664BCFD}" ancestor="IInterface" file="FMX.Styles.pas" line="83">
+    <procedure name="ClearContainer" visibility="public" procflags="abstract virtual" file="FMX.Styles.pas" line="85">
+    </procedure>
+    <procedure name="AddBinaryFromStream" visibility="public" procflags="abstract virtual" file="FMX.Styles.pas" line="86">
+      <parameters>
+        <parameter name="Name" type="string" paramflags="const"/>
+        <parameter name="SourceStream" type="TStream" paramflags="const"/>
+        <parameter name="Size" type="Int64" paramflags="const"/>
+      </parameters>
+    </procedure>
+    <procedure name="UnpackAllBinaries" visibility="public" procflags="abstract virtual" file="FMX.Styles.pas" line="88">
+      <devnotes>
+         <summary>Force to load all style's objects from binary stream.</summary>
+      </devnotes>
+    </procedure>
+  </interface>
+  <type name="TSupportedPlatformHook" file="FMX.Styles.pas" line="91" procflags="">
+  </type>
+  <class name="TStyleStreaming" file="FMX.Styles.pas" line="93">
+    
+    <members>
+      <struct name="TIndexItem" visibility="private" alias="FMX.Styles.TIndexItem" size="16" file="FMX.Styles.pas" line="95">
+        <field name="Name" type="string" visibility="public" size="4" offset="0" file="FMX.Styles.pas" line="96"/>
+        <field name="Size" type="Int64" visibility="public" size="8" offset="8" file="FMX.Styles.pas" line="97"/>
+      </struct>
+      <field name="FDefaultContainerClass" type="TFmxObjectClass" visibility="private" varflags="class" file="FMX.Styles.pas" line="100"/>
+      <field name="FSupportedPlatformHook" type="TSupportedPlatformHook" visibility="private" varflags="class" file="FMX.Styles.pas" line="101"/>
+      <function name="ReadHeader" visibility="private" procflags="class" file="FMX.Styles.pas" line="103">
+        <parameters>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+          <retval type="TArray&lt;FMX.Styles.TStyleStreaming.TIndexItem&gt;"/>
+        </parameters>
+      </function>
+      <function name="LoadFromIndexedStream" visibility="private" procflags="class" file="FMX.Styles.pas" line="104">
+        <parameters>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <procedure name="SaveToIndexedStream" visibility="private" procflags="static" file="FMX.Styles.pas" line="105">
+        <parameters>
+          <parameter name="Style" type="TFmxObject" paramflags="const"/>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="IsSupportedPlatformTarget" visibility="private" procflags="static" file="FMX.Styles.pas" line="106">
+        <parameters>
+          <parameter name="PlatformTarget" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="SameStyleDecription" visibility="private" procflags="static" file="FMX.Styles.pas" line="107">
+        <parameters>
+          <parameter name="Style1" type="TFmxObject" paramflags="const"/>
+          <parameter name="Style2" type="TFmxObject" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="SameObject" visibility="private" procflags="static" file="FMX.Styles.pas" line="108">
+        <parameters>
+          <parameter name="Obj1" type="TFmxObject" paramflags="const"/>
+          <parameter name="Obj2" type="TFmxObject" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="CompareSign" visibility="private" procflags="class" file="FMX.Styles.pas" line="109">
+        <parameters>
+          <parameter name="Sign1" type="TStyleSignature" paramflags="const"/>
+          <parameter name="Sign2" type="TStyleSignature" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="TryLoadStyleDescriptionFromIndexedStream" visibility="private" procflags="static" file="FMX.Styles.pas" line="110">
+        <parameters>
+          <parameter name="Stream" type="TStream" paramflags="const"/>
+          <parameter name="Description" type="TStyleDescription" paramflags="var"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="DefaultIsSupportedPlatformTarget" visibility="public" procflags="static" file="FMX.Styles.pas" line="113">
+        <parameters>
+          <parameter name="PlatformTarget" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="SaveToStream" visibility="public" procflags="class" file="FMX.Styles.pas" line="115">
+        <parameters>
+          <parameter name="Style" type="TFmxObject" paramflags="const"/>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+          <parameter name="Format" type="TStyleFormat" paramflags="const">
+            <value>
+              Indexed
+            </value>
+          </parameter>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="TryLoadStyleDescription" visibility="public" procflags="class" file="FMX.Styles.pas" line="119">
+        <devnotes><summary>
+This method tries to parse the style file and read the style description.
+The TStyleDescription object specified by Description should be destroyed by the caller.
+</summary></devnotes>
+        <parameters>
+          <parameter name="Stream" type="TStream" paramflags="const"/>
+          <parameter name="Description" type="TStyleDescription" paramflags="var"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="LoadFromFile" visibility="public" procflags="class" file="FMX.Styles.pas" line="121">
+        <parameters>
+          <parameter name="FileName" type="string" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified file.
+LoadFromFile returns a style object that can be set as the active style using the SetStyle method.
+Note that LoadFromFile does not automatically switch to the loaded style. To do that, call the SetStyleFromFile method. 
+</summary></devnotes></function>
+      <function name="LoadFromStream" visibility="public" procflags="class" file="FMX.Styles.pas" line="122">
+        <parameters>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified stream.
+LoadFromStream returns a style object that can be set as the active style using the SetStyle method.
+Note that LoadFromStream does not automatically switch to the loaded style. To do that, call the SetStyleFromFile method. 
+</summary></devnotes></function>
+      <function name="LoadFromResource" visibility="public" procflags="class" file="FMX.Styles.pas" line="123">
+        <parameters>
+          <parameter name="Instance" type="NativeUInt"/>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+          <parameter name="ResourceType" type="PWideChar"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified resource.
+LoadFromResource returns a style object that can be set as the active style using the SetStyle method.
+Note that LoadFromResource does not automatically switch to the loaded style. To do that, call the SetStyleFromFile method. 
+
+
+
+Parameter
+
+Meaning
+
+
+Instance
+
+The instance handle of the loaded resource.
+
+
+ResourceName
+
+The string associated with the resource.
+
+
+ResourceType
+
+A string that identifies the type of resource.
+</summary></devnotes></function>
+      <function name="CanLoadFromFile" visibility="public" procflags="class" file="FMX.Styles.pas" line="125">
+        <parameters>
+          <parameter name="FileName" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified file without raising an exception.
+CanLoadFromFile searches for the style specified by FileName.
+CanLoadFromFile returns True if the style is successfully loaded, and False otherwise.
+</summary></devnotes></function>
+      <function name="CanLoadFromStream" visibility="public" procflags="class" file="FMX.Styles.pas" line="126">
+        <parameters>
+          <parameter name="AStream" type="TStream" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified stream without raising an exception.
+CanLoadFromStream searches for the style specified by AStream.
+CanLoadFromStream returns True if the style is successfully loaded, and False otherwise.
+</summary></devnotes></function>
+      <function name="CanLoadFromResource" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="127">
+        <parameters>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+          <parameter name="ResourceType" type="PWideChar"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified resource without raising an exception.
+In the first signature CanLoadFromResource searches for the specified ResourceName with type ResourceType in the instace handle indicated by Instance.
+In the second signature CanLoadFromResource internally calls EnumModules in order to search for ResourceName in all modules of the application. 
+CanLoadFromResource returns True if the style is successfully loaded, and False otherwise.
+</summary></devnotes></function>
+      <function name="CanLoadFromResource" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="128">
+        <parameters>
+          <parameter name="Instance" type="NativeUInt"/>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+          <parameter name="ResourceType" type="PWideChar"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Loads a style from the specified resource without raising an exception.
+In the first signature CanLoadFromResource searches for the specified ResourceName with type ResourceType in the instace handle indicated by Instance.
+In the second signature CanLoadFromResource internally calls EnumModules in order to search for ResourceName in all modules of the application. 
+CanLoadFromResource returns True if the style is successfully loaded, and False otherwise.
+</summary></devnotes></function>
+      <function name="SameStyle" visibility="public" procflags="static" file="FMX.Styles.pas" line="130">
+        <parameters>
+          <parameter name="Style1" type="TFmxObject" paramflags="const"/>
+          <parameter name="Style2" type="TFmxObject" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="SetDefaultContainerClass" visibility="public" procflags="class" file="FMX.Styles.pas" line="132">
+        <parameters>
+          <parameter name="AClass" type="TFmxObjectClass" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="SetSupportedPlatformHook" visibility="public" procflags="class" file="FMX.Styles.pas" line="133">
+        <parameters>
+          <parameter name="AHook" type="TSupportedPlatformHook" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+    </members>
+  <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></class>
+  <type name="TPlatformStyleSelectionProc" file="FMX.Styles.pas" line="137" procflags="">
+    <devnotes>
+       <summary>This procedure return correct resource name if more than one is registered for platform.</summary>
+    </devnotes>
+  </type>
+  <anonMethod name="TStyleResourceEnumProc" file="FMX.Styles.pas" line="140">
+    <devnotes>
+       <summary>Anonymous method that EnumStyleResources calls in order to
+       enumerate all the registered style resources.</summary>
+    </devnotes>
+    <procedure name="Invoke" visibility="public" procflags="abstract virtual" file="FMX.Styles.pas" line="140">
+      <parameters>
+        <parameter name="AResourceName" type="string" paramflags="const"/>
+        <parameter name="APlatform" type="TOSPlatform" paramflags="const"/>
+      </parameters>
+    </procedure>
+  </anonMethod>
+  <class name="TStyleManager" sealed="true" file="FMX.Styles.pas" line="142">
+    
+    <members>
+      <class name="TStyleManagerNotification" visibility="class private" alias="FMX.Styles.TStyleManagerNotification" file="FMX.Styles.pas" line="144">
+        
+        <members>
+          <procedure name="FreeNotification" visibility="protected" procflags="override" file="FMX.Styles.pas" line="146">
+            <parameters>
+              <parameter name="AObject" type="TObject"/>
+            </parameters>
+          </procedure>
+        </members>
+      </class>
+      <field name="FStyleManagerNotification" type="TStyleManager.TStyleManagerNotification" visibility="class private" varflags="class" file="FMX.Styles.pas" line="149"/>
+      <field name="FPlatformResources" type="TDictionary&lt;System.string,FMX.Types.TOSPlatform&gt;" visibility="class private" varflags="class" file="FMX.Styles.pas" line="150"/>
+      <field name="FSelections" type="TDictionary&lt;FMX.Types.TOSPlatform,FMX.Styles.TPlatformStyleSelectionProc&gt;" visibility="class private" varflags="class" file="FMX.Styles.pas" line="151"/>
+      <field name="FStyleResources" type="TDictionary&lt;System.string,FMX.Types.TFmxObject&gt;" visibility="class private" varflags="class" file="FMX.Styles.pas" line="152"/>
+      <function name="FindDefaultStyleResource" visibility="class private" procflags="static" file="FMX.Styles.pas" line="153">
+        <parameters>
+          <parameter name="OSPlatform" type="TOSPlatform" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="StyleResourceForContext" visibility="class private" procflags="static" file="FMX.Styles.pas" line="154">
+        <parameters>
+          <parameter name="Context" type="TFmxObject" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="StyleManagerNotification" visibility="class private" procflags="class" file="FMX.Styles.pas" line="155">
+        <parameters>
+          <retval type="TStyleManager.TStyleManagerNotification"/>
+        </parameters>
+      </function>
+      <procedure name="RemoveStyleFromGlobalPool" visibility="public" procflags="static" file="FMX.Styles.pas" line="157">
+        <parameters>
+          <parameter name="Style" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Removes the specified Style from the pool of styles.
+</summary></devnotes></procedure>
+      <procedure name="UpdateScenes" visibility="public" procflags="static" file="FMX.Styles.pas" line="158">
+      <devnotes><summary>
+Updates the style for all the registered scenes.
+</summary></devnotes></procedure>
+      <procedure name="EnumStyleResources" visibility="public" procflags="class" file="FMX.Styles.pas" line="161">
+        <devnotes><summary>
+Enumetates all the registered style resource objects.
+</summary></devnotes>
+        <parameters>
+          <parameter name="Proc" type="TStyleResourceEnumProc"/>
+        </parameters>
+      </procedure>
+      <function name="GetStyleResource" visibility="public" procflags="class" file="FMX.Styles.pas" line="163">
+        <devnotes><summary>
+Gets the style resource object.
+GetStyleResource returns the style resource if it exits in cache. Otherwise it loads the style resource.
+ResourceName specifies the style resource as per name.
+</summary></devnotes>
+        <parameters>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <procedure name="RegisterPlatformStyleResource" visibility="public" procflags="class" file="FMX.Styles.pas" line="166">
+        <devnotes><summary>
+Registers the style resource for the specified platform.
+
+ResourceName specifies the resource style.
+APlatform specifies the target platform.</summary></devnotes>
+        <parameters>
+          <parameter name="APlatform" type="TOSPlatform" paramflags="const"/>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="RegisterPlatformStyleSelection" visibility="public" procflags="class" file="FMX.Styles.pas" line="168">
+        <devnotes><summary>
+Registers the style resource specified by selection.
+
+APlatform specifies the target platform.
+ASelection specifies the style selection with type TPlatformStyleSelectionProc.</summary></devnotes>
+        <parameters>
+          <parameter name="APlatform" type="TOSPlatform" paramflags="const"/>
+          <parameter name="ASelection" type="TPlatformStyleSelectionProc" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="ActiveStyle" visibility="public" procflags="static" file="FMX.Styles.pas" line="170">
+        <parameters>
+          <parameter name="Context" type="TFmxObject" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      <devnotes><summary>
+Returns the style that is currently set.
+</summary></devnotes></function>
+      <function name="ActiveStyleForScene" visibility="public" procflags="static" file="FMX.Styles.pas" line="172">
+        <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="AScene" type="IInterface" paramflags="const"/>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <procedure name="SetStyle" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="174">
+        <parameters>
+          <parameter name="Style" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the active style to the instance specified by the Style parameter.
+To set the active style to the native system style, for example Windows theme, pass nil as the Style parameter.
+
+Note: If you call the SetStyle function in the initialization section of a unit on the main project file, before Application.Initialize, then it is applied to all forms.</summary></devnotes></procedure>
+      <procedure name="SetStyle" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="175">
+        <parameters>
+          <parameter name="Context" type="TFmxObject" paramflags="const"/>
+          <parameter name="Style" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the active style to the instance specified by the Style parameter.
+To set the active style to the native system style, for example Windows theme, pass nil as the Style parameter.
+
+Note: If you call the SetStyle function in the initialization section of a unit on the main project file, before Application.Initialize, then it is applied to all forms.</summary></devnotes></procedure>
+      <function name="SetStyleFromFile" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="176">
+        <parameters>
+          <parameter name="FileName" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the style specified by FileName as the active style.
+Do not place multiple lines calling SetStyleFromFile in a project, because you can have only one active style in the style manager.
+You can call SetStyleFromFile either in the project source code (before calling Application.Initialize) or in the initialization section of one of the form units:
+
+If you call SetStyleFromFile in a form, the style is reapplied.
+If you call SetStyleFromFile before the form is created, the custom style fully replaces the platform style.
+Example
+This Delphi code demonstrates how to use the StyleManager:
+
+
+Delphi:
+
+procedure TForm1.FormCreate(Sender: TObject);
+  var
+    od : TOpenDialog;
+  begin
+    od := nil;
+    try
+    od := TOpenDialog.Create(self);
+    od.Filter := 'Style Files|*.style';
+    if od.Execute() then
+      TStyleManager.SetStyleFromFile(od.FileName);
+  finally
+    od.Free();
+  end;
+end;
+
+
+
+</summary></devnotes></function>
+      <function name="SetStyleFromFile" visibility="public" procflags="class overload" file="FMX.Styles.pas" line="177">
+        <parameters>
+          <parameter name="Context" type="TFmxObject" paramflags="const"/>
+          <parameter name="FileName" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the style specified by FileName as the active style.
+Do not place multiple lines calling SetStyleFromFile in a project, because you can have only one active style in the style manager.
+You can call SetStyleFromFile either in the project source code (before calling Application.Initialize) or in the initialization section of one of the form units:
+
+If you call SetStyleFromFile in a form, the style is reapplied.
+If you call SetStyleFromFile before the form is created, the custom style fully replaces the platform style.
+Example
+This Delphi code demonstrates how to use the StyleManager:
+
+
+Delphi:
+
+procedure TForm1.FormCreate(Sender: TObject);
+  var
+    od : TOpenDialog;
+  begin
+    od := nil;
+    try
+    od := TOpenDialog.Create(self);
+    od.Filter := 'Style Files|*.style';
+    if od.Execute() then
+      TStyleManager.SetStyleFromFile(od.FileName);
+  finally
+    od.Free();
+  end;
+end;
+
+
+
+</summary></devnotes></function>
+      <function name="TrySetStyleFromResource" visibility="public" procflags="class" file="FMX.Styles.pas" line="179">
+        <devnotes><summary>
+Loads the style from ResourceName and sets the style as the active style.
+TrySetStyleFromResource sets the style without raising exceptions.
+
+
+</summary></devnotes>
+        <parameters>
+          <parameter name="ResourceName" type="string" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="UnInitialize" visibility="public" procflags="class" file="FMX.Styles.pas" line="181">
+      <devnotes><summary>
+Uninitializes data about styles.
+
+Note: This function is reserved for internal use only. Do not call it directly.
+
+</summary></devnotes></procedure>
+      <function name="FindStyleDescriptor" visibility="public" procflags="class" file="FMX.Styles.pas" line="186">
+        <devnotes><summary>
+Returns the style description of the specified style.
+FindStyleDescriptor returns the TStyleDescription object associated with the style specified by AObject, if such a description is set.
+You can set the style description fields using the Tools &gt; Bitmap Style Designer dialog.
+</summary></devnotes>
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+          <retval type="TStyleDescription"/>
+        </parameters>
+      </function>
+      <function name="GetStyleDescriptionForControl" visibility="public" procflags="class" file="FMX.Styles.pas" line="188">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+          <retval type="TStyleDescription"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+    </members>
+  <devnotes><summary>
+TStyleManager handles styles-related operations.
+Use TStyleManager to:
+
+Set and retrieve the active style.
+Load styles from files or streams.</summary></devnotes></class>
+</namespace>

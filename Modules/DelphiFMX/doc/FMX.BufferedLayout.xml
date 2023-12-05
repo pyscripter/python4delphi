@@ -1,0 +1,238 @@
+<?xml version="1.0" ?><namespace name="FMX.BufferedLayout" platform="Win32">
+  <class name="TBufferedScene" file="FMX.BufferedLayout.pas" line="24">
+    
+    <interfaces>
+      <implements name="IContent"/>
+      <implements name="IAlignRoot"/>
+      <implements name="IScene"/>
+    </interfaces>
+    <members>
+      <field name="FScreenService" type="IFMXScreenService" visibility="private" varflags="class" file="FMX.BufferedLayout.pas" line="26"/>
+      <procedure name="Destroy@" visibility="class private" procflags="class destructor noself" file="FMX.BufferedLayout.pas" line="27">
+      </procedure>
+      <field name="FScene" type="TCustomBufferedLayout" visibility="private" size="4" offset="128" file="FMX.BufferedLayout.pas" line="29">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FBuffer" type="TBitmap" visibility="private" size="4" offset="132" file="FMX.BufferedLayout.pas" line="30"/>
+      <field name="FControls" type="TControlList" visibility="private" size="4" offset="136" file="FMX.BufferedLayout.pas" line="31"/>
+      <field name="FWidth" type="Integer" visibility="private" size="4" offset="140" file="FMX.BufferedLayout.pas" line="32"/>
+      <field name="FHeight" type="Integer" visibility="private" size="4" offset="144" file="FMX.BufferedLayout.pas" line="33"/>
+      <field name="FUpdateRects" type=":TBufferedScene.:1" visibility="private" size="4" offset="148" file="FMX.BufferedLayout.pas" line="34"/>
+      <field name="FLastWidth" type="Single" visibility="private" size="4" offset="152" file="FMX.BufferedLayout.pas" line="35"/>
+      <field name="FLastHeight" type="Single" visibility="private" size="4" offset="156" file="FMX.BufferedLayout.pas" line="36"/>
+      <field name="FDisableAlign" type="Boolean" visibility="private" size="1" offset="160" file="FMX.BufferedLayout.pas" line="37"/>
+      <procedure name="AddUpdateRect" visibility="private" file="FMX.BufferedLayout.pas" line="39">
+        <parameters>
+          <parameter name="R" type="TRectF" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetUpdateRectsCount" visibility="private" file="FMX.BufferedLayout.pas" line="40">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetUpdateRect" visibility="private" file="FMX.BufferedLayout.pas" line="41">
+        <parameters>
+          <parameter name="Index" type="Integer" paramflags="const"/>
+          <retval type="TRectF"/>
+        </parameters>
+      </function>
+      <function name="GetObject" visibility="private" file="FMX.BufferedLayout.pas" line="42">
+        <parameters>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <function name="GetCanvas" visibility="private" file="FMX.BufferedLayout.pas" line="43">
+        <parameters>
+          <retval type="TCanvas"/>
+        </parameters>
+      </function>
+      <function name="GetSceneScale" visibility="private" file="FMX.BufferedLayout.pas" line="44">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <function name="LocalToScreen" visibility="private" file="FMX.BufferedLayout.pas" line="45">
+        <parameters>
+          <parameter name="P" type="TPointF" paramflags="const"/>
+          <retval type="TPointF"/>
+        </parameters>
+      </function>
+      <function name="ScreenToLocal" visibility="private" file="FMX.BufferedLayout.pas" line="46">
+        <parameters>
+          <parameter name="P" type="TPointF" paramflags="const"/>
+          <retval type="TPointF"/>
+        </parameters>
+      </function>
+      <procedure name="ChangeScrollingState" visibility="private" file="FMX.BufferedLayout.pas" line="47">
+        <parameters>
+          <parameter name="AControl" type="TControl" paramflags="const"/>
+          <parameter name="Active" type="Boolean" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DisableUpdating" visibility="private" file="FMX.BufferedLayout.pas" line="48">
+      </procedure>
+      <procedure name="EnableUpdating" visibility="private" file="FMX.BufferedLayout.pas" line="49">
+      </procedure>
+      <function name="GetStyleBook" visibility="private" file="FMX.BufferedLayout.pas" line="50">
+        <parameters>
+          <retval type="TStyleBook"/>
+        </parameters>
+      </function>
+      <procedure name="SetStyleBook" visibility="private" file="FMX.BufferedLayout.pas" line="51">
+        <parameters>
+          <parameter name="Value" type="TStyleBook" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="Realign" visibility="private" file="FMX.BufferedLayout.pas" line="53">
+      </procedure>
+      <procedure name="ChildrenAlignChanged" visibility="private" file="FMX.BufferedLayout.pas" line="54">
+      </procedure>
+      <function name="GetParent" visibility="private" file="FMX.BufferedLayout.pas" line="56">
+        <parameters>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <function name="GetChildrenCount" visibility="private" file="FMX.BufferedLayout.pas" line="57">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="Changed" visibility="private" file="FMX.BufferedLayout.pas" line="58">
+      </procedure>
+      <procedure name="Invalidate" visibility="private" file="FMX.BufferedLayout.pas" line="59">
+      </procedure>
+      <procedure name="UpdateBuffer" visibility="private" file="FMX.BufferedLayout.pas" line="60">
+      </procedure>
+      <procedure name="ScaleChangedHandler" visibility="protected" procflags="virtual" file="FMX.BufferedLayout.pas" line="62">
+        <parameters>
+          <parameter name="Sender" type="TObject" paramflags="const"/>
+          <parameter name="Msg" type="TMessageBase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DrawTo" visibility="protected" file="FMX.BufferedLayout.pas" line="63">
+      </procedure>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="64">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoRemoveObject" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="65">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="ObjectAtPoint" visibility="protected" file="FMX.BufferedLayout.pas" line="66">
+        <parameters>
+          <parameter name="P" type="TPointF"/>
+          <retval type="IControl"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.BufferedLayout.pas" line="68">
+        <parameters>
+          <parameter name="AScene" type="TCustomBufferedLayout" paramflags="const"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.BufferedLayout.pas" line="69">
+        <parameters>
+        </parameters>
+      </destructor>
+      <procedure name="SetSize" visibility="public" file="FMX.BufferedLayout.pas" line="70">
+        <parameters>
+          <parameter name="AWidth" type="Integer" paramflags="const"/>
+          <parameter name="AHeight" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <property name="Buffer" visibility="public" read="FBuffer" type="TBitmap" file="FMX.BufferedLayout.pas" line="71"/>
+      <property name="Scene" visibility="public" read="FScene" type="TCustomBufferedLayout" file="FMX.BufferedLayout.pas" line="72"/>
+      <procedure name="Create@" visibility="class private" procflags="class constructor noself" generated="true">
+      </procedure>
+    </members>
+  </class>
+  <class name="TCustomBufferedLayout" file="FMX.BufferedLayout.pas" line="75">
+    
+    <members>
+      <field name="FScene" type="TBufferedScene" visibility="private" size="4" offset="904" file="FMX.BufferedLayout.pas" line="77"/>
+      <procedure name="Paint" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="79">
+      </procedure>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="80">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoResized" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="81">
+      </procedure>
+      <function name="ObjectAtPoint" visibility="protected" procflags="override" file="FMX.BufferedLayout.pas" line="82">
+        <parameters>
+          <parameter name="P" type="TPointF"/>
+          <retval type="IControl"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.BufferedLayout.pas" line="84">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.BufferedLayout.pas" line="85">
+        <parameters>
+        </parameters>
+      </destructor>
+    </members>
+  </class>
+  <class name="TBufferedLayout" file="FMX.BufferedLayout.pas" line="88">
+    
+    <members>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="90"/>
+      <property name="Anchors" visibility="published" read="FAnchors" write="SetAnchors" stored="IsAnchorsStored" type="TAnchors" hoisted="true" file="FMX.BufferedLayout.pas" line="91"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="92"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="93"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="94"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="95"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.BufferedLayout.pas" line="96"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" hoisted="true" file="FMX.BufferedLayout.pas" line="97"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="98"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.BufferedLayout.pas" line="99"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="100"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.BufferedLayout.pas" line="101"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.BufferedLayout.pas" line="102"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.BufferedLayout.pas" line="103"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.BufferedLayout.pas" line="104"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.BufferedLayout.pas" line="105"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.BufferedLayout.pas" line="106"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.BufferedLayout.pas" line="107"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.BufferedLayout.pas" line="108"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.BufferedLayout.pas" line="109"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.BufferedLayout.pas" line="110"/>
+      <property name="TabStop" visibility="published" read="GetTabStop" write="SetTabStop" type="Boolean" default="1" hoisted="true" file="FMX.BufferedLayout.pas" line="111"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.BufferedLayout.pas" line="112"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.BufferedLayout.pas" line="113"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.BufferedLayout.pas" line="114"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="116"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="117"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="118"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="119"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="120"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="122"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="123"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="124"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="125"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="126"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="128"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="129"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="130"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="131"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="132"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="133"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="134"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.BufferedLayout.pas" line="135"/>
+    </members>
+  <devnotes><summary>
+A layout is a container for other graphical objects.
+FMX.BufferedLayout.TCustomBufferedLayout inherits from FMX.Layouts.TLayout. All content below this line refers to FMX.Layouts.TLayout.
+A layout is a container for other graphical objects. 
+Use the layouts when you need to organize multiple graphical controls under the same parent.
+For instance, you can use these layouts when you need to create rich FireMonkey applications with many graphical controls that are grouped on the same layer. You can set the visibility of all the controls on a layout at once by affecting the visibility of the layout.
+</summary></devnotes></class>
+</namespace>

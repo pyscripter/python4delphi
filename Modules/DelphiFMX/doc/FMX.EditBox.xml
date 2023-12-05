@@ -1,0 +1,504 @@
+<?xml version="1.0" ?><namespace name="FMX.EditBox" platform="Win32">
+  <const name="MM_DECIMALDIGITS_CHANGED" type="Integer" file="FMX.EditBox.pas" line="21">
+    <value>
+      $171B
+    </value>
+  </const>
+  <const name="MM_VALUETYPE_CHANGED" type="Integer" file="FMX.EditBox.pas" line="22">
+    <value>
+      $171C
+    </value>
+  </const>
+  <const name="MM_VALUERANGE_CHANGED" type="Integer" file="FMX.EditBox.pas" line="23">
+    <value>
+      $171D
+    </value>
+  </const>
+  <const name="MM_HORZ_INCREMENT_CHANGED" type="Integer" file="FMX.EditBox.pas" line="24">
+    <value>
+      $171E
+    </value>
+  </const>
+  <const name="MM_EDITBOX_USER" type="Integer" file="FMX.EditBox.pas" line="25">
+    <value>
+      $171F
+    </value>
+  </const>
+  <class name="TEditBoxModel" file="FMX.EditBox.pas" line="31">
+    
+    <members>
+      <const name="DefaultDecimalDigits" visibility="public" type="Integer" file="FMX.EditBox.pas" line="33">
+        <value>
+          $2
+        </value>
+      </const>
+      <const name="DefaultHorzIncrement" visibility="public" type="Integer" file="FMX.EditBox.pas" line="34">
+        <value>
+          $1
+        </value>
+      </const>
+      <const name="DefaultValueType" visibility="public" type="TNumValueType" file="FMX.EditBox.pas" line="35">
+        <value>
+          Integer
+        </value>
+      </const>
+      <const name="DefaultKeyboardType" visibility="public" type="TVirtualKeyboardType" file="FMX.EditBox.pas" line="36">
+        <value>
+          NumberPad
+        </value>
+      </const>
+      <field name="FValueRange" type="TValueRange" visibility="private" size="4" offset="152" file="FMX.EditBox.pas" line="38"/>
+      <field name="FValueType" type="TNumValueType" visibility="private" size="4" offset="156" file="FMX.EditBox.pas" line="39"/>
+      <field name="FDecimalDigits" type="Integer" visibility="private" size="4" offset="160" file="FMX.EditBox.pas" line="40"/>
+      <field name="FHorzIncrement" type="Single" visibility="private" size="4" offset="164" file="FMX.EditBox.pas" line="41"/>
+      <field name="FDefaultValueRange" type="TBaseValueRange" visibility="private" size="4" offset="168" file="FMX.EditBox.pas" line="42"/>
+      <procedure name="SetDecimalDigits" visibility="private" file="FMX.EditBox.pas" line="43">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetValueType" visibility="private" file="FMX.EditBox.pas" line="44">
+        <parameters>
+          <parameter name="Value" type="TNumValueType" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetValue" visibility="private" file="FMX.EditBox.pas" line="45">
+        <parameters>
+          <retval type="Double"/>
+        </parameters>
+      </function>
+      <procedure name="SetValue" visibility="private" file="FMX.EditBox.pas" line="46">
+        <parameters>
+          <parameter name="Value" type="Double" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCurrentIncrement" visibility="private" file="FMX.EditBox.pas" line="47">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetHorzIncrement" visibility="private" file="FMX.EditBox.pas" line="48">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="HorzIncrementStored" visibility="private" file="FMX.EditBox.pas" line="49">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="DoFiltering" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="51">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="DoValidating" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="52">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="DoValidate" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="53">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetTextSettingsClass" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="54">
+        <parameters>
+          <retval type="TTextSettingsInfo.TCustomTextSettingsClass">
+          </retval>
+        </parameters>
+      </function>
+      <function name="ConvertToText" visibility="protected" file="FMX.EditBox.pas" line="55">
+        <parameters>
+          <parameter name="AValue" type="Double" paramflags="const"/>
+          <parameter name="Source" type="string" paramflags="const">
+            <value>
+              
+            </value>
+          </parameter>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.EditBox.pas" line="57">
+        <parameters>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.EditBox.pas" line="58">
+        <parameters>
+        </parameters>
+      </destructor>
+      <function name="ConvertValueToText" visibility="public" file="FMX.EditBox.pas" line="59">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="ConvertTextToValue" visibility="public" file="FMX.EditBox.pas" line="60">
+        <parameters>
+          <parameter name="AText" type="string" paramflags="const"/>
+          <retval type="Double"/>
+        </parameters>
+      </function>
+      <property name="CurrentIncrement" visibility="public" read="GetCurrentIncrement" type="Single" default="0" file="FMX.EditBox.pas" line="61"/>
+      <property name="DefaultValueRange" visibility="public" read="FDefaultValueRange" type="TBaseValueRange" file="FMX.EditBox.pas" line="62"/>
+      <property name="DecimalDigits" visibility="public" read="FDecimalDigits" write="SetDecimalDigits" type="Integer" file="FMX.EditBox.pas" line="63"/>
+      <property name="HorzIncrement" visibility="public" read="FHorzIncrement" write="SetHorzIncrement" stored="HorzIncrementStored" type="Single" file="FMX.EditBox.pas" line="64"/>
+      <property name="Value" visibility="public" read="GetValue" write="SetValue" type="Double" default="0" file="FMX.EditBox.pas" line="65"/>
+      <property name="ValueType" visibility="public" read="FValueType" write="SetValueType" type="TNumValueType" file="FMX.EditBox.pas" line="66"/>
+      <property name="ValueRange" visibility="public" read="FValueRange" type="TValueRange" file="FMX.EditBox.pas" line="67"/>
+    </members>
+  </class>
+  <class name="TCustomEditBox" file="FMX.EditBox.pas" line="70">
+    
+    <interfaces>
+      <implements name="IValueRange"/>
+    </interfaces>
+    <members>
+      <procedure name="SetMax" visibility="private" file="FMX.EditBox.pas" line="72">
+        <parameters>
+          <parameter name="AValue" type="Double" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetMax" visibility="private" file="FMX.EditBox.pas" line="73">
+        <parameters>
+          <retval type="Double"/>
+        </parameters>
+      </function>
+      <function name="MaxStored" visibility="private" file="FMX.EditBox.pas" line="74">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetMin" visibility="private" file="FMX.EditBox.pas" line="75">
+        <parameters>
+          <parameter name="AValue" type="Double" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetMin" visibility="private" file="FMX.EditBox.pas" line="76">
+        <parameters>
+          <retval type="Double"/>
+        </parameters>
+      </function>
+      <function name="MinStored" visibility="private" file="FMX.EditBox.pas" line="77">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetValue" visibility="private" file="FMX.EditBox.pas" line="78">
+        <parameters>
+          <retval type="Double"/>
+        </parameters>
+      </function>
+      <procedure name="SetDecimalDigits" visibility="private" file="FMX.EditBox.pas" line="79">
+        <parameters>
+          <parameter name="ADecimalDigits" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetDecimalDigits" visibility="private" file="FMX.EditBox.pas" line="80">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetValueType" visibility="private" file="FMX.EditBox.pas" line="81">
+        <parameters>
+          <parameter name="AValueType" type="TNumValueType" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetValueType" visibility="private" file="FMX.EditBox.pas" line="82">
+        <parameters>
+          <retval type="TNumValueType"/>
+        </parameters>
+      </function>
+      <procedure name="SetValueRange" visibility="private" file="FMX.EditBox.pas" line="83">
+        <parameters>
+          <parameter name="AValue" type="TCustomValueRange" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetValueRange" visibility="private" file="FMX.EditBox.pas" line="84">
+        <parameters>
+          <retval type="TCustomValueRange"/>
+        </parameters>
+      </function>
+      <procedure name="SetValueRange_" visibility="private" file="FMX.EditBox.pas" line="85">
+        <parameters>
+          <parameter name="Value" type="TValueRange" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetValueRange_" visibility="private" file="FMX.EditBox.pas" line="86">
+        <parameters>
+          <retval type="TValueRange"/>
+        </parameters>
+      </function>
+      <procedure name="SetHorzIncrement" visibility="private" file="FMX.EditBox.pas" line="87">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetHorzIncrement" visibility="private" file="FMX.EditBox.pas" line="88">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <function name="DefStored" visibility="private" file="FMX.EditBox.pas" line="89">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetDefaultValueRange" visibility="private" file="FMX.EditBox.pas" line="90">
+        <parameters>
+          <retval type="TBaseValueRange"/>
+        </parameters>
+      </function>
+      <function name="GetModel" visibility="private" procflags="overload" file="FMX.EditBox.pas" line="92">
+        <parameters>
+          <retval type="TEditBoxModel"/>
+        </parameters>
+      </function>
+      <function name="ValueStored" visibility="protected" file="FMX.EditBox.pas" line="97">
+        <devnotes><summary>
+It returns False in case Value has a default value, which means there is no need to store it.
+
+
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="HorzIncrementStored" visibility="protected" procflags="virtual" file="FMX.EditBox.pas" line="98">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns whether the HorzIncrement value is stored in the form file.
+</summary></devnotes></function>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="99">
+      <devnotes><summary>
+
+
+Initializes the control after the form file has been read into memory and loads its presentation.
+FMX.EditBox.TCustomEditBox.Loaded inherits from FMX.Controls.Presentation.TPresentedControl.Loaded. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Loaded.
+Initializes the control after the form file has been read into memory and loads its presentation.
+For details, see TControl.Loaded.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+FMX.Controls.TControl.Loaded
+
+</summary></devnotes></procedure>
+      <procedure name="SetValue" visibility="protected" procflags="virtual" file="FMX.EditBox.pas" line="100">
+        <parameters>
+          <parameter name="AValue" type="Double" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Protected setter implementation for the Value property.
+SetValue sets a value to the Value property of edit boxes.
+</summary></devnotes></procedure>
+      <function name="GetData" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="101">
+        <parameters>
+          <retval type="TValue">
+            <attributes>
+              <attribute name="HPPGENAttribute"/>
+            </attributes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+
+
+Protected getter implementation for the Data property.
+FMX.EditBox.TCustomEditBox.GetData inherits from FMX.Types.TFmxObject.GetData. All content below this line refers to FMX.Types.TFmxObject.GetData.
+Protected getter implementation for the Data property.
+</summary></devnotes></function>
+      <procedure name="SetData" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="102">
+        <parameters>
+          <parameter name="Value" type="TValue" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Protected setter implementation for the Data property.
+FMX.EditBox.TCustomEditBox.SetData inherits from FMX.Types.TFmxObject.SetData. All content below this line refers to FMX.Types.TFmxObject.SetData.
+Protected setter implementation for the Data property.
+</summary></devnotes></procedure>
+      <function name="GetActionLinkClass" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="104">
+        <parameters>
+          <retval type="TActionLinkClass"/>
+        </parameters>
+      <devnotes><summary>
+Returns the appropriate action link class associated with the track bar.
+GetActionLinkClass returns a TValueRangeActionLink.
+</summary></devnotes></function>
+      <procedure name="ActionChange" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="105">
+        <parameters>
+          <parameter name="Sender" type="TBasicAction"/>
+          <parameter name="CheckDefaults" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Specifies the behavior of a TCustomEditBox control when Action changes. 
+Depending on the CheckDefaults value,  ActionChange uses the TValueRangeAction.ValueRange property of the Sender action to set the new value to the  
+ValueRange property of TCustomEditBox. Then ActionChange calls the inherited TControl.ActionChange method.  
+Do not call ActionChange explicitly in an application. It is for internal use.
+</summary></devnotes></procedure>
+      <property name="DefaultValueRange" visibility="protected" read="GetDefaultValueRange" type="TBaseValueRange" file="FMX.EditBox.pas" line="106"><devnotes><summary>
+Returns the default interval for the values of the control.
+</summary></devnotes></property>
+      <function name="DefineModelClass" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="108">
+        <parameters>
+          <retval type="TDataModelClass"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns a class reference to a data model of this presented control.
+FMX.EditBox.TCustomEditBox.DefineModelClass inherits from FMX.Controls.Presentation.TPresentedControl.DefineModelClass. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefineModelClass.
+Returns a class reference to a data model of this presented control.
+Returns a class reference to a data model class that the constructor of this presented control uses to create a data model for the control.
+By default DefineModelClass returns TDataModel. Descendant classes reimplement DefineModelClass to determine the data model class that a descendant presented control uses for its data model.
+
+ See Also
+FMX.Controls.Model.TDataModelClass
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Presentation.Style.TStyledPresentation.DefineModelClass
+Class References
+
+</summary></devnotes></function>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.EditBox.pas" line="109">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns the name of the default presentation proxy that your presented control uses.
+FMX.EditBox.TCustomEditBox.DefinePresentationName inherits from FMX.Controls.Presentation.TPresentedControl.DefinePresentationName. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefinePresentationName.
+Returns the name of the default presentation proxy that your presented control uses.
+You can handle OnPresentationNameChoosing to specify a presentation proxy name to use instead of the name that DefinePresentationName returns.
+DefinePresentationName  calls TPresentationProxyFactory.GeneratePresentationName and returns a generated  presentation proxy name based on the class name of the presented control and the control type (Styled or Platform) of the presentation layer. For example:
+
+
+
+Class name
+
+Control type
+
+Result
+
+
+TMyPresentedControl
+
+Styled
+
+&quot;MyPresentedControl-Styled&quot;
+
+
+TMyPresentedControl
+
+Platform
+
+&quot;MyPresentedControl-Platform&quot;
+
+ See Also
+System.TObject.ClassName
+FMX.Controls.Presentation.TPresentedControl.ControlType
+FMX.Presentation.Factory.TPresentationProxyFactory.Register
+FMX.Controls.Presentation.TPresentationProxy
+FMX.Controls.Presentation.TPresentedControl.OnPresentationNameChoosing
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+
+</summary></devnotes></function>
+      <property name="Model" visibility="protected" read="GetModel" type="TEditBoxModel" file="FMX.EditBox.pas" line="110"><devnotes><summary>
+
+
+The data model representing the data used by the presentation of the current control.
+FMX.EditBox.TCustomEditBox.Model inherits from FMX.Controls.Presentation.TPresentedControl.Model. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Model.
+The data model representing the data used by the presentation of the current control.
+The constructor of your presented control creates a data model for your presented control. The class of the data model is the class that DefineModelClass returns.
+
+ See Also
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Presentation
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+
+</summary></devnotes></property>
+      <constructor name="Create" visibility="public" file="FMX.EditBox.pas" line="112">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates a new instance of TPresentedControl.
+FMX.EditBox.TCustomEditBox.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <procedure name="AfterConstruction" visibility="public" procflags="override" file="FMX.EditBox.pas" line="113">
+      <devnotes><summary>
+Responds after the last constructor has executed and loads the control presentation.
+FMX.EditBox.TCustomEditBox.AfterConstruction inherits from FMX.Controls.Presentation.TPresentedControl.AfterConstruction. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.AfterConstruction.
+Responds after the last constructor has executed and loads the control presentation.
+AfterConstruction is called automatically after the object's last constructor has executed. Do not call it explicitly in your applications.
+</summary></devnotes></procedure>
+      <procedure name="ValueInc" visibility="public" file="FMX.EditBox.pas" line="114">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ValueDec" visibility="public" file="FMX.EditBox.pas" line="115">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <property name="HorzIncrement" visibility="public" read="GetHorzIncrement" write="SetHorzIncrement" stored="HorzIncrementStored" type="Single" file="FMX.EditBox.pas" line="116"><devnotes><summary>
+Represents the value with which the number is incremented or decremented when, while holding down the mouse button, you move the mouse horizontally.
+HorzIncrement represents the value added or decreased from the number when, while holding down the mouse button, you move the mouse to the left or to the right. 
+</summary></devnotes></property>
+      <property name="ValueRange" visibility="public" read="GetValueRange_" write="SetValueRange_" stored="ValueStored" type="TValueRange" file="FMX.EditBox.pas" line="117"><devnotes><summary>
+Provides access to the Value and its Min and Max boundaries.
+</summary></devnotes></property>
+      <property name="Font" visibility="public" read="GetFont" write="SetFont" type="TFont" hoisted="true" file="FMX.EditBox.pas" line="118"/>
+      <property name="FontColor" visibility="public" read="GetFontColor" write="SetFontColor" type="TAlphaColor" default="-16777216" hoisted="true" file="FMX.EditBox.pas" line="119"/>
+      <property name="TextSettings" visibility="public" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.EditBox.pas" line="120"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="-4" hoisted="true" file="FMX.EditBox.pas" line="122"/>
+      <property name="DecimalDigits" visibility="published" read="GetDecimalDigits" write="SetDecimalDigits" type="Integer" default="2" file="FMX.EditBox.pas" line="123"><devnotes><summary>
+Specifies the number of decimal positions of the displayed Value.
+This property has effect only if the ValueType property is set to Float.
+</summary></devnotes></property>
+      <property name="Min" visibility="published" read="GetMin" write="SetMin" stored="MinStored" type="Double" file="FMX.EditBox.pas" line="124"><devnotes><summary>
+Contains the minimum value the number displayed by an edit control can show.
+Min sets the minimum value that can be displayed by edit controls that manipulate only numerical values.
+</summary></devnotes></property>
+      <property name="Max" visibility="published" read="GetMax" write="SetMax" stored="MaxStored" type="Double" file="FMX.EditBox.pas" line="125"><devnotes><summary>
+Contains the maximum value the number displayed by an edit control can show.
+Max sets the maximum value that can be displayed by edit controls that manipulate only numerical values.
+</summary></devnotes></property>
+      <property name="Value" visibility="published" read="GetValue" write="SetValue" stored="ValueStored" type="Double" file="FMX.EditBox.pas" line="126"><devnotes><summary>
+Contains the default number displayed by an edit control.
+</summary></devnotes></property>
+      <property name="ValueType" visibility="published" read="GetValueType" write="SetValueType" type="TNumValueType" default="0" file="FMX.EditBox.pas" line="127"><devnotes><summary>
+Defines the integer or float type of the Value number displayed by the edit box control.
+</summary></devnotes></property>
+      <property name="Text" visibility="published" read="GetText" write="SetText" stored="False" type="string" default="0" hoisted="true" file="FMX.EditBox.pas" line="128"/>
+    </members>
+  <devnotes><summary>
+Base class for all edit boxes that manipulate only numerical values.
+TCustomEditBox is the base class for all edit boxes that manipulate only numerical values, such as a TNumberBox. TCustomEditBox implements functionality to set the minimum and maximum value that this edit box can display, and also the possibility to specify the number of decimal digits of the displayed value.
+If you want to create your own custom edit box control that manipulates number data, then you should derive from TCustomEditBox.
+</summary></devnotes></class>
+</namespace>

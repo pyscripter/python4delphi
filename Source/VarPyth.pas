@@ -134,7 +134,7 @@ type
   end;
   TNamedParamArray = array of TNamedParamDesc;
 
-{$IF not defined(FPC) and (defined(OSX64) or defined(LINUX) or not defined(DELPHI10_4_OR_HIGHER))}
+{$IF not defined(FPC) and (defined(OSX64) or defined(LINUX) or defined(ANDROID) or not defined(DELPHI10_4_OR_HIGHER))}
   {$DEFINE PATCHEDSYSTEMDISPINVOKE}  //To correct memory leaks
 {$IFEND}
 
@@ -940,7 +940,7 @@ const
   CPropertyGet = $02;
   CPropertySet = $04;
 
-{$IF defined(PATCHEDSYSTEMDISPINVOKE) and (defined(OSX64) or defined(LINUX))}
+{$IF defined(PATCHEDSYSTEMDISPINVOKE) and (defined(OSX64) or defined(LINUX) or defined(ANDROID))}
 {
    Fixes https://quality.embarcadero.com/browse/RSP-28097
 }
@@ -1036,14 +1036,11 @@ begin
         varVariant:
           begin
             PVarParm^.VType := varEmpty;
-{$IFDEF CPUX64}
-
-//          PVariant(PVarParm)^ := PVariant(Params^)^;
+            {$IFDEF CPU64BITS}
             PVariant(PVarParm)^ := VarArgGetValue(VAList, PVariant)^;
-{$ELSE}
-//          PVariant(PVarParm)^ := PVariant(Params)^;
+            {$ELSE}
             PVariant(PVarParm)^ := VarArgGetValue(VAList, Variant);
-{$ENDIF}
+            {$ENDIF}
           end;
         varUnknown:   PVarParm^.VUnknown := VarArgGetValue(VAList, Pointer);
         varSmallint:  PVarParm^.VSmallInt := VarArgGetValue(VAList, SmallInt);

@@ -1,0 +1,566 @@
+<?xml version="1.0" ?><namespace name="FMX.ComboEdit" platform="Win32">
+  <const name="MM_ITEMHEIGHT_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="21">
+    <value>
+      $171B
+    </value>
+  </const>
+  <const name="MM_ITEMWIDTH_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="22">
+    <value>
+      $171C
+    </value>
+  </const>
+  <const name="MM_ITEMS_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="23">
+    <value>
+      $171D
+    </value>
+  </const>
+  <const name="MM_ITEMINDEX_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="24">
+    <value>
+      $171E
+    </value>
+  </const>
+  <const name="MM_DROPDOWNCOUNT_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="25">
+    <value>
+      $171F
+    </value>
+  </const>
+  <const name="MM_DROPDOWNKIND_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="26">
+    <value>
+      $1720
+    </value>
+  </const>
+  <const name="MM_LISTBOXRESOURCE_CHANGED" type="Integer" file="FMX.ComboEdit.pas" line="27">
+    <value>
+      $1721
+    </value>
+  </const>
+  <const name="MM_COMBOEDIT_USER" type="Integer" file="FMX.ComboEdit.pas" line="28">
+    <value>
+      $1722
+    </value>
+  </const>
+  <const name="PM_DROPDOWN" type="Integer" file="FMX.ComboEdit.pas" line="29">
+    <value>
+      $1004
+    </value>
+  </const>
+  <const name="PM_CLOSE_DROPDOWN" type="Integer" file="FMX.ComboEdit.pas" line="30">
+    <value>
+      $1005
+    </value>
+  </const>
+  <const name="PM_COMBOEDIT_USER" type="Integer" file="FMX.ComboEdit.pas" line="31">
+    <value>
+      $1008
+    </value>
+  </const>
+  <class name="TComboEditBase" file="FMX.ComboEdit.pas" line="38">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="FMX.ComboEdit.pas" line="40">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates a new instance of TPresentedControl.
+FMX.ComboEdit.TComboEditBase.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <procedure name="DropDown" visibility="public" procflags="virtual" file="FMX.ComboEdit.pas" line="41">
+      <devnotes><summary>
+Executes internally when the edit control is left-clicked.
+DropDown is overridden by edit controls that have pop-up windows that open and close when the edit control is left-clicked.
+If the pop-up window is open, then DropDown closes the pop-up window. Else, it opens it.
+</summary></devnotes></procedure>
+      <procedure name="CloseDropDown" visibility="public" file="FMX.ComboEdit.pas" line="43">
+        <devnotes><summary>
+Tries to close the drop-down list.
+CloseDropDown sends a PM_CLOSE_DROPDOWN message to the presentation layer through its presentation proxy.
+</summary></devnotes>
+      </procedure>
+    </members>
+  <devnotes><summary>
+The base class for edit boxes having a list of predefined choices.
+TComboEditBase extends TCustomEdit defining the DropDown method.
+</summary></devnotes></class>
+  <class name="TComboEditModel" file="FMX.ComboEdit.pas" line="48">
+    
+    <members>
+      <const name="DefaultDropDownCount" visibility="public" type="Integer" file="FMX.ComboEdit.pas" line="50">
+        <value>
+          $8
+        </value>
+      </const>
+      <const name="DefaultItemHeight" visibility="public" type="Integer" file="FMX.ComboEdit.pas" line="51">
+        <value>
+          $13
+        </value>
+      </const>
+      <const name="DefaultDropDownKind" visibility="public" type="TDropDownKind" file="FMX.ComboEdit.pas" line="52">
+        <value>
+          Native
+        </value>
+      </const>
+      <field name="FItems" type="TStrings" visibility="private" size="4" offset="152" file="FMX.ComboEdit.pas" line="54"/>
+      <field name="FNeedSetFocusAfterButtonClick" type="Boolean" visibility="private" size="1" offset="156" file="FMX.ComboEdit.pas" line="55"/>
+      <field name="FDropDownCount" type="Integer" visibility="private" size="4" offset="160" file="FMX.ComboEdit.pas" line="56"/>
+      <field name="FPlacement" type="TPlacement" visibility="private" size="1" offset="164" file="FMX.ComboEdit.pas" line="57"/>
+      <field name="FItemHeight" type="Single" visibility="private" size="4" offset="168" file="FMX.ComboEdit.pas" line="58"/>
+      <field name="FItemWidth" type="Single" visibility="private" size="4" offset="172" file="FMX.ComboEdit.pas" line="59"/>
+      <field name="FDroppedDown" type="Boolean" visibility="private" size="1" offset="176" file="FMX.ComboEdit.pas" line="60"/>
+      <field name="FDropDownKind" type="TDropDownKind" visibility="private" size="1" offset="177" file="FMX.ComboEdit.pas" line="61"/>
+      <field name="FItemIndex" type="Integer" visibility="private" size="4" offset="180" file="FMX.ComboEdit.pas" line="62"/>
+      <field name="FListBoxResource" type="string" visibility="private" size="4" offset="184" file="FMX.ComboEdit.pas" line="63"/>
+      <field name="FOnPopup" type="TNotifyEvent" visibility="private" size="8" offset="192" file="FMX.ComboEdit.pas" line="64"/>
+      <field name="FOnClosePopup" type="TNotifyEvent" visibility="private" size="8" offset="200" file="FMX.ComboEdit.pas" line="65"/>
+      <procedure name="DoItemsChanged" visibility="private" file="FMX.ComboEdit.pas" line="66">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetItemHeight" visibility="private" file="FMX.ComboEdit.pas" line="67">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetItemWidth" visibility="private" file="FMX.ComboEdit.pas" line="68">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetCount" visibility="private" file="FMX.ComboEdit.pas" line="69">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetItemIndex" visibility="private" file="FMX.ComboEdit.pas" line="70">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetDropDownCount" visibility="private" file="FMX.ComboEdit.pas" line="71">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetDropDownKind" visibility="private" file="FMX.ComboEdit.pas" line="72">
+        <parameters>
+          <parameter name="Value" type="TDropDownKind" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetListBoxResource" visibility="private" file="FMX.ComboEdit.pas" line="73">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetTextSettingsClass" visibility="protected" procflags="override" file="FMX.ComboEdit.pas" line="75">
+        <parameters>
+          <retval type="TTextSettingsInfo.TCustomTextSettingsClass">
+          </retval>
+        </parameters>
+      </function>
+      <function name="DoValidate" visibility="protected" procflags="override" file="FMX.ComboEdit.pas" line="76">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.ComboEdit.pas" line="78">
+        <parameters>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.ComboEdit.pas" line="79">
+        <parameters>
+        </parameters>
+      </destructor>
+      <property name="Count" visibility="public" read="GetCount" type="Integer" file="FMX.ComboEdit.pas" line="80"/>
+      <property name="DropDownKind" visibility="public" read="FDropDownKind" write="SetDropDownKind" type="TDropDownKind" file="FMX.ComboEdit.pas" line="81"/>
+      <property name="DroppedDown" visibility="public" read="FDroppedDown" write="FDroppedDown" type="Boolean" file="FMX.ComboEdit.pas" line="82"/>
+      <property name="DropDownCount" visibility="public" read="FDropDownCount" write="SetDropDownCount" type="Integer" file="FMX.ComboEdit.pas" line="83"/>
+      <property name="Items" visibility="public" read="FItems" type="TStrings" file="FMX.ComboEdit.pas" line="84"/>
+      <property name="ItemIndex" visibility="public" read="FItemIndex" write="SetItemIndex" type="Integer" file="FMX.ComboEdit.pas" line="85"/>
+      <property name="ItemHeight" visibility="public" read="FItemHeight" write="SetItemHeight" type="Single" default="0" file="FMX.ComboEdit.pas" line="86"/>
+      <property name="ItemWidth" visibility="public" read="FItemWidth" write="SetItemWidth" type="Single" default="0" file="FMX.ComboEdit.pas" line="87"/>
+      <property name="ListBoxResource" visibility="public" read="FListBoxResource" write="SetListBoxResource" type="string" default="0" file="FMX.ComboEdit.pas" line="88"/>
+      <property name="NeedSetFocusAfterButtonClick" visibility="public" read="FNeedSetFocusAfterButtonClick" write="FNeedSetFocusAfterButtonClick" type="Boolean" file="FMX.ComboEdit.pas" line="89"/>
+      <property name="Placement" visibility="public" read="FPlacement" type="TPlacement" file="FMX.ComboEdit.pas" line="90"/>
+      <event name="OnClosePopup" visibility="public" read="FOnClosePopup" write="FOnClosePopup" type="TNotifyEvent" file="FMX.ComboEdit.pas" line="91"/>
+      <event name="OnPopup" visibility="public" read="FOnPopup" write="FOnPopup" type="TNotifyEvent" file="FMX.ComboEdit.pas" line="92"/>
+    </members>
+  </class>
+  <class name="TCustomComboEdit" file="FMX.ComboEdit.pas" line="95">
+    
+    <members>
+      <function name="GetCount" visibility="private" file="FMX.ComboEdit.pas" line="97">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetItemIndex" visibility="private" file="FMX.ComboEdit.pas" line="98">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetItemIndex" visibility="private" file="FMX.ComboEdit.pas" line="99">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetDroppedDown" visibility="private" file="FMX.ComboEdit.pas" line="100">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetDropDownCount" visibility="private" file="FMX.ComboEdit.pas" line="101">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetDropDownCount" visibility="private" file="FMX.ComboEdit.pas" line="102">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetDropDownKind" visibility="private" file="FMX.ComboEdit.pas" line="103">
+        <parameters>
+          <parameter name="Value" type="TDropDownKind" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetDropDownKind" visibility="private" file="FMX.ComboEdit.pas" line="104">
+        <parameters>
+          <retval type="TDropDownKind"/>
+        </parameters>
+      </function>
+      <procedure name="SetListBoxResource" visibility="private" file="FMX.ComboEdit.pas" line="105">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetListBoxResource" visibility="private" file="FMX.ComboEdit.pas" line="106">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="SetItemHeight" visibility="private" file="FMX.ComboEdit.pas" line="107">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetItemHeight" visibility="private" file="FMX.ComboEdit.pas" line="108">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetItems" visibility="private" file="FMX.ComboEdit.pas" line="109">
+        <parameters>
+          <parameter name="Value" type="TStrings" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetItems" visibility="private" file="FMX.ComboEdit.pas" line="110">
+        <parameters>
+          <retval type="TStrings"/>
+        </parameters>
+      </function>
+      <procedure name="SetItemWidth" visibility="private" file="FMX.ComboEdit.pas" line="111">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetItemWidth" visibility="private" file="FMX.ComboEdit.pas" line="112">
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnClosePopup" visibility="private" file="FMX.ComboEdit.pas" line="113">
+        <parameters>
+          <parameter name="Value" type="TNotifyEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetOnClosePopup" visibility="private" file="FMX.ComboEdit.pas" line="114">
+        <parameters>
+          <retval type="TNotifyEvent"/>
+        </parameters>
+      </function>
+      <procedure name="SetOnPopup" visibility="private" file="FMX.ComboEdit.pas" line="115">
+        <parameters>
+          <parameter name="Value" type="TNotifyEvent" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetOnPopup" visibility="private" file="FMX.ComboEdit.pas" line="116">
+        <parameters>
+          <retval type="TNotifyEvent"/>
+        </parameters>
+      </function>
+      <function name="GetModel" visibility="private" procflags="overload" file="FMX.ComboEdit.pas" line="117">
+        <parameters>
+          <retval type="TComboEditModel"/>
+        </parameters>
+      </function>
+      <function name="DefineModelClass" visibility="protected" procflags="override" file="FMX.ComboEdit.pas" line="119">
+        <parameters>
+          <retval type="TDataModelClass"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns a class reference to a data model of this presented control.
+FMX.ComboEdit.TCustomComboEdit.DefineModelClass inherits from FMX.Controls.Presentation.TPresentedControl.DefineModelClass. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefineModelClass.
+Returns a class reference to a data model of this presented control.
+Returns a class reference to a data model class that the constructor of this presented control uses to create a data model for the control.
+By default DefineModelClass returns TDataModel. Descendant classes reimplement DefineModelClass to determine the data model class that a descendant presented control uses for its data model.
+
+ See Also
+FMX.Controls.Model.TDataModelClass
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Presentation.Style.TStyledPresentation.DefineModelClass
+Class References
+
+</summary></devnotes></function>
+      <function name="DefinePresentationName" visibility="protected" procflags="override" file="FMX.ComboEdit.pas" line="120">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Returns the name of the default presentation proxy that your presented control uses.
+FMX.ComboEdit.TCustomComboEdit.DefinePresentationName inherits from FMX.Controls.Presentation.TPresentedControl.DefinePresentationName. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DefinePresentationName.
+Returns the name of the default presentation proxy that your presented control uses.
+You can handle OnPresentationNameChoosing to specify a presentation proxy name to use instead of the name that DefinePresentationName returns.
+DefinePresentationName  calls TPresentationProxyFactory.GeneratePresentationName and returns a generated  presentation proxy name based on the class name of the presented control and the control type (Styled or Platform) of the presentation layer. For example:
+
+
+
+Class name
+
+Control type
+
+Result
+
+
+TMyPresentedControl
+
+Styled
+
+&quot;MyPresentedControl-Styled&quot;
+
+
+TMyPresentedControl
+
+Platform
+
+&quot;MyPresentedControl-Platform&quot;
+
+ See Also
+System.TObject.ClassName
+FMX.Controls.Presentation.TPresentedControl.ControlType
+FMX.Presentation.Factory.TPresentationProxyFactory.Register
+FMX.Controls.Presentation.TPresentationProxy
+FMX.Controls.Presentation.TPresentedControl.OnPresentationNameChoosing
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+
+</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.ComboEdit.pas" line="122">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Creates a new instance of TPresentedControl.
+FMX.ComboEdit.TCustomComboEdit.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <procedure name="Clear" visibility="public" file="FMX.ComboEdit.pas" line="123">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <property name="Action" visibility="public" read="GetAction" write="SetAction" type="TBasicAction" hoisted="true" file="FMX.ComboEdit.pas" line="124"/>
+      <property name="Model" visibility="public" read="GetModel" type="TComboEditModel" file="FMX.ComboEdit.pas" line="125"><devnotes><summary>
+
+
+The data model representing the data used by the presentation of the current control.
+FMX.ComboEdit.TCustomComboEdit.Model inherits from FMX.Controls.Presentation.TPresentedControl.Model. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Model.
+The data model representing the data used by the presentation of the current control.
+The constructor of your presented control creates a data model for your presented control. The class of the data model is the class that DefineModelClass returns.
+
+ See Also
+FMX.Controls.Model.TDataModel
+FMX.Controls.Presentation.TPresentedControl.Presentation
+FMX.Controls.Presentation.TPresentedControl.Create
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+
+</summary></devnotes></property>
+      <property name="DroppedDown" visibility="public" read="GetDroppedDown" type="Boolean" file="FMX.ComboEdit.pas" line="126"><devnotes><summary>
+Returns whether the drop-down box associated with the current TComboEdit object is visible.
+</summary></devnotes></property>
+      <property name="Count" visibility="public" read="GetCount" type="Integer" file="FMX.ComboEdit.pas" line="127"><devnotes><summary>
+Count returns the number of items contained by the ListBox object.
+</summary></devnotes></property>
+      <property name="Font" visibility="public" read="GetFont" write="SetFont" type="TFont" hoisted="true" file="FMX.ComboEdit.pas" line="128"/>
+      <property name="TextAlign" visibility="public" read="GetTextAlign" write="SetTextAlign" type="TTextAlign" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="129"/>
+      <property name="DropDownCount" visibility="public" read="GetDropDownCount" write="SetDropDownCount" type="Integer" file="FMX.ComboEdit.pas" line="131"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="DropDownKind" visibility="public" read="GetDropDownKind" write="SetDropDownKind" type="TDropDownKind" file="FMX.ComboEdit.pas" line="132"><devnotes><summary>
+Defines whether to use TCustomListPicker pickers providing platform-specific drop-down lists to select string items.
+The TDropDownKind type is also used in the TComboEdit, 
+TComboBox, and TPopupBox controls to define whether to use the TCustomListPicker picker to provide platform-specific controls to select string items from drop-down lists.
+</summary></devnotes></property>
+      <property name="ItemHeight" visibility="public" read="GetItemHeight" write="SetItemHeight" type="Single" default="0" file="FMX.ComboEdit.pas" line="133"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="ItemWidth" visibility="public" read="GetItemWidth" write="SetItemWidth" type="Single" default="0" file="FMX.ComboEdit.pas" line="134"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="Items" visibility="public" read="GetItems" write="SetItems" type="TStrings" file="FMX.ComboEdit.pas" line="135"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="ItemIndex" visibility="public" read="GetItemIndex" write="SetItemIndex" type="Integer" file="FMX.ComboEdit.pas" line="136"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <property name="ListBoxResource" visibility="public" read="GetListBoxResource" write="SetListBoxResource" type="string" default="0" file="FMX.ComboEdit.pas" line="137"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+      <event name="OnClosePopup" visibility="public" read="GetOnClosePopup" write="SetOnClosePopup" type="TNotifyEvent" file="FMX.ComboEdit.pas" line="138"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnPopup" visibility="public" read="GetOnPopup" write="SetOnPopup" type="TNotifyEvent" file="FMX.ComboEdit.pas" line="139"><devnotes><summary>
+Occurs just before the drop-drown list appears.
+Write an OnPopup event handler to take specific action just before the drop-drown list appears.
+</summary></devnotes></event>
+    </members>
+  <devnotes><summary>
+The base class, implementing the basic functionality, for edit boxes having a list of predefined choices.
+TCustomComboEdit extends TComboEditBase implementing the basic functionality for edit boxes having a list of predefined choices.
+TCustomComboEdit is a presented control. Its data model is TComboEditModel and presentation is TStyledComboEdit.
+</summary></devnotes></class>
+  <class name="TComboEdit" file="FMX.ComboEdit.pas" line="142">
+
+    
+    <members>
+      <property name="CanFocus" visibility="published" read="FCanFocus" write="FCanFocus" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="144"/>
+      <property name="CanParentFocus" visibility="published" read="FCanParentFocus" write="FCanParentFocus" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="145"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="-4" hoisted="true" file="FMX.ComboEdit.pas" line="146"/>
+      <property name="DisableFocusEffect" visibility="published" read="FDisableFocusEffect" write="FDisableFocusEffect" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="147"/>
+      <property name="DropDownCount" visibility="published" read="GetDropDownCount" write="SetDropDownCount" type="Integer" default="8" hoisted="true" file="FMX.ComboEdit.pas" line="148"/>
+      <property name="DropDownKind" visibility="published" read="GetDropDownKind" write="SetDropDownKind" type="TDropDownKind" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="149"/>
+      <property name="KeyboardType" visibility="published" read="GetKeyboardType" write="SetKeyboardType" type="TVirtualKeyboardType" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="150"/>
+      <property name="ReadOnly" visibility="published" read="GetReadOnly" write="SetReadOnly" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="151"/>
+      <property name="ItemHeight" visibility="published" read="GetItemHeight" write="SetItemHeight" type="Single" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="152"/>
+      <property name="ItemWidth" visibility="published" read="GetItemWidth" write="SetItemWidth" type="Single" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="153"/>
+      <property name="Items" visibility="published" read="GetItems" write="SetItems" type="TStrings" hoisted="true" file="FMX.ComboEdit.pas" line="154"/>
+      <property name="ItemIndex" visibility="published" read="GetItemIndex" write="SetItemIndex" type="Integer" hoisted="true" file="FMX.ComboEdit.pas" line="155"/>
+      <property name="ListBoxResource" visibility="published" read="GetListBoxResource" write="SetListBoxResource" type="string" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="156"/>
+      <property name="Text" visibility="published" read="GetText" write="SetText" type="string" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="157"/>
+      <property name="TextSettings" visibility="published" read="GetTextSettings" write="SetTextSettings" type="TTextSettings" hoisted="true" file="FMX.ComboEdit.pas" line="158"/>
+      <property name="Position" visibility="published" read="FPosition" write="SetPosition" stored="IsPositionStored" type="TPosition" hoisted="true" file="FMX.ComboEdit.pas" line="159"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.ComboEdit.pas" line="160"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.ComboEdit.pas" line="161"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="162"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="163"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="164"/>
+      <property name="Hint" visibility="published" read="FHint" write="SetHint" stored="HintStored" type="string" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="165"/>
+      <property name="StyledSettings" visibility="published" read="GetStyledSettings" write="SetStyledSettings" stored="StyledSettingsStored" type="TStyledSettings" hoisted="true" file="FMX.ComboEdit.pas" line="166"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="167"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="168"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="169"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="170"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="171"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="172"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="173"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="174"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.ComboEdit.pas" line="175"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.ComboEdit.pas" line="176"/>
+      <property name="Margins" visibility="published" read="GetMargins" write="SetMargins" type="TBounds" hoisted="true" file="FMX.ComboEdit.pas" line="177"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.ComboEdit.pas" line="178"/>
+      <property name="RotationAngle" visibility="published" read="GetRotationAngle" write="SetRotationAngle" type="Single" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="179"/>
+      <property name="RotationCenter" visibility="published" read="GetRotationCenter" write="SetRotationCenter" type="TPosition" hoisted="true" file="FMX.ComboEdit.pas" line="180"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.ComboEdit.pas" line="181"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.ComboEdit.pas" line="182"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.ComboEdit.pas" line="183"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="184"/>
+      <property name="Caret" visibility="published" read="GetCaret" write="SetCaret" type="TCustomCaret" hoisted="true" file="FMX.ComboEdit.pas" line="185"/>
+      <property name="KillFocusByReturn" visibility="published" read="GetKillFocusByReturn" write="SetKillFocusByReturn" type="Boolean" default="0" hoisted="true" file="FMX.ComboEdit.pas" line="186"/>
+      <property name="ParentShowHint" visibility="published" read="FParentShowHint" write="SetParentShowHint" type="Boolean" default="1" hoisted="true" file="FMX.ComboEdit.pas" line="187"/>
+      <property name="ShowHint" visibility="published" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="FMX.ComboEdit.pas" line="188"/>
+      <event name="OnChange" visibility="published" read="GetOnChange" write="SetOnChange" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="190"/>
+      <event name="OnChangeTracking" visibility="published" read="GetOnChangeTracking" write="SetOnChangeTracking" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="191"/>
+      <event name="OnTyping" visibility="published" read="GetOnTyping" write="SetOnTyping" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="192"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="193"/>
+      <event name="OnClosePopup" visibility="published" read="GetOnClosePopup" write="SetOnClosePopup" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="194"/>
+      <event name="OnPopup" visibility="published" read="GetOnPopup" write="SetOnPopup" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="195"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.ComboEdit.pas" line="197"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="198"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.ComboEdit.pas" line="199"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.ComboEdit.pas" line="200"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="201"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="203"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="204"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.ComboEdit.pas" line="206"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="207"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="208"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="209"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="210"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.ComboEdit.pas" line="211"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.ComboEdit.pas" line="212"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.ComboEdit.pas" line="213"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.ComboEdit.pas" line="214"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="215"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="216"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.ComboEdit.pas" line="217"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.ComboEdit.pas" line="218"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="219"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.ComboEdit.pas" line="220"/>
+      <event name="OnPresentationNameChoosing" visibility="published" read="FOnPresenterNameChoosing" write="FOnPresenterNameChoosing" type="TPresenterNameChoosingEvent" hoisted="true" file="FMX.ComboEdit.pas" line="221"/>
+    </members>
+  <devnotes><summary>
+An edit box with a list of predefined choices.
+TComboEdit stores the predefined choices in its Items property, which can be edited at design time. 
+TComboEdit encapsulates TComboEditListBox, which is displayed in the drop-down box when the right arrow icon is clicked. Although the ListBox object is fully exposed, we recommend that you use Items to access the list of items.
+</summary></devnotes></class>
+</namespace>

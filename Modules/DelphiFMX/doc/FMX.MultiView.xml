@@ -1,0 +1,1183 @@
+<?xml version="1.0" ?><namespace name="FMX.MultiView" platform="Win32">
+  <enum name="TPresentationState" file="FMX.MultiView.pas" line="26">
+    <element value="0" name="Installed" file="FMX.MultiView.pas" line="26"/>
+    <element value="1" name="Opened" file="FMX.MultiView.pas" line="26"/>
+    <element value="2" name="Moving" file="FMX.MultiView.pas" line="26"/>
+  </enum>
+  <set name="TPresentationStates" type="TPresentationState" file="FMX.MultiView.pas" line="27">
+    <element name="Installed"/>
+    <element name="Opened"/>
+    <element name="Moving"/>
+  </set>
+  <class name="TMultiViewPresentation" file="FMX.MultiView.pas" line="31">
+    
+    <members>
+      <const name="DefaultSpeed" visibility="public" type="Integer" file="FMX.MultiView.pas" line="33">
+        <value>
+          $0
+        </value>
+      </const>
+      <field name="FMultiView" type="TCustomMultiView" visibility="private" size="4" offset="12" file="FMX.MultiView.pas" line="35">
+        <attributes>
+          <attribute name="TObject"/>
+        </attributes>
+      </field>
+      <field name="FState" type="TPresentationStates" visibility="private" size="1" offset="16" file="FMX.MultiView.pas" line="36"/>
+      <field name="FInternalRealign" type="Integer" visibility="private" size="4" offset="20" file="FMX.MultiView.pas" line="37"/>
+      <function name="GetParentWidth" visibility="protected" file="FMX.MultiView.pas" line="40">
+        <devnotes>
+           <summary>Returns multi view parent width.</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <function name="GetParentHeight" visibility="protected" file="FMX.MultiView.pas" line="42">
+        <devnotes>
+           <summary>Returns multi view parent height.</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Single"/>
+        </parameters>
+      </function>
+      <procedure name="SetExpandedSize" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="44">
+        <devnotes>
+           <summary>Sets size of MultiView in opened state.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="Value" type="TSizeF" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetExpandedSize" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="46">
+        <devnotes>
+           <summary>If controls supports opening and closing, returns size of multiview in opened state.</summary>
+        </devnotes>
+        <parameters>
+          <retval type="TSizeF"/>
+        </parameters>
+      </function>
+      <function name="GetCollapsedSize" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="48">
+        <devnotes>
+           <summary>If controls supports opening and closing, returns size of multiview in closed state.</summary>
+        </devnotes>
+        <parameters>
+          <retval type="TSizeF"/>
+        </parameters>
+      </function>
+      <procedure name="DoShown" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="51">
+        <devnotes>
+           <summary>Invokes <c>MultiView.OnShown</c>. Should be called, when multi view is opened.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoStartShowing" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="53">
+        <devnotes>
+           <summary>Invokes <c>MultiView.OnStartShowing</c>. Should be called, when multi view is beginning to open.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoStartHiding" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="55">
+        <devnotes>
+           <summary>Invokes <c>MultiView.OnStartHiding</c>. Should be called, when multi view is beginning to close.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoHidden" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="57">
+        <devnotes>
+           <summary>Invokes <c>MultiView.OnStartShowing</c>. Should be called, when multi view is closed.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoInstall" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="59">
+        <devnotes>
+           <summary>Used for making initialization of presentation and storing previous state of MultiView.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoUninstall" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="61">
+        <devnotes>
+           <summary>Used for making finalization of presentation and restoring previous state of MultiView.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="DoOpen" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="63">
+        <devnotes>
+           <summary>Defines logic of opening MultiView. Parameter can define speed of opening, if presentation supports it.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="DoClose" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="65">
+        <devnotes>
+           <summary>Defines logic of closing MultiView. Parameter can define speed of opening, if presentation supports it.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="DoStartMoving" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="67">
+        <devnotes>
+           <summary>Used for defining when multi view is beginning to open. if presentation supports animation.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="DoEndMoving" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="69">
+        <devnotes>
+           <summary>Used for defining when multi view is ending moving. if presentation supports animation.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="StartMoving" visibility="protected" file="FMX.MultiView.pas" line="72">
+        <devnotes>
+           <summary>Changes state of multi view and includes <c>TPresentationState.Moving</c> also notifies presentation
+           about starting of moving</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="EndMoving" visibility="protected" file="FMX.MultiView.pas" line="75">
+        <devnotes>
+           <summary>Changes state of multi view and excludes <c>TPresentationState.Moving</c> also notifies presentation
+           about ending of moving</summary>
+        </devnotes>
+      </procedure>
+      <function name="GetMasterButtonVisible" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="77">
+        <devnotes>
+           <summary>Returns should be master button hidden or not</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="GetDisplayName" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="80">
+        <devnotes>
+           <summary>Returns badge title of current presentation, which is displayed in design time in right bottom
+           corner of TMultiView</summary>
+        </devnotes>
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="BeginInternalRealign" visibility="protected" file="FMX.MultiView.pas" line="82">
+        <devnotes>
+           <summary>Begins internal process of realign.</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="EndInternalRealign" visibility="protected" file="FMX.MultiView.pas" line="84">
+        <devnotes>
+           <summary>Ends internal process of realign.</summary>
+        </devnotes>
+      </procedure>
+      <function name="IsInternalRealign" visibility="protected" file="FMX.MultiView.pas" line="86">
+        <devnotes>
+           <summary>Are we in a internal process of realign?</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.MultiView.pas" line="88">
+        <parameters>
+          <parameter name="AMultiView" type="TCustomMultiView"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.MultiView.pas" line="89">
+        <parameters>
+        </parameters>
+      </destructor>
+      <procedure name="Install" visibility="public" file="FMX.MultiView.pas" line="91">
+        <devnotes>
+           <summary>Installs presentation</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="Uninstall" visibility="public" file="FMX.MultiView.pas" line="93">
+        <devnotes>
+           <summary>Uninstalls presentation</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="Open" visibility="public" file="FMX.MultiView.pas" line="95">
+        <devnotes>
+           <summary>Opens MultiView, if presentation supports it.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <procedure name="Close" visibility="public" file="FMX.MultiView.pas" line="97">
+        <devnotes>
+           <summary>Closes MultiView, if presentation supports it.</summary>
+        </devnotes>
+        <parameters>
+          <parameter name="ASpeed" type="Single" paramflags="const">
+            <value>
+              0
+            </value>
+          </parameter>
+        </parameters>
+      </procedure>
+      <function name="Opened" visibility="public" file="FMX.MultiView.pas" line="99">
+        <devnotes>
+           <summary>Is MultiView opened?</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="Moving" visibility="public" file="FMX.MultiView.pas" line="101">
+        <devnotes>
+           <summary>Is MultiView moving?</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="Realign" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="103">
+        <devnotes>
+           <summary>Refresh position and size of MultiView</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="TargetControlChanging" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="105">
+        <devnotes>
+           <summary>Notifies about changing <c>MultiView.TargetControl</c></summary>
+        </devnotes>
+        <parameters>
+          <parameter name="AOldControl" type="TControl"/>
+          <parameter name="ANewControl" type="TControl"/>
+        </parameters>
+      </procedure>
+      <procedure name="UpdateSettings" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="107">
+        <devnotes>
+           <summary>Notifies about updating <c>MultiView</c> settings</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="UpdateStyle" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="109">
+        <devnotes>
+           <summary>Notifies about updating <c>MultiView</c> style</summary>
+        </devnotes>
+      </procedure>
+      <procedure name="ControlTypeChanged" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="111">
+        <devnotes>
+           <summary>Notification about changed <c>ControlType</c> of <c>MultiView</c></summary>
+        </devnotes>
+      </procedure>
+      <procedure name="ParentChanged" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="113">
+        <devnotes>
+           <summary>Notification about changed <c>Parent</c> of <c>MultiView</c></summary>
+        </devnotes>
+      </procedure>
+      <procedure name="EnabledChanged" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="115">
+        <devnotes>
+           <summary>Notification about changed <c>Enabled</c> of <c>TMultiView</c></summary>
+        </devnotes>
+      </procedure>
+      <function name="NeedHideInDesignTime" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="117">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="CanShowHideInDesignTime" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="119">
+        <devnotes>
+           <summary>Does presentation supports openning and closing MultiView?</summary>
+        </devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="DisplayName" visibility="public" read="GetDisplayName" type="string" default="0" file="FMX.MultiView.pas" line="122">
+        <devnotes>
+           <summary>Returns badge title of current presentation, which is displayed in design time in right bottom
+           corner of TMultiView</summary>
+        </devnotes>
+      </property>
+      <property name="ExpandedSize" visibility="public" read="GetExpandedSize" write="SetExpandedSize" type="TSizeF" file="FMX.MultiView.pas" line="124">
+        <devnotes>
+           <summary>Size of MultiView in opened state</summary>
+        </devnotes>
+      </property>
+      <property name="CollapsedSize" visibility="public" read="GetCollapsedSize" type="TSizeF" file="FMX.MultiView.pas" line="126">
+        <devnotes>
+           <summary>Size of MultiView in closed state</summary>
+        </devnotes>
+      </property>
+      <property name="MultiView" visibility="public" read="FMultiView" type="TCustomMultiView" file="FMX.MultiView.pas" line="129">
+        <devnotes>
+           <summary>Link on MultiView</summary>
+        </devnotes>
+      </property>
+      <property name="State" visibility="public" read="FState" type="TPresentationStates" file="FMX.MultiView.pas" line="130"/>
+      <property name="MasterButtonVisible" visibility="public" read="GetMasterButtonVisible" type="Boolean" file="FMX.MultiView.pas" line="132">
+        <devnotes>
+           <summary>Returns should be master button hidden or not</summary>
+        </devnotes>
+      </property>
+    </members>
+  </class>
+  <classref name="TMultiViewPresentationClass" ref="TMultiViewPresentation" file="FMX.MultiView.pas" line="134"/>
+  <enum name="TMultiViewMode" file="FMX.MultiView.pas" line="148">
+    <element value="0" name="PlatformBehaviour" file="FMX.MultiView.pas" line="148"/>
+    <element value="1" name="Panel" file="FMX.MultiView.pas" line="148"/>
+    <element value="2" name="Popover" file="FMX.MultiView.pas" line="148"/>
+    <element value="3" name="Drawer" file="FMX.MultiView.pas" line="148"/>
+    <element value="4" name="Custom" file="FMX.MultiView.pas" line="148"/>
+    <element value="5" name="NavigationPane" file="FMX.MultiView.pas" line="148"/>
+  </enum>
+  <type name="TOnPresenterChanging" file="FMX.MultiView.pas" line="150" procflags="closure">
+  </type>
+  <class name="TMultiViewlDisplayedMessage" file="FMX.MultiView.pas" line="153">
+    
+  </class>
+  <class name="TCustomMultiView" file="FMX.MultiView.pas" line="155">
+    
+    <members>
+      <const name="DefaultWidth" visibility="public" type="Integer" file="FMX.MultiView.pas" line="157">
+        <value>
+          $FA
+        </value>
+      </const>
+      <field name="FMode" type="TMultiViewMode" visibility="private" size="1" offset="992" file="FMX.MultiView.pas" line="159"/>
+      <field name="FMasterContent" type="TContent" visibility="private" size="4" offset="996" file="FMX.MultiView.pas" line="160"/>
+      <field name="FMasterButton" type="TControl" visibility="private" size="4" offset="1000" file="FMX.MultiView.pas" line="161"/>
+      <field name="FSavedMasterButtonVisible" type="Boolean" visibility="private" size="1" offset="1004" file="FMX.MultiView.pas" line="162"/>
+      <field name="FTargetControl" type="TControl" visibility="private" size="4" offset="1008" file="FMX.MultiView.pas" line="163"/>
+      <field name="FBorderOptions" type="TMultiViewBorderOptions" visibility="private" size="4" offset="1012" file="FMX.MultiView.pas" line="164"/>
+      <field name="FShadowOptions" type="TShadowAppearance" visibility="private" size="4" offset="1016" file="FMX.MultiView.pas" line="165"/>
+      <field name="FDrawerOptions" type="TDrawerAppearance" visibility="private" size="4" offset="1020" file="FMX.MultiView.pas" line="166"/>
+      <field name="FPopoverOptions" type="TPopoverAppearance" visibility="private" size="4" offset="1024" file="FMX.MultiView.pas" line="167"/>
+      <field name="FSplitViewOptions" type="TSplitViewAppearance" visibility="private" size="4" offset="1028" file="FMX.MultiView.pas" line="168"/>
+      <field name="FNavigationPaneOptions" type="TNavigationPaneAppearance" visibility="private" size="4" offset="1032" file="FMX.MultiView.pas" line="169"/>
+      <field name="FPresenter" type="TMultiViewPresentation" visibility="private" size="4" offset="1036" file="FMX.MultiView.pas" line="170"/>
+      <field name="FCustomPresentationClass" type="TMultiViewPresentationClass" visibility="private" size="4" offset="1040" file="FMX.MultiView.pas" line="171"/>
+      <field name="FScreenService" type="IFMXScreenService" visibility="private" size="4" offset="1044" file="FMX.MultiView.pas" line="172"/>
+      <field name="FDeviceService" type="IFMXDeviceService" visibility="private" size="4" offset="1048" file="FMX.MultiView.pas" line="173"/>
+      <field name="FOnPresenterChanging" type="TOnPresenterChanging" visibility="private" size="8" offset="1056" file="FMX.MultiView.pas" line="174"/>
+      <field name="FOnStartShowing" type="TNotifyEvent" visibility="private" size="8" offset="1064" file="FMX.MultiView.pas" line="175"/>
+      <field name="FOnStartHiding" type="TNotifyEvent" visibility="private" size="8" offset="1072" file="FMX.MultiView.pas" line="176"/>
+      <field name="FOnShown" type="TNotifyEvent" visibility="private" size="8" offset="1080" file="FMX.MultiView.pas" line="177"/>
+      <field name="FOnHidden" type="TNotifyEvent" visibility="private" size="8" offset="1088" file="FMX.MultiView.pas" line="178"/>
+      <procedure name="SetMasterButton" visibility="private" file="FMX.MultiView.pas" line="179">
+        <parameters>
+          <parameter name="Value" type="TControl" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTargetControl" visibility="private" file="FMX.MultiView.pas" line="180">
+        <parameters>
+          <parameter name="Value" type="TControl" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetMode" visibility="private" file="FMX.MultiView.pas" line="181">
+        <parameters>
+          <parameter name="Value" type="TMultiViewMode" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetBorderOptions" visibility="private" file="FMX.MultiView.pas" line="182">
+        <parameters>
+          <parameter name="Value" type="TMultiViewBorderOptions" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetDrawerOptions" visibility="private" file="FMX.MultiView.pas" line="183">
+        <parameters>
+          <parameter name="Value" type="TDrawerAppearance" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetShadowOptions" visibility="private" file="FMX.MultiView.pas" line="184">
+        <parameters>
+          <parameter name="Value" type="TShadowAppearance" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetSplitViewOptions" visibility="private" file="FMX.MultiView.pas" line="185">
+        <parameters>
+          <parameter name="Value" type="TSplitViewAppearance" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetPopoverAppearance" visibility="private" file="FMX.MultiView.pas" line="186">
+        <parameters>
+          <parameter name="Value" type="TPopoverAppearance" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetNavigationPaneOptions" visibility="private" file="FMX.MultiView.pas" line="187">
+        <parameters>
+          <parameter name="Value" type="TNavigationPaneAppearance" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCustomPresentationClass" visibility="private" file="FMX.MultiView.pas" line="188">
+        <parameters>
+          <parameter name="Value" type="TMultiViewPresentationClass" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="AreBorderOptionsStored" visibility="private" file="FMX.MultiView.pas" line="189">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="AreShadowOptionsStored" visibility="private" file="FMX.MultiView.pas" line="190">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="AreDrawerOptionsStored" visibility="private" file="FMX.MultiView.pas" line="191">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="ArePopoverOptionsStored" visibility="private" file="FMX.MultiView.pas" line="192">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="AreSplitViewOptionsStored" visibility="private" file="FMX.MultiView.pas" line="193">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="AreNavigationPaneOptionsStored" visibility="private" file="FMX.MultiView.pas" line="194">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="DefineContext" visibility="private" file="FMX.MultiView.pas" line="195">
+        <parameters>
+          <retval type="TFmxObject"/>
+        </parameters>
+      </function>
+      <procedure name="DoOrientationChanged" visibility="private" file="FMX.MultiView.pas" line="197">
+        <parameters>
+          <parameter name="Sender" type="TObject" paramflags="const"/>
+          <parameter name="M" type="TMessageBase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoAnotherMultiViewDisplayed" visibility="private" file="FMX.MultiView.pas" line="198">
+        <parameters>
+          <parameter name="Sender" type="TObject" paramflags="const"/>
+          <parameter name="M" type="TMessageBase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoFormSizeChanged" visibility="private" file="FMX.MultiView.pas" line="199">
+        <parameters>
+          <parameter name="Sender" type="TObject" paramflags="const"/>
+          <parameter name="M" type="TMessageBase" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="DoOptionsChanged" visibility="private" file="FMX.MultiView.pas" line="200">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="GetOrientation" visibility="protected" file="FMX.MultiView.pas" line="202">
+        <parameters>
+          <retval type="TScreenOrientation"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="GetDeviceClass" visibility="protected" file="FMX.MultiView.pas" line="203">
+        <parameters>
+          <retval type="TDeviceInfo.TDeviceClass">
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="GetDevice" visibility="protected" file="FMX.MultiView.pas" line="206">
+        <devnotes><summary>
+Returns the current device. 
+The GetDevice method returns the current device with TDeviceInfo type.
+At design-time, the GetDevice method returns the device of the view that is selected in IDEs View Selector.
+</summary></devnotes>
+        <parameters>
+          <retval type="TDeviceInfo"/>
+        </parameters>
+      </function>
+      <function name="IsObjectForContent" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="208">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="DoAddObject" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="209">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+Adds the AObject object to the Children list of children attached to this parent object (self).
+FMX.MultiView.TCustomMultiView.DoAddObject inherits from FMX.Types.TFmxObject.DoAddObject. All content below this line refers to FMX.Types.TFmxObject.DoAddObject.
+Adds the AObject object to the Children list of children attached to this parent object (self).
+DoAddObject adds the object provided in the AObject parameter to the list of children stored in the Children property of this object (self). DoAddObject changes the parent of AObject to this object (self) and sets the root of AObject to the Root object of this object (self).
+Descendant classes, like TCommonCustomForm and TControl, additionally handle tab stop lists keeping ordered lists of objects to which the user can tab. If such descendant class supports the ITabStopController interface and AObject is an object of a class supporting the IControl interface, then DoAddObject of this descendant adds AObject to the TabList tab stop lists of the (self) object. 
+DoAddObject is internally called from AddObject.
+</summary></devnotes></procedure>
+      <procedure name="DoInsertObject" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="210">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoRemoveObject" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="211">
+        <parameters>
+          <parameter name="AObject" type="TFmxObject" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+
+
+
+
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoMasterButtonClick" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="212">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ParentChanged" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="213">
+      <devnotes><summary>
+Sends a PM_REFRESH_PARENT message to the presentation layer through its presentation proxy when the parent of this control changes.
+FMX.MultiView.TCustomMultiView.ParentChanged inherits from FMX.Controls.Presentation.TPresentedControl.ParentChanged. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.ParentChanged.
+Sends a PM_REFRESH_PARENT message to the presentation layer through its presentation proxy when the parent of this control changes.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.PresentationProxy
+FMX.Presentation.Messages.TMessageSender.SendMessage
+FMX.Controls.TControl.ParentChanged
+FMX.Controls.Presentation.TPresentedControl.AncestorParentChanged
+
+</summary></devnotes></procedure>
+      <function name="IsMobilePreview" visibility="protected" file="FMX.MultiView.pas" line="214">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="215">
+      <devnotes><summary>
+Initializes the control after the form file has been read into memory and loads its presentation.
+FMX.MultiView.TCustomMultiView.Loaded inherits from FMX.Controls.Presentation.TPresentedControl.Loaded. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Loaded.
+Initializes the control after the form file has been read into memory and loads its presentation.
+For details, see TControl.Loaded.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.LoadPresentation
+FMX.Controls.TControl.Loaded
+
+</summary></devnotes></procedure>
+      <procedure name="Resize" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="216">
+      <devnotes><summary>
+OnResize event dispatcher. 
+FMX.MultiView.TCustomMultiView.Resize inherits from FMX.Controls.TControl.Resize. All content below this line refers to FMX.Controls.TControl.Resize.
+OnResize event dispatcher. 
+A control calls Resize when the dimensions of the control change.
+Derived classes can override the protected Resize method to implement specific responses to control resizing.
+</summary></devnotes></procedure>
+      <procedure name="DoAbsoluteChanged" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="217">
+      <devnotes><summary>
+Sends a PM_ABSOLUTE_CHANGED message to the presentation layer through its presentation proxy.
+FMX.MultiView.TCustomMultiView.DoAbsoluteChanged inherits from FMX.Controls.Presentation.TPresentedControl.DoAbsoluteChanged. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.DoAbsoluteChanged.
+Sends a PM_ABSOLUTE_CHANGED message to the presentation layer through its presentation proxy.
+For details about the circumstances that trigger this procedure, see TControl.DoAbsoluteChanged.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.PresentationProxy
+FMX.Presentation.Messages.TMessageSender.SendMessage
+FMX.Controls.TControl.DoAbsoluteChanged
+
+</summary></devnotes></procedure>
+      <procedure name="EnabledChanged" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="218">
+      <devnotes><summary>
+Executed right after the value of the Enabled property changes.
+FMX.MultiView.TCustomMultiView.EnabledChanged inherits from FMX.Controls.TControl.EnabledChanged. All content below this line refers to FMX.Controls.TControl.EnabledChanged.
+Executed right after the value of the Enabled property changes.
+The control does not execute EnabledChanged if you assign Enabled the same value that it already has.
+EnabledChanged is never executed for effects, which execute EffectEnabledChanged instead.
+
+ See Also
+FMX.Controls.TControl.BeforeEffectEnabledChanged
+FMX.Controls.TControl.EffectEnabledChanged
+FMX.Controls.TControl.ClipChildrenChanged
+FMX.Controls.TControl.HandleSizeChanged
+FMX.Controls.TControl.HitTestChanged
+FMX.Controls.TControl.PaddingChanged
+FMX.Controls.TControl.ParentChanged
+FMX.Controls.TControl.VisibleChanged
+FMX.Controls.TControl.AncestorVisibleChanged
+FMX.Controls.TControl.AncestorParentChanged
+FMX.Controls.TControl.ChildrenAlignChanged
+
+</summary></devnotes></procedure>
+      <procedure name="Show" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="219">
+      <devnotes><summary>
+
+
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ControlTypeChanged" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="221">
+        <devnotes><summary>
+Notifies about the changes of ControlType. 
+FMX.MultiView.TCustomMultiView.ControlTypeChanged inherits from FMX.Controls.Presentation.TPresentedControl.ControlTypeChanged. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.ControlTypeChanged.
+Notifies about the changes of ControlType. 
+</summary></devnotes>
+      </procedure>
+      <procedure name="WriteState" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="223">
+        <parameters>
+          <parameter name="Writer" type="TWriter"/>
+        </parameters>
+      <devnotes><summary>
+Writes the state of the component.
+FMX.MultiView.TCustomMultiView.WriteState inherits from System.Classes.TComponent.WriteState. All content below this line refers to System.Classes.TComponent.WriteState.
+Writes the state of the component.
+WriteState is used internally in the component streaming system. It is not necessary to call it directly. 
+This method expects a TWriter object that is used for storing the state of the component. 
+</summary></devnotes></procedure>
+      <procedure name="ReadState" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="224">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      <devnotes><summary>
+Reads the state of the component.
+FMX.MultiView.TCustomMultiView.ReadState inherits from System.Classes.TComponent.ReadState. All content below this line refers to System.Classes.TComponent.ReadState.
+Reads the state of the component.
+ReadState is used internally in the component streaming system. It is not necessary to call it directly. 
+ReadState expects a TReader object, which is used for reading the state of the component. 
+</summary></devnotes></procedure>
+      <procedure name="DoStartShowing" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="226">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoStartHiding" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="227">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoShown" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="228">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="DoHidden" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="229">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="231">
+      <devnotes><summary>
+Customizes styles in complex objects.
+FMX.MultiView.TCustomMultiView.ApplyStyle inherits from FMX.Controls.TStyledControl.ApplyStyle. All content below this line refers to FMX.Controls.TStyledControl.ApplyStyle.
+Customizes styles in complex objects.
+TStyledControl descendants override it to apply styles in concordance with their primitive components.      
+Do not call ApplyStyle explicitly in an application. It is called by the ApplyStyleLookup method when object styles are updated.
+For an example of an ApplyStyle implementation, see &quot;TCalloutPanel:Style Contracts&quot; in FireMonkey Component Design.
+</summary></devnotes></procedure>
+      <procedure name="FreeStyle" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="232">
+      <devnotes><summary>
+Frees the style of TStyledControl.
+FMX.MultiView.TCustomMultiView.FreeStyle inherits from FMX.Controls.TStyledControl.FreeStyle. All content below this line refers to FMX.Controls.TStyledControl.FreeStyle.
+Frees the style of TStyledControl.
+Override it to free additional component-specific style resources.
+</summary></devnotes></procedure>
+      <procedure name="PaintChildren" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="234">
+      <devnotes><summary>
+
+
+Renders the child controls.
+FMX.MultiView.TCustomMultiView.PaintChildren inherits from FMX.Controls.TControl.PaintChildren. All content below this line refers to FMX.Controls.TControl.PaintChildren.
+Renders the child controls.
+The PaintChildren method is called automatically in the process of painting of the current control. It renders child controls, if any, on the surface specified by the Canvas property. 
+The effects that are applied to the control are also applied to its children.
+TControl descendants can override PaintChildren to provide specific rendering of the respective controls.
+</summary></devnotes></procedure>
+      <procedure name="FreeNotification" visibility="protected" procflags="override" file="FMX.MultiView.pas" line="236">
+        <parameters>
+          <parameter name="AObject" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Ensures that AComponent is notified that the component is going to be destroyed.
+FMX.MultiView.TCustomMultiView.FreeNotification inherits from System.Classes.TComponent.FreeNotification. All content below this line refers to System.Classes.TComponent.FreeNotification.
+Ensures that AComponent is notified that the component is going to be destroyed.
+Use FreeNotification to register AComponent as a component that should be notified when the component is about to be destroyed. It is only necessary to register components this way when they are in a different form or have a different owner. For example, if AComponent is in another form and uses the component to implement a property, it must call FreeNotification so that its Notification method is called when the component is destroyed.
+For components with the same owner, the Notification method is called automatically when an application explicitly frees the component. This notification is not sent out when components are freed implicitly, because the Owner is already being freed.
+</summary></devnotes></procedure>
+      <function name="RequestPresenter" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="238">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="DefineDrawerPresenterClass" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="239">
+        <parameters>
+          <retval type="TMultiViewPresentationClass"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="DefinePlatformBehaviourPresenter" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="240">
+        <parameters>
+          <retval type="TMultiViewPresentationClass"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <function name="DefinePresenterClass" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="241">
+        <parameters>
+          <retval type="TMultiViewPresentationClass"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></function>
+      <procedure name="DoPresenterChanging" visibility="protected" procflags="virtual" file="FMX.MultiView.pas" line="242">
+        <parameters>
+          <parameter name="PresenterClass" type="TMultiViewPresentationClass" paramflags="var"/>
+        </parameters>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="FMX.MultiView.pas" line="244">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates a new instance of TPresentedControl.
+FMX.MultiView.TCustomMultiView.Create inherits from FMX.Controls.Presentation.TPresentedControl.Create. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Create.
+Creates a new instance of TPresentedControl.
+AOwner takes ownership of the control and becomes responsible of destroying the control once the control is no longer necessary.
+The control constructor creates a data model for the control. DefineModelClass determines the default class of data model for each subclass of TPresentedControl.
+Create also sets the value of the CanUseDefaultPresentation property to True.
+
+ See Also
+System.Classes.TComponent.Create
+FMX.Controls.Presentation.TPresentedControl.Model
+FMX.Controls.Presentation.TPresentedControl.DefineModelClass
+FMX.Controls.Presentation.TPresentedControl.Destroy
+FMX.Controls.Presentation.TPresentedControl.CanUseDefaultPresentation
+
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.MultiView.pas" line="245">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys this instance of TPresentedControl.
+FMX.MultiView.TCustomMultiView.Destroy inherits from FMX.Controls.Presentation.TPresentedControl.Destroy. All content below this line refers to FMX.Controls.Presentation.TPresentedControl.Destroy.
+Destroys this instance of TPresentedControl.
+
+ See Also
+FMX.Controls.Presentation.TPresentedControl.Create
+
+</summary></devnotes></destructor>
+      <function name="HasMasterButton" visibility="public" file="FMX.MultiView.pas" line="246">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Verifies whether the component has a master button.
+A master button is a UI element that allows you to view or hide the master pane.
+</summary></devnotes></function>
+      <function name="HasTargetControl" visibility="public" file="FMX.MultiView.pas" line="247">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Verifies whether the component has the detail pane.
+</summary></devnotes></function>
+      <function name="HasPresenter" visibility="public" file="FMX.MultiView.pas" line="248">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Retrieves whether the master pane of the current MultiView component has the Presenter.
+</summary></devnotes></function>
+      <procedure name="HideMaster" visibility="public" file="FMX.MultiView.pas" line="249">
+      <devnotes><summary>
+Hides the master pane.
+Use this method to hide the master pane.
+</summary></devnotes></procedure>
+      <procedure name="ShowMaster" visibility="public" file="FMX.MultiView.pas" line="250">
+      <devnotes><summary>
+Displays the master pane.
+Use this method to display the master pane.
+</summary></devnotes></procedure>
+      <procedure name="UpdateAlignment" visibility="public" procflags="virtual" file="FMX.MultiView.pas" line="251">
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></procedure>
+      <function name="IsShowed" visibility="public" file="FMX.MultiView.pas" line="252">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Verifies whether the master pane is displayed. 
+Use this method to verify whether the master pane is displayed. The IsShowed method returns the following values:
+
+true: the master pane is displayed.
+false: the master pane is hidden.</summary></devnotes></function>
+      <procedure name="ClearContent" visibility="public" file="FMX.MultiView.pas" line="254">
+        <devnotes><summary>
+Removes all controls from the content.
+</summary></devnotes>
+      </procedure>
+      <property name="MasterContent" visibility="public" read="FMasterContent" type="TContent" file="FMX.MultiView.pas" line="255"><devnotes><summary>
+Holds the content (child controls) of the MultiView.
+MasterContent lists child controls in the master pane and does not list the detail pane. 
+
+Note: The detail pane is referenced by the TargetControl property.</summary></devnotes></property>
+      <property name="Presenter" visibility="public" read="FPresenter" type="TMultiViewPresentation" file="FMX.MultiView.pas" line="256"><devnotes><summary>
+Keeps the object providing the presentation of the master pane of the current MultiView component.
+</summary></devnotes></property>
+      <property name="CustomPresentationClass" visibility="public" read="FCustomPresentationClass" write="SetCustomPresentationClass" type="TMultiViewPresentationClass" file="FMX.MultiView.pas" line="258"><devnotes><summary>
+Refers the custom class for presentations of master panes in  MultiView controls.
+The user can customize the master pane presentation. You need to set the MultiView control to Custom and declare your own class that descends from TMultiViewPresentation or from other classes declared in the FMX.MultiView.Presentations.pas unit (such as MyPresentationClass).
+The custom presentation class should be set in the CustomPresentationClass property. See the Custom Mode subsection in Mobile Tutorial: Using a MultiView Component to Display Alternate Views of Information (iOS and Android).
+</summary></devnotes></property>
+      <property name="TargetControl" visibility="public" read="FTargetControl" write="SetTargetControl" type="TControl" file="FMX.MultiView.pas" line="259"><devnotes><summary>
+Specifies a datail pane container (such as TPanel) showing elements described in the master pane.
+For more information about the master-detail interface, see Mobile Tutorial: Using a MultiView Component to Display Alternate Views of Information (iOS and Android).
+
+Limitations
+See FireMonkey Native iOS Controls: Combining Native iOS Controls With Non-native Controls for more information about the limitations when using native controls.
+
+Exceptions
+Setting TargetControl may raise the following exception:
+
+
+
+Exception
+
+Exception.Message
+
+Scenarios
+
+
+
+EComponentError
+
+
+
+TargetControl cannot be a child of TMultiView.
+
+
+
+You set a child control of a TMultiView as the TargetControl of that TMultiView.
+You set a TMultiView as the TargetControl of itself.
+</summary></devnotes></property>
+      <property name="PopoverOptions" visibility="public" read="FPopoverOptions" write="SetPopoverAppearance" stored="ArePopoverOptionsStored" type="TPopoverAppearance" file="FMX.MultiView.pas" line="261">
+        <devnotes><summary>
+Handles appearance options of the master pane in the Popover presentation mode.
+In the Popover presentation mode, the master pane is a pop-up menu, which can be displayed or hidden using the master button.
+The PopoverOptions property allows you to handle the following options:
+
+AppearanceDuration: specifies the duration of the pop-up window appearance (in seconds). By default, this property is set to 0.25 s.
+PopupHeight: specifies the height of the pop-up window (in pixels). By default, this property is set to 400px.
+StyleLookup: specifies the name of the resource object (style) to which this pop-up window is linked.
+TintColor: specifies the tint applied to this pop-up window.</summary></devnotes>
+      </property>
+      <property name="MasterButton" visibility="public" read="FMasterButton" write="SetMasterButton" type="TControl" file="FMX.MultiView.pas" line="262"><devnotes><summary>
+Allows you to hide or show the master pane.
+If your application has no master button, leave the MasterButton property empty.
+
+Limitations
+The master button cannot be used when:
+
+The button is invisible and if the Mode property is set to Panel presentation mode. That is, the master pane is a &quot;docked panel&quot;.
+The onClick event handler is not supported.</summary></devnotes></property>
+      <property name="Mode" visibility="public" read="FMode" write="SetMode" type="TMultiViewMode" default="0" file="FMX.MultiView.pas" line="263"><devnotes><summary>
+Specifies the presentation mode of the master pane.
+The TMultiViewMode type provides the following presentation modes:
+
+
+
+Mode
+
+Master Pane Presentation
+
+
+Drawer
+
+In the Drawer mode, the master pane can be whether hidden or can slide to overlap the detail pane.
+
+
+Panel
+
+Master and detail panels are always displayed, independently of a device type and orientation. The master panel is docked to the left or right of the MultiView component.
+
+
+PlatformBehaviour
+
+An application automatically selects the master pane presentation mode depending on the device type and orientation, as described in the tables in the Platform Dependent Behavior Mode subsection below.
+
+
+Popover
+
+Pop-up menu.
+
+
+NavigationPane
+
+Navigation pane.
+
+
+Custom
+
+The user can customize the master pane presentation. The custom presentation class should be set in the CustomPresentationClass property. For details, see Custom Mode description.
+
+For detailed information about the presentation modes, see Master Pane Presentation Modes.
+
+Platform Dependent Behavior Mode
+In the PlatformBehaviour mode, you let the application automatically select the master pane presentation mode. In this scenario,  the application behavior depends on the device type, orientation, and the operation system version (only for desktop applications) as described in the following tables:
+Mobile Applications
+
+
+
+Device Type
+
+Device Orientation  
+
+Master Pane Presentation
+
+
+Phone
+
+Landscape, Portrait
+
+Drawer (push/overlap)
+
+
+Tablet
+
+Landscape
+
+Docked panel
+
+
+Tablet
+
+Portrait
+
+Drawer (push/overlap)
+
+Desktop Applications
+
+
+
+OS Version
+
+Master Pane Presentation
+
+
+Windows 10
+
+Navigation pane
+
+
+Windows 8 or earlier
+
+Docked panel
+
+
+OS X
+
+Docked panel
+</summary></devnotes></property>
+      <property name="BorderOptions" visibility="public" read="FBorderOptions" write="SetBorderOptions" stored="AreBorderOptionsStored" type="TMultiViewBorderOptions" file="FMX.MultiView.pas" line="264"><devnotes><summary>
+Handles appearance options of borders for MultiView components.
+TMultiViewBorderOptions defines the  Color and Visible properties.
+</summary></devnotes></property>
+      <property name="ShadowOptions" visibility="public" read="FShadowOptions" write="SetShadowOptions" stored="AreShadowOptionsStored" type="TShadowAppearance" file="FMX.MultiView.pas" line="265"><devnotes><summary>
+Handles appearance options of a shadow that the master pane casts on the detail pane.
+With ShadowOptions property, you can handle the following appearance options of the shadow:
+
+Color: specifies the shadow color.
+Enabled: enables or disables the shadow.
+Opacity: specifies the opacity level of the shadow.</summary></devnotes></property>
+      <property name="SplitViewOptions" visibility="public" read="FSplitViewOptions" write="SetSplitViewOptions" stored="AreSplitViewOptionsStored" type="TSplitViewAppearance" file="FMX.MultiView.pas" line="267">
+        <devnotes><summary>
+Handles appearance options of the master pane in the Panel presentation mode.
+With SplitViewOptions property, you can handle the Placement option. Placement specifies the docked master pane location (left, right, top, or bottom).
+</summary></devnotes>
+      </property>
+      <property name="DrawerOptions" visibility="public" read="FDrawerOptions" write="SetDrawerOptions" stored="AreDrawerOptionsStored" type="TDrawerAppearance" file="FMX.MultiView.pas" line="269">
+        <devnotes><summary>
+Handles appearance options of the master pane in the Drawer presentation mode.
+The DrawerOptions property handles the following options:
+
+DurationSliding: specifies the duration of the master pane sliding (in seconds).
+Mode: specifies the master pane sliding mode.
+Placement: specifies the master pane location (left or right).
+TouchAreaSize: specifies the touch area size (in pixels).</summary></devnotes>
+      </property>
+      <property name="NavigationPaneOptions" visibility="public" read="FNavigationPaneOptions" write="SetNavigationPaneOptions" stored="AreNavigationPaneOptionsStored" type="TNavigationPaneAppearance" file="FMX.MultiView.pas" line="271">
+        <devnotes><summary>
+Handles the appearance options of the master pane in the NavigationPane presentation mode.
+With NavigationPaneOptions, you can manage the CollapsedWidth property of the master pane appearance of the current MultiView component. CollapsedWidth specifies the width (in pixels) of the master pane in the NavigationPane presentation mode when it is collapsed.
+</summary></devnotes>
+      </property>
+      <event name="OnStartShowing" visibility="public" read="FOnStartShowing" write="FOnStartShowing" type="TNotifyEvent" file="FMX.MultiView.pas" line="272"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnStartHiding" visibility="public" read="FOnStartHiding" write="FOnStartHiding" type="TNotifyEvent" file="FMX.MultiView.pas" line="273"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnShown" visibility="public" read="FOnShown" write="FOnShown" type="TNotifyEvent" file="FMX.MultiView.pas" line="274"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnHidden" visibility="public" read="FOnHidden" write="FOnHidden" type="TNotifyEvent" file="FMX.MultiView.pas" line="275"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+      <event name="OnPresenterChanging" visibility="public" read="FOnPresenterChanging" write="FOnPresenterChanging" type="TOnPresenterChanging" file="FMX.MultiView.pas" line="276"><devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></event>
+    </members>
+  <devnotes><summary>
+The base class for MultiView components.
+If you need to create a custom MultiView component, derive it from TCustomMultiView.
+</summary></devnotes></class>
+  <class name="TMultiView" file="FMX.MultiView.pas" line="281">
+    
+    <members>
+      <property name="TargetControl" visibility="published" read="FTargetControl" write="SetTargetControl" type="TControl" hoisted="true" file="FMX.MultiView.pas" line="283"/>
+      <property name="BorderOptions" visibility="published" read="FBorderOptions" write="SetBorderOptions" stored="AreBorderOptionsStored" type="TMultiViewBorderOptions" hoisted="true" file="FMX.MultiView.pas" line="284"/>
+      <property name="DrawerOptions" visibility="published" read="FDrawerOptions" write="SetDrawerOptions" stored="AreDrawerOptionsStored" type="TDrawerAppearance" hoisted="true" file="FMX.MultiView.pas" line="285"/>
+      <property name="PopoverOptions" visibility="published" read="FPopoverOptions" write="SetPopoverAppearance" stored="ArePopoverOptionsStored" type="TPopoverAppearance" hoisted="true" file="FMX.MultiView.pas" line="286"/>
+      <property name="MasterButton" visibility="published" read="FMasterButton" write="SetMasterButton" type="TControl" hoisted="true" file="FMX.MultiView.pas" line="287"/>
+      <property name="Mode" visibility="published" read="FMode" write="SetMode" type="TMultiViewMode" default="0" hoisted="true" file="FMX.MultiView.pas" line="288"/>
+      <property name="NavigationPaneOptions" visibility="published" read="FNavigationPaneOptions" write="SetNavigationPaneOptions" stored="AreNavigationPaneOptionsStored" type="TNavigationPaneAppearance" hoisted="true" file="FMX.MultiView.pas" line="289"/>
+      <property name="ShadowOptions" visibility="published" read="FShadowOptions" write="SetShadowOptions" stored="AreShadowOptionsStored" type="TShadowAppearance" hoisted="true" file="FMX.MultiView.pas" line="290"/>
+      <property name="SplitViewOptions" visibility="published" read="FSplitViewOptions" write="SetSplitViewOptions" stored="AreSplitViewOptionsStored" type="TSplitViewAppearance" hoisted="true" file="FMX.MultiView.pas" line="291"/>
+      <event name="OnPresenterChanging" visibility="published" read="FOnPresenterChanging" write="FOnPresenterChanging" type="TOnPresenterChanging" hoisted="true" file="FMX.MultiView.pas" line="292"/>
+      <event name="OnStartShowing" visibility="published" read="FOnStartShowing" write="FOnStartShowing" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="293"/>
+      <event name="OnStartHiding" visibility="published" read="FOnStartHiding" write="FOnStartHiding" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="294"/>
+      <event name="OnShown" visibility="published" read="FOnShown" write="FOnShown" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="295"/>
+      <event name="OnHidden" visibility="published" read="FOnHidden" write="FOnHidden" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="296"/>
+      <property name="ControlType" visibility="published" read="GetControlType" write="SetControlType" type="TControlType" default="0" hoisted="true" file="FMX.MultiView.pas" line="298"/>
+      <property name="ClipChildren" visibility="published" read="FClipChildren" write="SetClipChildren" type="Boolean" default="0" hoisted="true" file="FMX.MultiView.pas" line="299"/>
+      <property name="ClipParent" visibility="published" read="FClipParent" write="FClipParent" type="Boolean" default="0" hoisted="true" file="FMX.MultiView.pas" line="300"/>
+      <property name="Cursor" visibility="published" read="GetCursor" write="SetCursor" type="TCursor" default="0" hoisted="true" file="FMX.MultiView.pas" line="301"/>
+      <property name="DragMode" visibility="published" read="GetDragMode" write="SetDragMode" type="TDragMode" default="0" hoisted="true" file="FMX.MultiView.pas" line="302"/>
+      <property name="EnableDragHighlight" visibility="published" read="FEnableDragHighlight" write="FEnableDragHighlight" type="Boolean" default="1" hoisted="true" file="FMX.MultiView.pas" line="303"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" default="1" hoisted="true" file="FMX.MultiView.pas" line="304"/>
+      <property name="Locked" visibility="published" read="FLocked" write="SetLocked" type="Boolean" default="0" hoisted="true" file="FMX.MultiView.pas" line="305"/>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="SetHelpContext" stored="IsHelpContextStored" type="THelpContext" default="0" hoisted="true" file="FMX.MultiView.pas" line="306"/>
+      <property name="HelpKeyword" visibility="published" read="FHelpKeyword" write="SetHelpKeyword" stored="IsHelpContextStored" type="string" default="0" hoisted="true" file="FMX.MultiView.pas" line="307"/>
+      <property name="HelpType" visibility="published" read="FHelpType" write="FHelpType" type="THelpType" default="1" hoisted="true" file="FMX.MultiView.pas" line="308"/>
+      <property name="Height" visibility="published" read="GetHeight" write="SetHeight" stored="False" type="Single" hoisted="true" file="FMX.MultiView.pas" line="309"/>
+      <property name="HitTest" visibility="published" read="FHitTest" write="SetHitTest" type="Boolean" default="1" hoisted="true" file="FMX.MultiView.pas" line="310"/>
+      <property name="Padding" visibility="published" read="GetPadding" write="SetPadding" type="TBounds" hoisted="true" file="FMX.MultiView.pas" line="311"/>
+      <property name="Opacity" visibility="published" read="FOpacity" write="SetOpacity" stored="IsOpacityStored" type="Single" hoisted="true" file="FMX.MultiView.pas" line="312"/>
+      <property name="PopupMenu" visibility="published" read="FPopupMenu" write="SetPopupMenu" stored="IsPopupMenuStored" type="TCustomPopupMenu" hoisted="true" file="FMX.MultiView.pas" line="313"/>
+      <property name="Scale" visibility="published" read="GetScale" write="SetScale" type="TPosition" hoisted="true" file="FMX.MultiView.pas" line="314"/>
+      <property name="Size" visibility="published" read="FSize" write="SetSize" stored="IsSizeStored" type="TControlSize" hoisted="true" file="FMX.MultiView.pas" line="315"/>
+      <property name="StyleLookup" visibility="published" read="FStyleLookup" write="SetStyleLookup" type="string" default="0" hoisted="true" file="FMX.MultiView.pas" line="316"/>
+      <property name="TouchTargetExpansion" visibility="published" read="FTouchTargetExpansion" write="SetTouchTargetExpansion" type="TBounds" hoisted="true" file="FMX.MultiView.pas" line="317"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="FMX.MultiView.pas" line="318"/>
+      <property name="Width" visibility="published" read="GetWidth" write="SetWidth" stored="False" type="Single" hoisted="true" file="FMX.MultiView.pas" line="319"/>
+      <property name="TabOrder" visibility="published" read="GetTabOrder" write="SetTabOrder" type="TTabOrder" default="-1" hoisted="true" file="FMX.MultiView.pas" line="320"/>
+      <event name="OnApplyStyleLookup" visibility="published" read="FOnApplyStyleLookup" write="FOnApplyStyleLookup" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="321"/>
+      <event name="OnDragEnter" visibility="published" read="FOnDragEnter" write="FOnDragEnter" type="TDragEnterEvent" hoisted="true" file="FMX.MultiView.pas" line="322"/>
+      <event name="OnDragLeave" visibility="published" read="FOnDragLeave" write="FOnDragLeave" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="323"/>
+      <event name="OnDragOver" visibility="published" read="FOnDragOver" write="FOnDragOver" type="TDragOverEvent" hoisted="true" file="FMX.MultiView.pas" line="324"/>
+      <event name="OnDragDrop" visibility="published" read="FOnDragDrop" write="FOnDragDrop" type="TDragDropEvent" hoisted="true" file="FMX.MultiView.pas" line="325"/>
+      <event name="OnDragEnd" visibility="published" read="FOnDragEnd" write="FOnDragEnd" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="326"/>
+      <event name="OnKeyDown" visibility="published" read="FOnKeyDown" write="FOnKeyDown" type="TKeyEvent" hoisted="true" file="FMX.MultiView.pas" line="327"/>
+      <event name="OnKeyUp" visibility="published" read="FOnKeyUp" write="FOnKeyUp" type="TKeyEvent" hoisted="true" file="FMX.MultiView.pas" line="328"/>
+      <event name="OnCanFocus" visibility="published" read="FOnCanFocus" write="FOnCanFocus" type="TCanFocusEvent" hoisted="true" file="FMX.MultiView.pas" line="329"/>
+      <event name="OnEnter" visibility="published" read="FOnEnter" write="FOnEnter" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="330"/>
+      <event name="OnExit" visibility="published" read="FOnExit" write="FOnExit" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="331"/>
+      <event name="OnClick" visibility="published" read="FOnClick" write="SetOnClick" stored="OnClickStored" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="332"/>
+      <event name="OnDblClick" visibility="published" read="FOnDblClick" write="FOnDblClick" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="333"/>
+      <event name="OnMouseDown" visibility="published" read="FOnMouseDown" write="FOnMouseDown" type="TMouseEvent" hoisted="true" file="FMX.MultiView.pas" line="334"/>
+      <event name="OnMouseMove" visibility="published" read="FOnMouseMove" write="FOnMouseMove" type="TMouseMoveEvent" hoisted="true" file="FMX.MultiView.pas" line="335"/>
+      <event name="OnMouseUp" visibility="published" read="FOnMouseUp" write="FOnMouseUp" type="TMouseEvent" hoisted="true" file="FMX.MultiView.pas" line="336"/>
+      <event name="OnMouseWheel" visibility="published" read="FOnMouseWheel" write="FOnMouseWheel" type="TMouseWheelEvent" hoisted="true" file="FMX.MultiView.pas" line="337"/>
+      <event name="OnMouseEnter" visibility="published" read="FOnMouseEnter" write="FOnMouseEnter" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="338"/>
+      <event name="OnMouseLeave" visibility="published" read="FOnMouseLeave" write="FOnMouseLeave" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="339"/>
+      <event name="OnPainting" visibility="published" read="FOnPainting" write="FOnPainting" type="TOnPaintEvent" hoisted="true" file="FMX.MultiView.pas" line="340"/>
+      <event name="OnPaint" visibility="published" read="FOnPaint" write="FOnPaint" type="TOnPaintEvent" hoisted="true" file="FMX.MultiView.pas" line="341"/>
+      <event name="OnResize" visibility="published" read="FOnResize" write="FOnResize" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="342"/>
+      <event name="OnResized" visibility="published" read="FOnResized" write="FOnResized" type="TNotifyEvent" hoisted="true" file="FMX.MultiView.pas" line="343"/>
+    </members>
+  <devnotes><summary>
+The class for MultiView components that allows providing the master-detail interface.
+With TMultiView, you can implement a master-detail interface, which can be used for any target platform (such as an iOS, Android, or desktop application).
+The TMultiView component provides the interface between the master and detail panes:   
+
+In the master pane, you can display a collection of visual controls, such as edit boxes, labels, lists, and so on. These controls may be linked to the concrete views on the detail pane.
+The detail pane displays information about the objects selected in the master pane. Whenever you change the selection in the master pane, the detail pane is updated to show details of the new selection.
+For more information, see Mobile Tutorial: Using a MultiView Component to Display Alternate Views of Information (iOS and Android) and FMX.MultiViewDemo sample application.
+</summary></devnotes></class>
+</namespace>

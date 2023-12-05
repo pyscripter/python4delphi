@@ -1467,8 +1467,6 @@ begin
     Result := Result
       + ' -> '
       + ARttiMethod.ReturnType.Name.Replace('T', '', []);
-
-  Result := Result + #10;
 end;
 
 { TExposedGetSet }
@@ -4135,16 +4133,14 @@ begin
         APyDelphiWrapper, APythonType, LRttiType);
 
       //Try to load the method doc string from doc server
-      //Try to load the method doc string from doc server
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiMethod, LDocStr)
       then
-        LExposedMethod.DocString := AnsiString(LDocStr);
-
-      //Build the DocStr including method args
-      LExposedMethod.DocString :=
-        Utf8Encode(TExposedMethod.MethodDocStr(LRttiMethod)) +
-        LExposedMethod.DocString;
+        LExposedMethod.DocString := Utf8Encode(LDocStr)
+      else
+        //Build the DocStr including method args
+        LExposedMethod.DocString :=
+          Utf8Encode(TExposedMethod.MethodDocStr(LRttiMethod));
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedMethod);

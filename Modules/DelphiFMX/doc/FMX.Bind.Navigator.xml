@@ -1,0 +1,776 @@
+<?xml version="1.0" ?><namespace name="Fmx.Bind.Navigator" platform="Win32">
+  <const name="InitRepeatPause" type="Integer" file="Fmx.Bind.Navigator.pas" line="20">
+    <value>
+      $190
+    </value>
+  </const>
+  <const name="RepeatPause" type="Integer" file="Fmx.Bind.Navigator.pas" line="21">
+    <value>
+      $64
+    </value>
+  </const>
+  <const name="SpaceSize" type="Integer" file="Fmx.Bind.Navigator.pas" line="22">
+    <value>
+      $5
+    </value>
+  </const>
+  <const name="ngEnabled" type="TBindNavGlyph" file="Fmx.Bind.Navigator.pas" line="28">
+    <value>
+      ngEnabled
+    </value>
+  </const>
+  <const name="ngDisabled" type="TBindNavGlyph" file="Fmx.Bind.Navigator.pas" line="28">
+    <value>
+      ngDisabled
+    </value>
+  </const>
+  <const name="nsAllowTimer" type=":2" file="Fmx.Bind.Navigator.pas" line="32">
+    <value>
+      nsAllowTimer
+    </value>
+  </const>
+  <const name="nsFocusRect" type=":2" file="Fmx.Bind.Navigator.pas" line="32">
+    <value>
+      nsFocusRect
+    </value>
+  </const>
+  <class name="EBindNavException" file="Fmx.Bind.Navigator.pas" line="25">
+    
+  </class>
+  <enum name="TBindNavGlyph" file="Fmx.Bind.Navigator.pas" line="28">
+    <element value="0" name="ngEnabled" file="Fmx.Bind.Navigator.pas" line="28"/>
+    <element value="1" name="ngDisabled" file="Fmx.Bind.Navigator.pas" line="28"/>
+  </enum>
+  <enum name="TBindNavigateBtn" alias="Data.Bind.Controls.TNavigateButton" file="Fmx.Bind.Navigator.pas" line="29">
+    <element value="0" name="nbFirst" file="Data.Bind.Controls.pas" line="19"/>
+    <element value="1" name="nbPrior" file="Data.Bind.Controls.pas" line="19"/>
+    <element value="2" name="nbNext" file="Data.Bind.Controls.pas" line="19"/>
+    <element value="3" name="nbLast" file="Data.Bind.Controls.pas" line="19"/>
+    <element value="4" name="nbInsert" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="5" name="nbDelete" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="6" name="nbEdit" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="7" name="nbPost" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="8" name="nbCancel" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="9" name="nbRefresh" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="10" name="nbApplyUpdates" file="Data.Bind.Controls.pas" line="20"/>
+    <element value="11" name="nbCancelUpdates" file="Data.Bind.Controls.pas" line="21"/>
+  </enum>
+  <set name="TBindNavButtonSet" alias="Data.Bind.Controls.TNavigateButtons" type="TNavigateButton" file="Fmx.Bind.Navigator.pas" line="30">
+    <element name="nbFirst"/>
+    <element name="nbPrior"/>
+    <element name="nbNext"/>
+    <element name="nbLast"/>
+    <element name="nbInsert"/>
+    <element name="nbDelete"/>
+    <element name="nbEdit"/>
+    <element name="nbPost"/>
+    <element name="nbCancel"/>
+    <element name="nbRefresh"/>
+    <element name="nbApplyUpdates"/>
+    <element name="nbCancelUpdates"/>
+  </set>
+  <set name="TBindNavButtonStyle" file="Fmx.Bind.Navigator.pas" line="32">
+    <element name="nsAllowTimer"/>
+    <element name="nsFocusRect"/>
+  </set>
+  <type name="EBindNavClick" file="Fmx.Bind.Navigator.pas" line="34" procflags="closure">
+  </type>
+  <class name="TCustomBindNavigator" file="Fmx.Bind.Navigator.pas" line="39">
+    
+    <interfaces>
+      <implements name="IBindNavigator"/>
+    </interfaces>
+    <members>
+      <field name="FController" type="TBindNavigatorController" visibility="private" size="4" offset="904" file="Fmx.Bind.Navigator.pas" line="41"/>
+      <field name="FVisibleButtons" type="TNavigateButtons" visibility="private" size="2" offset="908" file="Fmx.Bind.Navigator.pas" line="42"/>
+      <field name="FHints" type="TStrings" visibility="private" size="4" offset="912" file="Fmx.Bind.Navigator.pas" line="43"/>
+      <field name="FDefHints" type="TStrings" visibility="private" size="4" offset="916" file="Fmx.Bind.Navigator.pas" line="44"/>
+      <field name="ButtonWidth" type="Integer" visibility="private" size="4" offset="920" file="Fmx.Bind.Navigator.pas" line="45"/>
+      <field name="MinBtnSize" type="TPoint" visibility="private" size="8" offset="924" file="Fmx.Bind.Navigator.pas" line="46"/>
+      <field name="FOnNavClick" type="EBindNavClick" visibility="private" size="8" offset="936" file="Fmx.Bind.Navigator.pas" line="47"/>
+      <field name="FBeforeAction" type="EBindNavClick" visibility="private" size="8" offset="944" file="Fmx.Bind.Navigator.pas" line="48"/>
+      <field name="FocusedButton" type="TNavigateButton" visibility="private" size="1" offset="952" file="Fmx.Bind.Navigator.pas" line="49"/>
+      <field name="FConfirmDelete" type="Boolean" visibility="private" size="1" offset="953" file="Fmx.Bind.Navigator.pas" line="50"/>
+      <field name="FyRadius" type="Single" visibility="private" size="4" offset="956" file="Fmx.Bind.Navigator.pas" line="51"/>
+      <field name="FxRadius" type="Single" visibility="private" size="4" offset="960" file="Fmx.Bind.Navigator.pas" line="52"/>
+      <field name="FCornerType" type="TCornerType" visibility="private" size="4" offset="964" file="Fmx.Bind.Navigator.pas" line="53"/>
+      <field name="FCorners" type="TCorners" visibility="private" size="1" offset="968" file="Fmx.Bind.Navigator.pas" line="54"/>
+      <field name="FBindScopeName" type="string" visibility="private" size="4" offset="972" file="Fmx.Bind.Navigator.pas" line="55"/>
+      <procedure name="BtnMouseDown" visibility="private" file="Fmx.Bind.Navigator.pas" line="56">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      </procedure>
+      <procedure name="ClickHandler" visibility="private" file="Fmx.Bind.Navigator.pas" line="58">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <function name="GetDataSource" visibility="private" file="Fmx.Bind.Navigator.pas" line="59">
+        <parameters>
+          <retval type="TBaseLinkingBindSource"/>
+        </parameters>
+      </function>
+      <function name="GetHints" visibility="private" file="Fmx.Bind.Navigator.pas" line="60">
+        <parameters>
+          <retval type="TStrings"/>
+        </parameters>
+      </function>
+      <procedure name="HintsChanged" visibility="private" file="Fmx.Bind.Navigator.pas" line="61">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="InitButtons" visibility="private" file="Fmx.Bind.Navigator.pas" line="62">
+      </procedure>
+      <procedure name="InitHints" visibility="private" file="Fmx.Bind.Navigator.pas" line="63">
+      </procedure>
+      <procedure name="SetDataSource" visibility="private" file="Fmx.Bind.Navigator.pas" line="64">
+        <parameters>
+          <parameter name="Value" type="TBaseLinkingBindSource"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHints" visibility="private" file="Fmx.Bind.Navigator.pas" line="65">
+        <parameters>
+          <parameter name="Value" type="TStrings"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetSize" visibility="private" file="Fmx.Bind.Navigator.pas" line="66">
+        <parameters>
+          <parameter name="W" type="Single" paramflags="var"/>
+          <parameter name="H" type="Single" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetVisibleButtons" visibility="private" file="Fmx.Bind.Navigator.pas" line="67">
+        <parameters>
+          <parameter name="Value" type="TNavigateButtons"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCornerType" visibility="private" file="Fmx.Bind.Navigator.pas" line="68">
+        <parameters>
+          <parameter name="Value" type="TCornerType" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetxRadius" visibility="private" file="Fmx.Bind.Navigator.pas" line="69">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetyRadius" visibility="private" file="Fmx.Bind.Navigator.pas" line="70">
+        <parameters>
+          <parameter name="Value" type="Single" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="IsCornersStored" visibility="private" file="Fmx.Bind.Navigator.pas" line="71">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetCorners" visibility="private" file="Fmx.Bind.Navigator.pas" line="72">
+        <parameters>
+          <parameter name="Value" type="TCorners" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="OnActiveChanged" visibility="private" file="Fmx.Bind.Navigator.pas" line="73">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="OnDataChanged" visibility="private" file="Fmx.Bind.Navigator.pas" line="74">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="OnEditingChanged" visibility="private" file="Fmx.Bind.Navigator.pas" line="75">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadBindScope" visibility="private" file="Fmx.Bind.Navigator.pas" line="76">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <field name="Buttons" visibility="protected" size="48" offset="976" file="Fmx.Bind.Navigator.pas" line="78">
+        <array name="Buttons" visibility="protected" file="Fmx.Bind.Navigator.pas" line="78">
+          <element type="TBindNavButton"/>
+        </array>
+      </field>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="79">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      </procedure>
+      <procedure name="DataChanged" visibility="protected" file="Fmx.Bind.Navigator.pas" line="80">
+      </procedure>
+      <procedure name="EditingChanged" visibility="protected" file="Fmx.Bind.Navigator.pas" line="81">
+      </procedure>
+      <procedure name="ActiveChanged" visibility="protected" file="Fmx.Bind.Navigator.pas" line="82">
+      </procedure>
+      <procedure name="Loaded" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="83">
+      </procedure>
+      <procedure name="DoRealign" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="84">
+      </procedure>
+      <procedure name="KeyDown" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="85">
+        <parameters>
+          <parameter name="Key" type="Word" paramflags="var"/>
+          <parameter name="KeyChar" type="Char" paramflags="var"/>
+          <parameter name="Shift" type="TShiftState"/>
+        </parameters>
+      </procedure>
+      <procedure name="CalcMinSize" visibility="protected" file="Fmx.Bind.Navigator.pas" line="86">
+        <parameters>
+          <parameter name="W" type="Single" paramflags="var"/>
+          <parameter name="H" type="Single" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <property name="Hints" visibility="protected" read="GetHints" write="SetHints" type="TStrings" file="Fmx.Bind.Navigator.pas" line="87"/>
+      <property name="ShowHint" visibility="protected" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="Fmx.Bind.Navigator.pas" line="88"/>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="90">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="Fmx.Bind.Navigator.pas" line="91">
+        <parameters>
+        </parameters>
+      </destructor>
+      <procedure name="BtnClick" visibility="public" procflags="virtual" file="Fmx.Bind.Navigator.pas" line="92">
+        <parameters>
+          <parameter name="Index" type="TNavigateButton"/>
+        </parameters>
+      </procedure>
+      <property name="DataSource" visibility="public" read="GetDataSource" write="SetDataSource" type="TBaseLinkingBindSource" file="Fmx.Bind.Navigator.pas" line="93"/>
+      <property name="VisibleButtons" visibility="public" read="FVisibleButtons" write="SetVisibleButtons" type="TNavigateButtons" default="1023" file="Fmx.Bind.Navigator.pas" line="94"/>
+      <property name="Align" visibility="public" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="Fmx.Bind.Navigator.pas" line="96"/>
+      <property name="Enabled" visibility="public" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" hoisted="true" file="Fmx.Bind.Navigator.pas" line="97"/>
+      <property name="CornerType" visibility="public" read="FCornerType" write="SetCornerType" type="TCornerType" default="0" file="Fmx.Bind.Navigator.pas" line="98"/>
+      <property name="Corners" visibility="public" read="FCorners" write="SetCorners" stored="IsCornersStored" type="TCorners" file="Fmx.Bind.Navigator.pas" line="100">
+        <attributes>
+          <attribute name="StoredAttribute"/>
+        </attributes>
+      </property>
+      <property name="xRadius" visibility="public" read="FxRadius" write="SetxRadius" type="Single" default="0" file="Fmx.Bind.Navigator.pas" line="101"/>
+      <property name="yRadius" visibility="public" read="FyRadius" write="SetyRadius" type="Single" default="0" file="Fmx.Bind.Navigator.pas" line="102"/>
+      <property name="ConfirmDelete" visibility="public" read="FConfirmDelete" write="FConfirmDelete" type="Boolean" default="1" file="Fmx.Bind.Navigator.pas" line="105">
+        <attributes>
+          <attribute name="DefaultAttribute"/>
+        </attributes>
+      </property>
+      <property name="Visible" visibility="public" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="Fmx.Bind.Navigator.pas" line="107"/>
+      <event name="BeforeAction" visibility="public" read="FBeforeAction" write="FBeforeAction" type="EBindNavClick" file="Fmx.Bind.Navigator.pas" line="108"/>
+      <event name="OnClick" visibility="public" read="FOnNavClick" write="FOnNavClick" type="EBindNavClick" file="Fmx.Bind.Navigator.pas" line="109"/>
+    </members>
+  </class>
+  <class name="TBindNavigator" file="Fmx.Bind.Navigator.pas" line="112">
+    
+    <members>
+      <property name="Hints" visibility="protected" read="GetHints" write="SetHints" type="TStrings" hoisted="true" file="Fmx.Bind.Navigator.pas" line="114"/>
+      <property name="ShowHint" visibility="protected" read="FShowHint" write="SetShowHint" stored="IsShowHintStored" type="Boolean" hoisted="true" file="Fmx.Bind.Navigator.pas" line="115"/>
+      <property name="DataSource" visibility="published" read="GetDataSource" write="SetDataSource" type="TBaseLinkingBindSource" hoisted="true" file="Fmx.Bind.Navigator.pas" line="117"/>
+      <property name="VisibleButtons" visibility="published" read="FVisibleButtons" write="SetVisibleButtons" type="TNavigateButtons" default="1023" hoisted="true" file="Fmx.Bind.Navigator.pas" line="118"/>
+      <property name="Align" visibility="published" read="FAlign" write="SetAlign" type="TAlignLayout" default="0" hoisted="true" file="Fmx.Bind.Navigator.pas" line="119"/>
+      <property name="Enabled" visibility="published" read="FEnabled" write="SetEnabled" stored="EnabledStored" type="Boolean" hoisted="true" file="Fmx.Bind.Navigator.pas" line="120"/>
+      <property name="CornerType" visibility="published" read="FCornerType" write="SetCornerType" type="TCornerType" default="0" hoisted="true" file="Fmx.Bind.Navigator.pas" line="121"/>
+      <property name="Corners" visibility="published" read="FCorners" write="SetCorners" stored="IsCornersStored" type="TCorners" hoisted="true" file="Fmx.Bind.Navigator.pas" line="122"/>
+      <property name="xRadius" visibility="published" read="FxRadius" write="SetxRadius" type="Single" default="0" hoisted="true" file="Fmx.Bind.Navigator.pas" line="123"/>
+      <property name="yRadius" visibility="published" read="FyRadius" write="SetyRadius" type="Single" default="0" hoisted="true" file="Fmx.Bind.Navigator.pas" line="124"/>
+      <property name="ConfirmDelete" visibility="published" read="FConfirmDelete" write="FConfirmDelete" type="Boolean" default="1" hoisted="true" file="Fmx.Bind.Navigator.pas" line="126"/>
+      <property name="Visible" visibility="published" read="FVisible" write="SetVisible" stored="VisibleStored" type="Boolean" default="1" hoisted="true" file="Fmx.Bind.Navigator.pas" line="128"/>
+      <event name="BeforeAction" visibility="published" read="FBeforeAction" write="FBeforeAction" type="EBindNavClick" hoisted="true" file="Fmx.Bind.Navigator.pas" line="129"/>
+      <event name="OnClick" visibility="published" read="FOnNavClick" write="FOnNavClick" type="EBindNavClick" hoisted="true" file="Fmx.Bind.Navigator.pas" line="130"/>
+    </members>
+  </class>
+  <class name="TBindNavButton" file="Fmx.Bind.Navigator.pas" line="135">
+    
+    <members>
+      <field name="FIndex" type="TNavigateButton" visibility="private" size="1" offset="1128" file="Fmx.Bind.Navigator.pas" line="137"/>
+      <field name="FNavStyle" type="TBindNavButtonStyle" visibility="private" size="1" offset="1129" file="Fmx.Bind.Navigator.pas" line="138"/>
+      <field name="FRepeatTimer" type="TTimer" visibility="private" size="4" offset="1132" file="Fmx.Bind.Navigator.pas" line="139"/>
+      <field name="FPath" type="TPath" visibility="private" size="4" offset="1136" file="Fmx.Bind.Navigator.pas" line="140"/>
+      <procedure name="TimerExpired" visibility="private" file="Fmx.Bind.Navigator.pas" line="141">
+        <parameters>
+          <parameter name="Sender" type="TObject"/>
+        </parameters>
+      </procedure>
+      <procedure name="ApplyStyle" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="143">
+      </procedure>
+      <function name="GetDefaultStyleLookupName" visibility="protected" procflags="override" file="Fmx.Bind.Navigator.pas" line="144">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="146">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="Fmx.Bind.Navigator.pas" line="147">
+        <parameters>
+        </parameters>
+      </destructor>
+      <procedure name="MouseDown" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="148">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      </procedure>
+      <procedure name="MouseUp" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="150">
+        <parameters>
+          <parameter name="Button" type="TMouseButton"/>
+          <parameter name="Shift" type="TShiftState"/>
+          <parameter name="X" type="Single"/>
+          <parameter name="Y" type="Single"/>
+        </parameters>
+      </procedure>
+      <property name="NavStyle" visibility="public" read="FNavStyle" write="FNavStyle" type="TBindNavButtonStyle" file="Fmx.Bind.Navigator.pas" line="152"/>
+      <property name="Index" visibility="public" read="FIndex" write="FIndex" type="TNavigateButton" file="Fmx.Bind.Navigator.pas" line="153"/>
+    </members>
+  </class>
+  <class name="TFMXBindNavigateAction" file="Fmx.Bind.Navigator.pas" line="159">
+    
+    <members>
+      <field name="FController" type="TBindNavigatorController" visibility="private" size="4" offset="184" file="Fmx.Bind.Navigator.pas" line="161"/>
+      <field name="FButton" type="TNavigateButton" visibility="private" size="1" offset="188" file="Fmx.Bind.Navigator.pas" line="162"/>
+      <function name="GetDataSource" visibility="private" file="Fmx.Bind.Navigator.pas" line="163">
+        <parameters>
+          <retval type="TBaseLinkingBindSource"/>
+        </parameters>
+      </function>
+      <procedure name="SetDataSource" visibility="private" file="Fmx.Bind.Navigator.pas" line="164">
+        <parameters>
+          <parameter name="Value" type="TBaseLinkingBindSource"/>
+        </parameters>
+      </procedure>
+      <function name="InvokeController" visibility="private" file="Fmx.Bind.Navigator.pas" line="165">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+          <parameter name="AProc" type="TProc&lt;Data.Bind.Controls.TBindNavigatorController&gt;"/>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="Controller" visibility="protected" read="FController" type="TBindNavigatorController" file="Fmx.Bind.Navigator.pas" line="168"><devnotes><summary>
+Specifies the bind navigator controller that will execute the standard LiveBindings actions.
+</summary></devnotes></property>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="170">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="171">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="AButton" type="TNavigateButton"/>
+        </parameters>
+      <devnotes><summary>
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="Fmx.Bind.Navigator.pas" line="172">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys the instance of the contained action.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.Destroy inherits from System.Actions.TContainedAction.Destroy. All content below this line refers to System.Actions.TContainedAction.Destroy.
+Destroys the instance of the contained action.
+If the action is contained in an action list or action manager, Destroy removes the action from that list. Then it calls the inherited Destroy method.
+
+
+</summary></devnotes></destructor>
+      <function name="HandlesTarget" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="173">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Introduces an interface for verifying that the type and state of a target component or control are appropriate for the action.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.HandlesTarget inherits from System.Classes.TBasicAction.HandlesTarget. All content below this line refers to System.Classes.TBasicAction.HandlesTarget.
+Introduces an interface for verifying that the type and state of a target component or control are appropriate for the action.
+HandlesTarget does nothing in TBasicAction. HandlesTarget was introduced in TBasicAction so that descendants can override it to check the type and state of a target. HandlesTarget can verify any information about a target that is relevant for the action. HandlesTarget returns True if the target meets the specified criteria, False otherwise.
+</summary></devnotes></function>
+      <procedure name="ExecuteTarget" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="174">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Introduces an interface for invoking an action on a target client component or control.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.ExecuteTarget inherits from System.Classes.TBasicAction.ExecuteTarget. All content below this line refers to System.Classes.TBasicAction.ExecuteTarget.
+Introduces an interface for invoking an action on a target client component or control.
+ExecuteTarget does nothing in TBasicAction. ExecuteTarget was introduced in TBasicAction so that descendants can override it to initiate the action on the target. For example, an edit action that performs copying might copy the contents of an edit control to the clipboard.
+</summary></devnotes></procedure>
+      <procedure name="UpdateTarget" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="175">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+Introduces an interface for a method of notifying a client when the action updates itself.
+Fmx.Bind.Navigator.TFMXBindNavigateAction.UpdateTarget inherits from System.Classes.TBasicAction.UpdateTarget. All content below this line refers to System.Classes.TBasicAction.UpdateTarget.
+Introduces an interface for a method of notifying a client when the action updates itself.
+UpdateTarget does nothing in TBasicAction. UpdateTarget was introduced in TBasicAction so that descendants can override it to correspondingly update a target when the action updates. 
+</summary></devnotes></procedure>
+      <property name="DataSource" visibility="published" read="GetDataSource" write="SetDataSource" type="TBaseLinkingBindSource" file="Fmx.Bind.Navigator.pas" line="177"><devnotes><summary>
+Specifies the linking bind source (binding datasource) that will be affected by standard LiveBindings actions (for instance, Delete, ApplyUpdates, CancelUpdates, and so on).
+</summary></devnotes></property>
+    </members>
+  <devnotes><summary>
+Implements a standard LiveBindings action.
+TFMXBindNavigateAction is the base class for all standard LiveBindings actions that are compatible with the bind navigator. The standard LiveBindings actions are listed in the following table.
+
+
+
+Button
+
+Purpose
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateFirst
+
+Sets the current record to the first record in the data source, disables the First and Prior buttons, and enables the Next and Last buttons, if they are disabled.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigatePrior
+
+Sets the current record to the previous record and enables the Last and Next buttons, if they are disabled.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateNext
+
+Sets the current record to the next record and enables the First and Prior buttons, if they are disabled.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateLast
+
+Sets the current record to the last record in the data source, disables the Last and Next buttons, and enables the First and Prior buttons, if they are disabled.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateInsert
+
+Inserts a new record before the current record and sets the data source into Insert and Edit states.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateDelete
+
+Deletes the current record and makes the next record the current record.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateEdit
+
+Puts the data source into Edit state so that the current record can be modified.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigatePost
+
+Writes changes in the current record to the data source.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateCancel
+
+Cancels edits to the current record, restores the record display to its condition prior to editing, and turns off the Insert and Edit states, if they are active.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateRefresh
+
+Refreshes the buffered data in the associated data source.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateApplyUpdates
+
+Applies all pending updates to the data source.
+
+
+Fmx.Bind.Navigator.TFMXBindNavigateCancelUpdates
+
+Cancels all pending updates to the data source.
+
+For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateFirst" file="Fmx.Bind.Navigator.pas" line="180">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="182">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateFirst.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard First LiveBindings action.
+The TFMXBindNavigateFirst class implements a standard LiveBindings action that is used to set the current record to the first record in the data source, to disable the First and Prior buttons, and to enable the Next and Last buttons, if they are disabled. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigatePrior" file="Fmx.Bind.Navigator.pas" line="185">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="187">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigatePrior.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Prior LiveBindings action.
+The TFMXBindNavigatePrior class implements a standard LiveBindings action that is used to set the current record to the previous record and to enable the Last and Next buttons, if they are disabled. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateNext" file="Fmx.Bind.Navigator.pas" line="190">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="192">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateNext.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Next LiveBindings action.
+The TFMXBindNavigateNext class implements a standard LiveBindings action that is used to set the current record to the next record and to enable the First and Prior buttons, if they are disabled. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateLast" file="Fmx.Bind.Navigator.pas" line="195">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="197">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateLast.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Last LiveBindings action.
+The TFMXBindNavigateLast class implements a standard LiveBindings action that is used to set the current record to the last record in the data source, to disable the Last and Next buttons, and to enable the First and Prior buttons, if they are disabled. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateInsert" file="Fmx.Bind.Navigator.pas" line="200">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="202">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateInsert.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Insert LiveBindings action.
+The TFMXBindNavigateInsert class implements a standard LiveBindings action that is used to insert a new record before the current record and to set the data source into Insert and Edit states. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateDelete" file="Fmx.Bind.Navigator.pas" line="205">
+    
+    <members>
+      <field name="FConfirmDelete" type="Boolean" visibility="private" size="1" offset="192" file="Fmx.Bind.Navigator.pas" line="207"/>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="209">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateDelete.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+      <procedure name="ExecuteTarget" visibility="public" procflags="override" file="Fmx.Bind.Navigator.pas" line="210">
+        <parameters>
+          <parameter name="Target" type="TObject"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Introduces an interface for invoking an action on a target client component or control.
+Fmx.Bind.Navigator.TFMXBindNavigateDelete.ExecuteTarget inherits from System.Classes.TBasicAction.ExecuteTarget. All content below this line refers to System.Classes.TBasicAction.ExecuteTarget.
+Introduces an interface for invoking an action on a target client component or control.
+ExecuteTarget does nothing in TBasicAction. ExecuteTarget was introduced in TBasicAction so that descendants can override it to initiate the action on the target. For example, an edit action that performs copying might copy the contents of an edit control to the clipboard.
+</summary></devnotes></procedure>
+      <property name="ConfirmDelete" visibility="published" read="FConfirmDelete" write="FConfirmDelete" type="Boolean" default="1" file="Fmx.Bind.Navigator.pas" line="213">
+        <attributes>
+          <attribute name="DefaultAttribute"/>
+        </attributes>
+      <devnotes><summary>
+Embarcadero Technologies does not currently have any additional information.
+
+
+</summary></devnotes></property>
+    </members>
+  <devnotes><summary>
+Implements a standard Delete LiveBindings action.
+The TFMXBindNavigateDelete class implements a standard LiveBindings action that is used to delete the current record and to make the next record the current record. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateEdit" file="Fmx.Bind.Navigator.pas" line="216">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="218">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateEdit.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Edit LiveBindings action.
+The TFMXBindNavigateEdit class implements a standard LiveBindings action that is used to put the data source into Edit state so that the current record can be modified. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigatePost" file="Fmx.Bind.Navigator.pas" line="221">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="223">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigatePost.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Post LiveBindings action.
+The TFMXBindNavigatePost class implements a standard LiveBindings action that is used to apply edits made in the current record to the data source. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateCancel" file="Fmx.Bind.Navigator.pas" line="226">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="228">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateCancel.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Cancel LiveBindings action.
+The TFMXBindNavigateCancel class implements a standard LiveBindings action that is used to cancel edits to the current record, to restore the record display to its condition prior to editing, and to turn off the Insert and Edit states, if they are active. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateRefresh" file="Fmx.Bind.Navigator.pas" line="231">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="233">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateRefresh.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard Refresh LiveBindings action.
+The TFMXBindNavigateRefresh class implements a standard LiveBindings action that is used to refresh the current row only from the data source. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateApplyUpdates" file="Fmx.Bind.Navigator.pas" line="236">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="238">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateApplyUpdates.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard ApplyUpdates LiveBindings action.
+The TFMXBindNavigateApplyUpdates class implements a standard LiveBindings action that is used to apply updates to the database with all changes that have been made to the data source. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+  <class name="TFMXBindNavigateCancelUpdates" file="Fmx.Bind.Navigator.pas" line="241">
+    
+    <members>
+      <constructor name="Create" visibility="public" file="Fmx.Bind.Navigator.pas" line="243">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+
+
+Creates and initializes a TAction object.
+Fmx.Bind.Navigator.TFMXBindNavigateCancelUpdates.Create inherits from FMX.ActnList.TAction.Create. All content below this line refers to FMX.ActnList.TAction.Create.
+Creates and initializes a TAction object.
+Applications do not usually create action objects explicitly. Actions are created automatically when you add them to an action manager or action list component at design time. When instantiating TAction at run time, assign a TActionList component to the new action's ActionList property after calling Create.
+Create sets the DisableIfNoHandler to True, that is, the action is inaccessible if it does not have an OnExecute event handler.
+</summary></devnotes></constructor>
+    </members>
+  <devnotes><summary>
+Implements a standard CancelUpdates LiveBindings action.
+The TFMXBindNavigateCancelUpdates class implements a standard LiveBindings action that is used to discard all changes that have been made to the data source and restores the data source to the values originally retrieved from the database. For more information on how to use standard LiveBindings actions, see the LiveBindings and Action Lists help topic.
+</summary></devnotes></class>
+</namespace>

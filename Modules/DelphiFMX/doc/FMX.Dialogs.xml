@@ -1,0 +1,1646 @@
+<?xml version="1.0" ?><namespace name="FMX.Dialogs" platform="Win32">
+  <class name="TCommonDialog" file="FMX.Dialogs.pas" line="23">
+    
+    <members>
+      <field name="FHelpContext" type="THelpContext" visibility="private" size="4" offset="128" file="FMX.Dialogs.pas" line="25"/>
+      <field name="FOnClose" type="TNotifyEvent" visibility="private" size="8" offset="136" file="FMX.Dialogs.pas" line="26"/>
+      <field name="FOnShow" type="TNotifyEvent" visibility="private" size="8" offset="144" file="FMX.Dialogs.pas" line="27"/>
+      <procedure name="DoClose" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="29">
+      </procedure>
+      <procedure name="DoShow" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="30">
+      </procedure>
+      <function name="DoExecute" visibility="protected" procflags="abstract virtual" file="FMX.Dialogs.pas" line="31">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="FMX.Dialogs.pas" line="33">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      </constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Dialogs.pas" line="34">
+        <parameters>
+        </parameters>
+      </destructor>
+      <function name="Execute" visibility="public" procflags="overload virtual" file="FMX.Dialogs.pas" line="35">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="HelpContext" visibility="published" read="FHelpContext" write="FHelpContext" type="THelpContext" default="0" file="FMX.Dialogs.pas" line="37"/>
+      <event name="OnClose" visibility="published" read="FOnClose" write="FOnClose" type="TNotifyEvent" file="FMX.Dialogs.pas" line="38"/>
+      <event name="OnShow" visibility="published" read="FOnShow" write="FOnShow" type="TNotifyEvent" file="FMX.Dialogs.pas" line="39"/>
+    </members>
+  </class>
+  <class name="TOpenDialog" file="FMX.Dialogs.pas" line="45">
+    
+    <ancestor name="TCommonDialog" namespace="FMX.Dialogs">
+      <methodref name="DoClose" visibility="protected" procflags="dynamic"/>
+      <methodref name="DoShow" visibility="protected" procflags="dynamic"/>
+      <methodref name="DoExecute" visibility="protected" procflags="abstract virtual"/>
+      <methodref name="Create" visibility="public" procflags="constructor override"/>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <methodref name="Execute" visibility="public" procflags="overload virtual"/>
+      <propertyref name="HelpContext" visibility="published"/>
+      <eventref name="OnClose" visibility="published"/>
+      <eventref name="OnShow" visibility="published"/>
+      <ancestor name="TFmxObject" namespace="FMX.Types">
+        <interfaces>
+          <implements name="IActionClient"/>
+          <implements name="IFreeNotification"/>
+        </interfaces>
+        <methodref name="SetStyleName" visibility="private"/>
+        <methodref name="SetStored" visibility="private"/>
+        <methodref name="GetChildrenCount" visibility="private" procflags="inline"/>
+        <methodref name="GetIndexOfChild" visibility="private"/>
+        <methodref name="SetIndexOfChild" visibility="private"/>
+        <methodref name="SetIndex" visibility="private"/>
+        <methodref name="GetActionRoot" visibility="private"/>
+        <methodref name="GetActionClient" visibility="private" procflags="inline"/>
+        <methodref name="SetActionClient" visibility="private"/>
+        <methodref name="GetAction" visibility="private"/>
+        <methodref name="SetAction" visibility="private"/>
+        <methodref name="GetIndex" visibility="private"/>
+        <methodref name="Create@" visibility="class private" procflags="class constructor noself"/>
+        <methodref name="Destroy@" visibility="class private" procflags="class destructor noself"/>
+        <methodref name="CreateChildrenList" visibility="protected" procflags="virtual"/>
+        <methodref name="ResetChildrenIndicesSpan" visibility="protected"/>
+        <methodref name="ResetChildrenIndices" visibility="protected"/>
+        <methodref name="GetBackIndex" visibility="protected" procflags="virtual"/>
+        <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+        <methodref name="IgnoreBindingName" visibility="protected"/>
+        <methodref name="GetChildren" visibility="protected" procflags="override"/>
+        <methodref name="SetParentComponent" visibility="protected" procflags="override"/>
+        <methodref name="Notification" visibility="protected" procflags="override"/>
+        <methodref name="GetActionLinkClass" visibility="protected" procflags="virtual"/>
+        <methodref name="InitiateAction" visibility="protected" procflags="virtual"/>
+        <methodref name="DoActionChange" visibility="protected" procflags="virtual"/>
+        <methodref name="ActionChange" visibility="protected" procflags="virtual"/>
+        <methodref name="DoActionClientChanged" visibility="protected" procflags="virtual"/>
+        <propertyref name="ActionLink" visibility="protected"/>
+        <propertyref name="Action" visibility="protected"/>
+        <propertyref name="StyleIndexer" visibility="protected"/>
+        <methodref name="GetParentComponent" visibility="public" procflags="override"/>
+        <methodref name="HasParent" visibility="public" procflags="override"/>
+        <methodref name="AddToResourcePool" visibility="protected" procflags="virtual"/>
+        <methodref name="RemoveFromResourcePool" visibility="protected" procflags="virtual"/>
+        <methodref name="SetParent" visibility="protected" procflags="virtual"/>
+        <methodref name="DoRootChanging" visibility="protected" procflags="virtual"/>
+        <methodref name="DoRootChanged" visibility="protected" procflags="virtual"/>
+        <methodref name="ParentChanged" visibility="protected" procflags="virtual"/>
+        <methodref name="ChangeOrder" visibility="protected" procflags="virtual"/>
+        <methodref name="ChangeChildren" visibility="protected" procflags="virtual"/>
+        <methodref name="DoAddObject" visibility="protected" procflags="virtual"/>
+        <methodref name="DoInsertObject" visibility="protected" procflags="virtual"/>
+        <methodref name="DoRemoveObject" visibility="protected" procflags="virtual"/>
+        <methodref name="DoDeleteChildren" visibility="protected" procflags="virtual"/>
+        <methodref name="SearchInto" visibility="protected" procflags="virtual"/>
+        <methodref name="FreeNotification" visibility="protected" procflags="virtual"/>
+        <methodref name="SupportsPlatformService" visibility="protected" procflags="virtual"/>
+        <methodref name="GetData" visibility="protected" procflags="virtual"/>
+        <methodref name="SetData" visibility="protected" procflags="virtual"/>
+        <methodref name="IgnoreIntegerValue" visibility="protected"/>
+        <methodref name="IgnoreFloatValue" visibility="protected"/>
+        <methodref name="IgnoreBooleanValue" visibility="protected"/>
+        <methodref name="IgnoreIdentValue" visibility="protected"/>
+        <methodref name="Create" visibility="public" procflags="constructor override"/>
+        <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+        <methodref name="BeforeDestruction" visibility="public" procflags="override"/>
+        <methodref name="Release" visibility="public" procflags="virtual"/>
+        <methodref name="Released" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="ObjectState" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="SetRoot" visibility="public"/>
+        <methodref name="SetDesign" visibility="public"/>
+        <methodref name="Clone" visibility="public"/>
+        <methodref name="AddObject" visibility="public"/>
+        <methodref name="InsertObject" visibility="public"/>
+        <methodref name="RemoveObject" visibility="public" procflags="overload"/>
+        <methodref name="RemoveObject" visibility="public" procflags="overload"/>
+        <methodref name="ContainsObject" visibility="public" procflags="virtual"/>
+        <methodref name="Exchange" visibility="public" procflags="virtual"/>
+        <methodref name="DeleteChildren" visibility="public"/>
+        <methodref name="IsChild" visibility="public" procflags="virtual"/>
+        <methodref name="BringChildToFront" visibility="public"/>
+        <methodref name="SendChildToBack" visibility="public"/>
+        <methodref name="BringToFront" visibility="public" procflags="virtual"/>
+        <methodref name="SendToBack" visibility="public" procflags="virtual"/>
+        <methodref name="AddObjectsToList" visibility="public"/>
+        <methodref name="Sort" visibility="public" procflags="virtual"/>
+        <methodref name="EnumObjects" visibility="public">
+        </methodref>
+        <methodref name="AnimateFloat" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="AnimateFloatDelay" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="AnimateFloatWait" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="AnimateInt" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="AnimateIntWait" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="AnimateColor" visibility="public" symflags="deprecated">
+        </methodref>
+        <methodref name="StopPropertyAnimation" visibility="public"/>
+        <methodref name="AddFreeNotify" visibility="public"/>
+        <methodref name="RemoveFreeNotify" visibility="public"/>
+        <methodref name="FindStyleResource" visibility="public" procflags="overload virtual"/>
+        <propertyref name="Root" visibility="public"/>
+        <propertyref name="Stored" visibility="public"/>
+        <propertyref name="TagObject" visibility="public"/>
+        <propertyref name="TagFloat" visibility="public"/>
+        <propertyref name="TagString" visibility="public"/>
+        <propertyref name="ChildrenCount" visibility="public"/>
+        <propertyref name="Children" visibility="public"/>
+        <propertyref name="Data" visibility="public"/>
+        <propertyref name="Parent" visibility="public"/>
+        <propertyref name="Index" visibility="public"/>
+        <propertyref name="ActionClient" visibility="public"/>
+        <propertyref name="StyleName" visibility="published"/>
+        <ancestor name="TComponent" namespace="System.Classes">
+          <interfaces>
+            <implements name="IInterfaceComponentReference"/>
+            <implements name="IInterface"/>
+          </interfaces>
+          <methodref name="GetComObject" visibility="private">
+          </methodref>
+          <methodref name="GetComponent" visibility="private">
+          </methodref>
+          <methodref name="GetComponentCount" visibility="private">
+          </methodref>
+          <methodref name="GetComponentIndex" visibility="private">
+          </methodref>
+          <methodref name="Insert" visibility="private">
+          </methodref>
+          <methodref name="ReadLeft" visibility="private">
+          </methodref>
+          <methodref name="ReadTop" visibility="private">
+          </methodref>
+          <methodref name="Remove" visibility="private">
+          </methodref>
+          <methodref name="RemoveNotification" visibility="private">
+          </methodref>
+          <methodref name="SetComponentIndex" visibility="private">
+          </methodref>
+          <methodref name="SetReference" visibility="private">
+          </methodref>
+          <methodref name="WriteLeft" visibility="private">
+          </methodref>
+          <methodref name="WriteTop" visibility="private">
+          </methodref>
+          <methodref name="IntfGetComponent" visibility="private">
+          </methodref>
+          <methodref name="DoGetDeltaStreams" visibility="private">
+          </methodref>
+          <methodref name="ReadDeltaStream" visibility="private">
+          </methodref>
+          <methodref name="ReadDeltaState" visibility="private">
+          </methodref>
+          <methodref name="FindSortedComponent" visibility="private">
+          </methodref>
+          <methodref name="AddSortedComponent" visibility="private">
+          </methodref>
+          <methodref name="RemoveSortedComponent" visibility="private" procflags="inline">
+          </methodref>
+          <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+          </methodref>
+          <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="ChangeName" visibility="protected">
+          </methodref>
+          <methodref name="DefineProperties" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="GetChildren" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetChildOwner" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetChildParent" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="GetOwner" visibility="protected" procflags="override">
+          </methodref>
+          <methodref name="Loaded" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="Notification" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="ReadState" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="CanObserve" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="ObserverAdded" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="GetObservers" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetAncestor" visibility="protected">
+          </methodref>
+          <methodref name="SetDesigning" visibility="protected">
+          </methodref>
+          <methodref name="SetInline" visibility="protected">
+          </methodref>
+          <methodref name="SetDesignInstance" visibility="protected">
+          </methodref>
+          <methodref name="SetName" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="SetChildOrder" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="SetParentComponent" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="Updating" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="Updated" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual">
+          </methodref>
+          <methodref name="ValidateRename" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="ValidateContainer" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="ValidateInsert" visibility="protected" procflags="dynamic">
+          </methodref>
+          <methodref name="WriteState" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="RemoveFreeNotifications" visibility="protected">
+          </methodref>
+          <methodref name="QueryInterface" visibility="protected" procflags="virtual">
+          </methodref>
+          <methodref name="_AddRef" visibility="protected">
+          </methodref>
+          <methodref name="_Release" visibility="protected">
+          </methodref>
+          <methodref name="GetTypeInfoCount" visibility="protected">
+          </methodref>
+          <methodref name="GetTypeInfo" visibility="protected">
+          </methodref>
+          <methodref name="GetIDsOfNames" visibility="protected">
+          </methodref>
+          <methodref name="Invoke" visibility="protected">
+          </methodref>
+          <eventref name="OnGetDeltaStreams" visibility="protected">
+          </eventref>
+          <methodref name="Create" visibility="public" procflags="constructor virtual">
+          </methodref>
+          <methodref name="Destroy" visibility="public" procflags="destructor override">
+          </methodref>
+          <methodref name="BeforeDestruction" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="BeginInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="EndInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="EndInvoke" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="EndFunctionInvoke" visibility="public">
+          </methodref>
+          <methodref name="DestroyComponents" visibility="public">
+          </methodref>
+          <methodref name="Destroying" visibility="public">
+          </methodref>
+          <methodref name="ExecuteAction" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="FindComponent" visibility="public">
+          </methodref>
+          <methodref name="FreeNotification" visibility="public">
+          </methodref>
+          <methodref name="RemoveFreeNotification" visibility="public">
+          </methodref>
+          <methodref name="FreeOnRelease" visibility="public">
+          </methodref>
+          <methodref name="GetEnumerator" visibility="public" procflags="inline">
+          </methodref>
+          <methodref name="GetParentComponent" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="GetNamePath" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="HasParent" visibility="public" procflags="dynamic">
+          </methodref>
+          <methodref name="InsertComponent" visibility="public">
+          </methodref>
+          <methodref name="RemoveComponent" visibility="public">
+          </methodref>
+          <methodref name="SetSubComponent" visibility="public">
+          </methodref>
+          <methodref name="SafeCallException" visibility="public" procflags="override">
+          </methodref>
+          <methodref name="UpdateAction" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="IsImplementorOf" visibility="public">
+          </methodref>
+          <methodref name="ReferenceInterface" visibility="public">
+          </methodref>
+          <propertyref name="ComObject" visibility="public">
+          </propertyref>
+          <propertyref name="Components" visibility="public">
+          </propertyref>
+          <propertyref name="ComponentCount" visibility="public">
+          </propertyref>
+          <propertyref name="ComponentIndex" visibility="public">
+          </propertyref>
+          <propertyref name="ComponentState" visibility="public">
+          </propertyref>
+          <propertyref name="ComponentStyle" visibility="public">
+          </propertyref>
+          <propertyref name="DesignInfo" visibility="public">
+          </propertyref>
+          <propertyref name="Owner" visibility="public">
+          </propertyref>
+          <propertyref name="VCLComObject" visibility="public">
+          </propertyref>
+          <propertyref name="Observers" visibility="public">
+          </propertyref>
+          <propertyref name="Name" visibility="published">
+          </propertyref>
+          <propertyref name="Tag" visibility="published">
+          </propertyref>
+          <ancestor name="TPersistent" namespace="System.Classes">
+            <methodref name="AssignError" visibility="private">
+            </methodref>
+            <methodref name="AssignTo" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="DefineProperties" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetOwner" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor override">
+            </methodref>
+            <methodref name="Assign" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="GetNamePath" visibility="public" procflags="dynamic">
+            </methodref>
+            <ancestor name="TObject" namespace="System">
+              <methodref name="Create" visibility="public" procflags="constructor">
+              </methodref>
+              <methodref name="Free" visibility="public">
+              </methodref>
+              <methodref name="DisposeOf" visibility="public" procflags="inline">
+              </methodref>
+              <methodref name="InitInstance" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="CleanupInstance" visibility="public">
+              </methodref>
+              <methodref name="ClassType" visibility="public" procflags="inline">
+              </methodref>
+              <methodref name="ClassName" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="ClassNameIs" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="ClassParent" visibility="public" procflags="class inline">
+              </methodref>
+              <methodref name="ClassInfo" visibility="public" procflags="class inline">
+              </methodref>
+              <methodref name="InstanceSize" visibility="public" procflags="class inline">
+              </methodref>
+              <methodref name="InheritsFrom" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="MethodAddress" visibility="public" procflags="class overload">
+              </methodref>
+              <methodref name="MethodAddress" visibility="public" procflags="class overload">
+              </methodref>
+              <methodref name="MethodName" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="QualifiedClassName" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="FieldAddress" visibility="public" procflags="overload">
+              </methodref>
+              <methodref name="FieldAddress" visibility="public" procflags="overload">
+              </methodref>
+              <methodref name="GetInterface" visibility="public">
+              </methodref>
+              <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+              </methodref>
+              <methodref name="UnitName" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="UnitScope" visibility="public" procflags="class">
+              </methodref>
+              <methodref name="Equals" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="GetHashCode" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="ToString" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="SafeCallException" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="Dispatch" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="NewInstance" visibility="public" procflags="class virtual">
+              </methodref>
+              <methodref name="FreeInstance" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+              </methodref>
+              <methodref name="GetDisposed" visibility="protected" procflags="inline">
+              </methodref>
+              <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+              </methodref>
+              <propertyref name="Disposed" visibility="protected">
+              </propertyref>
+            </ancestor>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <field name="FHistoryList" type="TStrings" visibility="private" size="4" offset="152" file="FMX.Dialogs.pas" line="47"/>
+      <field name="FOptions" type="TOpenOptions" visibility="private" size="4" offset="156" file="FMX.Dialogs.pas" line="48"/>
+      <field name="FOptionsEx" type="TOpenOptionsEx" visibility="private" size="1" offset="160" file="FMX.Dialogs.pas" line="49"/>
+      <field name="FFilter" type="string" visibility="private" size="4" offset="164" file="FMX.Dialogs.pas" line="50"/>
+      <field name="FFilterIndex" type="Integer" visibility="private" size="4" offset="168" file="FMX.Dialogs.pas" line="51"/>
+      <field name="FInitialDir" type="string" visibility="private" size="4" offset="172" file="FMX.Dialogs.pas" line="52"/>
+      <field name="FTitle" type="string" visibility="private" size="4" offset="176" file="FMX.Dialogs.pas" line="53"/>
+      <field name="FDefaultExt" type="string" visibility="private" size="4" offset="180" file="FMX.Dialogs.pas" line="54"/>
+      <field name="FFileName" type="TFileName" visibility="private" size="4" offset="184" file="FMX.Dialogs.pas" line="55"/>
+      <field name="FFiles" type="TStrings" visibility="private" size="4" offset="188" file="FMX.Dialogs.pas" line="56"/>
+      <field name="FOnSelectionChange" type="TNotifyEvent" visibility="private" size="8" offset="192" file="FMX.Dialogs.pas" line="57"/>
+      <field name="FOnFolderChange" type="TNotifyEvent" visibility="private" size="8" offset="200" file="FMX.Dialogs.pas" line="58"/>
+      <field name="FOnTypeChange" type="TNotifyEvent" visibility="private" size="8" offset="208" file="FMX.Dialogs.pas" line="59"/>
+      <field name="FOnCanClose" type="TCloseQueryEvent" visibility="private" size="8" offset="216" file="FMX.Dialogs.pas" line="60"/>
+      <function name="GetFileName" visibility="private" file="FMX.Dialogs.pas" line="61">
+        <parameters>
+          <retval type="TFileName"/>
+        </parameters>
+      </function>
+      <function name="GetFiles" visibility="private" file="FMX.Dialogs.pas" line="62">
+        <parameters>
+          <retval type="TStrings"/>
+        </parameters>
+      </function>
+      <function name="GetFilterIndex" visibility="private" file="FMX.Dialogs.pas" line="63">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="GetInitialDir" visibility="private" file="FMX.Dialogs.pas" line="64">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <function name="GetTitle" visibility="private" file="FMX.Dialogs.pas" line="65">
+        <parameters>
+          <retval type="string"/>
+        </parameters>
+      </function>
+      <procedure name="ReadFileEditStyle" visibility="private" file="FMX.Dialogs.pas" line="66">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetFileName" visibility="private" file="FMX.Dialogs.pas" line="67">
+        <parameters>
+          <parameter name="Value" type="TFileName" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHistoryList" visibility="private" file="FMX.Dialogs.pas" line="68">
+        <parameters>
+          <parameter name="Value" type="TStrings" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetInitialDir" visibility="private" file="FMX.Dialogs.pas" line="69">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetTitle" visibility="private" file="FMX.Dialogs.pas" line="70">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="DoCanClose" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="72">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+OnCanClose event dispatcher.
+DoCanClose is called automatically when the user closes the dialog. 
+DoCanClose returns True (by default) to allow closing the dialog or False to prevent the dialog from closing. 
+DoCanClose executes the handler of the OnCanClose event if defined and allows you to set the CanClose parameter of the OnCanClose event handler to True or False. DoCanClose returns the value that CanClose has after the event handler finishes.
+</summary></devnotes></function>
+      <procedure name="DoSelectionChange" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="73">
+      <devnotes><summary>
+OnSelectionChange event dispatcher.
+DoSelectionChange is called automatically whenever the file selection is changed. 
+DoSelectionChange executes the handler of the OnSelectionChange event if defined.
+</summary></devnotes></procedure>
+      <procedure name="DoFolderChange" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="74">
+      <devnotes><summary>
+OnFolderChange event dispatcher.
+DoFolderChange is called automatically when the directory whose contents are displayed in the dialog changes. 
+DoFolderChange executes the handler of the OnFolderChange event if defined.
+</summary></devnotes></procedure>
+      <procedure name="DoTypeChange" visibility="protected" procflags="dynamic" file="FMX.Dialogs.pas" line="75">
+      <devnotes><summary>
+OnTypeChange event dispatcher.
+DoTypeChange is called automatically when the selection from the type combo box in the dialog is changed.
+DoTypeChange executes the handler of the OnTypeChange event if defined.
+</summary></devnotes></procedure>
+      <procedure name="DefineProperties" visibility="protected" procflags="override" file="FMX.Dialogs.pas" line="76">
+        <parameters>
+          <parameter name="Filer" type="TFiler"/>
+        </parameters>
+      <devnotes><summary>
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+FMX.Dialogs.TOpenDialog.DefineProperties inherits from System.Classes.TComponent.DefineProperties. All content below this line refers to System.Classes.TComponent.DefineProperties.
+Designates methods for storing an object's unpublished data on a stream such as a form file.
+TComponent overrides the DefineProperties method defined in TPersistent to define &quot;fake&quot; Top and Left properties. These are defined so that components that are not controls can be manipulated at design time. However, the Top and Left properties are hidden, that is, they are not published, because only controls appear at run time.
+DefineProperties is virtual; descendent classes can override it. When overriding DefineProperties, be aware that the Ancestor property of Filer might be set, and that this property can determine whether or not it is appropriate to write properties.
+DefineProperties is called automatically as part of the component streaming system; do not call it directly.
+</summary></devnotes></procedure>
+      <function name="DoExecute" visibility="protected" procflags="override" file="FMX.Dialogs.pas" line="77">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Displays the dialog box.
+FMX.Dialogs.TOpenDialog.DoExecute inherits from FMX.Dialogs.TCommonDialog.DoExecute. All content below this line refers to FMX.Dialogs.TCommonDialog.DoExecute.
+Displays the dialog box.
+For TCommonDialog, DoExecute does nothing.  
+TCommonDialog descendants override the DoExecute method in order to properly display the required dialog box. DoExecute returns a Boolean value, usually True if the user has clicked OK, and False otherwise.
+
+Note: DoExecute is a protected method for TCommonDialog descendants; therefore, to display the dialog box, call Execute instead.
+
+</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="FMX.Dialogs.pas" line="79">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates and initializes a TOpenDialog instance.
+Create generates a TOpenDialog instance, but the new dialog does not appear on the form at runtime until the Execute method is called.
+AOwner is the component that is responsible for freeing the TOpenDialog instance. It becomes the value of the Owner property.
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="FMX.Dialogs.pas" line="80">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys the TOpenDialog object and frees its memory.
+Do not call Destroy directly in an application. Call Free instead. Free calls Destroy if the TOpenDialog reference is not nil.
+</summary></devnotes></destructor>
+      <property name="Files" visibility="public" read="GetFiles" type="TStrings" file="FMX.Dialogs.pas" line="81"><devnotes><summary>
+Represents the list containing the absolute paths of the selected files.
+Files represents a string list that contains the absolute path of each selected file. 
+
+Note: In order for the user to select multiple files, set the ofAllowMultiSelect flag in Options.</summary></devnotes></property>
+      <property name="HistoryList" visibility="public" read="FHistoryList" write="SetHistoryList" type="TStrings" file="FMX.Dialogs.pas" line="82"><devnotes><summary>
+Maintains a list of the previously selected files. Obsolete property.
+HistoryList is maintained for compatibility with older versions of TOpenDialog. It is not used.
+</summary></devnotes></property>
+      <property name="DefaultExt" visibility="published" read="FDefaultExt" write="FDefaultExt" type="string" default="0" file="FMX.Dialogs.pas" line="84"><devnotes><summary>
+Specifies a default file extension.
+DefaultExt specifies a file extension that is appended automatically to the selected file name, unless the selected file name already includes a registered extension.
+Extensions longer than three characters are not supported. Do not include the period (.) that separates the file name from the extension.
+</summary></devnotes></property>
+      <property name="FileName" visibility="published" read="GetFileName" write="SetFileName" type="TFileName" default="0" file="FMX.Dialogs.pas" line="85"><devnotes><summary>
+Indicates the absolute path for the last file selected.
+The FileName represents the absolute (full) path of the file most recently selected from the dialog. The value of FileName is the same as the first item in the Files property.
+</summary></devnotes></property>
+      <property name="Filter" visibility="published" read="FFilter" write="FFilter" type="string" default="0" file="FMX.Dialogs.pas" line="86"><devnotes><summary>
+Represents the file masks (filters) of the dialog.
+The file-selection dialog includes a drop-down list of file types on the left of the 'File Name:' edit box. When the user picks a file type from the list, only files of the selected type are displayed in the dialog. You can select only one filter at a time.
+In order for Filter to work properly, the assigned string must be formatted as follows: 
+'&lt;first displayed name&gt;|&lt;first file extension&gt;|&lt;second displayed name&gt;|&lt;second file extension&gt;|...|&lt;n-th displayed name&gt;|&lt;n-th file extension&gt;'
+For example, the next code sample will add filters for text and executable files:
+
+  OpenDialog1.Filter:='Applications (*.exe)|*.EXE|Text files (*.txt)|*.TXT';
+</summary></devnotes></property>
+      <property name="FilterIndex" visibility="published" read="GetFilterIndex" write="FFilterIndex" type="Integer" default="1" file="FMX.Dialogs.pas" line="87"><devnotes><summary>
+Determines which filter is selected by default when the dialog opens.
+FilterIndex determines which of the file types in Filter is selected by default when the dialog opens. Set FilterIndex to 1 to choose the first file type in the list as default, 2 to choose the second file type as the default, and so on. If the value of FilterIndex is out of range, the last file type listed in Filter is selected by default.
+</summary></devnotes></property>
+      <property name="InitialDir" visibility="published" read="GetInitialDir" write="SetInitialDir" type="string" default="0" file="FMX.Dialogs.pas" line="88"><devnotes><summary>
+Determines which directory is selected by default when the dialog opens.
+InitialDir determines the default directory displayed in the file-selection dialog when it opens.
+If no value is assigned to InitialDir, or the specified directory does not exist, the initial directory is controlled by a special registry key assigned to your application.
+
+Note: For Windows, the registry key can be found at HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedMRU\.</summary></devnotes></property>
+      <property name="Options" visibility="published" read="FOptions" write="FOptions" type="TOpenOptions" default="524292" file="FMX.Dialogs.pas" line="89"><devnotes><summary>
+Determines the appearance and behavior of the file-selection dialog.
+Use the Options property to customize the appearance and functionality of the dialog.
+</summary></devnotes></property>
+      <property name="OptionsEx" visibility="published" read="FOptionsEx" write="FOptionsEx" type="TOpenOptionsEx" default="0" file="FMX.Dialogs.pas" line="91"><devnotes><summary>
+Augments the Options property with additional flags that determine the appearance and behavior of the file selection dialog.
+Use the OptionsEx property to further customize the file open dialog beyond the options covered by the Options property.
+</summary></devnotes></property>
+      <property name="Title" visibility="published" read="GetTitle" write="SetTitle" type="string" default="0" file="FMX.Dialogs.pas" line="92"><devnotes><summary>
+Specifies the text displayed in the dialog's title bar.
+Use Title to set the text that appears in the file-selection dialog's title bar. If no value is assigned to Title, the dialog's title is &quot;Open&quot;.
+
+
+</summary></devnotes></property>
+      <event name="OnCanClose" visibility="published" read="FOnCanClose" write="FOnCanClose" type="TCloseQueryEvent" file="FMX.Dialogs.pas" line="93"><devnotes><summary>
+Occurs when the user tries to close the dialog.
+Write an OnCanClose event handler to provide custom validation of the value of FileName. File selection dialogs provide a number of built-in validations, such as checking for invalid characters, prompting for confirmation before overwriting, checking whether a file or path exists, and so on. These validations can be specified using the Options property. However, applications can provide additional validation of file names in an OnCanClose event handler. 
+Set the CanClose parameter to False to prevent the dialog from closing. The OnCanClose event handler is responsible for telling the user why the dialog doesn't close.
+</summary></devnotes></event>
+      <event name="OnFolderChange" visibility="published" read="FOnFolderChange" write="FOnFolderChange" type="TNotifyEvent" file="FMX.Dialogs.pas" line="94"><devnotes><summary>
+Occurs when the current work directory from the dialog is changed.
+The OnFolderChange event occurs when the user changes the directory whose contents are displayed in the dialog. This can happen when the user double-clicks a directory, clicks the Up arrow, or uses the list box at the top of the dialog to navigate through the directory structure. 
+</summary></devnotes></event>
+      <event name="OnSelectionChange" visibility="published" read="FOnSelectionChange" write="FOnSelectionChange" type="TNotifyEvent" file="FMX.Dialogs.pas" line="95"><devnotes><summary>
+Occurs when file names displayed in the dialog are changed.
+The OnSelectionChange event occurs whenever the file selection is changed. This can include opening the file-selection dialog box, highlighting a file or directory, selecting a new filter, selecting a new directory, or creating a new folder.
+The currently selected file is stored in the FileName and Files properties. Files is used for multiple file selection.
+The Sender parameter is an instance of the TOpenDialog.
+</summary></devnotes></event>
+      <event name="OnTypeChange" visibility="published" read="FOnTypeChange" write="FOnTypeChange" type="TNotifyEvent" file="FMX.Dialogs.pas" line="96"><devnotes><summary>
+Occurs when the selection from the type combo box in the dialog is changed.
+The OnTypeChange event occurs when the user selects a new filter from the Type combo box at the bottom of the dialog. This includes the moment when the TOpenDialog is displayed.
+</summary></devnotes></event>
+    </members>
+  <devnotes><summary>
+TOpenDialog is a class used to display a file-selection dialog.
+Use TOpenDialog to display a dialog box for selecting and opening files. 
+When the user clicks the Open button, the dialog closes and the selected files are stored in the Files property.
+
+Note: The dialog does not appear at run time until it is activated by a call to the Execute method.</summary></devnotes></class>
+  <class name="TSaveDialog" file="FMX.Dialogs.pas" line="102">
+    
+    <ancestor name="TOpenDialog" namespace="FMX.Dialogs">
+      <methodref name="GetFileName" visibility="private"/>
+      <methodref name="GetFiles" visibility="private"/>
+      <methodref name="GetFilterIndex" visibility="private"/>
+      <methodref name="GetInitialDir" visibility="private"/>
+      <methodref name="GetTitle" visibility="private"/>
+      <methodref name="ReadFileEditStyle" visibility="private"/>
+      <methodref name="SetFileName" visibility="private"/>
+      <methodref name="SetHistoryList" visibility="private"/>
+      <methodref name="SetInitialDir" visibility="private"/>
+      <methodref name="SetTitle" visibility="private"/>
+      <methodref name="DoCanClose" visibility="protected" procflags="dynamic"/>
+      <methodref name="DoSelectionChange" visibility="protected" procflags="dynamic"/>
+      <methodref name="DoFolderChange" visibility="protected" procflags="dynamic"/>
+      <methodref name="DoTypeChange" visibility="protected" procflags="dynamic"/>
+      <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+      <methodref name="DoExecute" visibility="protected" procflags="override"/>
+      <methodref name="Create" visibility="public" procflags="constructor override"/>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <propertyref name="Files" visibility="public"/>
+      <propertyref name="HistoryList" visibility="public"/>
+      <propertyref name="DefaultExt" visibility="published"/>
+      <propertyref name="FileName" visibility="published"/>
+      <propertyref name="Filter" visibility="published"/>
+      <propertyref name="FilterIndex" visibility="published"/>
+      <propertyref name="InitialDir" visibility="published"/>
+      <propertyref name="Options" visibility="published"/>
+      <propertyref name="OptionsEx" visibility="published"/>
+      <propertyref name="Title" visibility="published"/>
+      <eventref name="OnCanClose" visibility="published"/>
+      <eventref name="OnFolderChange" visibility="published"/>
+      <eventref name="OnSelectionChange" visibility="published"/>
+      <eventref name="OnTypeChange" visibility="published"/>
+      <ancestor name="TCommonDialog" namespace="FMX.Dialogs">
+        <methodref name="DoClose" visibility="protected" procflags="dynamic"/>
+        <methodref name="DoShow" visibility="protected" procflags="dynamic"/>
+        <methodref name="DoExecute" visibility="protected" procflags="abstract virtual"/>
+        <methodref name="Create" visibility="public" procflags="constructor override"/>
+        <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+        <methodref name="Execute" visibility="public" procflags="overload virtual"/>
+        <propertyref name="HelpContext" visibility="published"/>
+        <eventref name="OnClose" visibility="published"/>
+        <eventref name="OnShow" visibility="published"/>
+        <ancestor name="TFmxObject" namespace="FMX.Types">
+          <interfaces>
+            <implements name="IActionClient"/>
+            <implements name="IFreeNotification"/>
+          </interfaces>
+          <methodref name="SetStyleName" visibility="private"/>
+          <methodref name="SetStored" visibility="private"/>
+          <methodref name="GetChildrenCount" visibility="private" procflags="inline"/>
+          <methodref name="GetIndexOfChild" visibility="private"/>
+          <methodref name="SetIndexOfChild" visibility="private"/>
+          <methodref name="SetIndex" visibility="private"/>
+          <methodref name="GetActionRoot" visibility="private"/>
+          <methodref name="GetActionClient" visibility="private" procflags="inline"/>
+          <methodref name="SetActionClient" visibility="private"/>
+          <methodref name="GetAction" visibility="private"/>
+          <methodref name="SetAction" visibility="private"/>
+          <methodref name="GetIndex" visibility="private"/>
+          <methodref name="Create@" visibility="class private" procflags="class constructor noself"/>
+          <methodref name="Destroy@" visibility="class private" procflags="class destructor noself"/>
+          <methodref name="CreateChildrenList" visibility="protected" procflags="virtual"/>
+          <methodref name="ResetChildrenIndicesSpan" visibility="protected"/>
+          <methodref name="ResetChildrenIndices" visibility="protected"/>
+          <methodref name="GetBackIndex" visibility="protected" procflags="virtual"/>
+          <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+          <methodref name="IgnoreBindingName" visibility="protected"/>
+          <methodref name="GetChildren" visibility="protected" procflags="override"/>
+          <methodref name="SetParentComponent" visibility="protected" procflags="override"/>
+          <methodref name="Notification" visibility="protected" procflags="override"/>
+          <methodref name="GetActionLinkClass" visibility="protected" procflags="virtual"/>
+          <methodref name="InitiateAction" visibility="protected" procflags="virtual"/>
+          <methodref name="DoActionChange" visibility="protected" procflags="virtual"/>
+          <methodref name="ActionChange" visibility="protected" procflags="virtual"/>
+          <methodref name="DoActionClientChanged" visibility="protected" procflags="virtual"/>
+          <propertyref name="ActionLink" visibility="protected"/>
+          <propertyref name="Action" visibility="protected"/>
+          <propertyref name="StyleIndexer" visibility="protected"/>
+          <methodref name="GetParentComponent" visibility="public" procflags="override"/>
+          <methodref name="HasParent" visibility="public" procflags="override"/>
+          <methodref name="AddToResourcePool" visibility="protected" procflags="virtual"/>
+          <methodref name="RemoveFromResourcePool" visibility="protected" procflags="virtual"/>
+          <methodref name="SetParent" visibility="protected" procflags="virtual"/>
+          <methodref name="DoRootChanging" visibility="protected" procflags="virtual"/>
+          <methodref name="DoRootChanged" visibility="protected" procflags="virtual"/>
+          <methodref name="ParentChanged" visibility="protected" procflags="virtual"/>
+          <methodref name="ChangeOrder" visibility="protected" procflags="virtual"/>
+          <methodref name="ChangeChildren" visibility="protected" procflags="virtual"/>
+          <methodref name="DoAddObject" visibility="protected" procflags="virtual"/>
+          <methodref name="DoInsertObject" visibility="protected" procflags="virtual"/>
+          <methodref name="DoRemoveObject" visibility="protected" procflags="virtual"/>
+          <methodref name="DoDeleteChildren" visibility="protected" procflags="virtual"/>
+          <methodref name="SearchInto" visibility="protected" procflags="virtual"/>
+          <methodref name="FreeNotification" visibility="protected" procflags="virtual"/>
+          <methodref name="SupportsPlatformService" visibility="protected" procflags="virtual"/>
+          <methodref name="GetData" visibility="protected" procflags="virtual"/>
+          <methodref name="SetData" visibility="protected" procflags="virtual"/>
+          <methodref name="IgnoreIntegerValue" visibility="protected"/>
+          <methodref name="IgnoreFloatValue" visibility="protected"/>
+          <methodref name="IgnoreBooleanValue" visibility="protected"/>
+          <methodref name="IgnoreIdentValue" visibility="protected"/>
+          <methodref name="Create" visibility="public" procflags="constructor override"/>
+          <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+          <methodref name="BeforeDestruction" visibility="public" procflags="override"/>
+          <methodref name="Release" visibility="public" procflags="virtual"/>
+          <methodref name="Released" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="ObjectState" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="SetRoot" visibility="public"/>
+          <methodref name="SetDesign" visibility="public"/>
+          <methodref name="Clone" visibility="public"/>
+          <methodref name="AddObject" visibility="public"/>
+          <methodref name="InsertObject" visibility="public"/>
+          <methodref name="RemoveObject" visibility="public" procflags="overload"/>
+          <methodref name="RemoveObject" visibility="public" procflags="overload"/>
+          <methodref name="ContainsObject" visibility="public" procflags="virtual"/>
+          <methodref name="Exchange" visibility="public" procflags="virtual"/>
+          <methodref name="DeleteChildren" visibility="public"/>
+          <methodref name="IsChild" visibility="public" procflags="virtual"/>
+          <methodref name="BringChildToFront" visibility="public"/>
+          <methodref name="SendChildToBack" visibility="public"/>
+          <methodref name="BringToFront" visibility="public" procflags="virtual"/>
+          <methodref name="SendToBack" visibility="public" procflags="virtual"/>
+          <methodref name="AddObjectsToList" visibility="public"/>
+          <methodref name="Sort" visibility="public" procflags="virtual"/>
+          <methodref name="EnumObjects" visibility="public">
+          </methodref>
+          <methodref name="AnimateFloat" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="AnimateFloatDelay" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="AnimateFloatWait" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="AnimateInt" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="AnimateIntWait" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="AnimateColor" visibility="public" symflags="deprecated">
+          </methodref>
+          <methodref name="StopPropertyAnimation" visibility="public"/>
+          <methodref name="AddFreeNotify" visibility="public"/>
+          <methodref name="RemoveFreeNotify" visibility="public"/>
+          <methodref name="FindStyleResource" visibility="public" procflags="overload virtual"/>
+          <propertyref name="Root" visibility="public"/>
+          <propertyref name="Stored" visibility="public"/>
+          <propertyref name="TagObject" visibility="public"/>
+          <propertyref name="TagFloat" visibility="public"/>
+          <propertyref name="TagString" visibility="public"/>
+          <propertyref name="ChildrenCount" visibility="public"/>
+          <propertyref name="Children" visibility="public"/>
+          <propertyref name="Data" visibility="public"/>
+          <propertyref name="Parent" visibility="public"/>
+          <propertyref name="Index" visibility="public"/>
+          <propertyref name="ActionClient" visibility="public"/>
+          <propertyref name="StyleName" visibility="published"/>
+          <ancestor name="TComponent" namespace="System.Classes">
+            <interfaces>
+              <implements name="IInterfaceComponentReference"/>
+              <implements name="IInterface"/>
+            </interfaces>
+            <methodref name="GetComObject" visibility="private">
+            </methodref>
+            <methodref name="GetComponent" visibility="private">
+            </methodref>
+            <methodref name="GetComponentCount" visibility="private">
+            </methodref>
+            <methodref name="GetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="Insert" visibility="private">
+            </methodref>
+            <methodref name="ReadLeft" visibility="private">
+            </methodref>
+            <methodref name="ReadTop" visibility="private">
+            </methodref>
+            <methodref name="Remove" visibility="private">
+            </methodref>
+            <methodref name="RemoveNotification" visibility="private">
+            </methodref>
+            <methodref name="SetComponentIndex" visibility="private">
+            </methodref>
+            <methodref name="SetReference" visibility="private">
+            </methodref>
+            <methodref name="WriteLeft" visibility="private">
+            </methodref>
+            <methodref name="WriteTop" visibility="private">
+            </methodref>
+            <methodref name="IntfGetComponent" visibility="private">
+            </methodref>
+            <methodref name="DoGetDeltaStreams" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaStream" visibility="private">
+            </methodref>
+            <methodref name="ReadDeltaState" visibility="private">
+            </methodref>
+            <methodref name="FindSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="AddSortedComponent" visibility="private">
+            </methodref>
+            <methodref name="RemoveSortedComponent" visibility="private" procflags="inline">
+            </methodref>
+            <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+            </methodref>
+            <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ChangeName" visibility="protected">
+            </methodref>
+            <methodref name="DefineProperties" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="GetChildren" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildOwner" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetChildParent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="GetOwner" visibility="protected" procflags="override">
+            </methodref>
+            <methodref name="Loaded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="Notification" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ReadState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="CanObserve" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ObserverAdded" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="GetObservers" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetAncestor" visibility="protected">
+            </methodref>
+            <methodref name="SetDesigning" visibility="protected">
+            </methodref>
+            <methodref name="SetInline" visibility="protected">
+            </methodref>
+            <methodref name="SetDesignInstance" visibility="protected">
+            </methodref>
+            <methodref name="SetName" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="SetChildOrder" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="SetParentComponent" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updating" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="Updated" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual">
+            </methodref>
+            <methodref name="ValidateRename" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="ValidateContainer" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="ValidateInsert" visibility="protected" procflags="dynamic">
+            </methodref>
+            <methodref name="WriteState" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="RemoveFreeNotifications" visibility="protected">
+            </methodref>
+            <methodref name="QueryInterface" visibility="protected" procflags="virtual">
+            </methodref>
+            <methodref name="_AddRef" visibility="protected">
+            </methodref>
+            <methodref name="_Release" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfoCount" visibility="protected">
+            </methodref>
+            <methodref name="GetTypeInfo" visibility="protected">
+            </methodref>
+            <methodref name="GetIDsOfNames" visibility="protected">
+            </methodref>
+            <methodref name="Invoke" visibility="protected">
+            </methodref>
+            <eventref name="OnGetDeltaStreams" visibility="protected">
+            </eventref>
+            <methodref name="Create" visibility="public" procflags="constructor virtual">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor override">
+            </methodref>
+            <methodref name="BeforeDestruction" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="BeginInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndInvoke" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="EndFunctionInvoke" visibility="public">
+            </methodref>
+            <methodref name="DestroyComponents" visibility="public">
+            </methodref>
+            <methodref name="Destroying" visibility="public">
+            </methodref>
+            <methodref name="ExecuteAction" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="FindComponent" visibility="public">
+            </methodref>
+            <methodref name="FreeNotification" visibility="public">
+            </methodref>
+            <methodref name="RemoveFreeNotification" visibility="public">
+            </methodref>
+            <methodref name="FreeOnRelease" visibility="public">
+            </methodref>
+            <methodref name="GetEnumerator" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="GetParentComponent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="GetNamePath" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="HasParent" visibility="public" procflags="dynamic">
+            </methodref>
+            <methodref name="InsertComponent" visibility="public">
+            </methodref>
+            <methodref name="RemoveComponent" visibility="public">
+            </methodref>
+            <methodref name="SetSubComponent" visibility="public">
+            </methodref>
+            <methodref name="SafeCallException" visibility="public" procflags="override">
+            </methodref>
+            <methodref name="UpdateAction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="IsImplementorOf" visibility="public">
+            </methodref>
+            <methodref name="ReferenceInterface" visibility="public">
+            </methodref>
+            <propertyref name="ComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Components" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentCount" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentIndex" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentState" visibility="public">
+            </propertyref>
+            <propertyref name="ComponentStyle" visibility="public">
+            </propertyref>
+            <propertyref name="DesignInfo" visibility="public">
+            </propertyref>
+            <propertyref name="Owner" visibility="public">
+            </propertyref>
+            <propertyref name="VCLComObject" visibility="public">
+            </propertyref>
+            <propertyref name="Observers" visibility="public">
+            </propertyref>
+            <propertyref name="Name" visibility="published">
+            </propertyref>
+            <propertyref name="Tag" visibility="published">
+            </propertyref>
+            <ancestor name="TPersistent" namespace="System.Classes">
+              <methodref name="AssignError" visibility="private">
+              </methodref>
+              <methodref name="AssignTo" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="DefineProperties" visibility="protected" procflags="virtual">
+              </methodref>
+              <methodref name="GetOwner" visibility="protected" procflags="dynamic">
+              </methodref>
+              <methodref name="Destroy" visibility="public" procflags="destructor override">
+              </methodref>
+              <methodref name="Assign" visibility="public" procflags="virtual">
+              </methodref>
+              <methodref name="GetNamePath" visibility="public" procflags="dynamic">
+              </methodref>
+              <ancestor name="TObject" namespace="System">
+                <methodref name="Create" visibility="public" procflags="constructor">
+                </methodref>
+                <methodref name="Free" visibility="public">
+                </methodref>
+                <methodref name="DisposeOf" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="InitInstance" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="CleanupInstance" visibility="public">
+                </methodref>
+                <methodref name="ClassType" visibility="public" procflags="inline">
+                </methodref>
+                <methodref name="ClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassNameIs" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="ClassParent" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="ClassInfo" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InstanceSize" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="InheritsFrom" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodAddress" visibility="public" procflags="class overload">
+                </methodref>
+                <methodref name="MethodName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="QualifiedClassName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="FieldAddress" visibility="public" procflags="overload">
+                </methodref>
+                <methodref name="GetInterface" visibility="public">
+                </methodref>
+                <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+                </methodref>
+                <methodref name="UnitName" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="UnitScope" visibility="public" procflags="class">
+                </methodref>
+                <methodref name="Equals" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="GetHashCode" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="ToString" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="SafeCallException" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Dispatch" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="NewInstance" visibility="public" procflags="class virtual">
+                </methodref>
+                <methodref name="FreeInstance" visibility="public" procflags="virtual">
+                </methodref>
+                <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+                </methodref>
+                <methodref name="GetDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+                </methodref>
+                <propertyref name="Disposed" visibility="protected">
+                </propertyref>
+              </ancestor>
+            </ancestor>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <function name="DoExecute" visibility="protected" procflags="override" file="FMX.Dialogs.pas" line="104">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+    </members>
+  </class>
+  <const name="mbYesNo" type="Set" file="FMX.Dialogs.pas" line="108">
+    <value>
+      [mbYes..mbNo]
+    </value>
+  </const>
+  <const name="mbYesNoCancel" type="Set" file="FMX.Dialogs.pas" line="109">
+    <value>
+      [mbYes..mbNo,mbCancel]
+    </value>
+  </const>
+  <const name="mbYesAllNoAllCancel" type="Set" file="FMX.Dialogs.pas" line="110">
+    <value>
+      [mbYes..mbNo,mbCancel,mbNoToAll..mbYesToAll]
+    </value>
+  </const>
+  <const name="mbOKCancel" type="Set" file="FMX.Dialogs.pas" line="112">
+    <value>
+      [mbOK..mbCancel]
+    </value>
+  </const>
+  <const name="mbAbortRetryIgnore" type="Set" file="FMX.Dialogs.pas" line="113">
+    <value>
+      [mbAbort..mbIgnore]
+    </value>
+  </const>
+  <const name="mbAbortIgnore" type="Set" file="FMX.Dialogs.pas" line="114">
+    <value>
+      [mbAbort,mbIgnore]
+    </value>
+  </const>
+  <const name="MsgTitles" type=":4" visibility="public" file="FMX.Dialogs.pas" line="116"/>
+  <const name="ModalResults" type="array[0..11] of Integer" visibility="public" file="FMX.Dialogs.pas" line="117"/>
+  <const name="ButtonCaptions" type=":5" visibility="public" file="FMX.Dialogs.pas" line="119"/>
+  <type name="TInputCloseQueryEvent" file="FMX.Dialogs.pas" line="123" procflags="closure">
+  </type>
+  <anonMethod name="TInputCloseQueryFunc" file="FMX.Dialogs.pas" line="124">
+    <function name="Invoke" visibility="public" procflags="abstract virtual" file="FMX.Dialogs.pas" line="124">
+      <parameters>
+        <parameter name="Values" paramflags="const">
+          <array name="Values">
+            <element type="string"/>
+          </array>
+        </parameter>
+        <retval type="Boolean"/>
+      </parameters>
+    </function>
+  </anonMethod>
+  <anonMethod name="TInputCloseQueryProc" file="FMX.Dialogs.pas" line="125">
+    <procedure name="Invoke" visibility="public" procflags="abstract virtual" file="FMX.Dialogs.pas" line="125">
+      <parameters>
+        <parameter name="AResult" type="TModalResult" paramflags="const"/>
+        <parameter name="AValues" paramflags="const">
+          <array name="AValues">
+            <element type="string"/>
+          </array>
+        </parameter>
+      </parameters>
+    </procedure>
+  </anonMethod>
+  <anonMethod name="TInputCloseBoxProc" file="FMX.Dialogs.pas" line="126">
+    <procedure name="Invoke" visibility="public" procflags="abstract virtual" file="FMX.Dialogs.pas" line="126">
+      <parameters>
+        <parameter name="AResult" type="TModalResult" paramflags="const"/>
+        <parameter name="AValue" type="string" paramflags="const"/>
+      </parameters>
+    </procedure>
+  </anonMethod>
+  <anonMethod name="TInputCloseDialogProc" file="FMX.Dialogs.pas" line="127">
+    <procedure name="Invoke" visibility="public" procflags="abstract virtual" file="FMX.Dialogs.pas" line="127">
+      <parameters>
+        <parameter name="AResult" type="TModalResult" paramflags="const"/>
+      </parameters>
+    </procedure>
+  </anonMethod>
+  <type name="TInputCloseDialogEvent" file="FMX.Dialogs.pas" line="128" procflags="closure">
+  </type>
+  <type name="TInputCloseQueryWithResultEvent" file="FMX.Dialogs.pas" line="129" procflags="closure">
+  </type>
+  <type name="TInputCloseBoxEvent" file="FMX.Dialogs.pas" line="130" procflags="closure">
+  </type>
+  <function name="LocalizedButtonCaption" visibility="public" procflags="inline" file="FMX.Dialogs.pas" line="243">
+    <parameters>
+      <parameter name="AButton" type="TMsgDlgBtn" paramflags="const"/>
+      <retval type="string"/>
+    </parameters>
+  </function>
+  <function name="LocalizedMessageDialogTitle" visibility="public" procflags="inline" file="FMX.Dialogs.pas" line="248">
+    <parameters>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <retval type="string"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDialogCheckInUIThread" visibility="public" file="FMX.Dialogs.pas" line="253">
+    <devnotes>
+       <summary>Message dialogs must be shown in the UI thread. This procedure chacks that and raises an exception if is not in the UI thread.</summary>
+    </devnotes>
+  </procedure>
+  <function name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="260" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="266" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="272" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="278" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="284" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlg" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="291" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="298" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="304" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="311" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="317" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="324" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlgPos" visibility="public" procflags="overload inline" file="FMX.Dialogs.pas" line="331" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="338" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="345" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="353" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="361" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <procedure name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="374" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogProc" type="TInputCloseDialogProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="MessageDlgPosHelp" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="385" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="ADialogType" type="TMsgDlgType" paramflags="const"/>
+      <parameter name="AButtons" type="TMsgDlgButtons" paramflags="const"/>
+      <parameter name="AHelpContext" type="THelpContext" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+      <parameter name="AHelpFileName" type="string" paramflags="const"/>
+      <parameter name="ADefaultButton" type="TMsgDlgBtn" paramflags="const"/>
+      <parameter name="ACloseDialogEvent" type="TInputCloseDialogEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <procedure name="ShowMessage" visibility="public" file="FMX.Dialogs.pas" line="398">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="ShowMessageFmt" visibility="public" file="FMX.Dialogs.pas" line="407">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="AParams" paramflags="const">
+        <array name="AParams" file="FMX.Dialogs.pas" line="407">
+          <element type="TVarRec"/>
+        </array>
+      </parameter>
+    </parameters>
+  </procedure>
+  <procedure name="ShowMessagePos" visibility="public" file="FMX.Dialogs.pas" line="412" symflags="deprecated">
+    <parameters>
+      <parameter name="AMessage" type="string" paramflags="const"/>
+      <parameter name="AX" type="Integer" paramflags="const"/>
+      <parameter name="AY" type="Integer" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <function name="SelectDirectory" visibility="public" file="FMX.Dialogs.pas" line="418">
+    <parameters>
+      <parameter name="Caption" type="string" paramflags="const"/>
+      <parameter name="Root" type="string" paramflags="const"/>
+      <parameter name="Directory" type="string" paramflags="var"/>
+      <retval type="Boolean"/>
+    </parameters>
+  </function>
+  <function name="InputBox" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="598" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="ADefault" type="string" paramflags="const"/>
+      <retval type="string"/>
+    </parameters>
+  </function>
+  <procedure name="InputBox" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="604" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="ADefault" type="string" paramflags="const"/>
+      <parameter name="ACloseBoxProc" type="TInputCloseBoxProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="InputBox" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="614" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="ADefault" type="string" paramflags="const"/>
+      <parameter name="ACloseBoxEvent" type="TInputCloseBoxEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="624" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompts" paramflags="const">
+        <array name="APrompts" file="FMX.Dialogs.pas" line="623">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="AValues" paramflags="var">
+        <array name="AValues" file="FMX.Dialogs.pas" line="623">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ACloseQueryFunc" type="TInputCloseQueryFunc" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+      <retval type="Boolean"/>
+    </parameters>
+  </function>
+  <function name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="635" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompts" paramflags="const">
+        <array name="APrompts" file="FMX.Dialogs.pas" line="634">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="AValues" paramflags="var">
+        <array name="AValues" file="FMX.Dialogs.pas" line="634">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ACloseQueryEvent" type="TInputCloseQueryEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+      <retval type="Boolean"/>
+    </parameters>
+  </function>
+  <function name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="645" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="Value" type="string" paramflags="var"/>
+      <retval type="Boolean"/>
+    </parameters>
+  </function>
+  <procedure name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="657" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompts" paramflags="const">
+        <array name="APrompts" file="FMX.Dialogs.pas" line="656">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ADefaultValues" paramflags="const">
+        <array name="ADefaultValues" file="FMX.Dialogs.pas" line="656">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ACloseQueryProc" type="TInputCloseQueryProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="666" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompts" paramflags="const">
+        <array name="APrompts" file="FMX.Dialogs.pas" line="665">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ADefaultValues" paramflags="const">
+        <array name="ADefaultValues" file="FMX.Dialogs.pas" line="665">
+          <element type="string"/>
+        </array>
+      </parameter>
+      <parameter name="ACloseQueryEvent" type="TInputCloseQueryWithResultEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <procedure name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="675" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="ADefaultValue" type="string" paramflags="const"/>
+      <parameter name="ACloseBoxProc" type="TInputCloseBoxProc" paramflags="const"/>
+    </parameters>
+  </procedure>
+  <procedure name="InputQuery" visibility="public" procflags="overload" file="FMX.Dialogs.pas" line="685" symflags="deprecated">
+    <parameters>
+      <parameter name="ACaption" type="string" paramflags="const"/>
+      <parameter name="APrompt" type="string" paramflags="const"/>
+      <parameter name="ADefaultValue" type="string" paramflags="const"/>
+      <parameter name="ACloseQueryEvent" type="TInputCloseQueryWithResultEvent" paramflags="const"/>
+      <parameter name="AContext" type="TObject" paramflags="const">
+        <value>
+          nil
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+</namespace>

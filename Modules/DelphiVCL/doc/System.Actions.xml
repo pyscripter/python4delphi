@@ -1,0 +1,2250 @@
+<?xml version="1.0" ?>
+<namespace name="System.Actions" platform="Win32">
+  <const name="saNone" type="TStatusAction" file="System.Actions.pas" line="36">
+    <devnotes>
+       <summary>
+       Status invisible. The input fields are displayed as well as before the
+       new properties.
+       </summary>
+    </devnotes>
+    <value>
+      saNone
+    </value>
+  </const>
+  <const name="saTrivial" type="TStatusAction" file="System.Actions.pas" line="40">
+    <devnotes>
+       <summary>
+       Displays the normal field in the normal state.
+       </summary>
+    </devnotes>
+    <value>
+      saTrivial
+    </value>
+  </const>
+  <const name="saDefault" type="TStatusAction" file="System.Actions.pas" line="44">
+    <devnotes>
+       <summary>
+       This field contains the default value
+       </summary>
+    </devnotes>
+    <value>
+      saDefault
+    </value>
+  </const>
+  <const name="saRequiredEmpty" type="TStatusAction" file="System.Actions.pas" line="48">
+    <devnotes>
+       <summary>
+       Required field that has not yet filled.
+       </summary>
+    </devnotes>
+    <value>
+      saRequiredEmpty
+    </value>
+  </const>
+  <const name="saRequired" type="TStatusAction" file="System.Actions.pas" line="52">
+    <devnotes>
+       <summary>
+       Required field is already filled.
+       </summary>
+    </devnotes>
+    <value>
+      saRequired
+    </value>
+  </const>
+  <const name="saValid" type="TStatusAction" file="System.Actions.pas" line="56">
+    <devnotes>
+       <summary>
+       Field been tested and it contains a valid value.
+       </summary>
+    </devnotes>
+    <value>
+      saValid
+    </value>
+  </const>
+  <const name="saInvalid" type="TStatusAction" file="System.Actions.pas" line="60">
+    <devnotes>
+       <summary>
+       The field has been tested and it contains an invalid value.
+       </summary>
+    </devnotes>
+    <value>
+      saInvalid
+    </value>
+  </const>
+  <const name="saWaiting" type="TStatusAction" file="System.Actions.pas" line="64">
+    <devnotes>
+       <summary>
+       Running some long operation.
+       </summary>
+    </devnotes>
+    <value>
+      saWaiting
+    </value>
+  </const>
+  <const name="saWarning" type="TStatusAction" file="System.Actions.pas" line="68">
+    <devnotes>
+       <summary>
+       Perhaps the field contains an invalid value.
+       </summary>
+    </devnotes>
+    <value>
+      saWarning
+    </value>
+  </const>
+  <const name="saUnused" type="TStatusAction" file="System.Actions.pas" line="72">
+    <devnotes>
+       <summary>
+       The field value is not used in this case.
+       </summary>
+    </devnotes>
+    <value>
+      saUnused
+    </value>
+  </const>
+  <const name="saCalculated" type="TStatusAction" file="System.Actions.pas" line="76">
+    <devnotes>
+       <summary>
+       This field value is calculated.
+       </summary>
+    </devnotes>
+    <value>
+      saCalculated
+    </value>
+  </const>
+  <const name="saError" type="TStatusAction" file="System.Actions.pas" line="80">
+    <devnotes>
+       <summary>
+       The field value is incorrect
+       </summary>
+    </devnotes>
+    <value>
+      saError
+    </value>
+  </const>
+  <const name="saOther" type="TStatusAction" file="System.Actions.pas" line="84">
+    <devnotes>
+       <summary>
+       Another state (user defined)
+       </summary>
+    </devnotes>
+    <value>
+      saOther
+    </value>
+  </const>
+  <const name="asNormal" type="TActionListState" file="System.Actions.pas" line="237">
+    <value>
+      asNormal
+    </value>
+  </const>
+  <const name="asSuspended" type="TActionListState" file="System.Actions.pas" line="237">
+    <value>
+      asSuspended
+    </value>
+  </const>
+  <const name="asSuspendedEnabled" type="TActionListState" file="System.Actions.pas" line="237">
+    <value>
+      asSuspendedEnabled
+    </value>
+  </const>
+  <class name="EActionError" file="System.Actions.pas" line="23">
+    <devnotes>
+       <summary> The class of errors that appear when working with actions </summary>
+    </devnotes>
+    <ancestor name="Exception" namespace="System.SysUtils">
+      <methodref name="Create@" visibility="class private" procflags="class constructor noself">
+      </methodref>
+      <methodref name="Destroy@" visibility="class private" procflags="class destructor noself">
+      </methodref>
+      <methodref name="SetInnerException" visibility="protected">
+      </methodref>
+      <methodref name="SetStackInfo" visibility="protected">
+      </methodref>
+      <methodref name="GetStackTrace" visibility="protected">
+      </methodref>
+      <methodref name="RaisingException" visibility="protected" procflags="virtual">
+      </methodref>
+      <methodref name="Create" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateFmt" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateRes" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateRes" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmt" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmt" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateHelp" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateFmtHelp" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="CreateResHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmtHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="CreateResFmtHelp" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="Destroy" visibility="public" procflags="destructor override">
+      </methodref>
+      <methodref name="GetBaseException" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="ToString" visibility="public" procflags="override">
+      </methodref>
+      <propertyref name="BaseException" visibility="public">
+      </propertyref>
+      <propertyref name="HelpContext" visibility="public">
+      </propertyref>
+      <propertyref name="InnerException" visibility="public">
+      </propertyref>
+      <propertyref name="Message" visibility="public">
+      </propertyref>
+      <propertyref name="StackTrace" visibility="public">
+      </propertyref>
+      <propertyref name="StackInfo" visibility="public">
+      </propertyref>
+      <methodref name="RaiseOuterException" visibility="public" procflags="static">
+      </methodref>
+      <methodref name="ThrowOuterException" visibility="public" procflags="static">
+      </methodref>
+      <ancestor name="TObject" namespace="System">
+        <methodref name="Create" visibility="public" procflags="constructor">
+        </methodref>
+        <methodref name="Free" visibility="public">
+        </methodref>
+        <methodref name="DisposeOf" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="InitInstance" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="CleanupInstance" visibility="public">
+        </methodref>
+        <methodref name="ClassType" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="ClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassNameIs" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassParent" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="ClassInfo" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InstanceSize" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InheritsFrom" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="QualifiedClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="GetInterface" visibility="public">
+        </methodref>
+        <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="UnitName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="UnitScope" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="Equals" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="GetHashCode" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="ToString" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="SafeCallException" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Dispatch" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="NewInstance" visibility="public" procflags="class virtual">
+        </methodref>
+        <methodref name="FreeInstance" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+        </methodref>
+        <methodref name="GetDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <propertyref name="Disposed" visibility="protected">
+        </propertyref>
+      </ancestor>
+    </ancestor>
+  </class>
+  <enum name="TStatusAction" file="System.Actions.pas" line="31">
+    <devnotes>
+       <summary>
+       Current status of the input field. This value can be used in different
+       type-validators on your own.
+       </summary>
+    </devnotes>
+    <element value="0" name="saNone" file="System.Actions.pas" line="36">
+      <devnotes>
+         <summary>
+         Status invisible. The input fields are displayed as well as before the
+         new properties.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="1" name="saTrivial" file="System.Actions.pas" line="40">
+      <devnotes>
+         <summary>
+         Displays the normal field in the normal state.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="2" name="saDefault" file="System.Actions.pas" line="44">
+      <devnotes>
+         <summary>
+         This field contains the default value
+         </summary>
+      </devnotes>
+    </element>
+    <element value="3" name="saRequiredEmpty" file="System.Actions.pas" line="48">
+      <devnotes>
+         <summary>
+         Required field that has not yet filled.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="4" name="saRequired" file="System.Actions.pas" line="52">
+      <devnotes>
+         <summary>
+         Required field is already filled.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="5" name="saValid" file="System.Actions.pas" line="56">
+      <devnotes>
+         <summary>
+         Field been tested and it contains a valid value.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="6" name="saInvalid" file="System.Actions.pas" line="60">
+      <devnotes>
+         <summary>
+         The field has been tested and it contains an invalid value.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="7" name="saWaiting" file="System.Actions.pas" line="64">
+      <devnotes>
+         <summary>
+         Running some long operation.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="8" name="saWarning" file="System.Actions.pas" line="68">
+      <devnotes>
+         <summary>
+         Perhaps the field contains an invalid value.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="9" name="saUnused" file="System.Actions.pas" line="72">
+      <devnotes>
+         <summary>
+         The field value is not used in this case.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="10" name="saCalculated" file="System.Actions.pas" line="76">
+      <devnotes>
+         <summary>
+         This field value is calculated.
+         </summary>
+      </devnotes>
+    </element>
+    <element value="11" name="saError" file="System.Actions.pas" line="80">
+      <devnotes>
+         <summary>
+         The field value is incorrect
+         </summary>
+      </devnotes>
+    </element>
+    <element value="12" name="saOther" file="System.Actions.pas" line="84">
+      <devnotes>
+         <summary>
+         Another state (user defined)
+         </summary>
+      </devnotes>
+    </element>
+  </enum>
+  <classref name="TContainedActionListClass" ref="TContainedActionList" file="System.Actions.pas" line="89"/>
+  <class name="TCustomShortCutList" file="System.Actions.pas" line="94">
+    <devnotes>
+      <summary> This is the base class that implements the operation with
+       a list of keyboard shortcuts. Should be established descendants
+       of this class (see TContainedAction.CreateShortCutList) for each platform (VCL, FMX), which should be overridden the method Add.</summary>
+    </devnotes>
+    <ancestor name="TStringList" namespace="System.Classes">
+      <methodref name="Grow" visibility="private"/>
+      <methodref name="QuickSort" visibility="private"/>
+      <methodref name="SetSorted" visibility="private"/>
+      <methodref name="SetCaseSensitive" visibility="private"/>
+      <methodref name="InternalStrComp" visibility="private" procflags="static inline"/>
+      <methodref name="LinearIndexOfName" visibility="private"/>
+      <methodref name="SortedIndexOfName" visibility="private"/>
+      <methodref name="Changed" visibility="protected" procflags="virtual"/>
+      <methodref name="Changing" visibility="protected" procflags="virtual"/>
+      <methodref name="ExchangeItems" visibility="protected"/>
+      <methodref name="Get" visibility="protected" procflags="override"/>
+      <methodref name="GetCapacity" visibility="protected" procflags="override"/>
+      <methodref name="GetCount" visibility="protected" procflags="override"/>
+      <methodref name="GetObject" visibility="protected" procflags="override"/>
+      <methodref name="Put" visibility="protected" procflags="override"/>
+      <methodref name="PutObject" visibility="protected" procflags="override"/>
+      <methodref name="SetCapacity" visibility="protected" procflags="override"/>
+      <methodref name="SetUpdateState" visibility="protected" procflags="override"/>
+      <methodref name="CompareStrings" visibility="protected" procflags="override"/>
+      <methodref name="InsertItem" visibility="protected" procflags="virtual"/>
+      <methodref name="Create" visibility="public" procflags="constructor overload"/>
+      <methodref name="Create" visibility="public" procflags="constructor overload"/>
+      <methodref name="Create" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="Create" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="Create" visibility="public" procflags="constructor overload">
+      </methodref>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <methodref name="Add" visibility="public" procflags="override"/>
+      <methodref name="AddObject" visibility="public" procflags="override"/>
+      <methodref name="AddStrings" visibility="public" procflags="overload override">
+        <attributes>
+          <attribute name="HPPGENAttribute"/>
+        </attributes>
+      </methodref>
+      <methodref name="Assign" visibility="public" procflags="override"/>
+      <methodref name="Clear" visibility="public" procflags="override"/>
+      <methodref name="Delete" visibility="public" procflags="override"/>
+      <methodref name="Exchange" visibility="public" procflags="override"/>
+      <methodref name="Find" visibility="public" procflags="virtual"/>
+      <methodref name="IndexOf" visibility="public" procflags="override"/>
+      <methodref name="IndexOfName" visibility="public" procflags="override"/>
+      <methodref name="IndexOfObject" visibility="public" procflags="override"/>
+      <methodref name="Insert" visibility="public" procflags="override"/>
+      <methodref name="InsertObject" visibility="public" procflags="override"/>
+      <methodref name="Sort" visibility="public" procflags="virtual"/>
+      <methodref name="CustomSort" visibility="public" procflags="virtual"/>
+      <propertyref name="Duplicates" visibility="public"/>
+      <propertyref name="Sorted" visibility="public"/>
+      <propertyref name="CaseSensitive" visibility="public"/>
+      <eventref name="OnChange" visibility="public"/>
+      <eventref name="OnChanging" visibility="public"/>
+      <propertyref name="OwnsObjects" visibility="public"/>
+      <ancestor name="TStrings" namespace="System.Classes">
+        <methodref name="GetCommaText" visibility="private"/>
+        <methodref name="GetDelimitedText" visibility="private"/>
+        <methodref name="GetName" visibility="private"/>
+        <methodref name="GetValue" visibility="private"/>
+        <methodref name="ReadData" visibility="private"/>
+        <methodref name="SetCommaText" visibility="private"/>
+        <methodref name="SetDelimitedText" visibility="private"/>
+        <methodref name="SetStringsAdapter" visibility="private"/>
+        <methodref name="SetValue" visibility="private"/>
+        <methodref name="WriteData" visibility="private"/>
+        <methodref name="GetStrictDelimiter" visibility="private" procflags="inline"/>
+        <methodref name="SetStrictDelimiter" visibility="private"/>
+        <methodref name="GetValueFromIndex" visibility="private"/>
+        <methodref name="SetValueFromIndex" visibility="private"/>
+        <methodref name="SetDefaultEncoding" visibility="private"/>
+        <methodref name="GetTrailingLineBreak" visibility="private" procflags="inline"/>
+        <methodref name="SetTrailingLineBreak" visibility="private"/>
+        <methodref name="GetUseLocale" visibility="private" procflags="inline"/>
+        <methodref name="SetUseLocale" visibility="private"/>
+        <methodref name="GetWriteBOM" visibility="private" procflags="inline"/>
+        <methodref name="SetWriteBOM" visibility="private"/>
+        <methodref name="GetUpdating" visibility="private" procflags="inline"/>
+        <methodref name="GetKeyName" visibility="private"/>
+        <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+        <methodref name="Error" visibility="protected" procflags="overload"/>
+        <methodref name="Error" visibility="protected" procflags="overload"/>
+        <methodref name="ExtractName" visibility="protected" procflags="overload inline"/>
+        <methodref name="ExtractName" visibility="protected" procflags="overload"/>
+        <methodref name="Get" visibility="protected" procflags="abstract virtual"/>
+        <methodref name="GetCapacity" visibility="protected" procflags="virtual"/>
+        <methodref name="GetCount" visibility="protected" procflags="abstract virtual"/>
+        <methodref name="GetObject" visibility="protected" procflags="virtual"/>
+        <methodref name="GetTextStr" visibility="protected" procflags="virtual"/>
+        <methodref name="Put" visibility="protected" procflags="virtual"/>
+        <methodref name="PutObject" visibility="protected" procflags="virtual"/>
+        <methodref name="SetCapacity" visibility="protected" procflags="virtual"/>
+        <methodref name="SetEncoding" visibility="protected" procflags="virtual"/>
+        <methodref name="SetTextStr" visibility="protected" procflags="virtual"/>
+        <methodref name="SetUpdateState" visibility="protected" procflags="virtual"/>
+        <methodref name="CompareStrings" visibility="protected" procflags="virtual"/>
+        <propertyref name="UpdateCount" visibility="protected"/>
+        <methodref name="Create" visibility="public" procflags="constructor"/>
+        <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+        <methodref name="Add" visibility="public" procflags="virtual"/>
+        <methodref name="AddPair" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="AddPair" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="AddObject" visibility="public" procflags="virtual"/>
+        <methodref name="Append" visibility="public"/>
+        <methodref name="AddStrings" visibility="public" procflags="overload virtual"/>
+        <methodref name="AddStrings" visibility="public" procflags="overload">
+          <attributes>
+            <attribute name="HPPGENAttribute"/>
+          </attributes>
+        </methodref>
+        <methodref name="AddStrings" visibility="public" procflags="overload">
+          <attributes>
+            <attribute name="HPPGENAttribute"/>
+          </attributes>
+        </methodref>
+        <methodref name="Assign" visibility="public" procflags="override"/>
+        <methodref name="SetStrings" visibility="public">
+        </methodref>
+        <methodref name="BeginUpdate" visibility="public"/>
+        <methodref name="Clear" visibility="public" procflags="abstract virtual"/>
+        <methodref name="Delete" visibility="public" procflags="abstract virtual"/>
+        <methodref name="EndUpdate" visibility="public"/>
+        <methodref name="Equals" visibility="public"/>
+        <methodref name="Exchange" visibility="public" procflags="virtual"/>
+        <methodref name="GetEnumerator" visibility="public" procflags="inline"/>
+        <methodref name="GetText" visibility="public" procflags="virtual"/>
+        <methodref name="IndexOf" visibility="public" procflags="virtual"/>
+        <methodref name="IndexOfName" visibility="public" procflags="virtual"/>
+        <methodref name="IndexOfObject" visibility="public" procflags="virtual"/>
+        <methodref name="Insert" visibility="public" procflags="abstract virtual"/>
+        <methodref name="InsertObject" visibility="public" procflags="virtual"/>
+        <methodref name="LoadFromFile" visibility="public" procflags="overload virtual"/>
+        <methodref name="LoadFromFile" visibility="public" procflags="overload virtual"/>
+        <methodref name="LoadFromStream" visibility="public" procflags="overload virtual"/>
+        <methodref name="LoadFromStream" visibility="public" procflags="overload virtual"/>
+        <methodref name="Move" visibility="public" procflags="virtual"/>
+        <methodref name="SaveToFile" visibility="public" procflags="overload virtual"/>
+        <methodref name="SaveToFile" visibility="public" procflags="overload virtual"/>
+        <methodref name="SaveToStream" visibility="public" procflags="overload virtual"/>
+        <methodref name="SaveToStream" visibility="public" procflags="overload virtual"/>
+        <methodref name="SetText" visibility="public" procflags="virtual"/>
+        <methodref name="ToStringArray" visibility="public"/>
+        <methodref name="ToObjectArray" visibility="public"/>
+        <propertyref name="Updating" visibility="public">
+        </propertyref>
+        <propertyref name="Capacity" visibility="public"/>
+        <propertyref name="CommaText" visibility="public"/>
+        <propertyref name="Count" visibility="public"/>
+        <propertyref name="DefaultEncoding" visibility="public"/>
+        <propertyref name="Delimiter" visibility="public"/>
+        <propertyref name="DelimitedText" visibility="public"/>
+        <propertyref name="Encoding" visibility="public"/>
+        <propertyref name="LineBreak" visibility="public"/>
+        <propertyref name="Names" visibility="public"/>
+        <propertyref name="KeyNames" visibility="public">
+        </propertyref>
+        <propertyref name="Objects" visibility="public"/>
+        <propertyref name="QuoteChar" visibility="public"/>
+        <propertyref name="Values" visibility="public"/>
+        <propertyref name="ValueFromIndex" visibility="public"/>
+        <propertyref name="NameValueSeparator" visibility="public"/>
+        <propertyref name="StrictDelimiter" visibility="public"/>
+        <propertyref name="Strings" visibility="public"/>
+        <propertyref name="Text" visibility="public"/>
+        <propertyref name="StringsAdapter" visibility="public"/>
+        <propertyref name="WriteBOM" visibility="public"/>
+        <propertyref name="TrailingLineBreak" visibility="public">
+        </propertyref>
+        <propertyref name="UseLocale" visibility="public">
+        </propertyref>
+        <propertyref name="Options" visibility="public">
+        </propertyref>
+        <ancestor name="TPersistent" namespace="System.Classes">
+          <methodref name="AssignError" visibility="private"/>
+          <methodref name="AssignTo" visibility="protected" procflags="virtual"/>
+          <methodref name="DefineProperties" visibility="protected" procflags="virtual"/>
+          <methodref name="GetOwner" visibility="protected" procflags="dynamic"/>
+          <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+          <methodref name="Assign" visibility="public" procflags="virtual"/>
+          <methodref name="GetNamePath" visibility="public" procflags="dynamic"/>
+          <ancestor name="TObject" namespace="System">
+            <methodref name="Create" visibility="public" procflags="constructor">
+            </methodref>
+            <methodref name="Free" visibility="public">
+            </methodref>
+            <methodref name="DisposeOf" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="InitInstance" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="CleanupInstance" visibility="public">
+            </methodref>
+            <methodref name="ClassType" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="ClassName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="ClassNameIs" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="ClassParent" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="ClassInfo" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="InstanceSize" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="InheritsFrom" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="MethodAddress" visibility="public" procflags="class overload">
+            </methodref>
+            <methodref name="MethodAddress" visibility="public" procflags="class overload">
+            </methodref>
+            <methodref name="MethodName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="QualifiedClassName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="FieldAddress" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="FieldAddress" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="GetInterface" visibility="public">
+            </methodref>
+            <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="UnitName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="UnitScope" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="Equals" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="GetHashCode" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="ToString" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="SafeCallException" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="Dispatch" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="NewInstance" visibility="public" procflags="class virtual">
+            </methodref>
+            <methodref name="FreeInstance" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+            </methodref>
+            <methodref name="GetDisposed" visibility="protected" procflags="inline">
+            </methodref>
+            <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+            </methodref>
+            <propertyref name="Disposed" visibility="protected">
+            </propertyref>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <function name="GetShortCuts" visibility="private" procflags="inline" file="System.Actions.pas" line="96">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <retval type="TShortCut"/>
+        </parameters>
+      </function>
+      <function name="IndexOfShortCut" visibility="public" procflags="overload" file="System.Actions.pas" line="98">
+        <parameters>
+          <parameter name="ShortCut" type="TShortCut" paramflags="const"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="IndexOfShortCut" visibility="public" procflags="overload" file="System.Actions.pas" line="99">
+        <parameters>
+          <parameter name="ShortCut" type="string" paramflags="const"/>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <property name="ShortCuts[Index]" visibility="public" read="GetShortCuts" type="TShortCut" file="System.Actions.pas" line="100"/>
+    </members>
+  </class>
+  <class name="TContainedAction" file="System.Actions.pas" line="105">
+    <devnotes><summary>
+TContainedAction is the base class for actions that can be grouped by category and that can appear in action lists.
+TContainedAction introduces properties and methods that enable actions to appear in an action list. The properties of TContainedAction contain information about the relationship between the action and its action list. Methods of TContainedAction override those of the base class to take into account the action list that owns the action.
+TContainedAction defines the published Category property.
+Objects of type TContainedAction can be associated with a Category of actions. This category is used at design time to organize the actions in an action list using the Action List editor or the Action Manager editor (only available for VCL).
+</summary></devnotes>
+    <ancestor name="TBasicAction" namespace="System.Classes">
+      <methodref name="GetClientCount" visibility="private"/>
+      <methodref name="GetClient" visibility="private"/>
+      <methodref name="SetActionComponent" visibility="private"/>
+      <methodref name="Change" visibility="protected" procflags="virtual"/>
+      <methodref name="SetOnExecute" visibility="protected" procflags="virtual"/>
+      <eventref name="OnChange" visibility="protected"/>
+      <methodref name="Notification" visibility="protected" procflags="override"/>
+      <propertyref name="ClientCount" visibility="protected"/>
+      <propertyref name="Clients" visibility="protected"/>
+      <methodref name="RegisterChanges" visibility="protected"/>
+      <methodref name="UnRegisterChanges" visibility="protected"/>
+      <methodref name="Create" visibility="public" procflags="constructor override"/>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <methodref name="Suspended" visibility="public" procflags="virtual"/>
+      <methodref name="HandlesTarget" visibility="public" procflags="virtual"/>
+      <methodref name="UpdateTarget" visibility="public" procflags="virtual"/>
+      <methodref name="ExecuteTarget" visibility="public" procflags="virtual"/>
+      <methodref name="Execute" visibility="public" procflags="dynamic"/>
+      <methodref name="Update" visibility="public" procflags="virtual"/>
+      <propertyref name="ActionComponent" visibility="public"/>
+      <eventref name="OnExecute" visibility="public"/>
+      <eventref name="OnUpdate" visibility="public"/>
+      <ancestor name="TComponent" namespace="System.Classes">
+        <interfaces>
+          <implements name="IInterfaceComponentReference"/>
+          <implements name="IInterface"/>
+        </interfaces>
+        <methodref name="GetComObject" visibility="private"/>
+        <methodref name="GetComponent" visibility="private"/>
+        <methodref name="GetComponentCount" visibility="private"/>
+        <methodref name="GetComponentIndex" visibility="private"/>
+        <methodref name="Insert" visibility="private"/>
+        <methodref name="ReadLeft" visibility="private"/>
+        <methodref name="ReadTop" visibility="private"/>
+        <methodref name="Remove" visibility="private"/>
+        <methodref name="RemoveNotification" visibility="private"/>
+        <methodref name="SetComponentIndex" visibility="private"/>
+        <methodref name="SetReference" visibility="private"/>
+        <methodref name="WriteLeft" visibility="private"/>
+        <methodref name="WriteTop" visibility="private"/>
+        <methodref name="IntfGetComponent" visibility="private"/>
+        <methodref name="DoGetDeltaStreams" visibility="private"/>
+        <methodref name="ReadDeltaStream" visibility="private"/>
+        <methodref name="ReadDeltaState" visibility="private"/>
+        <methodref name="FindSortedComponent" visibility="private"/>
+        <methodref name="AddSortedComponent" visibility="private"/>
+        <methodref name="RemoveSortedComponent" visibility="private" procflags="inline"/>
+        <methodref name="Create@" visibility="class private" procflags="class constructor noself"/>
+        <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+        </methodref>
+        <methodref name="ChangeName" visibility="protected"/>
+        <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+        <methodref name="GetChildren" visibility="protected" procflags="dynamic"/>
+        <methodref name="GetChildOwner" visibility="protected" procflags="dynamic"/>
+        <methodref name="GetChildParent" visibility="protected" procflags="dynamic"/>
+        <methodref name="GetOwner" visibility="protected" procflags="override"/>
+        <methodref name="Loaded" visibility="protected" procflags="virtual"/>
+        <methodref name="Notification" visibility="protected" procflags="virtual"/>
+        <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic"/>
+        <methodref name="ReadState" visibility="protected" procflags="virtual"/>
+        <methodref name="CanObserve" visibility="protected" procflags="virtual"/>
+        <methodref name="ObserverAdded" visibility="protected" procflags="virtual"/>
+        <methodref name="GetObservers" visibility="protected" procflags="virtual"/>
+        <methodref name="SetAncestor" visibility="protected"/>
+        <methodref name="SetDesigning" visibility="protected"/>
+        <methodref name="SetInline" visibility="protected"/>
+        <methodref name="SetDesignInstance" visibility="protected"/>
+        <methodref name="SetName" visibility="protected" procflags="virtual"/>
+        <methodref name="SetChildOrder" visibility="protected" procflags="dynamic"/>
+        <methodref name="SetParentComponent" visibility="protected" procflags="dynamic"/>
+        <methodref name="Updating" visibility="protected" procflags="dynamic"/>
+        <methodref name="Updated" visibility="protected" procflags="dynamic"/>
+        <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual"/>
+        <methodref name="ValidateRename" visibility="protected" procflags="virtual"/>
+        <methodref name="ValidateContainer" visibility="protected" procflags="dynamic"/>
+        <methodref name="ValidateInsert" visibility="protected" procflags="dynamic"/>
+        <methodref name="WriteState" visibility="protected" procflags="virtual"/>
+        <methodref name="RemoveFreeNotifications" visibility="protected"/>
+        <methodref name="QueryInterface" visibility="protected" procflags="virtual"/>
+        <methodref name="_AddRef" visibility="protected"/>
+        <methodref name="_Release" visibility="protected"/>
+        <methodref name="GetTypeInfoCount" visibility="protected"/>
+        <methodref name="GetTypeInfo" visibility="protected"/>
+        <methodref name="GetIDsOfNames" visibility="protected"/>
+        <methodref name="Invoke" visibility="protected"/>
+        <eventref name="OnGetDeltaStreams" visibility="protected"/>
+        <methodref name="Create" visibility="public" procflags="constructor virtual"/>
+        <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+        <methodref name="BeforeDestruction" visibility="public" procflags="override"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+        <methodref name="EndInvoke" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="EndInvoke" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="EndFunctionInvoke" visibility="public">
+        </methodref>
+        <methodref name="DestroyComponents" visibility="public"/>
+        <methodref name="Destroying" visibility="public"/>
+        <methodref name="ExecuteAction" visibility="public" procflags="dynamic"/>
+        <methodref name="FindComponent" visibility="public"/>
+        <methodref name="FreeNotification" visibility="public"/>
+        <methodref name="RemoveFreeNotification" visibility="public"/>
+        <methodref name="FreeOnRelease" visibility="public"/>
+        <methodref name="GetEnumerator" visibility="public" procflags="inline"/>
+        <methodref name="GetParentComponent" visibility="public" procflags="dynamic"/>
+        <methodref name="GetNamePath" visibility="public" procflags="override"/>
+        <methodref name="HasParent" visibility="public" procflags="dynamic"/>
+        <methodref name="InsertComponent" visibility="public"/>
+        <methodref name="RemoveComponent" visibility="public"/>
+        <methodref name="SetSubComponent" visibility="public"/>
+        <methodref name="SafeCallException" visibility="public" procflags="override"/>
+        <methodref name="UpdateAction" visibility="public" procflags="virtual"/>
+        <methodref name="IsImplementorOf" visibility="public"/>
+        <methodref name="ReferenceInterface" visibility="public"/>
+        <propertyref name="ComObject" visibility="public"/>
+        <propertyref name="Components" visibility="public"/>
+        <propertyref name="ComponentCount" visibility="public"/>
+        <propertyref name="ComponentIndex" visibility="public"/>
+        <propertyref name="ComponentState" visibility="public"/>
+        <propertyref name="ComponentStyle" visibility="public"/>
+        <propertyref name="DesignInfo" visibility="public"/>
+        <propertyref name="Owner" visibility="public"/>
+        <propertyref name="VCLComObject" visibility="public"/>
+        <propertyref name="Observers" visibility="public"/>
+        <propertyref name="Name" visibility="published"/>
+        <propertyref name="Tag" visibility="published"/>
+        <ancestor name="TPersistent" namespace="System.Classes">
+          <methodref name="AssignError" visibility="private"/>
+          <methodref name="AssignTo" visibility="protected" procflags="virtual"/>
+          <methodref name="DefineProperties" visibility="protected" procflags="virtual"/>
+          <methodref name="GetOwner" visibility="protected" procflags="dynamic"/>
+          <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+          <methodref name="Assign" visibility="public" procflags="virtual"/>
+          <methodref name="GetNamePath" visibility="public" procflags="dynamic"/>
+          <ancestor name="TObject" namespace="System">
+            <methodref name="Create" visibility="public" procflags="constructor">
+            </methodref>
+            <methodref name="Free" visibility="public">
+            </methodref>
+            <methodref name="DisposeOf" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="InitInstance" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="CleanupInstance" visibility="public">
+            </methodref>
+            <methodref name="ClassType" visibility="public" procflags="inline">
+            </methodref>
+            <methodref name="ClassName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="ClassNameIs" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="ClassParent" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="ClassInfo" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="InstanceSize" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="InheritsFrom" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="MethodAddress" visibility="public" procflags="class overload">
+            </methodref>
+            <methodref name="MethodAddress" visibility="public" procflags="class overload">
+            </methodref>
+            <methodref name="MethodName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="QualifiedClassName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="FieldAddress" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="FieldAddress" visibility="public" procflags="overload">
+            </methodref>
+            <methodref name="GetInterface" visibility="public">
+            </methodref>
+            <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+            </methodref>
+            <methodref name="UnitName" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="UnitScope" visibility="public" procflags="class">
+            </methodref>
+            <methodref name="Equals" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="GetHashCode" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="ToString" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="SafeCallException" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="Dispatch" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="NewInstance" visibility="public" procflags="class virtual">
+            </methodref>
+            <methodref name="FreeInstance" visibility="public" procflags="virtual">
+            </methodref>
+            <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+            </methodref>
+            <methodref name="GetDisposed" visibility="protected" procflags="inline">
+            </methodref>
+            <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+            </methodref>
+            <propertyref name="Disposed" visibility="protected">
+            </propertyref>
+          </ancestor>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <field name="FCategory" type="string" visibility="private" size="4" offset="96" file="System.Actions.pas" line="107"/>
+      <field name="FActionList" type="TContainedActionList" visibility="private" size="4" offset="100" file="System.Actions.pas" line="108"/>
+      <field name="FSavedEnabledState" type="Boolean" visibility="private" size="1" offset="104" file="System.Actions.pas" line="109"/>
+      <field name="FDisableIfNoHandler" type="Boolean" visibility="private" size="1" offset="105" file="System.Actions.pas" line="110"/>
+      <field name="FAutoCheck" type="Boolean" visibility="private" size="1" offset="106" file="System.Actions.pas" line="111"/>
+      <field name="FCaption" type="string" visibility="private" size="4" offset="108" file="System.Actions.pas" line="112"/>
+      <field name="FChecked" type="Boolean" visibility="private" size="1" offset="112" file="System.Actions.pas" line="113"/>
+      <field name="FEnabled" type="Boolean" visibility="private" size="1" offset="113" file="System.Actions.pas" line="114"/>
+      <field name="FGroupIndex" type="Integer" visibility="private" size="4" offset="116" file="System.Actions.pas" line="115"/>
+      <field name="FHelpContext" type="THelpContext" visibility="private" size="4" offset="120" file="System.Actions.pas" line="116"/>
+      <field name="FHelpKeyword" type="string" visibility="private" size="4" offset="124" file="System.Actions.pas" line="117"/>
+      <field name="FHelpType" type="THelpType" visibility="private" size="1" offset="128" file="System.Actions.pas" line="118"/>
+      <field name="FHint" type="string" visibility="private" size="4" offset="132" file="System.Actions.pas" line="119"/>
+      <field name="FVisible" type="Boolean" visibility="private" size="1" offset="136" file="System.Actions.pas" line="120"/>
+      <field name="FShortCut" type="TShortCut" visibility="private" size="2" offset="138" file="System.Actions.pas" line="121"/>
+      <field name="FSecondaryShortCuts" type="TCustomShortCutList" visibility="private" size="4" offset="140" file="System.Actions.pas" line="122"/>
+      <field name="FImageIndex" type="TImageIndex" visibility="private" size="4" offset="144" file="System.Actions.pas" line="123"/>
+      <field name="FChecking" type="Boolean" visibility="private" size="1" offset="148" file="System.Actions.pas" line="124"/>
+      <field name="FStatusAction" type="TStatusAction" visibility="private" size="1" offset="149" file="System.Actions.pas" line="125"/>
+      <field name="FOnHint" type="THintEvent" visibility="private" size="8" offset="152" file="System.Actions.pas" line="126"/>
+      <function name="GetIndex" visibility="private" file="System.Actions.pas" line="127">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <procedure name="SetIndex" visibility="private" file="System.Actions.pas" line="128">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCategory" visibility="private" file="System.Actions.pas" line="129">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="GetSecondaryShortCuts" visibility="private" file="System.Actions.pas" line="130">
+        <parameters>
+          <retval type="TCustomShortCutList">
+            <devnotes>
+              <summary> This is the base class that implements the operation with
+               a list of keyboard shortcuts. Should be established descendants
+               of this class (see TContainedAction.CreateShortCutList) for each platform (VCL, FMX), which should be overridden the method Add.</summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <procedure name="SetSecondaryShortCuts" visibility="private" file="System.Actions.pas" line="131">
+        <parameters>
+          <parameter name="Value" type="TCustomShortCutList" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <function name="IsSecondaryShortCutsStored" visibility="private" file="System.Actions.pas" line="132">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetActionList" visibility="private" file="System.Actions.pas" line="133">
+        <parameters>
+          <parameter name="AActionList" type="TContainedActionList"/>
+        </parameters>
+      </procedure>
+      <procedure name="ReadState" visibility="protected" procflags="override" file="System.Actions.pas" line="138">
+        <parameters>
+          <parameter name="Reader" type="TReader"/>
+        </parameters>
+      <devnotes><summary>
+Reads the state of the action.
+ReadState is used internally in the actions system. It is not necessary to call it directly.
+ReadState calls the inherited System.Classes.TComponent.ReadState procedure. Then 
+ReadState checks whether the Parent of Reader (Reader.Parent) is an action list, then ReadState sets that the action belongs to this action list (ActionList).  
+</summary></devnotes></procedure>
+      <function name="SecondaryShortCutsCreated" visibility="protected" file="System.Actions.pas" line="140">
+        <devnotes><summary>
+Retrieves whether the list stored in the SecondaryShortCuts property is created.
+SecondaryShortCutsCreated returns True if the SecondaryShortCuts list is created.
+</summary></devnotes>
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="CreateShortCutList" visibility="protected" procflags="virtual" file="System.Actions.pas" line="141">
+        <parameters>
+          <retval type="TCustomShortCutList">
+            <devnotes>
+              <summary> This is the base class that implements the operation with
+               a list of keyboard shortcuts. Should be established descendants
+               of this class (see TContainedAction.CreateShortCutList) for each platform (VCL, FMX), which should be overridden the method Add.</summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Introduces an interface for creating the ShortCutList object for the action.
+As implemented in TContainedAction, CreateShortCutList does not create any shortcut list object and just returns nil.
+
+
+</summary></devnotes></function>
+      <property name="SavedEnabledState" visibility="protected" read="FSavedEnabledState" write="FSavedEnabledState" type="Boolean" file="System.Actions.pas" line="144"><devnotes><summary>
+Stores the value of the Enabled property when the action is suspended.
+The System.Actions.TContainedActionList.SetState method uses SavedEnabledState internally:
+
+When System.Actions.TContainedActionList.SetState changes State from asSuspendedEnabled to asNormal, then the value stored in SavedEnabledState is used to set the Enabled property.
+When System.Actions.TContainedActionList.SetState sets State to asSuspendedEnabled, then the value of the Enabled property is saved in SavedEnabledState and Enabled is set to True.</summary></devnotes></property>
+      <procedure name="AssignTo" visibility="protected" procflags="override" file="System.Actions.pas" line="146">
+        <parameters>
+          <parameter name="Dest" type="TPersistent"/>
+        </parameters>
+      <devnotes><summary>
+Copies the properties of this action to a destination action.
+Dest specifies the destination action. AssignTo ensures the correct assignment of property values.
+If Dest is nil or Dest is not of the TContainedAction type, then an error is raised.
+</summary></devnotes></procedure>
+      <function name="HandleShortCut" visibility="protected" procflags="virtual" file="System.Actions.pas" line="147">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Executes the action when the user types one of its shortcuts.
+HandleShortCut calls System.Classes.TBasicAction.Execute to cause the action to perform its function. HandleShortCut returns the value that System.Classes.TBasicAction.Execute returns.
+Descendant classes can override HandleShortCut to respond in other ways when the user types the action's shortcut keys.
+
+
+</summary></devnotes></function>
+      <procedure name="SetAutoCheck" visibility="protected" procflags="virtual" file="System.Actions.pas" line="149">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the specified Value to the AutoCheck property of the action, and propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetCaption" visibility="protected" procflags="virtual" file="System.Actions.pas" line="150">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the specified Value to the Caption property of the action, and propagates this Value to all the clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetName" visibility="protected" procflags="override" file="System.Actions.pas" line="151">
+        <parameters>
+          <parameter name="Value" type="TComponentName" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the Name and Caption properties of the action.
+SetName calls the inherited System.Classes.TComponent.SetName method to set the specified Value to the Name property of the action. If the action does not have any clients and the current values of the Name and Caption properties of the action are equal, then SetName sets Value to the Caption property of the action also. 
+
+Warning: Using SetName to change the name of an action at run time causes any references to the old name to become undefined. Any subsequent code that uses the old name will cause an exception.</summary></devnotes></procedure>
+      <procedure name="SetChecked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="152">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the specified Value to the Checked property of the action, and propagates this Value to all clients of the action.
+If the action has a GroupIndex value greater than 0, then setting Checked to True causes all other actions in the group to have their Checked property set to False.
+</summary></devnotes></procedure>
+      <procedure name="SetEnabled" visibility="protected" procflags="virtual" file="System.Actions.pas" line="153">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the Enabled property of the action to the specified Value and propagates this Value to all clients of the action.
+The behavior of SetEnabled depends upon the State of the ActionList action list:
+
+If the value of State is asSuspended, then SetEnabled sets to the specified Value only the Enabled property of the action.
+If the value of State is asSuspendedEnabled, then SetEnabled sets to True the Enabled property of the action and of all clients of the action.
+Otherwise, SetEnabled sets to the specified Value the Enabled property of the action and propagates this Value to all clients of the action.</summary></devnotes></procedure>
+      <procedure name="SetGroupIndex" visibility="protected" procflags="virtual" file="System.Actions.pas" line="154">
+        <parameters>
+          <parameter name="Value" type="Integer" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the specified Value to the GroupIndex property of the action and properly handles the ON or OFF state of the Checked properties of all actions in the group specified by Value.
+SetGroupIndex sets the specified Value to the GroupIndex property of the action. If the Checked property of this action is True, then SetGroupIndex sets the Checked property to False for all the other actions in the group defined by the specified Value. 
+When Value is greater than 0, the group of actions with the GroupIndex property having this Value forms a group of actions that act like a group of radio buttons. When the Checked property of any action in this group is True, the Checked properties of all other actions in the group are False. That is, one and only one action in the group is checked ON at a time.
+
+Note: All actions in a group must be listed by the same action list.</summary></devnotes></procedure>
+      <procedure name="SetHelpContext" visibility="protected" procflags="virtual" file="System.Actions.pas" line="155">
+        <parameters>
+          <parameter name="Value" type="THelpContext"/>
+        </parameters>
+      <devnotes><summary>
+Sets the Help context ID for the action and action's clients.
+SetHelpContext sets the new Value of the integer help context ID, stored in the HelpContext property, for the action.
+SetHelpContext always propagates this Value to all clients of the action.
+HelpContext is only used when htContext is selected in the HelpType property.
+
+Note: To use Help in your application, you need to enable Help in your application. </summary></devnotes></procedure>
+      <procedure name="SetHelpKeyword" visibility="protected" procflags="virtual" file="System.Actions.pas" line="156">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Defines the Help keyword for the action and action's clients.
+SetHelpKeyword sets the new Value of the string help keyword, stored in the HelpKeyword property, for the action.
+SetHelpKeyword always propagates this Value to all clients of the action.
+HelpKeyword is only used when htKeyword is selected in the HelpType property.
+</summary></devnotes></procedure>
+      <procedure name="SetHelpType" visibility="protected" procflags="virtual" file="System.Actions.pas" line="157">
+        <parameters>
+          <parameter name="Value" type="THelpType"/>
+        </parameters>
+      <devnotes><summary>
+Sets the HelpType property for the action and action's clients.
+SetHelpType sets the new Value of the HelpType property for the action.
+SetHelpType always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetHint" visibility="protected" procflags="virtual" file="System.Actions.pas" line="158">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the Hint property for the action and action's clients to a new Value.
+SetHint sets the new Value of the Hint property for the action. 
+SetHint always propagates this Value to all clients of the action. 
+</summary></devnotes></procedure>
+      <procedure name="SetVisible" visibility="protected" procflags="virtual" file="System.Actions.pas" line="159">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Sets the new Value of the Visible property for the action and action's clients.
+SetVisible always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetShortCut" visibility="protected" procflags="virtual" file="System.Actions.pas" line="160">
+        <parameters>
+          <parameter name="Value" type="TShortCut"/>
+        </parameters>
+      <devnotes><summary>
+Sets the new Value of the ShortCut property for the action and action's clients.
+SetShortCut always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetImageIndex" visibility="protected" procflags="virtual" file="System.Actions.pas" line="161">
+        <parameters>
+          <parameter name="Value" type="TImageIndex"/>
+        </parameters>
+      <devnotes><summary>
+Sets the new Value of the ImageIndex property for the action and action's clients.
+SetImageIndex always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <procedure name="SetStatusAction" visibility="protected" procflags="virtual" file="System.Actions.pas" line="162">
+        <parameters>
+          <parameter name="Value" type="TStatusAction" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the new Value of the StatusAction property for the action and action's clients.
+SetStatusAction always propagates this Value to all clients of the action.
+</summary></devnotes></procedure>
+      <constructor name="Create" visibility="public" file="System.Actions.pas" line="164">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Instantiates and initializes a TContainedAction object.
+Applications do not need to call Create directly. Actions are created automatically when you choose New Action in the Action List editor. 
+Create calls the inherited System.Classes.TBasicAction.Create constructor and then 
+initializes the Enabled (setting it to True), Visible (setting it to True), and ImageIndex (setting it to -1) properties.
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="System.Actions.pas" line="165">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys the instance of the contained action.
+If the action is contained in an action list or action manager, Destroy removes the action from that list. Then it calls the inherited Destroy method.
+
+
+</summary></devnotes></destructor>
+      <function name="GetParentComponent" visibility="public" procflags="override" file="System.Actions.pas" line="166">
+        <parameters>
+          <retval type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Returns the action list containing the action.
+GetParentComponent returns the action list containing the action. This action list is stored in the ActionList property. If ActionList stores nil, then GetParentComponent calls the inherited System.Classes.TComponent.GetParentComponent method.
+</summary></devnotes></function>
+      <function name="HasParent" visibility="public" procflags="override" file="System.Actions.pas" line="167">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Indicates whether the action is contained in an action list.
+HasParent returns True if the action is contained in an action list stored in the  ActionList property. If ActionList stores nil, then HasParent calls the inherited System.Classes.TComponent.HasParent method.
+</summary></devnotes></function>
+      <procedure name="SetParentComponent" visibility="public" procflags="override" file="System.Actions.pas" line="168">
+        <parameters>
+          <parameter name="AParent" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Sets the action list containing the action.
+SetParentComponent sets the specified AParent action list as the action list containing the action. This action list is stored in the ActionList property. 
+</summary></devnotes></procedure>
+      <property name="ActionList" visibility="public" read="FActionList" write="SetActionList" type="TContainedActionList" file="System.Actions.pas" line="169"><devnotes><summary>
+Holds the action list to which the action belongs.
+</summary></devnotes></property>
+      <function name="Suspended" visibility="public" procflags="override" file="System.Actions.pas" line="170">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns True if the action list of the action is suspended.
+</summary></devnotes></function>
+      <property name="Index" visibility="public" read="GetIndex" write="SetIndex" stored="False" type="Integer" file="System.Actions.pas" line="171"><devnotes><summary>
+Specifies the index of the action in its action list.
+Index indicates the position of the action in its action list. You can change the action's Index at design time using one of the IDE editors to handle actions.
+The index of actions determines the order in which they appear in user interface elements such as menus and tool bars.
+Index is zero-based. When Index is -1, this means that the ActionList property does not contain any list.
+</summary></devnotes></property>
+      <property name="DisableIfNoHandler" visibility="public" read="FDisableIfNoHandler" write="FDisableIfNoHandler" type="Boolean" default="1" file="System.Actions.pas" line="173"><devnotes><summary>
+Indicates whether the action's clients should be disabled if no OnExecute event handler is found.
+DisableIfNoHandler defines whether to set the Enabled property of the action to False if no OnExecute event handler is set for the action. Setting Enabled to False disables all the action's clients.
+See, for example, how FMX.Forms.TApplication.UpdateAction uses DisableIfNoHandler to define whether to set Enabled to False if the OnExecute event handler is not defined to the action.
+For example, setting DisableIfNoHandler to False can be useful when managing submenus. In this case, pointing to a command on the main menu, which causes the submenu to open, does not need any OnExecute event handler. Then, if DisableIfNoHandler is True, this main menu command becomes disabled and the submenu cannot be opened. In such cases it can be convenient to use actions of types FMX.Controls.TControlAction and Vcl.Controls.TControlAction.  Objects of these classes have the value of DisableIfNoHandler set to False, by default.
+</summary></devnotes></property>
+      <property name="AutoCheck" visibility="public" read="FAutoCheck" write="SetAutoCheck" type="Boolean" default="0" file="System.Actions.pas" line="175"><devnotes><summary>
+Controls whether the Checked property toggles when the action executes.
+AutoCheck causes the Checked property to toggle when the action executes. This allows the Checked property of the action to remain in sync with the Checked property of the client (or an equivalent).
+If the client has an AutoCheck property of its own, the AutoCheck property of the action is propagated to the AutoCheck property of the client.
+</summary></devnotes></property>
+      <property name="Caption" visibility="public" read="FCaption" write="SetCaption" type="string" default="0" file="System.Actions.pas" line="176"><devnotes><summary>
+Represents the caption of the action.
+Caption holds the string that is used as the caption of the action, when it is set. The value of Caption can be propagated to all client controls and client menu items linked to the action.
+</summary></devnotes></property>
+      <property name="Checked" visibility="public" read="FChecked" write="SetChecked" type="Boolean" default="0" file="System.Actions.pas" line="177"><devnotes><summary>
+Indicates whether client controls and menu items appear checked.
+Checked specifies the checked state for the action. The value of Checked can be propagated to all client controls and client menu items linked to the action.
+
+Note:  If the action has a GroupIndex value greater than 0, then setting Checked to True sets to False the Checked properties of all other actions in the GroupIndex group.
+Tip: Use the AutoCheck property to ensure that the action's Checked property toggles when the action executes.</summary></devnotes></property>
+      <property name="Enabled" visibility="public" read="FEnabled" write="SetEnabled" type="Boolean" default="1" file="System.Actions.pas" line="178"><devnotes><summary>
+Specifies the enabled state for the action.
+The value of Enabled can be propagated to all client controls and client menu items linked to the action.
+</summary></devnotes></property>
+      <property name="GroupIndex" visibility="public" read="FGroupIndex" write="SetGroupIndex" type="Integer" default="0" file="System.Actions.pas" line="179"><devnotes><summary>
+Indicates a group of actions in one action list. Actions in this group act like the group of radio buttons.
+The value of GroupIndex is used to define groups of actions. Actions in each group act like groups of radio buttons. When GroupIndex is greater than 0, this value identifies the group to which some actions belong. The value of GroupIndex can be propagated to all client controls and client menu items linked to the action.
+When the Checked property of any action in that group is set to True, the Checked properties of all other actions in the group are set to False. That is, only one action in the group can be checked at a time.
+
+Note:  All actions in a group must be listed by the same action list.</summary></devnotes></property>
+      <property name="HelpContext" visibility="public" read="FHelpContext" write="SetHelpContext" type="THelpContext" default="0" file="System.Actions.pas" line="180"><devnotes><summary>
+Keeps the integer context ID that identifies the Help topic for the action.
+HelpContext specifies the integer context ID  to identify the Help topic to show when invoking Help for the action. The value of HelpContext can be propagated to all client controls and client menu items linked to the action. See also IsHelpLinked.
+HelpContext is only used when htContext is selected in the HelpType property.
+
+Note: To use Help, you need to enable Help in your application. When your application supports usage of the appropriate Help system, then it can show Help topics from the associated Help file. When a client control has focus and the user presses the F1 key, the control uses the value of the HelpContext property to invoke the online Help that shows the topic with this context ID. The target topic is uniquely identified by a HelpContext context ID value.</summary></devnotes></property>
+      <property name="HelpKeyword" visibility="public" read="FHelpKeyword" write="SetHelpKeyword" type="string" default="0" file="System.Actions.pas" line="181"><devnotes><summary>
+Contains the keyword string that identifies the Help topic for the action.
+The value of HelpKeyword can be propagated to all client controls and client menu items linked to the action. 
+HelpKeyword is only used when htKeyword is selected in the HelpType property.
+
+Note: To use Help, you need to enable Help in your application. When your application supports usage of the appropriate Help system, then it can show Help topics from the associated Help file. When a client control has focus and the user presses the F1 key, the control uses the HelpKeyword property's value to invoke the online Help showing the topic with this keyword. </summary></devnotes></property>
+      <property name="HelpType" visibility="public" read="FHelpType" write="SetHelpType" type="THelpType" default="0" file="System.Actions.pas" line="182"><devnotes><summary>
+Keeps whether to use the HelpContext or HelpKeyword property to identify the Help topic.
+The value of HelpType can be propagated to all client controls and client menu items linked to the action. 
+HelpType can keep one of the following constants:
+
+htContext � instructs to use the HelpContext property to identify the Help topic to show when invoking Help.
+htKeyword � instructs to use the HelpKeyword property to identify the Help topic to show when invoking Help.</summary></devnotes></property>
+      <property name="Hint" visibility="public" read="FHint" write="SetHint" type="string" default="0" file="System.Actions.pas" line="183"><devnotes><summary>
+Stores the Help hint text.
+Hint holds the hint string indicating the hint text for the action.
+Hint contains the text strings that appear in a pop-up box (or in a status bar) when the user moves the mouse over screen elements.
+This hint string can be propagated to clients of the action � to controls, menu items, and other GUI elements. 
+
+Note: VCL controls support hint strings containing three parts that can be shown in separate locations (see Vcl.Controls.TControl.Hint).</summary></devnotes></property>
+      <property name="Visible" visibility="public" read="FVisible" write="SetVisible" type="Boolean" default="1" file="System.Actions.pas" line="184"><devnotes><summary>
+Stores whether the action representation is visible.
+Visible specifies the visible state for the action (True means visible, False means invisible).
+This Visible value is propagated to a client of the action if IsVisibleLinked method of the action link linking the client to the action  returns True.
+If the Visible of an action is False and IsVisibleLinked of an action link returns True, then the Visible of the client (a control, menu item, or others) is also set False and this client is also invisible. Typically, IsVisibleLinked of an action link returns False if the action belongs to TCustomViewAction. Otherwise, when the action belongs to TAction, then  IsVisibleLinked of an action link returns True. That is, TCustomViewAction is used when one need to provide visible representation of clients of actions that have Visible set True. 
+</summary></devnotes></property>
+      <property name="ShortCut" visibility="public" read="FShortCut" write="SetShortCut" type="TShortCut" default="0" file="System.Actions.pas" line="185"><devnotes><summary>
+Shortcut that triggers the action.
+The value of Shortcut can be propagated to all client controls and client menu items linked to the action. 
+</summary></devnotes></property>
+      <property name="SecondaryShortCuts" visibility="public" read="GetSecondaryShortCuts" write="SetSecondaryShortCuts" stored="IsSecondaryShortCutsStored" type="TCustomShortCutList" file="System.Actions.pas" line="186"><devnotes><summary>
+Stores shortcuts (in addition to ShortCut) for triggering the action.
+Actions can execute in response to multiple shortcut key combinations. SecondaryShortCuts lists all the shortcut key combinations (other than the one specified by the ShortCut property) that can trigger the action. This lets you provide additional, secondary shortcuts.
+When the user types one of the key combinations listed in SecondaryShortCuts, the action's Execute method is called.
+</summary></devnotes></property>
+      <property name="ImageIndex" visibility="public" read="FImageIndex" write="SetImageIndex" type="TImageIndex" default="-1" file="System.Actions.pas" line="188"><devnotes><summary>
+Stores an index in a list of images.
+ImageIndex is a zero-based index in a list of images. TContainedAction does not provide the actual list of images, only implementations of actions in GUI application frameworks provide such a property. In general, this list of images contains images that are associated with controls and menu items that use this action.
+The value of ImageIndex can be propagated to all client controls and client menu items linked to the action. 
+
+Note: When ImageIndex is -1, this means that the list does not contain any images.
+In typical implementations of controls, an image is drawn at the leftmost position in the control, and a control's text is drawn to the right of the image. If ImageIndex is -1, then a control does not offset the text to the right to reserve a placeholder for the image. Otherwise, if ImageIndex is not -1, then the control's text is always drawn with the offset to the right to reserve a place for drawing an image.</summary></devnotes></property>
+      <function name="DoHint" visibility="public" procflags="dynamic" file="System.Actions.pas" line="190">
+        <parameters>
+          <parameter name="HintStr" type="string" paramflags="var"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Calls the OnHint event handler.
+Typically, applications do not call the DoHint method. It is called automatically when the user pauses the mouse on one of the action's client controls or menu items. DoHint is called by the action's client when the client asks to show the hint.
+
+DoHint checks for an OnHint event handler and passes HintStr to it, if the event handler exists. The OnHint event handler can change the specified hint string HintStr. DoHint returns True if no event handler is assigned or if OnHint returns True. DoHint can be used to determine which hint text should be shown. For example, Vcl.Controls.TControlActionLink.DoShowHint calls DoHint internally, and if DoHint returns True, then Vcl.Controls.TControlActionLink.DoShowHint appends the action's shortcut specification to the hint text to display.</summary></devnotes></function>
+      <event name="OnHint" visibility="public" read="FOnHint" write="FOnHint" type="THintEvent" file="System.Actions.pas" line="191"><devnotes><summary>
+Occurs when the mouse pauses over a client control or menu item.
+Use OnHint to override the default hint that appears when the user pauses the mouse over a client control or menu item. The OnHint event handler can change the hint that appears (by changing the string stored in the client's Hint property), or display the hint in an application-specific way.
+</summary></devnotes></event>
+      <property name="StatusAction" visibility="public" read="FStatusAction" write="SetStatusAction" type="TStatusAction" file="System.Actions.pas" line="198">
+        <devnotes><summary>
+Stores the status for an input field in an action.
+StatusAction holds the status for an input field in the action, when it is set. 
+The value of StatusAction  can be propagated to all client controls and client menu items linked to the action. 
+</summary></devnotes>
+      </property>
+      <property name="Category" visibility="published" read="FCategory" write="SetCategory" type="string" default="0" file="System.Actions.pas" line="200"><devnotes><summary>
+Group or category where the action belongs.
+IDE editors for actions group together actions that share the same category. In the VCL, if you are using an action manager, you can generate user interface elements that correspond to action categories.
+Action categories group actions by similarities, usually of behavior or functionality. Standard categories are Edit, Format, Help, Windows, and others. At design time you can modify or set the Category for an action by selecting the action from the action list or object tree view, and choosing Category in the Object Inspector.
+</summary></devnotes></property>
+    </members>
+  </class>
+  <class name="TContainedActionLink" file="System.Actions.pas" line="205">
+    <devnotes>
+       <summary> This class is designed to communicate with some of the object. </summary>
+       <remarks> It implements to work with common properties for all platforms (FMX, VCL).</remarks>
+    </devnotes>
+    <ancestor name="TBasicActionLink" namespace="System.Classes">
+      <methodref name="AssignClient" visibility="protected" procflags="virtual"/>
+      <methodref name="Change" visibility="protected" procflags="virtual"/>
+      <methodref name="IsOnExecuteLinked" visibility="protected" procflags="virtual"/>
+      <methodref name="SetAction" visibility="protected" procflags="virtual"/>
+      <methodref name="SetOnExecute" visibility="protected" procflags="virtual"/>
+      <methodref name="Create" visibility="public" procflags="constructor virtual"/>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <methodref name="Execute" visibility="public" procflags="virtual"/>
+      <methodref name="Update" visibility="public" procflags="virtual"/>
+      <propertyref name="Action" visibility="public"/>
+      <eventref name="OnChange" visibility="public"/>
+      <ancestor name="TObject" namespace="System">
+        <methodref name="Create" visibility="public" procflags="constructor">
+        </methodref>
+        <methodref name="Free" visibility="public">
+        </methodref>
+        <methodref name="DisposeOf" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="InitInstance" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="CleanupInstance" visibility="public">
+        </methodref>
+        <methodref name="ClassType" visibility="public" procflags="inline">
+        </methodref>
+        <methodref name="ClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassNameIs" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="ClassParent" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="ClassInfo" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InstanceSize" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="InheritsFrom" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodAddress" visibility="public" procflags="class overload">
+        </methodref>
+        <methodref name="MethodName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="QualifiedClassName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="FieldAddress" visibility="public" procflags="overload">
+        </methodref>
+        <methodref name="GetInterface" visibility="public">
+        </methodref>
+        <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+        </methodref>
+        <methodref name="UnitName" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="UnitScope" visibility="public" procflags="class">
+        </methodref>
+        <methodref name="Equals" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="GetHashCode" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="ToString" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="SafeCallException" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Dispatch" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="NewInstance" visibility="public" procflags="class virtual">
+        </methodref>
+        <methodref name="FreeInstance" visibility="public" procflags="virtual">
+        </methodref>
+        <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+        </methodref>
+        <methodref name="GetDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+        </methodref>
+        <propertyref name="Disposed" visibility="protected">
+        </propertyref>
+      </ancestor>
+    </ancestor>
+    <members>
+      <procedure name="DefaultIsLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="207">
+        <parameters>
+          <parameter name="Result" type="Boolean" paramflags="var"/>
+        </parameters>
+      </procedure>
+      <function name="IsCaptionLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="208">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsCheckedLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="209">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsEnabledLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="210">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsGroupIndexLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="211">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsHelpContextLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="212">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsHelpLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="213">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsHintLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="214">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsImageIndexLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="215">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsShortCutLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="216">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsVisibleLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="217">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <function name="IsStatusActionLinked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="218">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <procedure name="SetAutoCheck" visibility="protected" procflags="virtual" file="System.Actions.pas" line="219">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetCaption" visibility="protected" procflags="virtual" file="System.Actions.pas" line="220">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetChecked" visibility="protected" procflags="virtual" file="System.Actions.pas" line="221">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetEnabled" visibility="protected" procflags="virtual" file="System.Actions.pas" line="222">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetGroupIndex" visibility="protected" procflags="virtual" file="System.Actions.pas" line="223">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHelpContext" visibility="protected" procflags="virtual" file="System.Actions.pas" line="224">
+        <parameters>
+          <parameter name="Value" type="THelpContext"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHelpKeyword" visibility="protected" procflags="virtual" file="System.Actions.pas" line="225">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHelpType" visibility="protected" procflags="virtual" file="System.Actions.pas" line="226">
+        <parameters>
+          <parameter name="Value" type="THelpType"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetHint" visibility="protected" procflags="virtual" file="System.Actions.pas" line="227">
+        <parameters>
+          <parameter name="Value" type="string" paramflags="const"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetImageIndex" visibility="protected" procflags="virtual" file="System.Actions.pas" line="228">
+        <parameters>
+          <parameter name="Value" type="Integer"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetShortCut" visibility="protected" procflags="virtual" file="System.Actions.pas" line="229">
+        <parameters>
+          <parameter name="Value" type="TShortCut"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetVisible" visibility="protected" procflags="virtual" file="System.Actions.pas" line="230">
+        <parameters>
+          <parameter name="Value" type="Boolean"/>
+        </parameters>
+      </procedure>
+      <procedure name="SetStatusAction" visibility="protected" procflags="virtual" file="System.Actions.pas" line="231">
+        <parameters>
+          <parameter name="Value" type="TStatusAction" paramflags="const"/>
+        </parameters>
+      </procedure>
+    </members>
+  </class>
+  <classref name="TContainedActionLinkClass" ref="TContainedActionLink" file="System.Actions.pas" line="234"/>
+  <classref name="TContainedActionClass" ref="TContainedAction" file="System.Actions.pas" line="235"/>
+  <enum name="TActionListState" file="System.Actions.pas" line="237">
+    <element value="0" name="asNormal" file="System.Actions.pas" line="237"/>
+    <element value="1" name="asSuspended" file="System.Actions.pas" line="237"/>
+    <element value="2" name="asSuspendedEnabled" file="System.Actions.pas" line="237"/>
+  </enum>
+  <class name="TActionListEnumerator" file="System.Actions.pas" line="242">
+    <devnotes>
+       <summary>
+       Auxiliary class for enumeration actions in TContainedActionList
+       </summary>
+    </devnotes>
+    <ancestor name="TObject" namespace="System">
+      <methodref name="Create" visibility="public" procflags="constructor">
+      </methodref>
+      <methodref name="Free" visibility="public">
+      </methodref>
+      <methodref name="DisposeOf" visibility="public" procflags="inline">
+      </methodref>
+      <methodref name="InitInstance" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="CleanupInstance" visibility="public">
+      </methodref>
+      <methodref name="ClassType" visibility="public" procflags="inline">
+      </methodref>
+      <methodref name="ClassName" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="ClassNameIs" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="ClassParent" visibility="public" procflags="class inline">
+      </methodref>
+      <methodref name="ClassInfo" visibility="public" procflags="class inline">
+      </methodref>
+      <methodref name="InstanceSize" visibility="public" procflags="class inline">
+      </methodref>
+      <methodref name="InheritsFrom" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="MethodAddress" visibility="public" procflags="class overload">
+      </methodref>
+      <methodref name="MethodAddress" visibility="public" procflags="class overload">
+      </methodref>
+      <methodref name="MethodName" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="QualifiedClassName" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="FieldAddress" visibility="public" procflags="overload">
+      </methodref>
+      <methodref name="FieldAddress" visibility="public" procflags="overload">
+      </methodref>
+      <methodref name="GetInterface" visibility="public">
+      </methodref>
+      <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+      </methodref>
+      <methodref name="UnitName" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="UnitScope" visibility="public" procflags="class">
+      </methodref>
+      <methodref name="Equals" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="GetHashCode" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="ToString" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="SafeCallException" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="Dispatch" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="NewInstance" visibility="public" procflags="class virtual">
+      </methodref>
+      <methodref name="FreeInstance" visibility="public" procflags="virtual">
+      </methodref>
+      <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+      </methodref>
+      <methodref name="GetDisposed" visibility="protected" procflags="inline">
+      </methodref>
+      <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+      </methodref>
+      <propertyref name="Disposed" visibility="protected">
+      </propertyref>
+    </ancestor>
+    <members>
+      <field name="FIndex" type="Integer" visibility="private" size="4" offset="4" file="System.Actions.pas" line="244"/>
+      <field name="FActionList" type="TContainedActionList" visibility="private" size="4" offset="8" file="System.Actions.pas" line="245"/>
+      <function name="GetCurrent" visibility="private" procflags="inline" file="System.Actions.pas" line="246">
+        <parameters>
+          <retval type="TContainedAction">
+            <devnotes>
+               <summary> The ancestor class of actions, that contained in the TContainedActionList </summary>
+               <remarks> It implements to work with common properties for all platforms (FMX, VCL).</remarks>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <constructor name="Create" visibility="public" file="System.Actions.pas" line="248">
+        <parameters>
+          <parameter name="AActionList" type="TContainedActionList"/>
+        </parameters>
+      </constructor>
+      <function name="MoveNext" visibility="public" procflags="inline" file="System.Actions.pas" line="249">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      </function>
+      <property name="Current" visibility="public" read="GetCurrent" type="TContainedAction" file="System.Actions.pas" line="250"/>
+    </members>
+  </class>
+  <type name="TEnumActionListEvent" file="System.Actions.pas" line="253" procflags="closure">
+  </type>
+  <anonMethod name="TEnumActionListRef" file="System.Actions.pas" line="254">
+    <procedure name="Invoke" visibility="public" procflags="abstract virtual" file="System.Actions.pas" line="254">
+      <parameters>
+        <parameter name="Action" type="TContainedAction" paramflags="const"/>
+        <parameter name="Done" type="Boolean" paramflags="var"/>
+      </parameters>
+    </procedure>
+  </anonMethod>
+  <class name="TContainedActionList" file="System.Actions.pas" line="260">
+    <devnotes><summary>
+The base class for list of actions, without the published properties.
+Implement TContainedActionList to work with common properties for all GUI application frameworks.
+Actions lists the actions maintained by the action list.
+The ActionCount property returns the number of actions in the list.
+OnStateChange sends a notification when the State changes.
+</summary></devnotes>
+    <ancestor name="TComponent" namespace="System.Classes">
+      <interfaces>
+        <implements name="IInterfaceComponentReference"/>
+        <implements name="IInterface"/>
+      </interfaces>
+      <methodref name="GetComObject" visibility="private"/>
+      <methodref name="GetComponent" visibility="private"/>
+      <methodref name="GetComponentCount" visibility="private"/>
+      <methodref name="GetComponentIndex" visibility="private"/>
+      <methodref name="Insert" visibility="private"/>
+      <methodref name="ReadLeft" visibility="private"/>
+      <methodref name="ReadTop" visibility="private"/>
+      <methodref name="Remove" visibility="private"/>
+      <methodref name="RemoveNotification" visibility="private"/>
+      <methodref name="SetComponentIndex" visibility="private"/>
+      <methodref name="SetReference" visibility="private"/>
+      <methodref name="WriteLeft" visibility="private"/>
+      <methodref name="WriteTop" visibility="private"/>
+      <methodref name="IntfGetComponent" visibility="private"/>
+      <methodref name="DoGetDeltaStreams" visibility="private"/>
+      <methodref name="ReadDeltaStream" visibility="private"/>
+      <methodref name="ReadDeltaState" visibility="private"/>
+      <methodref name="FindSortedComponent" visibility="private"/>
+      <methodref name="AddSortedComponent" visibility="private"/>
+      <methodref name="RemoveSortedComponent" visibility="private" procflags="inline"/>
+      <methodref name="Create@" visibility="class private" procflags="class constructor noself"/>
+      <methodref name="AsyncSchedule" visibility="protected" procflags="virtual">
+      </methodref>
+      <methodref name="ChangeName" visibility="protected"/>
+      <methodref name="DefineProperties" visibility="protected" procflags="override"/>
+      <methodref name="GetChildren" visibility="protected" procflags="dynamic"/>
+      <methodref name="GetChildOwner" visibility="protected" procflags="dynamic"/>
+      <methodref name="GetChildParent" visibility="protected" procflags="dynamic"/>
+      <methodref name="GetOwner" visibility="protected" procflags="override"/>
+      <methodref name="Loaded" visibility="protected" procflags="virtual"/>
+      <methodref name="Notification" visibility="protected" procflags="virtual"/>
+      <methodref name="GetDeltaStreams" visibility="protected" procflags="dynamic"/>
+      <methodref name="ReadState" visibility="protected" procflags="virtual"/>
+      <methodref name="CanObserve" visibility="protected" procflags="virtual"/>
+      <methodref name="ObserverAdded" visibility="protected" procflags="virtual"/>
+      <methodref name="GetObservers" visibility="protected" procflags="virtual"/>
+      <methodref name="SetAncestor" visibility="protected"/>
+      <methodref name="SetDesigning" visibility="protected"/>
+      <methodref name="SetInline" visibility="protected"/>
+      <methodref name="SetDesignInstance" visibility="protected"/>
+      <methodref name="SetName" visibility="protected" procflags="virtual"/>
+      <methodref name="SetChildOrder" visibility="protected" procflags="dynamic"/>
+      <methodref name="SetParentComponent" visibility="protected" procflags="dynamic"/>
+      <methodref name="Updating" visibility="protected" procflags="dynamic"/>
+      <methodref name="Updated" visibility="protected" procflags="dynamic"/>
+      <methodref name="UpdateRegistry" visibility="protected" procflags="class virtual"/>
+      <methodref name="ValidateRename" visibility="protected" procflags="virtual"/>
+      <methodref name="ValidateContainer" visibility="protected" procflags="dynamic"/>
+      <methodref name="ValidateInsert" visibility="protected" procflags="dynamic"/>
+      <methodref name="WriteState" visibility="protected" procflags="virtual"/>
+      <methodref name="RemoveFreeNotifications" visibility="protected"/>
+      <methodref name="QueryInterface" visibility="protected" procflags="virtual"/>
+      <methodref name="_AddRef" visibility="protected"/>
+      <methodref name="_Release" visibility="protected"/>
+      <methodref name="GetTypeInfoCount" visibility="protected"/>
+      <methodref name="GetTypeInfo" visibility="protected"/>
+      <methodref name="GetIDsOfNames" visibility="protected"/>
+      <methodref name="Invoke" visibility="protected"/>
+      <eventref name="OnGetDeltaStreams" visibility="protected"/>
+      <methodref name="Create" visibility="public" procflags="constructor virtual"/>
+      <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+      <methodref name="BeforeDestruction" visibility="public" procflags="override"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload">
+      </methodref>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="BeginInvoke" visibility="public" procflags="overload"/>
+      <methodref name="EndInvoke" visibility="public" procflags="overload">
+      </methodref>
+      <methodref name="EndInvoke" visibility="public" procflags="overload">
+      </methodref>
+      <methodref name="EndFunctionInvoke" visibility="public">
+      </methodref>
+      <methodref name="DestroyComponents" visibility="public"/>
+      <methodref name="Destroying" visibility="public"/>
+      <methodref name="ExecuteAction" visibility="public" procflags="dynamic"/>
+      <methodref name="FindComponent" visibility="public"/>
+      <methodref name="FreeNotification" visibility="public"/>
+      <methodref name="RemoveFreeNotification" visibility="public"/>
+      <methodref name="FreeOnRelease" visibility="public"/>
+      <methodref name="GetEnumerator" visibility="public" procflags="inline"/>
+      <methodref name="GetParentComponent" visibility="public" procflags="dynamic"/>
+      <methodref name="GetNamePath" visibility="public" procflags="override"/>
+      <methodref name="HasParent" visibility="public" procflags="dynamic"/>
+      <methodref name="InsertComponent" visibility="public"/>
+      <methodref name="RemoveComponent" visibility="public"/>
+      <methodref name="SetSubComponent" visibility="public"/>
+      <methodref name="SafeCallException" visibility="public" procflags="override"/>
+      <methodref name="UpdateAction" visibility="public" procflags="virtual"/>
+      <methodref name="IsImplementorOf" visibility="public"/>
+      <methodref name="ReferenceInterface" visibility="public"/>
+      <propertyref name="ComObject" visibility="public"/>
+      <propertyref name="Components" visibility="public"/>
+      <propertyref name="ComponentCount" visibility="public"/>
+      <propertyref name="ComponentIndex" visibility="public"/>
+      <propertyref name="ComponentState" visibility="public"/>
+      <propertyref name="ComponentStyle" visibility="public"/>
+      <propertyref name="DesignInfo" visibility="public"/>
+      <propertyref name="Owner" visibility="public"/>
+      <propertyref name="VCLComObject" visibility="public"/>
+      <propertyref name="Observers" visibility="public"/>
+      <propertyref name="Name" visibility="published"/>
+      <propertyref name="Tag" visibility="published"/>
+      <ancestor name="TPersistent" namespace="System.Classes">
+        <methodref name="AssignError" visibility="private"/>
+        <methodref name="AssignTo" visibility="protected" procflags="virtual"/>
+        <methodref name="DefineProperties" visibility="protected" procflags="virtual"/>
+        <methodref name="GetOwner" visibility="protected" procflags="dynamic"/>
+        <methodref name="Destroy" visibility="public" procflags="destructor override"/>
+        <methodref name="Assign" visibility="public" procflags="virtual"/>
+        <methodref name="GetNamePath" visibility="public" procflags="dynamic"/>
+        <ancestor name="TObject" namespace="System">
+          <methodref name="Create" visibility="public" procflags="constructor">
+          </methodref>
+          <methodref name="Free" visibility="public">
+          </methodref>
+          <methodref name="DisposeOf" visibility="public" procflags="inline">
+          </methodref>
+          <methodref name="InitInstance" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="CleanupInstance" visibility="public">
+          </methodref>
+          <methodref name="ClassType" visibility="public" procflags="inline">
+          </methodref>
+          <methodref name="ClassName" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="ClassNameIs" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="ClassParent" visibility="public" procflags="class inline">
+          </methodref>
+          <methodref name="ClassInfo" visibility="public" procflags="class inline">
+          </methodref>
+          <methodref name="InstanceSize" visibility="public" procflags="class inline">
+          </methodref>
+          <methodref name="InheritsFrom" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="MethodAddress" visibility="public" procflags="class overload">
+          </methodref>
+          <methodref name="MethodAddress" visibility="public" procflags="class overload">
+          </methodref>
+          <methodref name="MethodName" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="QualifiedClassName" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="FieldAddress" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="FieldAddress" visibility="public" procflags="overload">
+          </methodref>
+          <methodref name="GetInterface" visibility="public">
+          </methodref>
+          <methodref name="GetInterfaceEntry" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="GetInterfaceTable" visibility="public" procflags="class inline">
+          </methodref>
+          <methodref name="UnitName" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="UnitScope" visibility="public" procflags="class">
+          </methodref>
+          <methodref name="Equals" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="GetHashCode" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="ToString" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="SafeCallException" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="AfterConstruction" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="BeforeDestruction" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="Dispatch" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="DefaultHandler" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="NewInstance" visibility="public" procflags="class virtual">
+          </methodref>
+          <methodref name="FreeInstance" visibility="public" procflags="virtual">
+          </methodref>
+          <methodref name="Destroy" visibility="public" procflags="destructor virtual">
+          </methodref>
+          <methodref name="GetDisposed" visibility="protected" procflags="inline">
+          </methodref>
+          <methodref name="CheckDisposed" visibility="protected" procflags="inline">
+          </methodref>
+          <propertyref name="Disposed" visibility="protected">
+          </propertyref>
+        </ancestor>
+      </ancestor>
+    </ancestor>
+    <members>
+      <field name="FActions" type="TList&lt;System.Actions.TContainedAction&gt;" visibility="private" size="4" offset="64" file="System.Actions.pas" line="262"/>
+      <field name="FOnChange" type="TNotifyEvent" visibility="private" size="8" offset="72" file="System.Actions.pas" line="263"/>
+      <field name="FOnExecute" type="TActionEvent" visibility="private" size="8" offset="80" file="System.Actions.pas" line="264"/>
+      <field name="FOnUpdate" type="TActionEvent" visibility="private" size="8" offset="88" file="System.Actions.pas" line="265"/>
+      <field name="FState" type="TActionListState" visibility="private" size="1" offset="96" file="System.Actions.pas" line="266"/>
+      <field name="FOnStateChange" type="TNotifyEvent" visibility="private" size="8" offset="104" file="System.Actions.pas" line="267"/>
+      <function name="GetAction" visibility="private" file="System.Actions.pas" line="268">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <retval type="TContainedAction">
+            <devnotes>
+               <summary> The ancestor class of actions, that contained in the TContainedActionList </summary>
+               <remarks> It implements to work with common properties for all platforms (FMX, VCL).</remarks>
+            </devnotes>
+          </retval>
+        </parameters>
+      </function>
+      <procedure name="SetAction" visibility="private" file="System.Actions.pas" line="269">
+        <parameters>
+          <parameter name="Index" type="Integer"/>
+          <parameter name="Value" type="TContainedAction"/>
+        </parameters>
+      </procedure>
+      <function name="GetActionCount" visibility="private" file="System.Actions.pas" line="270">
+        <parameters>
+          <retval type="Integer"/>
+        </parameters>
+      </function>
+      <function name="ActionsCreated" visibility="protected" procflags="inline" file="System.Actions.pas" line="275">
+        <parameters>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns True if the internal list of actions of the TContainedActionList instance has been created. It returns False otherwise.
+The internal list of actions is created when you create the TContainedActionList instance.
+</summary></devnotes></function>
+      <procedure name="CheckActionsCreated" visibility="protected" procflags="inline" file="System.Actions.pas" line="276">
+      <devnotes><summary>
+Raises an EActionError exception if the internal list of actions of the TContainedActionList has not been created.
+</summary></devnotes></procedure>
+      <procedure name="AddAction" visibility="protected" file="System.Actions.pas" line="277">
+        <parameters>
+          <parameter name="Action" type="TContainedAction" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Adds an action to the list.
+Applications cannot call this protected method. AddAction is used internally to add an action to the Actions property array.
+To add an action to an action list, set the action's ActionList property.
+</summary></devnotes></procedure>
+      <procedure name="RemoveAction" visibility="protected" file="System.Actions.pas" line="278">
+        <parameters>
+          <parameter name="Action" type="TContainedAction" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Removes an action from the list.
+Applications cannot call this protected method. RemoveAction is used internally to remove an action from the Actions property array. RemoveAction removes the action and sets its ActionList property to nil (Delphi) or NULL (C++).
+To remove an action from an action list, change the action's ActionList property.
+</summary></devnotes></procedure>
+      <procedure name="Change" visibility="protected" procflags="virtual" file="System.Actions.pas" line="279">
+      <devnotes><summary>
+Triggers the OnChange event on the action list and then on all its actions.
+The internal list of actions is created when you create the TContainedActionList instance.
+</summary></devnotes></procedure>
+      <procedure name="Notification" visibility="protected" procflags="override" file="System.Actions.pas" line="280">
+        <parameters>
+          <parameter name="AComponent" type="TComponent"/>
+          <parameter name="Operation" type="TOperation"/>
+        </parameters>
+      <devnotes><summary>
+Handles notifications about the removal of one of the actions of the list.
+If AComponent is an action of the list and Operation is opRemove, the action is removed from the list.
+</summary></devnotes></procedure>
+      <procedure name="SetChildOrder" visibility="protected" procflags="override" file="System.Actions.pas" line="281">
+        <parameters>
+          <parameter name="Component" type="TComponent"/>
+          <parameter name="Order" type="Integer"/>
+        </parameters>
+      <devnotes><summary>
+Sets the order in which actions are passed to a callback by the GetChildren method.
+SetChildOrder specifies the order in which the component streaming system loads and saves the action components owned by this action list. It ensures that the actions are loaded and saved in the same order that they appear in the Actions property array. You should not need to call this method directly.
+</summary></devnotes></procedure>
+      <procedure name="SetState" visibility="protected" procflags="virtual" file="System.Actions.pas" line="282">
+        <parameters>
+          <parameter name="Value" type="TActionListState" paramflags="const"/>
+        </parameters>
+      <devnotes><summary>
+Sets the State property for the action list. 
+If Value is asSuspendedEnabled, then SetState also sets Enabled to True for all the actions in the action list. This is useful when designing in the Action Manager.
+If the OnStateChange event handler is set, then SetState calls this event handler.
+</summary></devnotes></procedure>
+      <event name="OnChange" visibility="protected" read="FOnChange" write="FOnChange" type="TNotifyEvent" file="System.Actions.pas" line="283"><devnotes><summary>
+Occurs when a change occurs in the action list.
+Write an OnChange event handler to update your application in response to changes in the action list. Changes to the action list that trigger an OnChange event include changes to an action category or to the action list's image list.
+
+Note:  The action list automatically informs the actions in the list when an OnChange event occurs. You need only provide an OnChange event handler for application-specific responses.
+OnChange is an event handler of type TNotifyEvent.
+</summary></devnotes></event>
+      <event name="OnExecute" visibility="protected" read="FOnExecute" write="FOnExecute" type="TActionEvent" file="System.Actions.pas" line="284"><devnotes><summary>
+Occurs when a client object triggers an action in the list.
+Write an OnExecute event handler to respond when an action in the list fires.
+When the user invokes a client object, the action list�s OnExecute event is the first event to occur in response. If the OnExecute event handler sets its Handled parameter to True, the action is considered handled, and processing stops there. This blocks the execution of any other event handlers or any built-in response by a predefined action class in response to the user action.
+If the OnExecute event handler does not set its Handled parameter to True, the application�s OnActionExecute event occurs next. If the OnActionExecute event does not respond to the user input, the action object�s OnExecute event occurs. Finally, if the action does not have an OnExecute event handler, the application locates a target object and executes any predefined response implemented by the action object.
+</summary></devnotes></event>
+      <event name="OnUpdate" visibility="protected" read="FOnUpdate" write="FOnUpdate" type="TActionEvent" file="System.Actions.pas" line="285"><devnotes><summary>
+Occurs when the application is idle so that the action list can update a specific action in the list.
+Write an OnUpdate event handler to configure the properties of a specified action in the list so that it reflects current conditions.
+When the application is idle, it cycles through every action in turn, giving it a chance to update itself to reflect current conditions. For each action, the first event to occur in this sequence is the action list's OnUpdate event. If the OnUpdate event handler sets its Handled parameter to True, the action is considered updated, and processing stops there. This blocks the execution of any other event handlers or any built-in response by a predefined action class.
+If the OnUpdate event handler does not set its Handled parameter to True, the application's OnActionUpdate event occurs next. If the OnActionUpdate event does not update the action, the action object's OnUpdate event occurs. Finally, if the action does not have an OnUpdate event handler, the application executes any predefined update method implemented by the action object.
+</summary></devnotes></event>
+      <function name="SameCategory" visibility="protected" file="System.Actions.pas" line="286">
+        <parameters>
+          <parameter name="Source" type="string" paramflags="const"/>
+          <parameter name="Dest" type="string" paramflags="const"/>
+          <parameter name="IncludeSubCategory" type="Boolean" paramflags="const">
+            <value>
+              True
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Returns True if the Source and Dest categories are the same. If IncludeSubCategory is True, this function also returns true if Dest is a subcategory of Source.
+These are some examples of calls to this function:
+
+
+
+Source
+
+Dest
+
+IncludeSubCategory
+
+Result
+
+
+File
+
+File
+
+True
+
+True
+
+
+File.Recent
+
+File
+
+True
+
+False
+
+
+File
+
+File.Recent
+
+True
+
+True
+
+
+File
+
+File
+
+False
+
+True
+
+
+File.Recent
+
+File
+
+False
+
+False
+
+
+File
+
+File.Recent
+
+False
+
+False
+</summary></devnotes></function>
+      <constructor name="Create" visibility="public" file="System.Actions.pas" line="289">
+        <parameters>
+          <parameter name="AOwner" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Creates an instance of TContainedActionList.
+This creator is inherited from TComponent, see TComponent.Create for more information.
+</summary></devnotes></constructor>
+      <destructor name="Destroy" visibility="public" file="System.Actions.pas" line="290">
+        <parameters>
+        </parameters>
+      <devnotes><summary>
+Destroys an instance of TContainedActionList.
+This destructor is inherited from TComponent, see TComponent.Destroy for more information.
+</summary></devnotes></destructor>
+      <function name="ExecuteAction" visibility="public" procflags="override" file="System.Actions.pas" line="291">
+        <parameters>
+          <parameter name="Action" type="TBasicAction"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Generates an OnExecute event.
+Typically, applications do not call the ExecuteAction method. Instead, the action indicated by the Action parameter calls ExecuteAction in response to a user command. It is possible, however, to call ExecuteAction to generate an OnExecute event even though no client control has been triggered.
+ExecuteAction invokes the OnExecute event handler for the action list. It returns True if the event handler handles the action, False otherwise.
+</summary></devnotes></function>
+      <procedure name="GetChildren" visibility="public" procflags="override" file="System.Actions.pas" line="292">
+        <parameters>
+          <parameter name="Proc" type="TGetChildProc"/>
+          <parameter name="Root" type="TComponent"/>
+        </parameters>
+      <devnotes><summary>
+Calls a specified method for each child action of the action list.
+GetChildren is used by the component streaming system. For each action in the action list, GetChildren calls the method passed in Proc. The actions are passed to the callback in the order that they are loaded or saved by the component streaming system.
+
+
+</summary></devnotes></procedure>
+      <function name="GetEnumerator" visibility="public" file="System.Actions.pas" line="293">
+        <parameters>
+          <retval type="TActionListEnumerator">
+            <devnotes>
+               <summary>
+               Auxiliary class for enumeration actions in TContainedActionList
+               </summary>
+            </devnotes>
+          </retval>
+        </parameters>
+      <devnotes><summary>
+Returns a TContainedActionList enumerator, a TActionListEnumerator reference that enumerates the actions in the list.
+To process all actions, read Current from the enumerator within a �while MoveNext do� loop.
+</summary></devnotes></function>
+      <function name="UpdateAction" visibility="public" procflags="override" file="System.Actions.pas" line="294">
+        <parameters>
+          <parameter name="Action" type="TBasicAction"/>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Generates an OnUpdate event.
+Typically, applications do not call the UpdateAction method. Instead, the action indicated by the Action parameter calls UpdateAction when informed by the application that it can update itself. It is possible, however, to call UpdateAction to generate an OnUpdate event even though this has not been initiated by the application.
+UpdateAction invokes the OnUpdate event handler for the action list. It returns True if the event handler updates the action, False otherwise.
+</summary></devnotes></function>
+      <function name="EnumByCategory" visibility="public" procflags="overload" file="System.Actions.pas" line="295">
+        <parameters>
+          <parameter name="Proc" type="TEnumActionListEvent"/>
+          <parameter name="Category" type="string" paramflags="const"/>
+          <parameter name="IncludeSubCategory" type="Boolean" paramflags="const">
+            <value>
+              True
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Calls the specified procedure (TEnumActionListEvent or TEnumActionListRef) once for every action of the list in the specified category.
+IncludeSubCategory determines whether actions in subcategories are included (True) or not (False) in the loop of calls.
+Proc, an instance of either TEnumActionListEvent or TEnumActionListRef, can set its Done argument to True to stop the loop of calls prematurely.
+</summary></devnotes></function>
+      <function name="EnumByCategory" visibility="public" procflags="overload" file="System.Actions.pas" line="298">
+        <parameters>
+          <parameter name="Proc" type="TEnumActionListRef"/>
+          <parameter name="Category" type="string" paramflags="const"/>
+          <parameter name="IncludeSubCategory" type="Boolean" paramflags="const">
+            <value>
+              True
+            </value>
+          </parameter>
+          <retval type="Boolean"/>
+        </parameters>
+      <devnotes><summary>
+Calls the specified procedure (TEnumActionListEvent or TEnumActionListRef) once for every action of the list in the specified category.
+IncludeSubCategory determines whether actions in subcategories are included (True) or not (False) in the loop of calls.
+Proc, an instance of either TEnumActionListEvent or TEnumActionListRef, can set its Done argument to True to stop the loop of calls prematurely.
+</summary></devnotes></function>
+      <property name="Actions[Index]" visibility="public" read="GetAction" write="SetAction" type="TContainedAction" file="System.Actions.pas" line="301"/>
+      <property name="ActionCount" visibility="public" read="GetActionCount" type="Integer" file="System.Actions.pas" line="302"><devnotes><summary>
+Indicates the number of actions in the action list.
+ActionCount indicates how many actions are contained in the action list.
+</summary></devnotes></property>
+      <property name="State" visibility="public" read="FState" write="SetState" type="TActionListState" default="0" file="System.Actions.pas" line="303"><devnotes><summary>
+Indicates whether the actions in the action list respond when the user triggers a client object. 
+State can be one of the constants defined in the TActionListState type: 
+asNormal, asSuspended, and asSuspendedEnabled.
+</summary></devnotes></property>
+      <event name="OnStateChange" visibility="public" read="FOnStateChange" write="FOnStateChange" type="TNotifyEvent" file="System.Actions.pas" line="304"><devnotes><summary>
+Occurs after the State property's value is changed.
+Write an OnStateChange event handler to respond after the State property's value is changed.
+</summary></devnotes></event>
+    </members>
+  </class>
+  <pointer name="TEnumActionProcInfo" alias="System.Pointer" type="Pointer" indircnt="1" file="System.pas" line="12"/>
+  <type name="TEnumActionProc" file="System.Actions.pas" line="315" procflags="closure">
+  </type>
+  <variable name="vDesignAction" type="Boolean" file="System.Actions.pas" line="339"/>
+  <variable name="RegisterActionsProc" type="procedure(CategoryName: string; AClasses: array of TBasicActionClass; Resource: TComponentClass)" visibility="public" file="System.Actions.pas" line="341"/>
+  <variable name="UnRegisterActionsProc" type="procedure(AClasses: array of TBasicActionClass)" visibility="public" file="System.Actions.pas" line="344"/>
+  <variable name="EnumRegisteredActionsProc" type="procedure(Proc: TEnumActionProc; Info: Pointer; FrameworkType: string)" visibility="public" file="System.Actions.pas" line="345"/>
+  <variable name="CreateActionProc" type="function(AOwner: TComponent; ActionClass: TBasicActionClass; FrameworkType: string): TBasicAction;" visibility="public" file="System.Actions.pas" line="348"/>
+  <procedure name="RegisterActions" visibility="public" file="System.Actions.pas" line="374">
+    <parameters>
+      <parameter name="CategoryName" type="string" paramflags="const"/>
+      <parameter name="AClasses" paramflags="const">
+        <array name="AClasses" file="System.Actions.pas" line="373">
+          <element type="TBasicActionClass"/>
+        </array>
+      </parameter>
+      <parameter name="Resource" type="TComponentClass"/>
+    </parameters>
+  </procedure>
+  <procedure name="UnRegisterActions" visibility="public" file="System.Actions.pas" line="382">
+    <parameters>
+      <parameter name="AClasses" paramflags="const">
+        <array name="AClasses" file="System.Actions.pas" line="382">
+          <element type="TBasicActionClass"/>
+        </array>
+      </parameter>
+    </parameters>
+  </procedure>
+  <procedure name="EnumRegisteredActions" visibility="public" file="System.Actions.pas" line="390">
+    <parameters>
+      <parameter name="Proc" type="TEnumActionProc"/>
+      <parameter name="Info" type="Pointer"/>
+      <parameter name="FrameworkType" type="string">
+        <value>
+          
+        </value>
+      </parameter>
+    </parameters>
+  </procedure>
+  <function name="CreateAction" visibility="public" file="System.Actions.pas" line="398">
+    <parameters>
+      <parameter name="AOwner" type="TComponent"/>
+      <parameter name="ActionClass" type="TBasicActionClass"/>
+      <parameter name="FrameworkType" type="string">
+        <value>
+          
+        </value>
+      </parameter>
+      <retval type="TBasicAction"/>
+    </parameters>
+  </function>
+  <function name="RegisterShortCut" visibility="public" file="System.Actions.pas" line="1279">
+    <parameters>
+      <parameter name="ShortCut" type="TShortCut"/>
+      <parameter name="Index" type="Integer">
+        <value>
+          $FFFFFFFF
+        </value>
+      </parameter>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <function name="UnregisterShortCut" visibility="public" file="System.Actions.pas" line="1301">
+    <parameters>
+      <parameter name="ShortCut" type="TShortCut"/>
+      <retval type="Boolean"/>
+    </parameters>
+  </function>
+  <function name="RegisteredShortCutCount" visibility="public" file="System.Actions.pas" line="1318">
+    <parameters>
+      <retval type="Integer"/>
+    </parameters>
+  </function>
+  <function name="RegisteredShortCut" visibility="public" file="System.Actions.pas" line="1326">
+    <parameters>
+      <parameter name="Index" type="Integer"/>
+      <retval type="TShortCut"/>
+    </parameters>
+  </function>
+</namespace>
