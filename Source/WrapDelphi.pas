@@ -4005,6 +4005,7 @@ end;
 class procedure TPyDelphiObject.SetupType(APythonType: TPythonType);
 var
   _ContainerAccessClass : TContainerAccessClass;
+  TypeName: string;
   PyWrapper: TPyDelphiWrapper;
   NearestAncestorClass: TClass;
   RegisteredClass: TRegisteredClass;
@@ -4015,7 +4016,17 @@ var
   {$ENDIF EXTENDED_RTTI}
 begin
   inherited;
-  APythonType.TypeName := AnsiString(GetTypeName);
+  // Deal with generics
+  TypeName := GetTypeName;
+  if Pos('<', TypeName) > 0 then
+  begin
+    TypeName := StringReplace(TypeName, '<', '_', [rfReplaceAll]);
+    TypeName := StringReplace(TypeName, '>', '_', [rfReplaceAll]);
+    TypeName := StringReplace(TypeName, '.', '_', [rfReplaceAll]);
+    TypeName := StringReplace(TypeName, ',', '_', [rfReplaceAll]);
+  end;
+
+  APythonType.TypeName := AnsiString(TypeName);
   APythonType.Name := string(APythonType.TypeName) + TPythonType.TYPE_COMP_NAME_SUFFIX;
   APythonType.GenerateCreateFunction := False;
   APythonType.DocString.Text := 'Wrapper for Pascal class ' + DelphiObjectClass.ClassName;
