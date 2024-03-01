@@ -425,25 +425,14 @@ begin
 end;
 
 procedure TTestWrapDelphi.TestDynArrayParameters;
-{var
-  rc: TRttiContext;
-  rt: TRttiType;
-  rm: TRttiMethod;
-  rp: TArray<TRttiParameter>;
-  ra: TArray<TValue>;}
 begin
-{  rc := TRttiContext.Create;
-  rt := rc.GetType(TypeInfo(TTestRttiAccess));
-  rm := rt.GetMethod('SellFruitsInt');
-  rp := rm.GetParameters;
-  SetLength(ra, 1);
-  ra[0] := TValue.FromArray(TypeInfo(TIntegerDynArray), [TValue.From<Integer>(0)]);
-  rm.Invoke(TestRttiAccess, ra);}
+  // Integer dynamic array parameter
   TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
-  Rtti_Var.SellFruitsInt(VarPythonCreate([0, 1], stList));
+  Rtti_Var.SellFruitsInt(VarPythonCreate([Ord(TFruit.Apple), Ord(TFruit.Banana)], stList));
   Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
+  // Enumeration dynamic array parameter
   TestRttiAccess.Fruits := [TFruit.Apple, TFruit.Banana, TFruit.Orange];
-  Rtti_Var.SellFruits(VarPythonCreate([Ord(TFruit.Apple), Ord(TFruit.Banana)], stList));
+  Rtti_Var.SellFruits(VarPythonCreate(['Apple', 'Banana'], stList));
   Assert.IsTrue(TestRttiAccess.Fruits = [Orange]);
 end;
 

@@ -1937,18 +1937,25 @@ begin
 end;
 
 {$IFDEF EXTENDED_RTTI}
-function DynArrayToPython(const Value: TValue): PPyObject;
+function DynArrayToPython(const Value: TValue; DelphiWrapper: TPyDelphiWrapper;
+  out ErrMsg: string): PPyObject;
 var
   I: Integer;
-  V: Variant;
   PyEngine: TPythonEngine;
+  PyObj: PPyObject;
 begin
   PyEngine := GetPythonEngine();
   Result := PyEngine.PyList_New(Value.GetArrayLength);
   for I := 0 to Value.GetArrayLength() - 1 do
   begin
-    V := Value.GetArrayElement(i).AsVariant;
-    PyEngine.PyList_SetItem(Result, I, PyEngine.VariantAsPyObject(V));
+    PyObj := TValueToPyObject(Value.GetArrayElement(i), DelphiWrapper, ErrMsg);
+    if not Assigned(PyObj) then
+    begin
+      PyEngine.Py_DECREF(Result);
+      Result := nil;
+      Break;
+    end;
+    PyEngine.PyList_SetItem(Result, I, PyObj);
   end;
 end;
 
@@ -1986,14 +1993,8 @@ begin
           Result := SetToPython(Value.TypeData.CompType^,
             PInteger(Value.GetReferenceToRawData)^);
         end;
-      tkArray, tkDynArray:
-        Result := DynArrayToPython(Value);
-      tkClass, tkMethod,
-      tkRecord, tkInterface, {$IFDEF MANAGED_RECORD} tkMRecord,{$ENDIF}
-      tkClassRef, tkPointer, tkProcedure:
-        ErrMsg := rs_ErrValueToPython;
     else
-      ErrMsg := rs_ErrUnexpected;
+      ErrMsg := rs_ErrValueToPython;
     end;
   except
     on E: Exception do begin
@@ -2128,9 +2129,10 @@ var
   Arr: array of TValue;
   I: Integer;
   elType: PPTypeInfo;
-  V: Variant;
-  Num: Int64;
   PyEngine: TPythonEngine;
+  RttiContext: TRttiContext;
+  ElementType: TRttiType;
+  ArrElem: PPyObject;
 begin
   Result := False;
   PyEngine := GetPythonEngine;
@@ -2149,18 +2151,17 @@ begin
   if elType = nil then
     Exit;
 
+  ElementType := RttiContext.GetType(elType^);
+  if ElementType = nil then
+    Exit;
+
   try
     SetLength(Arr, PyEngine.PySequence_Length(PyValue));
     for I := 0 to PyEngine.PySequence_Length(PyValue) - 1 do
     begin
-      V := PyEngine.GetSequenceItem(PyValue, i);
-      if elType^.Kind = tkEnumeration then
-      begin
-        Num := TValue.FromVariant(V).Cast(TypeInfo(Int64)).AsInt64;
-        Arr[i] := TValue.FromOrdinal(elType^, Num);
-      end
-      else
-        Arr[i] := TValue.FromVariant(V).Cast(elType^);
+      ArrElem := PyEngine.PySequence_GetItem(PyValue, I);
+      if not PyObjectToTValue(ArrElem, ElementType, Arr[I], ErrMsg) then
+        Break;
     end;
     ParamValue := TValue.FromArray(RttiType.Handle, Arr);
     Result := True;
@@ -2169,7 +2170,7 @@ begin
   end;
 end;
 
-function PyObjectToTValue(PyArg : PPyObject; ArgType: TRttiType;
+function PyObjectToTValue(PyArg: PPyObject; ArgType: TRttiType;
   out Arg: TValue; out ErrMsg: string): Boolean;
 var
   Obj: TObject;
@@ -2245,6 +2246,8 @@ begin
       tkInterface: Result := DelphiWrapper.WrapInterface(Value);
       tkRecord{$IFDEF MANAGED_RECORD},tkMRecord{$ENDIF}:
         Result := DelphiWrapper.WrapRecord(Value);
+      tkArray, tkDynArray:
+        Result := DynArrayToPython(Value, DelphiWrapper, ErrMsg);
     else
       Result := SimpleValueToPython(Value, ErrMsg);
     end;
