@@ -9829,10 +9829,10 @@ end;
 
 type
   TPyEngineAndGIL = class(TInterfacedObject, IPyEngineAndGIL)
-  fPythonEngine: TPythonEngine;
-  fThreadState: PPyThreadState;
-  fGILState: PyGILstate_STATE;
   private
+    fPythonEngine: TPythonEngine;
+    fThreadState: PPyThreadState;
+    fGILState: PyGILstate_STATE;
     function GetPyEngine: TPythonEngine;
     function GetThreadState: PPyThreadState;
   public
