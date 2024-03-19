@@ -1511,11 +1511,14 @@ var
 begin
   Result := nil;
   if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, LOutMsg) then
-  begin
+  try
     if FRttiMember is TRttiProperty then
       Result := GetRttiProperty(Obj, TRttiProperty(FRttiMember), FPyDelphiWrapper, LOutMsg)
     else if FRttiMember is TRttiField then
       Result := GetRttiField(Obj, TRttiField(FRttiMember), FPyDelphiWrapper, LOutMsg);
+  except
+    on E: Exception do
+      LOutMsg := E.Message;
   end;
 
   if not Assigned(Result) then
@@ -1531,13 +1534,16 @@ var
 begin
   Result := -1;
   if ValidateClassProperty(AObj, FParentRtti.Handle, Obj, ErrMsg) then
-  begin
+  try
     if ((FRttiMember is TRttiProperty) and SetRttiProperty(Obj,
       TRttiProperty(FRttiMember), AValue, FPyDelphiWrapper, ErrMsg)) or
       ((FRttiMember is TRttiField) and SetRttiField(Obj,
       TRttiField(FRttiMember), AValue, FPyDelphiWrapper, ErrMsg))
     then
       Result := 0
+  except
+    on E: Exception do
+      ErrMsg := E.Message;
   end;
 
   if Result <> 0 then
