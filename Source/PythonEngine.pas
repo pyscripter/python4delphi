@@ -5182,7 +5182,7 @@ var
 begin
   SL := TStringList.Create;
   try
-    SL.LoadFromFile(FileName);
+    SL.LoadFromFile(FileName, TEncoding.UTF8);
     ExecStrings(SL, locals, globals, FileName);
   finally
     SL.Free;
