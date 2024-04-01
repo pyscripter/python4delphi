@@ -1961,7 +1961,8 @@ const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
 type
   TEngineClient = class;
-  TSysPathInitEvent = procedure ( Sender : TObject; PathList : PPyObject ) of Object;
+  TSysPathInitEvent = procedure(Sender: TObject; PathList: PPyObject) of object;
+  TConfigInitEvent = procedure(Sender: TObject; var Config: PyConfig) of object;
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
                  pfFrozenFlag, pfIgnoreEnvironmentFlag, pfIsolated);
   TPythonFlags = set of TPythonFlag;
@@ -2013,6 +2014,7 @@ type
     FPythonHome:                 UnicodeString;
     FPythonPath:                 UnicodeString;
     FOnSysPathInit:              TSysPathInitEvent;
+    FOnConfigInit:               TConfigInitEvent;
     FTraceback:                  TPythonTraceback;
     FUseWindowsConsole:          Boolean;
     FGlobalVars:                 PPyObject;
@@ -2163,6 +2165,8 @@ type
     property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
     property OnAfterInit: TNotifyEvent read FOnAfterInit write FOnAfterInit;
     property OnSysPathInit: TSysPathInitEvent read FOnSysPathInit write FOnSysPathInit;
+    property OnConfigInit: TConfigInitEvent read FOnConfigInit write FOnConfigInit;
+
   end;
 
 
@@ -4788,6 +4792,10 @@ begin
 
       // PythonPath
       SetPythonPath(Config);
+
+      // Fine tune Config
+      if Assigned(FOnConfigInit) then
+        FOnConfigInit(Self, Config);
 
       Py_InitializeFromConfig(Config);
     finally
