@@ -73,59 +73,47 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
     (
-    (DllName: 'python33.dll'; RegVersion: '3.3'; APIVersion: 1013),
-    (DllName: 'python34.dll'; RegVersion: '3.4'; APIVersion: 1013),
-    (DllName: 'python35.dll'; RegVersion: '3.5'; APIVersion: 1013),
-    (DllName: 'python36.dll'; RegVersion: '3.6'; APIVersion: 1013),
-    (DllName: 'python37.dll'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'python311.dll'; RegVersion: '3.11'; APIVersion: 1013),
-    (DllName: 'python312.dll'; RegVersion: '3.12'; APIVersion: 1013)
+    (DllName: 'python312.dll'; RegVersion: '3.12'; APIVersion: 1013),
+    (DllName: 'python313.dll'; RegVersion: '3.13'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
     (
-    (DllName: 'libpython3.3m.so'; RegVersion: '3.3'; APIVersion: 1013),
-    (DllName: 'libpython3.4m.so'; RegVersion: '3.4'; APIVersion: 1013),
-    (DllName: 'libpython3.5m.so'; RegVersion: '3.5'; APIVersion: 1013),
-    (DllName: 'libpython3.6m.so'; RegVersion: '3.6'; APIVersion: 1013),
-    (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
-    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013)
+    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013),
+    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
     (
-    (DllName: 'libpython3.3.dylib'; RegVersion: '3.3'; APIVersion: 1013),
-    (DllName: 'libpython3.4.dylib'; RegVersion: '3.4'; APIVersion: 1013),
-    (DllName: 'libpython3.5.dylib'; RegVersion: '3.5'; APIVersion: 1013),
-    (DllName: 'libpython3.6.dylib'; RegVersion: '3.6'; APIVersion: 1013),
-    (DllName: 'libpython3.7.dylib'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.dylib'; RegVersion: '3.11'; APIVersion: 1013),
-    (DllName: 'libpython3.12.dylib'; RegVersion: '3.12'; APIVersion: 1013)
+    (DllName: 'libpython3.12.dylib'; RegVersion: '3.12'; APIVersion: 1013),
+    (DllName: 'libpython3.13.dylib'; RegVersion: '3.13'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[5..10] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
     (
-    (DllName: 'libpython3.7m.so'; RegVersion: '3.7'; APIVersion: 1013),
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
     (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013)
+    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013)
     );
 {$ENDIF}
 
@@ -966,6 +954,7 @@ type
   end;
 
   //initconfig.h
+  //See https://docs.python.org/3/c-api/init_config.html
 
 const
   _PyStatus_TYPE_OK = 0;
@@ -981,6 +970,92 @@ type
     err_msg: PAnsiChar;
     exitcode: Integer;
   end;
+
+ PPyWideStringList = ^PyWideStringList;
+ PyWideStringList = {$IFDEF CPUX86}packed{$ENDIF} record
+   length: Py_ssize_t;
+   items: PPWCharT;
+ end;
+
+ PPyConfig = ^PyConfig;
+ PyConfig = record
+    _config_init: Integer;
+    isolated: Integer;
+    use_environment: Integer;
+    dev_mode: Integer;
+    install_signal_handlers: Integer;
+    use_hash_seed: Integer;
+    hash_seed: C_ULong;
+    faulthandler: Integer;
+    tracemalloc: Integer;
+    perf_profiling: Integer;
+    import_time: Integer;
+    code_debug_ranges: Integer;
+    show_ref_count: Integer;
+    dump_refs: Integer;
+    dump_refs_file: PWCharT;
+    malloc_stats: Integer;
+    filesystem_encoding: PWCharT;
+    filesystem_errors: PWCharT;
+    pycache_prefix: PWCharT;
+    parse_argv: Integer;
+    orig_argv: PyWideStringList;
+    argv: PyWideStringList;
+    xoptions: PyWideStringList;
+    warnoptions: PyWideStringList ;
+    site_import: Integer;
+    bytes_warning: Integer;
+    warn_default_encoding: Integer;
+    inspect: Integer;
+    interactive: Integer;
+    optimization_level: Integer;
+    parser_debug: Integer;
+    write_bytecode: Integer;
+    verbose: Integer;
+    quiet: Integer;
+    user_site_directory: Integer;
+    configure_c_stdio: Integer;
+    buffered_stdio: Integer;
+    stdio_encoding: PWCharT;
+    stdio_errors: PWCharT;
+    {$IFDEF MSWINDOWS}
+    legacy_windows_stdio: Integer;
+    {$ENDIF}
+    check_hash_pycs_mode: PWCharT;
+    use_frozen_modules: Integer;
+    safe_path: Integer;
+    int_max_str_digits: Integer;
+
+    (* --- Path configuration inputs ------------ *)
+    pathconfig_warnings: Integer;
+    program_name: PWCharT;
+    pythonpath_env: PWCharT;
+    home: PWCharT;
+    platlibdir: PWCharT;
+
+    (* --- Path configuration outputs ----------- *)
+    module_search_paths_set: Integer;
+    module_search_paths: PyWideStringList;
+    stdlib_dir: PWCharT;
+    executable: PWCharT;
+    base_executable: PWCharT;
+    prefix: PWCharT;
+    base_prefix: PWCharT;
+    exec_prefix: PWCharT;
+    base_exec_prefix: PWCharT;
+
+    (* --- Parameter only used by Py_Main() ---------- *)
+    kip_source_first_line: Integer;
+    un_command: PWCharT;
+    un_module: PWCharT;
+    un_filename: PWCharT;
+
+    (* --- Private fields ---------------------------- *)
+    install_importlib: Integer;
+    init_main: Integer;
+    is_python_build: Integer;
+end;
+
 
 //#######################################################
 //##                                                   ##
@@ -1355,15 +1430,6 @@ type
     procedure CheckPython;
 
   public
-    // define Python flags. See file pyDebug.h
-    Py_DebugFlag: PInteger;
-    Py_VerboseFlag: PInteger;
-    Py_InteractiveFlag: PInteger;
-    Py_OptimizeFlag: PInteger;
-    Py_NoSiteFlag: PInteger;
-    Py_FrozenFlag: PInteger;
-    Py_IgnoreEnvironmentFlag: PInteger;
-
     PyImport_FrozenModules: PP_frozen;
 
     Py_None:            PPyObject;
@@ -1771,6 +1837,18 @@ type
     PyGILState_Ensure               : function() : PyGILstate_STATE; cdecl;
     PyGILState_Release              : procedure(gilstate : PyGILState_STATE); cdecl;
 
+    // Initialization functions
+    PyWideStringList_Append         : function(var list: PyWideStringList; item: PWCharT): PyStatus; cdecl;
+    PyWideStringList_Insert         : function(var list: PyWideStringList; index: Py_ssize_t; item: PWCharT): PyStatus; cdecl;
+    PyConfig_InitPythonConfig       : procedure(var config: PyConfig); cdecl;
+    PyConfig_InitIsolatedConfig     : procedure(var config: PyConfig); cdecl;
+    PyConfig_Clear                  : procedure(var config: PyConfig); cdecl;
+    PyConfig_SetString              : function(var config: PyConfig; config_str: PPWCharT; str: PWCharT): PyStatus; cdecl;
+    PyConfig_Read                   : function(var config: PyConfig): PyStatus; cdecl;
+    PyConfig_SetArgv                : function(var config: PyConfig; argc: Py_ssize_t; argv: PPWCharT): PyStatus; cdecl;
+    PyConfig_SetWideStringList      : function(var config: PyConfig; list: PPyWideStringList; length: Py_ssize_t; items: PPWCharT): PyStatus; cdecl;
+    Py_InitializeFromConfig         : function({$IFDEF FPC}constref{$ELSE}[Ref] const{$ENDIF} config: PyConfig): PyStatus; cdecl;
+
   // Not exported in Python 3.8 and implemented as functions - this has been fixed
   // TODO - deal with the following:
   // the PyParser_* functions are deprecated in python 3.9 and will be removed in
@@ -1887,7 +1965,7 @@ type
   TPathInitializationEvent = procedure ( Sender : TObject; var Path : string ) of Object;
   TSysPathInitEvent = procedure ( Sender : TObject; PathList : PPyObject ) of Object;
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
-                 pfFrozenFlag, pfIgnoreEnvironmentFlag);
+                 pfFrozenFlag, pfIgnoreEnvironmentFlag, pfIsolated);
   TPythonFlags = set of TPythonFlag;
 
 
@@ -1974,14 +2052,14 @@ type
     procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
     procedure CheckRegistry;
-    procedure SetProgramArgs;
+    procedure SetProgramArgs(var Config: PyConfig);
     procedure InitWinConsole;
     procedure SetUseWindowsConsole( const Value : Boolean );
     procedure SetGlobalVars(const Value: PPyObject);
     procedure SetLocalVars(const Value: PPyObject);
     procedure SetPyFlags(const Value: TPythonFlags);
     procedure SetIO(InputOutput: TPythonInputOutput);
-    procedure AssignPyFlags;
+    procedure AssignPyFlags(var Config: PyConfig);
 
   public
     // Constructors & Destructors
@@ -3647,15 +3725,6 @@ end;
 
 procedure TPythonInterface.MapDll;
 begin
-  Py_DebugFlag               := Import('Py_DebugFlag');
-  Py_VerboseFlag             := Import('Py_VerboseFlag');
-  Py_InteractiveFlag         := Import('Py_InteractiveFlag');
-  Py_OptimizeFlag            := Import('Py_OptimizeFlag');
-  Py_NoSiteFlag              := Import('Py_NoSiteFlag');
-  Py_FrozenFlag              := Import('Py_FrozenFlag');
-
-  Py_IgnoreEnvironmentFlag   := Import('Py_IgnoreEnvironmentFlag');
-
   Py_None                    := Import('_Py_NoneStruct');
   Py_Ellipsis                := Import('_Py_EllipsisObject');
   Py_False                   := Import('_Py_FalseStruct');
@@ -4060,6 +4129,17 @@ begin
   PyErr_SetInterrupt       := Import('PyErr_SetInterrupt');
   PyGILState_Ensure        := Import('PyGILState_Ensure');
   PyGILState_Release       := Import('PyGILState_Release');
+
+  PyWideStringList_Append     := Import('PyWideStringList_Append');
+  PyWideStringList_Insert     := Import('PyWideStringList_Insert');
+  PyConfig_InitPythonConfig   := Import('PyConfig_InitPythonConfig');
+  PyConfig_InitIsolatedConfig := Import('PyConfig_InitIsolatedConfig');
+  PyConfig_Clear              := Import('PyConfig_Clear');
+  PyConfig_SetString          := Import('PyConfig_SetString');
+  PyConfig_Read               := Import('PyConfig_Read');
+  PyConfig_SetArgv            := Import('PyConfig_SetArgv');
+  PyConfig_SetWideStringList  := Import('PyConfig_SetWideStringList');
+  Py_InitializeFromConfig     := Import('Py_InitializeFromConfig');
 end;
 
 function TPythonInterface.Py_CompileString(str,filename:PAnsiChar;start:integer):PPyObject;
@@ -4596,25 +4676,15 @@ begin
   end;
 end;
 
-procedure TPythonEngine.AssignPyFlags;
-
-  procedure SetFlag( AFlag: PInteger; AValue : Boolean );
-  begin
-    if AValue then
-      AFlag^ := 1
-    else
-      AFlag^ := 0;
-  end;
-
+procedure TPythonEngine.AssignPyFlags(var Config: PyConfig);
 begin
-  // define each Python flag. See file pyDebug.h
-  SetFlag(Py_DebugFlag,       pfDebug in FPyFlags);
-  SetFlag(Py_VerboseFlag,     pfVerbose in FPyFlags);
-  SetFlag(Py_InteractiveFlag, pfInteractive in FPyFlags);
-  SetFlag(Py_OptimizeFlag,    pfOptimize in FPyFlags);
-  SetFlag(Py_NoSiteFlag,      pfNoSite in FPyFlags);
-  SetFlag(Py_FrozenFlag,      pfFrozenFlag in FPyFlags);
-  SetFlag(Py_IgnoreEnvironmentFlag, pfIgnoreEnvironmentFlag in FPyFlags);
+  Config.parser_debug := IfThen(pfDebug in FPyFlags, 1, 0);
+  Config.verbose := IfThen(pfVerbose in FPyFlags, 1, 0);
+  Config.interactive := IfThen(pfInteractive in FPyFlags, 1, 0);
+  Config.optimization_level := IfThen(pfOptimize in FPyFlags, 1, 0);
+  Config.site_import := IfThen(pfNoSite in FPyFlags, 0, 1);
+  Config.pathconfig_warnings := IfThen(pfFrozenFlag in FPyFlags, 1, 0);
+  Config.use_environment := IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
 end;
 
 procedure TPythonEngine.Initialize;
@@ -4689,6 +4759,7 @@ procedure TPythonEngine.Initialize;
 
 var
   i : Integer;
+  Config: PyConfig;
 begin
   if Assigned(gPythonEngine) then
     raise Exception.Create('There is already one instance of TPythonEngine running' );
@@ -4700,19 +4771,41 @@ begin
     FInitialized := True
   else
   begin
-    CheckRegistry;
-    if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
-      Py_SetProgramName(PWCharT(FProgramName));
-    AssignPyFlags;
-    if Length(FPythonHome) > 0 then
-      Py_SetPythonHome(PWCharT(FPythonHome));
-    Py_Initialize;
+//    CheckRegistry;
+//    if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
+//      Py_SetProgramName(PWCharT(FProgramName));
+//    AssignPyFlags;
+//    if Length(FPythonHome) > 0 then
+//      Py_SetPythonHome(PWCharT(FPythonHome));
+//    Py_Initialize;
+
+    // Fills Config with zeros and then sets some default values
+    if pfIsolated in FPyFlags then
+      PyConfig_InitIsolatedConfig(Config)
+    else
+      PyConfig_InitPythonConfig(Config);
+    try
+      AssignPyFlags(Config);
+
+      // Set programname and pythonhome if available
+      if Length(FProgramName) > 0 then
+        PyConfig_SetString(Config, @Config.program_name, PWCharT(FProgramName));
+      if Length(FPythonHome) > 0 then
+        PyConfig_SetString(Config, @Config.program_name, PWCharT(FPythonHome));
+
+      // Set program arguments (sys.argv)
+      SetProgramArgs(Config);
+
+      Py_InitializeFromConfig(Config);
+    finally
+      PyConfig_Clear(Config);
+    end;
+
     if Assigned(Py_IsInitialized) then
       FInitialized := Py_IsInitialized() <> 0
     else
       FInitialized := True;
     InitSysPath;
-    SetProgramArgs;
     if InitThreads and Assigned(PyEval_InitThreads) then
       PyEval_InitThreads;
     if RedirectIO and Assigned(FIO) then
@@ -4842,20 +4935,16 @@ begin
 {$ENDIF}
 end;
 
-procedure TPythonEngine.SetProgramArgs;
+procedure TPythonEngine.SetProgramArgs(var Config: PyConfig);
 var
-  I, argc : Integer;
-  wargv : array of PWCharT;
-  WL : array of WCharTString;
+  I: Integer;
   TempS: UnicodeString;
+  Str: WCharTString;
+
 begin
-  // we build a string list of the arguments, because ParamStr returns a volatile string
-  // and we want to build an array of PWCharT, pointing to valid strings.
-  argc := ParamCount;
-  SetLength(wargv, argc + 1);
-  // build the PWCharT array
-  SetLength(WL, argc+1);
-  for I := 0 to argc do begin
+  Config.parse_argv := 0; // do not parse
+  for I := 0 to ParamCount do
+  begin
     {
        ... the first entry should refer to the script file to be executed rather
        than the executable hosting the Python interpreter. If there isn’t a
@@ -4866,14 +4955,12 @@ begin
     else
       TempS := ParamStr(I);
     {$IFDEF POSIX}
-    WL[I] := UnicodeStringToUCS4String(TempS);
+    Str := UnicodeStringToUCS4String(TempS);
     {$ELSE}
-    WL[I] := UnicodeString(TempS);
+    Str := TempS;
     {$ENDIF}
-    wargv[I] := PWCharT(WL[I]);
-  end;
-  // set the argv list of the sys module with the application arguments
-  PySys_SetArgv( argc + 1, PPWCharT(wargv) );
+    PyWideStringList_Append(Config.argv, PWCharT(Str));
+   end;
 end;
 
 procedure TPythonEngine.InitWinConsole;
