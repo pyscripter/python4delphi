@@ -2011,8 +2011,8 @@ type
     FClients:                    TList;
     FExecModule:                 AnsiString;
     FAutoFinalize:               Boolean;
-    FProgramName:                WCharTString;
-    FPythonHome:                 WCharTString;
+    FProgramName:                UnicodeString;
+    FPythonHome:                 UnicodeString;
     FPythonPath:                 WCharTString;
     FInitThreads:                Boolean;
     FOnPathInitialization:       TPathInitializationEvent;
@@ -2033,8 +2033,6 @@ type
     FPyDateTime_TZInfoType:      PPyObject;
     FPyDateTime_TimeTZType:      PPyObject;
     FPyDateTime_DateTimeTZType:  PPyObject;
-    function  GetPythonHome: UnicodeString;
-    function  GetProgramName: UnicodeString;
     function GetPythonPath: UnicodeString;
     procedure SetPythonPath(const Value: UnicodeString);
 
@@ -2074,7 +2072,6 @@ type
     function   Run_CommandAsObjectWithDict(const command: AnsiString; mode: Integer; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject;
     function   EncodeString (const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
     {$IFDEF FPC}
-    overload;
     function   EncodeString (const str: AnsiString): AnsiString; overload;
     {$ENDIF}
     function   EncodeWindowsFilePath(const str: string): AnsiString;
@@ -2157,8 +2154,8 @@ type
     property LocalVars : PPyObject read FLocalVars Write SetLocalVars;
     property GlobalVars : PPyObject read FGlobalVars Write SetGlobalVars;
     property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
-    property PythonHome: UnicodeString read GetPythonHome write SetPythonHome;
-    property ProgramName: UnicodeString read GetProgramName write SetProgramName;
+    property PythonHome: UnicodeString read FPythonHome write SetPythonHome;
+    property ProgramName: UnicodeString read FProgramName write SetProgramName;
     property PythonPath: UnicodeString read GetPythonPath write SetPythonPath;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
@@ -2992,6 +2989,7 @@ procedure PythonVersionFromDLLName(LibName: string; out MajorVersion, MinorVersi
 function PythonVersionFromRegVersion(const ARegVersion: string;
   out AMajorVersion, AMinorVersion: integer): boolean;
 function PyStatus_Exception(const APyStatus: PyStatus): Boolean;
+function StringToWCharTString(Str: string): WcharTString;
 
 //#######################################################
 //##                                                   ##
@@ -4692,19 +4690,7 @@ procedure TPythonEngine.Initialize;
   procedure InitSysPath;
   var
     _path : PPyObject;
-  const Script =
-    'import sys' + sLineBreak +
-    'sys.executable = r"%s"' + sLineBreak +
-    'path = sys.path' + sLineBreak +
-    'for i in range(len(path)-1, -1, -1):' + sLineBreak +
-    '    if path[i].find("site-packages") > 0:' + sLineBreak +
-    '        path.pop(i)' + sLineBreak +
-    'import site' + sLineBreak +
-    'site.main()' + sLineBreak +
-    'del sys, path, i, site';
   begin
-     if VenvPythonExe <> '' then
-       ExecString(AnsiString(Format(Script, [VenvPythonExe])));
     _path := PySys_GetObject('path');
     if Assigned(FOnSysPathInit) then
       FOnSysPathInit(Self, _path);
@@ -4788,11 +4774,18 @@ begin
       AssignPyFlags(Config);
 
       // Set programname and pythonhome if available
-      if Length(FProgramName) > 0 then
-        PyConfig_SetString(Config, @Config.program_name, PWCharT(FProgramName));
-      if Length(FPythonHome) > 0 then
-        PyConfig_SetString(Config, @Config.program_name, PWCharT(FPythonHome));
+      if FProgramName <> '' then
+        PyConfig_SetString(Config, @Config.program_name,
+          PWCharT(StringToWCharTString(FProgramName)));
+      if FPythonHome <> '' then
+        PyConfig_SetString(Config, @Config.program_name,
+          PWCharT(StringToWCharTString(FPythonHome)));
+      // Set venv executable if available
+      if FVenvPythonExe <> '' then
+        PyConfig_SetString(Config, @Config.program_name,
+          PWCharT(StringToWCharTString(FVenvPythonExe)));
 
+      PyConfig_Read(Config);
       // Set program arguments (sys.argv)
       SetProgramArgs(Config);
 
@@ -5025,18 +5018,6 @@ begin
   end; // of if
 end;
 
-function  TPythonEngine.GetPythonHome: UnicodeString;
-begin
-{$IFDEF POSIX}
-  if Length(FPythonHome) = 0 then
-    Result := ''
-  else
-    Result := UCS4StringToUnicodeString(FPythonHome);
-{$ELSE}
-  Result := FPythonHome;
-{$ENDIF}
-end;
-
 function TPythonEngine.GetPythonPath: UnicodeString;
 begin
 {$IFDEF POSIX}
@@ -5060,18 +5041,6 @@ function TPythonEngine.GetSequenceItem(sequence: PPyObject;
     finally
       Py_XDecRef( val );
     end;
-end;
-
-function  TPythonEngine.GetProgramName: UnicodeString;
-begin
-{$IFDEF POSIX}
-  if Length(FProgramName) = 0 then
-    Result := ''
-  else
-    Result := UCS4StringToUnicodeString(FProgramName);
-{$ELSE}
-  Result := FProgramName;
-{$ENDIF}
 end;
 
 procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
@@ -9914,6 +9883,15 @@ end;
 function PyStatus_Exception(const APyStatus: PyStatus): Boolean;
 begin
   Result := APyStatus._type <> _PyStatus_TYPE_OK;
+end;
+
+function StringToWCharTString(Str: string): WcharTString;
+begin
+  {$IFDEF POSIX}
+  Result := UnicodeStringToUCS4String(UnicodeString(Str));
+  {$ELSE}
+  Result := Str;
+  {$ENDIF}
 end;
 
 { TPyEngineAndGIL - Internal class for SafePythonEngine }
