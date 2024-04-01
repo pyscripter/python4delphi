@@ -1962,7 +1962,6 @@ const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
 type
   TEngineClient = class;
-  TPathInitializationEvent = procedure ( Sender : TObject; var Path : string ) of Object;
   TSysPathInitEvent = procedure ( Sender : TObject; PathList : PPyObject ) of Object;
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
                  pfFrozenFlag, pfIgnoreEnvironmentFlag, pfIsolated);
@@ -2015,7 +2014,6 @@ type
     FPythonHome:                 UnicodeString;
     FPythonPath:                 WCharTString;
     FInitThreads:                Boolean;
-    FOnPathInitialization:       TPathInitializationEvent;
     FOnSysPathInit:              TSysPathInitEvent;
     FTraceback:                  TPythonTraceback;
     FUseWindowsConsole:          Boolean;
@@ -2049,7 +2047,6 @@ type
     function  GetClients( idx : Integer ) : TEngineClient;
     procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
-    procedure CheckRegistry;
     procedure SetProgramArgs(var Config: PyConfig);
     procedure InitWinConsole;
     procedure SetUseWindowsConsole( const Value : Boolean );
@@ -2168,7 +2165,6 @@ type
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
     property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
     property OnAfterInit: TNotifyEvent read FOnAfterInit write FOnAfterInit;
-    property OnPathInitialization: TPathInitializationEvent read FOnPathInitialization write FOnPathInitialization;
     property OnSysPathInit: TSysPathInitEvent read FOnSysPathInit write FOnSysPathInit;
   end;
 
@@ -4757,14 +4753,6 @@ begin
     FInitialized := True
   else
   begin
-//    CheckRegistry;
-//    if Assigned(Py_SetProgramName) and (Length(FProgramName) > 0) then
-//      Py_SetProgramName(PWCharT(FProgramName));
-//    AssignPyFlags;
-//    if Length(FPythonHome) > 0 then
-//      Py_SetPythonHome(PWCharT(FPythonHome));
-//    Py_Initialize;
-
     // Fills Config with zeros and then sets some default values
     if pfIsolated in FPyFlags then
       PyConfig_InitIsolatedConfig(Config)
@@ -4870,62 +4858,6 @@ begin
   inherited;
   if (Operation = opRemove) and (AComponent = IO) then
     IO := nil
-end;
-
-procedure TPythonEngine.CheckRegistry;
-{$IFDEF MSWINDOWS}
-var
-  key : string;
-  Path : string;
-  NewPath : string;
-{$IFDEF CPUX86}
-  LMajorVersion : integer;
-  LMinorVersion : integer;
-{$ENDIF}
-  VersionSuffix: string;
-{$ENDIF}
-begin
-{$IFDEF MSWINDOWS}
-  if Assigned( FOnPathInitialization ) then
-  try
-    with TRegistry.Create(KEY_ALL_ACCESS and not KEY_NOTIFY) do
-      try
-        VersionSuffix := '';
-{$IFDEF CPUX86}
-        PythonVersionFromRegVersion(RegVersion, LMajorVersion, LMinorVersion);
-        if (LMajorVersion > 3) or ((LMajorVersion = 3)  and (LMinorVersion >= 5)) then
-          VersionSuffix := '-32';
-{$ENDIF}
-        key := Format('\Software\Python\PythonCore\%s%s\PythonPath', [RegVersion, VersionSuffix]);
-
-        RootKey := HKEY_LOCAL_MACHINE;
-        if not KeyExists( key ) then
-        begin
-          // try a current user installation
-          RootKey := HKEY_CURRENT_USER;
-          if not KeyExists( key ) then  Exit;
-        end;
-        // Key found
-        OpenKey( key, True );
-        try
-          Path := ReadString('');
-          NewPath := Path;
-          FOnPathInitialization( Self, NewPath );
-          if NewPath <> Path then
-          begin
-            WriteString( '', NewPath );
-          end;
-        finally
-          CloseKey;
-        end;
-      finally
-        Free;
-      end;
-  except
-    // under WinNT, with a user without admin rights, the access to the
-    // LocalMachine keys would raise an exception.
-  end;
-{$ENDIF}
 end;
 
 procedure TPythonEngine.SetProgramArgs(var Config: PyConfig);
@@ -5045,11 +4977,7 @@ end;
 
 procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
-{$IFDEF POSIX}
-  FPythonHome :=  UnicodeStringToUCS4String(PythonHome);
-{$ELSE}
   FPythonHome :=  PythonHome;
-{$ENDIF}
 end;
 
 procedure TPythonEngine.SetPythonPath(const Value: UnicodeString);
@@ -5063,11 +4991,7 @@ end;
 
 procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
 begin
-{$IFDEF POSIX}
-  FProgramName := UnicodeStringToUCS4String(ProgramName);
-{$ELSE}
   FProgramName := ProgramName;
-{$ENDIF}
 end;
 
 function TPythonEngine.EvalPyFunction(pyfunc, pyargs:PPyObject): Variant;
