@@ -176,7 +176,6 @@ begin
   PythonEngine.UseLastKnownVersion := True;
 
   PythonEngine.AutoFinalize := True;
-  PythonEngine.InitThreads := True;
   PythonEngine.PyFlags := [pfInteractive];
   PythonEngine.LoadDll;
 

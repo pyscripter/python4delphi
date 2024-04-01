@@ -165,7 +165,6 @@ object ThreadSortForm: TThreadSortForm
     OnClick = SaveBtnClick
   end
   object PythonEngine1: TPythonEngine
-    InitThreads = True
     RedirectIO = False
     Left = 16
     Top = 32

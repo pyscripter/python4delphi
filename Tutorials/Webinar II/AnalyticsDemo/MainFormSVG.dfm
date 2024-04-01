@@ -254,7 +254,6 @@ object Form1: TForm1
     Top = 89
   end
   object PythonEngine1: TPythonEngine
-    InitThreads = True
     IO = PythonGUIInputOutput1
     Left = 632
     Top = 136

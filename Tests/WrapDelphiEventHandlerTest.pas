@@ -215,7 +215,6 @@ begin
   PythonEngine.FatalMsgDlg := True;
   PythonEngine.UseLastKnownVersion := True;
   PythonEngine.AutoFinalize := True;
-  PythonEngine.InitThreads := True;
   PythonEngine.PyFlags := [pfInteractive];
   DelphiModule := TPythonModule.Create(nil);
   DelphiModule.Name := 'DelphiModule';

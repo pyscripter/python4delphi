@@ -171,7 +171,6 @@ object ThreadSortForm: TThreadSortForm
     OnClick = StopBtnClick
   end
   object PythonEngine1: TPythonEngine
-    InitThreads = True
     PyFlags = [pfDebug, pfInteractive, pfVerbose]
     RedirectIO = False
     Left = 16

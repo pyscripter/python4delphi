@@ -1605,7 +1605,6 @@ type
     PyEval_GetGlobals:function :PPyObject; cdecl;
     PyEval_GetLocals:function :PPyObject; cdecl;
 
-    PyEval_InitThreads:procedure; cdecl;
     PyEval_RestoreThread:procedure( tstate: PPyThreadState); cdecl;
     PyEval_SaveThread:function :PPyThreadState; cdecl;
 
@@ -2013,7 +2012,6 @@ type
     FProgramName:                UnicodeString;
     FPythonHome:                 UnicodeString;
     FPythonPath:                 WCharTString;
-    FInitThreads:                Boolean;
     FOnSysPathInit:              TSysPathInitEvent;
     FTraceback:                  TPythonTraceback;
     FUseWindowsConsole:          Boolean;
@@ -2042,7 +2040,6 @@ type
     procedure DoOpenDll(const aDllName : string); override;
     procedure SetInitScript(Value: TStrings);
     function  GetThreadState: PPyThreadState;
-    procedure SetInitThreads(Value: Boolean);
     function  GetClientCount : Integer;
     function  GetClients( idx : Integer ) : TEngineClient;
     procedure Notification(AComponent: TComponent;
@@ -2159,7 +2156,6 @@ type
     property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
     property DatetimeConversionMode: TDatetimeConversionMode read FDatetimeConversionMode write FDatetimeConversionMode default DEFAULT_DATETIME_CONVERSION_MODE;
     property InitScript: TStrings read FInitScript write SetInitScript;
-    property InitThreads: Boolean read FInitThreads write SetInitThreads default False;
     property IO: TPythonInputOutput read FIO write SetIO;
     property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default [];
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
@@ -3880,7 +3876,6 @@ begin
   PyEval_GetFrame           := Import('PyEval_GetFrame');
   PyEval_GetGlobals         := Import('PyEval_GetGlobals');
   PyEval_GetLocals          := Import('PyEval_GetLocals');
-  PyEval_InitThreads        := Import('PyEval_InitThreads');
   PyEval_RestoreThread      := Import('PyEval_RestoreThread');
   PyEval_SaveThread         := Import('PyEval_SaveThread');
   PyFile_GetLine            := Import('PyFile_GetLine');
@@ -4555,7 +4550,6 @@ begin
   FRedirectIO              := True;
   FExecModule              := '__main__';
   FAutoFinalize            := True;
-  FInitThreads             := False;
   FTraceback               := TPythonTraceback.Create;
   FUseWindowsConsole       := False;
   FPyFlags                 := [];
@@ -4787,8 +4781,6 @@ begin
     else
       FInitialized := True;
     InitSysPath;
-    if InitThreads and Assigned(PyEval_InitThreads) then
-      PyEval_InitThreads;
     if RedirectIO and Assigned(FIO) then
       DoRedirectIO;
   end;
@@ -4818,16 +4810,6 @@ begin
     Result := PyThreadState_Get
   else
     Result := nil;
-end;
-
-procedure TPythonEngine.SetInitThreads(Value: Boolean);
-begin
-  if Value <> FInitThreads then
-  begin
-    if Value and Assigned(PyEval_InitThreads) then
-      PyEval_InitThreads;
-    FInitThreads := Value;
-  end;
 end;
 
 procedure TPythonEngine.SetIO(InputOutput: TPythonInputOutput);
