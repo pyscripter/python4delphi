@@ -2011,7 +2011,7 @@ type
     FAutoFinalize:               Boolean;
     FProgramName:                UnicodeString;
     FPythonHome:                 UnicodeString;
-    FPythonPath:                 WCharTString;
+    FPythonPath:                 UnicodeString;
     FOnSysPathInit:              TSysPathInitEvent;
     FTraceback:                  TPythonTraceback;
     FUseWindowsConsole:          Boolean;
@@ -2029,8 +2029,6 @@ type
     FPyDateTime_TZInfoType:      PPyObject;
     FPyDateTime_TimeTZType:      PPyObject;
     FPyDateTime_DateTimeTZType:  PPyObject;
-    function GetPythonPath: UnicodeString;
-    procedure SetPythonPath(const Value: UnicodeString);
 
   protected
     procedure  Initialize;
@@ -2150,7 +2148,10 @@ type
     property IOPythonModule: TObject read FIOPythonModule; {TPythonModule}
     property PythonHome: UnicodeString read FPythonHome write SetPythonHome;
     property ProgramName: UnicodeString read FProgramName write SetProgramName;
-    property PythonPath: UnicodeString read GetPythonPath write SetPythonPath;
+    // List of paths separated with the path delimiter
+    // If used with pfNoSite, it completely overwrites the pyhon path on initialization!
+    // For adding directories to sys.path use the OnSysPathInit event instead.
+    property PythonPath: UnicodeString read FPythonPath write FPythonPath;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
     property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
@@ -4686,6 +4687,21 @@ procedure TPythonEngine.Initialize;
       FOnSysPathInit(Self, _path);
   end;
 
+  procedure SetPythonPath(var Config: PyConfig);
+  var
+    Paths: TArray<string>;
+    I: Integer;
+  begin
+    if FPythonPath = '' then Exit;
+
+    Paths := FPythonPath.Split([PathSep], TStringSplitOptions.ExcludeLastEmpty);
+    for I := 0 to Length(Paths) - 1 do
+      PyWideStringList_Append(Config.module_search_paths,
+        PWCharT(StringToWCharTString(Paths[I])));
+    if Config.module_search_paths.length > 0 then
+      Config.module_search_paths_set := 1;
+  end;
+
   function GetVal(AModule : PPyObject; AVarName : AnsiString) : PPyObject;
   begin
     Result := PyObject_GetAttrString(AModule, PAnsiChar(AVarName));
@@ -4767,9 +4783,11 @@ begin
         PyConfig_SetString(Config, @Config.program_name,
           PWCharT(StringToWCharTString(FVenvPythonExe)));
 
-      PyConfig_Read(Config);
       // Set program arguments (sys.argv)
       SetProgramArgs(Config);
+
+      // PythonPath
+      SetPythonPath(Config);
 
       Py_InitializeFromConfig(Config);
     finally
@@ -4932,18 +4950,6 @@ begin
   end; // of if
 end;
 
-function TPythonEngine.GetPythonPath: UnicodeString;
-begin
-{$IFDEF POSIX}
-  if (Length(FPythonPath) > 0) then
-    Result := UCS4StringToUnicodeString(FPythonPath)
-  else
-    Result := '';
-{$ELSE}
-  Result := FPythonPath;
-{$ENDIF}
-end;
-
 function TPythonEngine.GetSequenceItem(sequence: PPyObject;
   idx: Integer): Variant;
   var
@@ -4960,15 +4966,6 @@ end;
 procedure TPythonEngine.SetPythonHome(const PythonHome: UnicodeString);
 begin
   FPythonHome :=  PythonHome;
-end;
-
-procedure TPythonEngine.SetPythonPath(const Value: UnicodeString);
-begin
-{$IFDEF POSIX}
-  FPythonPath :=  UnicodeStringToUCS4String(Value);
-{$ELSE}
-  FPythonPath :=  Value;
-{$ENDIF}
 end;
 
 procedure TPythonEngine.SetProgramName(const ProgramName: UnicodeString);
