@@ -86,7 +86,7 @@ begin
     with GetPythonEngine do begin
       pargs := MakePyTuple([ExtractPythonObjectFrom(_im)]);
       try
-        presult := PyEval_CallObjectWithKeywords(
+        presult := PyObject_Call(
             ExtractPythonObjectFrom(MainModule.ImageToBytes), pargs, nil);
         try
           if PyBytes_AsStringAndSize(presult, P, Len) < 0 then begin

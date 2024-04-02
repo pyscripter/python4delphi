@@ -979,83 +979,68 @@ type
 
  PPyConfig = ^PyConfig;
  PyConfig = record
-    _config_init: Integer;
-    isolated: Integer;
-    use_environment: Integer;
-    dev_mode: Integer;
-    install_signal_handlers: Integer;
-    use_hash_seed: Integer;
-    hash_seed: C_ULong;
-    faulthandler: Integer;
-    tracemalloc: Integer;
-    perf_profiling: Integer;
-    import_time: Integer;
-    code_debug_ranges: Integer;
-    show_ref_count: Integer;
-    dump_refs: Integer;
-    dump_refs_file: PWCharT;
-    malloc_stats: Integer;
-    filesystem_encoding: PWCharT;
-    filesystem_errors: PWCharT;
-    pycache_prefix: PWCharT;
-    parse_argv: Integer;
-    orig_argv: PyWideStringList;
-    argv: PyWideStringList;
-    xoptions: PyWideStringList;
-    warnoptions: PyWideStringList ;
-    site_import: Integer;
-    bytes_warning: Integer;
-    warn_default_encoding: Integer;
-    inspect: Integer;
-    interactive: Integer;
-    optimization_level: Integer;
-    parser_debug: Integer;
-    write_bytecode: Integer;
-    verbose: Integer;
-    quiet: Integer;
-    user_site_directory: Integer;
-    configure_c_stdio: Integer;
-    buffered_stdio: Integer;
-    stdio_encoding: PWCharT;
-    stdio_errors: PWCharT;
+   // The definition of PyConfig has been changing in every python version
+   // So we make this structure opaque and we access its fields through
+   // the ConfigOffsets below
+   Filler: array [0..1000] of Byte;
+ end;
+
+{$SCOPEDENUMS ON}
+  TConfigFields = (
+    use_environment,
+    parse_argv,
+    argv,
+    site_import,
+    interactive,
+    optimization_level,
+    parser_debug,
+    verbose,
+    pathconfig_warnings,
+    program_name,
+    home,
+    module_search_paths_set,
+    module_search_paths,
+    executable);
+{$SCOPEDENUMS OFF}
+
+  TConfigOffsets = array [8..13] of array [TConfigFields] of Integer;
+
+  // The followng needs updating when new versions are added
+  const
+    ConfigOffests: TConfigOffsets =
     {$IFDEF MSWINDOWS}
-    legacy_windows_stdio: Integer;
+      {$IFDEF CPU64BITS}
+      ((8, 80, 88, 144, 156, 160, 164, 172, 216, 104, 232, 240, 248, 264),
+       (8, 80, 88, 144, 156, 160, 164, 172, 216, 104, 232, 240, 248, 264),
+       (8, 80, 104, 152, 168, 172, 176, 184, 232, 240, 256, 272, 280, 296),
+       (8, 96, 120, 168, 184, 188, 192, 200, 264, 272, 288, 304, 312, 336),
+       (8, 96, 120, 168, 184, 188, 192, 200, 268, 272, 288, 304, 312, 336),
+       (8, 96, 120, 168, 184, 188, 192, 200, 272, 280, 296, 312, 320, 344));
+      {$ELSE}
+      ((8, 68, 72, 100, 112, 116, 120, 128, 164, 80, 172, 176, 180, 188),
+       (8, 68, 72, 100, 112, 116, 120, 128, 164, 80, 172, 176, 180, 188),
+       (8, 64, 76, 100, 116, 120, 124, 132, 168, 172, 180, 188, 192, 200),
+       (8, 72, 84, 108, 124, 128, 132, 140, 184, 188, 196, 204, 208, 220),
+       (8, 76, 88, 112, 128, 132, 136, 144, 192, 196, 204, 212, 216, 228),
+       (8, 76, 88, 112, 128, 132, 136, 144, 196, 200, 208, 216, 220, 232));
+      {$ENDIF}
+    {$ELSE}
+      {$IFDEF CPU64BITS}
+      ((8, 88, 96, 152, 164, 168, 172, 180, 224, 112, 240, 248, 256, 272),
+       (8, 88, 96, 152, 164, 168, 172, 180, 224, 112, 240, 248, 256, 272),
+       (8, 80, 104, 152, 168, 172, 176, 184, 232, 240, 256, 272, 280, 296),
+       (8, 96, 120, 168, 184, 188, 192, 200, 256, 264, 280, 296, 304, 328),
+       (8, 104, 128, 176, 192, 196, 200, 208, 268, 272, 288, 304, 312, 336),
+       (8, 104, 128, 176, 192, 196, 200, 208, 272, 280, 296, 312, 320, 344));
+      {$ELSE}
+      ((8, 68, 72, 100, 112, 116, 120, 128, 160, 80, 168, 172, 176, 184),
+       (8, 68, 72, 100, 112, 116, 120, 128, 160, 80, 168, 172, 176, 184),
+       (8, 64, 76, 100, 116, 120, 124, 132, 164, 168, 176, 184, 188, 196),
+       (8, 72, 84, 108, 124, 128, 132, 140, 180, 184, 192, 200, 204, 216),
+       (8, 76, 88, 112, 128, 132, 136, 144, 188, 192, 200, 208, 212, 224),
+       (8, 76, 88, 112, 128, 132, 136, 144, 192, 196, 204, 212, 216, 228));
+      {$ENDIF}
     {$ENDIF}
-    check_hash_pycs_mode: PWCharT;
-    use_frozen_modules: Integer;
-    safe_path: Integer;
-    int_max_str_digits: Integer;
-
-    (* --- Path configuration inputs ------------ *)
-    pathconfig_warnings: Integer;
-    program_name: PWCharT;
-    pythonpath_env: PWCharT;
-    home: PWCharT;
-    platlibdir: PWCharT;
-
-    (* --- Path configuration outputs ----------- *)
-    module_search_paths_set: Integer;
-    module_search_paths: PyWideStringList;
-    stdlib_dir: PWCharT;
-    executable: PWCharT;
-    base_executable: PWCharT;
-    prefix: PWCharT;
-    base_prefix: PWCharT;
-    exec_prefix: PWCharT;
-    base_exec_prefix: PWCharT;
-
-    (* --- Parameter only used by Py_Main() ---------- *)
-    kip_source_first_line: Integer;
-    un_command: PWCharT;
-    un_module: PWCharT;
-    un_filename: PWCharT;
-
-    (* --- Private fields ---------------------------- *)
-    install_importlib: Integer;
-    init_main: Integer;
-    is_python_build: Integer;
-end;
-
 
 //#######################################################
 //##                                                   ##
@@ -1583,7 +1568,6 @@ type
     PyBytes_AsString:    function( ob: PPyObject): PAnsiChar; cdecl;
     PyBytes_AsStringAndSize: function( ob: PPyObject; var buffer: PAnsiChar; var size: NativeInt): integer; cdecl;
     PyByteArray_AsString: function(ob: PPyObject): PAnsiChar; cdecl;
-    PySys_SetArgv:        procedure( argc: Integer; argv: PPWCharT); cdecl;
 
     PyCFunction_NewEx: function(md:PPyMethodDef;self, ob:PPyObject):PPyObject; cdecl;
 
@@ -1598,9 +1582,6 @@ type
       len: Py_ssize_t; readonly: Integer; flags: Integer): Integer; cdecl;
     PyBuffer_Release: procedure(view: PPy_buffer); cdecl;
 
-    // Removed.  Use PyEval_CallObjectWithKeywords with third argument nil
-    // PyEval_CallObject: function(callable_obj, args:PPyObject):PPyObject; cdecl;
-    PyEval_CallObjectWithKeywords:function (callable_obj, args, kw:PPyObject):PPyObject; cdecl;
     PyEval_GetFrame:function :PPyObject; cdecl;
     PyEval_GetGlobals:function :PPyObject; cdecl;
     PyEval_GetLocals:function :PPyObject; cdecl;
@@ -1760,7 +1741,6 @@ type
     PySet_Size: function(anyset: PPyObject): Py_ssize_t; cdecl;
     PySys_GetObject:function (s:PAnsiChar):PPyObject; cdecl;
     PySys_SetObject:function (s:PAnsiChar;ob:PPyObject):integer; cdecl;
-    PySys_SetPath:procedure(path:PAnsiChar); cdecl;
     PyTraceBack_Here:function (p:pointer):integer; cdecl;
     PyTraceBack_Print:function (ob1,ob2:PPyObject):integer; cdecl;
     PyTuple_GetItem:function (ob:PPyObject;i:NativeInt):PPyObject; cdecl;
@@ -1803,25 +1783,18 @@ type
     Py_GetCopyright                 : function : PAnsiChar; cdecl;
     Py_GetExecPrefix                : function : PWCharT; cdecl;
     Py_GetPath                      : function : PWCharT; cdecl;
-    Py_SetPath                      : procedure (path: PWCharT); cdecl;
-    Py_SetPythonHome                : procedure (home : PWCharT); cdecl;
     Py_GetPythonHome                : function : PWCharT; cdecl;
     Py_GetPrefix                    : function : PWCharT; cdecl;
     Py_GetProgramName               : function : PWCharT; cdecl;
 
-    PyParser_SimpleParseStringFlags : function ( str : PAnsiChar; start, flags : Integer) : PNode; cdecl;
-    PyNode_Free                     : procedure( n : PNode ); cdecl;
     PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
     PyMem_Malloc                    : function ( size : NativeUInt ) : Pointer;
 
-    Py_SetProgramName               : procedure( name: PWCharT); cdecl;
     Py_IsInitialized                : function : integer; cdecl;
     Py_GetProgramFullPath           : function : PAnsiChar; cdecl;
     Py_NewInterpreter               : function : PPyThreadState; cdecl;
     Py_NewInterpreterFromConfig     : function( tstate: PPyThreadState; config: PPyInterpreterConfig): PyStatus; cdecl;
     Py_EndInterpreter               : procedure( tstate: PPyThreadState); cdecl;
-    PyEval_AcquireLock              : procedure; cdecl;
-    PyEval_ReleaseLock              : procedure; cdecl;
     PyEval_AcquireThread            : procedure( tstate: PPyThreadState); cdecl;
     PyEval_ReleaseThread            : procedure( tstate: PPyThreadState); cdecl;
     PyInterpreterState_New          : function : PPyInterpreterState; cdecl;
@@ -1837,8 +1810,8 @@ type
     PyGILState_Release              : procedure(gilstate : PyGILState_STATE); cdecl;
 
     // Initialization functions
-    PyWideStringList_Append         : function(var list: PyWideStringList; item: PWCharT): PyStatus; cdecl;
-    PyWideStringList_Insert         : function(var list: PyWideStringList; index: Py_ssize_t; item: PWCharT): PyStatus; cdecl;
+    PyWideStringList_Append         : function(list: PPyWideStringList; item: PWCharT): PyStatus; cdecl;
+    PyWideStringList_Insert         : function(list: PPyWideStringList; index: Py_ssize_t; item: PWCharT): PyStatus; cdecl;
     PyConfig_InitPythonConfig       : procedure(var config: PyConfig); cdecl;
     PyConfig_InitIsolatedConfig     : procedure(var config: PyConfig); cdecl;
     PyConfig_Clear                  : procedure(var config: PyConfig); cdecl;
@@ -1848,11 +1821,6 @@ type
     PyConfig_SetWideStringList      : function(var config: PyConfig; list: PPyWideStringList; length: Py_ssize_t; items: PPWCharT): PyStatus; cdecl;
     Py_InitializeFromConfig         : function({$IFDEF FPC}constref{$ELSE}[Ref] const{$ENDIF} config: PyConfig): PyStatus; cdecl;
 
-  // Not exported in Python 3.8 and implemented as functions - this has been fixed
-  // TODO - deal with the following:
-  // the PyParser_* functions are deprecated in python 3.9 and will be removed in
-  // Python 3.10
-  function PyParser_SimpleParseString(str : PAnsiChar; start : Integer) : PNode; cdecl;
   function Py_CompileString(str,filename:PAnsiChar;start:integer) : PPyObject; cdecl;
 
   // functions redefined in Delphi
@@ -3862,7 +3830,6 @@ begin
   PyRun_String              := Import('PyRun_String');
   PyRun_SimpleString        := Import('PyRun_SimpleString');
   PyDict_GetItemString      := Import('PyDict_GetItemString');
-  PySys_SetArgv             := Import('PySys_SetArgv');
   Py_Exit                   := Import('Py_Exit');
 
   PyCFunction_NewEx         := Import('PyCFunction_NewEx');
@@ -3877,7 +3844,6 @@ begin
   if (FMajorVersion > 3) or (FMinorVersion > 9) then
     PyBuffer_SizeFromFormat    := Import('PyBuffer_SizeFromFormat');
 
-  PyEval_CallObjectWithKeywords:= Import('PyEval_CallObjectWithKeywords');
   PyEval_GetFrame           := Import('PyEval_GetFrame');
   PyEval_GetGlobals         := Import('PyEval_GetGlobals');
   PyEval_GetLocals          := Import('PyEval_GetLocals');
@@ -4040,7 +4006,6 @@ begin
   PySet_Size                  := Import('PySet_Size');
   PySys_GetObject             := Import('PySys_GetObject');
   PySys_SetObject             := Import('PySys_SetObject');
-  PySys_SetPath               := Import('PySys_SetPath');
   PyTraceBack_Here            := Import('PyTraceBack_Here');
   PyTraceBack_Print           := Import('PyTraceBack_Print');
   PyTuple_GetItem             := Import('PyTuple_GetItem');
@@ -4083,24 +4048,15 @@ begin
   Py_GetCopyright             := Import('Py_GetCopyright');
   Py_GetExecPrefix            := Import('Py_GetExecPrefix');
   Py_GetPath                  := Import('Py_GetPath');
-  Py_SetPath                  := Import('Py_SetPath');
-  Py_SetPythonHome            := Import('Py_SetPythonHome');
   Py_GetPythonHome            := Import('Py_GetPythonHome');
   Py_GetPrefix                := Import('Py_GetPrefix');
   Py_GetProgramName           := Import('Py_GetProgramName');
-
-  if (FMajorVersion = 3) and (FMinorVersion < 10) then
-  begin
-    PyParser_SimpleParseStringFlags := Import('PyParser_SimpleParseStringFlags');
-    PyNode_Free                 := Import('PyNode_Free');
-  end;
 
   PyErr_NewException          := Import('PyErr_NewException');
   try
     PyMem_Malloc := Import ('PyMem_Malloc');
   except
   end;
-  Py_SetProgramName        := Import('Py_SetProgramName');
   Py_IsInitialized         := Import('Py_IsInitialized');
   Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
   Py_GetBuildInfo          := Import('Py_GetBuildInfo');
@@ -4108,8 +4064,6 @@ begin
   if (FMajorVersion > 3) or (FMinorVersion >= 12) then
     Py_NewInterpreterFromConfig := Import('Py_NewInterpreterFromConfig');
   Py_EndInterpreter        := Import('Py_EndInterpreter');
-  PyEval_AcquireLock       := Import('PyEval_AcquireLock');
-  PyEval_ReleaseLock       := Import('PyEval_ReleaseLock');
   PyEval_AcquireThread     := Import('PyEval_AcquireThread');
   PyEval_ReleaseThread     := Import('PyEval_ReleaseThread');
   PyInterpreterState_New   := Import('PyInterpreterState_New');
@@ -4139,11 +4093,6 @@ end;
 function TPythonInterface.Py_CompileString(str,filename:PAnsiChar;start:integer):PPyObject;
 begin
   Result := Py_CompileStringExFlags(str, filename, start, nil, -1);
-end;
-
-function TPythonInterface.PyParser_SimpleParseString( str : PAnsiChar; start : integer) : PNode; cdecl;
-begin
-  Result := PyParser_SimpleParseStringFlags(str, start, 0);
 end;
 
 class procedure TPythonInterface.Py_INCREF(op: PPyObject);
@@ -4671,13 +4620,20 @@ end;
 
 procedure TPythonEngine.AssignPyFlags(var Config: PyConfig);
 begin
-  Config.parser_debug := IfThen(pfDebug in FPyFlags, 1, 0);
-  Config.verbose := IfThen(pfVerbose in FPyFlags, 1, 0);
-  Config.interactive := IfThen(pfInteractive in FPyFlags, 1, 0);
-  Config.optimization_level := IfThen(pfOptimize in FPyFlags, 1, 0);
-  Config.site_import := IfThen(pfNoSite in FPyFlags, 0, 1);
-  Config.pathconfig_warnings := IfThen(pfFrozenFlag in FPyFlags, 1, 0);
-  Config.use_environment := IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parser_debug])^ :=
+    IfThen(pfDebug in FPyFlags, 1, 0);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.verbose])^ :=
+    IfThen(pfVerbose in FPyFlags, 1, 0);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.interactive])^ :=
+    IfThen(pfInteractive in FPyFlags, 1, 0);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.optimization_level])^ :=
+    IfThen(pfOptimize in FPyFlags, 1, 0);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.site_import])^ :=
+    IfThen(pfNoSite in FPyFlags, 0, 1);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
+    IfThen(pfFrozenFlag in FPyFlags, 1, 0);
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.use_environment])^ :=
+    IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
 end;
 
 procedure TPythonEngine.Initialize;
@@ -4695,15 +4651,23 @@ procedure TPythonEngine.Initialize;
   var
     Paths: TArray<string>;
     I: Integer;
+    PWSL: PPyWideStringList;
   begin
     if FPythonPath = '' then Exit;
 
-    Paths := FPythonPath.Split([PathSep], TStringSplitOptions.ExcludeLastEmpty);
+    PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
+      TConfigFields.module_search_paths]);
+    Paths := FPythonPath.Split([PathSep]);
     for I := 0 to Length(Paths) - 1 do
-      PyWideStringList_Append(Config.module_search_paths,
-        PWCharT(StringToWCharTString(Paths[I])));
-    if Config.module_search_paths.length > 0 then
-      Config.module_search_paths_set := 1;
+    begin
+      if (Paths[I] = '') and (I > 0) then
+        Continue;
+      PyWideStringList_Append(PWSL, PWCharT(StringToWCharTString(Paths[I])));
+    end;
+
+    if PWSL^.length > 0 then
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion,
+        TConfigFields.module_search_paths_set])^ := 1;
   end;
 
   function GetVal(AModule : PPyObject; AVarName : AnsiString) : PPyObject;
@@ -4777,14 +4741,17 @@ begin
 
       // Set programname and pythonhome if available
       if FProgramName <> '' then
-        PyConfig_SetString(Config, @Config.program_name,
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.program_name]),
           PWCharT(StringToWCharTString(FProgramName)));
       if FPythonHome <> '' then
-        PyConfig_SetString(Config, @Config.program_name,
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.home]),
           PWCharT(StringToWCharTString(FPythonHome)));
       // Set venv executable if available
       if FVenvPythonExe <> '' then
-        PyConfig_SetString(Config, @Config.program_name,
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.executable]),
           PWCharT(StringToWCharTString(FVenvPythonExe)));
 
       // Set program arguments (sys.argv)
@@ -4875,7 +4842,8 @@ var
   Str: WCharTString;
 
 begin
-  Config.parse_argv := 0; // do not parse
+  // do not parse further
+  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parse_argv])^ := 0;
   for I := 0 to ParamCount do
   begin
     {
@@ -4892,7 +4860,9 @@ begin
     {$ELSE}
     Str := TempS;
     {$ENDIF}
-    PyWideStringList_Append(Config.argv, PWCharT(Str));
+    PyWideStringList_Append(
+      PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.argv]),
+      PWCharT(Str));
    end;
 end;
 
@@ -4988,7 +4958,7 @@ begin
   Result := -1;
   if pyfunc = nil then exit;
   try
-    presult := PyEval_CallObjectWithKeywords(pyfunc,pyargs, nil);
+    presult := PyObject_Call(pyfunc,pyargs, nil);
     CheckError(False);
     if presult = nil then
       // should not happen since an exception would have been raised
@@ -5200,22 +5170,11 @@ end;
 
 function TPythonEngine.CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
 var
-  n : PNode;
   PyCode: PPyObject;
 begin
-  if (FMajorVersion = 3) and (MinorVersion < 10) then
-  begin
-    n := PyParser_SimpleParseString( PAnsiChar(str), mode );
-    result := Assigned(n);
-    if Assigned( n ) then
-      PyNode_Free(n);
-  end
-  else
-  begin
-    PyCode := Py_CompileString(PAnsiChar(str), '<string>', mode);
-    Result := Assigned(PyCode);
-    Py_XDECREF(PyCode);
-  end;
+  PyCode := Py_CompileString(PAnsiChar(str), '<string>', mode);
+  Result := Assigned(PyCode);
+  Py_XDECREF(PyCode);
 end;
 
 procedure TPythonEngine.RaiseError;
@@ -5741,7 +5700,7 @@ begin
             raise EPythonError.Create('dcmToDatetime DatetimeConversionMode cannot be used with this version of python. Missing module datetime');
           args := ArrayToPyTuple([y, m, d, h, mi, sec, ms*1000]);
           try
-            Result := PyEval_CallObjectWithKeywords(FPyDateTime_DateTimeType, args, nil);
+            Result := PyObject_Call(FPyDateTime_DateTimeType, args, nil);
             CheckError(False);
           finally
             Py_DecRef(args);
@@ -7225,11 +7184,7 @@ begin
     // instance.
     if PyDict_Check( obj ) then
       begin
-        args := PyTuple_New(0);
-        if not Assigned(args) then
-          raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
-        res := PyEval_CallObjectWithKeywords(Error, args, nil);
-        Py_DECREF(args);
+        res := PyObject_CallObject(Error, nil);
         if not Assigned(res) then
           raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);
         if PyObject_TypeCheck(res, PPyTypeObject(PyExc_Exception^)) then
@@ -7239,7 +7194,7 @@ begin
               raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
             str := PyUnicodeFromString(msg);
             PyTuple_SetItem(args, 0, str);
-            res := PyEval_CallObjectWithKeywords(Error, args, nil);
+            res := PyObject_Call(Error, args, nil);
             Py_DECREF(args);
             if not Assigned(res) then
               raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);
