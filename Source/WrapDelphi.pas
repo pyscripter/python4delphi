@@ -1021,8 +1021,8 @@ resourcestring
   rs_ErrCheckBound = 'Delphi wrapper %s is not bound';
   rs_ErrSequence = 'Wrapper %s does not support sequences';
   rs_ErrInvalidArgs = '"%s" called with invalid arguments.'#$A'Error: %s';
-  rs_ErrInvalidRet = 'Call "%s" returned a value that could not be coverted to Python'#$A'Error: %s';
-  rs_IncompatibleArguments = 'Expected and actual arguements are incompatible';
+  rs_ErrInvalidRet = 'Call "%s" returned a value that could not be converted to Python'#$A'Error: %s';
+  rs_IncompatibleArguments = 'Expected and actual arguments are incompatible';
   rs_ErrAttrGet = 'Error in getting property "%s".'#$A'Error: %s';
   rs_UnknownAttribute = 'Unknown attribute';
   rs_ErrIterSupport = 'Wrapper %s does not support iterators';
