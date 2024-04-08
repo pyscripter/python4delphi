@@ -1038,6 +1038,7 @@ resourcestring
   rs_ExpectedNil = 'In static methods Self should be nil';
   rs_ExpectedInterface = 'Expected a Pascal interface';
   rs_ExpectedSequence = 'Expected a python sequence';
+  rsExpectedPPyObject = 'Expected a PPyObject';
   rs_InvalidClass = 'Invalid class';
   rs_ErrEventNotReg = 'No Registered EventHandler for events of type "%s';
   rs_ErrEventNoSuport = 'Class %s does not support events because it must '+
@@ -2176,6 +2177,25 @@ begin
   end;
 end;
 
+function ValidatePPyObject(PyValue: PPyObject; const RttiType: TRttiType;
+  out ParamValue: TValue; out ErrMsg: string): Boolean;
+var
+  RefType: TRttiType;
+begin
+  Result := False;
+  if (RTTIType is TRttiPointerType) then
+  begin
+    RefType := TRttiPointerType(RTTIType).ReferredType;
+    if Assigned(RefType) and (RefType.Name = 'PyObject') then
+    begin
+      Result := True;
+      ParamValue := TValue.From<PPyObject>(PyValue);
+    end;
+  end;
+  if not Result then
+    ErrMsg := rsExpectedPPyObject;
+end;
+
 function PyObjectToTValue(PyArg: PPyObject; ArgType: TRttiType;
   out Arg: TValue; out ErrMsg: string): Boolean;
 var
@@ -2205,7 +2225,9 @@ begin
     tkRecord{$IFDEF MANAGED_RECORD}, tkMRecord{$ENDIF}:
       Result := ValidateRecordProperty(PyArg, ArgType.Handle, Arg, ErrMsg);
     tkDynArray:
-      Result := ValidateDynArray(PyArg, ArgType, Arg, ErrMsg)
+      Result := ValidateDynArray(PyArg, ArgType, Arg, ErrMsg);
+    tkPointer:
+      Result := ValidatePPyObject(PyArg, ArgType, Arg, ErrMsg);
   else
     Result := SimplePythonToValue(PyArg, ArgType.Handle, Arg, ErrMsg);
   end;
@@ -2254,6 +2276,14 @@ begin
         Result := DelphiWrapper.WrapRecord(Value);
       tkArray, tkDynArray:
         Result := DynArrayToPython(Value, DelphiWrapper, ErrMsg);
+      tkPointer:
+        if Value.IsType<PPyObject> then
+          Result := Value.AsType<PPyObject>
+        else
+        begin
+          Result := nil;
+          ErrMsg := rs_ErrValueToPython;
+        end;
     else
       Result := SimpleValueToPython(Value, ErrMsg);
     end;
@@ -4127,7 +4157,7 @@ begin
 
       // Ignore methods with unhandled return type
       if Assigned(LRttiMethod.ReturnType) and (LRttiMethod.ReturnType.TypeKind
-        in [tkUnknown, tkMethod, tkPointer, tkProcedure])
+        in [tkUnknown, tkMethod, tkProcedure])
       then
         Continue;
 
@@ -4229,7 +4259,7 @@ begin
         Continue;
 
       // Skip if the type cannot be handled
-      if LRttiField.FieldType.TypeKind  in [tkUnknown, tkMethod, tkPointer, tkProcedure] then
+      if LRttiField.FieldType.TypeKind  in [tkUnknown, tkMethod, tkProcedure] then
         Continue;
 
       AddedFields := AddedFields + [LRttiField.Name];
@@ -4315,7 +4345,7 @@ begin
       else
       begin
         // Skip if the type cannot be handled
-        if LRttiProperty.PropertyType.TypeKind in [tkUnknown, tkPointer, tkMethod, tkProcedure] then
+        if LRttiProperty.PropertyType.TypeKind in [tkUnknown, tkMethod, tkProcedure] then
           Continue;
 
         // Create the exposed property
@@ -4399,7 +4429,7 @@ begin
         Continue;
 
       // Skip if the type cannot be handled
-      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkPointer, tkMethod, tkProcedure] then
+      if LRttiProperty.PropertyType.TypeKind  in [tkUnknown, tkMethod, tkProcedure] then
         Continue;
 
       AddedProperties := AddedProperties + [LRttiProperty.Name];

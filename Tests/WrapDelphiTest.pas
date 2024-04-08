@@ -71,6 +71,7 @@ type
     procedure VarArgsProc1(var I: Integer);
     function  VarArgsFunc1(var I: Integer): Integer;
     procedure VarArgsProc2(var I: Integer; var S: string);
+    function PlaceInNewList(PyObj: PPyObject): PPyObject;
     property Indexed[I: Integer]: Integer read GetIndexed write SetIndexed;
     property Indexed2[S1, S2: string]: string read GetIndexed2 write SetIndexed2; default;
     class var ClassField: string;
@@ -157,6 +158,8 @@ type
     procedure TestIndexedProperties;
     [Test]
     procedure TestVarArgs;
+    [Test]
+    procedure TestPPyObjects;
   end;
 
 implementation
@@ -427,6 +430,15 @@ begin
   Assert.Pass;
 end;
 
+procedure TTestWrapDelphi.TestPPyObjects;
+var
+  List: Variant;
+begin
+  List := rtti_var.PlaceInNewList('abc');
+  Assert.IsTrue(VarIsPythonList(List));
+  Assert.AreEqual<string>(List.GetItem(0), 'abc');
+end;
+
 procedure TTestWrapDelphi.TestRecord;
 begin
   Rtti_rec.StringField := 'abcd';
@@ -613,6 +625,16 @@ end;
 procedure TTestRttiAccess.PassVariantArray(const Value: Variant);
 begin
   Assert.IsTrue(VarIsArray(Value) and (VarArrayHighBound(Value, 1) = 9));
+end;
+
+function TTestRttiAccess.PlaceInNewList(PyObj: PPyObject): PPyObject;
+begin
+  with GetPythonEngine do
+  begin
+    Result := PyList_New(1);
+    Py_XIncRef(PyObj);
+    PyList_SetItem(Result, 0, PyObj);
+  end;
 end;
 
 procedure TTestRttiAccess.SellFruits(const AFruits: TFruitDynArray);
