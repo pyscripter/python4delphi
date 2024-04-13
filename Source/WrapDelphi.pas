@@ -2033,8 +2033,16 @@ begin
         end
         else
           ErrMsg := rs_ErrPythonToValue;
-      tkString, tkWString, tkUString,
-      tkLString, tkChar, tkWChar:
+      tkString, tkLString, tkChar:
+        begin
+          if GetPythonEngine.PyBytes_Check(PyValue) then
+            V := TValue.From(GetPythonEngine.PyBytesAsAnsiString(PyValue))
+          else
+            V := GetPythonEngine.PyObjectAsString(PyValue);
+          Value := V.Cast(TypeInfo);
+          Result := True;
+        end;
+      tkWString, tkUString, tkWChar:
         begin
           V := GetPythonEngine.PyObjectAsString(PyValue);
           Value := V.Cast(TypeInfo);

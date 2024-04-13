@@ -5414,25 +5414,22 @@ end;
 function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
 var
   S : PPyObject;
-  W : UnicodeString;
 begin
   Result := '';
   if not Assigned( obj ) then
     Exit;
 
   if PyUnicode_Check(obj) then
+    Result := string(PyUnicodeAsString(obj))
+  else if PyBytes_Check(obj) then
+    Result := string(UTF8ToString(PyBytesAsAnsiString(obj)))
+  else
   begin
-    W := PyUnicodeAsString(obj);
-    Result := string(W);
-    Exit;
+    S := PyObject_Str( obj );
+    if Assigned(S) and PyUnicode_Check(S) then
+      Result := string(PyUnicodeAsString(S));
+    Py_XDECREF(S);
   end;
-  S := PyObject_Str( obj );
-  if Assigned(S) and PyUnicode_Check(S) then
-  begin
-    W := PyUnicodeAsString(S);
-    Result := string(W);
-  end;
-  Py_XDECREF(S);
 end;
 
 procedure TPythonEngine.DoRedirectIO;
