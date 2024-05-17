@@ -1010,8 +1010,8 @@ type
     ConfigOffests: TConfigOffsets =
     {$IFDEF MSWINDOWS}
       {$IFDEF CPU64BITS}
-      ((8, 80, 88, 144, 156, 160, 164, 172, 216, 104, 232, 240, 248, 264),
-       (8, 80, 88, 144, 156, 160, 164, 172, 216, 104, 232, 240, 248, 264),
+      ((8, 80, 88, 144, 156, 160, 164, 172, 224, 104, 240, 248, 256, 272),
+       (8, 80, 88, 144, 156, 160, 164, 172, 224, 104, 240, 248, 256, 272),
        (8, 80, 104, 152, 168, 172, 176, 184, 232, 240, 256, 272, 280, 296),
        (8, 96, 120, 168, 184, 188, 192, 200, 264, 272, 288, 304, 312, 336),
        (8, 96, 120, 168, 184, 188, 192, 200, 268, 272, 288, 304, 312, 336),
@@ -3036,6 +3036,8 @@ resourcestring
 SPyConvertionError = 'Conversion Error: %s expects a %s Python object';
 SPyExcStopIteration = 'Stop Iteration';
 SPyExcSystemError = 'Unhandled SystemExit exception. Code: %s';
+SPyInitFailed = 'Python initialization failed: %s';
+SPyInitFailedUnknown = 'Unknown initialization error';
 
 (*******************************************************)
 (**                                                   **)
@@ -4720,6 +4722,8 @@ procedure TPythonEngine.Initialize;
 var
   i : Integer;
   Config: PyConfig;
+  Status: PyStatus;
+  ErrMsg: string;
 begin
   if Assigned(gPythonEngine) then
     raise Exception.Create('There is already one instance of TPythonEngine running' );
@@ -4764,15 +4768,30 @@ begin
       if Assigned(FOnConfigInit) then
         FOnConfigInit(Self, Config);
 
-      Py_InitializeFromConfig(Config);
+      Status := Py_InitializeFromConfig(Config);
+      FInitialized := Py_IsInitialized() <> 0
     finally
       PyConfig_Clear(Config);
     end;
 
-    if Assigned(Py_IsInitialized) then
-      FInitialized := Py_IsInitialized() <> 0
-    else
-      FInitialized := True;
+    if not FInitialized then
+    begin
+      if PyStatus_Exception(Status) then
+        ErrMsg := Format(SPyInitFailed, [string(Status.err_msg)])
+      else
+        ErrMsg := Format(SPyInitFailed, [SPyInitFailedUnknown]);
+      if FatalMsgDlg then
+        {$IFDEF MSWINDOWS}
+        MessageBox( GetActiveWindow, PChar(ErrMsg), 'Error', MB_TASKMODAL or MB_ICONSTOP );
+        {$ELSE}
+        WriteLn(ErrOutput, ErrMsg);
+        {$ENDIF}
+      if FatalAbort then
+        Quit
+      else
+        raise Exception.Create(ErrMsg);
+    end;
+
     InitSysPath;
     if RedirectIO and Assigned(FIO) then
       DoRedirectIO;
