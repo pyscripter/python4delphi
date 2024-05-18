@@ -611,6 +611,15 @@ type
     m_copy : PPyObject;
   end;
 
+  // Slots are used for two phase module initialization
+  // which is not yet implemented
+
+  PPyModuleDef_Slot = ^PyModuleDef_Slot;
+  PyModuleDef_Slot = {$IFDEF CPUX86}packed{$ENDIF} record
+    slot: integer;
+    value: Pointer;
+  end;
+
   PPyModuleDef = ^PyModuleDef;
   PyModuleDef = {$IFDEF CPUX86}packed{$ENDIF} record
     m_base : PyModuleDef_Base;
@@ -618,7 +627,7 @@ type
     m_doc : PAnsiChar;
     m_size : NativeInt;
     m_methods : PPyMethodDef;
-    m_reload : inquiry;
+    m_slots : PPyModuleDef_Slot;
     m_traverse : traverseproc;
     m_clear : inquiry;
     m_free : inquiry;
