@@ -1026,7 +1026,8 @@ resourcestring
   rs_ErrAttrGet = 'Error in getting property "%s".'#$A'Error: %s';
   rs_UnknownAttribute = 'Unknown attribute';
   rs_ErrIterSupport = 'Wrapper %s does not support iterators';
-  rs_ErrAttrSetr = 'Error in setting property %s'#$A'Error: %s';
+  rs_ErrAttrSet = 'Error in setting property %s'#$A'Error: %s';
+  rs_ErrObjectDestroyed = 'Trying to access a destroyed pascal object';
   rs_IncompatibleClasses = 'Incompatible classes';
   rs_IncompatibleRecords = 'Incompatible record types';
   rs_IncompatibleInterfaces = 'Incompatible interfaces';
@@ -1550,7 +1551,7 @@ begin
   if Result <> 0 then
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrSetr, [FRttiMember.Name, ErrMsg])));
+        PyUnicodeFromString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg])));
 end;
 
 { TExposedField }
@@ -1646,7 +1647,7 @@ begin
   if Result <> 0 then
     with GetPythonEngine do
       PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrSetr, [FRttiMember.Name, ErrMsg])));
+        PyUnicodeFromString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg])));
 end;
 
 { TExposedIndexedProperty }
@@ -3434,7 +3435,7 @@ begin
   if Result <> 0 then
     with GetPythonEngine do
       PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
-        Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
+        Format(rs_ErrAttrSet, [KeyName, ErrMsg])));
 end;
 
 function TPyRttiObject.SetProps(args, keywords: PPyObject): PPyObject;
@@ -3543,6 +3544,7 @@ function TPyDelphiObject.GetAttrO(key: PPyObject): PPyObject;
 var
   KeyName: string;
   ErrMsg : string;
+  PyEngine: TPythonEngine;
   {$IFNDEF EXTENDED_RTTI}
   {$IFNDEF FPC}
   Info: PMethodInfoHeader;
@@ -3554,16 +3556,24 @@ var
   RttiType: TRttiStructuredType;
   {$ENDIF}
 begin
-  Result := inherited GetAttrO(key);
-  if GetPythonEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
+  Result := nil;
+  PyEngine := GetPythonEngine;
 
-  // should not happen
-  if not (Assigned(DelphiObject) and
-     CheckStrAttribute(Key, 'GetAttrO key parameter', KeyName))
-  then
+  // If DelphiObject is nil Exit immediately with an error
+  if not Assigned(DelphiObject) then
+  begin
+    PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
+      PyEngine.PyUnicodeFromString(rs_ErrObjectDestroyed));
     Exit;
+  end;
 
-  GetPythonEngine.PyErr_Clear;
+  if not CheckStrAttribute(Key, 'GetAttrO key parameter', KeyName) then
+    Exit; // should not happen
+
+  Result := inherited GetAttrO(key);
+  if PyEngine.PyErr_Occurred = nil then Exit;  // We found what we wanted
+
+  PyEngine.PyErr_Clear;
 {$IFDEF EXTENDED_RTTI}
   // Use RTTI
   if Assigned(DelphiObject) then begin
@@ -3620,17 +3630,17 @@ begin
         {$ELSE FPC}
         if GetTypeData(PropInfo^.PropType^)^.BaseType^ = TypeInfo(Boolean) then
         {$ENDIF FPC}
-          Result := GetPythonEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
+          Result := PyEngine.VariantAsPyObject(Boolean(GetOrdProp(Self.DelphiObject, PropInfo)))
         else
         {$IFDEF FPC}
-          Result := GetPythonEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType,
+          Result := PyEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType,
         {$ELSE FPC}
-          Result := GetPythonEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType^,
+          Result := PyEngine.PyUnicodeFromString(GetEnumName(PropInfo^.PropType^,
         {$ENDIF FPC}
             GetOrdProp(Self.DelphiObject, PropInfo)));
       end
       end else
-         Result := GetPythonEngine.VariantAsPyObject(GetPropValue(DelphiObject, PropInfo));
+         Result := PyEngine.VariantAsPyObject(GetPropValue(DelphiObject, PropInfo));
     end;
   except
     on E: Exception do begin
@@ -3640,9 +3650,8 @@ begin
   end;
 {$ENDIF}
   if not Assigned(Result) then
-    with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+    PyEngine.PyErr_SetObject (PyEngine.PyExc_AttributeError^,
+      PyEngine.PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
 end;
 
 function TPyDelphiObject.GetContainerAccess: TContainerAccess;
@@ -3944,11 +3953,16 @@ begin
   Result := -1;
   PyEngine := GetPythonEngine;
 
-  // should not happen
-  if not (Assigned(DelphiObject) and
-     CheckStrAttribute(Key, 'SetAttrO key parameter', KeyName))
-  then
+  // If DelphiObject is nil Exit immediately with an error
+  if not Assigned(DelphiObject) then
+  begin
+    PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
+      PyEngine.PyUnicodeFromString(rs_ErrObjectDestroyed));
     Exit;
+  end;
+
+  if not CheckStrAttribute(Key, 'SetAttrO key parameter', KeyName) then
+    Exit; // should not happen
 
   // Only call the inherited method at this stage if the attribute exists
   PyObj := PyEngine.PyObject_GenericGetAttr(GetSelf, key);
@@ -3989,8 +4003,8 @@ begin
     Result := inherited SetAttrO(key, value);
   if Result <> 0 then
     with PyEngine do
-      PyErr_SetObject(PyEngine.PyExc_AttributeError^, PyUnicodeFromString(
-        Format(rs_ErrAttrSetr, [KeyName, ErrMsg])));
+      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
+        Format(rs_ErrAttrSet, [KeyName, ErrMsg])));
 end;
 
 procedure TPyDelphiObject.SetDelphiObject(const Value: TObject);
