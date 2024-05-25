@@ -3559,7 +3559,7 @@ begin
   Result := nil;
   PyEngine := GetPythonEngine;
 
-  // If DelphiObject is nil Exit immediately with an error
+  // If DelphiObject is nil exit immediately with an error
   if not Assigned(DelphiObject) then
   begin
     PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
@@ -3953,7 +3953,7 @@ begin
   Result := -1;
   PyEngine := GetPythonEngine;
 
-  // If DelphiObject is nil Exit immediately with an error
+  // If DelphiObject is nil exit immediately with an error
   if not Assigned(DelphiObject) then
   begin
     PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
@@ -4001,10 +4001,6 @@ begin
   //  Subclasses have a __dict__ and can set extra fields
   if Result <> 0 then
     Result := inherited SetAttrO(key, value);
-  if Result <> 0 then
-    with PyEngine do
-      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
-        Format(rs_ErrAttrSet, [KeyName, ErrMsg])));
 end;
 
 procedure TPyDelphiObject.SetDelphiObject(const Value: TObject);
