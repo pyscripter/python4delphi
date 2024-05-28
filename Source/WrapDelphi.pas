@@ -3835,7 +3835,7 @@ begin
   PythonType.AddGetSet('__bound__', @TPyDelphiObject.Get_Bound, nil,
     'Returns True if the wrapper is still bound to the Delphi instance.', nil);
   PythonType.AddGetSet('__owned__', @TPyDelphiObject.Get_Owned, @TPyDelphiObject.Set_Owned,
-    'Returns True if the wrapper owns the Delphi instance.', nil);
+    'Boolean read/write property that determines weather the wrapper owns the Delphi instance.', nil);
 end;
 
 class procedure TPyDelphiObject.RegisterMethods(PythonType: TPythonType);
