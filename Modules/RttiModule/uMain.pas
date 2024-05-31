@@ -34,10 +34,7 @@ begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
-    gEngine.UseLastKnownVersion := False;
-    // Adapt to the desired python version
-    gEngine.RegVersion := '3.8';
-    gEngine.DllName := 'python38.dll';
+    gEngine.UseLastKnownVersion := True;
 
     gModule := TPythonModule.Create(nil);
     gModule.Engine := gEngine;
@@ -47,7 +44,7 @@ begin
     gDelphiWrapper.Engine := gEngine;
     gDelphiWrapper.Module := gModule;
 
-    gEngine.LoadDll;
+    gEngine.LoadDllInExtensionModule;
     Py := gDelphiWrapper.Wrap(DelphiFunctions, TObjectOwnership.soReference);
     gModule.SetVar('delphi_funcs', Py);
     gEngine.Py_DecRef(Py);

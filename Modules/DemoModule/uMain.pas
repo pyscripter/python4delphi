@@ -49,7 +49,6 @@ begin
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
-    gEngine.UseLastKnownVersion := False;
     gEngine.UseLastKnownVersion := True;
 
     gModule := TPythonModule.Create(nil);
