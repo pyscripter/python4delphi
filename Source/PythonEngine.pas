@@ -2906,9 +2906,9 @@ type
   private class threadvar
     f_savethreadstate: PPyThreadState;
 
+  protected
     // Do not overwrite Execute! Use ExecuteWithPython instead!
     procedure Execute; override;
-  protected
     procedure ExecuteWithPython; virtual; abstract;
     function InterpreterConfig: PyInterpreterConfig; virtual;
   public
