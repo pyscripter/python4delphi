@@ -1072,7 +1072,7 @@ begin
     'Allows forms to be aligned in the screen.');
   PythonType.AddMethod('Realign', @TPyDelphiScreen.Realign_Wrapper,
     'TScreen.Realign()'#10 +
-    'Realigns the screen’s forms according to their Align properties.');
+    'Realigns the screen''s forms according to their Align properties.');
   PythonType.AddMethod('ResetFonts', @TPyDelphiScreen.ResetFonts_Wrapper,
     'TScreen.ResetFonts()'#10 +
     'Reinitializes the fonts listed in the Fonts property.');
