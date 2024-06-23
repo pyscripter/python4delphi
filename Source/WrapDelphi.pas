@@ -4290,7 +4290,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiField, LDocStr)
       then
-        LExposedField.DocString := AnsiString(LDocStr);
+        LExposedField.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedField);
@@ -4377,7 +4377,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiProperty, LDocStr)
       then
-        LExposedProperty.DocString := AnsiString(LDocStr);
+        LExposedProperty.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedProperty);
@@ -4460,7 +4460,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiProperty, LDocStr)
       then
-        LExposedProperty.DocString := AnsiString(LDocStr);
+        LExposedProperty.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedProperty);
