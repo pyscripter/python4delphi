@@ -4668,7 +4668,7 @@ procedure TPythonEngine.Initialize;
 
     PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
       TConfigFields.module_search_paths]);
-    Paths := FPythonPath.Split([PathSep]);
+    Paths := string(FPythonPath).Split([PathSep]);
     for I := 0 to Length(Paths) - 1 do
     begin
       if (Paths[I] = '') and (I > 0) then
@@ -9781,7 +9781,7 @@ begin
   {$IFDEF POSIX}
   Result := UnicodeStringToUCS4String(UnicodeString(Str));
   {$ELSE}
-  Result := Str;
+  Result := WcharTString(Str);
   {$ENDIF}
 end;
 
