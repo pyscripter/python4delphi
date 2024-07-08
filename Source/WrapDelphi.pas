@@ -553,16 +553,16 @@ Type
     class function ExcludedExposedMembers(APythonType: TPythonType): TArray<string>; virtual;
     class procedure ExposeMethods(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
-      AExcludedMethodNames: TArray<string> = []);
+      AExcludedMethodNames: TArray<string> = nil);
     class procedure ExposeFields(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
-      AExcludedFieldNames: TArray<string> = []);
+      AExcludedFieldNames: TArray<string> = nil);
     class procedure ExposeProperties(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
-      AExcludedPropertyNames: TArray<string> = []);
+      AExcludedPropertyNames: TArray<string> = nil);
     class procedure ExposeIndexedProperties(AClass: TClass; NearestAncestorClass: TClass;
       APythonType: TPythonType; APyDelphiWrapper: TPyDelphiWrapper;
-      AExcludedPropertyNames: TArray<string> = []);
+      AExcludedPropertyNames: TArray<string> = nil);
     {$ENDIF EXTENDED_RTTI}
   public
     PyDelphiWrapper : TPyDelphiWrapper;
@@ -4290,7 +4290,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiField, LDocStr)
       then
-        LExposedField.DocString := AnsiString(LDocStr);
+        LExposedField.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedField);
@@ -4377,7 +4377,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiProperty, LDocStr)
       then
-        LExposedProperty.DocString := AnsiString(LDocStr);
+        LExposedProperty.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedProperty);
@@ -4460,7 +4460,7 @@ begin
       if Assigned(PyDocServer) and PyDocServer.Initialized and
         PyDocServer.ReadMemberDocStr(LRttiProperty, LDocStr)
       then
-        LExposedProperty.DocString := AnsiString(LDocStr);
+        LExposedProperty.DocString := Utf8Encode(LDocStr);
 
       // Keep it alive until the Wrapper is Finalized
       APyDelphiWrapper.fExposedMembers.Add(LExposedProperty);
