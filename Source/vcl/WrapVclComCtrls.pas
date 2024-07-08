@@ -731,8 +731,7 @@ type
 
   function CustomDrawTargetToPython(const ACustomDrawTarget: TCustomDrawTarget): PPyObject;
   function CustomDrawStageToPython(const ACustomDrawStage: TCustomDrawStage): PPyObject;
-  function CustomDrawStateToPython(const ACustomDrawState: TCustomDrawState;
-    DelphiWrapper: TPyDelphiWrapper): PPyObject;
+  function CustomDrawStateToPython(const ACustomDrawState: TCustomDrawState): PPyObject;
 
   function ItemChangeToPython(const AItemChange: TItemChange): PPyObject;
   function ItemStateToPython(const AItemState: TItemState): PPyObject;
@@ -783,14 +782,13 @@ begin
       Ord(ACustomDrawStage)));
 end;
 
-function CustomDrawStateToPython(const ACustomDrawState: TCustomDrawState;
-  DelphiWrapper: TPyDelphiWrapper): PPyObject;
+function CustomDrawStateToPython(const ACustomDrawState: TCustomDrawState): PPyObject;
 var
   ErrMsg: string;
   Value: TValue;
 begin
   Value := TValue.From(ACustomDrawState);
-  Result := TValueToPyObject(Value, DelphiWrapper, ErrMsg);
+  Result := SimpleValueToPython(Value, ErrMsg);
 end;
 
 function ItemChangeToPython(const AItemChange: TItemChange): PPyObject;
@@ -2189,7 +2187,7 @@ begin
       LPyTuple := PyTuple_New(4);
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyNode);
-      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 3, LPyDefaultDraw);
       try
         LPyResult := PyObject_CallObject(Callable, LPyTuple);
@@ -2292,7 +2290,7 @@ begin
       LPyTuple := PyTuple_New(6);
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyNode);
-      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 3, CustomDrawStageToPython(Stage));
       PyTuple_SetItem(LPyTuple, 4, LPyPaintImages);
       PyTuple_SetItem(LPyTuple, 5, LPyDefaultDraw);
@@ -3084,7 +3082,7 @@ begin
       LPyTuple := PyTuple_New(4);
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyItem);
-      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 3, LPyDefaultDraw);
       try
         LPyResult := PyObject_CallObject(Callable, LPyTuple);
@@ -3136,7 +3134,7 @@ begin
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyItem);
       PyTuple_SetItem(LPyTuple, 2, PyLong_FromLong(SubItem));
-      PyTuple_SetItem(LPyTuple, 3, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 3, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 4, LPyDefaultDraw);
       try
         LPyResult := PyObject_CallObject(Callable, LPyTuple);
@@ -3237,7 +3235,7 @@ begin
       LPyTuple := PyTuple_New(5);
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyItem);
-      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 2, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 3, CustomDrawStageToPython(Stage));
       PyTuple_SetItem(LPyTuple, 4, LPyDefaultDraw);
       try
@@ -3290,7 +3288,7 @@ begin
       PyTuple_SetItem(LPyTuple, 0, LPyObject);
       PyTuple_SetItem(LPyTuple, 1, LPyItem);
       PyTuple_SetItem(LPyTuple, 2, PyLong_FromLong(SubItem));
-      PyTuple_SetItem(LPyTuple, 3, CustomDrawStateToPython(State, PyDelphiWrapper));
+      PyTuple_SetItem(LPyTuple, 3, CustomDrawStateToPython(State));
       PyTuple_SetItem(LPyTuple, 4, CustomDrawStageToPython(Stage));
       PyTuple_SetItem(LPyTuple, 5, LPyDefaultDraw);
       try

@@ -991,6 +991,8 @@ Type
 {$IFDEF EXTENDED_RTTI}
   function  CreateVarParam(PyDelphiWrapper : TPyDelphiWrapper;
     const AValue: TValue) : PPyObject; overload;
+  function SimpleValueToPython(const Value: TValue;
+    out ErrMsg: string): PPyObject;
   function TValueToPyObject(const Value: TValue;
     DelphiWrapper: TPyDelphiWrapper; out ErrMsg: string): PPyObject;
   function PyObjectToTValue(PyArg : PPyObject; ArgType: TRttiType;
