@@ -36,9 +36,13 @@ const
   N = 100000;
 
 type
- PIntArray = ^TIntArray;
- TIntArray = array[0..N - 1] of Integer;
-
+   PIntArray = ^TIntArray;
+  {$IFDEF MSWINDOWS}
+  TIntArray = array[0..N - 1] of Integer;
+  {$ELSE}
+  TIntArray = array[0..N - 1] of NativeInt;
+  {$ENDIF}
+ 
   { TBufferProtocol }
 
   TBufferProtocol = class(TCustomApplication)
