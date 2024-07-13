@@ -1068,7 +1068,7 @@ const
   PyInterpreterConfig_SHARED_GIL = 1;
   PyInterpreterConfig_OWN_GIL = 2;
 
-  type
+type
   PPyInterpreterConfig = ^PyInterpreterConfig;
   PyInterpreterConfig = {$IFDEF CPUX86}packed{$ENDIF} record
     use_main_obmalloc: Integer;
@@ -1080,7 +1080,7 @@ const
     gil: Integer;
   end;
 
-const
+var
   _PyInterpreterConfig_INIT: PyInterpreterConfig =
     ( use_main_obmalloc: 0;
       allow_fork: 0;
@@ -9305,7 +9305,7 @@ begin
       finally
         PyGILState_Release(gilstate);
       end;
-    end else {fThreadExecMode}
+    end else
     begin
       gilstate := PyGILState_Ensure();
       global_state := PyThreadState_Get;
@@ -9328,8 +9328,8 @@ begin
         PyThreadState_Swap(global_state);
         PyGILState_Release(gilstate);
       end else
-        raise EPythonError.Create( 'Could not create a new thread state');
-    end; {withinterp}
+        raise EPythonError.Create('Could not create a new thread state');
+    end;
   end;
 end;
 
