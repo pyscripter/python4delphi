@@ -8373,7 +8373,6 @@ begin
     begin
       Engine.Py_DECREF(Result);
       Result := nil;
-      obj.Free;
     end;
   end;
 end;
