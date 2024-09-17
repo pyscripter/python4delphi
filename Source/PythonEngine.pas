@@ -3021,9 +3021,8 @@ function CleanString(const s : UnicodeString; AppendLF : Boolean = True) : Unico
 implementation
 
 uses
-{$IFDEF FPC}
   StrUtils,
-{$ELSE}
+{$IFNDEF FPC}
   AnsiStrings,
 {$ENDIF}
 {$IFDEF MSWINDOWS}
@@ -4660,7 +4659,7 @@ procedure TPythonEngine.Initialize;
 
   procedure SetPythonPath(var Config: PyConfig);
   var
-    Paths: TArray<string>;
+    Paths: TStringDynArray;
     I: Integer;
     PWSL: PPyWideStringList;
   begin
@@ -4668,7 +4667,7 @@ procedure TPythonEngine.Initialize;
 
     PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
       TConfigFields.module_search_paths]);
-    Paths := string(FPythonPath).Split([PathSep]);
+    Paths := SplitString(string(FPythonPath), PathSep);
     for I := 0 to Length(Paths) - 1 do
     begin
       if (Paths[I] = '') and (I > 0) then
