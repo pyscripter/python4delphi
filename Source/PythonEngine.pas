@@ -2041,10 +2041,8 @@ type
     function   Run_CommandAsString(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): string;
     function   Run_CommandAsObject(const command: AnsiString; mode: Integer; const FileName: string = '<string>'): PPyObject;
     function   Run_CommandAsObjectWithDict(const command: AnsiString; mode: Integer; locals, globals: PPyObject; const FileName: string = '<string>'): PPyObject;
-    function   EncodeString (const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
-    {$IFDEF FPC}
-    function   EncodeString (const str: AnsiString): AnsiString; overload;
-    {$ENDIF}
+    function   EncodeString(const str: UnicodeString): AnsiString; overload;
+    function   EncodeString(const str: AnsiString): AnsiString; overload;
     function   EncodeWindowsFilePath(const str: string): AnsiString;
     procedure  ExecString(const command: AnsiString; const FileName: string = '<string>'); overload;
     procedure  ExecStrings(strings: TStrings; const FileName: string = '<string>'); overload;
@@ -5538,17 +5536,15 @@ begin
         end;
 end;
 
-function TPythonEngine.EncodeString(const str: UnicodeString): AnsiString; {$IFDEF FPC}overload;{$ENDIF}
+function TPythonEngine.EncodeString(const str: UnicodeString): AnsiString;
 begin
-  Result := UTF8Encode(str)
+  Result := UTF8Encode(str);
 end;
 
-{$IFDEF FPC}
-function TPythonEngine.EncodeString (const str: AnsiString): AnsiString; overload;
+function TPythonEngine.EncodeString(const str: AnsiString): AnsiString;
 begin
-  Result := str;
+  Result := UTF8Encode(str);
 end;
-{$ENDIF}
 
 function TPythonEngine.EncodeWindowsFilePath(const str: string): AnsiString;
 {PEP 529}
