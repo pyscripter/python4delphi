@@ -7234,10 +7234,11 @@ begin
           end
         else
           raise Exception.Create('TError.RaiseErrorObj: I didn''t get an instance' );
-        PyErr_SetObject( Error, res );
+        PyErr_SetObject(Error, res);
+        Py_XDECREF(res);
       end
     else
-      PyErr_SetObject( Error, obj );
+      PyErr_SetObject(Error, obj);
 end;
 
 function  TError.Owner : TErrors;
@@ -7735,7 +7736,7 @@ function TPyObject.GetBuffer(view: PPy_buffer; flags: Integer): Integer;
 begin
   view^.obj := nil;
   with GetPythonEngine do
-    PyErr_SetObject(PyExc_BufferError^, PyUnicodeFromString(''));
+    PyErr_SetString(PyExc_BufferError^, '');
   Result := -1;
 end;
 

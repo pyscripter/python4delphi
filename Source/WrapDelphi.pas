@@ -1527,8 +1527,8 @@ begin
 
   if not Assigned(Result) then
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrGet, [FRttiMember.Name, LOutMsg])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrAttrGet, [FRttiMember.Name, LOutMsg]))));
 end;
 
 function TExposedGetSet.SetterWrapper(AObj, AValue: PPyObject; AContext: Pointer): Integer; cdecl;
@@ -1552,8 +1552,8 @@ begin
 
   if Result <> 0 then
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg])));
+      PyErr_SetString (PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg]))));
 end;
 
 { TExposedField }
@@ -1648,8 +1648,8 @@ begin
 
   if Result <> 0 then
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg])));
+      PyErr_SetString (PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrAttrSet, [FRttiMember.Name, ErrMsg]))));
 end;
 
 { TExposedIndexedProperty }
@@ -1745,7 +1745,7 @@ begin
   if not FProperty.IsWritable then
   begin
     with Engine do
-      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(rs_NotWritable));
+      PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(rs_NotWritable)));
     Exit;
   end;
 
@@ -1869,8 +1869,8 @@ begin
     if Assigned(PyResult) and (EventHandler.MethodType.ReturnType <> nil) and
       not PyObjectToTValue(PyResult, EventHandler.MethodType.ReturnType, Result, ErrMsg)
     then
-      Engine.PyErr_SetObject(Engine.PyExc_TypeError^, Engine.PyUnicodeFromString(
-        Format(rs_ErrInvalidRet, [string(EventHandler.PropertyInfo.Name), ErrMsg])));
+      Engine.PyErr_SetString(Engine.PyExc_TypeError^, PAnsiChar(Engine.EncodeString(
+        Format(rs_ErrInvalidRet, [string(EventHandler.PropertyInfo.Name), ErrMsg]))));
     Engine.Py_XDECREF(PyResult);
   finally
     Engine.Py_XDECREF(PyArgs);
@@ -1904,9 +1904,8 @@ end;
 procedure InvalidArguments(const MethName, ErrMsg : string);
 begin
   with GetPythonEngine do
-    PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-      Format(rs_ErrInvalidArgs,
-      [MethName, ErrMsg])));
+    PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(
+      Format(rs_ErrInvalidArgs, [MethName, ErrMsg]))));
 end;
 
 function ValidateClassRef(PyValue: PPyObject; RefClass: TClass;
@@ -2354,8 +2353,8 @@ begin
     with GetPythonEngine do
     begin
       Result := False;
-      PyErr_SetObject (PyExc_IndexError^, PyUnicodeFromString(
-          Format(rs_ErrCheckIndex,[AIndexName, AIndex])));
+      PyErr_SetString(PyExc_IndexError^, PAnsiChar(EncodeString(
+          Format(rs_ErrCheckIndex,[AIndexName, AIndex]))));
     end
   else
     Result := True;
@@ -2372,8 +2371,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckInt, [AAttributeName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckInt, [AAttributeName]))));
   end;
 end;
 
@@ -2388,8 +2387,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckFloat, [AAttributeName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckFloat, [AAttributeName]))));
   end;
 end;
 
@@ -2410,8 +2409,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckStr, [AAttributeName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckStr, [AAttributeName]))));
   end;
 end;
 
@@ -2423,8 +2422,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckCallable, [AAttributeName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckCallable, [AAttributeName]))));
   end;
 end;
 
@@ -2436,9 +2435,9 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckEnum,
-        [AEnumName, AMinValue, AMaxValue, AValue])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckEnum,
+        [AEnumName, AMinValue, AMaxValue, AValue]))));
   end;
 end;
 
@@ -2461,8 +2460,8 @@ begin
     begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetObject (PyExc_AttributeError^,
-          PyUnicodeFromString(Format(rs_ErrCheckObjOfType, [AAttributeName, AExpectedClass.ClassName])));
+        PyErr_SetString(PyExc_AttributeError^,
+          PAnsiChar(EncodeString(Format(rs_ErrCheckObjOfType, [AAttributeName, AExpectedClass.ClassName]))));
     end
     else
     begin
@@ -2474,8 +2473,8 @@ begin
   begin
     Result := False;
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckObj, [AAttributeName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckObj, [AAttributeName]))));
   end;
 end;
 
@@ -2815,8 +2814,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSqAss, [fContainerAccess.Name])) );
+      PyErr_SetString( PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSqAss, [fContainerAccess.Name]))));
   end;
 end;
 
@@ -2833,8 +2832,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSqContains, [fContainerAccess.Name])) );
+      PyErr_SetString(PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSqContains, [fContainerAccess.Name]))));
   end;
 end;
 
@@ -2928,8 +2927,8 @@ begin
   Result := Assigned(DelphiObject);
   if not Result then
     with GetPythonEngine do
-      PyErr_SetObject(PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrCheckBound, [ClassName])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrCheckBound, [ClassName]))));
 end;
 
 function TPyDelphiObject.Compare(obj: PPyObject): Integer;
@@ -2959,8 +2958,8 @@ end;
 constructor TPyDelphiObject.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
 begin
     with APythonType.Engine do
-      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-        Format(rs_CannotCreate, [APythonType.TypeName])));
+      PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(
+        Format(rs_CannotCreate, [APythonType.TypeName]))));
 end;
 
 function TPyDelphiObject.CreateContainerAccess: TContainerAccess;
@@ -3189,8 +3188,8 @@ begin
 
     if Result = nil then
       with DelphiWrapper.Engine do
-        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-          Format(rs_ErrInvalidRet, [Method.Name, ErrMsg])));
+        PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(
+          Format(rs_ErrInvalidRet, [Method.Name, ErrMsg]))));
   except
     on E: Exception do begin
       Result := nil;
@@ -3405,8 +3404,8 @@ begin
     Result := GetRttiAttr(fAddr, RttiType, KeyName, PyDelphiWrapper, ErrMsg);
   if not Assigned(Result) then
     with GetPythonEngine do
-      PyErr_SetObject (PyExc_AttributeError^,
-        PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format(rs_ErrAttrGet,[KeyName, ErrMsg]))));
 end;
 
 class procedure TPyRttiObject.RegisterMethods(PythonType: TPythonType);
@@ -3436,8 +3435,8 @@ begin
 
   if Result <> 0 then
     with GetPythonEngine do
-      PyErr_SetObject(PyExc_AttributeError^, PyUnicodeFromString(
-        Format(rs_ErrAttrSet, [KeyName, ErrMsg])));
+      PyErr_SetString(PyExc_AttributeError^, PAnsiChar(EncodeString(
+        Format(rs_ErrAttrSet, [KeyName, ErrMsg]))));
 end;
 
 function TPyRttiObject.SetProps(args, keywords: PPyObject): PPyObject;
@@ -3564,8 +3563,8 @@ begin
   // If DelphiObject is nil exit immediately with an error
   if not Assigned(DelphiObject) then
   begin
-    PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
-      PyEngine.PyUnicodeFromString(rs_ErrObjectDestroyed));
+    PyEngine.PyErr_SetString(PyEngine.PyExc_AttributeError^,
+      PAnsiChar(PyEngine.EncodeString(rs_ErrObjectDestroyed)));
     Exit;
   end;
 
@@ -3652,8 +3651,8 @@ begin
   end;
 {$ENDIF}
   if not Assigned(Result) then
-    PyEngine.PyErr_SetObject (PyEngine.PyExc_AttributeError^,
-      PyEngine.PyUnicodeFromString(Format(rs_ErrAttrGet,[KeyName, ErrMsg])));
+    PyEngine.PyErr_SetString(PyEngine.PyExc_AttributeError^,
+      PAnsiChar(PyEngine.EncodeString(Format(rs_ErrAttrGet,[KeyName, ErrMsg]))));
 end;
 
 function TPyDelphiObject.GetContainerAccess: TContainerAccess;
@@ -3816,9 +3815,9 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrIterSupport,
-        [Self.ClassName])) );
+      PyErr_SetString(PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrIterSupport,
+        [Self.ClassName]))));
   end;
 end;
 
@@ -3958,8 +3957,8 @@ begin
   // If DelphiObject is nil exit immediately with an error
   if not Assigned(DelphiObject) then
   begin
-    PyEngine.PyErr_SetObject(PyEngine.PyExc_AttributeError^,
-      PyEngine.PyUnicodeFromString(rs_ErrObjectDestroyed));
+    PyEngine.PyErr_SetString(PyEngine.PyExc_AttributeError^,
+      PAnsiChar(PyEngine.EncodeString(rs_ErrObjectDestroyed)));
     Exit;
   end;
 
@@ -4528,7 +4527,7 @@ begin
   if not Prop.IsWritable then
   begin
     with Engine do
-      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(rs_NotWritable));
+      PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(rs_NotWritable)));
     Exit;
   end;
 
@@ -4595,8 +4594,8 @@ begin
   begin
     Result := -1;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSqAss, [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSqAss, [Self.ClassName]))));
   end;
 end;
 
@@ -4626,8 +4625,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
+      PyErr_SetString(PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSequence, [Self.ClassName]))));
   end;
 end;
 
@@ -4658,8 +4657,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
+      PyErr_SetString(PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSequence, [Self.ClassName]))));
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToList' ) <> 0 then
     with GetPythonEngine do
@@ -4682,8 +4681,8 @@ begin
   begin
     Result := nil;
     with GetPythonEngine do
-      PyErr_SetObject( PyExc_SystemError^,
-        PyUnicodeFromString(Format(rs_ErrSequence, [Self.ClassName])) );
+      PyErr_SetString( PyExc_SystemError^,
+        PAnsiChar(EncodeString(Format(rs_ErrSequence, [Self.ClassName]))));
   end
   else if GetPythonEngine.PyArg_ParseTuple( args, ':ToTuple' ) <> 0 then
     with GetPythonEngine do
@@ -4749,9 +4748,9 @@ begin
       on E: Exception do
       begin
         Result := nil;
-        PyErr_SetObject (PyExc_TypeError^,
-          PyUnicodeFromString(Format(rs_ErrInvalidArgs,
-          [MethodInfo.Name, E.Message])));
+        PyErr_SetString(PyExc_TypeError^,
+          PAnsiChar(EncodeString(Format(rs_ErrInvalidArgs,
+          [MethodInfo.Name, E.Message]))));
       end;
     end;
 end;
@@ -5227,9 +5226,8 @@ begin
         Klass := nil;
       end;
       if (Klass = nil) or not Klass.InheritsFrom(TComponent) then begin
-        PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-          Format(rs_ErrInvalidArgs,
-          ['CreateComponent', rs_InvalidClass])));
+        PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(
+          Format(rs_ErrInvalidArgs, ['CreateComponent', rs_InvalidClass]))));
         Exit;
       end;
 
@@ -5244,9 +5242,8 @@ begin
         Ownership := soOwned;
       Result := Self.Wrap(Component, Ownership);
     end else
-      PyErr_SetObject(PyExc_TypeError^, PyUnicodeFromString(
-        Format(rs_ErrInvalidArgs,
-        ['CreateComponent', ''])));
+      PyErr_SetString(PyExc_TypeError^, PAnsiChar(EncodeString(
+        Format(rs_ErrInvalidArgs, ['CreateComponent', '']))));
   end;
 end;
 
