@@ -151,6 +151,8 @@ end;
 // object.value
 // object.method(args)
 function  PyPoint_getattr(obj : PPyObject; key : PAnsiChar) : PPyObject; cdecl;
+var
+  Py_Key: PPyObject;
 begin
   with GetPythonEngine, PPyPoint(obj)^ do
     begin
@@ -163,9 +165,14 @@ begin
       else
         begin
           // Else check for a method
-          Result := PyObject_GenericGetAttr(obj, PyUnicodeFromString(key));
-          if not Assigned(Result) then
-            PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Utf8Encode(Format('Unknown attribute "%s"',[key]))));
+          Py_Key := PyUnicodeFromString(key);
+          try
+            Result := PyObject_GenericGetAttr(obj, Py_key);
+            if not Assigned(Result) then
+              PyErr_SetString (PyExc_AttributeError^, PAnsiChar(Utf8Encode(Format('Unknown attribute "%s"',[key]))));
+          finally
+            Py_DECREF(Py_Key);
+          end;
         end;
     end;
 end;
