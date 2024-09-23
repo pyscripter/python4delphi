@@ -1057,7 +1057,7 @@ begin
     else
     begin
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown THandleType value "%s"', [_value]))));
+        PyErr_SetString(PyExc_AttributeError^, PAnsiChar(EncodeString(Format('Unknown THandleType value "%s"', [_value]))));
       Result := -1;
       Exit;
     end;
@@ -1143,7 +1143,7 @@ begin
         DelphiObject.PixelFormat := pfCustom
       else
       begin
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TPixelFormat value "%s"', [_value]))));
+        PyErr_SetString(PyExc_AttributeError^, PAnsiChar(EncodeString(Format('Unknown TPixelFormat value "%s"', [_value]))));
         Result := -1;
         Exit;
       end;
@@ -1184,7 +1184,7 @@ begin
     else
     begin
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown TTransparentMode value "%s"', [_value]))));
+        PyErr_SetString(PyExc_AttributeError^, PAnsiChar(EncodeString(Format('Unknown TTransparentMode value "%s"', [_value]))));
       Result := -1;
       Exit;
     end;
@@ -1615,7 +1615,7 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_AttributeError^, 'PolyBezier accepts only a sequence of points as single parameter');
+        PyErr_SetString(PyExc_AttributeError^, 'PolyBezier accepts only a sequence of points as single parameter');
       end;
     end
     else
@@ -1662,7 +1662,7 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_AttributeError^, 'PolyBezierTo accepts only a sequence of points as single parameter');
+        PyErr_SetString(PyExc_AttributeError^, 'PolyBezierTo accepts only a sequence of points as single parameter');
       end;
     end
     else
@@ -1709,7 +1709,7 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_AttributeError^, 'Polygon accepts only a sequence of points as single parameter');
+        PyErr_SetString(PyExc_AttributeError^, 'Polygon accepts only a sequence of points as single parameter');
       end;
     end
     else
@@ -1755,7 +1755,7 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_AttributeError^, 'Polyline accepts only a sequence of points as single parameter');
+        PyErr_SetString(PyExc_AttributeError^, 'Polyline accepts only a sequence of points as single parameter');
       end;
     end
     else

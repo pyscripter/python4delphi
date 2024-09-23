@@ -288,7 +288,7 @@ begin
           FRandomInteger.Value := PythonToTRandomInteger(val1).Value;
     except
       on e: Exception do
-        PyErr_SetString(PyExc_Exception^, PAnsiChar(AnsiString(e.Message)));
+        PyErr_SetString(PyExc_Exception^, PAnsiChar(EncodeString(e.Message)));
     end;
   end;
 end;

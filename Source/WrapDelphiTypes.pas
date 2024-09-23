@@ -229,8 +229,8 @@ begin
     begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only Point objects', [AAttributeName]))));
+        PyErr_SetString(PyExc_AttributeError^,
+          PAnsiChar(EncodeString(Format('%s receives only Point objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -248,8 +248,8 @@ begin
     begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only Rect objects', [AAttributeName]))));
+        PyErr_SetString(PyExc_AttributeError^,
+          PAnsiChar(EncodeString(Format('%s receives only Rect objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -267,8 +267,8 @@ begin
     begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only Size objects', [AAttributeName]))));
+        PyErr_SetString(PyExc_AttributeError^,
+          PAnsiChar(EncodeString(Format('%s receives only Size objects', [AAttributeName]))));
     end;
   end;
 end;

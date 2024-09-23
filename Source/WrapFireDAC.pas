@@ -597,7 +597,7 @@ begin
  if not Assigned(DelphiObject) then begin
    Result := False;
    with GetPythonEngine do
-     PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('No field defined !') );
+     PyErr_SetString(PyExc_RuntimeError^, PAnsiChar('No field defined !') );
  end
  else
    Result := True;
@@ -978,7 +978,7 @@ begin
           Result := PyDelphiWrapper.Wrap(l_oDataset.Fields[idx])
         else begin
           Result := nil;
-          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Value out of range : %d', [idx]))));
+          PyErr_SetString(PyExc_AttributeError^, PAnsiChar(EncodeString(Format('Value out of range : %d', [idx]))));
         end;
       end
       else
@@ -1011,7 +1011,7 @@ begin
           Result := PyDelphiWrapper.Wrap(fld)
         else begin
           Result := nil;
-          PyErr_SetString (PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))) );
+          PyErr_SetString(PyExc_AttributeError^, PAnsiChar(AnsiString(Format('Unknown field "%s"', [String(s)]))) );
         end;
       end
       else
@@ -1191,7 +1191,7 @@ begin
     try
       if PyArg_ParseTuple( args, 'sOO:DBDataset.Locate',@keyFields, @keyValues, @options ) <> 0 then begin
         if PySequence_Check(options) = 0 then
-          PyErr_SetString (PyExc_AttributeError^, 'Third argument of Locate must be a sequence.')
+          PyErr_SetString(PyExc_AttributeError^, 'Third argument of Locate must be a sequence.')
         else begin
           // Prepare the locate options
           ListToSet( options, @opt, sizeof(opt) );
@@ -1391,14 +1391,14 @@ begin
     if not aMustOpen then begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is open!') );
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar('DBTable is open!') );
     end;
   end
   else begin
     if aMustOpen then begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBTable is not open!') );
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar('DBTable is not open!') );
     end;
   end;
 end;
@@ -1838,10 +1838,10 @@ begin
       if l_oTable.Active and
         (PyArg_ParseTuple( args, 'OO:FDTable.SetRange',@l_oPyStartValues, @l_oPyEndValues ) <> 0) then begin
         if PySequence_Check(l_oPyStartValues) = 0 then begin
-          PyErr_SetString (PyExc_AttributeError^, 'First argument of SetRange must be a sequence.');
+          PyErr_SetString(PyExc_AttributeError^, 'First argument of SetRange must be a sequence.');
         end
         else if PySequence_Check(l_oPyEndValues) = 0 then begin
-          PyErr_SetString (PyExc_AttributeError^, 'Second argument of SetRange must be a sequence.');
+          PyErr_SetString(PyExc_AttributeError^, 'Second argument of SetRange must be a sequence.');
         end
         else begin
           l_oTable.SetRangeStart;
@@ -1952,14 +1952,14 @@ begin
     if not aMustOpen then begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is open!') );
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar('DBQuery is open!') );
     end;
   end
   else begin
     if aMustOpen then begin
       Result := False;
       with GetPythonEngine do
-        PyErr_SetString (PyExc_RuntimeError^, PAnsiChar('DBQuery is not open!') );
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar('DBQuery is not open!') );
     end;
   end;
 end;

@@ -2419,8 +2419,8 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure BuildError( const ModuleName : AnsiString );
-    procedure RaiseError( const msg : AnsiString );
-    procedure RaiseErrorObj( const msg : AnsiString; obj : PPyObject );
+    procedure RaiseError(const msg : AnsiString);
+    procedure RaiseErrorObj(const msg : AnsiString; obj : PPyObject);
     function  Owner : TErrors;
     property Error : PPyObject read FError write FError;
   published
@@ -7183,14 +7183,14 @@ begin
     raise Exception.CreateFmt( 'Could not create error "%s"', [Name] );
 end;
 
-procedure TError.RaiseError( const msg : AnsiString );
+procedure TError.RaiseError(const msg : AnsiString);
 begin
   Owner.Owner.CheckEngine;
   with Owner.Owner.Engine do
-    PyErr_SetString( Error, PAnsiChar(msg) );
+    PyErr_SetString(Error, PAnsiChar(EncodeString(msg)));
 end;
 
-procedure TError.RaiseErrorObj( const msg : AnsiString; obj : PPyObject );
+procedure TError.RaiseErrorObj(const msg : AnsiString; obj : PPyObject);
 var
   args, res, str : PPyObject;
   i : Integer;
@@ -7698,8 +7698,8 @@ begin
   with GetPythonEngine do
     begin
       Result := -1;
-      PyErr_SetString (PyExc_AttributeError^,
-        PAnsiChar(AnsiString(Format('Unknown attribute "%s"',[key]))));
+      PyErr_SetString(PyExc_AttributeError^,
+        PAnsiChar(EncodeString(Format('Unknown attribute "%s"',[key]))));
     end;
 end;
 

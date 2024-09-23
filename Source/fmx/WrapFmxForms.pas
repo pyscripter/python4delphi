@@ -466,7 +466,7 @@ begin
   except
     on E: Exception do
       with GetPythonEngine do
-        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(Utf8Encode(E.Message)));
   end;
   Result := nil;
 end;

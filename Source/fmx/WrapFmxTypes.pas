@@ -505,7 +505,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only PointF objects', [AAttributeName]))));
+          PAnsiChar(Utf8Encode(Format('%s receives only PointF objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -524,7 +524,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only SizeF objects', [AAttributeName]))));
+          PAnsiChar(Utf8Encode(Format('%s receives only SizeF objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -543,7 +543,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only RectF objects', [AAttributeName]))));
+          PAnsiChar(Utf8Encode(Format('%s receives only RectF objects', [AAttributeName]))));
     end;
   end;
 end;
@@ -562,7 +562,7 @@ begin
       Result := False;
       with GetPythonEngine do
         PyErr_SetString (PyExc_AttributeError^,
-          PAnsiChar(AnsiString(Format('%s receives only Touch objects', [AAttributeName]))));
+          PAnsiChar(Utf8Encode(Format('%s receives only Touch objects', [AAttributeName]))));
     end;
   end;
 end;

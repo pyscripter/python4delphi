@@ -1221,13 +1221,13 @@ begin
       else
       begin
         Result := nil;
-        PyErr_SetString (PyExc_KeyError^, PAnsiChar(AnsiString(_name)));
+        PyErr_SetString(PyExc_KeyError^, PAnsiChar(EncodeString(_name)));
       end;
     end
     else
     begin
       Result := nil;
-      PyErr_SetString (PyExc_KeyError^, 'Key must be a string');
+      PyErr_SetString(PyExc_KeyError^, 'Key must be a string');
     end;
   end;
 end;
@@ -1329,7 +1329,7 @@ begin
     else
     begin
       Result := False;
-      PyErr_SetString (PyExc_AttributeError^, 'You can only assign strings to TStrings items');
+      PyErr_SetString(PyExc_AttributeError^, 'You can only assign strings to TStrings items');
     end;
   end
 end;
@@ -1393,7 +1393,7 @@ begin
     else
     begin
       Result := False;
-      PyErr_SetString (PyExc_AttributeError^, 'You can only assign Delphi wrappers to Objects items');
+      PyErr_SetString(PyExc_AttributeError^, 'You can only assign Delphi wrappers to Objects items');
     end;
   end
 end;
@@ -1617,11 +1617,11 @@ begin
           else
             Result := GetPythonEngine.ReturnNone;
         end else with GetPythonEngine do begin
-          PyErr_SetString (PyExc_KeyError^, PAnsiChar(AnsiString(S)));
+          PyErr_SetString(PyExc_KeyError^, PAnsiChar(EncodeString(S)));
           Result := nil;
         end;
       end else with GetPythonEngine do begin
-        PyErr_SetString (PyExc_KeyError^, '<Empty String>');
+        PyErr_SetString(PyExc_KeyError^, '<Empty String>');
         Result := nil;
       end;
     end;
@@ -2445,7 +2445,7 @@ begin
   except
     on E: Exception do
       with GetPythonEngine do
-        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(AnsiString(E.Message)));
+        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(EncodeString(E.Message)));
   end;
 
   //Maybe it was created on the next attempt...
