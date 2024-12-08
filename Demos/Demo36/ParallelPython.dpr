@@ -109,6 +109,7 @@ begin
       WriteLn('Elapsed ms: ' + SW.ElapsedMilliseconds.ToString);
       WriteLn;
     finally
+      Sleep(1000);  // allow some time for the threads to terminate
       DestroyEngine;
     end;
   except

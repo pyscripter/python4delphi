@@ -616,25 +616,26 @@ Type
     Generic wrapper for pascal classes
 
     Can be used from unit wrappers as follows:
-      APyDelphiWrapper.RegisterDelphiWrapper(TPyClassWrapper<TMyClass>);
+      PyDelphiWrapper1.RegisterDelphiWrapper(TPyClassWrapper<TMyClass>);
     or at runtime (e.g. inside the FormCreate handler:
       PyDelphiWrapper1.RegisterDelphiWrapper(TPyClassWrapper<TMyClass>).Initialize;
 
     if you want your class to capable of being instantiated from python then do:
 
-    TTestWrapper = class(TPyClassWrapper<TTest>)
+    TMyClassWrapper = class(TPyClassWrapper<TMyClass>)
       constructor CreateWith(APythonType: TPythonType; args, kwds: PPyObject); overload; override;
     end;
 
-    constuctor TTestWrapper.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
+    constuctor TMyClassWrapper.CreateWith(APythonType: TPythonType; args, kwds: PPyObject);
     begin
       Create(APythonType);
-      DelphiObject := TTest.Create;
+      DelphiObject := TMyClass.Create;
     end;
 
-    PyDelphiWrapper1.RegisterDelphiWrapper(TTestWrapper).Initialize;
+    PyDelphiWrapper1.RegisterDelphiWrapper(TMyClassWrapper).Initialize;
   }
   TPyClassWrapper<T: class> = class(TPyDelphiObject)
+  private
     function GetDelphiObject: T;
     procedure SetDelphiObject(const Value: T);
   public
