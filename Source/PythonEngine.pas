@@ -73,47 +73,51 @@ type
   end;
 const
 {$IFDEF MSWINDOWS}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
     (
     (DllName: 'python38.dll'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'python39.dll'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'python310.dll'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'python311.dll'; RegVersion: '3.11'; APIVersion: 1013),
     (DllName: 'python312.dll'; RegVersion: '3.12'; APIVersion: 1013),
-    (DllName: 'python313.dll'; RegVersion: '3.13'; APIVersion: 1013)
+    (DllName: 'python313.dll'; RegVersion: '3.13'; APIVersion: 1013),
+    (DllName: 'python314.dll'; RegVersion: '3.14'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF _so_files}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
     (
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
     (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013),
-    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013)
+    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013),
+    (DllName: 'libpython3.14.so'; RegVersion: '3.14'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF DARWIN}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
     (
     (DllName: 'libpython3.8.dylib'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.dylib'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.dylib'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.dylib'; RegVersion: '3.11'; APIVersion: 1013),
     (DllName: 'libpython3.12.dylib'; RegVersion: '3.12'; APIVersion: 1013),
-    (DllName: 'libpython3.13.dylib'; RegVersion: '3.13'; APIVersion: 1013)
+    (DllName: 'libpython3.13.dylib'; RegVersion: '3.13'; APIVersion: 1013),
+    (DllName: 'libpython3.14.dylib'; RegVersion: '3.14'; APIVersion: 1013)
     );
 {$ENDIF}
 {$IFDEF ANDROID}
-  PYTHON_KNOWN_VERSIONS: array[1..6] of TPythonVersionProp =
+  PYTHON_KNOWN_VERSIONS: array[1..7] of TPythonVersionProp =
     (
     (DllName: 'libpython3.8.so'; RegVersion: '3.8'; APIVersion: 1013),
     (DllName: 'libpython3.9.so'; RegVersion: '3.9'; APIVersion: 1013),
     (DllName: 'libpython3.10.so'; RegVersion: '3.10'; APIVersion: 1013),
     (DllName: 'libpython3.11.so'; RegVersion: '3.11'; APIVersion: 1013),
-    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013)
-    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013)
+    (DllName: 'libpython3.12.so'; RegVersion: '3.12'; APIVersion: 1013),
+    (DllName: 'libpython3.13.so'; RegVersion: '3.13'; APIVersion: 1013),
+    (DllName: 'libpython3.14.so'; RegVersion: '3.14'; APIVersion: 1013)
     );
 {$ENDIF}
 
@@ -176,8 +180,8 @@ type
   WCharTString = UnicodeString;
 {$ENDIF}
 
-  PPy_ssize_t = PNativeInt;
-  Py_ssize_t = NativeInt;
+  PPy_ssize_t = PNativeUInt;
+  Py_ssize_t = NativeUInt;
 
   const
 {
@@ -994,6 +998,9 @@ type
    Filler: array [0..1000] of Byte;
  end;
 
+ // Opaque structure PEP 741
+ PPyInitConfig = Pointer;
+
 {$SCOPEDENUMS ON}
   TConfigFields = (
     use_environment,
@@ -1796,8 +1803,9 @@ type
     Py_GetPrefix                    : function : PWCharT; cdecl;
     Py_GetProgramName               : function : PWCharT; cdecl;
 
-    PyErr_NewException              : function ( name : PAnsiChar; base, dict : PPyObject ) : PPyObject; cdecl;
-    PyMem_Malloc                    : function ( size : NativeUInt ) : Pointer;
+    PyErr_NewException              : function (name : PAnsiChar; base, dict : PPyObject): PPyObject; cdecl;
+    PyMem_Malloc                    : function (size: NativeUInt): Pointer; cdecl;
+    PyMem_Free                      : procedure (P: Pointer); cdecl;
 
     Py_IsInitialized                : function : integer; cdecl;
     Py_GetProgramFullPath           : function : PAnsiChar; cdecl;
@@ -1818,7 +1826,7 @@ type
     PyGILState_Ensure               : function() : PyGILstate_STATE; cdecl;
     PyGILState_Release              : procedure(gilstate : PyGILState_STATE); cdecl;
 
-    // Initialization functions
+    // PEP 587 Initialization functions
     PyWideStringList_Append         : function(list: PPyWideStringList; item: PWCharT): PyStatus; cdecl;
     PyWideStringList_Insert         : function(list: PPyWideStringList; index: Py_ssize_t; item: PWCharT): PyStatus; cdecl;
     PyConfig_InitPythonConfig       : procedure(var config: PyConfig); cdecl;
@@ -1829,6 +1837,17 @@ type
     PyConfig_SetArgv                : function(var config: PyConfig; argc: Py_ssize_t; argv: PPWCharT): PyStatus; cdecl;
     PyConfig_SetWideStringList      : function(var config: PyConfig; list: PPyWideStringList; length: Py_ssize_t; items: PPWCharT): PyStatus; cdecl;
     Py_InitializeFromConfig         : function({$IFDEF FPC}constref{$ELSE}[Ref] const{$ENDIF} config: PyConfig): PyStatus; cdecl;
+
+    // PEP 741 Initialization functions - python 3.14+
+    PyInitConfig_Create             : function(): PPyInitConfig; cdecl;
+    PyInitConfig_Free               : procedure(config: PPyInitConfig); cdecl;
+    Py_InitializeFromInitConfig     : function(config: PPyInitConfig): Integer; cdecl;
+    PyInitConfig_SetInt             : function(config: PPyInitConfig; name: PAnsiChar; value: Int64): Integer; cdecl;
+    PyInitConfig_SetStr             : function(config: PPyInitConfig; name: PAnsiChar; value: PAnsiChar): Integer; cdecl;
+    PyInitConfig_SetStrList         : function(config: PPyInitConfig; name: PAnsiChar; Lenght: Py_ssize_t; value: PPAnsiChar): Integer; cdecl;
+    PyInitConfig_GetError           : function(config: PPyInitConfig; err_msg: PPAnsiChar): integer; cdecl;
+    PyConfig_Get                    : function(name: PAnsiChar): PPyObject; cdecl;
+    PyConfig_Set                    : function(name: PAnsiChar; value: PPyObject): Integer; cdecl;
 
   function Py_CompileString(str,filename:PAnsiChar;start:integer) : PPyObject; cdecl;
 
@@ -1939,7 +1958,8 @@ const
 type
   TEngineClient = class;
   TSysPathInitEvent = procedure(Sender: TObject; PathList: PPyObject) of object;
-  TConfigInitEvent = procedure(Sender: TObject; var Config: PyConfig) of object;
+  // Config will be either PPyConfig if version < 3.14 or PPyInitConfig
+  TConfigInitEvent = procedure(Sender: TObject; Config: Pointer) of object;
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
                  pfFrozenFlag, pfIgnoreEnvironmentFlag, pfIsolated);
   TPythonFlags = set of TPythonFlag;
@@ -2021,14 +2041,12 @@ type
     function  GetClients( idx : Integer ) : TEngineClient;
     procedure Notification(AComponent: TComponent;
       Operation: TOperation); override;
-    procedure SetProgramArgs(var Config: PyConfig);
     procedure InitWinConsole;
     procedure SetUseWindowsConsole( const Value : Boolean );
     procedure SetGlobalVars(const Value: PPyObject);
     procedure SetLocalVars(const Value: PPyObject);
     procedure SetPyFlags(const Value: TPythonFlags);
     procedure SetIO(InputOutput: TPythonInputOutput);
-    procedure AssignPyFlags(var Config: PyConfig);
 
   public
     // Constructors & Destructors
@@ -4060,11 +4078,10 @@ begin
   Py_GetPrefix                := Import('Py_GetPrefix');
   Py_GetProgramName           := Import('Py_GetProgramName');
 
-  PyErr_NewException          := Import('PyErr_NewException');
-  try
-    PyMem_Malloc := Import ('PyMem_Malloc');
-  except
-  end;
+  PyErr_NewException       := Import('PyErr_NewException');
+  PyMem_Malloc             := Import ('PyMem_Malloc');
+  PyMem_Free               := Import ('PyMem_Free');
+
   Py_IsInitialized         := Import('Py_IsInitialized');
   Py_GetProgramFullPath    := Import('Py_GetProgramFullPath');
   Py_GetBuildInfo          := Import('Py_GetBuildInfo');
@@ -4096,6 +4113,20 @@ begin
   PyConfig_SetArgv            := Import('PyConfig_SetArgv');
   PyConfig_SetWideStringList  := Import('PyConfig_SetWideStringList');
   Py_InitializeFromConfig     := Import('Py_InitializeFromConfig');
+
+  // PEP 741
+  if (MajorVersion > 3) or (MinorVersion >= 14) then
+  begin
+    PyInitConfig_Create         := Import('PyInitConfig_Create');
+    PyInitConfig_Free           := Import('PyInitConfig_Free');
+    Py_InitializeFromInitConfig := Import('Py_InitializeFromInitConfig');
+    PyInitConfig_SetInt         := Import('PyInitConfig_SetInt');
+    PyInitConfig_SetStr         := Import('PyInitConfig_SetStr');
+    PyInitConfig_SetStrList     := Import('PyInitConfig_SetStrList');
+    PyInitConfig_GetError       := Import('PyInitConfig_GetError');
+    PyConfig_Get                := Import('PyConfig_Get');
+    PyConfig_Set                := Import('PyConfig_Set');
+  end;
 end;
 
 function TPythonInterface.Py_CompileString(str,filename:PAnsiChar;start:integer):PPyObject;
@@ -4626,25 +4657,245 @@ begin
   end;
 end;
 
-procedure TPythonEngine.AssignPyFlags(var Config: PyConfig);
-begin
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parser_debug])^ :=
-    IfThen(pfDebug in FPyFlags, 1, 0);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.verbose])^ :=
-    IfThen(pfVerbose in FPyFlags, 1, 0);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.interactive])^ :=
-    IfThen(pfInteractive in FPyFlags, 1, 0);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.optimization_level])^ :=
-    IfThen(pfOptimize in FPyFlags, 1, 0);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.site_import])^ :=
-    IfThen(pfNoSite in FPyFlags, 0, 1);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
-    IfThen(pfFrozenFlag in FPyFlags, 1, 0);
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.use_environment])^ :=
-    IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
-end;
-
 procedure TPythonEngine.Initialize;
+
+  procedure ConfgigPEP587(var ErrMsg: string);
+  // Initialize according to PEP587 available since python 3.8
+
+    procedure AssignPyFlags(var Config: PyConfig);
+    begin
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parser_debug])^ :=
+        IfThen(pfDebug in FPyFlags, 1, 0);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.verbose])^ :=
+        IfThen(pfVerbose in FPyFlags, 1, 0);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.interactive])^ :=
+        IfThen(pfInteractive in FPyFlags, 1, 0);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.optimization_level])^ :=
+        IfThen(pfOptimize in FPyFlags, 1, 0);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.site_import])^ :=
+        IfThen(pfNoSite in FPyFlags, 0, 1);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
+        IfThen(pfFrozenFlag in FPyFlags, 1, 0);
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.use_environment])^ :=
+        IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
+    end;
+
+    procedure SetProgramArgs(var Config: PyConfig);
+    var
+      I: Integer;
+      TempS: UnicodeString;
+      Str: WCharTString;
+
+    begin
+      // do not parse further
+      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parse_argv])^ := 0;
+      for I := 0 to ParamCount do
+      begin
+        {
+           ... the first entry should refer to the script file to be executed rather
+           than the executable hosting the Python interpreter. If there isn’t a
+           script that will be run, the first entry in argv can be an empty string.
+        }
+        if I = 0 then
+          TempS := ''
+        else
+          TempS := ParamStr(I);
+        {$IFDEF POSIX}
+        Str := UnicodeStringToUCS4String(TempS);
+        {$ELSE}
+        Str := TempS;
+        {$ENDIF}
+        PyWideStringList_Append(
+          PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.argv]),
+          PWCharT(Str));
+       end;
+    end;
+
+    procedure SetPythonPath(var Config: PyConfig);
+    var
+      Paths: TStringDynArray;
+      I: Integer;
+      PWSL: PPyWideStringList;
+    begin
+      if FPythonPath = '' then Exit;
+
+      PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
+        TConfigFields.module_search_paths]);
+      Paths := SplitString(string(FPythonPath), PathSep);
+      for I := 0 to Length(Paths) - 1 do
+      begin
+        if (Paths[I] = '') and (I > 0) then
+          Continue;
+        PyWideStringList_Append(PWSL, PWCharT(StringToWCharTString(Paths[I])));
+      end;
+
+      if PWSL^.length > 0 then
+        PInteger(PByte(@Config) + ConfigOffests[MinorVersion,
+          TConfigFields.module_search_paths_set])^ := 1;
+    end;
+
+  var
+    Config: PyConfig;
+    Status: PyStatus;
+  begin
+    // Fills Config with zeros and then sets some default values
+    if pfIsolated in FPyFlags then
+      PyConfig_InitIsolatedConfig(Config)
+    else
+      PyConfig_InitPythonConfig(Config);
+    try
+      AssignPyFlags(Config);
+
+      // Set programname and pythonhome if available
+      if FProgramName <> '' then
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.program_name]),
+          PWCharT(StringToWCharTString(FProgramName)));
+      if FPythonHome <> '' then
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.home]),
+          PWCharT(StringToWCharTString(FPythonHome)));
+      // Set venv executable if available
+      if FVenvPythonExe <> '' then
+        PyConfig_SetString(Config,
+          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.executable]),
+          PWCharT(StringToWCharTString(FVenvPythonExe)));
+
+      // Set program arguments (sys.argv)
+      SetProgramArgs(Config);
+
+      // PythonPath
+      SetPythonPath(Config);
+
+      // Fine tune Config
+      if Assigned(FOnConfigInit) then
+        FOnConfigInit(Self, @Config);
+
+      Status := Py_InitializeFromConfig(Config);
+      FInitialized := Py_IsInitialized() <> 0;
+
+      if PyStatus_Exception(Status) then
+        ErrMsg := Format(SPyInitFailed, [string(Status.err_msg)])
+      else if not FInitialized then
+        ErrMsg := Format(SPyInitFailed, [SPyInitFailedUnknown]);
+
+    finally
+      PyConfig_Clear(Config);
+    end;
+  end;
+
+  procedure ConfgigPEP741(var ErrMsg: string);
+  // Initialize according to PEP587 available since python 3.8
+
+    procedure AssignPyFlags(Config: PPyInitConfig);
+    begin
+      PyInitConfig_SetInt(Config, 'parser_debug', IfThen(pfDebug in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'verbose', IfThen(pfVerbose in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'interactive', IfThen(pfInteractive in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'optimization_level', IfThen(pfOptimize in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'site_import', IfThen(pfNoSite in FPyFlags, 0, 1));
+      PyInitConfig_SetInt(Config, 'user_site_directory', IfThen(pfNoSite in FPyFlags, 0, 1));
+      PyInitConfig_SetInt(Config, 'pathconfig_warnings', IfThen(pfFrozenFlag in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'use_environment', IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1));
+    end;
+
+    procedure SetProgramArgs(Config: PPyInitConfig);
+    var
+      I: Integer;
+      Params: TArray<AnsiString>;
+      PParams: TArray<PAnsiChar>;
+    begin
+      // do not parse further
+      PyInitConfig_SetInt(Config, 'parse_argv', 0);
+
+      SetLength(Params, ParamCount + 1);
+      SetLength(PParams, ParamCount + 1);
+      for I := 0 to ParamCount do
+      begin
+        {
+           ... the first entry should refer to the script file to be executed rather
+           than the executable hosting the Python interpreter. If there isn’t a
+           script that will be run, the first entry in argv can be an empty string.
+        }
+        if I = 0 then
+          Params[I] := ''
+        else
+          Params[I] := EncodeString(ParamStr(I));
+        PParams[I] := PAnsiChar(Params[I])
+      end;
+      PyInitConfig_SetStrList(Config, 'argv', ParamCount + 1, @PParams[0]);
+    end;
+
+    procedure SetPythonPath(Config: PPyInitConfig);
+    var
+      Paths: TStringDynArray;
+      I: Integer;
+      Utf8Paths: TArray<AnsiString>;
+      PUtf8Paths: TArray<PAnsiChar>;
+    begin
+      if FPythonPath = '' then Exit;
+
+      Paths := SplitString(string(FPythonPath), PathSep);
+
+      if Length(Paths) = 0  then Exit;
+
+      SetLength(Utf8Paths, Length(Paths));
+      SetLength(PUtf8Paths, Length(Paths));
+
+      for I := 0 to Length(Paths) - 1 do
+      begin
+        Utf8Paths[I] := EncodeString(Paths[I]);
+        PUtf8Paths[I] := PAnsiChar(Utf8Paths[I]);
+      end;
+
+      // The following Also sets module_search_paths_set
+      PyInitConfig_SetStrList(Config, 'module_search_paths', Length(Paths), @PUtf8Paths[0]);
+    end;
+
+  var
+    Config: PPyInitConfig;
+    PErrMsg: PAnsiChar;
+  begin
+    Config := PyInitConfig_Create;
+    try
+      PyInitConfig_SetInt(Config, 'isolated', IfThen(pfIsolated in FPyFlags, 1, 0));
+
+      AssignPyFlags(Config);
+
+      // Set programname and pythonhome if available
+      if FProgramName <> '' then
+        PyInitConfig_SetStr(Config, 'program_name', PAnsiChar(EncodeString(FProgramName)));
+      if FPythonHome <> '' then
+        PyInitConfig_SetStr(Config, 'home', PAnsiChar(EncodeString(FPythonHome)));
+      // Set venv executable if available
+      if FVenvPythonExe <> '' then
+        PyInitConfig_SetStr(Config, 'executable', PAnsiChar(EncodeString(FPythonHome)));
+
+      // Set program arguments (sys.argv)
+      SetProgramArgs(Config);
+
+      // PythonPath
+      SetPythonPath(Config);
+
+      // Fine tune Config
+      if Assigned(FOnConfigInit) then
+        FOnConfigInit(Self, Config);
+
+      if Py_InitializeFromInitConfig(Config) <> 0 then
+      begin
+        FInitialized := False;
+        PyInitConfig_GetError(Config, @PErrMsg);
+        if PErrMsg <> nil then
+          ErrMsg := Format(SPyInitFailed, [UTF8ToString(AnsiString(PErrMsg))]);
+      end
+      else
+        FInitialized := Py_IsInitialized() <> 0;
+      if not FInitialized and (ErrMsg = '') then
+        ErrMsg := Format(SPyInitFailed, [SPyInitFailedUnknown]);
+    finally
+      PyInitConfig_Free(Config);
+    end;
+  end;
 
   procedure InitSysPath;
   var
@@ -4653,29 +4904,6 @@ procedure TPythonEngine.Initialize;
     _path := PySys_GetObject('path');
     if Assigned(FOnSysPathInit) then
       FOnSysPathInit(Self, _path);
-  end;
-
-  procedure SetPythonPath(var Config: PyConfig);
-  var
-    Paths: TStringDynArray;
-    I: Integer;
-    PWSL: PPyWideStringList;
-  begin
-    if FPythonPath = '' then Exit;
-
-    PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
-      TConfigFields.module_search_paths]);
-    Paths := SplitString(string(FPythonPath), PathSep);
-    for I := 0 to Length(Paths) - 1 do
-    begin
-      if (Paths[I] = '') and (I > 0) then
-        Continue;
-      PyWideStringList_Append(PWSL, PWCharT(StringToWCharTString(Paths[I])));
-    end;
-
-    if PWSL^.length > 0 then
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion,
-        TConfigFields.module_search_paths_set])^ := 1;
   end;
 
   function GetVal(AModule : PPyObject; AVarName : AnsiString) : PPyObject;
@@ -4727,8 +4955,6 @@ procedure TPythonEngine.Initialize;
 
 var
   i : Integer;
-  Config: PyConfig;
-  Status: PyStatus;
   ErrMsg: string;
 begin
   if Assigned(gPythonEngine) then
@@ -4741,51 +4967,13 @@ begin
     FInitialized := True
   else
   begin
-    // Fills Config with zeros and then sets some default values
-    if pfIsolated in FPyFlags then
-      PyConfig_InitIsolatedConfig(Config)
+    if (MajorVersion > 3) or (MinorVersion >= 14) then
+      ConfgigPEP741(ErrMsg)
     else
-      PyConfig_InitPythonConfig(Config);
-    try
-      AssignPyFlags(Config);
-
-      // Set programname and pythonhome if available
-      if FProgramName <> '' then
-        PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.program_name]),
-          PWCharT(StringToWCharTString(FProgramName)));
-      if FPythonHome <> '' then
-        PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.home]),
-          PWCharT(StringToWCharTString(FPythonHome)));
-      // Set venv executable if available
-      if FVenvPythonExe <> '' then
-        PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.executable]),
-          PWCharT(StringToWCharTString(FVenvPythonExe)));
-
-      // Set program arguments (sys.argv)
-      SetProgramArgs(Config);
-
-      // PythonPath
-      SetPythonPath(Config);
-
-      // Fine tune Config
-      if Assigned(FOnConfigInit) then
-        FOnConfigInit(Self, Config);
-
-      Status := Py_InitializeFromConfig(Config);
-      FInitialized := Py_IsInitialized() <> 0
-    finally
-      PyConfig_Clear(Config);
-    end;
+      ConfgigPEP587(ErrMsg);
 
     if not FInitialized then
     begin
-      if PyStatus_Exception(Status) then
-        ErrMsg := Format(SPyInitFailed, [string(Status.err_msg)])
-      else
-        ErrMsg := Format(SPyInitFailed, [SPyInitFailedUnknown]);
       if FatalMsgDlg then
         {$IFDEF MSWINDOWS}
         MessageBox( GetActiveWindow, PChar(ErrMsg), 'Error', MB_TASKMODAL or MB_ICONSTOP );
@@ -4858,37 +5046,6 @@ begin
   inherited;
   if (Operation = opRemove) and (AComponent = IO) then
     IO := nil
-end;
-
-procedure TPythonEngine.SetProgramArgs(var Config: PyConfig);
-var
-  I: Integer;
-  TempS: UnicodeString;
-  Str: WCharTString;
-
-begin
-  // do not parse further
-  PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parse_argv])^ := 0;
-  for I := 0 to ParamCount do
-  begin
-    {
-       ... the first entry should refer to the script file to be executed rather
-       than the executable hosting the Python interpreter. If there isn’t a
-       script that will be run, the first entry in argv can be an empty string.
-    }
-    if I = 0 then
-      TempS := ''
-    else
-      TempS := ParamStr(I);
-    {$IFDEF POSIX}
-    Str := UnicodeStringToUCS4String(TempS);
-    {$ELSE}
-    Str := TempS;
-    {$ENDIF}
-    PyWideStringList_Append(
-      PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.argv]),
-      PWCharT(Str));
-   end;
 end;
 
 procedure TPythonEngine.InitWinConsole;
