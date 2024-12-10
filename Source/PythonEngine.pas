@@ -2003,7 +2003,7 @@ type
   {$IFEND}
   TPythonEngine = class(TPythonInterface)
   private
-    FVenvPythonExe:              string;
+    FPythonExecutable:           string;
     FInitScript:                 TStrings;
     FIO:                         TPythonInputOutput;
     FRedirectIO:                 Boolean;
@@ -2153,7 +2153,7 @@ type
     property PythonPath: UnicodeString read FPythonPath write FPythonPath;
   published
     property AutoFinalize: Boolean read FAutoFinalize write FAutoFinalize default True;
-    property VenvPythonExe: string read FVenvPythonExe write FVenvPythonExe;
+    property PythonExecutable: string read FPythonExecutable write FPythonExecutable;
     property DatetimeConversionMode: TDatetimeConversionMode read FDatetimeConversionMode write FDatetimeConversionMode default DEFAULT_DATETIME_CONVERSION_MODE;
     property InitScript: TStrings read FInitScript write SetInitScript;
     property IO: TPythonInputOutput read FIO write SetIO;
@@ -4760,10 +4760,10 @@ procedure TPythonEngine.Initialize;
           PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.home]),
           PWCharT(StringToWCharTString(FPythonHome)));
       // Set venv executable if available
-      if FVenvPythonExe <> '' then
+      if FPythonExecutable <> '' then
         PyConfig_SetString(Config,
           PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.executable]),
-          PWCharT(StringToWCharTString(FVenvPythonExe)));
+          PWCharT(StringToWCharTString(FPythonExecutable)));
 
       // Set program arguments (sys.argv)
       SetProgramArgs(Config);
@@ -4872,8 +4872,8 @@ procedure TPythonEngine.Initialize;
       if FPythonHome <> '' then
         PyInitConfig_SetStr(Config, 'home', PAnsiChar(EncodeString(FPythonHome)));
       // Set venv executable if available
-      if FVenvPythonExe <> '' then
-        PyInitConfig_SetStr(Config, 'executable', PAnsiChar(EncodeString(FPythonHome)));
+      if FPythonExecutable <> '' then
+        PyInitConfig_SetStr(Config, 'executable', PAnsiChar(EncodeString(FPythonExecutable)));
 
       // Set program arguments (sys.argv)
       SetProgramArgs(Config);

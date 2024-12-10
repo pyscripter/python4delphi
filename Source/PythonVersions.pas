@@ -127,7 +127,7 @@ begin
     TPythonEngine(PythonEngine).DllPath := DLLPath;
     TPythonEngine(PythonEngine).APIVersion := ApiVersion;
     if Is_venv then begin
-      TPythonEngine(PythonEngine).VenvPythonExe := PythonExecutable;
+      TPythonEngine(PythonEngine).PythonExecutable := PythonExecutable;
       TPythonEngine(PythonEngine).SetPythonHome(DLLPath);
     end else
       {
