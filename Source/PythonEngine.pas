@@ -1954,13 +1954,19 @@ end;
 type
   TDatetimeConversionMode = (dcmToTuple, dcmToDatetime);
   TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
-                 pfFrozenFlag, pfIgnoreEnvironmentFlag,
-                 pfDontWriteBytecodeFlag, pfIsolated);
+                 pfFrozen, pfIgnoreEnvironment, pfNoUserSiteDirectory,
+                 pfDontWriteBytecode, pfIsolated);
   TPythonFlags = set of TPythonFlag;
 
 const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
-  DEFAULT_FLAGS = {$IFDEF IOS}[pfIsolated, pfDontWriteBytecodeFlag]{$ELSE}[]{$ENDIF IOS};
+  DEFAULT_FLAGS =
+    {$IFDEF IOS}
+    [pfIsolated, pfNoUserSiteDirectory, pfIgnoreEnvironment,
+    pfDontWriteBytecodeFlag]
+    {$ELSE}
+    []
+    {$ENDIF IOS};
 
 type
   TEngineClient = class;
@@ -4679,9 +4685,9 @@ procedure TPythonEngine.Initialize;
       PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.site_import])^ :=
         IfThen(pfNoSite in FPyFlags, 0, 1);
       PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
-        IfThen(pfFrozenFlag in FPyFlags, 1, 0);
+        IfThen(pfFrozen in FPyFlags, 1, 0);
       PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.use_environment])^ :=
-        IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1);
+        IfThen(pfIgnoreEnvironment in FPyFlags, 0, 1);
     end;
 
     procedure SetProgramArgs(var Config: PyConfig);
@@ -4793,14 +4799,16 @@ procedure TPythonEngine.Initialize;
 
     procedure AssignPyFlags(Config: PPyInitConfig);
     begin
+      PyInitConfig_SetInt(Config, 'isolated', IfThen(pfIsolated in FPyFlags, 1, 0));
       PyInitConfig_SetInt(Config, 'parser_debug', IfThen(pfDebug in FPyFlags, 1, 0));
       PyInitConfig_SetInt(Config, 'verbose', IfThen(pfVerbose in FPyFlags, 1, 0));
       PyInitConfig_SetInt(Config, 'interactive', IfThen(pfInteractive in FPyFlags, 1, 0));
       PyInitConfig_SetInt(Config, 'optimization_level', IfThen(pfOptimize in FPyFlags, 1, 0));
       PyInitConfig_SetInt(Config, 'site_import', IfThen(pfNoSite in FPyFlags, 0, 1));
-      PyInitConfig_SetInt(Config, 'user_site_directory', IfThen(pfNoSite in FPyFlags, 0, 1));
-      PyInitConfig_SetInt(Config, 'pathconfig_warnings', IfThen(pfFrozenFlag in FPyFlags, 1, 0));
-      PyInitConfig_SetInt(Config, 'use_environment', IfThen(pfIgnoreEnvironmentFlag in FPyFlags, 0, 1));
+      PyInitConfig_SetInt(Config, 'pathconfig_warnings', IfThen(pfFrozen in FPyFlags, 1, 0));
+      PyInitConfig_SetInt(Config, 'use_environment', IfThen(pfIgnoreEnvironment in FPyFlags, 0, 1));
+      PyInitConfig_SetInt(Config, 'user_site_directory', IfThen(pfNoUserSiteDirectory in FPyFlags, 0, 1));
+      PyInitConfig_SetInt(Config, 'write_bytecode', IfThen(pfDontWriteBytecode in FPyFlags, 0, 1));
     end;
 
     procedure SetProgramArgs(Config: PPyInitConfig);
@@ -4862,8 +4870,6 @@ procedure TPythonEngine.Initialize;
   begin
     Config := PyInitConfig_Create;
     try
-      PyInitConfig_SetInt(Config, 'isolated', IfThen(pfIsolated in FPyFlags, 1, 0));
-
       AssignPyFlags(Config);
 
       // Set programname and pythonhome if available
