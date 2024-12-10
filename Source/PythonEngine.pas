@@ -1953,16 +1953,20 @@ end;
 //--------------------------------------------------------
 type
   TDatetimeConversionMode = (dcmToTuple, dcmToDatetime);
+  TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
+                 pfFrozenFlag, pfIgnoreEnvironmentFlag,
+                 pfDontWriteBytecodeFlag, pfIsolated);
+  TPythonFlags = set of TPythonFlag;
+
 const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
+  DEFAULT_FLAGS = {$IFDEF IOS}[pfIsolated, pfDontWriteBytecodeFlag]{$ELSE}[]{$ENDIF IOS};
+
 type
   TEngineClient = class;
   TSysPathInitEvent = procedure(Sender: TObject; PathList: PPyObject) of object;
   // Config will be either PPyConfig if version < 3.14 or PPyInitConfig
   TConfigInitEvent = procedure(Sender: TObject; Config: Pointer) of object;
-  TPythonFlag = (pfDebug, pfInteractive, pfNoSite, pfOptimize, pfVerbose,
-                 pfFrozenFlag, pfIgnoreEnvironmentFlag, pfIsolated);
-  TPythonFlags = set of TPythonFlag;
 
 
   TTracebackItem = class
@@ -2153,7 +2157,7 @@ type
     property DatetimeConversionMode: TDatetimeConversionMode read FDatetimeConversionMode write FDatetimeConversionMode default DEFAULT_DATETIME_CONVERSION_MODE;
     property InitScript: TStrings read FInitScript write SetInitScript;
     property IO: TPythonInputOutput read FIO write SetIO;
-    property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default [];
+    property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default DEFAULT_FLAGS;
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
     property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
     property OnAfterInit: TNotifyEvent read FOnAfterInit write FOnAfterInit;
@@ -4545,7 +4549,7 @@ begin
   FAutoFinalize            := True;
   FTraceback               := TPythonTraceback.Create;
   FUseWindowsConsole       := False;
-  FPyFlags                 := [];
+  FPyFlags                 := DEFAULT_FLAGS;
   FDatetimeConversionMode  := DEFAULT_DATETIME_CONVERSION_MODE;
   if csDesigning in ComponentState then
     begin

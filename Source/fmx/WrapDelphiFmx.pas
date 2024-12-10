@@ -24,9 +24,7 @@ uses
   WrapDelphiWindows,
   {$ENDIF MSWINDOWS}
   WrapDelphiDataBind,
-  {$IFNDEF LINUX}
   WrapFmxDataBind,
-  {$ENDIF LINUX}
   WrapFmxTypes,
   WrapFmxImgList,
   WrapFmxControls,
