@@ -474,7 +474,7 @@ type
   end;
 
   PyObject = {$IFDEF CPUX86}packed{$ENDIF} record
-    ob_refcnt: NativeInt;
+    ob_refcnt: NativeUInt;
     ob_type:   PPyTypeObject;
   end;
 
@@ -485,7 +485,7 @@ type
   end;
 
   PySliceObject = {$IFDEF CPUX86}packed{$ENDIF} record
-    ob_refcnt:          NativeInt;
+    ob_refcnt:          NativeUInt;
     ob_type:            PPyTypeObject;
     start, stop, step:  PPyObject;
   end;
@@ -544,7 +544,7 @@ type
   PPyDescrObject = ^PyDescrObject;
   PyDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -555,7 +555,7 @@ type
   PyMethodDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -568,7 +568,7 @@ type
   PyMemberDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -581,7 +581,7 @@ type
   PyGetSetDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -594,7 +594,7 @@ type
   PyWrapperDescrObject = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of PyDescr_COMMON
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     d_type     : PPyTypeObject;
@@ -607,7 +607,7 @@ type
   PPyModuleDef_Base = ^PyModuleDef_Base;
   PyModuleDef_Base = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     m_init     : function( ) : PPyObject; cdecl;
@@ -667,7 +667,7 @@ type
   // object.h
 
   PyTypeObject = {$IFDEF CPUX86}packed{$ENDIF} record
-    ob_refcnt:      NativeInt;
+    ob_refcnt:      NativeUInt;
     ob_type:        PPyTypeObject;
     ob_size:        NativeInt; // Number of items in variable part
     tp_name:        PAnsiChar; // For printing
@@ -814,7 +814,7 @@ const
 type
   PyDateTime_Delta = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode    : NativeInt;  // -1 when unknown
@@ -826,7 +826,7 @@ type
 
   PyDateTime_TZInfo = {$IFDEF CPUX86}packed{$ENDIF} record // a pure abstract base clase
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
   end;
@@ -849,7 +849,7 @@ type
   _PyDateTime_BaseTZInfo = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -873,7 +873,7 @@ type
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -888,7 +888,7 @@ type
     // Start of _PyDateTime_TIMEHEAD
       // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -910,7 +910,7 @@ type
   PyDateTime_Date = {$IFDEF CPUX86}packed{$ENDIF} record
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -929,7 +929,7 @@ type
   _PyDateTime_BaseDateTime = {$IFDEF CPUX86}packed{$ENDIF} record // hastzinfo false
     // Start of _PyTZINFO_HEAD
     // Start of the Head of an object
-    ob_refcnt  : NativeInt;
+    ob_refcnt  : NativeUInt;
     ob_type    : PPyTypeObject;
     // End of the Head of an object
     hashcode   : Integer;
@@ -943,7 +943,7 @@ type
     // Start of _PyDateTime_DATETIMEHEAD
       // Start of _PyTZINFO_HEAD
         // Start of the Head of an object
-        ob_refcnt  : NativeInt;
+        ob_refcnt  : NativeUInt;
         ob_type    : PPyTypeObject;
         // End of the Head of an object
       hashcode   : Integer;
@@ -958,7 +958,7 @@ type
   //bytearrayobject.h
 
   PyByteArrayObject = {$IFDEF CPUX86}packed{$ENDIF} record
-    ob_refcnt: NativeInt;
+    ob_refcnt: NativeUInt;
     ob_type:   PPyTypeObject;
     ob_alloc: Py_ssize_t;
     ob_bytes: PAnsiChar;
@@ -2576,9 +2576,9 @@ type
   // The base class of all new Python types
   TPyObject = class
   private
-    function  Get_ob_refcnt: NativeInt;
+    function  Get_ob_refcnt: NativeUInt;
     function  Get_ob_type: PPyTypeObject;
-    procedure Set_ob_refcnt(const Value: NativeInt);
+    procedure Set_ob_refcnt(const Value: NativeUInt);
     procedure Set_ob_type(const Value: PPyTypeObject);
   public
     PythonType     : TPythonType;
@@ -2599,7 +2599,7 @@ type
     procedure Adjust(PyPointer: Pointer);
     function  GetModule : TPythonModule;
 
-    property ob_refcnt : NativeInt read Get_ob_refcnt write Set_ob_refcnt;
+    property ob_refcnt : NativeUInt read Get_ob_refcnt write Set_ob_refcnt;
     property ob_type   : PPyTypeObject read Get_ob_type write Set_ob_type;
 
     // Type services
@@ -7816,7 +7816,7 @@ begin
     Result := nil;
 end;
 
-function TPyObject.Get_ob_refcnt: NativeInt;
+function TPyObject.Get_ob_refcnt: NativeUInt;
 begin
   Result := GetSelf^.ob_refcnt;
 end;
@@ -7826,7 +7826,7 @@ begin
   Result := GetSelf^.ob_type;
 end;
 
-procedure TPyObject.Set_ob_refcnt(const Value: NativeInt);
+procedure TPyObject.Set_ob_refcnt(const Value: NativeUInt);
 begin
   GetSelf^.ob_refcnt := Value;
 end;
