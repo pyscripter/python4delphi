@@ -4436,7 +4436,7 @@ end;
  * This method is automatically called by the Exec/Eval methods of
  * TPythonEngine. But if you use the Python core API, then don't
  * forget to refresh the traceback yourself. Or much better,
- * simply use the method CheckError wich will call PyErr_Print,
+ * simply use the method CheckError which will call PyErr_Print,
  * Traceback.Refresh and RaiseError for you.
 }
 procedure TPythonTraceback.Refresh(pytraceback: PPyObject);
