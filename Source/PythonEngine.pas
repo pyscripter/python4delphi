@@ -3072,6 +3072,59 @@ SPyExcStopIteration = 'Stop Iteration';
 SPyExcSystemError = 'Unhandled SystemExit exception. Code: %s';
 SPyInitFailed = 'Python initialization failed: %s';
 SPyInitFailedUnknown = 'Unknown initialization error';
+SCannotCreateMain = 'Run_CommandAsObject: can''t create __main__';
+SRaiseError = 'RaiseError: couldn''t fetch last exception';
+SMissingModuleDateTime = 'dcmToDatetime DatetimeConversionMode cannot be used with this version of python. Missing module datetime';
+SInvalidDateTimeConvMode = 'Invalid DatetimeConversionMode';
+SUnexpectedTypeInTimeObject = 'Unexpected type found in member %s of a time_struct object';
+SArguementTypeNotAllowed = 'Argument type not allowed';
+SCouldNotCreateTuple = 'Could not create a new tuple object';
+SCouldNotCreateList = 'Could not create a new list object';
+SCouldNotCreateDict = 'Could not create a new dict object';
+SArgumemntsShouldBeEven = 'You must provide an even number of arguments';
+SExpectedList = 'The python object is not a list';
+SExpectedTuple = 'The python object is not a tuple';
+SCouldNotSetVar = 'Could not set var "%s" in module "%s"';
+SCannotSetVarNoInit = 'Can''t set var "%s" in module "%s", because it is not yet initialized';
+SCannotGetDict = 'Can''t get __dict__ of module "%s"';
+SCannotDelVarNoInit = 'Can''t delete var "%s" in module "%s", because it is not yet initialized';
+SExpectedDelphiClass = 'Pytho;n object "%s" is not a Delphi class';
+SCannotCreateModule = 'CreateVar: can''t create module "%s"';
+SVarNotCreated = 'No variable was created';
+SVarExists = 'A variable "%s" already exists in the module "%s"';
+SCannotCreateThreadState = 'Could not create a new thread state';
+SCannotCreatePythonEngine = 'No Python engine was created';
+SCannotInitPythonEngine = 'The Python engine is not properly initialized';
+SThreadPythonExec = 'ThreadPythonExec should only be called from the main thread';
+SQuitMessage = 'Dll %s could not be loaded. We must quit.';
+SPythonQuitMessage = 'Python DLL %s could not be initialized. We must quit.';
+SErrCannotOpenDLL = 'Error %d: Could not open Dll "%s"';
+SPythonNoInit = 'Python is not initialized';
+SOnlyOnePythonEngine = 'You canott have more than one TPythonEngine component';
+SMoreThanOnePythonEngine = 'There is already one instance of TPythonEngine running';
+SGlobalVarsShouldBeDict = 'You must set a Python dictionary in the GlobalVars property';
+SLocalVarsShouldBeDict = 'You must set a Python dictionary in the LocalVars property';
+SCannotModifyFlags = 'You can''t modify Python flags after it has been initialized';
+SCannotFindType = 'Could not find type: %s';
+SCannotFindModule = 'Could not find module: %s';
+SCannotFindComponent = 'Could not find component: %s';
+SCannotHandleMoreThan3Dim = 'Can''t convert a variant array of more than 3 dimensions to a Python sequence';
+SNoEngineForComponent = 'No Engine defined for component "%s"';
+SIndexOutOfRange = '%s: Index %d out of range';
+SUnknownMemberType = 'Unknown member type';
+SUnknownMemberFlag = 'Unknown member flag';
+SDuplicateErrorName = 'In module "%s", there''s already an error named "%s"';
+SNoModuleWithParentClass = 'Could not find module containing the parent class of error "%s"';
+SCannotFindParentClass = 'Could not find the parent class "%s" of error "%s"';
+SObjectNotClass = 'The object "%s" in module "%s" is not a class';
+SErrorNotClass = 'Error without name in module "%s"';
+SCouldNotCreateError = 'Could not create error "%s"';
+STErrorCouldNotCreateInstance = 'TError.RaiseErrorObj: Could not create an instance of "%s"';
+STErrorCouldNotCreateTuple = 'TError.RaiseErrorObj: Could not create an empty tuple';
+STErrorNoInstance = 'TError.RaiseErrorObj: I didn''t get an instance';
+SCouldNotFindError = 'Could not find error "%s"';
+SCouldNotMapSymbol = 'Error %d: could not map symbol "%s"';
+SUndeterminedPythonVersion = 'Undetermined Python version';
 
 (*******************************************************)
 (**                                                   **)
@@ -3423,7 +3476,7 @@ begin
 
   if not IsHandleValid then begin
     {$IFDEF MSWINDOWS}
-    s := Format('Error %d: Could not open Dll "%s"',[GetLastError, DllName]);
+    s := Format(SErrCannotOpenDLL, [GetLastError, DllName]);
     {$ELSE}
     s := Format('Error: Could not open Dll "%s"',[DllName]);
     {$ENDIF}
@@ -3471,7 +3524,7 @@ begin
   {$IFEND}
   if (Result = nil) and canFail then begin
     {$IFDEF MSWINDOWS}
-    E := EDllImportError.CreateFmt('Error %d: could not map symbol "%s"', [GetLastError, funcname]);
+    E := EDllImportError.CreateFmt(SCouldNotMapSymbol, [GetLastError, funcname]);
     E.ErrorCode := GetLastError;
     {$ELSE}
     E := EDllImportError.CreateFmt('Error: could not map symbol "%s"', [funcname]);
@@ -3566,7 +3619,7 @@ begin
     end;
 
   if not LFound then
-    raise EDLLLoadError.Create('Undetermined Python version from loaded module.');
+    raise EDLLLoadError.Create(SUndeterminedPythonVersion);
 end;
 
 procedure TDynamicDll.LoadDll;
@@ -3619,7 +3672,7 @@ end;
 
 function  TDynamicDll.GetQuitMessage : string;
 begin
-  Result := Format( 'Dll %s could not be loaded. We must quit.', [DllName]);
+  Result := Format(SQuitMessage, [DllName]);
 end;
 
 function TDynamicDll.HasPythonSymbolsInLibrary: boolean;
@@ -3692,7 +3745,7 @@ begin
   if not FInExtensionModule then
     PythonVersionFromDLLName(DLLName, FMajorVersion, FMinorVersion)
   else if not PythonVersionFromRegVersion(RegVersion, FMajorVersion, FMinorVersion) then
-    raise EDLLLoadError.Create('Undetermined Python version.');
+    raise EDLLLoadError.Create(SUndeterminedPythonVersion);
 
   FBuiltInModuleName := 'builtins';
 
@@ -3713,13 +3766,13 @@ end;
 
 function  TPythonInterface.GetQuitMessage : string;
 begin
-  Result := Format( 'Python could not be properly initialized. We must quit.', [DllName]);
+  Result := Format(SPythonQuitMessage, [DllName]);
 end;
 
 procedure TPythonInterface.CheckPython;
 begin
   if not Initialized then
-    raise Exception.Create('Python is not properly initialized' );
+    raise Exception.Create(SPythonNoInit);
 end;
 
 procedure TPythonInterface.MapDll;
@@ -4562,7 +4615,7 @@ begin
       for i := 0 to AOwner.ComponentCount - 1 do
         if (AOwner.Components[i] is TPythonEngine) and
            (AOwner.Components[i] <> Self) then
-          raise Exception.Create('You can''t drop more than one TPythonEngine component');
+          raise Exception.Create(SOnlyOnePythonEngine);
     end;
 end;
 
@@ -4968,7 +5021,7 @@ var
   ErrMsg: string;
 begin
   if Assigned(gPythonEngine) then
-    raise Exception.Create('There is already one instance of TPythonEngine running' );
+    raise Exception.Create(SMoreThanOnePythonEngine);
 
   gPythonEngine := Self;
 
@@ -5085,7 +5138,7 @@ begin
     else
       begin
         FGlobalVars := nil;
-        raise Exception.Create('You must set a Python dictionary in the GlobalVars property');
+        raise Exception.Create(SGlobalVarsShouldBeDict);
       end
   else
     FGlobalVars := nil;
@@ -5103,7 +5156,7 @@ begin
     else
       begin
         FLocalVars := nil;
-        raise Exception.Create('You must set a Python dictionary in the LocalVars property');
+        raise Exception.Create(SLocalVarsShouldBeDict);
       end
   else
     FLocalVars := nil;
@@ -5115,7 +5168,7 @@ begin
   if FPyFlags <> Value then
   begin
     if Initialized then
-      raise Exception.Create('You can''t modify Python flags after it has been initialized');
+      raise Exception.Create(SCannotModifyFlags);
     FPyFlags := Value;
   end; // of if
 end;
@@ -5256,7 +5309,7 @@ begin
 
   m := GetMainModule;
   if m = nil then
-    raise EPythonError.Create('Run_CommandAsObject: can''t create __main__');
+    raise EPythonError.Create(SCannotCreateMain);
 
   if Assigned(locals) then
     _locals  := locals
@@ -5600,7 +5653,7 @@ begin
         raise Define( EPyExecError.Create(''), s_type, s_value );
     end
   else
-    raise EPythonError.Create('RaiseError: couldn''t fetch last exception');
+    raise EPythonError.Create(SRaiseError);
 end;
 
 function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
@@ -5734,7 +5787,7 @@ begin
             Result := TheTypePtr;
             Exit;
           end;
-  raise Exception.CreateFmt('Could not find type: %s', [aTypeName]);
+  raise Exception.CreateFmt(SCannotFindType, [aTypeName]);
 end;
 
 function   TPythonEngine.ModuleByName( const aModuleName : AnsiString ) : PPyObject;
@@ -5749,7 +5802,7 @@ begin
             Result := Module;
             Exit;
           end;
-  raise Exception.CreateFmt('Could not find module: %s', [aModuleName]);
+  raise Exception.CreateFmt(SCannotFindModule, [aModuleName]);
 end;
 
 function TPythonEngine.MethodsByName( const aMethodsContainer: string ) : PPyMethodDef;
@@ -5764,7 +5817,7 @@ begin
             Result := MethodsData;
             Exit;
           end;
-  raise Exception.CreateFmt('Could not find component: %s', [aMethodsContainer]);
+  raise Exception.CreateFmt(SCannotFindComponent, [aMethodsContainer]);
 end;
 
 function TPythonEngine.VariantAsPyObject( const V : Variant ) : PPyObject;
@@ -5884,7 +5937,7 @@ begin
         else if (DatetimeConversionMode = dcmToDatetime) then
         begin
           if not Assigned(FPyDateTime_DateTimeType) then
-            raise EPythonError.Create('dcmToDatetime DatetimeConversionMode cannot be used with this version of python. Missing module datetime');
+            raise EPythonError.Create(SMissingModuleDateTime);
           args := ArrayToPyTuple([y, m, d, h, mi, sec, ms*1000]);
           try
             Result := PyObject_Call(FPyDateTime_DateTimeType, args, nil);
@@ -5894,7 +5947,7 @@ begin
           end;
         end
         else
-          raise EPythonError.Create('Invalid DatetimeConversionMode');
+          raise EPythonError.Create(SInvalidDateTimeConvMode);
       end;
     varOleStr:
       begin
@@ -5922,7 +5975,7 @@ begin
         2: Result := ArrayVarDim2;
         3: Result := ArrayVarDim3;
         else
-          raise Exception.Create('Can''t convert a variant array of more than 3 dimensions to a Python sequence');
+          raise Exception.Create(SCannotHandleMoreThan3Dim);
         end;
       end
     else if VarIsNull(DeRefV) or VarIsEmpty(DeRefV) then
@@ -5948,7 +6001,7 @@ function TPythonEngine.PyObjectAsVariant( obj : PPyObject ) : Variant;
       if PyLong_Check(member) then
         Result := PyLong_AsLong(member)
       else
-        raise EPythonError.CreateFmt('Unexpected type found in member %s of a time_struct object', [AMember]);
+        raise EPythonError.CreateFmt(SUnexpectedTypeInTimeObject, [AMember]);
       Py_XDecRef(member);
     end;
 
@@ -6138,7 +6191,7 @@ begin
           Result := PyUnicodeFromString('');
       end;
   else
-    Raise Exception.Create('Argument type not allowed');
+    Raise Exception.Create(SArguementTypeNotAllowed);
   end;
 end;
 
@@ -6151,7 +6204,7 @@ var
 begin
   Result := PyTuple_New( High(objects)+1 );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new tuple object');
+    raise EPythonError.Create(SCouldNotCreateTuple);
   for i := Low(objects) to High(objects) do
     begin
       Py_XINCREF( objects[i] );
@@ -6168,7 +6221,7 @@ var
 begin
   Result := PyList_New( High(objects)+1 );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new list object');
+    raise EPythonError.Create(SCouldNotCreateList);
   for i := Low(objects) to High(objects) do
     begin
       Py_XIncRef( objects[i] );
@@ -6182,7 +6235,7 @@ var
 begin
   Result := PyTuple_New( High(items)+1 );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new tuple object');
+    raise EPythonError.Create(SCouldNotCreateTuple);
   for i := Low(items) to High(items) do
     PyTuple_SetItem( Result, i, VarRecAsPyObject( items[i] ) );
 end;
@@ -6193,7 +6246,7 @@ var
 begin
   Result := PyList_New( High(items)+1 );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new list object');
+    raise EPythonError.Create(SCouldNotCreateList);
   for i := Low(items) to High(items) do
     PyList_SetItem( Result, i, VarRecAsPyObject( items[i] ) );
 end;
@@ -6249,7 +6302,7 @@ function TPythonEngine.ArrayToPyDict( const items : array of const) : PPyObject;
           Result := '';
       end;
     else
-      Raise Exception.Create('Argument type not allowed');
+      Raise Exception.Create(SArguementTypeNotAllowed);
     end;
   end;
 
@@ -6259,10 +6312,10 @@ var
   obj : PPyObject;
 begin
   if ((High(items)+1) mod 2) <> 0 then
-    raise Exception.Create('You must provide an even number of arguments');
+    raise Exception.Create(SArgumemntsShouldBeEven);
   Result := PyDict_New;
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new dict object');
+    raise EPythonError.Create(SCouldNotCreateDict);
   i := Low(items);
   try
     while i <= High(items) do
@@ -6287,7 +6340,7 @@ var
 begin
   Result := PyList_New( strings.Count );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new list object');
+    raise EPythonError.Create(SCouldNotCreateList);
   for i := 0 to strings.Count - 1 do
     PyList_SetItem( Result, i,
       PyUnicodeFromString(strings.Strings[i]));
@@ -6299,7 +6352,7 @@ var
 begin
   Result := PyTuple_New( strings.Count );
   if not Assigned(Result) then
-    raise EPythonError.Create('Could not create a new tuple object');
+    raise EPythonError.Create(SCouldNotCreateTuple);
   for i := 0 to strings.Count - 1 do
     PyTuple_SetItem( Result, i,
       PyUnicodeFromString(strings.Strings[i]));
@@ -6311,7 +6364,7 @@ var
   i : Integer;
 begin
   if not PyList_Check(list) then
-    raise EPythonError.Create('the python object is not a list');
+    raise EPythonError.Create(SExpectedList);
   if ClearStrings then
     Strings.Clear;
   for i := 0 to PyList_Size( list ) - 1 do
@@ -6323,7 +6376,7 @@ var
   i : Integer;
 begin
   if not PyTuple_Check(tuple) then
-    raise EPythonError.Create('the python object is not a tuple');
+    raise EPythonError.Create(SExpectedTuple);
   strings.Clear;
   for i := 0 to PyTuple_Size( tuple ) - 1 do
     strings.Add( PyObjectAsString( PyTuple_GetItem( tuple, i ) ) );
@@ -6725,7 +6778,7 @@ end;
 procedure  TEngineClient.CheckEngine;
 begin
   if not Assigned(FEngine) then
-    raise Exception.CreateFmt('No Engine defined for component "%s"', [Name]);
+    raise Exception.CreateFmt(SNoEngineForComponent, [Name]);
 end;
 
 
@@ -6871,7 +6924,7 @@ end;
 function TMethodsContainer.GetMethods( idx : Integer ) : PPyMethodDef;
 begin
   if (idx < 0) or (idx > MethodCount) then
-    raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
+    raise Exception.CreateFmt(SIndexOutOfRange, [ClassName, idx]);
   Result := @( FMethods[idx] );
 end;
 
@@ -7004,7 +7057,7 @@ begin
       mtStringInplace:  _type := T_STRING_INPLACE;
       mtObjectEx:       _type := T_OBJECT_EX;
       else
-        raise Exception.Create('Unknown member type');
+        raise Exception.Create(SUnknownMemberType);
       end;
       offset    := MemberOffset + GetMembersStartOffset;
       case MemberFlags of
@@ -7014,9 +7067,9 @@ begin
       mfWriteRestricted:        flags := PY_WRITE_RESTRICTED;
       mfRestricted:             flags := RESTRICTED;
       else
-        raise Exception.Create('Unknown member flag');
+        raise Exception.Create(SUnknownMemberFlag);
       end;
-      doc       := MemberDoc;
+      doc := MemberDoc;
     end;
   Inc( FMemberCount );
 end;
@@ -7067,7 +7120,7 @@ end;
 function TMembersContainer.GetMembers(idx: Integer): PPyMemberDef;
 begin
   if (idx < 0) or (idx > MemberCount) then
-    raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
+    raise Exception.CreateFmt(SIndexOutOfRange, [ClassName, idx]);
   Result := @( FMembers[idx] );
 end;
 
@@ -7144,7 +7197,7 @@ end;
 function TGetSetContainer.GetGetSet(idx: Integer): PPyGetSetDef;
 begin
   if (idx < 0) or (idx > GetSetCount) then
-    raise Exception.CreateFmt('%s: Index %d out of range', [ClassName, idx]);
+    raise Exception.CreateFmt(SIndexOutOfRange, [ClassName, idx]);
   Result := @( FGetSets[idx] );
 end;
 
@@ -7181,7 +7234,8 @@ end;
 function TError.GetDisplayName: string;
 begin
   Result := string(Name);
-  if Result = '' then Result := inherited GetDisplayName;
+  if Result = '' then
+    Result := inherited GetDisplayName;
 end;
 
 procedure TError.SetName( const Value : AnsiString );
@@ -7199,8 +7253,8 @@ procedure TError.SetName( const Value : AnsiString );
         for i := 0 to Count - 1 do
           with Items[i] do
             if Name = Value then
-              raise Exception.CreateFmt( 'In module "%s", there''s already an error named "%s"',
-                                         [m.ModuleName, Value]);
+              raise Exception.CreateFmt(SDuplicateErrorName,
+                [m.ModuleName, Value]);
       end;
   end;
 
@@ -7310,13 +7364,13 @@ procedure TError.BuildError( const ModuleName : AnsiString );
         else
           m := FindModule( ModuleName );
         if not Assigned(m) then
-          raise Exception.CreateFmt('Could not find module containing the parent class of error "%s"', [Self.Name]);
+          raise Exception.CreateFmt(SNoModuleWithParentClass, [Self.Name]);
         d := PyModule_GetDict(m);
         Result := PyDict_GetItemString( d, PAnsiChar(ParentClass.Name) );
         if not Assigned(Result) then
-          raise Exception.CreateFmt('Could not find the parent class "%s" of error "%s"', [ParentClass.Name, Self.Name]);
+          raise Exception.CreateFmt(SCannotFindParentClass, [ParentClass.Name, Self.Name]);
         if not PyClass_Check( Result ) and not PyType_CheckExact( Result ) then
-          raise Exception.CreateFmt('The object "%s" in module "%s" is not a class', [ParentClass.Name, ParentClass.Module] );
+          raise Exception.CreateFmt(SObjectNotClass, [ParentClass.Name, ParentClass.Module] );
       end;
   end;
 
@@ -7327,7 +7381,7 @@ begin
     Exit;
   if Name = '' then
     with GetOwner as TPythonModule do
-      raise Exception.CreateFmt( 'Error without name in module "%s"', [ModuleName] );
+      raise Exception.CreateFmt(SErrorNotClass, [ModuleName] );
   if Text = '' then
     Text := Name;
   Owner.Owner.CheckEngine;
@@ -7347,7 +7401,7 @@ begin
         end;
     end;
   if not Assigned(Error) then
-    raise Exception.CreateFmt( 'Could not create error "%s"', [Name] );
+    raise Exception.CreateFmt(SCouldNotCreateError, [Name]);
 end;
 
 procedure TError.RaiseError(const msg : AnsiString);
@@ -7373,18 +7427,18 @@ begin
       begin
         res := PyObject_CallObject(Error, nil);
         if not Assigned(res) then
-          raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);
+          raise Exception.CreateFmt(STErrorCouldNotCreateInstance, [Self.Name]);
         if PyObject_TypeCheck(res, PPyTypeObject(PyExc_Exception^)) then
           begin
             args := PyTuple_New(1);
             if not Assigned(args) then
-              raise Exception.Create('TError.RaiseErrorObj: Could not create an empty tuple');
+              raise Exception.Create(STErrorCouldNotCreateTuple);
             str := PyUnicodeFromString(msg);
             PyTuple_SetItem(args, 0, str);
             res := PyObject_Call(Error, args, nil);
             Py_DECREF(args);
             if not Assigned(res) then
-              raise Exception.CreateFmt('TError.RaiseErrorObj: Could not create an instance of "%s"', [Self.Name]);
+              raise Exception.CreateFmt(STErrorCouldNotCreateInstance, [Self.Name]);
             keys := PyDict_Keys(obj);
             for i := 0 to PySequence_Length(keys)-1 do
             begin
@@ -7400,7 +7454,7 @@ begin
             Py_XDECREF(keys);
           end
         else
-          raise Exception.Create('TError.RaiseErrorObj: I didn''t get an instance' );
+          raise Exception.Create(STErrorNoInstance);
         PyErr_SetObject(Error, res);
         Py_XDECREF(res);
       end
@@ -7600,7 +7654,7 @@ begin
         Result := Errors.Items[i];
         Exit;
       end;
-  raise Exception.CreateFmt( 'Could not find error "%s"', [AName] );
+  raise Exception.CreateFmt(SCouldNotFindError, [AName] );
 end;
 
 procedure TPythonModule.RaiseError( const error, msg : AnsiString );
@@ -7652,10 +7706,10 @@ begin
   if Assigned(FEngine) and Assigned( FModule ) then
     begin
       if Engine.PyObject_SetAttrString(Module, PAnsiChar(varName), value ) <> 0 then
-        raise EPythonError.CreateFmt( 'Could not set var "%s" in module "%s"', [varName, ModuleName] );
+        raise EPythonError.CreateFmt(SCouldNotSetVar, [varName, ModuleName]);
     end
   else
-    raise EPythonError.CreateFmt( 'Can''t set var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
+    raise EPythonError.CreateFmt(SCannotSetVarNoInit, [varName, ModuleName]);
 end;
 
 // warning, this function will increase the refcount of value,
@@ -7669,7 +7723,7 @@ begin
     Engine.PyErr_Clear;
   end
   else
-    raise EPythonError.CreateFmt( 'Can''t get var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
+    raise EPythonError.CreateFmt(SCannotSetVarNoInit, [varName, ModuleName]);
 end;
 
 procedure TPythonModule.DeleteVar( const varName : AnsiString );
@@ -7680,11 +7734,12 @@ begin
     with Engine do
     begin
       dict := PyModule_GetDict( Module );
-      if not Assigned(dict) then raise EPythonError.CreateFmt( 'Can''t get __dict__ of module "%s"', [ModuleName] );
+      if not Assigned(dict) then
+        raise EPythonError.CreateFmt(SCannotGetDict, [ModuleName] );
       PyDict_DelItemString( dict, PAnsiChar(varName) );
     end
   else
-    raise EPythonError.CreateFmt( 'Can''t delete var "%s" in module "%s", because it is not yet initialized', [varName, ModuleName] );
+    raise EPythonError.CreateFmt(SCannotDelVarNoInit, [varName, ModuleName]);
 end;
 
 procedure TPythonModule.ClearVars;
@@ -8252,7 +8307,7 @@ begin
   if IsDelphiObject( obj ) then
     Result := TPyObject(PAnsiChar(obj)+Sizeof(PyObject))
   else
-    raise EPythonError.CreateFmt( 'Python object "%s" is not a Delphi class', [GetPythonEngine.PyObjectAsString(obj)] );
+    raise EPythonError.CreateFmt(SExpectedDelphiClass, [GetPythonEngine.PyObjectAsString(obj)]);
 end;
 
 procedure PyObjectDestructor( pSelf : PPyObject); cdecl;
@@ -9103,7 +9158,7 @@ begin
       // Add a reference to this var in the module
       m := PyImport_AddModule(PAnsiChar(Module));
       if m = nil then
-        raise EPythonError.CreateFmt('CreateVar: can''t create module "%s"', [Module]);
+        raise EPythonError.CreateFmt(SCannotCreateModule, [Module]);
       d := PyModule_GetDict(m);
       if @PyDict_SetItemString = nil then
         raise Exception.Create('nil');
@@ -9117,7 +9172,7 @@ begin
     with TPyVar(PythonToDelphi(FVarObject)) do
       Result := GetValueAsVariant
   else
-    raise Exception.Create('No variable was created' );
+    raise Exception.Create(SVarNotCreated);
 end;
 
 procedure TPythonDelphiVar.SetValue( const val : Variant );
@@ -9126,7 +9181,7 @@ begin
     with TPyVar(PythonToDelphi(FVarObject)) do
       SetValueFromVariant(val)
   else
-    raise Exception.Create('No variable was created' );
+    raise Exception.Create(SVarNotCreated);
 end;
 
 // Warning: GetValueAsPyObject returns a preincremented object !
@@ -9136,7 +9191,7 @@ begin
     with TPyVar(PythonToDelphi(FVarObject)) do
       Result := GetValue
   else
-    raise Exception.Create('No variable was created' );
+    raise Exception.Create(SVarNotCreated);
 end;
 
 procedure TPythonDelphiVar.SetValueFromPyObject( val : PPyObject );
@@ -9145,7 +9200,7 @@ begin
     with TPyVar(PythonToDelphi(FVarObject)) do
       SetValue(val)
   else
-    raise Exception.Create('No variable was created' );
+    raise Exception.Create(SVarNotCreated);
 end;
 
 function  TPythonDelphiVar.IsVariantOk( const v : Variant ) : Boolean;
@@ -9198,7 +9253,7 @@ procedure TPythonDelphiVar.SetVarName( const val : AnsiString );
       if Owner.Components[i] is TPythonDelphiVar then
         with TPythonDelphiVar(Owner.Components[i]) do
           if (VarName = val) and (Module = Self.Module) then
-            raise Exception.CreateFmt('A variable "%s" already exists in the module "%s"',[val, Module]);
+            raise Exception.CreateFmt(SVarExists, [val, Module]);
   end;
 
 begin
@@ -9490,7 +9545,7 @@ begin
         PyThreadState_Swap(global_state);
         PyGILState_Release(gilstate);
       end else
-        raise EPythonError.Create('Could not create a new thread state');
+        raise EPythonError.Create(SCannotCreateThreadState);
     end;
   end;
 end;
@@ -9698,9 +9753,9 @@ end;
 function  GetPythonEngine : TPythonEngine;
 begin
   if not Assigned( gPythonEngine ) then
-    raise Exception.Create( 'No Python engine was created' );
+    raise Exception.Create(SCannotCreatePythonEngine);
   if not gPythonEngine.Finalizing and not gPythonEngine.Initialized then
-    raise Exception.Create( 'The Python engine is not properly initialized' );
+    raise Exception.Create(SCannotInitPythonEngine);
   Result := gPythonEngine;
 end;
 
@@ -10053,7 +10108,7 @@ var
   Thread: TAnonymousPythonThread;
 begin
   if GetCurrentThreadId <> MainThreadID then
-    raise Exception.Create('ThreadPythonExec should only be called from the main thread');
+    raise Exception.Create(SThreadPythonExec);
   Thread := TAnonymousPythonThread.Create(ExecuteProc, TerminateProc, WaitToFinish, ThreadExecMode);
   if WaitToFinish then
   begin
