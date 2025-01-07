@@ -538,7 +538,8 @@ type
   {#define PyDescr_COMMON \
           PyObject_HEAD \
           PyTypeObject *d_type; \
-          PyObject *d_name
+          PyObject *d_name \
+          PyObject *d_qualname
   }
 
   PPyDescrObject = ^PyDescrObject;
@@ -549,6 +550,7 @@ type
     // End of the Head of an object
     d_type     : PPyTypeObject;
     d_name     : PPyObject;
+    d_qualname : PPyObject;
   end;
 
   PPyMethodDescrObject = ^PyMethodDescrObject;
@@ -560,6 +562,7 @@ type
     // End of the Head of an object
     d_type     : PPyTypeObject;
     d_name     : PPyObject;
+    d_qualname : PPyObject;
     // End of PyDescr_COMMON
     d_method : PPyMethodDef;
   end;
@@ -573,6 +576,7 @@ type
     // End of the Head of an object
     d_type     : PPyTypeObject;
     d_name     : PPyObject;
+    d_qualname : PPyObject;
     // End of PyDescr_COMMON
     d_member : PPyMemberDef;
   end;
@@ -586,6 +590,7 @@ type
     // End of the Head of an object
     d_type     : PPyTypeObject;
     d_name     : PPyObject;
+    d_qualname : PPyObject;
     // End of PyDescr_COMMON
     d_getset : PPyGetSetDef;
   end;
@@ -599,6 +604,7 @@ type
     // End of the Head of an object
     d_type     : PPyTypeObject;
     d_name     : PPyObject;
+    d_qualname : PPyObject;
     // End of PyDescr_COMMON
     d_base : pwrapperbase;
     d_wrapped : Pointer; // This can be any function pointer
@@ -1513,6 +1519,7 @@ type
     PySuper_Type: PPyTypeObject;
     PyTraceBack_Type: PPyTypeObject;
     PyUnicode_Type: PPyTypeObject;
+    PyGetSetDescr_Type: PPyTypeObject;
     PyWrapperDescr_Type: PPyTypeObject;
     _PyWeakref_RefType: PPyTypeObject;
     _PyWeakref_ProxyType: PPyTypeObject;
@@ -3859,6 +3866,7 @@ begin
   PyStaticMethod_Type        := Import('PyStaticMethod_Type');
   PySuper_Type               := Import('PySuper_Type');
   PyTraceBack_Type           := Import('PyTraceBack_Type');
+  PyGetSetDescr_Type         := Import('PyGetSetDescr_Type');
   PyWrapperDescr_Type        := Import('PyWrapperDescr_Type');
   _PyWeakref_RefType         := Import('_PyWeakref_RefType');
   _PyWeakref_ProxyType       := Import('_PyWeakref_ProxyType');
