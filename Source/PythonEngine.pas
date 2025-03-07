@@ -1034,7 +1034,7 @@ type
       {$IFDEF CPU64BITS}
       ((8, 80, 88, 144, 156, 160, 164, 172, 224, 104, 240, 248, 256, 272),
        (8, 80, 88, 144, 156, 160, 164, 172, 224, 104, 240, 248, 256, 272),
-       (8, 80, 104, 152, 168, 172, 176, 184, 232, 240, 256, 272, 280, 296),
+       (8, 80, 104, 152, 168, 172, 176, 184, 240, 248, 264, 280, 288, 304),
        (8, 96, 120, 168, 184, 188, 192, 200, 264, 272, 288, 304, 312, 336),
        (8, 96, 120, 168, 184, 188, 192, 200, 268, 272, 288, 304, 312, 336),
        (8, 96, 120, 168, 184, 188, 192, 200, 272, 280, 296, 312, 320, 344));
@@ -4730,7 +4730,7 @@ end;
 
 procedure TPythonEngine.Initialize;
 
-  procedure ConfgigPEP587(var ErrMsg: string);
+  procedure ConfigPEP587(var ErrMsg: string);
   // Initialize according to PEP587 available since python 3.8
 
     procedure AssignPyFlags(var Config: PyConfig);
@@ -4855,7 +4855,7 @@ procedure TPythonEngine.Initialize;
     end;
   end;
 
-  procedure ConfgigPEP741(var ErrMsg: string);
+  procedure ConfigPEP741(var ErrMsg: string);
   // Initialize according to PEP587 available since python 3.8
 
     procedure AssignPyFlags(Config: PPyInitConfig);
@@ -5039,9 +5039,9 @@ begin
   else
   begin
     if (MajorVersion > 3) or (MinorVersion >= 14) then
-      ConfgigPEP741(ErrMsg)
+      ConfigPEP741(ErrMsg)
     else
-      ConfgigPEP587(ErrMsg);
+      ConfigPEP587(ErrMsg);
 
     if not FInitialized then
     begin
