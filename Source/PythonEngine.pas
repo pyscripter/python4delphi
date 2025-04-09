@@ -1649,6 +1649,7 @@ type
     PyLong_FromLongLong:function(val:Int64): PPyObject; cdecl;
     PyLong_FromUnsignedLongLong:function(val:UInt64) : PPyObject; cdecl;
     PyLong_AsLongLong:function(ob:PPyObject): Int64; cdecl;
+    PyLong_AsVoidPtr:function(ob:PPyObject): Pointer;
     PyLong_FromVoidPtr:function(p: Pointer): PPyObject; cdecl;
     PyMapping_Check:function (ob:PPyObject):integer; cdecl;
     PyMapping_GetItemString:function (ob:PPyObject;key:PAnsiChar):PPyObject; cdecl;
@@ -3984,6 +3985,7 @@ begin
   PyLong_FromLongLong       := Import('PyLong_FromLongLong');
   PyLong_FromUnsignedLongLong := Import('PyLong_FromUnsignedLongLong');
   PyLong_AsLongLong         := Import('PyLong_AsLongLong');
+  PyLong_AsVoidPtr          := Import('PyLong_AsVoidPtr');
   PyLong_FromVoidPtr        := Import('PyLong_FromVoidPtr');
   PyMapping_Check           := Import('PyMapping_Check');
   PyMapping_GetItemString   := Import('PyMapping_GetItemString');
