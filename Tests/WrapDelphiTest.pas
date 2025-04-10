@@ -55,6 +55,7 @@ type
     ObjectField: TObject;
     RecordField: TTestRecord;
     InterfaceField: ITestInterface;
+    PointerField: Pointer;
     ClassRef: TClass;
     function GetData: TObject;
     procedure BuyFruits(AFruits: TFruits);
@@ -160,6 +161,8 @@ type
     procedure TestVarArgs;
     [Test]
     procedure TestPPyObjects;
+    [Test]
+    procedure TestPointers;
   end;
 
 implementation
@@ -437,6 +440,12 @@ begin
   List := rtti_var.PlaceInNewList('abc');
   Assert.IsTrue(VarIsPythonList(List));
   Assert.AreEqual<string>(List.GetItem(0), 'abc');
+end;
+
+procedure TTestWrapDelphi.TestPointers;
+begin
+  rtti_var.PointerField := $FFFF;
+  Assert.AreEqual<NativeUInt>(rtti_var.PointerField, $FFFF);
 end;
 
 procedure TTestWrapDelphi.TestRecord;
