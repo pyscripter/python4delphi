@@ -2154,7 +2154,7 @@ var
   V: Variant;
 begin
   for V in VarPyIterate(AValue) do
-    AStrings.Add(V)
+    AStrings.Add(VarPythonAsString(V))
 end;
 
 initialization
