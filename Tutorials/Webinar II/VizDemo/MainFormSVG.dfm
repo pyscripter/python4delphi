@@ -10,17 +10,12 @@ object Form1: TForm1
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 489
     Top = 0
     Height = 613
-    ExplicitLeft = 528
-    ExplicitTop = 280
-    ExplicitHeight = 100
   end
   object SVGIconImage1: TSVGIconImage
     Left = 960
@@ -35,8 +30,6 @@ object Form1: TForm1
     Width = 543
     Height = 613
     AutoSize = False
-    ParentDoubleBuffered = False
-    DoubleBuffered = True
     Align = alClient
   end
   object PageControl1: TPageControl
@@ -46,7 +39,7 @@ object Form1: TForm1
     Height = 613
     ActivePage = TabSheet1
     Align = alLeft
-    TabOrder = 2
+    TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'matplotlib'
       object Panel1: TPanel
@@ -63,8 +56,6 @@ object Form1: TForm1
           Height = 3
           Cursor = crVSplit
           Align = alBottom
-          ExplicitTop = 10
-          ExplicitWidth = 492
         end
         object SynEdit1: TSynEdit
           Left = 1
@@ -72,6 +63,7 @@ object Form1: TForm1
           Width = 479
           Height = 444
           Align = alClient
+          CaseSensitive = True
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -85,6 +77,8 @@ object Form1: TForm1
           Gutter.Font.Height = -11
           Gutter.Font.Name = 'Consolas'
           Gutter.Font.Style = []
+          Gutter.Font.Quality = fqClearTypeNatural
+          Gutter.Bands = <>
           Highlighter = SynPythonSyn1
           Lines.Strings = (
             'from delphi_module import svg_image'
@@ -102,10 +96,16 @@ object Form1: TForm1
             
               '# stores the date as an np.datetime64 with a day unit ('#39'D'#39') in t' +
               'he date column.'
-            
-              'price_data = (cbook.get_sample_data('#39'goog.npz'#39', np_load=True)['#39'p' +
-              'rice_data'#39']'
-            '              .view(np.recarray))'
+            '# Load Google stock price data from Matplotlib'#39's sample data'
+            'data = cbook.get_sample_data('#39'goog.npz'#39')'
+            ''
+            '# Handle different return types from get_sample_data'
+            'if isinstance(data, np.lib.npyio.NpzFile):'
+            '    # Already an NpzFile, access price_data directly'
+            '    price_data = data['#39'price_data'#39'].view(np.recarray)'
+            'else:'
+            '    # Assume data is a path or file-like object, use np.load'
+            '    price_data = np.load(data)['#39'price_data'#39'].view(np.recarray)'
             
               'price_data = price_data[-250:]  # get the most recent 250 tradin' +
               'g days'
@@ -138,6 +138,7 @@ object Form1: TForm1
             'svg_image.SvgText = figdata_svg'
             ''
             '#plt.show()')
+          ScrollbarAnnotations = <>
         end
         object Panel2: TPanel
           Left = 1
@@ -183,8 +184,6 @@ object Form1: TForm1
           Height = 3
           Cursor = crVSplit
           Align = alBottom
-          ExplicitTop = 151
-          ExplicitWidth = 433
         end
         object SynEdit2: TSynEdit
           Left = 1
@@ -192,6 +191,7 @@ object Form1: TForm1
           Width = 479
           Height = 376
           Align = alClient
+          CaseSensitive = True
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -205,6 +205,8 @@ object Form1: TForm1
           Gutter.Font.Height = -11
           Gutter.Font.Name = 'Consolas'
           Gutter.Font.Style = []
+          Gutter.Font.Quality = fqClearTypeNatural
+          Gutter.Bands = <>
           Highlighter = SynPythonSyn1
           Lines.Strings = (
             'from delphi_module import svg_image'
@@ -222,6 +224,7 @@ object Form1: TForm1
             ''
             '#plt.show()'
             '')
+          ScrollbarAnnotations = <>
         end
         object Panel6: TPanel
           Left = 1
@@ -252,9 +255,6 @@ object Form1: TForm1
     end
   end
   object SynPythonSyn1: TSynPythonSyn
-    Options.AutoDetectEnabled = False
-    Options.AutoDetectLineLimit = 0
-    Options.Visible = False
     Left = 632
     Top = 40
   end
@@ -264,6 +264,10 @@ object Form1: TForm1
     Top = 89
   end
   object PythonEngine1: TPythonEngine
+    DllName = 'python313.dll'
+    APIVersion = 1013
+    RegVersion = '3.13'
+    UseLastKnownVersion = False
     IO = PythonGUIInputOutput1
     Left = 632
     Top = 136
