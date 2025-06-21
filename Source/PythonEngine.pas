@@ -5570,9 +5570,7 @@ begin
       s_type := GetTypeAsString(err_type);
       s_value := PyObjectAsString(err_value);
 
-      if (PyErr_GivenExceptionMatches(err_type, PyExc_SystemExit^) <> 0) then
-        raise Define( EPySystemExit.Create(''), s_type, s_value )
-      else if (PyErr_GivenExceptionMatches(err_type, PyExc_StopIteration^) <> 0) then
+      if (PyErr_GivenExceptionMatches(err_type, PyExc_StopIteration^) <> 0) then
         raise Define( EPyStopIteration.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_KeyboardInterrupt^) <> 0) then
         raise Define( EPyKeyboardInterrupt.Create(''), s_type, s_value )
@@ -6606,6 +6604,7 @@ procedure TPythonEngine.CheckError(ACatchStopEx : Boolean = False);
   var
     errtype, errvalue, errtraceback: PPyObject;
     SErrValue: string;
+    SystemExit: EPySystemExit;
   begin
     // PyErr_Fetch clears the error. The returned python objects are new references
     PyErr_Fetch(errtype, errvalue, errtraceback);
@@ -6614,7 +6613,11 @@ procedure TPythonEngine.CheckError(ACatchStopEx : Boolean = False);
     Py_XDECREF(errtype);
     Py_XDECREF(errvalue);
     Py_XDECREF(errtraceback);
-    raise EPySystemExit.CreateResFmt(@SPyExcSystemError, [SErrValue]);
+
+    SystemExit := EPySystemExit.CreateResFmt(@SPyExcSystemError, [SErrValue]);
+    SystemExit.EValue := SErrValue;
+    SystemExit.EName := 'SystemExit';
+    raise SystemExit;
   end;
 
 var
