@@ -2771,9 +2771,9 @@ type
 //--                                                   --
 //-------------------------------------------------------
 
+  // The component that initializes a Python type and
+  // creates instances of itself.
   // The base class of all new Python types
-  // The component that initializes the Python type and
-  // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
@@ -5096,8 +5096,8 @@ begin
       if not Initialized then
         Initialize;
 
-
   {$IFDEF MSWINDOWS}
+  // fix #504
   if not FRedirectIO and UseWindowsConsole then
     PyRun_SimpleString(
       'import sys, io'#10 +
