@@ -344,6 +344,20 @@ const
   PyBUF_READ =  $100;
   PyBUF_WRITE = $200;
 
+const
+  // constants used in PyModuleDef slots from moduleobject.h
+  Py_mod_create = 1;
+  Py_mod_exec = 2;
+  Py_mod_multiple_interpreters = 3;     // Added in version 3.12
+  Py_mod_gil = 4;                       // Added in version 3.13
+
+  Py_MOD_MULTIPLE_INTERPRETERS_NOT_SUPPORTED: Pointer = Pointer(0);
+  Py_MOD_MULTIPLE_INTERPRETERS_SUPPORTED: Pointer = Pointer(1);
+  Py_MOD_PER_INTERPRETER_GIL_SUPPORTED: Pointer = Pointer(2);
+
+  Py_MOD_GIL_USED: Pointer = Pointer(0);
+  Py_MOD_GIL_NOT_USED: Pointer = Pointer(1);
+
 //#######################################################
 //##                                                   ##
 //##           Non-Python specific constants           ##
@@ -642,6 +656,10 @@ type
     m_clear : inquiry;
     m_free : inquiry;
   end;
+
+  // signature of functions used in slots
+  Py_create_module_function = function(spec: PPyObject; def: PPyModuleDef):PPyObject; cdecl;
+  Py_exec_module_function = function(module: PPyObject): Integer; cdecl;
 
   // pybuffer.h
 
@@ -1541,6 +1559,9 @@ type
     PyCallable_Check: function(ob	: PPyObject): integer; cdecl;
 
     PyModule_Create2:   function(moduledef: PPyModuleDef; Api_Version: Integer):PPyObject; cdecl;
+    PyModuleDef_Init:   function(moduledef: PPyModuleDef):PPyObject; cdecl;
+    PyModule_ExecDef:   function(module: PPyObject; moduledef: PPyModuleDef):Integer; cdecl;
+    PyModule_FromDefAndSpec2: function(moduledef: PPyModuleDef; spec: PPyObject; Api_Version: Integer):PPyObject; cdecl;
     PyErr_BadArgument:  function: integer; cdecl;
     PyErr_BadInternalCall: procedure; cdecl;
     PyErr_CheckSignals: function: integer; cdecl;
@@ -2173,7 +2194,7 @@ type
     property IO: TPythonInputOutput read FIO write SetIO;
     property PyFlags: TPythonFlags read FPyFlags write SetPyFlags default DEFAULT_FLAGS;
     property RedirectIO: Boolean read FRedirectIO write FRedirectIO default True;
-    property UseWindowsConsole: Boolean read FUseWindowsConsole write FUseWindowsConsole default False;
+    property UseWindowsConsole: Boolean read FUseWindowsConsole write SetUseWindowsConsole default False;
     property OnAfterInit: TNotifyEvent read FOnAfterInit write FOnAfterInit;
     property OnSysPathInit: TSysPathInitEvent read FOnSysPathInit write FOnSysPathInit;
     property OnConfigInit: TConfigInitEvent read FOnConfigInit write FOnConfigInit;
@@ -2534,12 +2555,6 @@ type
   end;
 
 
-//-------------------------------------------------------
-//--                                                   --
-//--class:  TPythonType  derived from TGetSetContainer --
-//--                                                   --
-//-------------------------------------------------------
-
 {
         A                    B                                                      C
         +-------------------++------------------------------------------------------+
@@ -2556,15 +2571,15 @@ type
         by GetSelf
 
         - a Python object must start at A.
-        - a Delphi class class must start at B
+        - a Delphi class must start at B
         - TPyObject.InstanceSize will return C-B
         - Sizeof(TPyObject) will return C-B
         - The total memory allocated for a TPyObject instance will be C-A,
           even if its InstanceSize is C-B.
-        - When turning a Python object pointer into a Delphi instance pointer, PythonToDelphi
-          will offset the pointer from A to B.
-        - When turning a Delphi instance into a Python object pointer, GetSelf will offset
-          Self from B to A.
+        - When turning a Python object pointer into a Delphi instance pointer,
+          PythonToDelphi will offset the pointer from A to B.
+        - When turning a Delphi instance into a Python object pointer, GetSelf
+          will offset Self from B to A.
         - Properties ob_refcnt and ob_type will call GetSelf to access their data.
 
         Further Notes:
@@ -2581,7 +2596,6 @@ type
           FreeInstance.
         - This class is heart of the P4D library.  Pure magic!!
 }
-  // The base class of all new Python types
   TPyObject = class
   private
     function  Get_ob_refcnt: NativeUInt;
@@ -2751,6 +2765,13 @@ type
       property Mapping : TMappingServices read FMapping write FMapping;
   end;
 
+//-------------------------------------------------------
+//--                                                   --
+//--class:  TPythonType  derived from TGetSetContainer --
+//--                                                   --
+//-------------------------------------------------------
+
+  // The base class of all new Python types
   // The component that initializes the Python type and
   // that creates instances of itself.
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
@@ -3901,6 +3922,9 @@ begin
   PyDict_SetItemString      := Import('PyDict_SetItemString');
   PyDictProxy_New           := Import('PyDictProxy_New');
   PyModule_Create2          := Import('PyModule_Create2');
+  PyModuleDef_Init          := Import('PyModuleDef_Init');
+  PyModule_ExecDef          := Import('PyModule_ExecDef');
+  PyModule_FromDefAndSpec2  := Import('PyModule_FromDefAndSpec2');
   PyErr_Print               := Import('PyErr_Print');
   PyErr_SetNone             := Import('PyErr_SetNone');
   PyErr_SetObject           := Import('PyErr_SetObject');
@@ -5072,6 +5096,19 @@ begin
       if not Initialized then
         Initialize;
 
+
+  {$IFDEF MSWINDOWS}
+  if not FRedirectIO and UseWindowsConsole then
+    PyRun_SimpleString(
+      'import sys, io'#10 +
+      'sys.stdout = io.TextIOWrapper(open("CONOUT$", "wb", buffering=0), ' +
+      'encoding="utf-8", errors="replace", line_buffering=True)'#10 +
+      'sys.stderr = io.TextIOWrapper(open("CONOUT$", "wb", buffering=0), ' +
+      'encoding="utf-8", errors="replace", line_buffering=False)'#10 +
+      'sys.stdin = io.TextIOWrapper(open("CONIN$", "rb", buffering=0), ' +
+      'encoding="utf-8", errors="replace", line_buffering=True)'#10);
+  {$ENDIF}
+
   if InitScript.Count > 0 then
     ExecStrings(InitScript);
   if Assigned(FOnAfterInit) then
@@ -5127,10 +5164,12 @@ begin
   FreeConsole;
   AllocConsole;
   SetConsoleTitle( 'Python console' );
+  SetConsoleOutputCP(CP_UTF8);
+  SetConsoleCP(CP_UTF8);
 {$ENDIF}
 end;
 
-procedure TPythonEngine.SetUseWindowsConsole( const Value : Boolean );
+procedure TPythonEngine.SetUseWindowsConsole(const Value: Boolean);
 begin
   FUseWindowsConsole := Value;
   if (csDesigning in ComponentState) then
