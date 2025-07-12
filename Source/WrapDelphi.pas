@@ -1003,7 +1003,7 @@ Type
 
 implementation
 
-Uses
+uses
   Math,
   StrUtils,
   RTLConsts,

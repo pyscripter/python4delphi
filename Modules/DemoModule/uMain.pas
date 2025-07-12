@@ -7,13 +7,14 @@ uses PythonEngine;
 function PyInit_DemoModule: PPyObject; cdecl;
 
 implementation
-Uses
+uses
+  Winapi.Windows,
   System.Math,
   WrapDelphi;
 
 var
-  gEngine : TPythonEngine;
-  gModule : TPythonModule;
+  gEngine : TPythonEngine = nil;
+  gModule : TPythonModule = nil;
 
 function IsPrime(x: Integer): Boolean;
 // Naive implementation.  It is just a demo
@@ -46,6 +47,7 @@ end;
 
 function PyInit_DemoModule: PPyObject;
 begin
+  if not Assigned(gEngine) then
   try
     gEngine := TPythonEngine.Create(nil);
     gEngine.AutoFinalize := False;
@@ -56,12 +58,18 @@ begin
     gModule.ModuleName := 'DemoModule';
     gModule.AddMethod('is_prime', delphi_is_prime, 'is_prime(n) -> bool' );
 
+    // We need to set this so that the module is not created by Initialzize
+    gModule.IsExtensionModule := True;
+    gModule.MultInterpretersSupport := mmiPerInterpreterGIL;
+
     gEngine.LoadDllInExtensionModule;
   except
+    Exit(nil);
   end;
-  Result := gModule.Module;
-end;
 
+  // The python import machinery will create the python module from ModuleDef
+  Result := gEngine.PyModuleDef_Init(@gModule.ModuleDef);
+end;
 
 initialization
 finalization

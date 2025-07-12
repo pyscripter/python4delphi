@@ -642,6 +642,7 @@ type
   PyModuleDef_Slot = {$IFDEF CPUX86}packed{$ENDIF} record
     slot: integer;
     value: Pointer;
+    class function Make(slot: integer; value: Pointer): PyModuleDef_Slot; static;
   end;
 
   PPyModuleDef = ^PyModuleDef;
@@ -1953,7 +1954,6 @@ type
   function PyWeakref_CheckProxy( obj : PPyObject ) : Boolean;
   function PyBool_Check( obj : PPyObject ) : Boolean;
   function PyEnum_Check( obj : PPyObject ) : Boolean;
-  function Py_InitModule( const md : PyModuleDef) : PPyObject;
 
   // The following are defined as non-exported inline functions in object.h
   function Py_Type(ob: PPyObject): PPyTypeObject; inline;
@@ -2138,6 +2138,7 @@ type
     function   ArrayToPyDict( const items : array of const) : PPyObject;
     function   StringsToPyList( strings : TStrings ) : PPyObject;
     function   StringsToPyTuple( strings : TStrings ) : PPyObject;
+    function   Py_InitModule( const md : PyModuleDef) : PPyObject;
     procedure  PyListToStrings(list: PPyObject; Strings: TStrings; ClearStrings: Boolean = True);
     procedure  PyTupleToStrings( tuple: PPyObject; strings : TStrings );
     function   GetSequenceItem( sequence : PPyObject; idx : Integer ) : Variant;
@@ -2303,7 +2304,6 @@ type
       FMethodCount : Integer;
       FAllocatedMethodCount : Integer;
       FMethods : PPyMethodDef;
-      FModuleDef : PyModuleDef;
       FEventDefs: TEventDefs;
 
       procedure AllocMethods;
@@ -2347,7 +2347,6 @@ type
       property MethodCount : Integer read FMethodCount;
       property Methods[ idx : Integer ] : PPyMethodDef read GetMethods;
       property MethodsData : PPyMethodDef read FMethods;
-      property ModuleDef : PyModuleDef read FModuleDef;
 
     published
       property Events: TEventDefs read fEventDefs write fEventDefs stored StoreEventDefs;
@@ -2502,56 +2501,68 @@ type
     property Items[Index: Integer]: TError read GetError write SetError; default;
   end;
 
+  TMultIntperpretersSupport = (mmiSupported, mmiNotSupported, mmiPerInterpreterGIL);
+
   {$IF not Defined(FPC) and (CompilerVersion >= 23)}
   [ComponentPlatformsAttribute(pidSupportedPlatforms)]
   {$IFEND}
   TPythonModule = class(TMethodsContainer)
-    protected
-      FModuleName : AnsiString;
-      FModule : PPyObject;
-      FClients : TList;
-      FErrors : TErrors;
-      FOnAfterInitialization : TNotifyEvent;
-      FDocString : TStringList;
+  private
+    FModuleDef : PyModuleDef;
+    FMultInterpretersSupport: TMultIntperpretersSupport;
+    FEncodedDocString: AnsiString;
+    FIsExtensionModule: Boolean;
+    function Exec_Module(module: PPyObject): Integer; cdecl; // used in the slot
+  protected
+    FModuleName : AnsiString;
+    FModule : PPyObject;
+    FSlots: TArray<PyModuleDef_Slot>;
+    FClients : TList;
+    FErrors : TErrors;
+    FDocString : TStringList;
+    FOnAfterInitialization : TNotifyEvent;
 
-      function GetClientCount : Integer;
-      function GetClients( idx : Integer ) : TEngineClient;
-      procedure SetErrors( val : TErrors );
-      procedure SetModuleName( const val : AnsiString );
-      procedure SetDocString( value : TStringList );
-    public
-      // Constructors & destructors
-      constructor Create( AOwner : TComponent ); override;
-      destructor  Destroy; override;
+    function GetClientCount : Integer;
+    function GetClients( idx : Integer ) : TEngineClient;
+    procedure SetErrors( val : TErrors );
+    procedure SetModuleName( const val : AnsiString );
+    procedure SetDocString( value : TStringList );
+  public
+    // Constructors & destructors
+    constructor Create( AOwner : TComponent ); override;
+    destructor  Destroy; override;
 
-      // Public methods
-      procedure MakeModule;
-      procedure DefineDocString;
-      procedure Initialize; override;
-      procedure InitializeForNewInterpreter;
-      procedure AddClient(Client : TEngineClient);
-      procedure RemoveClient(Client : TEngineClient);
-      function  ErrorByName( const AName : AnsiString ) : TError;
-      procedure RaiseError( const error, msg : AnsiString );
-      procedure RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
-      procedure RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
-      procedure BuildErrors;
-      procedure SetVar( const varName : AnsiString; value : PPyObject );
-      function  GetVar( const varName : AnsiString ) : PPyObject;
-      procedure DeleteVar( const varName : AnsiString );
-      procedure ClearVars;
-      procedure SetVarFromVariant( const varName : AnsiString; const value : Variant );
-      function  GetVarAsVariant( const varName: AnsiString ) : Variant;
+    // Public methods
+    procedure MakeModuleDef;
+    procedure Initialize; override;
+    procedure InitializeForNewInterpreter;
+    procedure AddClient(Client : TEngineClient);
+    procedure RemoveClient(Client : TEngineClient);
+    function  ErrorByName( const AName : AnsiString ) : TError;
+    procedure RaiseError( const error, msg : AnsiString );
+    procedure RaiseErrorFmt( const error, format : AnsiString; const Args : array of const );
+    procedure RaiseErrorObj( const error, msg : AnsiString; obj : PPyObject );
+    procedure BuildErrors;
+    procedure SetVar( const varName : AnsiString; value : PPyObject );
+    function  GetVar( const varName : AnsiString ) : PPyObject;
+    procedure DeleteVar( const varName : AnsiString );
+    procedure ClearVars;
+    procedure SetVarFromVariant( const varName : AnsiString; const value : Variant );
+    function  GetVarAsVariant( const varName: AnsiString ) : Variant;
 
-      // Public properties
-      property Module : PPyObject read FModule;
-      property Clients[ idx : Integer ] : TEngineClient read GetClients;
-      property ClientCount : Integer read GetClientCount;
-    published
-      property DocString : TStringList read FDocString write SetDocString;
-      property ModuleName : AnsiString read FModuleName write SetModuleName;
-      property Errors : TErrors read FErrors write SetErrors;
-      property OnAfterInitialization : TNotifyEvent read FOnAfterInitialization write FOnAfterInitialization;
+    // Public properties
+    property Module : PPyObject read FModule;
+    property ModuleDef : PyModuleDef read FModuleDef;
+    property IsExtensionModule: Boolean read FIsExtensionModule write FIsExtensionModule;
+    property Clients[ idx : Integer ] : TEngineClient read GetClients;
+    property ClientCount : Integer read GetClientCount;
+  published
+    property DocString : TStringList read FDocString write SetDocString;
+    property ModuleName : AnsiString read FModuleName write SetModuleName;
+    property MultInterpretersSupport: TMultIntperpretersSupport
+      read FMultInterpretersSupport write FMultInterpretersSupport;
+    property Errors : TErrors read FErrors write SetErrors;
+    property OnAfterInitialization : TNotifyEvent read FOnAfterInitialization write FOnAfterInitialization;
   end;
 
 
@@ -4449,21 +4460,6 @@ begin
   Result := IsType(obj, t) or (PyType_IsSubtype(obj^.ob_type, t) = 1);
 end;
 
-function TPythonInterface.Py_InitModule(const md: PyModuleDef): PPyObject;
-Var
-  modules  : PPyObject;
-begin
-  CheckPython;
-  Result:= PyModule_Create2(@md, APIVersion);
-  if not Assigned(Result) then
-    GetPythonEngine.CheckError;
-  // To emulate Py_InitModule4 we need to add the module to sys.modules
-  modules := PyImport_GetModuleDict;
-  if PyDict_SetItemString(modules, md.m_name, Result) <> 0 then
-    GetPythonEngine.CheckError;
-end;
-
-
 (*******************************************************)
 (**                                                   **)
 (**            class TPythonTraceback                 **)
@@ -5837,13 +5833,13 @@ begin
   raise Exception.CreateFmt(SCannotFindType, [aTypeName]);
 end;
 
-function   TPythonEngine.ModuleByName( const aModuleName : AnsiString ) : PPyObject;
+function TPythonEngine.ModuleByName( const aModuleName : AnsiString ) : PPyObject;
 var
   i : Integer;
 begin
   for i := 0 to ClientCount - 1 do
     if Clients[i] is TPythonModule then
-      with TPythonModule( Clients[i] ) do
+      with TPythonModule(Clients[i]) do
         if ModuleName = aModuleName then
           begin
             Result := Module;
@@ -6748,6 +6744,64 @@ begin
 end;
 
 
+function TPythonEngine.Py_InitModule(const md: PyModuleDef): PPyObject;
+// Implements multi-phase module intialization
+var
+  modules, importlib, spec_func, module_name, args, spec: PPyObject;
+begin
+  CheckPython;
+
+  importlib := nil;
+  spec_func := nil;
+  module_name := nil;
+  args := nil;
+  spec := nil;
+
+  try
+    // We need a spec and for that we need importlib;
+    importlib := PyImport_ImportModule('importlib.util');
+    if not Assigned(importlib) then CheckError;
+
+    // Get spec_from_loader function
+    spec_func := PyObject_GetAttrString(importlib, 'spec_from_loader');
+    if not Assigned(spec_func) then CheckError;
+
+    // Create module name
+    module_name := PyUnicode_FromString(md.m_name);
+    if not Assigned(module_name) then CheckError;
+
+    // Create arguments tuple for spec_from_loader(name, loader)
+    args := MakePyTuple([module_name, Py_None]);
+
+    // Create the module specification
+    spec := PyObject_CallObject(spec_func, args);
+    if not Assigned(spec) then CheckError;
+
+    // Create the module from the definition and spec
+    Result := PyModule_FromDefAndSpec2(@md, spec, APIVersion);
+    if not Assigned(spec) then CheckError;
+
+    // Execute the module (triggers Py_mod_exec slot)
+    if (PyModule_ExecDef(Result, @md) < 0) then
+    begin
+      Py_DECREF(Result);
+      CheckError;
+    end;
+
+  finally
+    Py_XDECREF(importlib);
+    Py_XDECREF(spec_func);
+    Py_XDECREF(module_name);
+    Py_XDECREF(args);
+    Py_XDECREF(spec);
+  end;
+
+  // We need to add the module to sys.modules
+  modules := PyImport_GetModuleDict;
+  if PyDict_SetItemString(modules, md.m_name, Result) <> 0 then
+    GetPythonEngine.CheckError;
+end;
+
 (*******************************************************)
 (**                                                   **)
 (**     class TEngineClient                           **)
@@ -7610,6 +7664,7 @@ begin
   FClients := TList.Create;
   FErrors  := TErrors.Create(Self);
   FDocString := TStringList.Create;
+  FDocString.TrailingLineBreak := False;
 end;
 
 destructor  TPythonModule.Destroy;
@@ -7625,52 +7680,59 @@ begin
   FDocString.Assign( value );
 end;
 
-procedure TPythonModule.DefineDocString;
+procedure TPythonModule.MakeModuleDef;
 var
-  doc : PPyObject;
+  P: Pointer;
 begin
-  with Engine do
-    begin
-      if DocString.Text <> '' then
-        begin
-          doc :=
-            PyUnicodeFromString(CleanString(FDocString.Text, False));
-          PyObject_SetAttrString( FModule, '__doc__', doc );
-          Py_XDecRef(doc);
-          CheckError(False);
-        end;
-    end;
-end;
+  FillChar(FModuleDef, SizeOf(FModuleDef), 0);
+  FModuleDef.m_base.ob_refcnt := 1;
+  FModuleDef.m_name := PAnsiChar(ModuleName);
+  FModuleDef.m_methods := MethodsData;
+  FModuleDef.m_size := 0;
 
-procedure TPythonModule.MakeModule;
-begin
-  CheckEngine;
-  if Assigned(FModule) then
-    Exit;
-  with Engine do
-    begin
-      FillChar(FModuleDef, SizeOf(FModuleDef), 0);
-      FModuleDef.m_base.ob_refcnt := 1;
-      FModuleDef.m_name := PAnsiChar(ModuleName);
-      FModuleDef.m_methods := MethodsData;
-      FModuleDef.m_size := -1;
-      FModule := Py_InitModule( ModuleDef );
-      DefineDocString;
+  // Doc string
+  if FDocString.Count > 0 then
+  begin
+    FEncodedDocString := UTF8Encode(CleanString(FDocString.Text, False));
+    FModuleDef.m_doc := PAnsiChar(FEncodedDocString);
+  end;
+
+  // Fill the m_slots for multi-phase initialization
+  FSlots := [PyModuleDef_Slot.Make(Py_mod_exec,
+    GetCallBack(Self, @TPythonModule.Exec_Module, 1, DEFAULT_CALLBACK_TYPE))];
+
+  if (Engine.MajorVersion > 3) or (Engine.MinorVersion >= 12) then
+  begin
+    case FMultInterpretersSupport of
+      mmiNotSupported: P := Py_MOD_MULTIPLE_INTERPRETERS_NOT_SUPPORTED;
+      mmiPerInterpreterGIL: P := Py_MOD_PER_INTERPRETER_GIL_SUPPORTED;
+    else
+      P := Py_MOD_MULTIPLE_INTERPRETERS_SUPPORTED;
     end;
+    FSlots := FSlots + [PyModuleDef_Slot.Make(Py_mod_multiple_interpreters, P)];
+  end;
+  FSlots := FSlots + [PyModuleDef_Slot.Make(0, nil)];
+
+  FModuleDef.m_slots := @FSlots[0];
 end;
 
 procedure TPythonModule.Initialize;
-var
-  i : Integer;
 begin
   inherited;
-  FModule := nil;
-  MakeModule;
-  for i := 0 to ClientCount - 1 do
-    Clients[i].ModuleReady(Self);
-  BuildErrors;
-  if Assigned(FOnAfterInitialization) then
-    FOnAfterInitialization( Self );
+
+  if Assigned(FModule) then Exit;
+
+  MakeModuleDef;
+  // Py_InitModule will call Exec_Module which will
+  // - Set FModule
+  // - initialize clients
+  // - Call OnInitialized
+  CheckEngine;
+
+  // Extension modules are intilized directly from ModuleDef
+  if FIsExtensionModule then Exit;
+
+  FModule := Engine.Py_InitModule(FModuleDef);
 end;
 
 procedure TPythonModule.InitializeForNewInterpreter;
@@ -7709,6 +7771,21 @@ begin
   raise Exception.CreateFmt(SCouldNotFindError, [AName] );
 end;
 
+function TPythonModule.Exec_Module(module: PPyObject): Integer;
+// Executed via the m_slots of PyModuleDef as part of the
+// multi-phase module initialization
+var
+  I : Integer;
+begin
+  FModule := module;
+  for I := 0 to ClientCount - 1 do
+    Clients[I].ModuleReady(Self);
+  BuildErrors;
+  if Assigned(FOnAfterInitialization) then
+    FOnAfterInitialization(Self);
+  Result := 0;
+end;
+
 procedure TPythonModule.RaiseError( const error, msg : AnsiString );
 begin
   ErrorByName( error ).RaiseError( msg );
@@ -7738,7 +7815,7 @@ begin
   CheckEngine;
   with Engine do
     begin
-      d := PyModule_GetDict( Module );
+      d := PyModule_GetDict(FModule);
       if not Assigned(d) then
         Exit;
       for i := 0 to Errors.Count - 1 do
@@ -7757,7 +7834,7 @@ procedure TPythonModule.SetVar( const varName : AnsiString; value : PPyObject );
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
     begin
-      if Engine.PyObject_SetAttrString(Module, PAnsiChar(varName), value ) <> 0 then
+      if Engine.PyObject_SetAttrString(FModule, PAnsiChar(varName), value ) <> 0 then
         raise EPythonError.CreateFmt(SCouldNotSetVar, [varName, ModuleName]);
     end
   else
@@ -7771,21 +7848,21 @@ function  TPythonModule.GetVar( const varName : AnsiString ) : PPyObject;
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
   begin
-    Result := Engine.PyObject_GetAttrString(Module, PAnsiChar(varName) );
+    Result := Engine.PyObject_GetAttrString(FModule, PAnsiChar(varName) );
     Engine.PyErr_Clear;
   end
   else
     raise EPythonError.CreateFmt(SCannotSetVarNoInit, [varName, ModuleName]);
 end;
 
-procedure TPythonModule.DeleteVar( const varName : AnsiString );
+procedure TPythonModule.DeleteVar(const varName : AnsiString);
 var
   dict : PPyObject;
 begin
   if Assigned(FEngine) and Assigned( FModule ) then
     with Engine do
     begin
-      dict := PyModule_GetDict( Module );
+      dict := PyModule_GetDict(FModule);
       if not Assigned(dict) then
         raise EPythonError.CreateFmt(SCannotGetDict, [ModuleName] );
       PyDict_DelItemString( dict, PAnsiChar(varName) );
@@ -7800,7 +7877,7 @@ var
 begin
  if Assigned(FEngine) and Assigned( FModule ) then
    with Engine do begin
-     dict := PyModule_GetDict( Module );
+     dict := PyModule_GetDict(FModule);
      PyDict_Clear(dict);
    end;
 end;
@@ -8932,7 +9009,7 @@ begin
       begin
         tp_init             := TPythonType_InitSubtype;
         tp_alloc            := FEngine.PyType_GenericAlloc;
-        tp_new              := GetCallBack( Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
+        tp_new              := GetCallBack(Self, @TPythonType.NewSubtypeInst, 3, DEFAULT_CALLBACK_TYPE);
         tp_free             := FEngine.PyObject_Free;
         tp_methods          := MethodsData;
         tp_members          := MembersData;
@@ -10172,6 +10249,15 @@ begin
 end;
 
 {$ENDIF FPC}
+
+{ PyModuleDef_Slot }
+
+class function PyModuleDef_Slot.Make(slot: integer;
+  value: Pointer): PyModuleDef_Slot;
+begin
+  Result.slot := slot;
+  Result.value := value;
+end;
 
 end.
 
