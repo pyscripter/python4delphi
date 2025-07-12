@@ -5419,12 +5419,11 @@ begin
     with TPythonType(fHelperClassRegister.Objects[i]) do
       if not Initialized then Initialize;
   // Initialize module
-  if Assigned(FModule) then begin
+  if Assigned(FModule) then
+  begin
+    CreateModuleFunctions;
     if Module.Initialized then
-    begin
-      CreateModuleFunctions;
-      CreateModuleVars;
-    end
+      CreateModuleVars
     else
       Module.AddClient( Self );
   end;
@@ -5433,7 +5432,6 @@ end;
 procedure TPyDelphiWrapper.ModuleReady(Sender : TObject);
 begin
   inherited;
-  CreateModuleFunctions;
   CreateModuleVars;
 end;
 
@@ -5542,13 +5540,13 @@ begin
         TPythonType(fHelperClassRegister.Objects[i]).Module := Value;
     if Assigned(FModule) then
       if Initialized and (ComponentState * [csDesigning, csLoading] = []) then
+      begin
+        CreateModuleFunctions;
         if FModule.Initialized then
-        begin
-          CreateModuleFunctions;
-          CreateModuleVars;
-        end
+          CreateModuleVars
         else
           FModule.AddClient(Self);
+      end;
   end;
 end;
 
