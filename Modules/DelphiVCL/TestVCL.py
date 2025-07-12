@@ -40,6 +40,7 @@ def main():
     f.Show()
     FreeConsole()
     Application.Run()
+    f.Free()
 
 main()
 
