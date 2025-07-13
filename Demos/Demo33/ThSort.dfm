@@ -180,6 +180,7 @@ object ThreadSortForm: TThreadSortForm
     Engine = PythonEngine1
     OnInitialization = SortModuleInitialization
     ModuleName = 'SortModule'
+    MultInterpretersSupport = mmiPerInterpreterGIL
     Errors = <>
     Left = 64
     Top = 88
