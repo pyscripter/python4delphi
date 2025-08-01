@@ -1048,7 +1048,7 @@ type
 
   // The followng needs updating when new versions are added
   const
-    ConfigOffests: TConfigOffsets =
+    ConfigOffsets: TConfigOffsets =
     {$IFDEF MSWINDOWS}
       {$IFDEF CPU64BITS}
       ((8, 80, 88, 144, 156, 160, 164, 172, 224, 104, 240, 248, 256, 272),
@@ -4757,19 +4757,19 @@ procedure TPythonEngine.Initialize;
 
     procedure AssignPyFlags(var Config: PyConfig);
     begin
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parser_debug])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.parser_debug])^ :=
         IfThen(pfDebug in FPyFlags, 1, 0);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.verbose])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.verbose])^ :=
         IfThen(pfVerbose in FPyFlags, 1, 0);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.interactive])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.interactive])^ :=
         IfThen(pfInteractive in FPyFlags, 1, 0);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.optimization_level])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.optimization_level])^ :=
         IfThen(pfOptimize in FPyFlags, 1, 0);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.site_import])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.site_import])^ :=
         IfThen(pfNoSite in FPyFlags, 0, 1);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.pathconfig_warnings])^ :=
         IfThen(pfFrozen in FPyFlags, 1, 0);
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.use_environment])^ :=
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.use_environment])^ :=
         IfThen(pfIgnoreEnvironment in FPyFlags, 0, 1);
     end;
 
@@ -4781,7 +4781,7 @@ procedure TPythonEngine.Initialize;
 
     begin
       // do not parse further
-      PInteger(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.parse_argv])^ := 0;
+      PInteger(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.parse_argv])^ := 0;
       for I := 0 to ParamCount do
       begin
         {
@@ -4799,7 +4799,7 @@ procedure TPythonEngine.Initialize;
         Str := TempS;
         {$ENDIF}
         PyWideStringList_Append(
-          PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.argv]),
+          PPyWideStringList(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.argv]),
           PWCharT(Str));
        end;
     end;
@@ -4812,7 +4812,7 @@ procedure TPythonEngine.Initialize;
     begin
       if FPythonPath = '' then Exit;
 
-      PWSL := PPyWideStringList(PByte(@Config) + ConfigOffests[MinorVersion,
+      PWSL := PPyWideStringList(PByte(@Config) + ConfigOffsets[MinorVersion,
         TConfigFields.module_search_paths]);
       Paths := SplitString(string(FPythonPath), PathSep);
       for I := 0 to Length(Paths) - 1 do
@@ -4823,7 +4823,7 @@ procedure TPythonEngine.Initialize;
       end;
 
       if PWSL^.length > 0 then
-        PInteger(PByte(@Config) + ConfigOffests[MinorVersion,
+        PInteger(PByte(@Config) + ConfigOffsets[MinorVersion,
           TConfigFields.module_search_paths_set])^ := 1;
     end;
 
@@ -4842,16 +4842,16 @@ procedure TPythonEngine.Initialize;
       // Set programname and pythonhome if available
       if FProgramName <> '' then
         PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.program_name]),
+          PPWcharT(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.program_name]),
           PWCharT(StringToWCharTString(FProgramName)));
       if FPythonHome <> '' then
         PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.home]),
+          PPWcharT(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.home]),
           PWCharT(StringToWCharTString(FPythonHome)));
       // Set venv executable if available
       if FPythonExecutable <> '' then
         PyConfig_SetString(Config,
-          PPWcharT(PByte(@Config) + ConfigOffests[MinorVersion, TConfigFields.executable]),
+          PPWcharT(PByte(@Config) + ConfigOffsets[MinorVersion, TConfigFields.executable]),
           PWCharT(StringToWCharTString(FPythonExecutable)));
 
       // Set program arguments (sys.argv)
