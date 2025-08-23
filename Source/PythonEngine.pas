@@ -9664,11 +9664,18 @@ begin
         ((FMajorVersion = 3) and (FMinorVersion < 12)) or
         PyStatus_Exception(Py_NewInterpreterFromConfig(@fThreadState, @Config))
       then
-        fThreadState := Py_NewInterpreter;
+        fThreadState := Py_NewInterpreter
+      else
+        // flag IOPythonModule as per interpreter GIL compatible
+        TPythonModule(IOPythonModule).MultInterpretersSupport := mmiPerInterpreterGIL;
 
-      if Assigned( fThreadState) then
+      if Assigned(fThreadState) then
       begin
         PyThreadState_Swap(fThreadState);
+        // Redirect IO
+        TPythonModule(IOPythonModule).InitializeForNewInterpreter;
+        DoRedirectIO;
+        // Execute the python code
         ExecuteWithPython;
         Py_EndInterpreter( fThreadState);
         PyThreadState_Swap(global_state);
