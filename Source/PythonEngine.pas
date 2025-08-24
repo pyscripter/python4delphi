@@ -9651,7 +9651,8 @@ begin
       finally
         PyGILState_Release(gilstate);
       end;
-    end else
+    end
+    else
     begin
       gilstate := PyGILState_Ensure();
       global_state := PyThreadState_Get;
@@ -9665,7 +9666,7 @@ begin
         PyStatus_Exception(Py_NewInterpreterFromConfig(@fThreadState, @Config))
       then
         fThreadState := Py_NewInterpreter
-      else
+      else if Assigned(IOPythonModule) then
         // flag IOPythonModule as per interpreter GIL compatible
         TPythonModule(IOPythonModule).MultInterpretersSupport := mmiPerInterpreterGIL;
 
@@ -9673,14 +9674,18 @@ begin
       begin
         PyThreadState_Swap(fThreadState);
         // Redirect IO
-        TPythonModule(IOPythonModule).InitializeForNewInterpreter;
-        DoRedirectIO;
+        if RedirectIO and Assigned(IOPythonModule) then
+        begin
+          TPythonModule(IOPythonModule).InitializeForNewInterpreter;
+          DoRedirectIO;
+        end;
         // Execute the python code
         ExecuteWithPython;
         Py_EndInterpreter( fThreadState);
         PyThreadState_Swap(global_state);
         PyGILState_Release(gilstate);
-      end else
+      end
+      else
         raise EPythonError.Create(SCannotCreateThreadState);
     end;
   end;
