@@ -9674,7 +9674,7 @@ begin
       begin
         PyThreadState_Swap(fThreadState);
         // Redirect IO
-        if RedirectIO and Assigned(IOPythonModule) then
+        if RedirectIO and Assigned(IO) and Assigned(IOPythonModule) then
         begin
           TPythonModule(IOPythonModule).InitializeForNewInterpreter;
           DoRedirectIO;
