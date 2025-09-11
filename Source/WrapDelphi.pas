@@ -2638,7 +2638,9 @@ end;
 
 function Abort_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
 begin
+  {$HINTS OFF}
   Result := nil;
+  {$HINTS ON}
   Abort;
 end;
 
