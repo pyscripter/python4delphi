@@ -2636,13 +2636,13 @@ begin
 end;
 {$ENDIF}
 
+{$HINTS OFF}
 function Abort_Wrapper(pself, args: PPyObject): PPyObject; cdecl;
 begin
-  {$HINTS OFF}
   Result := nil;
-  {$HINTS ON}
   Abort;
 end;
+{$HINTS ON}
 
 Type
   //  Used for class registration by TPyDelphiWrapper fClassRegister
