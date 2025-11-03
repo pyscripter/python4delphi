@@ -71,7 +71,8 @@ function VarIsSubtypeOf(const ADerived, AType : Variant): Boolean;
 function VarIsNone(const AValue : Variant): Boolean;
 function VarIsTrue(const AValue : Variant): Boolean;
 
-function VarModuleHasObject(const AModule : Variant; aObj: AnsiString): Boolean;
+function VarModuleHasObject(const AModule : Variant; const aObj: AnsiString): Boolean;
+function VarHasAttr(const AValue: Variant; const AAttr: AnsiString): Boolean;
 
 function NewPythonList( const ASize : Integer = 0 ): Variant;
 function NewPythonTuple( const ASize : Integer ): Variant;
@@ -570,13 +571,20 @@ begin
   Result := AValue; // the cast into a boolean will call the PyObject_IsTrue API.
 end;
 
-function VarModuleHasObject(const AModule : Variant; aObj: AnsiString): Boolean;
+function VarModuleHasObject(const AModule : Variant; const aObj: AnsiString):
+    Boolean;
 begin
   with GetPythonEngine do
-    Result := VarIsPython(AModule) and
-              PyModule_Check(ExtractPythonObjectFrom(AModule)) and
+    Result := VarIsPythonModule(AModule) and
               Assigned(PyDict_GetItemString(
                 PyModule_GetDict(ExtractPythonObjectFrom(AModule)),PAnsiChar(aObj)));
+end;
+
+function VarHasAttr(const AValue: Variant; const AAttr: AnsiString): Boolean;
+begin
+  with GetPythonEngine do
+    Result := VarIsPython(AValue) and
+      (PyObject_HasAttrString(ExtractPythonObjectFrom(AValue), PAnsiChar(AAttr)) = 1);
 end;
 
 function NewPythonList( const ASize : Integer = 0 ): Variant;
