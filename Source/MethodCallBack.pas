@@ -79,6 +79,9 @@ procedure FreeCallBacks;
 implementation
 
 uses
+  {$IFDEF UNIX}
+  BaseUnix, Unix,
+  {$ENDIF}
   {$IFDEF MSWINDOWS}
   Windows,
   {$ELSE WINDOWS}
@@ -715,12 +718,24 @@ const
   $00, $00, $00, $00,  //	.word	0x00000000 //Method
   $00, $00, $00, $00   //	.word	0x00000000
 );
+const
+  PageSize = 4096;
 var
   P, Q: PByte;
   LLiteralPool: TArray<pointer>;
   I: Integer;
+  addr: Pointer;
 begin
   GetCodeMem(Q, SizeOf(S1));
+  {$IFDEF UNIX}
+  if Q = nil then
+  begin
+    addr := fpMmap(nil, PageSize, PROT_READ or PROT_WRITE or PROT_EXEC, MAP_PRIVATE or MAP_ANONYMOUS, -1, 0);
+    if addr = Pointer(-1) then
+      raise Exception.Create('mmap failed: ' + SysErrorMessage(GetLastOSError));    	
+    Q := PByte(addr);
+  end;
+  {$ENDIF}
   P := Q;
   Move(S1, P^, SizeOf(S1));
 
@@ -731,6 +746,10 @@ begin
     Move(LLiteralPool[I], P^, SizeOf(pointer));
     Inc(P, SizeOf(pointer));
   end;
+  {$IFDEF UNIX}
+  if fpMprotect(Pointer(Q), SizeOf(S1), PROT_READ or PROT_EXEC) <> 0 then
+    raise Exception.Create('mprotect failed: ' + SysErrorMessage(GetLastOSError));
+  {$ENDIF}
 
   {$IF DEFINED(OSX) AND DEFINED(CPUARM64)}
     {
