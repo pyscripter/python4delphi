@@ -137,7 +137,11 @@ const
   PROT_WRITE  =2;
   PROT_EXEC   =4;
   MAP_PRIVATE =2;
-  MAP_ANON=$1000;  
+  {$IFDEF MACOS}
+  MAP_ANON=$1000;
+  {$ELSE}
+  MAP_ANON=$20;
+  {$ENDIF MACOS}
 {$ENDIF}
 {$ENDIF}
 
@@ -754,3 +758,5 @@ finalization
   FreeCallBacks;
 
 end.
+
+
