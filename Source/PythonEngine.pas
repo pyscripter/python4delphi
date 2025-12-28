@@ -1251,18 +1251,26 @@ Exception\n\
    EPyTypeError = class (EPyStandardError);
    EPyUnboundLocalError = class (EPyNameError);
    EPyValueError = class (EPyStandardError);
+
+   // UnicodeError -> accepts any tuple, but dont map this to specific attributes, just pass it around
+   // UnicodeTranslateError -> PyArg_ParseTuple(args, "UnnU", &object, &start, &end, &reason)
+   // UnicodeDecodeError -> PyArg_ParseTuple(args, "UOnnU", &encoding, &object, &start, &end, &reason)
+   // UnicodeEncodeError -> PyArg_ParseTuple(args, "UUnnU", &encoding, &object, &start, &end, &reason)
    EPyUnicodeError = class (EPyValueError)
    public
       EEncoding: UnicodeString;
       EReason: UnicodeString;
-      EObject: RawByteString;        // The object as bytes (for simple reconstruction)
-      EObjectRepr: UnicodeString;    // String representation of the object (for debugging/logging)
+      EObjectRepr: UnicodeString;   // String representation of the object (for delphi debugging/logging)
       EStart: Integer;
       EEnd: Integer;
+      EArgs: PPyObject;             // of PyTuple_Type; original args for python exception constructor
+      constructor Create;
+      destructor Destroy; override;
    end;
    UnicodeEncodeError = class (EPyUnicodeError);
    UnicodeDecodeError = class (EPyUnicodeError);
    UnicodeTranslateError = class (EPyUnicodeError);
+
    EPyZeroDivisionError = class (EPyArithmeticError);
    EPyStopIteration = class(EPyException);
    EPyWarning = class (EPyException);
@@ -4465,8 +4473,24 @@ begin
 end;
 
 function TPythonInterface.PyPathLike_Check( obj : PPyObject ) : Boolean;
+  var tmp: PPyObject;
 begin
-  Result := Assigned(obj) and (PyObject_HasAttrString(obj, '__fspath__') <> 0);
+  Result := False;
+  if not Assigned(obj) then
+    Exit;
+
+  tmp := PyObject_GetAttrString(obj, '__fspath__');
+
+  if tmp = nil then begin
+    PyErr_Clear;
+    Exit;
+  end;
+
+  try
+    Result := PyCallable_Check(tmp) <> 0;
+  finally
+    Py_XDECREF(tmp);
+  end;
 end;
 
 function TPythonInterface.Py_Type(ob: PPyObject): PPyTypeObject;
@@ -5615,105 +5639,93 @@ procedure TPythonEngine.RaiseError;
 
   function DefineUnicodeError( E : EPyUnicodeError; const sType, sValue : UnicodeString; err_type, err_value : PPyObject ) : EPyUnicodeError;
   var
-    s_value           : UnicodeString;
-    s_encoding        : UnicodeString;
-    s_reason          : UnicodeString;
-    s_object_repr     : UnicodeString;
-    obj_bytes         : RawByteString;
-    i_start           : Integer;
-    i_end             : Integer;
     tmp               : PPyObject;
     buffer            : PAnsiChar;
     size              : NativeInt;
+    obj_bytes         : PPyObject;
   begin
     Result := E;
     Result.EName  := sType;
     Result.EValue := sValue;
-    s_value := '';
-    s_encoding := '';
-    s_reason := '';
-    s_object_repr := '';
-    obj_bytes := '';
-    i_start := 0;
-    i_end := 0;
-    // Sometimes there's a tuple instead of instance...
-    if PyTuple_Check(err_value) and (PyTuple_Size(err_value) >= 2) then
+    Result.EEncoding := '';
+    Result.EReason := '';
+    Result.EObjectRepr := '';
+    Result.EStart := 0;
+    Result.EEnd := 0;
+//    Result.EArgs := PyTuple_New(0);
+
+    // Get the args - arguments with which exception has been created.
+    tmp := SafeGetPyObjectAttr(err_value, 'args');
+    if tmp <> nil then
     begin
-      s_value := PyObjectAsString(PyTuple_GetItem(err_value, 0));
-      err_value := PyTuple_GetItem(err_value, 1);
-      // Legacy tuple format may not have all UnicodeError attributes
-    end else
-    // Is it an instance of the UnicodeError class ?
-    if (PyType_IsSubtype(PPyTypeObject(err_type), PPyTypeObject(PyExc_UnicodeError^)) = 1)
-       and IsType(err_value, PPyTypeObject(err_type))
-    then
-    begin
-      // Get the encoding
-      tmp := SafeGetPyObjectAttr(err_value, 'encoding');
-      if tmp <> nil then
-      begin
-        if PyUnicode_Check(tmp) then
-          s_encoding := PyUnicodeAsString(tmp)
-        else if PyBytes_Check(tmp) then
-          s_encoding := UnicodeString(PyBytesAsAnsiString(tmp));
+      if PyTuple_Check(tmp) then
+        Result.EArgs := tmp
+      else begin
         Py_XDECREF(tmp);
+        Result.EArgs := PyTuple_New(0);
       end;
+    end;
+
+    // For pure UnicodeError - following doesnt have sense
+    if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) = 0) then
+    begin
       // Get the reason
       tmp := SafeGetPyObjectAttr(err_value, 'reason');
       if tmp <> nil then
       begin
         if PyUnicode_Check(tmp) then
-          s_reason := PyUnicodeAsString(tmp)
+          Result.EReason := PyUnicodeAsString(tmp)
         else if PyBytes_Check(tmp) then
-          s_reason := UnicodeString(PyBytesAsAnsiString(tmp));
+          Result.EReason := UnicodeString(PyBytesAsAnsiString(tmp));
         Py_XDECREF(tmp);
       end;
-      // Get the object (as bytes for reconstruction)
+
+      // Get the object (We will need it just EObjectRepr representation)
       tmp := SafeGetPyObjectAttr(err_value, 'object');
       if tmp <> nil then
       begin
-        if PyBytes_Check(tmp) then
-        begin
-          PyBytes_AsStringAndSize(tmp, buffer, size);
-          SetString(obj_bytes, buffer, size);
-        end
-        else if PyByteArray_Check(tmp) then
-        begin
-          buffer := PyByteArray_AsString(tmp);
-          size := PyByteArray_Size(tmp);
-          if Assigned(buffer) and (size > 0) then
-            SetString(obj_bytes, buffer, size);
-        end;
-        // Get string representation for EObjectRepr
-        s_object_repr := PyObjectAsString(tmp);
+        Result.EObjectRepr := PyObjectAsString(tmp);
         Py_XDECREF(tmp);
       end;
+
       // Get the start index
       tmp := SafeGetPyObjectAttr(err_value, 'start');
       if Assigned(tmp) and PyLong_Check(tmp) then
-        i_start := PyLong_AsLong(tmp);
+        Result.EStart := PyLong_AsLong(tmp);
       Py_XDECREF(tmp);
+
       // Get the end index
       tmp := SafeGetPyObjectAttr(err_value, 'end');
       if Assigned(tmp) and PyLong_Check(tmp) then
-        i_end := PyLong_AsLong(tmp);
+        Result.EEnd := PyLong_AsLong(tmp);
       Py_XDECREF(tmp);
-    end;
+
+
+      // Get the encoding (Not needed for Translate Error - always None)
+      if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeTranslateError^) = 0) then begin
+        tmp := SafeGetPyObjectAttr(err_value, 'encoding');
+        if tmp <> nil then
+        begin
+          if PyUnicode_Check(tmp) then
+            Result.EEncoding := PyUnicodeAsString(tmp)
+          else if PyBytes_Check(tmp) then
+            Result.EEncoding := UnicodeString(PyBytesAsAnsiString(tmp));
+          Py_XDECREF(tmp);
+        end;
+      end;
+
+    end; // NOT pure UnicodeError
+
     // Populate the result
     with Result do
     begin
-      EEncoding := s_encoding;
-      EReason := s_reason;
-      EObject := obj_bytes;
-      EObjectRepr := s_object_repr;
-      EStart := i_start;
-      EEnd := i_end;
-
-      if ((sType<>'') and (sValue<>'')) then
-        Message := Format('%s: %s', [sType, sValue]) // Original text
-      else
+      if ((sType<>'') and (sValue<>'')) then  // Original text
+        Message := Format('%s: %s', [sType, sValue])
+      else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) = 0) then
         Message := Format('%s: %s  (encoding: %s) (position: %d-%d) (source: %s)',
-          [sType, s_reason, s_encoding, i_start, i_end, s_object_repr]);
+          [sType, EReason, EEncoding, EStart, EEnd, EObjectRepr])
+      else // basic UnicodeError
+        Message := 'UnicodeError: Unknown Reason.';
     end;
   end;
 
@@ -5794,14 +5806,14 @@ begin
         raise Define( EPyFloatingPointError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ArithmeticError^) <> 0) then
         raise Define( EPyArithmeticError.Create(''), s_type, s_value )
- else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeEncodeError^) <> 0) then
-        raise DefineUnicodeError( UnicodeEncodeError.Create(''), s_type, s_value, err_type, err_value )
+      else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeEncodeError^) <> 0) then
+        raise DefineUnicodeError( UnicodeEncodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeDecodeError^) <> 0) then
-        raise DefineUnicodeError( UnicodeDecodeError.Create(''), s_type, s_value, err_type, err_value )
+        raise DefineUnicodeError( UnicodeDecodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeTranslateError^) <> 0) then
-        raise DefineUnicodeError( UnicodeTranslateError.Create(''), s_type, s_value, err_type, err_value )
+        raise DefineUnicodeError( UnicodeTranslateError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) <> 0) then
-        raise DefineUnicodeError( EPyUnicodeError.Create(''), s_type, s_value, err_type, err_value )
+        raise DefineUnicodeError( EPyUnicodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ValueError^) <> 0) then
         raise Define( EPyValueError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ReferenceError^) <> 0) then
@@ -5837,11 +5849,12 @@ begin
 end;
 
 procedure TPythonEngine.SetPyErrFromException(E: Exception);
-  // This function actually mirrors RaiseError procedure. Its intended to easily
-  // create python exception from existing delphi exception.
+  // This function translates Delphi Exception to Python exception.
+  // It actually mirrors RaiseError procedure AND translates
+  // some Delphi exceptions to pythons.
   //
   // The function is intended to simplify delphi exception handling on
-  // wrapped mehods exposed in python.
+  // wrapped methods exposed in python.
   function MsgForPython(const E: Exception): AnsiString;
   begin
     if (E is EPythonError) then
@@ -5859,68 +5872,37 @@ procedure TPythonEngine.SetPyErrFromException(E: Exception);
 
   procedure SetUnicodeError(const PythonExc: PPyObject; const UnicodeErr: EPyUnicodeError);
   var
-    exc_instance, args_tuple, encoding_obj, reason_obj, object_obj, start_obj, end_obj: PPyObject;
-    encoding_str, reason_str: AnsiString;
+    exc_instance: PPyObject;
+
   begin
     // Create exception instance with proper attributes
-    // UnicodeError(encoding, reason, object, start, end)
-    exc_instance := nil;
-    args_tuple := nil;
-    encoding_obj := nil;
-    reason_obj := nil;
-    object_obj := nil;
-    start_obj := nil;
-    end_obj := nil;
-
     try
-      // Prepare encoding
-      encoding_obj := PyUnicode_FromString(PAnsiChar(EncodeString(UnicodeErr.EEncoding)));
-
-      // Prepare reason
-      reason_obj := PyUnicode_FromString(PAnsiChar(EncodeString(UnicodeErr.EReason)));
-
-      // Prepare object (from EObject bytes)
-      object_obj := PyBytes_FromStringAndSize(PAnsiChar(UnicodeErr.EObject), Length(UnicodeErr.EObject));
-
-      // Prepare start and end
-      start_obj := PyLong_FromLong(UnicodeErr.EStart);
-      end_obj := PyLong_FromLong(UnicodeErr.EEnd);
-
-      // MakePyTuple will INCREF all objects, so we need to DECREF them after
-      args_tuple := MakePyTuple([encoding_obj, object_obj, start_obj, end_obj, reason_obj]);
-      if args_tuple = nil then
-      begin
-        // Can't create tuple - fall back to ValueError (parent class) which accepts string message
-        // UnicodeError family requires specific parameters, can't use SetPythonError
-        SetPythonError(PyExc_ValueError^, EncodeString(UnicodeErr.Message));
-        Exit;
-      end;
-
-      exc_instance := PyObject_CallObject(PythonExc, args_tuple);
+      exc_instance := PyObject_CallObject(PythonExc, UnicodeErr.EArgs);
       if exc_instance = nil then
       begin
-        SetPythonError(PyExc_ValueError^, EncodeString(UnicodeErr.Message));
+        WriteLn(ErrOutput, 'Error during creating Python exception: Constructing excetion failed.');
+        SetPythonError(PyExc_UnicodeError^, MsgForPython(UnicodeErr));
+        Exit;
       end;
-
+      
       PyErr_SetObject(PythonExc, exc_instance);
     finally
       Py_XDECREF(exc_instance);
-      Py_XDECREF(encoding_obj);
-      Py_XDECREF(reason_obj);
-      Py_XDECREF(object_obj);
-      Py_XDECREF(start_obj);
-      Py_XDECREF(end_obj);
-      Py_XDECREF(args_tuple);
     end;
   end;
 
 
 begin
-  // KOKOT Don’t overwrite an already-set Python error (important for Python-callback failures)
+  // Don’t overwrite an already-set Python error.
+  // TODO: Consider more robust exception handling,
+  //       with reporting even exception, while handling exception, and/or
+  //       reporting unhandled python exceptions).
   if PyErr_Occurred <> nil then
     Exit;
 
-  // Mirror of RaiseError mapping order
+  { ------------------------------------------------------------------------
+                      Mirror of RaiseError mapping order
+    ------------------------------------------------------------------------}
   if (E is EPySystemExit) then
     SetPythonError(PyExc_SystemExit^, MsgForPython(E))
   else if (E is EPyStopIteration) then
@@ -6011,6 +5993,12 @@ begin
     SetPythonError(PyExc_Exception^, MsgForPython(E))
   else if (E is EPyExecError) then
     SetPythonError(PyExc_Exception^, MsgForPython(E))
+
+    { ------------------------------------------------------------------------
+                      Native Delphi exceptions mapping
+    ------------------------------------------------------------------------}
+  else if (E is EFOpenError) then
+    SetPythonError(PyExc_OSError^, MsgForPython(E))
   else
     SetPythonError(PyExc_RuntimeError^, MsgForPython(E));
 end;
@@ -6837,7 +6825,7 @@ begin
   try
     Result := PyUnicodeAsString(u);
   finally
-    Py_DecRef(u);
+    Py_XDECREF(u);
   end;
 end;
 
@@ -9624,6 +9612,23 @@ end;
 function TPythonType.GetMembersStartOffset : Integer;
 begin
   Result := Sizeof(PyObject);
+end;
+
+
+(*******************************************************)
+(**                                                   **)
+(**     exception classes EPyException                **)
+(**                                                   **)
+(*******************************************************)
+
+constructor EPyUnicodeError.Create;
+begin
+  EArgs := nil;
+end;
+
+destructor EPyUnicodeError.Destroy;
+begin
+  TPythonInterface.Py_XDECREF(EArgs);
 end;
 
 (*******************************************************)

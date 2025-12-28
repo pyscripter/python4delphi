@@ -549,11 +549,12 @@ begin
 end;
 
 function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
+var
+  path: PPyObject;
 begin
   Adjust(@Self);
   try
     with GetPythonEngine() do begin
-      var path: PPyObject;
       if PyArg_ParseTuple(args, 'O:LoadProps', @path) = 0 then
         Exit(nil);   // Python exception is already set.
       if InternalReadComponent(PyFSPathObjectAsString(path), DelphiObject) then

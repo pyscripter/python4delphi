@@ -1096,9 +1096,9 @@ var
   LInput: TFileStream;
   LOutput: TMemoryStream;
 begin
-  if AResFile.IsEmpty or not FileExists(AResFile) then begin
+//  if AResFile.IsEmpty or not FileExists(AResFile) then begin
+  if not FileExists(AResFile) then
     raise EPyOSError.CreateFmt('File `%s` not found.', [AResFile]);
-  end;
 
   LInput := TFileStream.Create(AResFile, fmOpenRead);
   try
