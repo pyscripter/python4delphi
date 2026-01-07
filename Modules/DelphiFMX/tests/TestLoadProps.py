@@ -505,16 +505,22 @@ class TestLoadProps(unittest.TestCase):
 
     def test_loadprops_with_pathlike_returning_bytes_invalid_encoding(self):
         """Test LoadProps with PathLike returning bytes with invalid encoding."""
-        class InvalidBytesPathLike:
+
+        class NonUTF8BytesPathLike:
             def __fspath__(self):
-                # Return bytes that are not valid UTF-8
                 return b'\xff\xfe\x00\x01'
         
-        with self.assertRaises(UnicodeDecodeError) as context:
-            self.form.LoadProps(InvalidBytesPathLike())
-        self.assertEqual("'utf-8' codec can't decode byte 0xff in position 0: invalid start byte", str(context.exception))
-        
-  
+        if platform.system() == 'Windows':
+            with self.assertRaises(UnicodeDecodeError) as context:
+                self.form.LoadProps(NonUTF8BytesPathLike())
+            self.assertEqual("'utf-8' codec can't decode byte 0xff in position 0: invalid start byte", str(context.exception))
+        else: # On Linux this is actually valid path, so we actually dont find the file
+            with self.assertRaises(OSError) as context:
+                self.form.LoadProps(NonUTF8BytesPathLike())
+            self.assertIn('not found', str(context.exception))
+            self.assertIn(os.fsdecode(NonUTF8BytesPathLike().__fspath__()), str(context.exception))
+
+
     def test_loadprops_overwrites_existing_properties(self):
         """Test that LoadProps overwrites existing form properties."""
         self.form.Caption = 'Initial Caption'
@@ -533,8 +539,9 @@ class TestLoadProps(unittest.TestCase):
         with self._deny_read_access(no_read_file):
             with self.assertRaises(OSError) as context:
                 self.form.LoadProps(no_read_file)
-            self.assertIn('access is denied', str(context.exception).lower())
+            self.assertIn('denied', str(context.exception))
             self.assertIn('EFOpenError', str(context.exception))
+            self.assertIn(no_read_file, str(context.exception))
 
     def test_loadprops_with_directory_no_read_permission(self):
         """Test LoadProps with file in directory that has no read permissions."""
