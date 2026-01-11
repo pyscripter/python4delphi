@@ -549,30 +549,24 @@ begin
 end;
 
 function TPyDelphiCustomForm.LoadProps_Wrapper(args: PPyObject): PPyObject;
-
-  function FindResource(): string;
-  var
-    LStr: PAnsiChar;
-  begin
-    with GetPythonEngine() do begin
-      if PyArg_ParseTuple(args, 's:LoadProps', @LStr) <> 0 then begin
-        Result := string(LStr);
-      end else
-        Result := String.Empty;
-    end;
-  end;
-
+var
+  path: PPyObject;
 begin
   Adjust(@Self);
   try
-    if InternalReadComponent(FindResource(), DelphiObject) then
-      Exit(GetPythonEngine().ReturnTrue)
-    else
-      Exit(GetPythonEngine().ReturnFalse);
+    with GetPythonEngine() do begin
+      if PyArg_ParseTuple(args, 'O:LoadProps', @path) = 0 then
+        Exit(nil);   // Python exception is already set.
+      if InternalReadComponent(PyFSPathObjectAsString(path), DelphiObject) then
+        Exit(ReturnTrue)
+      else
+        Exit(ReturnFalse);
+    end;
   except
     on E: Exception do
-      with GetPythonEngine() do
-        PyErr_SetString(PyExc_RuntimeError^, PAnsiChar(EncodeString(E.Message)));
+      with GetPythonEngine() do begin
+        SetPyErrFromException(E);
+      end;
   end;
   Result := nil;
 end;

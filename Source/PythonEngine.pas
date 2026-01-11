@@ -1251,10 +1251,26 @@ Exception\n\
    EPyTypeError = class (EPyStandardError);
    EPyUnboundLocalError = class (EPyNameError);
    EPyValueError = class (EPyStandardError);
-   EPyUnicodeError = class (EPyValueError);
+
+   // UnicodeError -> accepts any tuple, but dont map this to specific attributes, just pass it around
+   // UnicodeTranslateError -> PyArg_ParseTuple(args, "UnnU", &object, &start, &end, &reason)
+   // UnicodeDecodeError -> PyArg_ParseTuple(args, "UOnnU", &encoding, &object, &start, &end, &reason)
+   // UnicodeEncodeError -> PyArg_ParseTuple(args, "UUnnU", &encoding, &object, &start, &end, &reason)
+   EPyUnicodeError = class (EPyValueError)
+   public
+      EEncoding: UnicodeString;
+      EReason: UnicodeString;
+      EObjectRepr: UnicodeString;   // String representation of the object (for delphi debugging/logging)
+      EStart: Integer;
+      EEnd: Integer;
+      EArgs: PPyObject;             // of PyTuple_Type; original args for python exception constructor
+      constructor Create;
+      destructor Destroy; override;
+   end;
    UnicodeEncodeError = class (EPyUnicodeError);
    UnicodeDecodeError = class (EPyUnicodeError);
    UnicodeTranslateError = class (EPyUnicodeError);
+
    EPyZeroDivisionError = class (EPyArithmeticError);
    EPyStopIteration = class(EPyException);
    EPyWarning = class (EPyException);
@@ -1576,6 +1592,7 @@ type
     PyErr_SetNone:      procedure(value: PPyObject); cdecl;
     PyErr_SetObject:    procedure  (ob1, ob2	: PPyObject); cdecl;
     PyErr_SetString:    procedure( ErrorObject: PPyObject; text: PAnsiChar); cdecl;
+    PyErr_Format:       function(ErrorObject: PPyObject; format: PAnsiChar; obj: PPyObject {...}): PPyObject; cdecl varargs;
     PyErr_WarnEx:       function (ob: PPyObject; text: PAnsiChar; stack_level: NativeInt): integer; cdecl;
     PyErr_WarnExplicit: function (ob: PPyObject; text: PAnsiChar; filename: PAnsiChar; lineno: integer; module: PAnsiChar; registry: PPyObject): integer; cdecl;
     PyImport_GetModuleDict: function: PPyObject; cdecl;
@@ -1803,6 +1820,7 @@ type
     PyUnicode_FromStringAndSize:function (s:PAnsiChar;i:NativeInt):PPyObject; cdecl;
     PyUnicode_FromKindAndData:function (kind:integer;const buffer:pointer;size:NativeInt):PPyObject; cdecl;
     PyUnicode_AsWideChar:function (unicode: PPyObject; w:PWCharT; size:NativeInt):integer; cdecl;
+    PyUnicode_AsWideCharString:function (unicode: PPyObject; size: PNativeInt):PWCharT; cdecl;
     PyUnicode_AsUTF8:function (unicode: PPyObject):PAnsiChar; cdecl;
     PyUnicode_AsUTF8AndSize:function (unicode: PPyObject; size: PNativeInt):PAnsiChar; cdecl;
     PyUnicode_Decode:function (const s:PAnsiChar; size: NativeInt; const encoding : PAnsiChar; const errors: PAnsiChar):PPyObject; cdecl;
@@ -1810,6 +1828,7 @@ type
     PyUnicode_AsEncodedString:function (unicode:PPyObject; const encoding:PAnsiChar; const errors:PAnsiChar):PPyObject; cdecl;
     PyUnicode_FromOrdinal:function (ordinal:integer):PPyObject; cdecl;
     PyUnicode_GetLength:function (unicode:PPyObject):NativeInt; cdecl;
+    PyUnicode_DecodeFSDefaultAndSize:function (const s:PAnsiChar; size: NativeInt): PPyObject; cdecl;
     PyWeakref_GetObject: function ( ref : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewProxy: function ( ob, callback : PPyObject) : PPyObject; cdecl;
     PyWeakref_NewRef: function ( ob, callback : PPyObject) : PPyObject; cdecl;
@@ -1954,6 +1973,7 @@ type
   function PyWeakref_CheckProxy( obj : PPyObject ) : Boolean;
   function PyBool_Check( obj : PPyObject ) : Boolean;
   function PyEnum_Check( obj : PPyObject ) : Boolean;
+  function PyPathLike_Check( obj : PPyObject ) : Boolean;
 
   // The following are defined as non-exported inline functions in object.h
   function Py_Type(ob: PPyObject): PPyTypeObject; inline;
@@ -2119,6 +2139,7 @@ type
     function   CheckExecSyntax( const str : AnsiString ) : Boolean;
     function   CheckSyntax( const str : AnsiString; mode : Integer ) : Boolean;
     procedure  RaiseError;
+    procedure  SetPyErrFromException(E: Exception);
     function   PyObjectAsString( obj : PPyObject ) : string;
     procedure  DoRedirectIO;
     procedure  AddClient( client : TEngineClient );
@@ -2171,6 +2192,11 @@ type
     function PyUnicodeAsUTF8String( obj : PPyObject ) : RawByteString;
     function PyBytesAsAnsiString( obj : PPyObject ) : AnsiString;
     function PyByteArrayAsAnsiString( obj : PPyObject ) : AnsiString;
+
+    { Filesystem strings conversion }
+    function PyBytesAsFSDecodedString( bytes : PPyObject): string;
+    function PyPathLikeObjectAsString( pathlike : PPyObject ) : string;
+    function PyFSPathObjectAsString( path : PPyObject ) : string;
 
     // Public Properties
     property ClientCount : Integer read GetClientCount;
@@ -3112,6 +3138,8 @@ SPyExcStopIteration = 'Stop Iteration';
 SPyExcSystemError = 'Unhandled SystemExit exception. Code: %s';
 SPyInitFailed = 'Python initialization failed: %s';
 SPyInitFailedUnknown = 'Unknown initialization error';
+SPyWrongArgumentType = 'Expected argument type(s): %s, real type: %s';
+SPyReturnTypeError = 'Python function `%s` should return value of following type(s): %s. Instead type `%s` was returned.';
 SCannotCreateMain = 'Run_CommandAsObject: can''t create __main__';
 SRaiseError = 'RaiseError: couldn''t fetch last exception';
 SMissingModuleDateTime = 'dcmToDatetime DatetimeConversionMode cannot be used with this version of python. Missing module datetime';
@@ -3949,6 +3977,7 @@ begin
   PyErr_Clear               := Import('PyErr_Clear');
   PyErr_Fetch               := Import('PyErr_Fetch');
   PyErr_SetString           := Import('PyErr_SetString');
+  PyErr_Format              := Import('PyErr_Format');
   PyErr_WarnEx              := Import('PyErr_WarnEx');
   PyErr_WarnExplicit        := Import('PyErr_WarnExplicit');
   PyEval_GetBuiltins        := Import('PyEval_GetBuiltins');
@@ -4156,6 +4185,7 @@ begin
   PyUnicode_FromStringAndSize := Import('PyUnicode_FromStringAndSize');
   PyUnicode_FromKindAndData   := Import('PyUnicode_FromKindAndData');
   PyUnicode_AsWideChar        := Import('PyUnicode_AsWideChar');
+  PyUnicode_AsWideCharString  := Import('PyUnicode_AsWideCharString');
   PyUnicode_AsUTF8            := Import('PyUnicode_AsUTF8');
   PyUnicode_AsUTF8AndSize     := Import('PyUnicode_AsUTF8AndSize');
   PyUnicode_Decode            := Import('PyUnicode_Decode');
@@ -4163,6 +4193,7 @@ begin
   PyUnicode_AsEncodedString   := Import('PyUnicode_AsEncodedString');
   PyUnicode_FromOrdinal       := Import('PyUnicode_FromOrdinal');
   PyUnicode_GetLength         := Import('PyUnicode_GetLength');
+  PyUnicode_DecodeFSDefaultAndSize := Import('PyUnicode_DecodeFSDefaultAndSize');
   PyWeakref_GetObject         := Import('PyWeakref_GetObject');
   PyWeakref_NewProxy          := Import('PyWeakref_NewProxy');
   PyWeakref_NewRef            := Import('PyWeakref_NewRef');
@@ -4443,6 +4474,27 @@ end;
 function TPythonInterface.PyEnum_Check( obj : PPyObject ) : Boolean;
 begin
   Result := Assigned( obj ) and (obj^.ob_type = PPyTypeObject(PyEnum_Type));
+end;
+
+function TPythonInterface.PyPathLike_Check( obj : PPyObject ) : Boolean;
+  var tmp: PPyObject;
+begin
+  Result := False;
+  if not Assigned(obj) then
+    Exit;
+
+  tmp := PyObject_GetAttrString(obj, '__fspath__');
+
+  if tmp = nil then begin
+    PyErr_Clear;
+    Exit;
+  end;
+
+  try
+    Result := PyCallable_Check(tmp) <> 0;
+  finally
+    Py_XDECREF(tmp);
+  end;
 end;
 
 function TPythonInterface.Py_Type(ob: PPyObject): PPyTypeObject;
@@ -5581,6 +5633,104 @@ procedure TPythonEngine.RaiseError;
       Result.Message := sType;
   end;
 
+  function SafeGetPyObjectAttr(const obj : PPyObject; const name : PAnsiChar): PPyObject;
+  begin
+    if PyObject_HasAttrString(obj, name) = 0 then
+      Exit(nil);
+
+    Exit(PyObject_GetAttrString(obj, name));
+  end;
+
+  function DefineUnicodeError( E : EPyUnicodeError; const sType, sValue : UnicodeString; err_type, err_value : PPyObject ) : EPyUnicodeError;
+  var
+    tmp               : PPyObject;
+  begin
+    Result := E;
+    Result.EName  := sType;
+    Result.EValue := sValue;
+    Result.EEncoding := '';
+    Result.EReason := '';
+    Result.EObjectRepr := '';
+    Result.EStart := 0;
+    Result.EEnd := 0;
+
+
+    // Get the args - arguments with which exception has been created.
+    tmp := SafeGetPyObjectAttr(err_value, 'args');
+    if tmp <> nil then
+    begin
+      if PyTuple_Check(tmp) then
+        Result.EArgs := tmp
+      else begin
+        Py_XDECREF(tmp);
+        Result.EArgs := PyTuple_New(0);
+      end;
+    end;
+
+    // For pure UnicodeError - following doesnt have sense
+    if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) = 0) then
+    begin
+      // Get the reason
+      tmp := SafeGetPyObjectAttr(err_value, 'reason');
+      if tmp <> nil then
+      begin
+        if PyUnicode_Check(tmp) then
+          Result.EReason := PyUnicodeAsString(tmp)
+        else if PyBytes_Check(tmp) then
+          Result.EReason := UnicodeString(PyBytesAsAnsiString(tmp));
+        Py_XDECREF(tmp);
+      end;
+
+      // Get the object (We will need it just EObjectRepr representation)
+      tmp := SafeGetPyObjectAttr(err_value, 'object');
+      if tmp <> nil then
+      begin
+        Result.EObjectRepr := PyObjectAsString(tmp);
+        Py_XDECREF(tmp);
+      end;
+
+      // Get the start index
+      tmp := SafeGetPyObjectAttr(err_value, 'start');
+      if Assigned(tmp) and PyLong_Check(tmp) then
+        Result.EStart := PyLong_AsLong(tmp);
+      Py_XDECREF(tmp);
+
+      // Get the end index
+      tmp := SafeGetPyObjectAttr(err_value, 'end');
+      if Assigned(tmp) and PyLong_Check(tmp) then
+        Result.EEnd := PyLong_AsLong(tmp);
+      Py_XDECREF(tmp);
+
+
+      // Get the encoding (Not needed for Translate Error - always None)
+      if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeTranslateError^) = 0) then begin
+        tmp := SafeGetPyObjectAttr(err_value, 'encoding');
+        if tmp <> nil then
+        begin
+          if PyUnicode_Check(tmp) then
+            Result.EEncoding := PyUnicodeAsString(tmp)
+          else if PyBytes_Check(tmp) then
+            Result.EEncoding := UnicodeString(PyBytesAsAnsiString(tmp));
+          Py_XDECREF(tmp);
+        end;
+      end;
+
+    end; // NOT pure UnicodeError
+
+    // Populate the result
+    with Result do
+    begin
+      if ((sType<>'') and (sValue<>'')) then  // Original text
+        Message := Format('%s: %s', [sType, sValue])
+      else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) = 0) then
+        Message := Format('%s: %s  (encoding: %s) (position: %d-%d) (source: %s)',
+          [sType, EReason, EEncoding, EStart, EEnd, EObjectRepr])
+      else // basic UnicodeError
+        Message := 'UnicodeError: Unknown Reason.';
+    end;
+  end;
+
+
   function GetTypeAsString( obj : PPyObject ) : string;
   begin
     if PyType_CheckExact( obj ) then
@@ -5658,13 +5808,13 @@ begin
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ArithmeticError^) <> 0) then
         raise Define( EPyArithmeticError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeEncodeError^) <> 0) then
-        raise Define( UnicodeEncodeError.Create(''), s_type, s_value )
+        raise DefineUnicodeError( UnicodeEncodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeDecodeError^) <> 0) then
-        raise Define( UnicodeDecodeError.Create(''), s_type, s_value )
+        raise DefineUnicodeError( UnicodeDecodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeTranslateError^) <> 0) then
-        raise Define( UnicodeTranslateError.Create(''), s_type, s_value )
+        raise DefineUnicodeError( UnicodeTranslateError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_UnicodeError^) <> 0) then
-        raise Define( EPyUnicodeError.Create(''), s_type, s_value )
+        raise DefineUnicodeError( EPyUnicodeError.Create(), s_type, s_value, err_type, err_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ValueError^) <> 0) then
         raise Define( EPyValueError.Create(''), s_type, s_value )
       else if (PyErr_GivenExceptionMatches(err_type, PyExc_ReferenceError^) <> 0) then
@@ -5697,6 +5847,202 @@ begin
     end
   else
     raise EPythonError.Create(SRaiseError);
+end;
+
+procedure TPythonEngine.SetPyErrFromException(E: Exception);
+  // This function translates Delphi Exception to Python exception.
+  // It actually mirrors RaiseError procedure AND translates
+  // some Delphi exceptions to pythons.
+  //
+  // The function is intended to simplify delphi exception handling on
+  // wrapped methods exposed in python.
+
+  function ExtractErrorMessage(const E: Exception): UnicodeString;
+  begin
+    if (E is EPythonError) then
+      Exit(E.Message)
+    else if E.Message <> '' then
+      Exit(Format('%s: %s', [E.ClassName, E.Message]))
+    else
+      Exit(E.ClassName);
+  end;
+
+  function MsgForPython(const E: Exception): AnsiString;
+  begin
+    Result := EncodeString(ExtractErrorMessage(E));
+  end;
+
+
+  procedure SetPythonError(const PythonExc: PPyObject; const msg: AnsiString);
+  begin
+    PyErr_SetString(PythonExc, PAnsiChar(msg));
+  end;
+
+  procedure SetFSPythonError(const PythonExc: PPyObject; const E: EPyOSError);
+  // Filesystem error needs special handling, since in various platforms,
+  // filesystem objects names can be variously assembled bytes, that is actually
+  // invalid utf8 - so we need to handle it more carefuly.
+  // On the other side, this is not correct handling for all cases, since
+  // sometimes it could lead to not correct print of surrogate pairs (like 🍕),
+  // which COULD be printed as more characters, instead of one emoji.
+
+  var
+    PyMsgObj: PPyObject;
+    msg: string;
+  begin
+    msg := ExtractErrorMessage(E);
+
+    PyMsgObj := PyUnicode_FromKindAndData(SizeOf(WideChar), PWideChar(msg), Length(msg));
+
+    if PyMsgObj = nil then begin
+      WriteLn(ErrOutput, 'Error during creating Python exception: Constructing exception string failed.');
+      if PyErr_Occurred <> nil then
+          PyErr_Print;
+      SetPythonError(PythonExc, EncodeString(E.ClassName));
+      Exit;
+    end;
+
+    try
+      // yes, this is uppercase `S` in format string, lowercase `s` doesnt work.
+      PyErr_Format(PythonExc, '%S', PyMsgObj);
+    finally
+      Py_XDECREF(PyMsgObj);
+    end;
+  end;
+
+  procedure SetUnicodeError(const PythonExc: PPyObject; const UnicodeErr: EPyUnicodeError);
+  var
+    exc_instance: PPyObject;
+  begin
+    // Create exception instance with proper attributes
+    exc_instance := nil;
+    try
+      exc_instance := PyObject_CallObject(PythonExc, UnicodeErr.EArgs);
+      if exc_instance = nil then
+      begin
+        WriteLn(ErrOutput, 'Error during creating Python exception: Constructing exception failed.');
+        if PyErr_Occurred <> nil then
+          PyErr_Print;
+        SetPythonError(PyExc_UnicodeError^, MsgForPython(UnicodeErr));
+        Exit;
+      end;
+      
+      PyErr_SetObject(PythonExc, exc_instance);
+    finally
+      Py_XDECREF(exc_instance);
+    end;
+  end;
+
+
+begin
+  // Don’t overwrite an already-set Python error.
+  // TODO: Consider more robust exception handling,
+  //       with reporting another exception, while handling exception, and/or
+  //       reporting unhandled python exceptions).
+  if PyErr_Occurred <> nil then
+    Exit;
+
+  { ------------------------------------------------------------------------
+                      Mirror of RaiseError mapping order
+    ------------------------------------------------------------------------}
+  if (E is EPySystemExit) then
+    SetPythonError(PyExc_SystemExit^, MsgForPython(E))
+  else if (E is EPyStopIteration) then
+    SetPythonError(PyExc_StopIteration^, MsgForPython(E))
+  else if (E is EPyKeyboardInterrupt) then
+    SetPythonError(PyExc_KeyboardInterrupt^, MsgForPython(E))
+  else if (E is EPyImportError) then
+    SetPythonError(PyExc_ImportError^, MsgForPython(E))
+{$IFDEF MSWINDOWS}
+  else if (E is EPyWindowsError) then
+    SetPythonError(PyExc_WindowsError^, MsgForPython(E))
+{$ENDIF}
+  else if (E is EPyIOError) then
+    SetFSPythonError(PyExc_IOError^, E as EPyOSError)
+  else if (E is EPyOSError) then
+    SetFSPythonError(PyExc_OSError^, E as EPyOSError)
+  else if (E is EPyEnvironmentError) then
+    SetPythonError(PyExc_EnvironmentError^, MsgForPython(E))
+  else if (E is EPyEOFError) then
+    SetPythonError(PyExc_EOFError^, MsgForPython(E))
+  else if (E is EPyNotImplementedError) then
+    SetPythonError(PyExc_NotImplementedError^, MsgForPython(E))
+  else if (E is EPyRuntimeError) then
+    SetPythonError(PyExc_RuntimeError^, MsgForPython(E))
+  else if (E is EPyUnboundLocalError) then
+    SetPythonError(PyExc_UnboundLocalError^, MsgForPython(E))
+  else if (E is EPyNameError) then
+    SetPythonError(PyExc_NameError^, MsgForPython(E))
+  else if (E is EPyAttributeError) then
+    SetPythonError(PyExc_AttributeError^, MsgForPython(E))
+  else if (E is EPyTabError) then
+    SetPythonError(PyExc_TabError^, MsgForPython(E))
+  else if (E is EPyIndentationError) then
+    SetPythonError(PyExc_IndentationError^, MsgForPython(E))
+  else if (E is EPySyntaxError) then
+    SetPythonError(PyExc_SyntaxError^, MsgForPython(E))
+  else if (E is EPyTypeError) then
+    SetPythonError(PyExc_TypeError^, MsgForPython(E))
+  else if (E is EPyAssertionError) then
+    SetPythonError(PyExc_AssertionError^, MsgForPython(E))
+  else if (E is EPyIndexError) then
+    SetPythonError(PyExc_IndexError^, MsgForPython(E))
+  else if (E is EPyKeyError) then
+    SetPythonError(PyExc_KeyError^, MsgForPython(E))
+  else if (E is EPyLookupError) then
+    SetPythonError(PyExc_LookupError^, MsgForPython(E))
+  else if (E is EPyOverflowError) then
+    SetPythonError(PyExc_OverflowError^, MsgForPython(E))
+  else if (E is EPyZeroDivisionError) then
+    SetPythonError(PyExc_ZeroDivisionError^, MsgForPython(E))
+  else if (E is EPyFloatingPointError) then
+    SetPythonError(PyExc_FloatingPointError^, MsgForPython(E))
+  else if (E is EPyArithmeticError) then
+    SetPythonError(PyExc_ArithmeticError^, MsgForPython(E))
+  else if (E is UnicodeEncodeError) then
+    SetUnicodeError(PyExc_UnicodeEncodeError^, EPyUnicodeError(E))
+  else if (E is UnicodeDecodeError) then
+    SetUnicodeError(PyExc_UnicodeDecodeError^, EPyUnicodeError(E))
+  else if (E is UnicodeTranslateError) then
+    SetUnicodeError(PyExc_UnicodeTranslateError^, EPyUnicodeError(E))
+  else if (E is EPyUnicodeError) then
+    SetUnicodeError(PyExc_UnicodeError^, EPyUnicodeError(E))
+  else if (E is EPyValueError) then
+    SetPythonError(PyExc_ValueError^, MsgForPython(E))
+  else if (E is EPyReferenceError) then
+    SetPythonError(PyExc_ReferenceError^, MsgForPython(E))
+  else if (E is EPyBufferError) then
+    SetPythonError(PyExc_BufferError^, MsgForPython(E))
+  else if (E is EPySystemError) then
+    SetPythonError(PyExc_SystemError^, MsgForPython(E))
+  else if (E is EPyMemoryError) then
+    SetPythonError(PyExc_MemoryError^, MsgForPython(E))
+  else if (E is EPyUserWarning) then
+    SetPythonError(PyExc_UserWarning^, MsgForPython(E))
+  else if (E is EPyDeprecationWarning) then
+    SetPythonError(PyExc_DeprecationWarning^, MsgForPython(E))
+  else if (E is EPySyntaxWarning) then
+    SetPythonError(PyExc_SyntaxWarning^, MsgForPython(E))
+  else if (E is EPyRuntimeWarning) then
+    SetPythonError(PyExc_RuntimeWarning^, MsgForPython(E))
+  else if (E is FutureWarning) then
+    SetPythonError(PyExc_FutureWarning^, MsgForPython(E))
+  else if (E is PendingDeprecationWarning) then
+    SetPythonError(PyExc_PendingDeprecationWarning^, MsgForPython(E))
+  else if (E is EPyWarning) then
+    SetPythonError(PyExc_Warning^, MsgForPython(E))
+  else if (E is EPyException) then
+    SetPythonError(PyExc_Exception^, MsgForPython(E))
+  else if (E is EPyExecError) then
+    SetPythonError(PyExc_Exception^, MsgForPython(E))
+
+    { ------------------------------------------------------------------------
+                      Native Delphi exceptions mapping
+    ------------------------------------------------------------------------}
+  else if (E is EFOpenError) then
+    SetPythonError(PyExc_OSError^, MsgForPython(E))
+  else
+    SetPythonError(PyExc_RuntimeError^, MsgForPython(E));
 end;
 
 function TPythonEngine.PyObjectAsString( obj : PPyObject ) : string;
@@ -6460,13 +6806,16 @@ var
   Size: NativeInt;
   NewSize: Cardinal;
 begin
+
   if PyUnicode_Check(obj) then
   begin
     // Size does not include the final #0
+    Size := 0; // When Buffer is set to nil, Size could stay unintialized
     Buffer := PyUnicode_AsUTF8AndSize(obj, @Size);
     SetLength(Result, Size);
+
     if (Size = 0) or (Buffer = nil) then
-      Exit;
+      Exit;  // TODO: Consider RaiseError for Buffer=nil and PyErr_Occured
 
     // The second argument is the size of the destination (Result) including #0
     NewSize := Utf8ToUnicode(PWideChar(Result), Cardinal(Size + 1), Buffer, Cardinal(Size));
@@ -6495,6 +6844,90 @@ begin
   end
   else
     raise EPythonError.CreateFmt(SPyConvertionError, ['PyUnicodeAsUTF8String', 'Unicode']);
+end;
+
+function TPythonEngine.PyBytesAsFSDecodedString( bytes : PPyObject) : string;
+// Bytes with the meaning of FileSystem paths returned from python should have
+// special treatment for decoding. Python provides this.
+var
+  CharArray: PAnsiChar;
+  CharCount: NativeInt;
+  UnicodeObject: PPyObject;
+  WideBuffer: PWCharT;
+
+  {$IFDEF POSIX}
+  function PWCharT2UCS4String(ABuffer: PWCharT; ACharCount: NativeInt) : UCS4String;
+  begin
+     SetLength(Result, ACharCount + 1);
+     Move(ABuffer^, Result[0], ACharCount * SizeOf(UCS4Char));
+     Result[ACharCount] := 0;
+  end;
+  {$ENDIF}
+
+begin
+  if not PyBytes_Check(bytes) then
+    raise EPythonError.CreateFmt(SPyConvertionError, ['PyBytesAsFSDecodedString', 'Bytes']);
+
+  if PyBytes_AsStringAndSize(bytes, CharArray, CharCount) <> 0 then
+    RaiseError;
+
+  UnicodeObject := nil;
+  UnicodeObject := PyUnicode_DecodeFSDefaultAndSize(CharArray, CharCount);
+  if UnicodeObject = nil then RaiseError;
+
+  try
+      WideBuffer := PyUnicode_AsWideCharString(UnicodeObject, @CharCount);
+      if WideBuffer = nil then RaiseError;
+      try
+        {$IFDEF POSIX}
+          Result := UCS4StringToWideString(PWCharT2UCS4String(WideBuffer, CharCount));
+        {$ELSE}
+          SetString(Result, WideBuffer, CharCount);
+        {$ENDIF}
+      finally
+        PyMem_Free(WideBuffer);
+      end;
+
+  finally
+    Py_XDECREF(UnicodeObject);
+  end;
+
+end;
+
+function TPythonEngine.PyPathLikeObjectAsString( pathlike : PPyObject ) : string;
+var
+  tmp: PPyObject;
+begin
+  tmp := PyObject_CallMethod(pathlike, '__fspath__', nil);
+
+  if tmp = nil then
+    if PyErr_Occurred <> nil then
+      RaiseError // If call already set the exception, it will be propagated.
+    else
+      raise EPyTypeError.CreateFmt(SPyReturnTypeError, ['__fspath__', 'str or bytes', 'NULL']);
+
+  try
+    if PyUnicode_Check(tmp) then
+      Exit(PyUnicodeAsString(tmp))
+    else if PyBytes_Check(tmp) then
+      Exit(PyBytesAsFSDecodedString(tmp))
+    else
+      raise EPyTypeError.CreateFmt(SPyReturnTypeError, ['__fspath__', 'str or bytes', tmp^.ob_type^.tp_name]);
+  finally
+    Py_XDECREF(tmp);
+  end;
+end;
+
+function TPythonEngine.PyFSPathObjectAsString( path : PPyObject ) : string;
+begin
+  if PyPathLike_Check(path) then
+    Exit(PyPathLikeObjectAsString(path))
+  else if PyUnicode_Check(path) then
+    Exit(PyUnicodeAsString(path))
+  else if PyBytes_Check(path) then
+    Exit(PyBytesAsFSDecodedString(path))
+  else
+    raise EPyTypeError.CreateFmt(SPyWrongArgumentType, ['str, bytes or os.PathLike', path^.ob_type^.tp_name]);
 end;
 
 
@@ -9246,6 +9679,26 @@ end;
 function TPythonType.GetMembersStartOffset : Integer;
 begin
   Result := Sizeof(PyObject);
+end;
+
+
+(*******************************************************)
+(**                                                   **)
+(**     exception classes EPyException                **)
+(**                                                   **)
+(*******************************************************)
+
+constructor EPyUnicodeError.Create;
+begin
+  EArgs := nil;
+end;
+
+destructor EPyUnicodeError.Destroy;
+begin
+  with GetPythonEngine do
+    TPythonInterface.Py_XDECREF(EArgs);
+
+    inherited;
 end;
 
 (*******************************************************)

@@ -1,0 +1,28 @@
+object Form1: TForm1
+  Left = 0
+  Top = 0
+  Caption = 'Form1'
+  ClientHeight = 441
+  ClientWidth = 624
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
+  object Edit1: TEdit
+    Left = 80
+    Top = 256
+    Width = 121
+    Height = 23
+    TabOrder = 3
+    Text = 'Edit1'
+  end
+  object Button1: TButton
+    Left = 184
+    Top = 392
+    Width = 75
+    Height = 25
+    Text = 'Button1'
+    TabOrder = 4
+  end
+end
+
