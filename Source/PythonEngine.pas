@@ -1991,8 +1991,8 @@ const
   DEFAULT_DATETIME_CONVERSION_MODE = dcmToTuple;
   DEFAULT_FLAGS =
     {$IFDEF IOS}
-    [pfIsolated, pfNoUserSiteDirectory, pfIgnoreEnvironment,
-    pfDontWriteBytecodeFlag]
+    [pfIsolated, pfNoUserSiteDirectory, pfIgnoreEnvironment]//,
+    //pfDontWriteBytecodeFlag]
     {$ELSE}
     []
     {$ENDIF IOS};
